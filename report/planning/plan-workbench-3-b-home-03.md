@@ -2,12 +2,12 @@
 Generated: 2025-12-22 00:00:00
 Report Type: planning
 Command: pm-plan-from-ticket
-Ticket: krafto-3
+Ticket: workbench-3
 ---
 
 ### Summary
 
-Define clear, explicit editorial rules for featured products and shops on the Buyer homepage to ensure ethical, diverse, transparent curation aligned with Krafto's positioning, while remaining operationally feasible. This is a documentation/definition ticket that will inform future domain modeling and implementation.
+Define clear, explicit editorial rules for featured products and shops on the Buyer homepage to ensure ethical, diverse, transparent curation aligned with Workbench's positioning, while remaining operationally feasible. This is a documentation/definition ticket that will inform future domain modeling and implementation.
 
 Key constraints: no code implementation in this ticket (documentation only), rules must align with B-HOME-01 messaging and B-HOME-02 section definitions, and output must be actionable for future technical implementation.
 
@@ -64,10 +64,10 @@ Key constraints: no code implementation in this ticket (documentation only), rul
 
 ### Agent Prompts
 
--   **Unit Test Coach**: "From `jira/3.md` and `report/planning/plan-krafto-3-b-home-03.md`, design a unit test spec in `__tests__/core/domain/featured-content-rules.test.ts` that validates eligibility criteria, diversity requirements, recency rules, and exclusion logic for featured products and shops."
--   **Architecture-Aware Dev**: "Using `jira/3.md` and `report/planning/plan-krafto-3-b-home-03.md`, prepare domain type definitions (schemas/types only, no implementation) for featured content eligibility, diversity signals, and rotation rules that will later support usecases like `listFeaturedProducts` and `listFeaturedShops`."
--   **UI Designer**: "Based on `jira/3.md` and `report/planning/plan-krafto-3-b-home-03.md`, ensure future UI designs for featured sections respect transparency requirements (e.g., 'editorial selection' labels) and diversity representation (visual balance across categories/styles)."
--   **QA & Test Coach**: "Using `jira/3.md` and `report/planning/plan-krafto-3-b-home-03.md`, draft a QA plan to validate that implemented featured content respects eligibility rules, diversity criteria, recency requirements, and exclusion rules defined in the editorial rules document."
+-   **Unit Test Coach**: "From `jira/3.md` and `report/planning/plan-workbench-3-b-home-03.md`, design a unit test spec in `__tests__/core/domain/featured-content-rules.test.ts` that validates eligibility criteria, diversity requirements, recency rules, and exclusion logic for featured products and shops."
+-   **Architecture-Aware Dev**: "Using `jira/3.md` and `report/planning/plan-workbench-3-b-home-03.md`, prepare domain type definitions (schemas/types only, no implementation) for featured content eligibility, diversity signals, and rotation rules that will later support usecases like `listFeaturedProducts` and `listFeaturedShops`."
+-   **UI Designer**: "Based on `jira/3.md` and `report/planning/plan-workbench-3-b-home-03.md`, ensure future UI designs for featured sections respect transparency requirements (e.g., 'editorial selection' labels) and diversity representation (visual balance across categories/styles)."
+-   **QA & Test Coach**: "Using `jira/3.md` and `report/planning/plan-workbench-3-b-home-03.md`, draft a QA plan to validate that implemented featured content respects eligibility rules, diversity criteria, recency requirements, and exclusion rules defined in the editorial rules document."
 
 ### Open Questions
 

@@ -2,12 +2,12 @@
 Generated: 2025-12-22 00:00:00
 Report Type: planning
 Command: pm-plan-from-ticket
-Ticket: krafto-2
+Ticket: workbench-2
 ---
 
 ### Summary
 
-Define and document the Buyer homepage content sections (hero, featured artisans, categories, collections, trust signals, and CTAs) into a clear information architecture that supports first-time visitors in understanding Krafto’s value and moving toward exploration or conversion, without yet implementing UI or data fetching.
+Define and document the Buyer homepage content sections (hero, featured artisans, categories, collections, trust signals, and CTAs) into a clear information architecture that supports first-time visitors in understanding Workbench’s value and moving toward exploration or conversion, without yet implementing UI or data fetching.
 
 Key constraints: respect Clean Architecture (no business logic in UI, no Supabase in presentation), keep this ticket content/IA-only (implementation in later tickets), and align copy, tone, and section purposes with B-HOME-01 Buyer messaging.
 
@@ -58,10 +58,10 @@ Key constraints: respect Clean Architecture (no business logic in UI, no Supabas
 
 ### Agent Prompts
 
--   **Unit Test Coach**: “From `jira/2.md` and the planning report `report/planning/plan-krafto-2-b-home-02.md`, design a unit test spec in `__tests__/core/domain/homepage-content-architecture.test.ts` that validates required sections, ordering, and presence of trust signals before key CTAs.”
--   **Architecture-Aware Dev**: “Using `jira/2.md` and `report/planning/plan-krafto-2-b-home-02.md`, prepare domain/usecase scaffolding (types or schemas only, no infrastructure or UI) that can later support Buyer homepage sections and their relationships.”
--   **UI Designer**: “Based on `jira/2.md` and `report/planning/plan-krafto-2-b-home-02.md`, create low-fidelity wireframes for the Buyer homepage that visually express each section, their order, and primary/secondary CTAs.”
--   **QA & Test Coach**: “Using `jira/2.md` and `report/planning/plan-krafto-2-b-home-02.md`, draft a QA plan and high-level test scenarios (including a11y) to validate that the implemented Buyer homepage respects section definitions, ordering, and trust signal placement.”
+-   **Unit Test Coach**: “From `jira/2.md` and the planning report `report/planning/plan-workbench-2-b-home-02.md`, design a unit test spec in `__tests__/core/domain/homepage-content-architecture.test.ts` that validates required sections, ordering, and presence of trust signals before key CTAs.”
+-   **Architecture-Aware Dev**: “Using `jira/2.md` and `report/planning/plan-workbench-2-b-home-02.md`, prepare domain/usecase scaffolding (types or schemas only, no infrastructure or UI) that can later support Buyer homepage sections and their relationships.”
+-   **UI Designer**: “Based on `jira/2.md` and `report/planning/plan-workbench-2-b-home-02.md`, create low-fidelity wireframes for the Buyer homepage that visually express each section, their order, and primary/secondary CTAs.”
+-   **QA & Test Coach**: “Using `jira/2.md` and `report/planning/plan-workbench-2-b-home-02.md`, draft a QA plan and high-level test scenarios (including a11y) to validate that the implemented Buyer homepage respects section definitions, ordering, and trust signal placement.”
 
 ### Open Questions
 
@@ -72,12 +72,12 @@ Key constraints: respect Clean Architecture (no business logic in UI, no Supabas
 
 -   **Goal of the hero section**:
 
-    -   Make it immediately clear to first-time Buyer visitors what Krafto does for them and why it matters, using the finalized value proposition from krafto-1.
+    -   Make it immediately clear to first-time Buyer visitors what Workbench does for them and why it matters, using the finalized value proposition from workbench-1.
     -   Drive them toward a first exploration action (primary CTA) while also offering a learning path (secondary CTA) for visitors who need more context before acting.
 
 -   **Core content (desktop and mobile)**:
 
--   **Hero title (H1)**: reuse the finalized hero title from `docs/homepage/value-proposition.md` (krafto-1): “Make supplier catalogs clear, centralized, and easy to act on.”
+-   **Hero title (H1)**: reuse the finalized hero title from `docs/homepage/value-proposition.md` (workbench-1): “Make supplier catalogs clear, centralized, and easy to act on.”
 -   **Hero subtitle**: reuse the finalized subtitle from the same doc (`docs/homepage/value-proposition.md`), placed directly under the H1.
 -   **Supporting promises**: visually connect (via layout) to the three core promises defined in `docs/homepage/value-proposition.md`, either as a nearby bullet list or as a short “key benefits” strip adjacent to the hero.
 
@@ -88,7 +88,7 @@ Key constraints: respect Clean Architecture (no business logic in UI, no Supabas
         -   Target flow: leads buyers into the main discovery experience for supplier catalogs (future `/catalogs` or equivalent route).
         -   Behavior: scrolls or navigates to the first discovery section (e.g., featured artisans / categories) if on the same page, or routes to the dedicated catalogs page when implemented.
     -   **Secondary CTA (learn path)**:
-        -   Copy (working label): “See how Krafto works”.
+        -   Copy (working label): “See how Workbench works”.
         -   Target flow: leads to an explanatory page or section (e.g., “How it works” section or `/how-it-works` route) that explains key steps and benefits before committing.
         -   Behavior: scrolls to an information section on the homepage in MVP, with the option to later link to a dedicated product explanation page.
     -   Optional tertiary action (text link only, lower priority): “Talk to us” or “Book a demo”, positioned near but visually lighter than the primary/secondary CTAs, linking to a contact or demo request flow (future ticket).
@@ -108,7 +108,7 @@ Key constraints: respect Clean Architecture (no business logic in UI, no Supabas
 
 -   **Overall goal of these sections**:
 
-    -   Help Buyers quickly understand the variety and quality of artisans and products available on Krafto.
+    -   Help Buyers quickly understand the variety and quality of artisans and products available on Workbench.
     -   Provide two complementary entry points into discovery: by **artisan** (human/brand angle) and by **category** (need/problem angle).
 
 -   **Featured artisans section**:
@@ -154,7 +154,7 @@ Key constraints: respect Clean Architecture (no business logic in UI, no Supabas
 
 -   **Overall goal of these sections**:
 
-    -   Reinforce that there is depth and curation in the catalog (collections) and that Krafto is **safe and trustworthy** (trust signals).
+    -   Reinforce that there is depth and curation in the catalog (collections) and that Workbench is **safe and trustworthy** (trust signals).
     -   Provide “editorial shortcuts” into the catalog (collections) and reduce perceived risk before conversion (trust section).
 
 -   **Collections / thematic highlights section**:
@@ -176,10 +176,10 @@ Key constraints: respect Clean Architecture (no business logic in UI, no Supabas
 
 -   **Trust signals section**:
 
-    -   **Goal**: Provide clear, concise evidence that using Krafto is safe and professional-grade for purchasing teams (not a random marketplace).
+    -   **Goal**: Provide clear, concise evidence that using Workbench is safe and professional-grade for purchasing teams (not a random marketplace).
     -   **Types of trust elements (conceptual)**:
         -   Social proof (e.g., short quote/testimonial from a buyer, overall satisfaction metric).
-        -   Scale / credibility indicators (e.g., number of artisans, number of products, or companies using Krafto – when available).
+        -   Scale / credibility indicators (e.g., number of artisans, number of products, or companies using Workbench – when available).
         -   Guarantees and safeguards (e.g., secure payments, clear return/dispute policy, curated artisans).
     -   **Content model**:
         -   Section title focused on reassurance (exact wording to be refined later).
@@ -197,7 +197,7 @@ Key constraints: respect Clean Architecture (no business logic in UI, no Supabas
         -   Each collection CTA leads to a filtered product view that can be shared/linked.
         -   If collections are not yet fully implemented in infrastructure, the section can initially be static (manual curation) with clear constraints.
     -   Trust signals:
-        -   Trust elements themselves are mostly informational, but they can link to more detailed pages (e.g., “How Krafto selects artisans”, “Security & payments”).
+        -   Trust elements themselves are mostly informational, but they can link to more detailed pages (e.g., “How Workbench selects artisans”, “Security & payments”).
 
 ### Section Spec – B-HOME-02.4 Information architecture & navigation flows
 
@@ -221,7 +221,7 @@ Key constraints: respect Clean Architecture (no business logic in UI, no Supabas
     -   From hero primary CTA (“Explore catalogs”):
         -   Scroll to or navigate into the exploration area anchored near featured artisans / categories.
         -   In a dedicated implementation ticket, this may map to a `/catalogs` or `/explore` route with pre-configured filters.
-    -   From hero secondary CTA (“See how Krafto works”):
+    -   From hero secondary CTA (“See how Workbench works”):
         -   Scroll to a “how it works” explanatory block on the homepage (to be defined in a later ticket) or navigate to a dedicated route (e.g., `/how-it-works`).
     -   From featured artisans:
         -   Each artisan card leads to the artisan’s shop page (later implementation of B-SHOP-01).

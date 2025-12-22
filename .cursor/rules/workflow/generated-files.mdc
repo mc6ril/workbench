@@ -110,7 +110,7 @@ Ticket: {projectKey}-{ticketNumber}
 
 Notes:
 
--   `Ticket` MUST be in the format `krafto-{ticketNumber}` (e.g., `krafto-5`), not a file path.
+-   `Ticket` MUST be in the format `workbench-{ticketNumber}` (e.g., `workbench-5`), not a file path.
 -   `Generated` must use a space between date and time (not a `T`).
 -   Additional keys can be added but MUST NOT replace the required keys above.
 
@@ -128,9 +128,9 @@ For planning reports:
 
 1. Determine the related Jira ticket number
 2. Generate slug from the feature title in lowercase with hyphens
-3. Save to `report/planning/plan-krafto-{ticketNumber}-{slug}.md`
+3. Save to `report/planning/plan-workbench-{ticketNumber}-{slug}.md`
 4. Inform user of saved file location
-5. Ensure required frontmatter is present with `Ticket: krafto-{ticketNumber}`
+5. Ensure required frontmatter is present with `Ticket: workbench-{ticketNumber}`
 
 ### 3. File Content Format
 

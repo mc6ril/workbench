@@ -2,7 +2,7 @@
 Generated: 2025-12-22 00:00:00
 Report Type: planning
 Command: pm-plan-from-ticket
-Ticket: krafto-4
+Ticket: workbench-4
 ---
 
 ### Summary
@@ -62,10 +62,10 @@ Define the primary and secondary Buyer CTAs on the homepage (buy-side) and decid
 
 ### Agent Prompts
 
--   **Unit Test Coach**: "From `jira/4.md` and `report/planning/plan-krafto-4-b-home-04.md`, design a unit test spec in `__tests__/core/domain/homepage-cta-strategy.test.ts` that validates CTA audience classification, hierarchy, conflict safeguards, and experimentation guardrails."
--   **Architecture-Aware Dev**: "Using `jira/4.md` and `report/planning/plan-krafto-4-b-home-04.md`, prepare domain-level types or configs (no implementation yet) to represent homepage CTAs, their audiences, hierarchy, and links to routes/flows."
--   **UI Designer**: "Based on `jira/4.md` and `report/planning/plan-krafto-4-b-home-04.md`, create low-fidelity layouts showing primary Buyer CTAs and Seller entry points across the homepage, respecting hierarchy and conflict/dilution safeguards."
--   **QA & Test Coach**: "Using `jira/4.md` and `report/planning/plan-krafto-4-b-home-04.md`, draft a QA plan and scenarios to verify that implemented homepage CTAs respect audience, hierarchy, placement rules, and do not dilute the Buyer journey."
+-   **Unit Test Coach**: "From `jira/4.md` and `report/planning/plan-workbench-4-b-home-04.md`, design a unit test spec in `__tests__/core/domain/homepage-cta-strategy.test.ts` that validates CTA audience classification, hierarchy, conflict safeguards, and experimentation guardrails."
+-   **Architecture-Aware Dev**: "Using `jira/4.md` and `report/planning/plan-workbench-4-b-home-04.md`, prepare domain-level types or configs (no implementation yet) to represent homepage CTAs, their audiences, hierarchy, and links to routes/flows."
+-   **UI Designer**: "Based on `jira/4.md` and `report/planning/plan-workbench-4-b-home-04.md`, create low-fidelity layouts showing primary Buyer CTAs and Seller entry points across the homepage, respecting hierarchy and conflict/dilution safeguards."
+-   **QA & Test Coach**: "Using `jira/4.md` and `report/planning/plan-workbench-4-b-home-04.md`, draft a QA plan and scenarios to verify that implemented homepage CTAs respect audience, hierarchy, placement rules, and do not dilute the Buyer journey."
 
 ### Open Questions
 

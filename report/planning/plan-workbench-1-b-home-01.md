@@ -2,12 +2,12 @@
 Generated: 2025-12-22 00:00:00
 Report Type: planning
 Command: pm-plan-from-ticket
-Ticket: krafto-1
+Ticket: workbench-1
 ---
 
 ### Summary
 
-Define and validate a concise buyer-centric homepage value proposition and 2–3 core promises that clearly state what Krafto does for buyers and what they can expect, producing final copy ready to plug into the homepage hero section. Constraints: messaging must align with existing product vision, target personas, and domain naming, and remain short, scannable, and suitable for landing page use.
+Define and validate a concise buyer-centric homepage value proposition and 2–3 core promises that clearly state what Workbench does for buyers and what they can expect, producing final copy ready to plug into the homepage hero section. Constraints: messaging must align with existing product vision, target personas, and domain naming, and remain short, scannable, and suitable for landing page use.
 
 ### Solution Outline
 
@@ -21,7 +21,7 @@ Define and validate a concise buyer-centric homepage value proposition and 2–3
 ```markdown
 ### 1.1 - Clarify buyer personas, problems, and desired outcomes
 
--   AC: [x] Primary buyer persona(s) documented with key pains and goals [x] Top 2–3 problems Krafto solves for buyers are clearly listed [x] Desired high-level outcomes (what success looks like for buyers) are captured
+-   AC: [x] Primary buyer persona(s) documented with key pains and goals [x] Top 2–3 problems Workbench solves for buyers are clearly listed [x] Desired high-level outcomes (what success looks like for buyers) are captured
 -   DoD: [x] Findings documented in `docs/homepage/buyer-personas.md` (or existing planning doc) [x] Aligned with current product vision/roadmap (assumptions noted in doc) [x] Reviewed with at least one product stakeholder (to be validated and updated if feedback differs)
 -   Effort: 2h | Deps: [none]
 
@@ -34,7 +34,7 @@ Define and validate a concise buyer-centric homepage value proposition and 2–3
 ### 1.3 - Finalize copy and prepare implementation handoff
 
 -   AC: [x] Final version of value proposition and promises selected and documented in `docs/homepage/value-proposition.md` [x] Mapping to homepage UI defined (hero + promises) in the same doc [x] Potential variants and notes available for future experiments
--   DoD: [x] Final copy stored in repo under `docs/` with clear sections [x] Ticket links added between this planning ticket and future implementation ticket (`jira/2.md`, krafto-2) [x] Status: messaging work ready for implementation
+-   DoD: [x] Final copy stored in repo under `docs/` with clear sections [x] Ticket links added between this planning ticket and future implementation ticket (`jira/2.md`, workbench-2) [x] Status: messaging work ready for implementation
 -   Effort: 2h | Deps: [1.2]
 ```
 
@@ -50,10 +50,10 @@ Define and validate a concise buyer-centric homepage value proposition and 2–3
 
 ### Agent Prompts
 
--   **Unit Test Coach**: "From the finalized homepage value proposition and promises for buyers (krafto-1), design a unit test spec for the homepage hero/promise components ensuring copy, i18n keys, and structure are validated."
--   **Architecture-Aware Dev**: "Using the finalized buyer-facing homepage value proposition and promises from krafto-1, create an implementation ticket and plan to integrate the copy into the homepage hero and promise sections following Clean Architecture, i18n, and SCSS conventions."
--   **UI Designer**: "Based on krafto-1 buyer messaging (value proposition and promises), propose a visual and layout treatment for the homepage hero and promises section optimized for scannability and clarity for first-time buyers."
--   **QA & Test Coach**: "Using krafto-1 buyer homepage messaging, define a QA plan and scenarios to verify that the value proposition and promises are correctly displayed, localized (if applicable), and accessible on the homepage."
+-   **Unit Test Coach**: "From the finalized homepage value proposition and promises for buyers (workbench-1), design a unit test spec for the homepage hero/promise components ensuring copy, i18n keys, and structure are validated."
+-   **Architecture-Aware Dev**: "Using the finalized buyer-facing homepage value proposition and promises from workbench-1, create an implementation ticket and plan to integrate the copy into the homepage hero and promise sections following Clean Architecture, i18n, and SCSS conventions."
+-   **UI Designer**: "Based on workbench-1 buyer messaging (value proposition and promises), propose a visual and layout treatment for the homepage hero and promises section optimized for scannability and clarity for first-time buyers."
+-   **QA & Test Coach**: "Using workbench-1 buyer homepage messaging, define a QA plan and scenarios to verify that the value proposition and promises are correctly displayed, localized (if applicable), and accessible on the homepage."
 
 ### Open Questions
 

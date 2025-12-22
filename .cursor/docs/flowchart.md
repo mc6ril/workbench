@@ -1,273 +1,214 @@
-1. Sitemap global (pages & sections)
+1. Sitemap global des pages
+   flowchart TD
+   R[ROOT] --> H[Home Dashboard]
+   R --> BL[Backlog]
+   R --> BD[Board]
+   R --> EP[Epics]
+   R --> TK[Ticket Detail]
+   R --> SE[Settings]
 
-```mermaid
-flowchart TD
-   A[ROOT] --> H[Home / Landing]
-   A --> EX[Explorer / Search]
-   A --> CAT[Category]
-   A --> PRD[Product Page]
-   A --> SHP[Shop Page]
-   A --> CRT[Cart]
-   A --> CHK[Checkout]
-   A --> ATH[Auth]
-   A --> ACC[Buyer Account]
-   A --> SEL[Seller Area]
-   A --> ADM[Admin]
-   A --> LEG[Legal & Help]
+H --> H1[Quick Add Ticket]
+H --> H2[My Work]
+H --> H3[Recent Activity]
+H --> H4[Shortcuts]
 
-H --> H1[Featured Products]
-H --> H2[Featured Shops]
-H --> H3[Editorial / Collections]
-H --> H4[CTA Buy]
-H --> H5[CTA Sell]
+BL --> BL1[Ticket List]
+BL --> BL2[Filters and Search]
+BL --> BL3[Sort]
+BL --> BL4[Bulk Actions]
+BL --> BL5[Create Ticket]
 
-EX --> EX1[Search Results]
-EX --> EX2[Filters]
-EX --> EX3[Sort]
-EX --> EX4[Collections / Curations]
-CAT --> CAT1[Subcategories]
-CAT --> EX
+BD --> BD1[Board View]
+BD --> BD2[Columns Config]
+BD --> BD3[Drag and Drop]
+BD --> BD4[Swimlanes Optional]
+BD --> BD5[Board Filters]
 
-SHP --> SHP1[Shop Home]
-SHP --> SHP2[Shop Listings]
-SHP --> SHP3[Shop Reviews]
-SHP --> SHP4[About / Policies]
-SHP --> SHP5[Follow Shop]
-SHP --> SHP6[Contact / Messages]
+EP --> EP1[Epics List]
+EP --> EP2[Create Epic]
+EP --> EP3[Epic Detail]
+EP3 --> EP31[Epic Tickets]
+EP3 --> EP32[Epic Progress]
 
-PRD --> PRD1[Gallery]
-PRD --> PRD2[Variants]
-PRD --> PRD3[Description]
-PRD --> PRD4[Shipping & Returns]
-PRD --> PRD5[Reviews / Q&A]
-PRD --> PRD6[Seller Card]
-PRD --> PRD7[Related Products]
+TK --> TK1[Overview]
+TK --> TK2[Edit Fields]
+TK --> TK3[Comments Optional]
+TK --> TK4[Subtasks]
+TK --> TK5[Link to Epic]
+TK --> TK6[History Optional]
 
-CRT --> CRT1[Cart Items]
-CRT --> CRT2[Shipping Estimate]
-CRT --> CRT3[Promo / Gift Card]
-CRT --> CHK
+SE --> SE1[Project Settings]
+SE --> SE2[Statuses and Columns]
+SE --> SE3[Priorities]
+SE --> SE4[Labels Optional]
+SE --> SE5[Export and Import]
+SE --> SE6[Theme Optional]
 
-CHK --> CHK1[Address]
-CHK --> CHK2[Shipping Method]
-CHK --> CHK3[Payment]
-CHK --> CHK4[Confirm]
-CHK --> CHK5[Success / Receipt]
+2. Flow utilisateur complet end-to-end
+   stateDiagram-v2
+   [*] --> Home
+   Home --> Backlog
+   Home --> Board
+   Home --> Epics
+   Home --> Settings
 
-ATH --> ATH1[Sign up]
-ATH --> ATH2[Log in]
-ATH --> ATH3[Magic link]
-ATH --> ATH4[Forgot Password]
-ATH --> ATH5[2FA - Mature]
+Backlog --> CreateTicket : add ticket
+CreateTicket --> Backlog : saved
 
-ACC --> ACC1[Profile]
-ACC --> ACC2[Orders]
-ACC2 --> ACC21[Order Detail]
-ACC2 --> ACC22[Track Shipment]
-ACC2 --> ACC23[Invoice]
-ACC --> ACC3[Addresses]
-ACC --> ACC4[Favorites]
-ACC --> ACC5[Messages]
-ACC --> ACC6[Reviews Given]
-ACC --> ACC7[Returns/Disputes - Mature]
+Backlog --> TicketDetail : open ticket
+Board --> TicketDetail : open ticket card
+Epics --> TicketDetail : open ticket from epic
 
-SEL --> SEL0[Seller Onboarding]
-SEL --> SEL1[Seller Dashboard]
-SEL --> SEL2[Shop Settings]
-SEL --> SEL3[Products]
-SEL3 --> SEL31[List Products]
-SEL3 --> SEL32[Create Product]
-SEL3 --> SEL33[Edit Product]
-SEL3 --> SEL34[Inventory]
-SEL --> SEL4[Orders]
-SEL4 --> SEL41[Order Detail]
-SEL4 --> SEL42[Fulfillment / Shipping]
-SEL --> SEL5[Payouts]
-SEL --> SEL6[Marketing]
-SEL --> SEL7[Analytics - Mature]
-SEL --> SEL8[Support / Policies]
+TicketDetail --> EditTicket : edit fields
+EditTicket --> TicketDetail : saved
 
-ADM --> ADM1[Admin Dashboard]
-ADM --> ADM2[Tenants / Marketplaces]
-ADM --> ADM3[Shops]
-ADM --> ADM4[Users]
-ADM --> ADM5[Products / Listings]
-ADM --> ADM6[Orders]
-ADM --> ADM7[Payments / Fees]
-ADM --> ADM8[Moderation / Abuse]
-ADM --> ADM9[Disputes - Mature]
-ADM --> ADM10[Feature Flags / Config]
+TicketDetail --> CreateSubtask : add subtask
+CreateSubtask --> TicketDetail : saved
 
-LEG --> LEG1[FAQ]
-LEG --> LEG2[Shipping Policy]
-LEG --> LEG3[Returns Policy]
-LEG --> LEG4[Terms / CGV]
-LEG --> LEG5[Privacy / RGPD]
-LEG --> LEG6[Cookies]
-LEG --> LEG7[Contact Support]
-```
+TicketDetail --> LinkEpic : assign epic
+LinkEpic --> TicketDetail : saved
 
-2. Flow acheteur complet (découverte → achat → post-achat)
+Backlog --> Board : send to board
+Board --> MoveTicket : drag card
+MoveTicket --> Board : status and position updated
 
-```mermaid
-stateDiagram-v2
-   [*] --> Browsing
-   Browsing --> Search : enter query
-   Browsing --> Category : browse categories
-   Search --> Product : open product
-   Category --> Product : open product
-   Product --> Shop : open seller shop
-   Shop --> Product : open listing
-   Product --> Cart : add to cart
-   Cart --> Checkout : proceed
-   Checkout --> Auth : not logged in
-   Auth --> Checkout : login ok
-   Checkout --> PaymentPending : confirm payment
-   PaymentPending --> Success : payment success
-   PaymentPending --> Failed : payment failed
-   Failed --> Checkout : retry
-   Success --> Orders : view order
-   Orders --> OrderDetail : open order
-   OrderDetail --> Tracking : track shipment
-   OrderDetail --> Review : leave review
-   OrderDetail --> Dispute : issue / dispute (mature)
-   Review --> [*]
-   Tracking --> [*]
-   Dispute --> [*]
-```
+Settings --> ConfigureColumns : edit columns
+ConfigureColumns --> Board : board updated
 
-3. Flow vendeur complet (onboarding → publier → vendre → expédier → payout)
+Epics --> CreateEpic : add epic
+CreateEpic --> Epics : saved
+Epics --> EpicDetail : open epic
+EpicDetail --> TicketDetail : open linked ticket
 
-```mermaid
-stateDiagram-v2
-   [*] --> SellerSignup
-   SellerSignup --> CreateShop : create shop profile
-   CreateShop --> VerifyIdentity : KYC/Legal (optional/mature)
-   CreateShop --> ConnectPayout : Stripe Connect onboarding
-   ConnectPayout --> CreateListing : create first product
-   CreateListing --> PublishListing : publish
-   PublishListing --> ShopLive : shop visible
-   ShopLive --> OrderReceived : new order
-   OrderReceived --> AcceptOrAuto : accept/auto-accept
-   AcceptOrAuto --> Prepare : prepare items
-   Prepare --> BuyLabel : shipping label (mature)
-   Prepare --> MarkShipped : manual tracking (mvp)
-   BuyLabel --> MarkShipped
-   MarkShipped --> Delivered : carrier delivered
-   Delivered --> ReviewReceived : buyer review
-   Delivered --> EligiblePayout : payout delay passed
-   EligiblePayout --> PayoutSent : payout executed
-   PayoutSent --> [*]
-```
+TicketDetail --> [*]
 
-4. Paiement marketplace (Stripe Connect) + webhooks + états de commande
+3. Domaine et Use cases (Clean Architecture map)
 
-```mermaid
-sequenceDiagram
-   autonumber
-   participant U as Buyer
-   participant W as Web/App
-   participant API as API
-   participant ST as Stripe
-   participant WH as Webhook Handler
-   participant DB as DB
-   participant Q as Queue/Worker
+Ce diagramme te sert de “plan de build” : chaque nœud = une brique.
 
-U->>W: Checkout
-W->>API: POST /checkout (cart, address, shipping)
-API->>DB: Create Order (status=PENDING_PAYMENT)
-API->>ST: Create PaymentIntent (application_fee, transfer_data)
-ST-->>API: client_secret
-API-->>W: client_secret + order_id
-U->>ST: Pay (card)
-ST-->>WH: webhook payment_intent.succeeded
-WH->>DB: Update Order (status=PAID)
-   WH->>Q: Enqueue (send receipt, notify seller, index, etc.)
-   Q->>DB: Create Payment record + ledger entries
-   Q-->>API: (optional) push notification event
-```
-
-5. Backoffice Admin + Modération + Litiges (mature)
-
-```mermaid
-flowchart TD
-   A[Admin Dashboard] --> M[Moderation]
-   A --> O[Orders]
-   A --> P[Payments & Fees]
-   A --> U[Users]
-   A --> S[Shops]
-   A --> L[Listings/Products]
-   A --> T[Tenants/Marketplaces (SaaS)]
-   A --> C[Config / Feature Flags]
-
-M --> M1[Reports Queue]
-M --> M2[Review Shop]
-M --> M3[Review Listing]
-M --> M4[Take Action]
-M4 --> M41[Remove Listing]
-M4 --> M42[Suspend Shop]
-M4 --> M43[Ban User]
-M4 --> M44[Hold Payout]
-M --> M5[Fraud Signals (mature)]
-
-O --> O1[Search Orders]
-O --> O2[Order Detail]
-O2 --> O21[Refund / Cancel]
-O2 --> O22[Force Status]
-O2 --> O23[Contact Parties]
-
-P --> P1[Fees]
-P --> P2[Payouts]
-P --> P3[Refunds]
-P --> P4[Chargebacks]
-P --> P5[Ledger / Reconciliation (mature)]
-
-C --> C1[Commission Rules]
-C --> C2[Shipping Rules (per tenant)]
-C --> C3[Category Taxonomy]
-C --> C4[Email Templates]
-C --> C5[Search Ranking Rules]
-```
-
-6. “Services” (worker/async) : emails, search, fraud, payouts, notifications
-
-```mermaid
 flowchart LR
-   API[API] --> Q[Queue]
-   WH[Stripe Webhooks] --> Q
-   UI[Admin Actions] --> Q
+subgraph UI[UI Pages]
+UI1[Backlog Page]
+UI2[Board Page]
+UI3[Epics Page]
+UI4[Ticket Detail Page]
+UI5[Settings Page]
+end
 
-Q --> E[Email Worker]
-Q --> N[Notification Worker]
-Q --> SI[Search Index Worker]
-Q --> F[Fraud/Risk Worker (mature)]
-Q --> PO[Payout Worker]
-Q --> R[Reporting Worker (mature)]
+subgraph APP[Application Use Cases]
+UC1[Create Ticket]
+UC2[Update Ticket]
+UC3[Delete Ticket]
+UC4[List Tickets]
+UC5[Create Epic]
+UC6[Assign Ticket to Epic]
+UC7[Create Subtask]
+UC8[Move Ticket]
+UC9[Reorder Ticket]
+UC10[Configure Columns]
+UC11[List Epics]
+UC12[Get Ticket Detail]
+end
 
-E --> SMTP[Email Provider]
-N --> PUSH[Push/SMS Provider]
-SI --> SEARCH[Meilisearch/Elastic]
-PO --> STRIPE[Stripe Transfers/Payouts]
-F --> DB[(DB)]
-R --> DW[(Analytics/BI store)]
-```
+subgraph DOM[Domain Entities]
+D1[Ticket]
+D2[Epic]
+D3[Board]
+D4[Column]
+D5[Project]
+end
 
-7. Multi-tenant SaaS (white-label) : résolution tenant + isolation data
+subgraph PORTS[Ports]
+P1[Ticket Repository]
+P2[Epic Repository]
+P3[Board Repository]
+P4[Event Store Optional]
+end
 
-```mermaid
-flowchart TD
-   R[Request] --> TR[Tenant Resolver]
-   TR -->|domain/subdomain/header| TID[tenantId]
-   TID --> AUTH[Auth]
-   AUTH --> RBAC[RBAC & Policies]
-   RBAC --> UC[Use Case]
-   UC --> REPO[Repositories (tenant-scoped)]
-   REPO --> DB[(Postgres)]
-   UC --> EXT[External Services]
-   EXT --> STRIPE[Stripe Connect]
-   EXT --> S3[S3/R2 Storage]
-   EXT --> SEARCH[Search]
+subgraph INFRA[Infrastructure]
+I1[DB Ticket Repo]
+I2[DB Epic Repo]
+I3[DB Board Repo]
+I4[Migration Tool]
+end
 
-DB --> RLS[Optional: Postgres RLS]
-RLS --> DB
-```
+UI1 --> UC1
+UI1 --> UC4
+UI1 --> UC12
+UI1 --> UC2
+UI1 --> UC3
+
+UI2 --> UC8
+UI2 --> UC9
+UI2 --> UC10
+UI2 --> UC4
+UI2 --> UC12
+
+UI3 --> UC5
+UI3 --> UC11
+UI3 --> UC6
+
+UI4 --> UC12
+UI4 --> UC2
+UI4 --> UC6
+UI4 --> UC7
+
+UI5 --> UC10
+
+UC1 --> D1
+UC2 --> D1
+UC3 --> D1
+UC4 --> D1
+UC12 --> D1
+UC5 --> D2
+UC11 --> D2
+UC6 --> D1
+UC6 --> D2
+UC7 --> D1
+UC8 --> D1
+UC8 --> D3
+UC9 --> D1
+UC10 --> D3
+UC10 --> D4
+
+UC1 --> P1
+UC2 --> P1
+UC3 --> P1
+UC4 --> P1
+UC12 --> P1
+UC5 --> P2
+UC11 --> P2
+UC6 --> P1
+UC6 --> P2
+UC8 --> P1
+UC9 --> P1
+UC10 --> P3
+
+P1 --> I1
+P2 --> I2
+P3 --> I3
+I4 --> I1
+I4 --> I2
+I4 --> I3
+
+4. Flow drag and drop (Board) détaillé
+   sequenceDiagram
+   autonumber
+   participant U as User
+   participant UI as Board UI
+   participant UC as MoveTicket usecase
+   participant TR as TicketRepository
+   participant DB as Database
+
+U->>UI: Drag ticket card
+UI->>UC: MoveTicket(ticketId, toColumnId, newIndex)
+UC->>TR: getById(ticketId)
+TR->>DB: SELECT ticket
+DB-->>TR: ticket
+TR-->>UC: ticket
+UC->>TR: updateStatusAndPosition(ticketId, toColumnId, newIndex)
+TR->>DB: UPDATE ticket position and status
+DB-->>TR: ok
+TR-->>UC: ok
+UC-->>UI: updated ticket
+UI-->>U: Board re-renders with new order

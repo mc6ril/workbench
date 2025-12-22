@@ -1,12 +1,12 @@
-# Krafto - La Plateforme Éthique pour les Artisans
+# Workbench - La Plateforme Éthique pour les Artisans
 
-![Krafto Logo](https://via.placeholder.com/150) _(À remplacer par votre logo)_
+![Workbench Logo](https://via.placeholder.com/150) _(À remplacer par votre logo)_
 
 ---
 
 ## **📌 Vue d’Ensemble**
 
-**Krafto** est une plateforme e-commerce **éthique et locale**, conçue pour **réinventer la vente en ligne de produits artisanaux**. Contrairement à des géants comme Etsy, Krafto met l’accent sur :
+**Workbench** est une plateforme e-commerce **éthique et locale**, conçue pour **réinventer la vente en ligne de produits artisanaux**. Contrairement à des géants comme Etsy, Workbench met l’accent sur :
 
 -   **L’authenticité** : Seuls les vrais artisans, vérifiés manuellement, peuvent vendre.
 -   **L’équité économique** : **0€** à l’inscription, **commission réduite** (5-10% du CA) au lieu de frais fixes.
@@ -15,7 +15,7 @@
 
 ---
 
-## **🎯 Pourquoi Krafto ?**
+## **🎯 Pourquoi Workbench ?**
 
 ### **Problèmes Actuels**
 
@@ -28,7 +28,7 @@
 
 ### **Notre Solution**
 
-| **Critère**          | **Etsy**             | **Krafto**             |
+| **Critère**          | **Etsy**             | **Workbench**             |
 | -------------------- | -------------------- | ---------------------- |
 | Frais d’inscription  | 16€                  | **0€**                 |
 | Commission           | 15-20%               | **5-10%**              |
@@ -78,7 +78,7 @@
 | Événements            | Organisation de marchés virtuels  | 10% des inscriptions |
 
 **Exemple** :
-Un artisan vend pour **1 000€/mois** → Krafto prend **50-100€** (vs 150-200€ sur Etsy).
+Un artisan vend pour **1 000€/mois** → Workbench prend **50-100€** (vs 150-200€ sur Etsy).
 
 ---
 
@@ -139,6 +139,6 @@ Un artisan vend pour **1 000€/mois** → Krafto prend **50-100€** (vs 150-20
 -   **Typographie** :
     -   Titres : Playfair Display (élégant).
     -   Texte : Inter (lisible).
--   **Logo** : "K" stylisé avec outils artisanaux (marteau, pinceau).
+-   **Logo** : "W" stylisé avec outils artisanaux (marteau, pinceau).
 
 ---
