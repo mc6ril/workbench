@@ -1,144 +1,228 @@
-# Workbench - La Plateforme Éthique pour les Artisans
+# Project Overview — Workbench (Personal Jira-like)
 
-![Workbench Logo](https://via.placeholder.com/150) _(À remplacer par votre logo)_
+## 1. Purpose
 
----
+**Workbench** is a lightweight, personal task and project management tool inspired by Jira, designed to help a single user manage work **clearly, progressively, and without cognitive overload**.
 
-## **📌 Vue d’Ensemble**
+The goal is **not** to replicate Jira, but to provide:
 
-**Workbench** est une plateforme e-commerce **éthique et locale**, conçue pour **réinventer la vente en ligne de produits artisanaux**. Contrairement à des géants comme Etsy, Workbench met l’accent sur :
+-   a clean backlog,
+-   a visual board (Trello-like),
+-   and structured planning via Epics and sub-tasks,
 
--   **L’authenticité** : Seuls les vrais artisans, vérifiés manuellement, peuvent vendre.
--   **L’équité économique** : **0€** à l’inscription, **commission réduite** (5-10% du CA) au lieu de frais fixes.
--   **La transparence** : Pas de dropshipping, pas de concurrence déloyale (ex : produits chinois).
--   **La communauté** : Outils pour connecter artisans et acheteurs locaux.
-
----
-
-## **🎯 Pourquoi Workbench ?**
-
-### **Problèmes Actuels**
-
--   **Etsy** et autres plateformes :
-    -   Frais élevés (16€ d’inscription + 0,20€/fiche produit + 15-20% de commission).
-    -   Concurrence déloyale (dropshipping, produits industriels).
-    -   Peu de visibilité pour les petits artisans.
--   **Manque d’alternatives** :
-    -   Les artisans cherchent des plateformes **locales, éthiques et abordables**.
-
-### **Notre Solution**
-
-| **Critère**          | **Etsy**             | **Workbench**             |
-| -------------------- | -------------------- | ---------------------- |
-| Frais d’inscription  | 16€                  | **0€**                 |
-| Commission           | 15-20%               | **5-10%**              |
-| Concurrence chinoise | Oui                  | **Non** (vérification) |
-| Mise en avant        | Payante et aléatoire | **Équitable + badges** |
-| Support              | Robotisé             | **Humain et réactif**  |
+all built **incrementally, Workbench by Workbench**.
 
 ---
 
-## **👥 Cibles Principales**
+## 2. Core Principles
 
-### **1. Artisans**
+1. **Personal-first**
 
--   **Profil** :
-    -   Micro-entrepreneurs, créateurs locaux, débutants ou expérimentés.
-    -   Frustrés par les frais d’Etsy ou la concurrence déloyale.
--   **Besoins** :
-    -   Visibilité sans frais fixes.
-    -   Outils simples pour gérer leurs ventes.
-    -   Communauté bienveillante.
+    - Single user
+    - No collaboration, no permissions, no accounts (for now)
 
-### **2. Acheteurs**
+2. **Incremental construction**
 
--   **Profil** :
-    -   Consommateurs soucieux de l’éthique et du local.
-    -   À la recherche de pièces uniques et authentiques.
--   **Besoins** :
-    -   Découvrir des artisans locaux.
-    -   Acheter en confiance (pas de dropshipping).
+    - One feature = one vertical slice
+    - Each slice is usable on its own
 
-### **3. Collectivités**
+3. **Clarity over power**
 
--   **Profil** :
-    -   Mairies, offices de tourisme, chambres de métiers.
--   **Besoins** :
-    -   Soutenir l’artisanat local via des partenariats.
+    - Fewer features
+    - Explicit structure
+    - No hidden magic
+
+4. **Domain-driven**
+    - Clear concepts
+    - Stable domain model
+    - UI reflects the domain, not the opposite
 
 ---
 
-## **💡 Modèle Économique**
+## 3. Core Features (MVP Scope)
 
-| **Source de Revenus** | **Détails**                       | **Exemple de Tarif** |
-| --------------------- | --------------------------------- | -------------------- |
-| Commission sur ventes | % du CA, prélevé à la transaction | 5-10%                |
-| Abonnement premium    | Outils marketing, mise en avant   | 9,90€/mois           |
-| Publicité ciblée      | Mise en avant de produits locaux  | 0,50€/clic           |
-| Événements            | Organisation de marchés virtuels  | 10% des inscriptions |
+### 3.1 Backlog
 
-**Exemple** :
-Un artisan vend pour **1 000€/mois** → Workbench prend **50-100€** (vs 150-200€ sur Etsy).
+The backlog is the foundation of the system.
 
----
+**Capabilities**
 
-## **🛠 Stack Technique**
+-   Create tickets
+-   Edit title and description
+-   Delete tickets
+-   View all tickets in a flat list
+-   Filter and sort tickets
 
-### **Frontend**
+**Rules**
 
--   **Framework** : Next.js (React) + TypeScript.
--   **Style** : Tailwind CSS + Framer Motion (animations).
--   **UI Components** : Chakra UI ou Mantine (pour le dashboard).
-
-### **Backend**
-
--   **Base de données** : Supabase (PostgreSQL + Auth + Stockage).
--   **Paiements** : Stripe (commissions automatiques).
--   **Emails** : SendGrid (confirmations, relances).
-
-### **Outils Complémentaires**
-
--   **Recherche** : Algolia (filtres avancés).
--   **Cartes** : Mapbox (géolocalisation des artisans).
--   **Analytics** : Google Analytics + Metabase (dashboard).
+-   Tickets exist independently of the board
+-   No status logic required to exist in the backlog
 
 ---
 
-## **📦 MVP (Fonctionnalités Clés)**
+### 3.2 Board (Trello-like)
 
-### **Site Acheteurs**
+The board is a **visual representation** of tickets.
 
--   Page d’accueil avec artisans mis en avant.
--   Fiches produits (photos, description, prix, options).
--   Panier et paiement (Stripe).
--   Recherche par localisation/catégorie.
+**Capabilities**
 
-### **Dashboard Artisans**
+-   Custom columns (statuses)
+-   Drag and drop tickets between columns
+-   Reorder tickets within a column
+-   Persist ticket position and status
 
--   Tableau de bord (CA, ventes, stats).
--   Gestion des produits (CRUD).
--   Suivi des commandes.
--   Personnalisation de la boutique.
+**Rules**
 
----
-
-## **🚀 Roadmap**
-
-| **Étape**            | **Objectifs**                               | **Délai** |
-| -------------------- | ------------------------------------------- | --------- |
-| **MVP**              | Lancement site + dashboard                  | 2 mois    |
-| **Bêta Fermée**      | Test avec 10 artisans et 50 acheteurs       | 1 mois    |
-| **Lancement Public** | Marketing + partenariats locaux             | 1 mois    |
-| **Scaling**          | Ajout de fonctionnalités (blog, événements) | 3 mois    |
+-   The board does not create tickets
+-   Moving a ticket updates its status and position
+-   Board configuration is fully user-defined
 
 ---
 
-## **🎨 Identité Visuelle**
+### 3.3 Epics
 
--   **Couleurs** : Beige (#F5F5DC), Noir (#000000), Vert Sage (#8A9A5B).
--   **Typographie** :
-    -   Titres : Playfair Display (élégant).
-    -   Texte : Inter (lisible).
--   **Logo** : "W" stylisé avec outils artisanaux (marteau, pinceau).
+Epics provide long-term structure and grouping.
+
+**Capabilities**
+
+-   Create Epics
+-   Assign tickets to an Epic
+-   View all tickets linked to an Epic
+-   Display Epic progress (basic)
+
+**Rules**
+
+-   A ticket may belong to at most one Epic
+-   Epics do not affect ticket workflow directly
 
 ---
+
+### 3.4 Sub-tasks
+
+Sub-tasks allow hierarchical decomposition.
+
+**Capabilities**
+
+-   Create sub-tasks under a ticket
+-   View parent/child relationships
+-   Track completion of sub-tasks
+
+**Rules**
+
+-   Sub-tasks are tickets with a parent reference
+-   Only one level of nesting (no infinite trees)
+
+---
+
+## 4. Non-Goals (Explicitly Out of Scope)
+
+-   Multi-user collaboration
+-   Permissions or roles
+-   Notifications
+-   Comments or mentions
+-   Time tracking
+-   Sprint management
+-   Reports or burndown charts
+-   Cloud sync or auth
+
+These may be considered **only after** the core is stable.
+
+---
+
+## 5. Domain Model (Conceptual)
+
+### Entities
+
+-   **Project**
+-   **Ticket**
+-   **Epic**
+-   **Board**
+-   **Column**
+
+### Relationships
+
+-   A Project contains many Tickets
+-   A Ticket may belong to one Epic
+-   A Ticket may have one parent Ticket
+-   A Board contains ordered Columns
+-   Columns reference Tickets by status and position
+
+---
+
+## 6. Architecture
+
+Workbench follows **Clean Architecture** principles.
+
+### Layers
+
+-   **Domain**
+    -   Entities
+    -   Business rules
+-   **Application**
+    -   Use cases
+    -   Commands and queries
+-   **Infrastructure**
+    -   Database
+    -   Repositories
+-   **UI**
+    -   Pages
+    -   View models
+
+### Guiding Rule
+
+> The domain knows nothing about frameworks, databases, or UI.
+
+---
+
+## 7. Development Strategy
+
+### Vertical Slices
+
+Each feature is implemented as a **complete vertical slice**:
+
+-   UI
+-   Use case
+-   Domain logic
+-   Persistence
+
+### Order of Implementation
+
+1. Project setup and health check
+2. Backlog (ticket CRUD)
+3. Board columns configuration
+4. Drag and drop workflow
+5. Epics
+6. Sub-tasks
+
+No feature is started until the previous one is **fully done**.
+
+---
+
+## 8. Success Criteria
+
+Workbench is successful if:
+
+-   It replaces ad-hoc notes and mental tracking
+-   Managing tasks feels calm and predictable
+-   The system remains understandable after months away
+-   Every feature has a clear reason to exist
+
+---
+
+## 9. Long-Term Vision (Optional)
+
+If Workbench grows beyond personal use:
+
+-   Multiple projects
+-   Templates
+-   Persistence sync
+-   Collaboration
+-   Plugin system
+
+But **only** if the personal version remains simple and solid.
+
+---
+
+## 10. One-Sentence Summary
+
+> **Workbench is a personal project management tool built incrementally, where every feature earns its place and nothing exists without purpose.**
