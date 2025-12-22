@@ -33,11 +33,7 @@ This flow should be followed at the start of a new ticket/conversation, and agai
 
 For any work on the Buyer homepage, the assistant must **always** check, in this order:
 
--   `docs/homepage/buyer-personas.md` – personas, pains, outcomes.
--   `docs/homepage/value-proposition.md` – messaging and promises.
--   `docs/homepage/implementation.md` – sections, IA, navigation.
--   `docs/homepage/featured-editorial-rules.md` – featured content rules.
--   `docs/homepage/cta-strategy.md` – CTA hierarchy and entrypoints.
+-   `docs/homepage/implementation.md` – sections, IA, navigation.rules.
 
 ## When Adding or Updating Docs
 
