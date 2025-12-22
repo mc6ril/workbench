@@ -15,9 +15,9 @@ This document outlines the comprehensive development plan for Workbench, a perso
 | Setup | Configuration       | ESLint Configuration         | Configure ESLint with Next.js preset and custom rules aligned with project conventions  | Done    |
 | Setup | Configuration       | Prettier Configuration       | Setup Prettier for code formatting with consistent rules                                | Done    |
 | Setup | Configuration       | Path Aliases                 | Configure path aliases (@/ for src/) in tsconfig.json and next.config                   | Done    |
-| Setup | Configuration       | Git Configuration            | Setup .gitignore, .gitattributes, and commit message conventions                        | Pending |
-| Setup | Dependencies        | Core Dependencies            | Install React, Next.js, TypeScript, and essential runtime dependencies                  | Pending |
-| Setup | Dependencies        | UI Dependencies              | Install React Query (@tanstack/react-query), Zustand for state management               | Pending |
+| Setup | Configuration       | Git Configuration            | Setup .gitignore, .gitattributes, and commit message conventions                        | Done    |
+| Setup | Dependencies        | Core Dependencies            | Install React, Next.js, TypeScript, and essential runtime dependencies                  | Done    |
+| Setup | Dependencies        | UI Dependencies              | Install React Query (@tanstack/react-query), Zustand for state management               | Done    |
 | Setup | Dependencies        | Styling Dependencies         | Setup SCSS/Sass support, install SCSS modules, configure PostCSS                        | Pending |
 | Setup | Dependencies        | Form Dependencies            | Install form handling library (React Hook Form, Zod for validation)                     | Pending |
 | Setup | Dependencies        | Drag & Drop                  | Install drag and drop library (dnd-kit or react-beautiful-dnd)                          | Pending |
