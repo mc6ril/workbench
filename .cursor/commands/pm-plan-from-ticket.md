@@ -55,27 +55,34 @@ Layers impacted: Domain/Usecases/Infrastructure/Presentation (brief).
 Each sub-ticket: Title, 2-3 key AC, DoD checklist, Effort, Dependencies.
 
 **Format:**
+
 ```markdown
 ### {TicketNumber}.{Index} - [Title]
-- AC: [ ] [key AC1] [ ] [key AC2]
-- DoD: [ ] Tests [ ] A11y [ ] SCSS vars
-- Effort: Xh | Deps: [none|ticket refs]
+
+-   AC: [ ] [key AC1] [ ] [key AC2]
+-   DoD: [ ] Tests [ ] A11y [ ] SCSS vars
+-   Effort: Xh | Deps: [none|ticket refs]
 ```
 
 ### Unit Test Spec
 
-- File path
-- Key test names (3-5 most important)
-- Status: tests {proposed|approved}
+-   File path
+-   Key test names (3-5 most important)
+-   Status: tests {proposed|approved}
 
 ### Agent Prompts
 
 One-line prompts for:
-- Unit Test Coach
-- Architecture-Aware Dev
-- UI Designer
-- QA & Test Coach
+
+-   Unit Test Coach
+-   Architecture-Aware Dev
+-   UI Designer
+-   QA & Test Coach
 
 ### Open Questions
 
 Only critical questions (max 2-3).
+
+**Plan Saved Automatically**
+
+Plan is automatically saved to `docs/PM/{jira-title}.md`

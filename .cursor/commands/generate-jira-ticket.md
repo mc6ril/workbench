@@ -51,7 +51,7 @@ The Jira Ticket Generator:
 
 4. **Ticket Saved Automatically**
 
-    - Ticket is automatically saved to `jira/{number}.md` (numbered sequentially: 1, 2, 3, etc.)
+    - Ticket is automatically saved to `docs/jira/{number}.md` (numbered sequentially: 1, 2, 3, etc.)
     - Check the saved location displayed in the output
     - Ticket is ready to copy-paste into Jira
 
