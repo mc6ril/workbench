@@ -8,27 +8,27 @@ This document outlines the comprehensive development plan for Workbench, a perso
 
 ### 1.1 Core Setup
 
-| Area  | Sub Area            | Title                        | Description                                                                             | Status  |
-| ----- | ------------------- | ---------------------------- | --------------------------------------------------------------------------------------- | ------- |
-| Setup | Configuration       | TypeScript Configuration     | Configure TypeScript with strict mode, path aliases (@/), and proper compiler options   | Done    |
-| Setup | Configuration       | Next.js Configuration        | Setup Next.js App Router, TypeScript integration, and build configuration               | Done    |
-| Setup | Configuration       | ESLint Configuration         | Configure ESLint with Next.js preset and custom rules aligned with project conventions  | Done    |
-| Setup | Configuration       | Prettier Configuration       | Setup Prettier for code formatting with consistent rules                                | Done    |
-| Setup | Configuration       | Path Aliases                 | Configure path aliases (@/ for src/) in tsconfig.json and next.config                   | Done    |
-| Setup | Configuration       | Git Configuration            | Setup .gitignore, .gitattributes, and commit message conventions                        | Done    |
-| Setup | Dependencies        | Core Dependencies            | Install React, Next.js, TypeScript, and essential runtime dependencies                  | Done    |
-| Setup | Dependencies        | UI Dependencies              | Install React Query (@tanstack/react-query), Zustand for state management               | Done    |
-| Setup | Dependencies        | Styling Dependencies         | Setup SCSS/Sass support, install SCSS modules, configure PostCSS                        | Pending |
-| Setup | Dependencies        | Form Dependencies            | Install form handling library (React Hook Form, Zod for validation)                     | Pending |
-| Setup | Dependencies        | Drag & Drop                  | Install drag and drop library (dnd-kit or react-beautiful-dnd)                          | Pending |
-| Setup | Dependencies        | Database Client              | Install Supabase client library and configure connection                                | Pending |
-| Setup | Directory Structure | Clean Architecture Structure | Create directory structure (core/, infrastructure/, presentation/, shared/)             | Pending |
-| Setup | Directory Structure | Domain Structure             | Create domain subdirectories (domain/, usecases/, ports/)                               | Pending |
-| Setup | Directory Structure | Presentation Structure       | Create presentation subdirectories (components/, hooks/, stores/, providers/, layouts/) | Pending |
-| Setup | Directory Structure | Styles Structure             | Create styles directories (variables/, components/, layout/)                            | Pending |
-| Setup | Development Tools   | VS Code Configuration        | Setup .vscode/ settings, extensions recommendations, debug configuration                | Pending |
-| Setup | Development Tools   | Environment Variables        | Setup .env.example, .env.local template, and environment validation                     | Pending |
-| Setup | Development Tools   | Scripts                      | Add npm scripts (dev, build, start, lint, test, type-check)                             | Pending |
+| Area  | Sub Area            | Title                        | Description                                                                             | Status |
+| ----- | ------------------- | ---------------------------- | --------------------------------------------------------------------------------------- | ------ |
+| Setup | Configuration       | TypeScript Configuration     | Configure TypeScript with strict mode, path aliases (@/), and proper compiler options   | Done   |
+| Setup | Configuration       | Next.js Configuration        | Setup Next.js App Router, TypeScript integration, and build configuration               | Done   |
+| Setup | Configuration       | ESLint Configuration         | Configure ESLint with Next.js preset and custom rules aligned with project conventions  | Done   |
+| Setup | Configuration       | Prettier Configuration       | Setup Prettier for code formatting with consistent rules                                | Done   |
+| Setup | Configuration       | Path Aliases                 | Configure path aliases (@/ for src/) in tsconfig.json and next.config                   | Done   |
+| Setup | Configuration       | Git Configuration            | Setup .gitignore, .gitattributes, and commit message conventions                        | Done   |
+| Setup | Dependencies        | Core Dependencies            | Install React, Next.js, TypeScript, and essential runtime dependencies                  | Done   |
+| Setup | Dependencies        | UI Dependencies              | Install React Query (@tanstack/react-query), Zustand for state management               | Done   |
+| Setup | Dependencies        | Styling Dependencies         | Setup SCSS/Sass support, install SCSS modules, configure PostCSS                        | Done   |
+| Setup | Dependencies        | Form Dependencies            | Install form handling library (React Hook Form, Zod for validation)                     | Done   |
+| Setup | Dependencies        | Drag & Drop                  | Install drag and drop library (dnd-kit or react-beautiful-dnd)                          | Done   |
+| Setup | Dependencies        | Database Client              | Install Supabase client library and configure connection                                | Done   |
+| Setup | Directory Structure | Clean Architecture Structure | Create directory structure (core/, infrastructure/, presentation/, shared/)             | Done   |
+| Setup | Directory Structure | Domain Structure             | Create domain subdirectories (domain/, usecases/, ports/)                               | Done   |
+| Setup | Directory Structure | Presentation Structure       | Create presentation subdirectories (components/, hooks/, stores/, providers/, layouts/) | Done   |
+| Setup | Directory Structure | Styles Structure             | Create styles directories (variables/, components/, layout/)                            | Done   |
+| Setup | Development Tools   | VS Code Configuration        | Setup .vscode/ settings, extensions recommendations, debug configuration                | Done   |
+| Setup | Development Tools   | Environment Variables        | Setup .env.example, .env.local template, and environment validation                     | Done   |
+| Setup | Development Tools   | Scripts                      | Add npm scripts (dev, build, start, lint, test, type-check)                             | Done   |
 
 ### 1.2 Testing Setup
 
