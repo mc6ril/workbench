@@ -54,17 +54,19 @@ This document outlines the comprehensive development plan for Workbench, a perso
 
 ### 1.4 Shared & Common Setup
 
-| Area   | Sub Area      | Title                | Description                                                                | Status  |
-| ------ | ------------- | -------------------- | -------------------------------------------------------------------------- | ------- |
-| Shared | Styles        | SCSS Variables       | Define color palette, spacing scale, typography, breakpoints               | Pending |
-| Shared | Styles        | Global Styles        | Setup global.scss with reset, base styles, typography                      | Pending |
-| Shared | Styles        | Component Styles     | Create base component styles (buttons, inputs, cards)                      | Pending |
-| Shared | Accessibility | A11y Utilities       | Create accessibility utilities and constants in shared/a11y/               | Pending |
-| Shared | Accessibility | A11y Constants       | Define accessibility ID generators and ARIA label constants                | Pending |
-| Shared | I18n          | Translation System   | Setup i18n system with translation files (fr.json) and useTranslation hook | Pending |
-| Shared | Utils         | Type Utilities       | Create common TypeScript utility types and helpers                         | Pending |
-| Shared | Utils         | Validation Utilities | Create validation utilities and error handling helpers                     | Pending |
-| Shared | Constants     | App Constants        | Define application-wide constants (routes, keys, limits)                   | Pending |
+| Area   | Sub Area      | Title                     | Description                                                                                 | Status  |
+| ------ | ------------- | ------------------------- | ------------------------------------------------------------------------------------------- | ------- |
+| Shared | Styles        | SCSS Variables            | Define color palette, spacing scale, typography, breakpoints                                | Pending |
+| Shared | Styles        | Global Styles             | Setup global.scss with reset, base styles, typography                                       | Pending |
+| Shared | Styles        | Component Styles          | Create base component styles (buttons, inputs, cards)                                       | Pending |
+| Shared | Accessibility | A11y Utilities            | Create accessibility utilities and constants in shared/a11y/                                | Pending |
+| Shared | Accessibility | A11y Constants            | Define accessibility ID generators and ARIA label constants                                 | Pending |
+| Shared | I18n          | Translation System        | Setup i18n system with translation files (fr.json) and useTranslation hook                  | Pending |
+| Shared | Utils         | Type Utilities            | Create common TypeScript utility types and helpers                                          | Pending |
+| Shared | Utils         | Validation Utilities      | Create validation utilities and error handling helpers                                      | Pending |
+| Shared | Observability | Logging & Error System    | Design centralized logging and error-handling utilities (log levels, correlation ids, etc.) | Pending |
+| Shared | Observability | Loading & Status Handling | Create shared loading/error/empty-state patterns for React Query and UI components          | Pending |
+| Shared | Constants     | App Constants             | Define application-wide constants (routes, keys, limits)                                    | Pending |
 
 ---
 
