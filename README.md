@@ -50,6 +50,13 @@ Each feature is implemented as a complete vertical slice (UI + use case + domain
 
 No feature is started until the previous one is fully done.
 
+### Testing
+
+- Run unit tests once: `yarn test`
+- Run unit tests in watch mode: `yarn test:watch`
+
+Tests live under the project root `__tests__/` directory (mirroring the `src/` structure), with shared mocks under `__mocks__/`. This setup is powered by Jest with TypeScript support (`ts-jest`), following the Clean Architecture testing rules described in `docs/plan.md` and `.cursor/docs/testing.md`.
+
 ### Success Criteria
 
 Workbench is successful if:
