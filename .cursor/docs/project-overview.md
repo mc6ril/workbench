@@ -16,20 +16,25 @@ all built **incrementally, Workbench by Workbench**.
 
 ## 2. Core Principles
 
-1. **Personal-first**
-   - Single user
-   - No collaboration, no permissions, no accounts (for now)
+1. **Secure and authenticated**
+   - Users must be authenticated to access any project
+   - Access is restricted to project members only
+   - Edit/delete permissions are role-based (admin or member)
 
-2. **Incremental construction**
+2. **Personal-first**
+   - Designed for single user or small teams
+   - Role-based permissions for collaboration (admin, member, viewer)
+
+3. **Incremental construction**
    - One feature = one vertical slice
    - Each slice is usable on its own
 
-3. **Clarity over power**
+4. **Clarity over power**
    - Fewer features
    - Explicit structure
    - No hidden magic
 
-4. **Domain-driven**
+5. **Domain-driven**
    - Clear concepts
    - Stable domain model
    - UI reflects the domain, not the opposite
@@ -111,22 +116,43 @@ Sub-tasks allow hierarchical decomposition.
 
 ---
 
-## 4. Non-Goals (Explicitly Out of Scope)
+## 4. Security and Access Control
 
-- Multi-user collaboration
-- Permissions or roles
+### Authentication
+
+- All users must be authenticated via Supabase Auth to access the application
+- Only authenticated users can view or interact with projects
+
+### Project Membership
+
+- Users must be members of a project to access it
+- Project membership is managed via the `project_members` table
+- Each user has a role in each project: `admin`, `member`, or `viewer`
+
+### Permissions
+
+- **View access**: Users can view projects where they are members (any role)
+- **Edit access**: Only users with `admin` or `member` roles can create, update, or delete tickets, epics, boards, and columns
+- **Admin access**: Only users with `admin` role can:
+  - Delete projects
+  - Manage project members (add/remove users, change roles)
+
+See `docs/row-level-security.md` for detailed information about RLS policies and permissions.
+
+## 5. Non-Goals (Explicitly Out of Scope)
+
+- Multi-project management (single project assumption for MVP)
 - Notifications
 - Comments or mentions
 - Time tracking
 - Sprint management
 - Reports or burndown charts
-- Cloud sync or auth
 
 These may be considered **only after** the core is stable.
 
 ---
 
-## 5. Domain Model (Conceptual)
+## 6. Domain Model (Conceptual)
 
 ### Entities
 
@@ -146,7 +172,7 @@ These may be considered **only after** the core is stable.
 
 ---
 
-## 6. Architecture
+## 7. Architecture
 
 Workbench follows **Clean Architecture** principles.
 
@@ -171,7 +197,7 @@ Workbench follows **Clean Architecture** principles.
 
 ---
 
-## 7. Development Strategy
+## 8. Development Strategy
 
 ### Vertical Slices
 
@@ -195,7 +221,7 @@ No feature is started until the previous one is **fully done**.
 
 ---
 
-## 8. Success Criteria
+## 9. Success Criteria
 
 Workbench is successful if:
 
@@ -206,7 +232,7 @@ Workbench is successful if:
 
 ---
 
-## 9. Long-Term Vision (Optional)
+## 10. Long-Term Vision (Optional)
 
 If Workbench grows beyond personal use:
 
@@ -220,6 +246,6 @@ But **only** if the personal version remains simple and solid.
 
 ---
 
-## 10. One-Sentence Summary
+## 11. One-Sentence Summary
 
 > **Workbench is a personal project management tool built incrementally, where every feature earns its place and nothing exists without purpose.**

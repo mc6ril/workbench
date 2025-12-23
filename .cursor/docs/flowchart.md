@@ -2,6 +2,19 @@
 
 This document contains Mermaid diagrams representing the application architecture, user flows, and system interactions.
 
+## Authentication and Authorization
+
+**Important**: All features require user authentication and project membership:
+
+- **Authentication**: Users must be authenticated via Supabase Auth to access any feature
+- **Project Membership**: Users must be members of a project to view or interact with it
+- **Permissions**:
+  - **View access**: All project members (admin, member, viewer) can view project data
+  - **Edit access**: Only users with `admin` or `member` roles can create, update, or delete data
+  - **Admin access**: Only users with `admin` role can delete projects or manage project members
+
+See `docs/row-level-security.md` for detailed information about RLS policies and permissions.
+
 ## 1. Global Sitemap
 
 ```mermaid
@@ -55,36 +68,38 @@ flowchart TD
 
 ```mermaid
 stateDiagram-v2
-   [*] --> Home
-   Home --> Backlog
-   Home --> Board
-   Home --> Epics
-   Home --> Settings
+   [*] --> Authenticate
+   Authenticate --> Home : authenticated & project member
+   
+   Home --> Backlog : has view access
+   Home --> Board : has view access
+   Home --> Epics : has view access
+   Home --> Settings : has view access
 
-   Backlog --> CreateTicket : add ticket
+   Backlog --> CreateTicket : add ticket (if admin/member)
    CreateTicket --> Backlog : saved
 
    Backlog --> TicketDetail : open ticket
    Board --> TicketDetail : open ticket card
    Epics --> TicketDetail : open ticket from epic
 
-   TicketDetail --> EditTicket : edit fields
+   TicketDetail --> EditTicket : edit fields (if admin/member)
    EditTicket --> TicketDetail : saved
 
-   TicketDetail --> CreateSubtask : add subtask
+   TicketDetail --> CreateSubtask : add subtask (if admin/member)
    CreateSubtask --> TicketDetail : saved
 
-   TicketDetail --> LinkEpic : assign epic
+   TicketDetail --> LinkEpic : assign epic (if admin/member)
    LinkEpic --> TicketDetail : saved
 
    Backlog --> Board : send to board
-   Board --> MoveTicket : drag card
+   Board --> MoveTicket : drag card (if admin/member)
    MoveTicket --> Board : status and position updated
 
-   Settings --> ConfigureColumns : edit columns
+   Settings --> ConfigureColumns : edit columns (if admin/member)
    ConfigureColumns --> Board : board updated
 
-   Epics --> CreateEpic : add epic
+   Epics --> CreateEpic : add epic (if admin/member)
    CreateEpic --> Epics : saved
    Epics --> EpicDetail : open epic
    EpicDetail --> TicketDetail : open linked ticket
@@ -92,12 +107,24 @@ stateDiagram-v2
    TicketDetail --> [*]
 ```
 
+**Access Control Notes:**
+- All users must be authenticated to access any feature
+- Users must be project members to view project data
+- Only users with `admin` or `member` roles can create, update, or delete data
+- Only users with `admin` role can delete projects or manage project members
+
 ## 3. Domain and Use Cases (Clean Architecture Map)
 
 This diagram serves as a "build plan": each node represents a building block.
 
 ```mermaid
 flowchart LR
+   subgraph AUTH[Authentication & Authorization]
+      A1[Supabase Auth]
+      A2[RLS Policies]
+      A3[Project Membership]
+   end
+
    subgraph UI[UI Pages]
       UI1[Backlog Page]
       UI2[Board Page]
@@ -127,21 +154,32 @@ flowchart LR
       D3[Board]
       D4[Column]
       D5[Project]
+      D6[Project Member]
    end
 
    subgraph PORTS[Ports]
       P1[Ticket Repository]
       P2[Epic Repository]
       P3[Board Repository]
-      P4[Event Store Optional]
+      P4[Project Repository]
+      P5[Event Store Optional]
    end
 
    subgraph INFRA[Infrastructure]
       I1[DB Ticket Repo]
       I2[DB Epic Repo]
       I3[DB Board Repo]
-      I4[Migration Tool]
+      I4[DB Project Repo]
+      I5[Migration Tool]
+      I6[RLS Policies]
    end
+
+   A1 --> UI1
+   A1 --> UI2
+   A1 --> UI3
+   A1 --> UI4
+   A1 --> UI5
+   A3 --> A2
 
    UI1 --> UC1
    UI1 --> UC4
@@ -198,32 +236,63 @@ flowchart LR
    P1 --> I1
    P2 --> I2
    P3 --> I3
-   I4 --> I1
-   I4 --> I2
-   I4 --> I3
+   P4 --> I4
+   I5 --> I1
+   I5 --> I2
+   I5 --> I3
+   I5 --> I4
+   I6 --> I1
+   I6 --> I2
+   I6 --> I3
+   I6 --> I4
+
+   A2 --> I6
 ```
+
+**Security Layer Notes:**
+- All UI interactions require authentication (Supabase Auth)
+- RLS policies enforce project membership and role-based permissions at database level
+- Project membership is checked before any data access
+- Edit operations require admin or member role (enforced by RLS)
 
 ## 4. Detailed Drag and Drop Flow (Board)
 
 ```mermaid
 sequenceDiagram
    autonumber
-   participant U as User
+   participant U as User (authenticated & member)
    participant UI as Board UI
    participant UC as MoveTicket usecase
    participant TR as TicketRepository
-   participant DB as Database
+   participant DB as Database (with RLS)
+   participant RLS as Row Level Security
+
+   Note over U,RLS: User must be authenticated and project member
 
    U->>UI: Drag ticket card
    UI->>UC: MoveTicket(ticketId, toColumnId, newIndex)
+   
+   Note over UC: Verify user has edit permission (admin/member)
+   
    UC->>TR: getById(ticketId)
    TR->>DB: SELECT ticket
+   DB->>RLS: Check RLS policy (is_project_member)
+   RLS-->>DB: Allow (user is project member)
    DB-->>TR: ticket
    TR-->>UC: ticket
+   
    UC->>TR: updateStatusAndPosition(ticketId, toColumnId, newIndex)
    TR->>DB: UPDATE ticket position and status
+   DB->>RLS: Check RLS policy (can_edit_project)
+   RLS-->>DB: Allow (user is admin or member)
    DB-->>TR: ok
    TR-->>UC: ok
    UC-->>UI: updated ticket
    UI-->>U: Board re-renders with new order
 ```
+
+**Security Notes:**
+- User must be authenticated (Supabase Auth)
+- RLS policies verify user is project member before SELECT
+- RLS policies verify user has edit permission (admin/member) before UPDATE
+- If user lacks permission, database returns error, usecase handles it

@@ -43,16 +43,33 @@ This document outlines the comprehensive development plan for Workbench, a perso
 
 ### 1.3 Infrastructure Setup
 
-| Area           | Sub Area | Title                  | Description                                                              | Status  |
-| -------------- | -------- | ---------------------- | ------------------------------------------------------------------------ | ------- |
-| Infrastructure | Database | Supabase Project Setup | Create Supabase project, configure database, get API keys                | Pending |
-| Infrastructure | Database | Database Schema Design | Design database schema for Project, Ticket, Epic, Board, Column entities | Pending |
-| Infrastructure | Database | Migration System       | Setup database migration system and initial schema migrations            | Pending |
-| Infrastructure | Database | Seed Data              | Create seed scripts for initial data (default project, columns)          | Pending |
-| Infrastructure | Database | Database Connection    | Setup Supabase client singleton and connection management                | Pending |
-| Infrastructure | Database | Repository Pattern     | Define repository interfaces (ports) and initial structure               | Pending |
+| Area           | Sub Area | Title                  | Description                                                              | Status |
+| -------------- | -------- | ---------------------- | ------------------------------------------------------------------------ | ------ |
+| Infrastructure | Database | Supabase Project Setup | Create Supabase project, configure database, get API keys                | Done   |
+| Infrastructure | Database | Database Schema Design | Design database schema for Project, Ticket, Epic, Board, Column entities | Done   |
+| Infrastructure | Database | Migration System       | Setup database migration system and initial schema migrations            | Done   |
+| Infrastructure | Database | Seed Data              | Create seed scripts for initial data (default project, columns)          | Done   |
+| Infrastructure | Database | Database Connection    | Setup Supabase client singleton and connection management                | Done   |
+| Infrastructure | Database | Repository Pattern     | Define repository interfaces (ports) and initial structure               | Done   |
 
-### 1.4 Shared & Common Setup
+### 1.4 Authentication & Project Access Screens
+
+Simple implementation screens to verify authentication and user privilege system is working correctly. Minimal design focus.
+
+| Area | Sub Area       | Title            | Description                                                                            | Status  |
+| ---- | -------------- | ---------------- | -------------------------------------------------------------------------------------- | ------- |
+| Auth | Authentication | Signup Screen    | Create simple signup page using Supabase Auth (email/password)                         | Pending |
+| Auth | Authentication | Signin Screen    | Create simple signin page using Supabase Auth (email/password)                         | Pending |
+| Auth | Project Access | Project Overview | Create project overview page that shows:                                               | Pending |
+|      |                |                  | - Option to create new project (if user has no project access)                         |         |
+|      |                |                  | - List of granted projects (if user has project access)                                |         |
+|      |                |                  | - Input field to enter project ID for access request (if user has no project access)   |         |
+| Auth | Navigation     | Auth Guard       | Add route protection to redirect unauthenticated users to signin page                  | Pending |
+| Auth | Navigation     | Project Guard    | Add route protection to redirect users without project access to project overview page | Pending |
+
+**Note**: This is a simple implementation to verify the authentication and RLS system works correctly. Design is minimal and can be improved later.
+
+### 1.5 Shared & Common Setup
 
 | Area   | Sub Area      | Title                     | Description                                                                                 | Status  |
 | ------ | ------------- | ------------------------- | ------------------------------------------------------------------------------------------- | ------- |
