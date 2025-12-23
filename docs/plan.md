@@ -32,14 +32,14 @@ This document outlines the comprehensive development plan for Workbench, a perso
 
 ### 1.2 Testing Setup
 
-| Area    | Sub Area  | Title                    | Description                                                              | Status  |
-| ------- | --------- | ------------------------ | ------------------------------------------------------------------------ | ------- |
-| Testing | Framework | Jest Configuration       | Configure Jest for unit testing with TypeScript support                  | Done    |
-| Testing | Framework | React Testing Library    | Setup React Testing Library for component testing                        | Pending |
-| Testing | Framework | Test Utilities           | Create test utilities and helpers for mocking, rendering, and assertions | Pending |
-| Testing | Framework | Mock Setup               | Setup mocks for Supabase, React Query, and external dependencies         | Pending |
-| Testing | Structure | Test Directory Structure | Create **tests**/ directory structure mirroring src/                     | Done    |
-| Testing | Structure | Mock Directory Structure | Create **mocks**/ directory for shared mocks                             | Done    |
+| Area    | Sub Area  | Title                    | Description                                                              | Status |
+| ------- | --------- | ------------------------ | ------------------------------------------------------------------------ | ------ |
+| Testing | Framework | Jest Configuration       | Configure Jest for unit testing with TypeScript support                  | Done   |
+| Testing | Framework | React Testing Library    | Setup React Testing Library for component testing                        | Done   |
+| Testing | Framework | Test Utilities           | Create test utilities and helpers for mocking, rendering, and assertions | Done   |
+| Testing | Framework | Mock Setup               | Setup mocks for Supabase, React Query, and external dependencies         | Done   |
+| Testing | Structure | Test Directory Structure | Create **tests**/ directory structure mirroring src/                     | Done   |
+| Testing | Structure | Mock Directory Structure | Create **mocks**/ directory for shared mocks                             | Done   |
 
 ### 1.3 Infrastructure Setup
 
