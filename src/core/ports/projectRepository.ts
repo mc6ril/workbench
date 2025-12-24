@@ -66,4 +66,12 @@ export type ProjectRepository = {
     projectId: string,
     role?: ProjectRole
   ): Promise<Project>;
+
+  /**
+   * Check if the current user has access to any project.
+   * Uses optimized SQL function for lightweight boolean check.
+   * @returns True if user has access to at least one project, false otherwise
+   * @throws DatabaseError if database operation fails
+   */
+  hasProjectAccess(): Promise<boolean>;
 };

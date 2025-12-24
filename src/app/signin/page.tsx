@@ -64,8 +64,8 @@ const SigninPage = () => {
 
   useEffect(() => {
     if (signInMutation.isSuccess && signInMutation.data) {
-      // Redirect to home page (project overview) after successful signin
-      router.push("/");
+      // Redirect to workspace page after successful signin
+      router.push("/myworkspace");
     }
   }, [signInMutation.isSuccess, signInMutation.data, router]);
 

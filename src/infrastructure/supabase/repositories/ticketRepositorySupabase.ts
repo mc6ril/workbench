@@ -5,7 +5,10 @@ import type {
   UpdateTicketInput,
 } from "@/core/domain/ticket/ticket.schema";
 
-import { supabaseClient } from "@/infrastructure/supabase/client";
+import { createSupabaseBrowserClient } from "@/infrastructure/supabase/client-browser";
+
+// Create browser client instance (uses cookies via @supabase/ssr)
+const browserClient = createSupabaseBrowserClient();
 import {
   mapTicketRowsToDomain,
   mapTicketRowToDomain,
@@ -22,7 +25,7 @@ import type { TicketRepository } from "@/core/ports/ticketRepository";
 export const ticketRepositorySupabase: TicketRepository = {
   async findById(id: string): Promise<Ticket | null> {
     try {
-      const { data, error } = await supabaseClient
+      const { data, error } = await browserClient
         .from("tickets")
         .select("*")
         .eq("id", id)
@@ -55,7 +58,7 @@ export const ticketRepositorySupabase: TicketRepository = {
 
   async listByProject(projectId: string): Promise<Ticket[]> {
     try {
-      const { data, error } = await supabaseClient
+      const { data, error } = await browserClient
         .from("tickets")
         .select("*")
         .eq("project_id", projectId)
@@ -86,7 +89,7 @@ export const ticketRepositorySupabase: TicketRepository = {
 
   async listByStatus(projectId: string, status: string): Promise<Ticket[]> {
     try {
-      const { data, error } = await supabaseClient
+      const { data, error } = await browserClient
         .from("tickets")
         .select("*")
         .eq("project_id", projectId)
@@ -118,7 +121,7 @@ export const ticketRepositorySupabase: TicketRepository = {
 
   async create(input: CreateTicketInput): Promise<Ticket> {
     try {
-      const { data, error } = await supabaseClient
+      const { data, error } = await browserClient
         .from("tickets")
         .insert({
           project_id: input.projectId,
@@ -182,7 +185,7 @@ export const ticketRepositorySupabase: TicketRepository = {
         updateData.parent_id = input.parentId;
       }
 
-      const { data, error } = await supabaseClient
+      const { data, error } = await browserClient
         .from("tickets")
         .update(updateData)
         .eq("id", id)
@@ -216,7 +219,7 @@ export const ticketRepositorySupabase: TicketRepository = {
 
   async delete(id: string): Promise<void> {
     try {
-      const { error } = await supabaseClient
+      const { error } = await browserClient
         .from("tickets")
         .delete()
         .eq("id", id);

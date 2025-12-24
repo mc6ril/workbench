@@ -8,6 +8,7 @@ export type TranslationKey =
   | `pages.signup.${string}`
   | `pages.signin.${string}`
   | `pages.home.${string}`
+  | `pages.landing.${string}`
   | `forms.${string}`
   | `errors.${string}`;
 
@@ -19,6 +20,7 @@ export interface TranslationMessages {
     signup: Record<string, string | Record<string, string>>;
     signin: Record<string, string | Record<string, string>>;
     home: Record<string, string | Record<string, string>>;
+    landing: Record<string, string | Record<string, string>>;
   };
   forms: Record<string, string | Record<string, unknown>>;
   errors: Record<string, string | Record<string, unknown>>;

@@ -18,6 +18,7 @@ export type ProjectRepositoryMock = {
     Promise<Project>,
     [string, ("admin" | "member" | "viewer")?]
   >;
+  hasProjectAccess: jest.Mock<Promise<boolean>, []>;
 };
 
 type ProjectRepositoryMockOverrides = Partial<ProjectRepositoryMock>;
@@ -43,6 +44,7 @@ export const createProjectRepositoryMock = (
       Promise<Project>,
       [string, ("admin" | "member" | "viewer")?]
     >(),
+    hasProjectAccess: jest.fn<Promise<boolean>, []>(),
   };
 
   return {

@@ -1,3 +1,5 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import type {
   AuthResult,
   AuthSession,
@@ -5,23 +7,24 @@ import type {
   SignUpInput,
 } from "@/core/domain/auth/auth.schema";
 
-import { createSupabaseBrowserClient } from "@/infrastructure/supabase/client-browser";
 import { mapSupabaseSessionToDomain } from "@/infrastructure/supabase/mappers/authMapper";
 import { mapSupabaseAuthError } from "@/infrastructure/supabase/utils/authErrorMapper";
 
 import type { AuthRepository } from "@/core/ports/authRepository";
 
-// Create browser client instance (uses cookies via @supabase/ssr)
-const browserClient = createSupabaseBrowserClient();
-
 /**
- * Supabase implementation of AuthRepository.
- * Handles all authentication operations using Supabase Auth client.
+ * Create an AuthRepository implementation using the provided Supabase client.
+ * This allows using different clients (browser/server) based on context.
+ *
+ * @param client - Supabase client instance to use
+ * @returns AuthRepository implementation
  */
-export const authRepositorySupabase: AuthRepository = {
+export const createAuthRepository = (
+  client: SupabaseClient
+): AuthRepository => ({
   async signUp(input: SignUpInput): Promise<AuthResult> {
     try {
-      const { data, error } = await browserClient.auth.signUp({
+      const { data, error } = await client.auth.signUp({
         email: input.email,
         password: input.password,
       });
@@ -66,7 +69,7 @@ export const authRepositorySupabase: AuthRepository = {
 
   async signIn(input: SignInInput): Promise<AuthResult> {
     try {
-      const { data, error } = await browserClient.auth.signInWithPassword({
+      const { data, error } = await client.auth.signInWithPassword({
         email: input.email,
         password: input.password,
       });
@@ -111,7 +114,7 @@ export const authRepositorySupabase: AuthRepository = {
 
   async signOut(): Promise<void> {
     try {
-      const { error } = await browserClient.auth.signOut();
+      const { error } = await client.auth.signOut();
 
       if (error) {
         throw mapSupabaseAuthError(error);
@@ -140,30 +143,39 @@ export const authRepositorySupabase: AuthRepository = {
 
   async getSession(): Promise<AuthSession | null> {
     try {
+      // Use getUser() for server-side authentication to verify the user
+      // This authenticates the data by contacting the Supabase Auth server
+      // instead of reading directly from cookies (which can be manipulated)
       const {
-        data: { session },
+        data: { user },
         error,
-      } = await browserClient.auth.getSession();
+      } = await client.auth.getUser();
 
       if (error) {
         throw mapSupabaseAuthError(error);
       }
 
-      if (!session) {
+      if (!user) {
         return null;
       }
 
-      // Get user email from session or fetch user if needed
-      const userEmail = session.user.email;
+      // Get user email from authenticated user data
+      const userEmail = user.email;
       if (!userEmail) {
-        // If email is not in session, it might be in user metadata
-        // For now, throw an error as we need the email
+        // If email is not in user data, throw an error as we need the email
         throw mapSupabaseAuthError(
-          new Error("User email not found in session")
+          new Error("User email not found in authenticated user data")
         );
       }
 
-      return mapSupabaseSessionToDomain(session, userEmail);
+      // Map authenticated user directly to AuthSession
+      // Note: accessToken is empty string for server-side checks as getUser()
+      // doesn't return tokens, but we only need user info for authentication verification
+      return {
+        userId: user.id,
+        email: userEmail,
+        accessToken: "", // Not available from getUser(), but not needed for server-side auth checks
+      };
     } catch (error) {
       // Re-throw domain errors
       if (
@@ -185,4 +197,4 @@ export const authRepositorySupabase: AuthRepository = {
       throw mapSupabaseAuthError(error);
     }
   },
-};
+});
