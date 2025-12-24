@@ -1,0 +1,58 @@
+{
+  "common": {
+    "loading": "Chargement en cours...",
+    "email": "Email",
+    "password": "Mot de passe",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire"
+  },
+  "pages": {
+    "signup": {
+      "title": "Créer un compte",
+      "subtitle": "Inscrivez-vous pour commencer avec Workbench",
+      "button": "S'inscrire",
+      "buttonAriaLabel": "S'inscrire",
+      "footer": "Vous avez déjà un compte ?",
+      "footerLink": "Se connecter",
+      "errors": {
+        "invalidEmail": "Adresse email invalide",
+        "weakPassword": "Le mot de passe ne respecte pas les exigences",
+        "generic": "Une erreur s'est produite lors de l'inscription"
+      }
+    },
+    "signin": {
+      "title": "Se connecter",
+      "subtitle": "Connectez-vous pour accéder à votre Workbench",
+      "button": "Se connecter",
+      "buttonAriaLabel": "Se connecter",
+      "footer": "Vous n'avez pas de compte ?",
+      "footerLink": "S'inscrire",
+      "errors": {
+        "invalidCredentials": "Email ou mot de passe invalide",
+        "invalidEmail": "Adresse email invalide",
+        "generic": "Une erreur s'est produite lors de la connexion"
+      }
+    },
+    "home": {
+      "welcome": "Bienvenue sur Workbench",
+      "welcomeSubtitle": "Commencez par vous connecter ou créer un compte",
+      "welcomeTitle": "Bienvenue",
+      "signedInAs": "Connecté en tant que :",
+      "accessProjectTitle": "Accéder à un projet",
+      "accessProjectDescription": "Entrez un ID de projet pour accéder à un projet dont vous n'êtes pas encore membre",
+      "projectIdLabel": "ID du projet",
+      "projectIdPlaceholder": "Entrez l'UUID du projet",
+      "accessProjectButton": "Accéder au projet",
+      "yourProjectsTitle": "Vos projets",
+      "loading": "Chargement...",
+      "loadingProjects": "Chargement des projets...",
+      "noProjects": "Vous n'avez pas encore accès à des projets.",
+      "errorLoadingProjects": "Erreur lors du chargement des projets :",
+      "unknownError": "Erreur inconnue",
+      "pleaseEnterProjectId": "Veuillez entrer un ID de projet",
+      "failedToAddToProject": "Impossible de vous ajouter au projet"
+    }
+  },
+  "forms": {},
+  "errors": {}
+}

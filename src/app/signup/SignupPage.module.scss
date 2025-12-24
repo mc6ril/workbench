@@ -1,0 +1,84 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/transitions" as *;
+
+.signup-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  background-color: $color-background;
+}
+
+.signup-container {
+  width: 100%;
+  max-width: 25rem; // 400px
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.signup-title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: $color-text;
+  margin: 0;
+  text-align: center;
+}
+
+.signup-subtitle {
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $color-text-secondary;
+  margin: 0;
+  text-align: center;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  width: 100%;
+}
+
+.signup-error {
+  padding: $spacing-md;
+  border-radius: $border-radius-md;
+  background-color: $color-error-background;
+  color: $color-error-text;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  text-align: center;
+}
+
+.signup-footer {
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-text-secondary;
+  margin: 0;
+  text-align: center;
+}
+
+.signup-link {
+  color: $color-primary;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+  transition: $transition-color;
+
+  &:hover {
+    color: $color-primary-hover;
+    text-decoration: underline;
+  }
+
+  &:focus {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+    border-radius: $border-radius-sm;
+  }
+}
+

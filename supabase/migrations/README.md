@@ -10,6 +10,7 @@ Migrations are numbered sequentially and applied in order:
 - `000002_seed_default_project.sql` - Inserts default project, board, and columns (seed data)
 - `000003_add_project_members_and_rls.sql` - Adds project_members table and Row Level Security policies
 - `000004_auto_add_creator_as_admin.sql` - Auto-adds project creator as admin and restricts project creation to users without existing projects
+- `000005_allow_users_to_add_themselves_as_viewer.sql` - Allows authenticated users to add themselves as viewer to projects
 
 ## Running Migrations
 

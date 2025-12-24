@@ -1,0 +1,69 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/transitions" as *;
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.input-label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-normal;
+  color: $color-text;
+}
+
+.input-label--required::after {
+  content: " *";
+  color: $color-error;
+}
+
+.input {
+  width: 100%;
+  padding: $spacing-input-padding-y $spacing-input-padding-x;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-input;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $color-text;
+  background-color: $color-secondary;
+  transition: $transition-border;
+
+  &:focus {
+    outline: none;
+    border-color: $color-focus;
+    box-shadow: 0 0 0 3px $color-focus-ring;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: $color-disabled-background;
+    color: $color-disabled-text;
+    border-color: $color-border;
+  }
+
+  &::placeholder {
+    color: $color-disabled-text;
+  }
+
+  &[aria-invalid="true"] {
+    border-color: $color-error;
+  }
+
+  &[aria-invalid="true"]:focus {
+    border-color: $color-error;
+    box-shadow: 0 0 0 3px $color-error-ring;
+  }
+}
+
+.input-error {
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-error;
+  margin-top: $spacing-xs;
+}
+

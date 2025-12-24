@@ -1,0 +1,18 @@
+// Transition Variables
+// All transition values must reference these variables
+
+// Transition Durations
+$transition-duration-fast: 150ms;
+$transition-duration-base: 200ms;
+$transition-duration-slow: 300ms;
+
+// Transition Easing
+$transition-ease-in-out: ease-in-out;
+$transition-ease-out: ease-out;
+
+// Common Transitions
+$transition-base: $transition-duration-base $transition-ease-in-out;
+$transition-color: color $transition-base;
+$transition-background: background-color $transition-base;
+$transition-border: border-color $transition-base;
+

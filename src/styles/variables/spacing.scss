@@ -1,0 +1,22 @@
+// Spacing Scale Variables
+// All spacing (margins, paddings, gaps) must reference these variables
+
+// Base spacing unit (4px)
+$spacing-unit: 0.25rem;
+
+// Spacing scale
+$spacing-xs: $spacing-unit; // 0.25rem (4px)
+$spacing-sm: $spacing-unit * 2; // 0.5rem (8px)
+$spacing-md: $spacing-unit * 4; // 1rem (16px)
+$spacing-lg: $spacing-unit * 6; // 1.5rem (24px)
+$spacing-xl: $spacing-unit * 8; // 2rem (32px)
+$spacing-2xl: $spacing-unit * 12; // 3rem (48px)
+$spacing-3xl: $spacing-unit * 16; // 4rem (64px)
+
+// Component-specific spacing
+$spacing-input-padding-x: $spacing-unit * 5; // 1.25rem (20px)
+$spacing-input-padding-y: $spacing-unit * 3; // 0.75rem (12px)
+$spacing-button-padding-x: $spacing-unit * 5; // 1.25rem (20px)
+$spacing-button-padding-y: $spacing-unit * 3; // 0.75rem (12px)
+$spacing-button-height: $spacing-unit * 12; // 3rem (48px)
+

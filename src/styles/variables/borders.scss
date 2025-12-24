@@ -1,0 +1,17 @@
+// Border Variables
+// All border values must reference these variables
+
+// Border Width
+$border-width: 1px;
+$border-width-thick: 2px;
+
+// Border Radius
+$border-radius-sm: 0.25rem; // 4px
+$border-radius-md: 0.375rem; // 6px
+$border-radius-lg: 0.5rem; // 8px
+$border-radius-full: 9999px;
+
+// Border Radius for specific components
+$border-radius-input: $border-radius-md;
+$border-radius-button: $border-radius-full;
+

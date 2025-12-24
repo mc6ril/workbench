@@ -3,6 +3,10 @@
  * Provides type-safe query keys following hierarchical pattern.
  */
 export const queryKeys = {
+  auth: {
+    session: () => ["auth", "session"] as const,
+    user: () => ["auth", "user"] as const,
+  },
   projects: {
     all: () => ["projects"] as const,
     detail: (id: string) => ["projects", id] as const,

@@ -50,4 +50,18 @@ export type ProjectRepository = {
    * @throws DatabaseError if database operation fails
    */
   delete(id: string): Promise<void>;
+
+  /**
+   * Add current user to a project as a member.
+   * @param projectId - Project ID
+   * @param role - Role to assign (default: 'viewer'). Note: Users can only self-add as 'viewer'. Admins can add with any role.
+   * @returns The project the user was added to
+   * @throws NotFoundError if project not found
+   * @throws ConstraintError if user is already a member
+   * @throws DatabaseError if database operation fails or permission denied
+   */
+  addCurrentUserAsMember(
+    projectId: string,
+    role?: "admin" | "member" | "viewer"
+  ): Promise<Project>;
 };

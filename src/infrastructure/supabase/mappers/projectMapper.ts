@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import type { Project } from "@/core/domain/project/project.schema";
 import { ProjectSchema } from "@/core/domain/project/project.schema";
 
@@ -12,12 +14,38 @@ import type { ProjectRow } from "@/infrastructure/supabase/types/projectRow";
  * @throws Error if row data is invalid
  */
 export const mapProjectRowToDomain = (row: ProjectRow): Project => {
-  return ProjectSchema.parse({
-    id: row.id,
-    name: row.name,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-  });
+  try {
+    // Clean the data before parsing (schema will handle UUID validation and normalization)
+    const cleanData = {
+      id: String(row.id).trim(),
+      name: String(row.name).trim(),
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    };
+
+    return ProjectSchema.parse(cleanData);
+  } catch (error) {
+    // Log detailed error for debugging
+    if (error instanceof z.ZodError) {
+      console.error("Project mapping error:", {
+        originalRow: row,
+        rowIdType: typeof row.id,
+        rowIdValue: row.id,
+        cleanedData: {
+          id: String(row.id).trim(),
+          name: String(row.name).trim(),
+          createdAt: row.created_at,
+          updatedAt: row.updated_at,
+        },
+        zodIssues: error.issues,
+      });
+      // Throw a more descriptive error
+      throw new Error(
+        `Failed to map project: ${error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")}`
+      );
+    }
+    throw error;
+  }
 };
 
 /**
