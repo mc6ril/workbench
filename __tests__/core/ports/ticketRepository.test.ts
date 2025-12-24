@@ -1,6 +1,10 @@
-import { createTicketRepositoryMock, type TicketRepositoryMock } from "./repositoryMocks";
+// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+import {
+  createTicketRepositoryMock,
+  type TicketRepositoryMock,
+} from "../../../__mocks__/core/ports/ticketRepository";
 
-describe("repository mocks", () => {
+describe("createTicketRepositoryMock", () => {
   it("creates a ticket repository mock with jest.fn methods by default", async () => {
     const repo = createTicketRepositoryMock();
 
@@ -15,9 +19,13 @@ describe("repository mocks", () => {
   });
 
   it("allows overriding individual methods", async () => {
-    const listTickets = jest.fn<Promise<unknown[]>, []>(async () => [{ id: "1" }]);
+    const listTickets = jest.fn<Promise<unknown[]>, []>(async () => [
+      { id: "1" },
+    ]);
 
-    const repo: TicketRepositoryMock = createTicketRepositoryMock({ listTickets });
+    const repo: TicketRepositoryMock = createTicketRepositoryMock({
+      listTickets,
+    });
 
     const result = await repo.listTickets();
 

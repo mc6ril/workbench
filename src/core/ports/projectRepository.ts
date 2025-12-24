@@ -1,6 +1,8 @@
 import type {
   CreateProjectInput,
   Project,
+  ProjectRole,
+  ProjectWithRole,
 } from "@/core/domain/project/project.schema";
 
 /**
@@ -17,11 +19,11 @@ export type ProjectRepository = {
   findById(id: string): Promise<Project | null>;
 
   /**
-   * Get all projects.
-   * @returns Array of projects
+   * Get all projects accessible to the current user with their roles.
+   * @returns Array of projects with role information for the current user
    * @throws DatabaseError if database operation fails
    */
-  list(): Promise<Project[]>;
+  list(): Promise<ProjectWithRole[]>;
 
   /**
    * Create a new project.
@@ -62,6 +64,6 @@ export type ProjectRepository = {
    */
   addCurrentUserAsMember(
     projectId: string,
-    role?: "admin" | "member" | "viewer"
+    role?: ProjectRole
   ): Promise<Project>;
 };

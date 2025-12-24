@@ -18,7 +18,7 @@ export interface TranslationMessages {
   pages: {
     signup: Record<string, string | Record<string, string>>;
     signin: Record<string, string | Record<string, string>>;
-    home: Record<string, string>;
+    home: Record<string, string | Record<string, string>>;
   };
   forms: Record<string, string | Record<string, unknown>>;
   errors: Record<string, string | Record<string, unknown>>;

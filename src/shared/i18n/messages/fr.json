@@ -50,7 +50,22 @@
       "errorLoadingProjects": "Erreur lors du chargement des projets :",
       "unknownError": "Erreur inconnue",
       "pleaseEnterProjectId": "Veuillez entrer un ID de projet",
-      "failedToAddToProject": "Impossible de vous ajouter au projet"
+      "failedToAddToProject": "Impossible de vous ajouter au projet",
+      "roleAdmin": "Administrateur",
+      "roleMember": "Membre",
+      "roleViewer": "Observateur",
+      "roleAriaLabel": "Rôle",
+      "createProjectTitle": "Créer un projet",
+      "createProjectDescription": "Créez votre premier projet pour commencer à travailler",
+      "projectNameLabel": "Nom du projet",
+      "projectNamePlaceholder": "Entrez le nom de votre projet",
+      "createProjectButton": "Créer le projet",
+      "createProjectButtonAriaLabel": "Créer le projet",
+      "errors": {
+        "projectNameRequired": "Le nom du projet est requis",
+        "projectNameTooShort": "Le nom du projet doit contenir au moins 1 caractère",
+        "generic": "Une erreur s'est produite lors de la création du projet"
+      }
     }
   },
   "forms": {},

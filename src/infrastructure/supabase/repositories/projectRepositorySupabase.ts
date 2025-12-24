@@ -1,16 +1,26 @@
 import { createNotFoundError } from "@/core/domain/errors/repositoryError";
-import type {
-  CreateProjectInput,
-  Project,
+import {
+  type CreateProjectInput,
+  type Project,
+  type ProjectRole,
+  type ProjectWithRole,
 } from "@/core/domain/project/project.schema";
 
 import { supabaseClient } from "@/infrastructure/supabase/client";
 import {
-  mapProjectRowsToDomain,
   mapProjectRowToDomain,
+  mapProjectToProjectWithRole,
 } from "@/infrastructure/supabase/mappers/projectMapper";
 import type { ProjectRow } from "@/infrastructure/supabase/types/projectRow";
 import { mapSupabaseError } from "@/infrastructure/supabase/utils/errorMapper";
+
+import {
+  hasErrorCode,
+  isNonEmptyString,
+  isObject,
+  isProjectRole,
+  isString,
+} from "@/shared/utils/guards";
 
 import type { ProjectRepository } from "@/core/ports/projectRepository";
 
@@ -39,12 +49,11 @@ export const projectRepositorySupabase: ProjectRepository = {
     } catch (error) {
       // Re-throw domain errors, wrap unknown errors
       if (
-        error &&
-        typeof error === "object" &&
-        "code" in error &&
-        (error.code === "NOT_FOUND" ||
-          error.code === "CONSTRAINT_VIOLATION" ||
-          error.code === "DATABASE_ERROR")
+        hasErrorCode(error, [
+          "NOT_FOUND",
+          "CONSTRAINT_VIOLATION",
+          "DATABASE_ERROR",
+        ])
       ) {
         throw error;
       }
@@ -52,12 +61,23 @@ export const projectRepositorySupabase: ProjectRepository = {
     }
   },
 
-  async list(): Promise<Project[]> {
+  async list(): Promise<ProjectWithRole[]> {
     try {
+      // Query project_members to get projects with roles
+      // RLS automatically filters to only the current user's memberships
       const { data, error } = await supabaseClient
-        .from("projects")
-        .select("id, name, created_at, updated_at")
-        .order("created_at", { ascending: false });
+        .from("project_members")
+        .select(
+          `
+          role,
+          projects!inner (
+            id,
+            name,
+            created_at,
+            updated_at
+          )
+        `
+        );
 
       if (error) {
         throw mapSupabaseError(error, "Project");
@@ -67,33 +87,57 @@ export const projectRepositorySupabase: ProjectRepository = {
         return [];
       }
 
-      // Filter out any invalid rows before mapping
-      const validRows = data
-        .filter(
-          (row): row is ProjectRow =>
-            row &&
-            typeof row === "object" &&
-            typeof row.id === "string" &&
-            row.id.trim().length > 0 &&
-            typeof row.name === "string" &&
-            row.name.trim().length > 0
-        )
-        .map((row) => ({
-          id: String(row.id).trim(),
-          name: String(row.name).trim(),
-          created_at: row.created_at,
-          updated_at: row.updated_at,
-        })) as ProjectRow[];
+      // Map the joined data to ProjectWithRole[]
+      // Note: Supabase returns projects as an object (not array) for 1:1 relationships
+      const projectsWithRole: ProjectWithRole[] = [];
 
-      return mapProjectRowsToDomain(validRows);
+      for (const row of data) {
+        // Validate the row structure
+        if (
+          !isObject(row) ||
+          !isString(row.role) ||
+          !isProjectRole(row.role) ||
+          !isObject(row.projects)
+        ) {
+          continue;
+        }
+
+        // For 1:1 relationships, Supabase returns projects as an object, not an array
+        // Cast to unknown first to handle TypeScript's type inference
+        const projectData = row.projects as unknown as ProjectRow;
+        const role = row.role; // Type is narrowed to ProjectRole by isProjectRole guard
+
+        // Validate project data
+        if (
+          !isObject(projectData) ||
+          !isNonEmptyString(projectData.id) ||
+          !isNonEmptyString(projectData.name)
+        ) {
+          continue;
+        }
+
+        // Map to domain entity
+        const project = mapProjectRowToDomain({
+          id: String(projectData.id).trim(),
+          name: String(projectData.name).trim(),
+          created_at: projectData.created_at,
+          updated_at: projectData.updated_at,
+        });
+
+        projectsWithRole.push(mapProjectToProjectWithRole(project, role));
+      }
+
+      // Sort by created_at descending (newest first)
+      projectsWithRole.sort((a, b) => {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      });
+
+      return projectsWithRole;
     } catch (error) {
       // Re-throw domain errors, wrap unknown errors
-      if (
-        error &&
-        typeof error === "object" &&
-        "code" in error &&
-        error.code === "DATABASE_ERROR"
-      ) {
+      if (hasErrorCode(error, ["DATABASE_ERROR"])) {
         throw error;
       }
       throw mapSupabaseError(error, "Project");
@@ -124,13 +168,7 @@ export const projectRepositorySupabase: ProjectRepository = {
       return mapProjectRowToDomain(data as ProjectRow);
     } catch (error) {
       // Re-throw domain errors, wrap unknown errors
-      if (
-        error &&
-        typeof error === "object" &&
-        "code" in error &&
-        (error.code === "CONSTRAINT_VIOLATION" ||
-          error.code === "DATABASE_ERROR")
-      ) {
+      if (hasErrorCode(error, ["CONSTRAINT_VIOLATION", "DATABASE_ERROR"])) {
         throw error;
       }
       throw mapSupabaseError(error, "Project");
@@ -163,12 +201,11 @@ export const projectRepositorySupabase: ProjectRepository = {
     } catch (error) {
       // Re-throw domain errors, wrap unknown errors
       if (
-        error &&
-        typeof error === "object" &&
-        "code" in error &&
-        (error.code === "NOT_FOUND" ||
-          error.code === "CONSTRAINT_VIOLATION" ||
-          error.code === "DATABASE_ERROR")
+        hasErrorCode(error, [
+          "NOT_FOUND",
+          "CONSTRAINT_VIOLATION",
+          "DATABASE_ERROR",
+        ])
       ) {
         throw error;
       }
@@ -189,12 +226,11 @@ export const projectRepositorySupabase: ProjectRepository = {
     } catch (error) {
       // Re-throw domain errors, wrap unknown errors
       if (
-        error &&
-        typeof error === "object" &&
-        "code" in error &&
-        (error.code === "NOT_FOUND" ||
-          error.code === "CONSTRAINT_VIOLATION" ||
-          error.code === "DATABASE_ERROR")
+        hasErrorCode(error, [
+          "NOT_FOUND",
+          "CONSTRAINT_VIOLATION",
+          "DATABASE_ERROR",
+        ])
       ) {
         throw error;
       }
@@ -204,7 +240,7 @@ export const projectRepositorySupabase: ProjectRepository = {
 
   async addCurrentUserAsMember(
     projectId: string,
-    role: "admin" | "member" | "viewer" = "viewer"
+    role: ProjectRole = "viewer"
   ): Promise<Project> {
     try {
       // Get current user session first
@@ -253,15 +289,22 @@ export const projectRepositorySupabase: ProjectRepository = {
 
         // Check if it's a permission error (RLS policy violation)
         // This can happen if user tries to add themselves with a role other than 'viewer'
-        if (insertError.code === "42501" || insertError.message?.includes("permission")) {
+        if (
+          insertError.code === "42501" ||
+          insertError.message?.includes("permission")
+        ) {
           if (role !== "viewer") {
             throw mapSupabaseError(
-              new Error("You can only add yourself as a viewer. Contact a project admin to be added with a different role."),
+              new Error(
+                "You can only add yourself as a viewer. Contact a project admin to be added with a different role."
+              ),
               "Project"
             );
           }
           throw mapSupabaseError(
-            new Error("Permission denied. Only project admins can add members."),
+            new Error(
+              "Permission denied. Only project admins can add members."
+            ),
             "Project"
           );
         }
@@ -285,12 +328,11 @@ export const projectRepositorySupabase: ProjectRepository = {
     } catch (error) {
       // Re-throw domain errors, wrap unknown errors
       if (
-        error &&
-        typeof error === "object" &&
-        "code" in error &&
-        (error.code === "NOT_FOUND" ||
-          error.code === "CONSTRAINT_VIOLATION" ||
-          error.code === "DATABASE_ERROR")
+        hasErrorCode(error, [
+          "NOT_FOUND",
+          "CONSTRAINT_VIOLATION",
+          "DATABASE_ERROR",
+        ])
       ) {
         throw error;
       }

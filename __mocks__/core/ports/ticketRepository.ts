@@ -6,12 +6,15 @@ export type TicketRepositoryMock = {
 type TicketRepositoryMockOverrides = Partial<TicketRepositoryMock>;
 
 /**
- * Factory for a simple ticket repository mock.
+ * Factory for creating a mock TicketRepository.
  *
  * Tests can override only the methods they need while keeping the rest as jest.fn().
+ *
+ * @param overrides - Partial mock to override specific methods
+ * @returns A mock TicketRepository
  */
 export const createTicketRepositoryMock = (
-  overrides: TicketRepositoryMockOverrides = {},
+  overrides: TicketRepositoryMockOverrides = {}
 ): TicketRepositoryMock => {
   const base: TicketRepositoryMock = {
     listTickets: jest.fn<Promise<unknown[]>, []>(),

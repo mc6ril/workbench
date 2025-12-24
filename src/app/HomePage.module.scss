@@ -77,7 +77,8 @@
   margin: 0;
 }
 
-.home-access-form {
+.home-access-form,
+.home-create-form {
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
@@ -117,7 +118,10 @@
 }
 
 .home-project-link {
-  display: block;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-md;
   padding: $spacing-md;
   border: $border-width solid $color-border;
   border-radius: $border-radius-md;
@@ -138,4 +142,18 @@
     outline-offset: 2px;
     border-radius: $border-radius-md;
   }
+}
+
+.home-project-name {
+  flex: 1;
+}
+
+.home-project-role {
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $border-radius-sm;
+  background-color: $color-secondary;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
 }

@@ -4,7 +4,8 @@ import { z } from "zod";
  * UUID validation regex that accepts any valid UUID format
  * This is more permissive than Zod's .uuid() which may reject certain UUID versions
  */
-const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const uuidRegex =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * Zod schema for Project entity.
@@ -35,3 +36,16 @@ export const CreateProjectInputSchema = z.object({
 });
 
 export type CreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
+
+/**
+ * Project role type (as stored in project_members table).
+ */
+export type ProjectRole = "admin" | "member" | "viewer";
+
+/**
+ * Project with role information for the current user.
+ * Used when listing projects to display user's role in each project.
+ */
+export type ProjectWithRole = Project & {
+  role: ProjectRole;
+};

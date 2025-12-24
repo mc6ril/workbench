@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import type { Project } from "@/core/domain/project/project.schema";
+import type {
+  Project,
+  ProjectWithRole,
+  ProjectRole,
+} from "@/core/domain/project/project.schema";
 import { ProjectSchema } from "@/core/domain/project/project.schema";
 
 import type { ProjectRow } from "@/infrastructure/supabase/types/projectRow";
@@ -56,4 +60,21 @@ export const mapProjectRowToDomain = (row: ProjectRow): Project => {
  */
 export const mapProjectRowsToDomain = (rows: ProjectRow[]): Project[] => {
   return rows.map(mapProjectRowToDomain);
+};
+
+/**
+ * Maps a Project entity with a role to a ProjectWithRole entity.
+ *
+ * @param project - Project entity
+ * @param role - User's role in the project
+ * @returns ProjectWithRole entity
+ */
+export const mapProjectToProjectWithRole = (
+  project: Project,
+  role: ProjectRole
+): ProjectWithRole => {
+  return {
+    ...project,
+    role,
+  };
 };
