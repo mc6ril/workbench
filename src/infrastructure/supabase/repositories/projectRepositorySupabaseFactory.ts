@@ -1,15 +1,13 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import { createNotFoundError } from "@/core/domain/errors/repositoryError";
-import {
-  type CreateProjectInput,
-  type Project,
-  type ProjectRole,
-  type ProjectWithRole,
+import type {
+  CreateProjectInput,
+  Project,
+  ProjectRole,
+  ProjectWithRole,
 } from "@/core/domain/project/project.schema";
 
-import { createSupabaseBrowserClient } from "@/infrastructure/supabase/client-browser";
-
-// Create browser client instance (uses cookies via @supabase/ssr)
-const browserClient = createSupabaseBrowserClient();
 import {
   mapProjectRowToDomain,
   mapProjectToProjectWithRole,
@@ -22,19 +20,23 @@ import {
   isNonEmptyString,
   isObject,
   isProjectRole,
-  isString,
 } from "@/shared/utils/guards";
 
 import type { ProjectRepository } from "@/core/ports/projectRepository";
 
 /**
- * Supabase implementation of ProjectRepository.
- * Handles all database operations for projects using Supabase client.
+ * Create a ProjectRepository implementation using the provided Supabase client.
+ * This allows using different clients (browser/server) based on context.
+ *
+ * @param client - Supabase client instance to use
+ * @returns ProjectRepository implementation
  */
-export const projectRepositorySupabase: ProjectRepository = {
+export const createProjectRepository = (
+  client: SupabaseClient
+): ProjectRepository => ({
   async findById(id: string): Promise<Project | null> {
     try {
-      const { data, error } = await browserClient
+      const { data, error } = await client
         .from("projects")
         .select("*")
         .eq("id", id)
@@ -66,21 +68,15 @@ export const projectRepositorySupabase: ProjectRepository = {
 
   async list(): Promise<ProjectWithRole[]> {
     try {
-      // Query project_members to get projects with roles
-      // RLS automatically filters to only the current user's memberships
-      const { data, error } = await browserClient
-        .from("project_members")
+      const { data, error } = await client
+        .from("projects")
         .select(
           `
-          role,
-          projects!inner (
-            id,
-            name,
-            created_at,
-            updated_at
-          )
+          *,
+          project_members!inner(role)
         `
-        );
+        )
+        .order("created_at", { ascending: false });
 
       if (error) {
         throw mapSupabaseError(error, "Project");
@@ -90,57 +86,47 @@ export const projectRepositorySupabase: ProjectRepository = {
         return [];
       }
 
-      // Map the joined data to ProjectWithRole[]
-      // Note: Supabase returns projects as an object (not array) for 1:1 relationships
-      const projectsWithRole: ProjectWithRole[] = [];
-
-      for (const row of data) {
-        // Validate the row structure
-        if (
-          !isObject(row) ||
-          !isString(row.role) ||
-          !isProjectRole(row.role) ||
-          !isObject(row.projects)
-        ) {
-          continue;
+      // Transform the data to match ProjectWithRole structure
+      return data.map((row: unknown) => {
+        if (!isObject(row)) {
+          throw mapSupabaseError(
+            new Error("Invalid project data structure"),
+            "Project"
+          );
         }
 
-        // For 1:1 relationships, Supabase returns projects as an object, not an array
-        // Cast to unknown first to handle TypeScript's type inference
-        const projectData = row.projects as unknown as ProjectRow;
-        const role = row.role; // Type is narrowed to ProjectRole by isProjectRole guard
+        const project = mapProjectRowToDomain(row as ProjectRow);
 
-        // Validate project data
-        if (
-          !isObject(projectData) ||
-          !isNonEmptyString(projectData.id) ||
-          !isNonEmptyString(projectData.name)
-        ) {
-          continue;
+        // Extract role from project_members relationship
+        // The data structure has project_members as an array with one element
+        const members = (row as { project_members?: Array<{ role?: string }> })
+          .project_members;
+        if (!Array.isArray(members) || members.length === 0) {
+          throw mapSupabaseError(
+            new Error("Project member role not found"),
+            "Project"
+          );
         }
 
-        // Map to domain entity
-        const project = mapProjectRowToDomain({
-          id: String(projectData.id).trim(),
-          name: String(projectData.name).trim(),
-          created_at: projectData.created_at,
-          updated_at: projectData.updated_at,
-        });
+        const roleValue = members[0]?.role;
+        if (!roleValue || !isProjectRole(roleValue)) {
+          throw mapSupabaseError(
+            new Error(`Invalid project role: ${roleValue}`),
+            "Project"
+          );
+        }
 
-        projectsWithRole.push(mapProjectToProjectWithRole(project, role));
-      }
-
-      // Sort by created_at descending (newest first)
-      projectsWithRole.sort((a, b) => {
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
+        return mapProjectToProjectWithRole(project, roleValue);
       });
-
-      return projectsWithRole;
     } catch (error) {
       // Re-throw domain errors, wrap unknown errors
-      if (hasErrorCode(error, ["DATABASE_ERROR"])) {
+      if (
+        hasErrorCode(error, [
+          "NOT_FOUND",
+          "CONSTRAINT_VIOLATION",
+          "DATABASE_ERROR",
+        ])
+      ) {
         throw error;
       }
       throw mapSupabaseError(error, "Project");
@@ -149,7 +135,7 @@ export const projectRepositorySupabase: ProjectRepository = {
 
   async create(input: CreateProjectInput): Promise<Project> {
     try {
-      const { data, error } = await browserClient
+      const { data, error } = await client
         .from("projects")
         .insert({
           name: input.name,
@@ -183,11 +169,30 @@ export const projectRepositorySupabase: ProjectRepository = {
     input: Partial<CreateProjectInput>
   ): Promise<Project> {
     try {
-      const { data, error } = await browserClient
+      const updateData: Partial<{ name: string }> = {};
+
+      if (input.name !== undefined) {
+        if (!isNonEmptyString(input.name)) {
+          throw mapSupabaseError(
+            new Error("Project name cannot be empty"),
+            "Project"
+          );
+        }
+        updateData.name = input.name;
+      }
+
+      if (Object.keys(updateData).length === 0) {
+        // No fields to update, return existing project
+        const existing = await this.findById(id);
+        if (!existing) {
+          throw createNotFoundError("Project", id);
+        }
+        return existing;
+      }
+
+      const { data, error } = await client
         .from("projects")
-        .update({
-          name: input.name,
-        })
+        .update(updateData)
         .eq("id", id)
         .select()
         .single();
@@ -218,10 +223,7 @@ export const projectRepositorySupabase: ProjectRepository = {
 
   async delete(id: string): Promise<void> {
     try {
-      const { error } = await browserClient
-        .from("projects")
-        .delete()
-        .eq("id", id);
+      const { error } = await client.from("projects").delete().eq("id", id);
 
       if (error) {
         throw mapSupabaseError(error, "Project");
@@ -249,7 +251,7 @@ export const projectRepositorySupabase: ProjectRepository = {
       // Get current user session first
       const {
         data: { session },
-      } = await browserClient.auth.getSession();
+      } = await client.auth.getSession();
       if (!session?.user?.id) {
         throw mapSupabaseError(
           new Error("User must be authenticated"),
@@ -258,7 +260,7 @@ export const projectRepositorySupabase: ProjectRepository = {
       }
 
       // Verify the project exists using RPC function (bypasses RLS)
-      const { data: exists, error: existsError } = await browserClient.rpc(
+      const { data: exists, error: existsError } = await client.rpc(
         "project_exists",
         { project_uuid: projectId }
       );
@@ -270,7 +272,7 @@ export const projectRepositorySupabase: ProjectRepository = {
       // Try to add user as member
       // Note: RLS allows users to self-add as 'viewer', or admins can add with any role
       // If user tries to add themselves with a role other than 'viewer', it will fail unless they're admin
-      const { error: insertError } = await browserClient
+      const { error: insertError } = await client
         .from("project_members")
         .insert({
           project_id: projectId,
@@ -347,9 +349,7 @@ export const projectRepositorySupabase: ProjectRepository = {
     try {
       // Use SQL function for optimized boolean check
       // This function checks if the current user has any project membership
-      const { data, error } = await browserClient.rpc(
-        "has_any_project_access"
-      );
+      const { data, error } = await client.rpc("has_any_project_access");
 
       if (error) {
         throw mapSupabaseError(error, "Project");
@@ -366,4 +366,4 @@ export const projectRepositorySupabase: ProjectRepository = {
       throw mapSupabaseError(error, "Project");
     }
   },
-};
+});

@@ -66,6 +66,21 @@
         "projectNameTooShort": "Le nom du projet doit contenir au moins 1 caractère",
         "generic": "Une erreur s'est produite lors de la création du projet"
       }
+    },
+    "landing": {
+      "title": "Workbench",
+      "subtitle": "Un outil léger et personnel de gestion de tâches et de projets",
+      "purposeTitle": "Objectif",
+      "purposeText": "Workbench est conçu pour vous aider à gérer votre travail clairement, progressivement et sans surcharge cognitive. Il offre un backlog propre, un tableau visuel et une planification structurée via les Epics.",
+      "featuresTitle": "Fonctionnalités principales",
+      "backlogLabel": "Backlog",
+      "backlogDescription": "Créer, modifier, supprimer, afficher, filtrer et trier les tickets",
+      "boardLabel": "Tableau",
+      "boardDescription": "Tableau visuel avec colonnes personnalisées, glisser-déposer et gestion de flux de travail",
+      "epicsLabel": "Epics",
+      "epicsDescription": "Créer des epics, assigner des tickets et suivre la progression",
+      "subtasksLabel": "Sous-tâches",
+      "subtasksDescription": "Décomposer les tickets en sous-tâches gérables"
     }
   },
   "forms": {},

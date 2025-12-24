@@ -9,3 +9,13 @@ export const PROJECT_ROLES: readonly ProjectRole[] = Object.freeze([
   "member",
   "viewer",
 ]);
+
+// Re-export route constants for convenience
+export {
+  PUBLIC_ROUTES,
+  PROTECTED_ROUTES,
+  APP_ROUTES,
+  isPublicRoute,
+  isProtectedRoute,
+  isAppRoute,
+} from "./routes";

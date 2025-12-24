@@ -1,0 +1,102 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/borders" as *;
+
+.landing-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: $spacing-lg;
+  background-color: $color-background;
+}
+
+.landing-container {
+  width: 100%;
+  max-width: 50rem; // 800px
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.landing-header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  text-align: center;
+}
+
+.landing-title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: $color-text;
+  margin: 0;
+}
+
+.landing-subtitle {
+  font-size: $font-size-xl;
+  line-height: $line-height-normal;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.landing-content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.landing-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.landing-section-title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  color: $color-text;
+  margin: 0;
+}
+
+.landing-section-text {
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.landing-features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.landing-features-list li {
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $color-text-secondary;
+  padding: $spacing-md;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-md;
+  background-color: $color-secondary;
+
+  strong {
+    color: $color-text;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.landing-actions {
+  display: flex;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: $spacing-lg 0;
+}
+
