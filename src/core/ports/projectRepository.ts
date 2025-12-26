@@ -3,7 +3,7 @@ import type {
   Project,
   ProjectRole,
   ProjectWithRole,
-} from "@/core/domain/project/project.schema";
+} from "@/core/domain/project.schema";
 
 /**
  * Repository contract for Project operations.

@@ -3,7 +3,7 @@ import type {
   AuthSession,
   SignInInput,
   SignUpInput,
-} from "@/core/domain/auth/auth.schema";
+} from "@/core/domain/auth.schema";
 
 /**
  * Repository contract for Authentication operations.
@@ -13,7 +13,7 @@ export type AuthRepository = {
   /**
    * Sign up a new user.
    * @param input - Signup credentials (email, password)
-   * @returns Authentication result with session
+   * @returns Authentication result with session (or null session with requiresEmailVerification flag if email verification is required)
    * @throws AuthenticationFailure if signup fails (email already exists, weak password, etc.)
    */
   signUp(input: SignUpInput): Promise<AuthResult>;
@@ -21,7 +21,7 @@ export type AuthRepository = {
   /**
    * Sign in an existing user.
    * @param input - Signin credentials (email, password)
-   * @returns Authentication result with session
+   * @returns Authentication result with session (always returns a session for successful signin)
    * @throws InvalidCredentialsError if credentials are invalid
    * @throws AuthenticationFailure for other authentication errors
    */

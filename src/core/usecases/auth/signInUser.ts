@@ -1,5 +1,5 @@
-import type { AuthResult } from "@/core/domain/auth/auth.schema";
-import { type SignInInput, SignInSchema } from "@/core/domain/auth/auth.schema";
+import type { AuthResult } from "@/core/domain/auth.schema";
+import { type SignInInput, SignInSchema } from "@/core/domain/auth.schema";
 
 import type { AuthRepository } from "@/core/ports/authRepository";
 

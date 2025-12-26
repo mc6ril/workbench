@@ -1,5 +1,5 @@
-import type { AuthResult } from "@/core/domain/auth/auth.schema";
-import { type SignUpInput, SignUpSchema } from "@/core/domain/auth/auth.schema";
+import type { AuthResult } from "@/core/domain/auth.schema";
+import { type SignUpInput, SignUpSchema } from "@/core/domain/auth.schema";
 
 import type { AuthRepository } from "@/core/ports/authRepository";
 
@@ -9,7 +9,7 @@ import type { AuthRepository } from "@/core/ports/authRepository";
  *
  * @param repository - Auth repository
  * @param input - Signup credentials (email, password)
- * @returns Authentication result with session
+ * @returns Authentication result with session (or null session with requiresEmailVerification flag if email verification is required)
  * @throws AuthenticationFailure if signup fails (email already exists, weak password, etc.)
  */
 export async function signUpUser(
@@ -20,5 +20,7 @@ export async function signUpUser(
   const validatedInput = SignUpSchema.parse(input);
 
   // Call repository to create user
+  // Repository will return session if user is automatically logged in,
+  // or null session with requiresEmailVerification: true if email verification is required
   return repository.signUp(validatedInput);
 }

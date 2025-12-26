@@ -7,13 +7,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { SignUpInput } from "@/core/domain/auth/auth.schema";
-import { SignUpSchema } from "@/core/domain/auth/auth.schema";
+import type { SignUpInput } from "@/core/domain/auth.schema";
+import { SignUpSchema } from "@/core/domain/auth.schema";
 import { useTranslation } from "@/shared/i18n";
 
 import Button from "@/presentation/components/ui/Button";
 import Input from "@/presentation/components/ui/Input";
-import { useSignUp } from "@/presentation/hooks/useSignUp";
+import { useSignUp } from "@/presentation/hooks";
 
 import styles from "./SignupPage.module.scss";
 
@@ -64,8 +64,12 @@ const SignupPage = () => {
   }, [signUpMutation.error, setError]);
 
   useEffect(() => {
-    if (signUpMutation.isSuccess && signUpMutation.data) {
-      // Redirect to signin page after successful signup
+    if (
+      signUpMutation.isSuccess &&
+      signUpMutation.data?.session &&
+      !signUpMutation.data.requiresEmailVerification
+    ) {
+      // Redirect to signin page after successful signup (only if session exists and email verification is not required)
       router.push("/signin");
     }
   }, [signUpMutation.isSuccess, signUpMutation.data, router]);

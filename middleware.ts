@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { type CookieOptions, createServerClient } from "@supabase/ssr";
 
-import { isProtectedRoute } from "@/shared/constants/routes";
+import { isProtectedRoute } from "@/shared/utils/routes";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY =

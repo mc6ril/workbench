@@ -1,4 +1,4 @@
-import type { ProjectRole } from "@/core/domain/project/project.schema";
+import type { ProjectRole } from "@/core/domain/project.schema";
 
 /**
  * Array of all valid project roles.
@@ -11,11 +11,9 @@ export const PROJECT_ROLES: readonly ProjectRole[] = Object.freeze([
 ]);
 
 // Re-export route constants for convenience
-export {
-  PUBLIC_ROUTES,
-  PROTECTED_ROUTES,
-  APP_ROUTES,
-  isPublicRoute,
-  isProtectedRoute,
-  isAppRoute,
-} from "./routes";
+export type { ProjectView } from "./routes";
+export { PROJECT_VIEWS, PROTECTED_ROUTES, PUBLIC_ROUTES } from "./routes";
+
+// Re-export error code constants for convenience
+export type { AuthErrorCode, RepositoryErrorCode } from "./errorCodes";
+export { AUTH_ERROR_CODES, REPOSITORY_ERROR_CODES } from "./errorCodes";

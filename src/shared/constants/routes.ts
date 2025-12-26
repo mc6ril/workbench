@@ -16,58 +16,22 @@ export const PUBLIC_ROUTES: readonly string[] = Object.freeze([
 /**
  * Protected routes that require authentication.
  * These routes are protected by middleware and require a valid session.
+ * Includes /myworkspace and all project-specific routes (/{projectId}/...)
  */
 export const PROTECTED_ROUTES: readonly string[] = Object.freeze([
   "/myworkspace",
-  // Future app routes will be added here as needed:
-  // "/app/board",
-  // "/app/backlog",
-  // "/app/epics",
 ]);
 
 /**
- * Routes that are under the /app/* path pattern.
- * These routes require both authentication and project access.
+ * Project route patterns.
+ * Project routes follow the pattern: /{projectId}/{view}
+ * where projectId is a UUID and view can be: board, backlog, epics, settings, etc.
  */
-export const APP_ROUTES: readonly string[] = Object.freeze([
-  // Future app routes will be added here:
-  // "/app/board",
-  // "/app/backlog",
-  // "/app/epics",
-]);
+export const PROJECT_VIEWS = Object.freeze({
+  BOARD: "board",
+  BACKLOG: "backlog",
+  EPICS: "epics",
+  SETTINGS: "settings",
+});
 
-/**
- * Check if a pathname is a public route.
- *
- * @param pathname - The pathname to check
- * @returns True if the pathname is a public route
- */
-export function isPublicRoute(pathname: string): boolean {
-  return PUBLIC_ROUTES.includes(pathname);
-}
-
-/**
- * Check if a pathname is a protected route.
- *
- * @param pathname - The pathname to check
- * @returns True if the pathname is a protected route
- */
-export function isProtectedRoute(pathname: string): boolean {
-  // Check exact matches
-  if (PROTECTED_ROUTES.includes(pathname)) {
-    return true;
-  }
-
-  // Check if pathname starts with /app/
-  return pathname.startsWith("/app/");
-}
-
-/**
- * Check if a pathname is under the /app/* pattern.
- *
- * @param pathname - The pathname to check
- * @returns True if the pathname is an app route
- */
-export function isAppRoute(pathname: string): boolean {
-  return pathname.startsWith("/app/");
-}
+export type ProjectView = (typeof PROJECT_VIEWS)[keyof typeof PROJECT_VIEWS];

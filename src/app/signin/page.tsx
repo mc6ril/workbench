@@ -7,13 +7,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { SignInInput } from "@/core/domain/auth/auth.schema";
-import { SignInSchema } from "@/core/domain/auth/auth.schema";
+import type { SignInInput } from "@/core/domain/auth.schema";
+import { SignInSchema } from "@/core/domain/auth.schema";
 import { useTranslation } from "@/shared/i18n";
 
 import Button from "@/presentation/components/ui/Button";
 import Input from "@/presentation/components/ui/Input";
-import { useSignIn } from "@/presentation/hooks/useSignIn";
+import { useSignIn } from "@/presentation/hooks";
 
 import styles from "./SigninPage.module.scss";
 

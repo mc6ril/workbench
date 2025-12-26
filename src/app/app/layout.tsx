@@ -1,11 +1,13 @@
 import { redirect } from "next/navigation";
 
-import { getCurrentSession } from "@/core/usecases/getCurrentSession";
-import { hasProjectAccess } from "@/core/usecases/hasProjectAccess";
+import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
+import { hasProjectAccess } from "@/core/usecases/project/hasProjectAccess";
 
-import { createSupabaseServerClient } from "@/infrastructure/supabase/client-server";
-import { createAuthRepository } from "@/infrastructure/supabase/repositories/authRepositorySupabaseFactory";
-import { createProjectRepository } from "@/infrastructure/supabase/repositories/projectRepositorySupabaseFactory";
+import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
+import {
+  createAuthRepository,
+  createProjectRepository,
+} from "@/infrastructure/supabase/repositories";
 
 /**
  * Server-side layout for /app/* routes.

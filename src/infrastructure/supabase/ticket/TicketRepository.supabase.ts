@@ -1,0 +1,185 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+import { createNotFoundError } from "@/core/domain/repositoryError";
+import type {
+  CreateTicketInput,
+  Ticket,
+  UpdateTicketInput,
+} from "@/core/domain/ticket.schema";
+
+import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
+import type { TicketRow } from "@/infrastructure/supabase/types";
+
+import {
+  mapTicketRowsToDomain,
+  mapTicketRowToDomain,
+} from "./TicketMapper.supabase";
+
+import type { TicketRepository } from "@/core/ports/ticketRepository";
+
+/**
+ * Create a TicketRepository implementation using the provided Supabase client.
+ * This allows using different clients (browser/server) based on context.
+ *
+ * @param client - Supabase client instance to use
+ * @returns TicketRepository implementation
+ */
+export const createTicketRepository = (
+  client: SupabaseClient
+): TicketRepository => ({
+  async findById(id: string): Promise<Ticket | null> {
+    try {
+      const { data, error } = await client
+        .from("tickets")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        handleRepositoryError(error, "Ticket");
+      }
+
+      if (!data) {
+        return null;
+      }
+
+      return mapTicketRowToDomain(data as TicketRow);
+    } catch (error) {
+      handleRepositoryError(error, "Ticket");
+    }
+  },
+
+  async listByProject(projectId: string): Promise<Ticket[]> {
+    try {
+      const { data, error } = await client
+        .from("tickets")
+        .select("*")
+        .eq("project_id", projectId)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        handleRepositoryError(error, "Ticket");
+      }
+
+      if (!data) {
+        return [];
+      }
+
+      return mapTicketRowsToDomain(data as TicketRow[]);
+    } catch (error) {
+      handleRepositoryError(error, "Ticket");
+    }
+  },
+
+  async listByStatus(projectId: string, status: string): Promise<Ticket[]> {
+    try {
+      const { data, error } = await client
+        .from("tickets")
+        .select("*")
+        .eq("project_id", projectId)
+        .eq("status", status)
+        .order("position", { ascending: true });
+
+      if (error) {
+        handleRepositoryError(error, "Ticket");
+      }
+
+      if (!data) {
+        return [];
+      }
+
+      return mapTicketRowsToDomain(data as TicketRow[]);
+    } catch (error) {
+      handleRepositoryError(error, "Ticket");
+    }
+  },
+
+  async create(input: CreateTicketInput): Promise<Ticket> {
+    try {
+      const { data, error } = await client
+        .from("tickets")
+        .insert({
+          project_id: input.projectId,
+          title: input.title,
+          description: input.description ?? null,
+          status: input.status,
+          position: input.position ?? 0,
+          epic_id: input.epicId ?? null,
+          parent_id: input.parentId ?? null,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        handleRepositoryError(error, "Ticket");
+      }
+
+      if (!data) {
+        handleRepositoryError(
+          new Error("No data returned from insert"),
+          "Ticket"
+        );
+      }
+
+      return mapTicketRowToDomain(data as TicketRow);
+    } catch (error) {
+      handleRepositoryError(error, "Ticket");
+    }
+  },
+
+  async update(id: string, input: UpdateTicketInput): Promise<Ticket> {
+    try {
+      const updateData: Partial<TicketRow> = {};
+
+      if (input.title !== undefined) {
+        updateData.title = input.title;
+      }
+      if (input.description !== undefined) {
+        updateData.description = input.description;
+      }
+      if (input.status !== undefined) {
+        updateData.status = input.status;
+      }
+      if (input.position !== undefined) {
+        updateData.position = input.position;
+      }
+      if (input.epicId !== undefined) {
+        updateData.epic_id = input.epicId;
+      }
+      if (input.parentId !== undefined) {
+        updateData.parent_id = input.parentId;
+      }
+
+      const { data, error } = await client
+        .from("tickets")
+        .update(updateData)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        handleRepositoryError(error, "Ticket");
+      }
+
+      if (!data) {
+        handleRepositoryError(createNotFoundError("Ticket", id), "Ticket");
+      }
+
+      return mapTicketRowToDomain(data as TicketRow);
+    } catch (error) {
+      handleRepositoryError(error, "Ticket");
+    }
+  },
+
+  async delete(id: string): Promise<void> {
+    try {
+      const { error } = await client.from("tickets").delete().eq("id", id);
+
+      if (error) {
+        handleRepositoryError(error, "Ticket");
+      }
+    } catch (error) {
+      handleRepositoryError(error, "Ticket");
+    }
+  },
+});

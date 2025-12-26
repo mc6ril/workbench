@@ -2,7 +2,7 @@ import type {
   CreateTicketInput,
   Ticket,
   UpdateTicketInput,
-} from "@/core/domain/ticket/ticket.schema";
+} from "@/core/domain/ticket.schema";
 
 /**
  * Repository contract for Ticket operations.

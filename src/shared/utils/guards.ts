@@ -1,4 +1,4 @@
-import type { ProjectRole } from "@/core/domain/project/project.schema";
+import type { ProjectRole } from "@/core/domain/project.schema";
 
 import { PROJECT_ROLES } from "@/shared/constants";
 

@@ -7,15 +7,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { CreateProjectInput } from "@/core/domain/project/project.schema";
-import { CreateProjectInputSchema } from "@/core/domain/project/project.schema";
+import type { CreateProjectInput } from "@/core/domain/project.schema";
+import { CreateProjectInputSchema } from "@/core/domain/project.schema";
 
 import Button from "@/presentation/components/ui/Button";
 import Input from "@/presentation/components/ui/Input";
-import { useAddUserToProject } from "@/presentation/hooks/useAddUserToProject";
-import { useCreateProject } from "@/presentation/hooks/useCreateProject";
-import { useProjects } from "@/presentation/hooks/useProjects";
-import { useSession } from "@/presentation/hooks/useSession";
+import {
+  useAddUserToProject,
+  useCreateProject,
+  useProjects,
+  useSession,
+} from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
 

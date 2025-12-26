@@ -2,7 +2,7 @@ import type {
   CreateProjectInput,
   Project,
   ProjectWithRole,
-} from "@/core/domain/project/project.schema";
+} from "@/core/domain/project.schema";
 
 /**
  * Mock type for ProjectRepository.
