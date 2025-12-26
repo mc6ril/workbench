@@ -64,8 +64,12 @@ const SignupPage = () => {
   }, [signUpMutation.error, setError]);
 
   useEffect(() => {
-    if (signUpMutation.isSuccess && signUpMutation.data) {
-      // Redirect to signin page after successful signup
+    if (
+      signUpMutation.isSuccess &&
+      signUpMutation.data?.session &&
+      !signUpMutation.data.requiresEmailVerification
+    ) {
+      // Redirect to signin page after successful signup (only if session exists and email verification is not required)
       router.push("/signin");
     }
   }, [signUpMutation.isSuccess, signUpMutation.data, router]);

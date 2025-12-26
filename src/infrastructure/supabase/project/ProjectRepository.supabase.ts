@@ -43,7 +43,7 @@ export const createProjectRepository = (
         .single();
 
       if (error) {
-        throw error;
+        handleRepositoryError(error, "Project");
       }
 
       if (!data) {
@@ -69,7 +69,7 @@ export const createProjectRepository = (
         .order("created_at", { ascending: false });
 
       if (error) {
-        throw error;
+        handleRepositoryError(error, "Project");
       }
 
       if (!data || !Array.isArray(data)) {
@@ -79,7 +79,10 @@ export const createProjectRepository = (
       // Transform the data to match ProjectWithRole structure
       return data.map((row: unknown) => {
         if (!isObject(row)) {
-          throw new Error("Invalid project data structure");
+          handleRepositoryError(
+            new Error("Invalid project data structure"),
+            "Project"
+          );
         }
 
         const project = mapProjectRowToDomain(row as ProjectRow);
@@ -89,12 +92,18 @@ export const createProjectRepository = (
         const members = (row as { project_members?: Array<{ role?: string }> })
           .project_members;
         if (!Array.isArray(members) || members.length === 0) {
-          throw new Error("Project member role not found");
+          handleRepositoryError(
+            new Error("Project member role not found"),
+            "Project"
+          );
         }
 
         const roleValue = members[0]?.role;
         if (!roleValue || !isProjectRole(roleValue)) {
-          throw new Error(`Invalid project role: ${roleValue}`);
+          handleRepositoryError(
+            new Error(`Invalid project role: ${roleValue}`),
+            "Project"
+          );
         }
 
         return mapProjectToProjectWithRole(project, roleValue);
@@ -115,11 +124,14 @@ export const createProjectRepository = (
         .single();
 
       if (error) {
-        throw error;
+        handleRepositoryError(error, "Project");
       }
 
       if (!data) {
-        throw new Error("No data returned from insert");
+        handleRepositoryError(
+          new Error("No data returned from insert"),
+          "Project"
+        );
       }
 
       return mapProjectRowToDomain(data as ProjectRow);
@@ -137,7 +149,10 @@ export const createProjectRepository = (
 
       if (input.name !== undefined) {
         if (!isNonEmptyString(input.name)) {
-          throw new Error("Project name cannot be empty");
+          handleRepositoryError(
+            new Error("Project name cannot be empty"),
+            "Project"
+          );
         }
         updateData.name = input.name;
       }
@@ -146,7 +161,7 @@ export const createProjectRepository = (
         // No fields to update, return existing project
         const existing = await this.findById(id);
         if (!existing) {
-          throw createNotFoundError("Project", id);
+          handleRepositoryError(createNotFoundError("Project", id), "Project");
         }
         return existing;
       }
@@ -159,11 +174,11 @@ export const createProjectRepository = (
         .single();
 
       if (error) {
-        throw error;
+        handleRepositoryError(error, "Project");
       }
 
       if (!data) {
-        throw createNotFoundError("Project", id);
+        handleRepositoryError(createNotFoundError("Project", id), "Project");
       }
 
       return mapProjectRowToDomain(data as ProjectRow);
@@ -177,7 +192,7 @@ export const createProjectRepository = (
       const { error } = await client.from("projects").delete().eq("id", id);
 
       if (error) {
-        throw error;
+        handleRepositoryError(error, "Project");
       }
     } catch (error) {
       handleRepositoryError(error, "Project");
@@ -194,22 +209,15 @@ export const createProjectRepository = (
         data: { session },
       } = await client.auth.getSession();
       if (!session?.user?.id) {
-        throw new Error("User must be authenticated");
+        handleRepositoryError(
+          new Error("User must be authenticated"),
+          "Project"
+        );
       }
 
-      // Verify the project exists using RPC function (bypasses RLS)
-      const { data: exists, error: existsError } = await client.rpc(
-        "project_exists",
-        { project_uuid: projectId }
-      );
-
-      if (existsError || !exists) {
-        throw createNotFoundError("Project", projectId);
-      }
-
-      // Try to add user as member
-      // Note: RLS allows users to self-add as 'viewer', or admins can add with any role
-      // If user tries to add themselves with a role other than 'viewer', it will fail unless they're admin
+      // Optimized: Eliminate rpc('project_exists') by relying on foreign key constraint
+      // If project doesn't exist, insert will fail with foreign key constraint error (code 23503)
+      // This reduces DB calls from 3 to 2 (insert + findById instead of rpc + insert + findById)
       const { error: insertError } = await client
         .from("project_members")
         .insert({
@@ -219,14 +227,30 @@ export const createProjectRepository = (
         });
 
       if (insertError) {
-        throw insertError;
+        // Check if error is due to foreign key constraint (project doesn't exist)
+        if (
+          insertError.code === "23503" ||
+          (insertError.message &&
+            insertError.message.includes("foreign key constraint"))
+        ) {
+          handleRepositoryError(
+            createNotFoundError("Project", projectId),
+            "Project"
+          );
+        }
+        // Other errors (constraint violation, permission denied, etc.) are re-thrown as-is
+        handleRepositoryError(insertError, "Project");
       }
 
-      // After successful insertion, fetch the project (user is now a member)
+      // Fetch the project after successful insertion (user is now a member, so RLS allows access)
+      // This is the second call (after insert), which is acceptable per AC requirement (max 2 calls)
       const project = await this.findById(projectId);
       if (!project) {
-        // This shouldn't happen, but handle it just in case
-        throw createNotFoundError("Project", projectId);
+        // This shouldn't happen since insert succeeded, but handle it just in case
+        handleRepositoryError(
+          createNotFoundError("Project", projectId),
+          "Project"
+        );
       }
 
       return project;
@@ -242,7 +266,7 @@ export const createProjectRepository = (
       const { data, error } = await client.rpc("has_any_project_access");
 
       if (error) {
-        throw error;
+        handleRepositoryError(error, "Project");
       }
 
       // SQL function returns boolean, but Supabase RPC might return null

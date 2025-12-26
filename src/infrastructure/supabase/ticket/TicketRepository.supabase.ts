@@ -36,7 +36,7 @@ export const createTicketRepository = (
         .single();
 
       if (error) {
-        throw error;
+        handleRepositoryError(error, "Ticket");
       }
 
       if (!data) {
@@ -58,7 +58,7 @@ export const createTicketRepository = (
         .order("created_at", { ascending: false });
 
       if (error) {
-        throw error;
+        handleRepositoryError(error, "Ticket");
       }
 
       if (!data) {
@@ -81,7 +81,7 @@ export const createTicketRepository = (
         .order("position", { ascending: true });
 
       if (error) {
-        throw error;
+        handleRepositoryError(error, "Ticket");
       }
 
       if (!data) {
@@ -111,11 +111,14 @@ export const createTicketRepository = (
         .single();
 
       if (error) {
-        throw error;
+        handleRepositoryError(error, "Ticket");
       }
 
       if (!data) {
-        throw new Error("No data returned from insert");
+        handleRepositoryError(
+          new Error("No data returned from insert"),
+          "Ticket"
+        );
       }
 
       return mapTicketRowToDomain(data as TicketRow);
@@ -155,11 +158,11 @@ export const createTicketRepository = (
         .single();
 
       if (error) {
-        throw error;
+        handleRepositoryError(error, "Ticket");
       }
 
       if (!data) {
-        throw createNotFoundError("Ticket", id);
+        handleRepositoryError(createNotFoundError("Ticket", id), "Ticket");
       }
 
       return mapTicketRowToDomain(data as TicketRow);
@@ -173,7 +176,7 @@ export const createTicketRepository = (
       const { error } = await client.from("tickets").delete().eq("id", id);
 
       if (error) {
-        throw error;
+        handleRepositoryError(error, "Ticket");
       }
     } catch (error) {
       handleRepositoryError(error, "Ticket");

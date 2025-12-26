@@ -30,11 +30,20 @@ export const createAuthRepository = (
       });
 
       if (error) {
-        throw error;
+        handleAuthError(error);
       }
 
-      if (!data.session || !data.user) {
-        throw new Error("No session or user returned from signup");
+      // Handle email verification case: Supabase returns null session when email verification is required
+      if (!data.session) {
+        return {
+          session: null,
+          requiresEmailVerification: true,
+        };
+      }
+
+      // Session exists: user is automatically logged in (email verification not required or already verified)
+      if (!data.user) {
+        handleAuthError(new Error("User data not returned from signup"));
       }
 
       const session = mapSupabaseSessionToDomain(
@@ -42,7 +51,7 @@ export const createAuthRepository = (
         data.user.email || input.email
       );
 
-      return { session };
+      return { session, requiresEmailVerification: false };
     } catch (error) {
       handleAuthError(error);
     }
@@ -56,11 +65,11 @@ export const createAuthRepository = (
       });
 
       if (error) {
-        throw error;
+        handleAuthError(error);
       }
 
       if (!data.session || !data.user) {
-        throw new Error("No session or user returned from signin");
+        handleAuthError(new Error("No session or user returned from signin"));
       }
 
       const session = mapSupabaseSessionToDomain(
@@ -68,7 +77,8 @@ export const createAuthRepository = (
         data.user.email || input.email
       );
 
-      return { session };
+      // SignIn always returns a session (no email verification needed for existing users)
+      return { session, requiresEmailVerification: false };
     } catch (error) {
       handleAuthError(error);
     }
@@ -79,7 +89,7 @@ export const createAuthRepository = (
       const { error } = await client.auth.signOut();
 
       if (error) {
-        throw error;
+        handleAuthError(error);
       }
     } catch (error) {
       handleAuthError(error);
@@ -101,7 +111,7 @@ export const createAuthRepository = (
         } = await client.auth.getUser();
 
         if (error) {
-          throw error;
+          handleAuthError(error);
         }
 
         if (!user) {
@@ -110,7 +120,9 @@ export const createAuthRepository = (
 
         const userEmail = user.email;
         if (!userEmail) {
-          throw new Error("User email not found in authenticated user data");
+          handleAuthError(
+            new Error("User email not found in authenticated user data")
+          );
         }
 
         // Map authenticated user directly to AuthSession
@@ -129,7 +141,7 @@ export const createAuthRepository = (
         } = await client.auth.getSession();
 
         if (error) {
-          throw error;
+          handleAuthError(error);
         }
 
         if (!session) {
@@ -138,7 +150,7 @@ export const createAuthRepository = (
 
         const userEmail = session.user.email;
         if (!userEmail) {
-          throw new Error("User email not found in session");
+          handleAuthError(new Error("User email not found in session"));
         }
 
         return mapSupabaseSessionToDomain(session, userEmail);

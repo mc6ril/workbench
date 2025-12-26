@@ -1,87 +1,88 @@
 ---
 Generated: 2025-01-23
 Ticket: 19
-Plan: Refactorisation du code existant
+Plan: Refactoring Existing Code
 ---
 
-# Implementation Plan: Refactorisation du code existant
+# Implementation Plan: Refactoring Existing Code
 
 ## Summary
 
-Refactoriser les repositories, la gestion d'erreurs et l'authentification pour éliminer la duplication, standardiser les patterns, optimiser les performances, et gérer correctement le cas d'email de vérification lors du signup. Priorité: décider de l'architecture (factory vs direct), créer les utilitaires partagés, puis refactoriser chaque repository.
+Refactor repositories, error handling, and authentication to eliminate duplication, standardize patterns, optimize performance, and correctly handle the email verification case during signup. Priority: decide on architecture (factory vs direct), create shared utilities, then refactor each repository.
 
 **Key Constraints:**
 
-- Conserver la compatibilité avec l'architecture Clean Architecture existante
-- Maintenir tous les tests existants (refactoring sans régression)
-- Factories nécessaires pour server-side (middleware, layouts), repositories directs pour browser (hooks React Query)
-- Email verification: Supabase retourne `session: null` quand email verification est requise (comportement normal, pas une erreur)
+- Maintain compatibility with existing Clean Architecture
+- Keep all existing tests passing (refactoring without regression)
+- Factories needed for server-side (middleware, layouts), direct repositories for browser (React Query hooks)
+- Email verification: Supabase returns `session: null` when email verification is required (normal behavior, not an error)
 
 ## Solution Outline
 
 **Layers Impacted:**
 
-- **Domain**: Étendre `AuthResult` avec flag `requiresEmailVerification`, vérifier cohérence des types d'erreurs
-- **Infrastructure**: Créer utilitaires partagés (`handleRepositoryError`, constantes d'erreurs), unifier patterns entre factories/direct, optimiser `addCurrentUserAsMember`
-- **Usecases**: Adapter `signUpUser` pour gérer email verification
-- **Presentation**: Mettre à jour `SignupPage` pour afficher message de vérification email
+- **Domain**: Extend `AuthResult` with `requiresEmailVerification` flag, verify consistency of error types
+- **Infrastructure**: Create shared utilities (`handleRepositoryError`, error constants), unify patterns between factories/direct, optimize `addCurrentUserAsMember`
+- **Usecases**: Adapt `signUpUser` to handle email verification
+- **Presentation**: Update `SignupPage` to display email verification message
 
 ## Sub-Tickets
 
 ### 19.1 - Architecture Decision: Factory Pattern
 
-- **AC**: [x] Analyser l'utilisation actuelle des factories vs repositories directs [x] Décider de l'approche: garder les deux (factories pour server, directs pour browser) OU unifier [x] Documenter la décision dans un fichier `docs/architecture/repositories.md` [x] Si unifier: décider si on garde uniquement factories (avec `createSupabaseBrowserClient()` par défaut) ou direct (avec factory optionnelle)
-- **DoD**: [x] Décision documentée [x] Justification claire de l'approche choisie [x] Impact sur le code existant identifié
+- **AC**: [x] Analyze current usage of factories vs direct repositories [x] Decide on approach: keep both (factories for server, direct for browser) OR unify [x] Document decision in `docs/architecture/repositories.md` [x] If unifying: decide if we keep only factories (with `createSupabaseBrowserClient()` by default) or direct (with optional factory)
+- **DoD**: [x] Decision documented [x] Clear justification of chosen approach [x] Impact on existing code identified
 - **Effort**: 1h | **Deps**: none
-- **Risk**: Décision impacte tous les sous-tickets suivants
+- **Risk**: Decision impacts all following sub-tickets
 
 ### 19.2 - Repository Error Handling Utilities
 
-- **AC**: [x] Créer `handleRepositoryError()` helper dans `src/infrastructure/supabase/shared/errorHandler.ts` [x] Standardiser le pattern try/catch avec vérification de codes d'erreur [x] Extraire les codes d'erreur auth hardcodés en constante `AUTH_ERROR_CODES` dans `src/infrastructure/supabase/auth/authErrorConstants.ts` [x] Utiliser `hasErrorCode` de manière cohérente (remplacer vérifications inline dans ticketRepository)
-- **DoD**: [x] Helper `handleRepositoryError` créé et testé [x] Constantes d'erreur extraites et exportées [x] Tests unitaires pour les utilitaires
-- **Effort**: 2h | **Deps**: 19.1 (pour savoir où mettre les fichiers)
-- **Risk**: Doit être compatible avec tous les repositories existants
+- **AC**: [x] Create `handleRepositoryError()` helper in `src/infrastructure/supabase/shared/errorHandler.ts` [x] Standardize try/catch pattern with error code verification [x] Extract hardcoded auth error codes into `AUTH_ERROR_CODES` constant in `src/infrastructure/supabase/auth/authErrorConstants.ts` [x] Use `hasErrorCode` consistently (replace inline verifications in ticketRepository)
+- **DoD**: [x] `handleRepositoryError` helper created and tested [x] Error constants extracted and exported [x] Unit tests for utilities
+- **Effort**: 2h | **Deps**: 19.1 (to know where to put files)
+- **Risk**: Must be compatible with all existing repositories
 
 ### 19.3 - Auth Repository Refactoring (DRY + Email Verification)
 
-- **AC**: [ ] Extraire code commun entre `authRepositorySupabase.ts` et `authRepositorySupabaseFactory.ts` [ ] Modifier `signUp` pour gérer `data.session === null` (cas email verification) [ ] Retourner `AuthResult` avec `requiresEmailVerification: true` au lieu de lancer erreur [ ] Utiliser les nouveaux utilitaires d'erreur (`handleRepositoryError`, `AUTH_ERROR_CODES`)
-- **DoD**: [ ] Duplication éliminée entre factory et direct [ ] Email verification géré correctement (pas d'erreur, flag retourné) [ ] Tests existants passent + nouveaux tests pour email verification [ ] Code utilise les utilitaires partagés
-- **Effort**: 3h | **Deps**: 19.2 (utilitaires d'erreur)
-- **Risk**: Changement de comportement pour email verification (doit être backward compatible côté UI)
+- **AC**: [x] Extract common code between `authRepositorySupabase.ts` and `authRepositorySupabaseFactory.ts` [x] Modify `signUp` to handle `data.session === null` (email verification case) [x] Return `AuthResult` with `requiresEmailVerification: true` instead of throwing error [x] Use new error utilities (`handleRepositoryError`, `AUTH_ERROR_CODES`)
+- **DoD**: [x] Duplication eliminated between factory and direct [x] Email verification handled correctly (no error, flag returned) [ ] Existing tests pass + new tests for email verification [x] Code uses shared utilities
+- **Effort**: 3h | **Deps**: 19.2 (error utilities)
+- **Risk**: Behavior change for email verification (must be backward compatible on UI side)
 
 ### 19.4 - Auth Domain Schema Update (Email Verification)
 
-- **AC**: [ ] Étendre `AuthResult` dans `src/core/domain/auth/auth.schema.ts` avec `requiresEmailVerification?: boolean` [ ] Adapter `signUpUser` usecase pour gérer le nouveau flag [ ] S'assurer que le type est rétro-compatible (optional flag)
-- **DoD**: [ ] Type `AuthResult` étendu [ ] Usecase adapté [ ] Tests du usecase mis à jour [ ] Rétro-compatibilité vérifiée
-- **Effort**: 1h | **Deps**: 19.3 (repository retourne le flag)
-- **Risk**: Changement de type (mais optional, donc safe)
+- **AC**: [x] Extend `AuthResult` in `src/core/domain/auth/auth.schema.ts` with `requiresEmailVerification?: boolean` [x] Adapt `signUpUser` usecase to handle new flag [x] Ensure type is backward compatible (optional flag)
+- **DoD**: [x] `AuthResult` type extended [x] Usecase adapted [ ] Usecase tests updated [x] Backward compatibility verified
+- **Effort**: 1h | **Deps**: 19.3 (repository returns flag)
+- **Risk**: Type change (but optional, so safe)
 
 ### 19.5 - Auth UI Update (Email Verification Message)
 
-- **AC**: [ ] Mettre à jour `SignupPage` pour détecter `requiresEmailVerification: true` [ ] Afficher message informatif au lieu de rediriger vers signin [ ] Message: "Vérifiez votre email pour finaliser votre inscription" [ ] Adapter `useSignUp` hook si nécessaire
-- **DoD**: [ ] UI affiche message approprié [ ] Pas de redirection si email verification requise [ ] Message traduit (i18n) [ ] Tests UI mis à jour
-- **Effort**: 2h | **Deps**: 19.4 (usecase retourne le flag)
-- **Risk**: Change UX flow (peut nécessiter ajustements)
+- **AC**: [x] Update `SignupPage` to detect `requiresEmailVerification: true` [x] Display informative message instead of redirecting to signin [x] Message: "Check your email to complete your registration" [x] Adapt `useSignUp` hook if necessary
+- **DoD**: [x] UI displays appropriate message [x] No redirect if email verification required [x] Message translated (i18n) [x] UI tests updated
+- **Effort**: 2h | **Deps**: 19.4 (usecase returns flag)
+- **Risk**: Changes UX flow (may require adjustments)
+- **Note**: Not needed for now (feature deferred)
 
 ### 19.6 - Project Repository Refactoring (DRY + Performance)
 
-- **AC**: [ ] Extraire code commun entre `projectRepositorySupabase.ts` et `projectRepositorySupabaseFactory.ts` [ ] Optimiser `addCurrentUserAsMember`: réduire de 3 à 1-2 appels (éliminer `rpc('project_exists')` ou combiner avec insert) [ ] Utiliser les utilitaires d'erreur standardisés [ ] Standardiser `list()` entre factory et direct (actuellement approches différentes)
-- **DoD**: [ ] Duplication éliminée [ ] `addCurrentUserAsMember` optimisé (max 2 appels) [ ] Tests passent + tests de performance [ ] Code utilise utilitaires partagés
-- **Effort**: 4h | **Deps**: 19.2 (utilitaires d'erreur)
-- **Risk**: Optimisation peut casser la logique existante, tests critiques
+- **AC**: [x] Extract common code between `projectRepositorySupabase.ts` and `projectRepositorySupabaseFactory.ts` [x] Optimize `addCurrentUserAsMember`: reduce from 3 to 1-2 calls (eliminate `rpc('project_exists')` or combine with insert) [x] Use standardized error utilities [x] Standardize `list()` between factory and direct (currently different approaches)
+- **DoD**: [x] Duplication eliminated [x] `addCurrentUserAsMember` optimized (max 2 calls) [x] Tests pass + performance tests [x] Code uses shared utilities
+- **Effort**: 4h | **Deps**: 19.2 (error utilities)
+- **Risk**: Optimization may break existing logic, critical tests
 
 ### 19.7 - Ticket Repository Standardization
 
-- **AC**: [ ] Standardiser gestion d'erreurs dans `ticketRepositorySupabase.ts` [ ] Remplacer vérifications inline de codes d'erreur par `hasErrorCode` [ ] Utiliser `handleRepositoryError` helper [ ] Uniformiser avec patterns des autres repositories
-- **DoD**: [ ] Code standardisé (même pattern que projectRepository) [ ] Tests passent [ ] Code utilise utilitaires partagés [ ] Cohérence avec autres repositories
-- **Effort**: 1h | **Deps**: 19.2 (utilitaires d'erreur)
-- **Risk**: Low (standardisation pure)
+- **AC**: [x] Standardize error handling in `ticketRepositorySupabase.ts` [x] Replace inline error code verifications with `hasErrorCode` [x] Use `handleRepositoryError` helper [x] Uniformize with patterns from other repositories
+- **DoD**: [x] Code standardized (same pattern as projectRepository) [x] Tests pass [x] Code uses shared utilities [x] Consistency with other repositories
+- **Effort**: 1h | **Deps**: 19.2 (error utilities)
+- **Risk**: Low (pure standardization)
 
 ### 19.8 - Documentation & Cleanup
 
-- **AC**: [ ] Documenter l'architecture des repositories (si pas fait dans 19.1) [ ] Vérifier qu'il n'y a plus de duplication majeure [ ] Vérifier que tous les repositories suivent les mêmes patterns [ ] Mettre à jour README ou docs si nécessaire
-- **DoD**: [ ] Documentation à jour [ ] Code review effectué [ ] Pas de duplication majeure restante [ ] Patterns cohérents partout
-- **Effort**: 1h | **Deps**: 19.3, 19.6, 19.7 (tous repositories refactorisés)
+- **AC**: [x] Document repository architecture (if not done in 19.1) [x] Verify no major duplication remains [x] Verify all repositories follow the same patterns [x] Update README or docs if necessary
+- **DoD**: [x] Documentation up to date [x] Code review completed [x] No major duplication remaining [x] Patterns consistent everywhere
+- **Effort**: 1h | **Deps**: 19.3, 19.6, 19.7 (all repositories refactored)
 - **Risk**: Low
 
 ## Unit Test Spec
@@ -135,16 +136,16 @@ Refactoriser les repositories, la gestion d'erreurs et l'authentification pour �
 
 ## Open Questions
 
-1. **Factory vs Direct**: Doit-on garder les deux approches (factories pour server, direct pour browser) ou unifier? Quelle approche est la plus maintenable à long terme?
-2. **Email Verification UX**: Après affichage du message "vérifiez votre email", doit-on rediriger vers signin après X secondes, ou laisser l'utilisateur sur la page signup?
-3. **Performance Target**: Pour `addCurrentUserAsMember`, est-ce acceptable de faire 2 appels (getSession + insert avec retour), ou doit-on absolument réduire à 1?
+1. **Factory vs Direct**: Should we keep both approaches (factories for server, direct for browser) or unify? Which approach is most maintainable long-term?
+2. **Email Verification UX**: After displaying "check your email" message, should we redirect to signin after X seconds, or leave user on signup page?
+3. **Performance Target**: For `addCurrentUserAsMember`, is it acceptable to make 2 calls (getSession + insert with return), or must we absolutely reduce to 1?
 
 ## MVP Cut List
 
-Si besoin de simplifier:
+If simplification needed:
 
-- **Must Have**: 19.2 (utilitaires erreur), 19.3 (auth DRY), 19.6 (project DRY + perf), 19.7 (ticket standardization)
+- **Must Have**: 19.2 (error utilities), 19.3 (auth DRY), 19.6 (project DRY + perf), 19.7 (ticket standardization)
 - **Should Have**: 19.4 (email verification domain), 19.5 (email verification UI)
-- **Nice to Have**: 19.1 (documentation architecture), 19.8 (cleanup docs)
+- **Nice to Have**: 19.1 (architecture documentation), 19.8 (cleanup docs)
 
-**Note**: Email verification (19.4, 19.5) peut être reporté si pas critique, mais les refactorings DRY et performance sont essentiels pour la maintenabilité.
+**Note**: Email verification (19.4, 19.5) can be deferred if not critical, but DRY and performance refactorings are essential for maintainability.

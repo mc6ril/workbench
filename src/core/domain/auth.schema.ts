@@ -97,7 +97,9 @@ export type AuthSession = {
 
 /**
  * Authentication result for signup/signin operations.
+ * When email verification is required, session will be null and requiresEmailVerification will be true.
  */
 export type AuthResult = {
-  session: AuthSession;
+  session: AuthSession | null;
+  requiresEmailVerification?: boolean;
 };
