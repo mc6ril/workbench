@@ -3,8 +3,11 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
   AuthResult,
   AuthSession,
+  ResetPasswordInput,
   SignInInput,
   SignUpInput,
+  UpdatePasswordInput,
+  VerifyEmailInput,
 } from "@/core/domain/auth.schema";
 
 import { mapSupabaseSessionToDomain } from "@/infrastructure/supabase/auth/AuthMapper.supabase";
@@ -155,6 +158,158 @@ export const createAuthRepository = (
 
         return mapSupabaseSessionToDomain(session, userEmail);
       }
+    } catch (error) {
+      handleAuthError(error);
+    }
+  },
+
+  async resetPasswordForEmail(input: ResetPasswordInput): Promise<void> {
+    try {
+      // Determine redirect URL based on context
+      const redirectTo =
+        typeof window !== "undefined"
+          ? `${window.location.origin}/auth/update-password`
+          : undefined;
+
+      const { error } = await client.auth.resetPasswordForEmail(input.email, {
+        redirectTo,
+      });
+
+      if (error) {
+        handleAuthError(error);
+      }
+    } catch (error) {
+      handleAuthError(error);
+    }
+  },
+
+  async updatePassword(input: UpdatePasswordInput): Promise<AuthResult> {
+    try {
+      // First, verify the OTP token with type 'recovery'
+      const { data: verifyData, error: verifyError } =
+        await client.auth.verifyOtp({
+          email: input.email,
+          token: input.token,
+          type: "recovery",
+        });
+
+      if (verifyError) {
+        handleAuthError(verifyError);
+      }
+
+      if (!verifyData.session || !verifyData.user) {
+        handleAuthError(
+          new Error("No session or user returned from token verification")
+        );
+      }
+
+      // Update the password
+      const { error: updateError } = await client.auth.updateUser({
+        password: input.password,
+      });
+
+      if (updateError) {
+        handleAuthError(updateError);
+      }
+
+      // Map session to domain
+      const userEmail = verifyData.user.email || input.email;
+      const session = mapSupabaseSessionToDomain(verifyData.session, userEmail);
+
+      return { session, requiresEmailVerification: false };
+    } catch (error) {
+      handleAuthError(error);
+    }
+  },
+
+  async verifyEmail(input: VerifyEmailInput): Promise<AuthResult> {
+    try {
+      const { data, error } = await client.auth.verifyOtp({
+        email: input.email,
+        token: input.token,
+        type: "email",
+      });
+
+      if (error) {
+        handleAuthError(error);
+      }
+
+      if (!data.session || !data.user) {
+        handleAuthError(
+          new Error("No session or user returned from email verification")
+        );
+      }
+
+      const userEmail = data.user.email || input.email;
+      const session = mapSupabaseSessionToDomain(data.session, userEmail);
+
+      return { session, requiresEmailVerification: false };
+    } catch (error) {
+      handleAuthError(error);
+    }
+  },
+
+  async resendVerificationEmail(email: string): Promise<void> {
+    try {
+      // Check if resend is available (Supabase may support this via resend method)
+      // For now, we'll use signUp with the same email to trigger resend
+      // Note: This is a workaround - Supabase doesn't have a direct resend API
+      // In production, this might need to use admin API or a different approach
+      const { error } = await client.auth.resend({
+        type: "signup",
+        email: email,
+      });
+
+      if (error) {
+        handleAuthError(error);
+      }
+    } catch (error) {
+      handleAuthError(error);
+    }
+  },
+
+  async updateUser(input: {
+    email?: string;
+    password?: string;
+    data?: Record<string, unknown>;
+  }): Promise<void> {
+    try {
+      const updateData: {
+        email?: string;
+        password?: string;
+        data?: Record<string, unknown>;
+      } = {};
+
+      if (input.email) {
+        updateData.email = input.email;
+      }
+
+      if (input.password) {
+        updateData.password = input.password;
+      }
+
+      if (input.data) {
+        updateData.data = input.data;
+      }
+
+      const { error } = await client.auth.updateUser(updateData);
+
+      if (error) {
+        handleAuthError(error);
+      }
+    } catch (error) {
+      handleAuthError(error);
+    }
+  },
+
+  async deleteUser(): Promise<void> {
+    try {
+      // Note: Supabase doesn't allow client-side user deletion for security reasons
+      // This requires server-side implementation with admin API
+      // For now, we'll throw an error indicating this needs server-side implementation
+      throw new Error(
+        "User deletion requires server-side implementation with admin API"
+      );
     } catch (error) {
       handleAuthError(error);
     }

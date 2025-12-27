@@ -14,7 +14,7 @@ export type TranslationKey =
 
 export type Locale = "fr";
 
-export interface TranslationMessages {
+export type TranslationMessages = {
   common: Record<string, string>;
   pages: {
     signup: Record<string, string | Record<string, string>>;
@@ -24,5 +24,4 @@ export interface TranslationMessages {
   };
   forms: Record<string, string | Record<string, unknown>>;
   errors: Record<string, string | Record<string, unknown>>;
-}
-
+};

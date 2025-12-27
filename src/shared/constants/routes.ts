@@ -9,8 +9,11 @@
  */
 export const PUBLIC_ROUTES: readonly string[] = Object.freeze([
   "/",
-  "/signin",
-  "/signup",
+  "/auth/signin",
+  "/auth/signup",
+  "/auth/verify-email",
+  "/auth/reset-password",
+  "/auth/update-password",
 ]);
 
 /**

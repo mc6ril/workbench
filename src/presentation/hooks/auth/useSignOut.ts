@@ -1,28 +1,33 @@
+import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { SignInInput } from "@/core/domain/auth.schema";
-
-import { signInUser } from "@/core/usecases/auth/signInUser";
+import { signOutUser } from "@/core/usecases/auth/signOutUser";
 
 import { authRepository } from "@/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 
 /**
- * Hook for signing in an existing user.
+ * Hook for signing out the current user.
+ * Clears the session and redirects to the landing page.
  *
  * @returns Mutation object with mutate, mutateAsync, data, isPending, error, etc.
  */
-export const useSignIn = () => {
+export const useSignOut = () => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation({
-    mutationFn: (input: SignInInput) => signInUser(authRepository, input),
+    mutationFn: () => signOutUser(authRepository),
     onSuccess: () => {
-      // Invalidate auth-related queries after successful signin
+      // Invalidate all auth-related queries
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.session() });
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.user() });
-      queryClient.invalidateQueries({ queryKey: queryKeys.projects.all() });
+      // Clear all queries
+      queryClient.clear();
+      // Redirect to landing page
+      router.push("/");
     },
   });
 };
+

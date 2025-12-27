@@ -4,8 +4,11 @@ import type {
   AuthenticationFailure,
   AuthSession,
   EmailAlreadyExistsError,
+  EmailVerificationError,
   InvalidCredentialsError,
   InvalidEmailError,
+  InvalidTokenError,
+  PasswordResetError,
   WeakPasswordError,
 } from "@/core/domain/auth.schema";
 
@@ -68,14 +71,42 @@ const createInvalidEmailError = (
 });
 
 /**
+ * Creates an email verification error.
+ */
+const createEmailVerificationError = (
+  message: string = "Email verification failed"
+): EmailVerificationError => ({
+  code: "EMAIL_VERIFICATION_ERROR",
+  message,
+});
+
+/**
+ * Creates a password reset error.
+ */
+const createPasswordResetError = (
+  message: string = "Password reset failed"
+): PasswordResetError => ({
+  code: "PASSWORD_RESET_ERROR",
+  message,
+});
+
+/**
+ * Creates an invalid token error.
+ */
+const createInvalidTokenError = (
+  message: string = "Invalid or expired token"
+): InvalidTokenError => ({
+  code: "INVALID_TOKEN",
+  message,
+});
+
+/**
  * Maps Supabase Auth errors to domain authentication errors.
  *
  * @param error - Supabase Auth error
  * @returns Domain authentication error
  */
-export const mapSupabaseAuthError = (
-  error: unknown
-): AuthenticationFailure => {
+export const mapSupabaseAuthError = (error: unknown): AuthenticationFailure => {
   // Handle Supabase AuthError
   if (
     error &&
@@ -91,6 +122,15 @@ export const mapSupabaseAuthError = (
 
     // Map common Supabase Auth error codes
     const errorMessage = authError.message.toLowerCase();
+
+    // Email not confirmed (unverified user trying to sign in)
+    if (
+      authError.code === "email_not_confirmed" ||
+      errorMessage.includes("email not confirmed") ||
+      errorMessage.includes("email address not confirmed")
+    ) {
+      return createEmailVerificationError(authError.message);
+    }
 
     // Invalid credentials
     if (
@@ -130,6 +170,49 @@ export const mapSupabaseAuthError = (
     ) {
       return createInvalidEmailError(authError.message);
     }
+
+    // Email verification errors
+    if (
+      errorMessage.includes("email verification") ||
+      errorMessage.includes("verification failed") ||
+      errorMessage.includes("token") ||
+      authError.code === "email_not_confirmed" ||
+      authError.code === "token_expired"
+    ) {
+      if (
+        errorMessage.includes("expired") ||
+        errorMessage.includes("invalid token") ||
+        authError.code === "token_expired"
+      ) {
+        return createInvalidTokenError(authError.message);
+      }
+      return createEmailVerificationError(authError.message);
+    }
+
+    // Password reset errors
+    if (
+      errorMessage.includes("password reset") ||
+      errorMessage.includes("reset failed") ||
+      authError.code === "email_not_found"
+    ) {
+      if (
+        errorMessage.includes("expired") ||
+        errorMessage.includes("invalid token")
+      ) {
+        return createInvalidTokenError(authError.message);
+      }
+      return createPasswordResetError(authError.message);
+    }
+
+    // Invalid token (general)
+    if (
+      errorMessage.includes("invalid token") ||
+      errorMessage.includes("token expired") ||
+      authError.code === "invalid_token" ||
+      authError.code === "token_expired"
+    ) {
+      return createInvalidTokenError(authError.message);
+    }
   }
 
   // Handle generic Error objects
@@ -168,4 +251,3 @@ export const mapSupabaseAuthError = (
     originalError: error,
   };
 };
-

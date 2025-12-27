@@ -25,9 +25,7 @@ export default function LandingPage() {
             <h2 className={styles["landing-section-title"]}>
               {t("purposeTitle")}
             </h2>
-            <p className={styles["landing-section-text"]}>
-              {t("purposeText")}
-            </p>
+            <p className={styles["landing-section-text"]}>{t("purposeText")}</p>
           </section>
 
           <section className={styles["landing-section"]}>
@@ -45,20 +43,21 @@ export default function LandingPage() {
                 <strong>{t("epicsLabel")}</strong>: {t("epicsDescription")}
               </li>
               <li>
-                <strong>{t("subtasksLabel")}</strong>: {t("subtasksDescription")}
+                <strong>{t("subtasksLabel")}</strong>:{" "}
+                {t("subtasksDescription")}
               </li>
             </ul>
           </section>
 
           <div className={styles["landing-actions"]}>
-            <Link href="/signin">
+            <Link href="/auth/signin">
               <Button
                 label={tCommon("signIn")}
                 onClick={() => {}}
                 aria-label={tCommon("signIn")}
               />
             </Link>
-            <Link href="/signup">
+            <Link href="/auth/signup">
               <Button
                 label={tCommon("signUp")}
                 variant="secondary"

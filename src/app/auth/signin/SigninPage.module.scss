@@ -1,0 +1,126 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/transitions" as *;
+
+.signin-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  background-color: $color-background;
+}
+
+.signin-container {
+  width: 100%;
+  max-width: 25rem; // 400px
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.signin-title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: $color-text;
+  margin: 0;
+  text-align: center;
+}
+
+.signin-subtitle {
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $color-text-secondary;
+  margin: 0;
+  text-align: center;
+}
+
+.signin-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  width: 100%;
+}
+
+.signin-forgot-password {
+  text-align: right;
+  margin-top: -$spacing-sm;
+}
+
+.signin-error {
+  padding: $spacing-md;
+  border-radius: $border-radius-md;
+  background-color: $color-error-background;
+  color: $color-error-text;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  text-align: center;
+
+  p {
+    margin: 0 0 $spacing-sm 0;
+  }
+}
+
+.signin-resend-verification {
+  margin-top: $spacing-sm;
+  display: flex;
+  justify-content: center;
+}
+
+.signin-resend-button {
+  background: none;
+  border: none;
+  color: $color-primary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: $spacing-xs;
+  transition: $transition-color;
+
+  &:hover:not(:disabled) {
+    color: $color-primary-hover;
+  }
+
+  &:focus {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+    border-radius: $border-radius-sm;
+  }
+
+  &:disabled {
+    color: $color-disabled;
+    cursor: not-allowed;
+    text-decoration: none;
+  }
+}
+
+.signin-footer {
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-text-secondary;
+  margin: 0;
+  text-align: center;
+}
+
+.signin-link {
+  color: $color-primary;
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+  transition: $transition-color;
+
+  &:hover {
+    color: $color-primary-hover;
+    text-decoration: underline;
+  }
+
+  &:focus {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+    border-radius: $border-radius-sm;
+  }
+}

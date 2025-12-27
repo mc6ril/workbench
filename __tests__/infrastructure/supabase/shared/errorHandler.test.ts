@@ -1,7 +1,4 @@
-import {
-  createConstraintError,
-  createDatabaseError,
-} from "@/core/domain/repositoryError";
+import { createConstraintError } from "@/core/domain/repositoryError";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 

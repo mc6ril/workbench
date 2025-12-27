@@ -22,6 +22,8 @@ export const useSignUp = () => {
       // Invalidate auth-related queries after successful signup
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.session() });
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.user() });
+      // Invalidate projects queries to ensure fresh data after signup
+      queryClient.invalidateQueries({ queryKey: queryKeys.projects.all() });
     },
   });
 };

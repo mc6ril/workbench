@@ -14,10 +14,68 @@
       "buttonAriaLabel": "S'inscrire",
       "footer": "Vous avez déjà un compte ?",
       "footerLink": "Se connecter",
+      "verification": {
+        "title": "Vérification de l'email requise",
+        "message": "Un email de vérification a été envoyé à votre adresse.",
+        "instructions": "Veuillez vérifier votre boîte de réception et cliquer sur le lien pour vérifier votre compte.",
+        "backToSignin": "Retour à la connexion"
+      },
       "errors": {
         "invalidEmail": "Adresse email invalide",
         "weakPassword": "Le mot de passe ne respecte pas les exigences",
         "generic": "Une erreur s'est produite lors de l'inscription"
+      }
+    },
+    "verifyEmail": {
+      "title": "Vérification de l'email",
+      "success": "Votre email a été vérifié avec succès.",
+      "redirecting": "Redirection en cours...",
+      "backToSignin": "Retour à la connexion",
+      "errors": {
+        "missingToken": "Lien de vérification invalide. Le token ou l'email est manquant.",
+        "invalidToken": "Le lien de vérification est invalide ou a expiré. Veuillez demander un nouveau lien.",
+        "verificationError": "Une erreur s'est produite lors de la vérification de l'email.",
+        "generic": "Une erreur s'est produite lors de la vérification"
+      }
+    },
+    "resetPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "subtitle": "Entrez votre adresse email pour recevoir un lien de réinitialisation",
+      "button": "Envoyer le lien",
+      "buttonAriaLabel": "Envoyer le lien de réinitialisation",
+      "backToSignin": "Retour à la connexion",
+      "success": {
+        "message": "Un email de réinitialisation a été envoyé à votre adresse.",
+        "instructions": "Veuillez vérifier votre boîte de réception et cliquer sur le lien pour réinitialiser votre mot de passe."
+      },
+      "errors": {
+        "invalidEmail": "Adresse email invalide",
+        "generic": "Une erreur s'est produite lors de l'envoi de l'email"
+      }
+    },
+    "updatePassword": {
+      "title": "Mettre à jour le mot de passe",
+      "subtitle": "Entrez votre nouveau mot de passe",
+      "button": "Mettre à jour le mot de passe",
+      "buttonAriaLabel": "Mettre à jour le mot de passe",
+      "backToSignin": "Retour à la connexion",
+      "success": "Votre mot de passe a été mis à jour avec succès.",
+      "redirecting": "Redirection en cours...",
+      "fields": {
+        "password": "Nouveau mot de passe",
+        "confirmPassword": "Confirmer le mot de passe"
+      },
+      "validation": {
+        "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères",
+        "passwordMaxLength": "Le mot de passe doit contenir moins de 100 caractères",
+        "confirmPasswordRequired": "Veuillez confirmer votre mot de passe",
+        "passwordsDoNotMatch": "Les mots de passe ne correspondent pas"
+      },
+      "errors": {
+        "missingToken": "Lien de réinitialisation invalide. Le token ou l'email est manquant.",
+        "invalidToken": "Le lien de réinitialisation est invalide ou a expiré. Veuillez demander un nouveau lien.",
+        "passwordResetError": "Une erreur s'est produite lors de la mise à jour du mot de passe.",
+        "generic": "Une erreur s'est produite lors de la mise à jour"
       }
     },
     "signin": {
@@ -25,11 +83,18 @@
       "subtitle": "Connectez-vous pour accéder à votre Workbench",
       "button": "Se connecter",
       "buttonAriaLabel": "Se connecter",
+      "forgotPassword": "Mot de passe oublié ?",
       "footer": "Vous n'avez pas de compte ?",
       "footerLink": "S'inscrire",
+      "resendVerification": {
+        "button": "Renvoyer l'email de vérification",
+        "buttonAriaLabel": "Renvoyer l'email de vérification",
+        "success": "Email de vérification envoyé. Veuillez vérifier votre boîte de réception."
+      },
       "errors": {
         "invalidCredentials": "Email ou mot de passe invalide",
         "invalidEmail": "Adresse email invalide",
+        "emailNotVerified": "Votre email n'a pas été vérifié. Veuillez vérifier votre boîte de réception et cliquer sur le lien de vérification.",
         "generic": "Une erreur s'est produite lors de la connexion"
       }
     },
@@ -61,6 +126,21 @@
       "projectNamePlaceholder": "Entrez le nom de votre projet",
       "createProjectButton": "Créer le projet",
       "createProjectButtonAriaLabel": "Créer le projet",
+      "logoutButton": "Se déconnecter",
+      "logoutButtonAriaLabel": "Se déconnecter",
+      "updateUserButton": "Mettre à jour le compte",
+      "updateUserButtonAriaLabel": "Mettre à jour les informations du compte",
+      "deleteUserButton": "Supprimer le compte",
+      "deleteUserButtonAriaLabel": "Supprimer définitivement le compte",
+      "deleteUserConfirmation": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
+      "newEmailLabel": "Nouvel email",
+      "newEmailPlaceholder": "Entrez votre nouvel email",
+      "newPasswordLabel": "Nouveau mot de passe",
+      "newPasswordPlaceholder": "Entrez votre nouveau mot de passe (optionnel)",
+      "saveButton": "Enregistrer",
+      "saveButtonAriaLabel": "Enregistrer les modifications",
+      "cancelButton": "Annuler",
+      "cancelButtonAriaLabel": "Annuler les modifications",
       "errors": {
         "projectNameRequired": "Le nom du projet est requis",
         "projectNameTooShort": "Le nom du projet doit contenir au moins 1 caractère",

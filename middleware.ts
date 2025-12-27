@@ -62,7 +62,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check if this is an auth page (signin/signup)
-  const isAuthPage = pathname === "/signin" || pathname === "/signup";
+  const isAuthPage = pathname === "/auth/signin" || pathname === "/auth/signup";
 
   try {
     // Create Supabase client for Edge Runtime with cookie handling
@@ -82,9 +82,22 @@ export async function middleware(request: NextRequest) {
     // If this is a protected route and user is not authenticated, redirect to signin
     if (isProtectedRoute(pathname)) {
       if (error || !session) {
-        const signInUrl = new URL("/signin", request.url);
+        const signInUrl = new URL("/auth/signin", request.url);
         // Preserve the original URL as a redirect parameter
         signInUrl.searchParams.set("redirect", pathname);
+        return NextResponse.redirect(signInUrl);
+      }
+
+      // Check if user email is verified (email_confirmed_at must be set)
+      // Use getUser() to get user details including email_confirmed_at
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user && !user.email_confirmed_at) {
+        // User is authenticated but email not verified, redirect to signin with message
+        const signInUrl = new URL("/auth/signin", request.url);
+        signInUrl.searchParams.set("unverified", "true");
         return NextResponse.redirect(signInUrl);
       }
     }

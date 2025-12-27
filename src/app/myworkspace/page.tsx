@@ -15,8 +15,11 @@ import Input from "@/presentation/components/ui/Input";
 import {
   useAddUserToProject,
   useCreateProject,
+  useDeleteUser,
   useProjects,
   useSession,
+  useSignOut,
+  useUpdateUser,
 } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
@@ -31,13 +34,20 @@ export default function MyWorkspace() {
   const {
     data: projects,
     isLoading: isLoadingProjects,
+    isFetching: isFetchingProjects,
     error: projectsError,
     refetch: refetchProjects,
   } = useProjects();
   const addUserToProjectMutation = useAddUserToProject();
   const createProjectMutation = useCreateProject();
+  const signOutMutation = useSignOut();
+  const deleteUserMutation = useDeleteUser();
+  const updateUserMutation = useUpdateUser();
   const [projectId, setProjectId] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [showUpdateUserForm, setShowUpdateUserForm] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const t = useTranslation("pages.home");
 
   const {
@@ -110,13 +120,22 @@ export default function MyWorkspace() {
     createProjectMutation.mutate(data);
   };
 
-  // Determine if user has no projects (for conditional rendering)
-  // Only consider it as "no projects" if projects is defined and is an empty array
+  // Determine if user has projects (for conditional rendering)
+  // Only consider it as "has projects" if projects is defined and is a non-empty array
   // If projects is undefined, we're still loading or there's an error
-  const hasNoProjects = Array.isArray(projects) && projects.length === 0;
+  const hasProjects = Array.isArray(projects) && projects.length > 0;
 
-  // Loading state
-  if (isLoadingSession) {
+  // Loading state - wait for both session and projects to load
+  // Also wait if projects is undefined (initial state before first fetch completes)
+  // Wait for both isLoadingProjects AND isFetchingProjects to be false to avoid rendering during refetches
+  // Only render content when we have a definitive answer: projects is an array (empty or not) or there's an error
+  const isInitialLoad =
+    isLoadingSession ||
+    isLoadingProjects ||
+    isFetchingProjects ||
+    projects === undefined;
+
+  if (isInitialLoad) {
     return (
       <main className={styles["home-page"]}>
         <div className={styles["home-container"]}>
@@ -136,9 +155,105 @@ export default function MyWorkspace() {
               {t("signedInAs")} <strong>{session.email}</strong>
             </p>
           )}
+          <div className={styles["home-user-actions"]}>
+            <Button
+              label={t("logoutButton")}
+              onClick={() => signOutMutation.mutate()}
+              disabled={signOutMutation.isPending}
+              variant="secondary"
+              aria-label={t("logoutButtonAriaLabel")}
+            />
+            <Button
+              label={t("updateUserButton")}
+              onClick={() => {
+                setShowUpdateUserForm(true);
+                setNewEmail(session?.email || "");
+                setNewPassword("");
+              }}
+              disabled={updateUserMutation.isPending}
+              variant="secondary"
+              aria-label={t("updateUserButtonAriaLabel")}
+            />
+            <Button
+              label={t("deleteUserButton")}
+              onClick={() => {
+                if (
+                  window.confirm(t("deleteUserConfirmation") || "Are you sure?")
+                ) {
+                  deleteUserMutation.mutate();
+                }
+              }}
+              disabled={deleteUserMutation.isPending}
+              variant="secondary"
+              aria-label={t("deleteUserButtonAriaLabel")}
+            />
+          </div>
+          {showUpdateUserForm && (
+            <div className={styles["home-update-user-form"]}>
+              <Input
+                label={t("newEmailLabel")}
+                type="email"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                placeholder={t("newEmailPlaceholder")}
+              />
+              <Input
+                label={t("newPasswordLabel")}
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder={t("newPasswordPlaceholder")}
+                autoComplete="new-password"
+              />
+              <div className={styles["home-update-user-actions"]}>
+                <Button
+                  label={t("saveButton")}
+                  onClick={() => {
+                    const updateData: {
+                      email?: string;
+                      password?: string;
+                    } = {};
+
+                    if (newEmail && newEmail !== session?.email) {
+                      updateData.email = newEmail;
+                    }
+
+                    if (newPassword) {
+                      updateData.password = newPassword;
+                    }
+
+                    if (Object.keys(updateData).length > 0) {
+                      updateUserMutation.mutate(updateData, {
+                        onSuccess: () => {
+                          setShowUpdateUserForm(false);
+                          setNewEmail("");
+                          setNewPassword("");
+                        },
+                      });
+                    }
+                  }}
+                  disabled={
+                    updateUserMutation.isPending ||
+                    ((!newEmail || newEmail === session?.email) && !newPassword)
+                  }
+                  aria-label={t("saveButtonAriaLabel")}
+                />
+                <Button
+                  label={t("cancelButton")}
+                  onClick={() => {
+                    setShowUpdateUserForm(false);
+                    setNewEmail("");
+                    setNewPassword("");
+                  }}
+                  variant="secondary"
+                  aria-label={t("cancelButtonAriaLabel")}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
-        {hasNoProjects && (
+        {!hasProjects && (
           <section className={styles["home-section"]}>
             <h2 className={styles["home-section-title"]}>
               {t("createProjectTitle")}
@@ -179,7 +294,7 @@ export default function MyWorkspace() {
           </section>
         )}
 
-        {hasNoProjects && (
+        {!hasProjects && (
           <section className={styles["home-section"]}>
             <h2 className={styles["home-section-title"]}>
               {t("accessProjectTitle")}

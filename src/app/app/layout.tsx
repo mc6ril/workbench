@@ -3,11 +3,11 @@ import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
 import { hasProjectAccess } from "@/core/usecases/project/hasProjectAccess";
 
-import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 import {
   createAuthRepository,
   createProjectRepository,
 } from "@/infrastructure/supabase/repositories";
+import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
 /**
  * Server-side layout for /app/* routes.
@@ -30,7 +30,7 @@ export default async function AppLayout({
 
     // If no session, redirect to signin (middleware should have caught this, but fail-safe)
     if (!session) {
-      redirect("/signin");
+      redirect("/auth/signin");
     }
 
     // Check project access using optimized usecase
@@ -62,4 +62,3 @@ export default async function AppLayout({
   // User is authenticated and has projects, render children
   return <>{children}</>;
 }
-

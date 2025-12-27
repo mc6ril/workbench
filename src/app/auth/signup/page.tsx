@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
@@ -9,11 +9,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { SignUpInput } from "@/core/domain/auth.schema";
 import { SignUpSchema } from "@/core/domain/auth.schema";
-import { useTranslation } from "@/shared/i18n";
 
 import Button from "@/presentation/components/ui/Button";
 import Input from "@/presentation/components/ui/Input";
 import { useSignUp } from "@/presentation/hooks";
+
+import { useTranslation } from "@/shared/i18n";
 
 import styles from "./SignupPage.module.scss";
 
@@ -35,6 +36,16 @@ const SignupPage = () => {
     mode: "onBlur",
   });
 
+  // Memoize error messages to avoid recreating them on every render
+  const errorMessages = useMemo(
+    () => ({
+      invalidEmail: t("errors.invalidEmail"),
+      weakPassword: t("errors.weakPassword"),
+      generic: t("errors.generic"),
+    }),
+    [t]
+  );
+
   useEffect(() => {
     if (signUpMutation.error) {
       const error = signUpMutation.error as { message?: string; code?: string };
@@ -46,37 +57,66 @@ const SignupPage = () => {
       ) {
         setError("email", {
           type: "server",
-          message: error.message || t("errors.invalidEmail"),
+          message: error.message || errorMessages.invalidEmail,
         });
       } else if (error.code === "WEAK_PASSWORD") {
         setError("password", {
           type: "server",
-          message: error.message || t("errors.weakPassword"),
+          message: error.message || errorMessages.weakPassword,
         });
       } else {
         // General error - set on root
         setError("root", {
           type: "server",
-          message: error.message || t("errors.generic"),
+          message: error.message || errorMessages.generic,
         });
       }
     }
-  }, [signUpMutation.error, setError]);
+  }, [signUpMutation.error, setError, errorMessages]);
 
   useEffect(() => {
-    if (
-      signUpMutation.isSuccess &&
-      signUpMutation.data?.session &&
-      !signUpMutation.data.requiresEmailVerification
-    ) {
-      // Redirect to signin page after successful signup (only if session exists and email verification is not required)
-      router.push("/signin");
+    if (signUpMutation.isSuccess && signUpMutation.data) {
+      // If email verification is required, show message (don't redirect)
+      if (signUpMutation.data.requiresEmailVerification) {
+        // Stay on page to show verification message
+        return;
+      }
+
+      // If session exists and email verification is not required, redirect to signin
+      if (signUpMutation.data.session) {
+        router.push("/auth/signin");
+      }
     }
   }, [signUpMutation.isSuccess, signUpMutation.data, router]);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     signUpMutation.mutate(data);
   };
+
+  // Show email verification message if verification is required
+  if (
+    signUpMutation.isSuccess &&
+    signUpMutation.data?.requiresEmailVerification
+  ) {
+    return (
+      <div className={styles["signup-page"]}>
+        <div className={styles["signup-container"]}>
+          <h1 className={styles["signup-title"]}>{t("verification.title")}</h1>
+          <p className={styles["signup-subtitle"]}>
+            {t("verification.message")}
+          </p>
+          <p className={styles["signup-subtitle"]}>
+            {t("verification.instructions")}
+          </p>
+          <div className={styles["signup-footer"]}>
+            <Link href="/auth/signin" className={styles["signup-link"]}>
+              {t("verification.backToSignin")}
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles["signup-page"]}>
@@ -125,7 +165,7 @@ const SignupPage = () => {
 
         <p className={styles["signup-footer"]}>
           {t("footer")}{" "}
-          <Link href="/signin" className={styles["signup-link"]}>
+          <Link href="/auth/signin" className={styles["signup-link"]}>
             {t("footerLink")}
           </Link>
         </p>

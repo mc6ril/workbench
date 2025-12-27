@@ -1,25 +1,25 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { SignInInput } from "@/core/domain/auth.schema";
+import type { VerifyEmailInput } from "@/core/domain/auth.schema";
 
-import { signInUser } from "@/core/usecases/auth/signInUser";
+import { verifyEmail } from "@/core/usecases/auth/verifyEmail";
 
 import { authRepository } from "@/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 
 /**
- * Hook for signing in an existing user.
+ * Hook for verifying email address using a verification token.
  *
  * @returns Mutation object with mutate, mutateAsync, data, isPending, error, etc.
  */
-export const useSignIn = () => {
+export const useVerifyEmail = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: SignInInput) => signInUser(authRepository, input),
+    mutationFn: (input: VerifyEmailInput) => verifyEmail(authRepository, input),
     onSuccess: () => {
-      // Invalidate auth-related queries after successful signin
+      // Invalidate auth-related queries after successful email verification
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.session() });
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.user() });
       queryClient.invalidateQueries({ queryKey: queryKeys.projects.all() });

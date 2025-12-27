@@ -76,16 +76,6 @@ export type AuthenticationError = AuthError & {
 };
 
 /**
- * Union type of all possible authentication errors.
- */
-export type AuthenticationFailure =
-  | InvalidCredentialsError
-  | EmailAlreadyExistsError
-  | WeakPasswordError
-  | InvalidEmailError
-  | AuthenticationError;
-
-/**
  * Authentication session data.
  * Represents an authenticated user session.
  */
@@ -103,3 +93,82 @@ export type AuthResult = {
   session: AuthSession | null;
   requiresEmailVerification?: boolean;
 };
+
+/**
+ * Zod schema for password reset request input.
+ * Validates email format.
+ */
+export const ResetPasswordSchema = z.object({
+  email: z.string().min(1, "Email is required").email("Invalid email format"),
+});
+
+/**
+ * Password reset request input type.
+ */
+export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;
+
+/**
+ * Zod schema for password update input.
+ * Validates password requirements and token presence.
+ */
+export const UpdatePasswordSchema = z.object({
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .max(100, "Password must be less than 100 characters"),
+  token: z.string().min(1, "Token is required"),
+  email: z.string().min(1, "Email is required").email("Invalid email format"),
+});
+
+/**
+ * Password update input type.
+ */
+export type UpdatePasswordInput = z.infer<typeof UpdatePasswordSchema>;
+
+/**
+ * Zod schema for email verification input.
+ * Validates email format and token presence.
+ */
+export const VerifyEmailSchema = z.object({
+  email: z.string().min(1, "Email is required").email("Invalid email format"),
+  token: z.string().min(1, "Token is required"),
+});
+
+/**
+ * Email verification input type.
+ */
+export type VerifyEmailInput = z.infer<typeof VerifyEmailSchema>;
+
+/**
+ * Error when email verification fails (expired or invalid token).
+ */
+export type EmailVerificationError = AuthError & {
+  code: "EMAIL_VERIFICATION_ERROR";
+};
+
+/**
+ * Error when password reset fails (expired or invalid token, email not found).
+ */
+export type PasswordResetError = AuthError & {
+  code: "PASSWORD_RESET_ERROR";
+};
+
+/**
+ * Error when token is invalid or expired.
+ */
+export type InvalidTokenError = AuthError & {
+  code: "INVALID_TOKEN";
+};
+
+/**
+ * Union type of all possible authentication errors.
+ */
+export type AuthenticationFailure =
+  | InvalidCredentialsError
+  | EmailAlreadyExistsError
+  | WeakPasswordError
+  | InvalidEmailError
+  | AuthenticationError
+  | EmailVerificationError
+  | PasswordResetError
+  | InvalidTokenError;

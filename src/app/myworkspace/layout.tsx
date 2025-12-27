@@ -3,11 +3,11 @@ import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
 import { hasProjectAccess } from "@/core/usecases/project/hasProjectAccess";
 
-import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 import {
   createAuthRepository,
   createProjectRepository,
 } from "@/infrastructure/supabase/repositories";
+import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
 /**
  * Server-side layout for /myworkspace route.

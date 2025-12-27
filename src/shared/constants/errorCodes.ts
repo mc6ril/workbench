@@ -13,6 +13,9 @@ export const AUTH_ERROR_CODES = [
   "WEAK_PASSWORD",
   "INVALID_EMAIL",
   "AUTHENTICATION_ERROR",
+  "EMAIL_VERIFICATION_ERROR",
+  "PASSWORD_RESET_ERROR",
+  "INVALID_TOKEN",
 ] as const;
 
 export type AuthErrorCode = (typeof AUTH_ERROR_CODES)[number];

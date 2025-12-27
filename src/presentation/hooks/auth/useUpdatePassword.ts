@@ -1,25 +1,26 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { SignInInput } from "@/core/domain/auth.schema";
+import type { UpdatePasswordInput } from "@/core/domain/auth.schema";
 
-import { signInUser } from "@/core/usecases/auth/signInUser";
+import { updatePassword } from "@/core/usecases/auth/updatePassword";
 
 import { authRepository } from "@/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 
 /**
- * Hook for signing in an existing user.
+ * Hook for updating password using a reset token.
  *
  * @returns Mutation object with mutate, mutateAsync, data, isPending, error, etc.
  */
-export const useSignIn = () => {
+export const useUpdatePassword = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: SignInInput) => signInUser(authRepository, input),
+    mutationFn: (input: UpdatePasswordInput) =>
+      updatePassword(authRepository, input),
     onSuccess: () => {
-      // Invalidate auth-related queries after successful signin
+      // Invalidate auth-related queries after successful password update
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.session() });
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.user() });
       queryClient.invalidateQueries({ queryKey: queryKeys.projects.all() });
