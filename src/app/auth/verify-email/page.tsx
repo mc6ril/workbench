@@ -35,34 +35,48 @@ const VerifyEmailContent = () => {
   const t = useTranslation("pages.verifyEmail");
   const tCommon = useTranslation("common");
 
-  // Extract token and email from URL parameters using useMemo to avoid unnecessary re-renders
+  // Extract token/code and email from URL parameters using useMemo to avoid unnecessary re-renders
+  // Supabase can redirect with either:
+  // 1. token + type + email (standard format)
+  // 2. code (exchange code format, used when redirecting to root)
   const { token, email, isValid } = useMemo(() => {
     const tokenParam = searchParams.get("token");
+    const codeParam = searchParams.get("code");
     const typeParam = searchParams.get("type");
     const emailParam = searchParams.get("email");
 
-    // Only proceed if type is 'email' (email verification)
-    const isValidType = typeParam === "email" && tokenParam && emailParam;
+    // Use code as token if token is not available (Supabase redirects with code to root)
+    const actualToken = tokenParam || codeParam;
+
+    // For token format, we need type='email' and email parameter
+    const isValidTokenFormat =
+      typeParam === "email" && actualToken && emailParam;
+
+    // For code format, validate that type is either missing or "email"
+    // Reject codes with type="recovery" or other types to prevent misuse
+    const isValidCodeFormat =
+      codeParam !== null &&
+      (typeParam === null || typeParam === "email"); // No type or type must be "email"
 
     return {
-      token: isValidType ? tokenParam : null,
-      email: isValidType ? emailParam : null,
-      isValid: isValidType,
+      token: actualToken,
+      email: emailParam || null, // Email may be null for code format
+      isValid: isValidTokenFormat || isValidCodeFormat,
     };
   }, [searchParams]);
 
-  // Trigger verification when token and email are available
+  // Trigger verification when token is available
+  // Email is optional (code format doesn't require email in URL)
   useEffect(() => {
     if (
       isValid &&
       token &&
-      email &&
       !verifyEmailMutation.isPending &&
       !verifyEmailMutation.isSuccess &&
       !verifyEmailMutation.isError
     ) {
       verifyEmailMutation.mutate({
-        email,
+        email: email || "", // Empty string if email not provided (code format)
         token,
       });
     }
@@ -108,8 +122,9 @@ const VerifyEmailContent = () => {
     return error.message || errorMessages.generic;
   }, [verifyEmailMutation.error, errorMessages]);
 
-  // Show error if token/email are missing
-  if (!token || !email) {
+  // Show error if token is missing
+  // Email is optional (code format doesn't require email)
+  if (!token) {
     return (
       <div className={styles["verify-email-page"]}>
         <div className={styles["verify-email-container"]}>

@@ -1,18 +1,15 @@
 import { redirect } from "next/navigation";
 
 import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
-import { hasProjectAccess } from "@/core/usecases/project/hasProjectAccess";
 
-import {
-  createAuthRepository,
-  createProjectRepository,
-} from "@/infrastructure/supabase/repositories";
+import { createAuthRepository } from "@/infrastructure/supabase/repositories";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
 /**
  * Server-side layout for /myworkspace route.
- * Checks authentication (middleware already verified this, but double-check)
- * and project access, redirecting to home page if user has no projects.
+ * Checks authentication (middleware already verified this, but double-check).
+ * Users can access /myworkspace even without projects - the page will show
+ * create/access project forms.
  */
 export default async function MyWorkspaceLayout({
   children,
@@ -23,22 +20,13 @@ export default async function MyWorkspaceLayout({
     // Create server client with cookie handling
     const supabaseClient = await createSupabaseServerClient();
     const authRepository = createAuthRepository(supabaseClient);
-    const projectRepository = createProjectRepository(supabaseClient);
 
     // Load session using server client (reads from cookies)
     const session = await getCurrentSession(authRepository);
 
-    // If no session, redirect to landing page
+    // If no session, redirect to signin
     if (!session) {
-      redirect("/");
-    }
-
-    // Check project access using optimized usecase
-    const userHasProjects = await hasProjectAccess(projectRepository);
-
-    // If user has no projects, redirect to home page
-    if (!userHasProjects) {
-      redirect("/");
+      redirect("/auth/signin");
     }
   } catch (error) {
     // Next.js redirect() throws a special error that must be re-thrown
@@ -59,6 +47,8 @@ export default async function MyWorkspaceLayout({
     console.error("MyWorkspace layout error:", error);
   }
 
-  // User is authenticated and has projects, render children
+  // User is authenticated, render children
+  // Note: User can access /myworkspace even without projects
+  // The page will show create/access project forms
   return <>{children}</>;
 }

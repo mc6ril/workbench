@@ -224,6 +224,51 @@ export const createAuthRepository = (
 
   async verifyEmail(input: VerifyEmailInput): Promise<AuthResult> {
     try {
+      // If email is not provided, Supabase redirects with only a code
+      // The Supabase client automatically exchanges the code for a session
+      // when getSession() is called after the code is in the URL
+      if (!input.email || input.email.trim() === "") {
+        // Wait a bit for Supabase to process the code from URL
+        // Then get the session (Supabase client handles code exchange automatically)
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const { data: sessionData, error: sessionError } =
+          await client.auth.getSession();
+
+        if (sessionError) {
+          handleAuthError(sessionError);
+        }
+
+        // If we have a session, get the user to verify email confirmation
+        if (sessionData.session) {
+          const {
+            data: { user },
+            error: userError,
+          } = await client.auth.getUser();
+
+          if (userError) {
+            handleAuthError(userError);
+          }
+
+          if (user) {
+            const userEmail = user.email || "";
+            const session = mapSupabaseSessionToDomain(
+              sessionData.session,
+              userEmail
+            );
+            return { session, requiresEmailVerification: false };
+          }
+        }
+
+        // If no session, the code might be invalid or expired
+        handleAuthError(
+          new Error(
+            "Unable to verify email. The verification code may be invalid or expired. Please request a new verification email."
+          )
+        );
+      }
+
+      // Standard verification with email and token
       const { data, error } = await client.auth.verifyOtp({
         email: input.email,
         token: input.token,
@@ -240,7 +285,7 @@ export const createAuthRepository = (
         );
       }
 
-      const userEmail = data.user.email || input.email;
+      const userEmail = data.user.email || input.email || "";
       const session = mapSupabaseSessionToDomain(data.session, userEmail);
 
       return { session, requiresEmailVerification: false };
@@ -304,12 +349,24 @@ export const createAuthRepository = (
 
   async deleteUser(): Promise<void> {
     try {
-      // Note: Supabase doesn't allow client-side user deletion for security reasons
-      // This requires server-side implementation with admin API
-      // For now, we'll throw an error indicating this needs server-side implementation
-      throw new Error(
-        "User deletion requires server-side implementation with admin API"
-      );
+      // User deletion requires admin API (service_role key)
+      // Call Next.js API route which handles server-side deletion
+      const response = await fetch("/api/auth/delete-user", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.error || `Failed to delete user: ${response.statusText}`
+        );
+      }
+
+      // User deletion successful
+      return;
     } catch (error) {
       handleAuthError(error);
     }

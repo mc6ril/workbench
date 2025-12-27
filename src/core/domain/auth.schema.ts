@@ -128,9 +128,13 @@ export type UpdatePasswordInput = z.infer<typeof UpdatePasswordSchema>;
 /**
  * Zod schema for email verification input.
  * Validates email format and token presence.
+ * Email is optional when using code format (Supabase redirects with code only).
+ * Accepts valid email string, empty string, or undefined.
  */
 export const VerifyEmailSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Invalid email format"),
+  email: z
+    .union([z.string().email("Invalid email format"), z.literal("")])
+    .optional(), // Allow empty string or undefined for code-only format
   token: z.string().min(1, "Token is required"),
 });
 

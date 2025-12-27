@@ -1,6 +1,8 @@
 "use client";
 
+import { Suspense, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import Button from "@/presentation/components/ui/Button";
 
@@ -8,9 +10,21 @@ import { useTranslation } from "@/shared/i18n";
 
 import styles from "./LandingPage.module.scss";
 
-export default function LandingPage() {
+const LandingPageContent = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslation("pages.landing");
   const tCommon = useTranslation("common");
+
+  // Handle Supabase email verification code redirect
+  // Supabase redirects to /?code=... instead of /auth/verify-email?token=...
+  useEffect(() => {
+    const code = searchParams.get("code");
+    if (code) {
+      // Redirect to verify-email page with code parameter
+      router.replace(`/auth/verify-email?code=${encodeURIComponent(code)}`);
+    }
+  }, [searchParams, router]);
 
   return (
     <main className={styles["landing-page"]}>
@@ -69,5 +83,15 @@ export default function LandingPage() {
         </div>
       </div>
     </main>
+  );
+};
+
+export default function LandingPage() {
+  const tCommon = useTranslation("common");
+
+  return (
+    <Suspense fallback={<div>{tCommon("loading")}</div>}>
+      <LandingPageContent />
+    </Suspense>
   );
 }

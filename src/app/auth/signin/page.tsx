@@ -110,6 +110,8 @@ const SigninPage = () => {
   useEffect(() => {
     if (signInMutation.isSuccess && signInMutation.data) {
       // Redirect to workspace page after successful signin
+      // Use router.push() to allow React Query onSuccess callback to execute
+      // This ensures queries are properly invalidated and data is refreshed
       router.push("/myworkspace");
     }
   }, [signInMutation.isSuccess, signInMutation.data, router]);
