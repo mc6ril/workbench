@@ -5,7 +5,10 @@ import { z } from "zod";
  * Validates email format and password requirements.
  */
 export const SignUpSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Invalid email format"),
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email({ message: "Invalid email format" }),
   password: z
     .string()
     .min(6, "Password must be at least 6 characters")
@@ -22,7 +25,10 @@ export type SignUpInput = z.infer<typeof SignUpSchema>;
  * Validates email format and password presence.
  */
 export const SignInSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Invalid email format"),
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email({ message: "Invalid email format" }),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -99,7 +105,10 @@ export type AuthResult = {
  * Validates email format.
  */
 export const ResetPasswordSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Invalid email format"),
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email({ message: "Invalid email format" }),
 });
 
 /**
@@ -110,6 +119,8 @@ export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;
 /**
  * Zod schema for password update input.
  * Validates password requirements and token presence.
+ * Email is optional when using code format (Supabase redirects with code only).
+ * Accepts valid email string, empty string, or undefined.
  */
 export const UpdatePasswordSchema = z.object({
   password: z
@@ -117,7 +128,12 @@ export const UpdatePasswordSchema = z.object({
     .min(6, "Password must be at least 6 characters")
     .max(100, "Password must be less than 100 characters"),
   token: z.string().min(1, "Token is required"),
-  email: z.string().min(1, "Email is required").email("Invalid email format"),
+  email: z
+    .union([
+      z.string().email({ message: "Invalid email format" }),
+      z.literal(""),
+    ])
+    .optional(), // Allow empty string or undefined for code-only format
 });
 
 /**
@@ -133,7 +149,10 @@ export type UpdatePasswordInput = z.infer<typeof UpdatePasswordSchema>;
  */
 export const VerifyEmailSchema = z.object({
   email: z
-    .union([z.string().email("Invalid email format"), z.literal("")])
+    .union([
+      z.string().email({ message: "Invalid email format" }),
+      z.literal(""),
+    ])
     .optional(), // Allow empty string or undefined for code-only format
   token: z.string().min(1, "Token is required"),
 });

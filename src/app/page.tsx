@@ -16,13 +16,27 @@ const LandingPageContent = () => {
   const t = useTranslation("pages.landing");
   const tCommon = useTranslation("common");
 
-  // Handle Supabase email verification code redirect
-  // Supabase redirects to /?code=... instead of /auth/verify-email?token=...
+  // Handle Supabase code redirects
+  // Supabase redirects to /?code=... instead of dedicated pages
+  // Check type parameter to route to correct page
   useEffect(() => {
     const code = searchParams.get("code");
+    const type = searchParams.get("type");
+
     if (code) {
-      // Redirect to verify-email page with code parameter
-      router.replace(`/auth/verify-email?code=${encodeURIComponent(code)}`);
+      // Route based on type parameter
+      if (type === "recovery") {
+        // Password reset flow
+        const email = searchParams.get("email");
+        const params = new URLSearchParams({ code, type });
+        if (email) {
+          params.set("email", email);
+        }
+        router.replace(`/auth/update-password?${params.toString()}`);
+      } else {
+        // Email verification flow (default)
+        router.replace(`/auth/verify-email?code=${encodeURIComponent(code)}`);
+      }
     }
   }, [searchParams, router]);
 

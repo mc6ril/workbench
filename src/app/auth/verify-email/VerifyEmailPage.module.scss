@@ -16,7 +16,7 @@
 
 .verify-email-container {
   width: 100%;
-  max-width: 25rem;
+  max-width: $container-max-width;
   display: flex;
   flex-direction: column;
   gap: $spacing-lg;
@@ -78,8 +78,8 @@
   }
 
   &:focus {
-    outline: 2px solid $color-focus;
-    outline-offset: 2px;
+    outline: $border-width-thick solid $color-focus;
+    outline-offset: $border-width-thick;
     border-radius: $border-radius-sm;
   }
 }

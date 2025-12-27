@@ -185,7 +185,60 @@ export const createAuthRepository = (
 
   async updatePassword(input: UpdatePasswordInput): Promise<AuthResult> {
     try {
-      // First, verify the OTP token with type 'recovery'
+      // If email is not provided, Supabase redirects with only a code
+      // The Supabase client automatically exchanges the code for a session
+      // when getSession() is called after the code is in the URL
+      if (!input.email || input.email.trim() === "") {
+        // Wait a bit for Supabase to process the code from URL
+        // Then get the session (Supabase client handles code exchange automatically)
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const { data: sessionData, error: sessionError } =
+          await client.auth.getSession();
+
+        if (sessionError) {
+          handleAuthError(sessionError);
+        }
+
+        // If we have a session, update the password
+        if (sessionData.session) {
+          const { error: updateError } = await client.auth.updateUser({
+            password: input.password,
+          });
+
+          if (updateError) {
+            handleAuthError(updateError);
+          }
+
+          // Get the user to get the email
+          const {
+            data: { user },
+            error: userError,
+          } = await client.auth.getUser();
+
+          if (userError) {
+            handleAuthError(userError);
+          }
+
+          if (user) {
+            const userEmail = user.email || "";
+            const session = mapSupabaseSessionToDomain(
+              sessionData.session,
+              userEmail
+            );
+            return { session, requiresEmailVerification: false };
+          }
+        }
+
+        // If no session, the code might be invalid or expired
+        handleAuthError(
+          new Error(
+            "Unable to reset password. The reset code may be invalid or expired. Please request a new password reset email."
+          )
+        );
+      }
+
+      // Standard password reset with email and token
       const { data: verifyData, error: verifyError } =
         await client.auth.verifyOtp({
           email: input.email,

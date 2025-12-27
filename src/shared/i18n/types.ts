@@ -7,6 +7,9 @@ export type TranslationKey =
   | `common.${string}`
   | `pages.signup.${string}`
   | `pages.signin.${string}`
+  | `pages.verifyEmail.${string}`
+  | `pages.resetPassword.${string}`
+  | `pages.updatePassword.${string}`
   | `pages.home.${string}`
   | `pages.landing.${string}`
   | `forms.${string}`
@@ -19,6 +22,9 @@ export type TranslationMessages = {
   pages: {
     signup: Record<string, string | Record<string, string>>;
     signin: Record<string, string | Record<string, string>>;
+    verifyEmail: Record<string, string | Record<string, string>>;
+    resetPassword: Record<string, string | Record<string, string>>;
+    updatePassword: Record<string, string | Record<string, string>>;
     home: Record<string, string | Record<string, string>>;
     landing: Record<string, string | Record<string, string>>;
   };

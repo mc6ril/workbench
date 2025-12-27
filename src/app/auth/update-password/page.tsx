@@ -64,18 +64,26 @@ const UpdatePasswordContent = () => {
   const t = useTranslation("pages.updatePassword");
   const tCommon = useTranslation("common");
 
-  // Extract token and email from URL parameters using useMemo
+  // Extract token/code and email from URL parameters using useMemo
+  // Supabase can redirect with either token or code parameter
   const { token, email, isValid } = useMemo(() => {
     const tokenParam = searchParams.get("token");
+    const codeParam = searchParams.get("code");
     const typeParam = searchParams.get("type");
     const emailParam = searchParams.get("email");
 
-    // Only proceed if type is 'recovery' (password reset)
-    const isValidType = typeParam === "recovery" && tokenParam && emailParam;
+    // Use code as token if token is not available (Supabase redirects with code to root)
+    const actualToken = tokenParam || codeParam;
+
+    // Only proceed if type is 'recovery' (password reset) and we have a token/code
+    // For token format, we need type='recovery' and token
+    // For code format, we also need type='recovery' and code
+    // Email is optional (Supabase may not include it in code-based redirects)
+    const isValidType = typeParam === "recovery" && actualToken !== null;
 
     return {
-      token: isValidType ? tokenParam : null,
-      email: isValidType ? emailParam : null,
+      token: isValidType ? actualToken : null,
+      email: emailParam || null, // Email may be null for code format
       isValid: isValidType,
     };
   }, [searchParams]);
@@ -148,7 +156,7 @@ const UpdatePasswordContent = () => {
   }, [updatePasswordMutation.isSuccess, updatePasswordMutation.data, router]);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    if (!token || !email) {
+    if (!token) {
       setError("root", {
         type: "server",
         message: t("errors.missingToken"),
@@ -159,14 +167,15 @@ const UpdatePasswordContent = () => {
     const updatePasswordInput: UpdatePasswordInput = {
       password: data.password,
       token,
-      email,
+      email: email || "", // Empty string if email not provided (code format)
     };
 
     updatePasswordMutation.mutate(updatePasswordInput);
   };
 
-  // Show error if token/email are missing
-  if (!token || !email || !isValid) {
+  // Show error if token is missing
+  // Email is optional (code format doesn't require email in URL)
+  if (!token || !isValid) {
     return (
       <div className={styles["update-password-page"]}>
         <div className={styles["update-password-container"]}>
