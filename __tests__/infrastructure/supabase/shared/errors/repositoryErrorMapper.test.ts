@@ -199,5 +199,110 @@ describe("mapSupabaseError", () => {
     // Assert
     expect(result.message).toBe("CustomEntity not found");
   });
-});
 
+  it("should map RLS policy violation with code 42501 to ConstraintError with RLS_POLICY_VIOLATION constraint", () => {
+    // Arrange
+    const supabaseError = {
+      code: "42501",
+      message:
+        'new row violates row-level security policy for table "projects"',
+      details: "RLS policy violation",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    // Message should be the original Supabase message (presentation layer will translate based on constraint)
+    expect(result.message).toBe(
+      'new row violates row-level security policy for table "projects"'
+    );
+  });
+
+  it("should map RLS policy violation by message content to ConstraintError with RLS_POLICY_VIOLATION constraint", () => {
+    // Arrange - Some RLS errors may not have code 42501 but have the message
+    const supabaseError = {
+      code: "PGRST301",
+      message:
+        'new row violates row-level security policy for table "projects"',
+      details: "Row-level security check failed",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    // Message should be the original Supabase message (presentation layer will translate based on constraint)
+    expect(result.message).toBe(
+      'new row violates row-level security policy for table "projects"'
+    );
+  });
+
+  it("should map RLS policy violation with details when message is missing to ConstraintError with default message", () => {
+    // Arrange
+    const supabaseError = {
+      code: "42501",
+      message: "",
+      details: "Row-level security policy violation",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    // Should use details when message is missing (presentation layer will translate based on constraint)
+    expect(result.message).toBe("Row-level security policy violation");
+  });
+
+  it("should map RLS policy violation with default message when both message and details are missing", () => {
+    // Arrange
+    const supabaseError = {
+      code: "42501",
+      message: "",
+      details: "",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    // Should use default message from createConstraintError when both message and details are missing
+    // (presentation layer will translate based on constraint)
+    expect(result.message).toBe(
+      "Database constraint violation: RLS_POLICY_VIOLATION"
+    );
+  });
+
+  it("should map RLS policy violation for non-Project entities with original message", () => {
+    // Arrange
+    const supabaseError = {
+      code: "42501",
+      message: 'new row violates row-level security policy for table "tickets"',
+      details: "",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Ticket");
+
+    // Assert
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    // For non-Project entities, use original message
+    expect(result.message).toBe(
+      'new row violates row-level security policy for table "tickets"'
+    );
+  });
+});

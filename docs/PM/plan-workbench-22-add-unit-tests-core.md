@@ -51,32 +51,32 @@ Add comprehensive unit tests for all core business logic layers (domain error fa
 
 ### 22.5 - Test Auth Usecases (Batch 1: signUp, signIn, signOut, getCurrentSession)
 
-- AC: [ ] Test `signUpUser` - success with valid input, Zod validation errors, repository errors [ ] Test `signInUser` - success with valid credentials, invalid credentials, repository errors [ ] Test `signOutUser` - success, repository errors [ ] Test `getCurrentSession` - with session, without session (null), repository errors [ ] All tests use `createAuthRepositoryMock` from `__mocks__/core/ports/authRepository.ts`
-- DoD: [x] Tests [ ] A11y [ ] SCSS vars
+- AC: [x] Test `signUpUser` - success with valid input, Zod validation errors, repository errors [x] Test `signInUser` - success with valid credentials, invalid credentials, repository errors [x] Test `signOutUser` - success, repository errors [x] Test `getCurrentSession` - with session, without session (null), repository errors [x] All tests use `createAuthRepositoryMock` from `__mocks__/core/ports/authRepository.ts`
+- DoD: [x] Tests [x] A11y [x] SCSS vars
 - Effort: 3h | Deps: [22.2]
 
 ### 22.6 - Test Auth Usecases (Batch 2: password reset, email verification, user management)
 
-- AC: [ ] Test `resetPasswordForEmail` - success, email not found, repository errors [ ] Test `updatePassword` - success with valid token, invalid token, repository errors [ ] Test `verifyEmail` - success with valid token, invalid token, repository errors [ ] Test `resendVerificationEmail` - success, repository errors [ ] Test `updateUser` - success, validation errors, repository errors [ ] Test `deleteUser` - success, repository errors [ ] All tests use `createAuthRepositoryMock` from `__mocks__/core/ports/authRepository.ts`
-- DoD: [x] Tests [ ] A11y [ ] SCSS vars
+- AC: [x] Test `resetPasswordForEmail` - success, email not found, repository errors [x] Test `updatePassword` - success with valid token, invalid token, repository errors [x] Test `verifyEmail` - success with valid token, invalid token, repository errors [x] Test `resendVerificationEmail` - success, repository errors [x] Test `updateUser` - success, validation errors, repository errors [x] Test `deleteUser` - success, repository errors [x] All tests use `createAuthRepositoryMock` from `__mocks__/core/ports/authRepository.ts`
+- DoD: [x] Tests [x] A11y [x] SCSS vars
 - Effort: 3h | Deps: [22.2]
 
 ### 22.7 - Test Project Usecases (listProjects, getProject, addUserToProject)
 
-- AC: [ ] Test `listProjects` - success with projects, empty list, repository errors [ ] Test `getProject` - success with existing project, not found (null), repository errors [ ] Test `addUserToProject` - success, project not found, constraint violations (already member), repository errors [ ] All tests use `createProjectRepositoryMock` from `__mocks__/core/ports/projectRepository.ts`
-- DoD: [x] Tests [ ] A11y [ ] SCSS vars
+- AC: [x] Test `listProjects` - success with projects, empty list, repository errors [x] Test `getProject` - success with existing project, not found (null), repository errors [x] Test `addUserToProject` - success, project not found, constraint violations (already member), repository errors [x] All tests use `createProjectRepositoryMock` from `__mocks__/core/ports/projectRepository.ts`
+- DoD: [x] Tests [x] A11y [x] SCSS vars
 - Effort: 2h | Deps: [22.3]
 
 ### 22.8 - Test Ticket Usecase (listTickets)
 
-- AC: [ ] Test `listTickets` - success with tickets, empty list, repository errors [ ] Test uses `createTicketRepositoryMock` from `__mocks__/core/ports/ticketRepository.ts` [ ] Test verifies repository.listByProject called with correct projectId
-- DoD: [x] Tests [ ] A11y [ ] SCSS vars
+- AC: [x] Test `listTickets` - success with tickets, empty list, repository errors [x] Test uses `createTicketRepositoryMock` from `__mocks__/core/ports/ticketRepository.ts` [x] Test verifies repository.listByProject called with correct projectId
+- DoD: [x] Tests [x] A11y [x] SCSS vars
 - Effort: 1h | Deps: [none] (mock factory already exists)
 
 ### 22.9 - Test Complete End-to-End Flows
 
-- AC: [ ] Test complete signup flow: signUpUser → getCurrentSession (with email verification requirement) [ ] Test complete signin flow: signInUser → getCurrentSession → listProjects [ ] Test complete project access flow: listProjects → getProject → addUserToProject [ ] Test complete ticket flow: listProjects → listTickets [ ] All flow tests use mock user credentials (cyril.lesot@yahoo.fr / Azerty123!) [ ] Flow tests verify multiple usecases work together correctly [ ] Flow tests cover happy paths and error propagation
-- DoD: [x] Tests [ ] A11y [ ] SCSS vars
+- AC: [x] Test complete signup flow: signUpUser → getCurrentSession (with email verification requirement) [x] Test complete signin flow: signInUser → getCurrentSession → listProjects [x] Test complete project access flow: listProjects → getProject → addUserToProject [x] Test complete ticket flow: listProjects → listTickets [x] All flow tests use mock user credentials (cyril.lesot@yahoo.fr / Azerty123!) [x] Flow tests verify multiple usecases work together correctly [x] Flow tests cover happy paths and error propagation
+- DoD: [x] Tests [x] A11y [x] SCSS vars
 - Effort: 3h | Deps: [22.5, 22.6, 22.7, 22.8]
 
 ## Unit Test Spec

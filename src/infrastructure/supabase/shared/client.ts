@@ -1,92 +1,43 @@
-import { cookies } from "next/headers";
-import { createBrowserClient } from "@supabase/ssr";
-import { createServerClient } from "@supabase/ssr";
+import { type NextRequest, NextResponse } from "next/server";
+import { type CookieOptions, createServerClient } from "@supabase/ssr";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY =
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 
-/** Validate required env vars; throw with helpful message on missing. */
-const validateEnvironmentVariables = (): void => {
-  const missingVariables: string[] = [];
+export const createClient = (request: NextRequest) => {
+  // Create an unmodified response
+  let supabaseResponse = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
 
-  if (!SUPABASE_URL) {
-    missingVariables.push("NEXT_PUBLIC_SUPABASE_URL");
-  }
-
-  if (!SUPABASE_PUBLISHABLE_KEY) {
-    missingVariables.push("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY");
-  }
-
-  if (missingVariables.length > 0) {
-    const variablesList = missingVariables.join(", ");
-    throw new Error(
-      `Missing required environment variable(s): ${variablesList}\n` +
-        `Please add them to your .env.local file.\n` +
-        `See .env.local.example for reference.`
-    );
-  }
-};
-
-/**
- * Create Supabase client for browser (Client Components).
- * Uses @supabase/ssr to handle sessions via cookies.
- *
- * @returns Supabase client configured for browser usage
- */
-export const createClient = () => {
-  try {
-    validateEnvironmentVariables();
-
-    return createBrowserClient(SUPABASE_URL!, SUPABASE_PUBLISHABLE_KEY!);
-  } catch (error) {
-    console.error(
-      "[Supabase Browser Client] Failed to create browser client:",
-      error
-    );
-    throw error;
-  }
-};
-
-/**
- * Create Supabase client for server (Server Components, Server Actions, Middleware).
- * Uses @supabase/ssr to handle sessions via cookies.
- *
- * @returns Supabase client configured for server usage
- */
-export const createServerClientForServer = async () => {
-  try {
-    validateEnvironmentVariables();
-
-    const cookieStore = await cookies();
-
-    return createServerClient(SUPABASE_URL!, SUPABASE_PUBLISHABLE_KEY!, {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-          } catch (error) {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
-            console.warn(
-              "[Supabase Server Client] Failed to set cookies in Server Component:",
-              error
-            );
-          }
-        },
+  createServerClient(supabaseUrl!, supabaseKey!, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
       },
-    });
-  } catch (error) {
-    console.error(
-      "[Supabase Server Client] Failed to create server client:",
-      error
-    );
-    throw error;
-  }
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(
+          ({
+            name,
+            value,
+            options: {},
+          }: {
+            name: string;
+            value: string;
+            options: CookieOptions;
+          }) => request.cookies.set(name, value)
+        );
+        supabaseResponse = NextResponse.next({
+          request,
+        });
+        cookiesToSet.forEach(({ name, value, options }) =>
+          supabaseResponse.cookies.set(name, value, options)
+        );
+      },
+    },
+  });
+
+  return supabaseResponse;
 };

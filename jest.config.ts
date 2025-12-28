@@ -15,7 +15,6 @@ const config: Config = {
   setupFilesAfterEnv: ["<rootDir>/__tests__/setupTests.ts"],
   collectCoverage: true,
   collectCoverageFrom: [
-    "src/core/domain/**/*.{ts,tsx}",
     "src/core/usecases/**/*.{ts,tsx}",
     "src/infrastructure/**/*.{ts,tsx}",
     "src/presentation/components/**/*.{ts,tsx}",

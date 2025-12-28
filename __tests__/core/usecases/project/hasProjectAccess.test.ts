@@ -1,7 +1,7 @@
 import { hasProjectAccess } from "@/core/usecases/project/hasProjectAccess";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
-import { createProjectRepositoryMock } from "../../../__mocks__/core/ports/projectRepository";
+import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
 
 describe("hasProjectAccess", () => {
   it("should return true when user has project access", async () => {
@@ -44,10 +44,7 @@ describe("hasProjectAccess", () => {
     });
 
     // Act & Assert
-    await expect(hasProjectAccess(repository)).rejects.toThrow(
-      repositoryError
-    );
+    await expect(hasProjectAccess(repository)).rejects.toThrow(repositoryError);
     expect(repository.hasProjectAccess).toHaveBeenCalledTimes(1);
   });
 });
-
