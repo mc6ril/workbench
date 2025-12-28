@@ -48,6 +48,25 @@ export const mapSupabaseError = (
       );
     }
 
+    // RLS (Row-Level Security) policy violations
+    // These should be mapped to ConstraintError as they represent policy constraints
+    if (
+      supabaseError.code === "42501" ||
+      (supabaseError.message &&
+        supabaseError.message.toLowerCase().includes("row-level security"))
+    ) {
+      // Use consistent constraint name for RLS violations
+      // The presentation layer will translate the message based on the constraint code
+      const constraint = "RLS_POLICY_VIOLATION";
+
+      // Use original Supabase message for debugging/logging purposes
+      // The presentation layer will handle user-friendly translation based on constraint
+      const message =
+        supabaseError.message || supabaseError.details || undefined;
+
+      return createConstraintError(constraint, message);
+    }
+
     // Generic database error
     return createDatabaseError(
       supabaseError.message || `Database error: ${supabaseError.code}`,

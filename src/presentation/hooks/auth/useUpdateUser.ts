@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { UpdateUserInput } from "@/core/usecases/auth/updateUser";
+import type { UpdateUserInput } from "@/core/domain/auth.schema";
+
 import { updateUser } from "@/core/usecases/auth/updateUser";
 
 import { authRepository } from "@/infrastructure/supabase/repositories";
@@ -24,4 +25,3 @@ export const useUpdateUser = () => {
     },
   });
 };
-

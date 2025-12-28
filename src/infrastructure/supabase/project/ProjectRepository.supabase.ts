@@ -115,26 +115,76 @@ export const createProjectRepository = (
 
   async create(input: CreateProjectInput): Promise<Project> {
     try {
-      const { data, error } = await client
-        .from("projects")
-        .insert({
-          name: input.name,
-        })
-        .select()
-        .single();
+      // Use RPC function to bypass RLS issues
+      // The function create_project() is SECURITY DEFINER and bypasses RLS
+      const { data: projectData, error: rpcError } = await client.rpc(
+        "create_project",
+        { project_name: input.name }
+      );
 
-      if (error) {
-        handleRepositoryError(error, "Project");
+      if (rpcError) {
+        handleRepositoryError(rpcError, "Project");
       }
 
-      if (!data) {
-        handleRepositoryError(
-          new Error("No data returned from insert"),
-          "Project"
-        );
+      // Handle different return types from RPC
+      let projectId: string | null = null;
+
+      if (Array.isArray(projectData) && projectData.length > 0) {
+        // If it's an array, get the project from it
+        const project = projectData[0];
+        if (typeof project === "object" && project !== null) {
+          // It's already the full project object
+          return mapProjectRowToDomain(project as ProjectRow);
+        } else if (typeof project === "string") {
+          // It's just the ID
+          projectId = project;
+        }
+      } else if (typeof projectData === "string") {
+        // RPC returned just the UUID
+        projectId = projectData;
+      } else if (projectData && typeof projectData === "object") {
+        // RPC returned the project object directly (not in array)
+        return mapProjectRowToDomain(projectData as ProjectRow);
       }
 
-      return mapProjectRowToDomain(data as ProjectRow);
+      // If we only have the ID, fetch the full project using RPC (bypasses RLS)
+      if (projectId) {
+        const { data: projectDataFromRpc, error: rpcFetchError } =
+          await client.rpc("get_project_by_id", { p_project_id: projectId });
+
+        if (rpcFetchError) {
+          handleRepositoryError(rpcFetchError, "Project");
+        }
+
+        if (!projectDataFromRpc) {
+          handleRepositoryError(
+            new Error(
+              "No project data returned from get_project_by_id function"
+            ),
+            "Project"
+          );
+        }
+
+        // RPC returns array, get first element
+        const projectRow = Array.isArray(projectDataFromRpc)
+          ? projectDataFromRpc[0]
+          : projectDataFromRpc;
+
+        if (!projectRow) {
+          handleRepositoryError(
+            new Error("No project data returned after creation"),
+            "Project"
+          );
+        }
+
+        return mapProjectRowToDomain(projectRow as ProjectRow);
+      }
+
+      // If we get here, something went wrong
+      handleRepositoryError(
+        new Error("No project data returned from create_project function"),
+        "Project"
+      );
     } catch (error) {
       handleRepositoryError(error, "Project");
     }

@@ -1,25 +1,9 @@
-import { z } from "zod";
+import {
+  type UpdateUserInput,
+  UpdateUserSchema,
+} from "@/core/domain/auth.schema";
 
 import type { AuthRepository } from "@/core/ports/authRepository";
-
-/**
- * Schema for updating user information.
- * All fields are optional - user can update email, password, or metadata.
- */
-export const UpdateUserSchema = z.object({
-  email: z.string().email("Invalid email format").optional(),
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .max(100, "Password must be less than 100 characters")
-    .optional(),
-  data: z.record(z.string(), z.unknown()).optional(),
-});
-
-/**
- * Update user input type.
- */
-export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
 
 /**
  * Update user information.

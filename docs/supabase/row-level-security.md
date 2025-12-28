@@ -92,7 +92,7 @@ SELECT has_any_project_access();
 ### Projects
 
 - **SELECT**: Users can view projects where they are members
-- **INSERT**: Authenticated users can create projects only if they have no existing project access (creator is automatically added as admin)
+- **INSERT**: Any authenticated users can create projects (creator is automatically added as admin)
 - **UPDATE**: Users can update projects where they have edit permission (admin or member)
 - **DELETE**: Only admins can delete projects
 

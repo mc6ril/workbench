@@ -27,30 +27,17 @@ const validateEnvironmentVariables = (): void => {
 };
 
 /**
- * Singleton browser client instance.
+ * Create Supabase client for browser (Client Components).
  * Uses @supabase/ssr to handle sessions via cookies.
- */
-let browserClientInstance: ReturnType<typeof createBrowserClient> | null = null;
-
-/**
- * Create or get Supabase client for browser (Client Components).
- * Uses @supabase/ssr to handle sessions via cookies.
- * Returns a singleton instance to avoid creating multiple clients.
+ *
+ * Note: createBrowserClient automatically handles cookies via document.cookie,
+ * so no explicit cookie configuration is needed. The client reads cookies
+ * on each request to ensure fresh session state.
  *
  * @returns Supabase client configured for browser usage
  */
 export const createSupabaseBrowserClient = () => {
   validateEnvironmentVariables();
 
-  // Return singleton instance to avoid creating multiple clients
-  if (browserClientInstance) {
-    return browserClientInstance;
-  }
-
-  browserClientInstance = createBrowserClient(
-    SUPABASE_URL!,
-    SUPABASE_PUBLISHABLE_KEY!
-  );
-
-  return browserClientInstance;
+  return createBrowserClient(SUPABASE_URL!, SUPABASE_PUBLISHABLE_KEY!);
 };

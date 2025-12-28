@@ -1,0 +1,308 @@
+import { mapSupabaseError } from "@/infrastructure/supabase/shared/errors/repositoryErrorMapper";
+
+describe("mapSupabaseError", () => {
+  it("should map Supabase PGRST116 error to DatabaseError", () => {
+    // Arrange
+    const supabaseError = {
+      code: "PGRST116",
+      message: "The result contains 0 rows",
+      details: "No rows returned",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result.message).toBe("Project not found");
+    expect(result).toHaveProperty("originalError", supabaseError);
+  });
+
+  it("should map constraint violation code 23505 to ConstraintError", () => {
+    // Arrange
+    const supabaseError = {
+      code: "23505",
+      message: "duplicate key value violates unique constraint",
+      details: "Key (name)=(Test Project) already exists.",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result).toHaveProperty("constraint", "23505");
+    expect(result.message).toBe(
+      "duplicate key value violates unique constraint"
+    );
+  });
+
+  it("should map constraint violation code 23503 to ConstraintError", () => {
+    // Arrange
+    const supabaseError = {
+      code: "23503",
+      message: "foreign key constraint violated",
+      details: "Key (project_id)=(123) is not present in table projects.",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Ticket");
+
+    // Assert
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result).toHaveProperty("constraint", "23503");
+    expect(result.message).toBe("foreign key constraint violated");
+  });
+
+  it("should map constraint violation code 23514 to ConstraintError", () => {
+    // Arrange
+    const supabaseError = {
+      code: "23514",
+      message: "check constraint violated",
+      details: "New row violates check constraint",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result).toHaveProperty("constraint", "23514");
+    expect(result.message).toBe("check constraint violated");
+  });
+
+  it("should use details when message is missing for constraint errors", () => {
+    // Arrange
+    const supabaseError = {
+      code: "23505",
+      message: "",
+      details: "Unique constraint violation details",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result.message).toBe("Unique constraint violation details");
+  });
+
+  it("should map generic Supabase errors to DatabaseError", () => {
+    // Arrange
+    const supabaseError = {
+      code: "PGRST301",
+      message: "PostgREST error",
+      details: "Some database error",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result.message).toBe("PostgREST error");
+    expect(result).toHaveProperty("originalError", supabaseError);
+  });
+
+  it("should map Supabase error with code but no message to DatabaseError", () => {
+    // Arrange
+    const supabaseError = {
+      code: "PGRST999",
+      message: "",
+      details: "",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result.message).toBe("Database error: PGRST999");
+    expect(result).toHaveProperty("originalError", supabaseError);
+  });
+
+  it("should map Error instances to DatabaseError", () => {
+    // Arrange
+    const error = new Error("Network connection failed");
+
+    // Act
+    const result = mapSupabaseError(error, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result.message).toBe("Network connection failed");
+    expect(result).toHaveProperty("originalError", error);
+  });
+
+  it("should handle unknown error types with fallback", () => {
+    // Arrange
+    const unknownError = "String error";
+
+    // Act
+    const result = mapSupabaseError(unknownError, "Ticket");
+
+    // Assert
+    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result.message).toBe(
+      "Unknown error occurred while accessing Ticket"
+    );
+    expect(result).toHaveProperty("originalError", unknownError);
+  });
+
+  it("should handle null error with fallback", () => {
+    // Arrange
+    const nullError = null;
+
+    // Act
+    const result = mapSupabaseError(nullError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result.message).toBe(
+      "Unknown error occurred while accessing Project"
+    );
+    expect(result).toHaveProperty("originalError", nullError);
+  });
+
+  it("should use default entityType when not provided", () => {
+    // Arrange
+    const error = new Error("Database error");
+
+    // Act
+    const result = mapSupabaseError(error);
+
+    // Assert
+    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result.message).toBe("Database error");
+    expect(result.message).not.toContain("Entity");
+  });
+
+  it("should use custom entityType in error message", () => {
+    // Arrange
+    const supabaseError = {
+      code: "PGRST116",
+      message: "Not found",
+      details: "",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "CustomEntity");
+
+    // Assert
+    expect(result.message).toBe("CustomEntity not found");
+  });
+
+  it("should map RLS policy violation with code 42501 to ConstraintError with RLS_POLICY_VIOLATION constraint", () => {
+    // Arrange
+    const supabaseError = {
+      code: "42501",
+      message:
+        'new row violates row-level security policy for table "projects"',
+      details: "RLS policy violation",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    // Message should be the original Supabase message (presentation layer will translate based on constraint)
+    expect(result.message).toBe(
+      'new row violates row-level security policy for table "projects"'
+    );
+  });
+
+  it("should map RLS policy violation by message content to ConstraintError with RLS_POLICY_VIOLATION constraint", () => {
+    // Arrange - Some RLS errors may not have code 42501 but have the message
+    const supabaseError = {
+      code: "PGRST301",
+      message:
+        'new row violates row-level security policy for table "projects"',
+      details: "Row-level security check failed",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    // Message should be the original Supabase message (presentation layer will translate based on constraint)
+    expect(result.message).toBe(
+      'new row violates row-level security policy for table "projects"'
+    );
+  });
+
+  it("should map RLS policy violation with details when message is missing to ConstraintError with default message", () => {
+    // Arrange
+    const supabaseError = {
+      code: "42501",
+      message: "",
+      details: "Row-level security policy violation",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    // Should use details when message is missing (presentation layer will translate based on constraint)
+    expect(result.message).toBe("Row-level security policy violation");
+  });
+
+  it("should map RLS policy violation with default message when both message and details are missing", () => {
+    // Arrange
+    const supabaseError = {
+      code: "42501",
+      message: "",
+      details: "",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    // Should use default message from createConstraintError when both message and details are missing
+    // (presentation layer will translate based on constraint)
+    expect(result.message).toBe(
+      "Database constraint violation: RLS_POLICY_VIOLATION"
+    );
+  });
+
+  it("should map RLS policy violation for non-Project entities with original message", () => {
+    // Arrange
+    const supabaseError = {
+      code: "42501",
+      message: 'new row violates row-level security policy for table "tickets"',
+      details: "",
+      hint: null,
+    };
+
+    // Act
+    const result = mapSupabaseError(supabaseError, "Ticket");
+
+    // Assert
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    // For non-Project entities, use original message
+    expect(result.message).toBe(
+      'new row violates row-level security policy for table "tickets"'
+    );
+  });
+});

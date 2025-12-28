@@ -7,15 +7,19 @@ const config: Config = {
   testMatch: ["**/*.test.ts", "**/*.test.tsx"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src/$1",
+    // Map SCSS/CSS files first (before path aliases)
     "^.+\\.(css|scss|sass)$": "<rootDir>/__mocks__/styleMock.ts",
     "^.+\\.(gif|jpg|jpeg|png|svg|webp)$": "<rootDir>/__mocks__/fileMock.ts",
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
   setupFilesAfterEnv: ["<rootDir>/__tests__/setupTests.ts"],
   collectCoverage: true,
   collectCoverageFrom: [
-    "src/core/domain/**/*.{ts,tsx}",
     "src/core/usecases/**/*.{ts,tsx}",
+    "src/infrastructure/**/*.{ts,tsx}",
+    "src/presentation/components/**/*.{ts,tsx}",
+    "src/shared/**/*.{ts,tsx}",
+    "src/utils/**/*.{ts,tsx}",
     "!src/**/*.d.ts",
   ],
   coverageDirectory: "coverage",

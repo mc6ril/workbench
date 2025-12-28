@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
@@ -49,6 +49,7 @@ export default function MyWorkspace() {
   const [showUpdateUserForm, setShowUpdateUserForm] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const isSubmittingRef = useRef(false);
   const t = useTranslation("pages.home");
 
   const {
@@ -110,15 +111,37 @@ export default function MyWorkspace() {
 
   useEffect(() => {
     if (createProjectMutation.isSuccess && createProjectMutation.data) {
+      // Reset submitting ref
+      isSubmittingRef.current = false;
       // Redirect to project page after successful creation
       router.push(`/projects/${createProjectMutation.data.id}`);
     }
   }, [createProjectMutation.isSuccess, createProjectMutation.data, router]);
 
+  useEffect(() => {
+    if (createProjectMutation.error) {
+      // Reset submitting ref on error
+      isSubmittingRef.current = false;
+    }
+  }, [createProjectMutation.error]);
+
   const onCreateProjectSubmit: SubmitHandler<CreateProjectFormData> = async (
     data
   ) => {
-    createProjectMutation.mutate(data);
+    // Prevent duplicate submissions using ref (faster than isPending)
+    if (isSubmittingRef.current || createProjectMutation.isPending) {
+      return;
+    }
+
+    isSubmittingRef.current = true;
+    try {
+      await createProjectMutation.mutateAsync(data);
+    } finally {
+      // Reset after a short delay to allow mutation state to update
+      setTimeout(() => {
+        isSubmittingRef.current = false;
+      }, 100);
+    }
   };
 
   // Determine if user has projects (for conditional rendering)
