@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import Loader from "@/presentation/components/ui/Loader";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 import { useVerifyEmail } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
@@ -103,7 +105,9 @@ const VerifyEmailContent = () => {
     return (
       <div className={styles["verify-email-page"]}>
         <div className={styles["verify-email-container"]}>
-          <h1 className={styles["verify-email-title"]}>{t("title")}</h1>
+          <Title variant="h1" className={styles["verify-email-title"]}>
+            {t("title")}
+          </Title>
           <div className={styles["verify-email-error"]} role="alert">
             {t("errors.missingToken")}
           </div>
@@ -120,7 +124,9 @@ const VerifyEmailContent = () => {
   return (
     <div className={styles["verify-email-page"]}>
       <div className={styles["verify-email-container"]}>
-        <h1 className={styles["verify-email-title"]}>{t("title")}</h1>
+        <Title variant="h1" className={styles["verify-email-title"]}>
+          {t("title")}
+        </Title>
 
         {verifyEmailMutation.isPending && <Loader variant="inline" />}
 
@@ -136,8 +142,8 @@ const VerifyEmailContent = () => {
             role="status"
             aria-live="polite"
           >
-            <p>{t("success")}</p>
-            <p>{t("redirecting")}</p>
+            <Text variant="body">{t("success")}</Text>
+            <Text variant="body">{t("redirecting")}</Text>
           </div>
         )}
 

@@ -2,7 +2,7 @@ import React from "react";
 
 import styles from "@/styles/components/ui/Button.module.scss";
 
-type ButtonVariant = "primary" | "secondary";
+type ButtonVariant = "primary" | "secondary" | "outline" | "ghost";
 
 type Props = {
   label: string;

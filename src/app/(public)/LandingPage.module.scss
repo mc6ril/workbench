@@ -2,12 +2,30 @@
 @use "@/styles/variables/spacing" as *;
 @use "@/styles/variables/typography" as *;
 @use "@/styles/variables/borders" as *;
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/shadows" as *;
 
 .landing-page {
   width: 100%;
   min-height: 100vh;
   padding: $spacing-lg;
   background-color: $color-background;
+  animation: fadeIn $animation-duration-base $easing-ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY($spacing-sm);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .landing-container {
@@ -17,6 +35,22 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-xl;
+  animation: slideUp $animation-duration-slow $easing-smooth;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY($spacing-md);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .landing-header {
@@ -27,18 +61,11 @@
 }
 
 .landing-title {
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
-  line-height: $line-height-tight;
-  color: $color-text;
-  margin: 0;
+  // Styles handled by Title component
 }
 
 .landing-subtitle {
-  font-size: $font-size-xl;
-  line-height: $line-height-normal;
-  color: $color-text-secondary;
-  margin: 0;
+  // Styles handled by Text component
 }
 
 .landing-content {
@@ -54,18 +81,11 @@
 }
 
 .landing-section-title {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
-  line-height: $line-height-tight;
-  color: $color-text;
-  margin: 0;
+  // Styles handled by Title component
 }
 
 .landing-section-text {
-  font-size: $font-size-base;
-  line-height: $line-height-normal;
-  color: $color-text-secondary;
-  margin: 0;
+  // Styles handled by Text component
 }
 
 .landing-features-list {
@@ -78,13 +98,25 @@
 }
 
 .landing-features-list li {
-  font-size: $font-size-base;
-  line-height: $line-height-normal;
-  color: $color-text-secondary;
   padding: $spacing-md;
   border: $border-width solid $color-border;
   border-radius: $border-radius-md;
   background-color: $color-secondary;
+  transition: transform $transition-base, box-shadow $transition-base;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+
+    @media (prefers-reduced-motion: reduce) {
+      transform: none;
+      box-shadow: none;
+    }
+  }
 
   strong {
     color: $color-text;

@@ -11,8 +11,11 @@ import { z } from "zod";
 import type { UpdatePasswordInput } from "@/core/domain/auth.schema";
 
 import Button from "@/presentation/components/ui/Button";
+import Form from "@/presentation/components/ui/Form";
 import Input from "@/presentation/components/ui/Input";
 import Loader from "@/presentation/components/ui/Loader";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 import { useUpdatePassword } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
@@ -163,7 +166,9 @@ const UpdatePasswordContent = () => {
     return (
       <div className={styles["update-password-page"]}>
         <div className={styles["update-password-container"]}>
-          <h1 className={styles["update-password-title"]}>{t("title")}</h1>
+          <Title variant="h1" className={styles["update-password-title"]}>
+            {t("title")}
+          </Title>
           <div className={styles["update-password-error"]} role="alert">
             {t("errors.missingToken")}
           </div>
@@ -183,20 +188,19 @@ const UpdatePasswordContent = () => {
   return (
     <div className={styles["update-password-page"]}>
       <div className={styles["update-password-container"]}>
-        <h1 className={styles["update-password-title"]}>{t("title")}</h1>
-        <p className={styles["update-password-subtitle"]}>{t("subtitle")}</p>
+        <Title variant="h1" className={styles["update-password-title"]}>
+          {t("title")}
+        </Title>
+        <Text variant="body" className={styles["update-password-subtitle"]}>
+          {t("subtitle")}
+        </Text>
 
-        <form
+        <Form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["update-password-form"]}
+          error={errors.root?.message}
           noValidate
         >
-          {errors.root && (
-            <div className={styles["update-password-error"]} role="alert">
-              {errors.root.message}
-            </div>
-          )}
-
           <Input
             label={t("fields.password")}
             type="password"
@@ -223,7 +227,7 @@ const UpdatePasswordContent = () => {
             aria-label={t("buttonAriaLabel")}
             onClick={() => {}}
           />
-        </form>
+        </Form>
 
         {updatePasswordMutation.isPending && <Loader variant="inline" />}
 
@@ -234,8 +238,8 @@ const UpdatePasswordContent = () => {
               role="status"
               aria-live="polite"
             >
-              <p>{t("success")}</p>
-              <p>{t("redirecting")}</p>
+              <Text variant="body">{t("success")}</Text>
+              <Text variant="body">{t("redirecting")}</Text>
             </div>
           )}
 

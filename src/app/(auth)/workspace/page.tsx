@@ -10,8 +10,11 @@ import type { CreateProjectInput } from "@/core/domain/project.schema";
 import { CreateProjectInputSchema } from "@/core/domain/project.schema";
 
 import Button from "@/presentation/components/ui/Button";
+import Form from "@/presentation/components/ui/Form";
 import Input from "@/presentation/components/ui/Input";
 import Loader from "@/presentation/components/ui/Loader";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 import {
   useAddUserToProject,
   useCreateProject,
@@ -158,11 +161,13 @@ export default function WorkspacePage() {
     <main className={styles["workspace-page"]}>
       <div className={styles["workspace-container"]}>
         <div className={styles["workspace-header"]}>
-          <h1 className={styles["workspace-title"]}>{t("welcomeTitle")}</h1>
+          <Title variant="h1" className={styles["workspace-title"]}>
+            {t("welcomeTitle")}
+          </Title>
           {session && (
-            <p className={styles["workspace-user-info"]}>
+            <Text variant="body" className={styles["workspace-user-info"]}>
               {t("signedInAs")} <strong>{session.email}</strong>
-            </p>
+            </Text>
           )}
           <div className={styles["workspace-user-actions"]}>
             <Button
@@ -264,22 +269,18 @@ export default function WorkspacePage() {
 
         {!hasProjects && (
           <section className={styles["workspace-section"]}>
-            <h2 className={styles["workspace-section-title"]}>
+            <Title variant="h2" className={styles["workspace-section-title"]}>
               {t("createProjectTitle")}
-            </h2>
-            <p className={styles["workspace-section-description"]}>
+            </Title>
+            <Text variant="small" className={styles["workspace-section-description"]}>
               {t("createProjectDescription")}
-            </p>
-            <form
+            </Text>
+            <Form
               onSubmit={handleSubmit(onCreateProjectSubmit)}
               className={styles["workspace-create-form"]}
+              error={errors.root?.message}
               noValidate
             >
-              {errors.root && (
-                <div className={styles["workspace-error"]} role="alert">
-                  {errors.root.message}
-                </div>
-              )}
 
               <Input
                 label={t("projectNameLabel")}
@@ -299,18 +300,18 @@ export default function WorkspacePage() {
                 aria-label={t("createProjectButtonAriaLabel")}
                 onClick={() => {}}
               />
-            </form>
+            </Form>
           </section>
         )}
 
         {!hasProjects && (
           <section className={styles["workspace-section"]}>
-            <h2 className={styles["workspace-section-title"]}>
+            <Title variant="h2" className={styles["workspace-section-title"]}>
               {t("accessProjectTitle")}
-            </h2>
-            <p className={styles["workspace-section-description"]}>
+            </Title>
+            <Text variant="small" className={styles["workspace-section-description"]}>
               {t("accessProjectDescription")}
-            </p>
+            </Text>
             <div className={styles["workspace-access-form"]}>
               <Input
                 label={t("projectIdLabel")}
@@ -336,14 +337,16 @@ export default function WorkspacePage() {
         )}
 
         <section className={styles["workspace-section"]}>
-          <h2 className={styles["workspace-section-title"]}>
+          <Title variant="h2" className={styles["workspace-section-title"]}>
             {t("yourProjectsTitle")}
-          </h2>
+          </Title>
           {projectsError && (
-            <p className={styles["workspace-error"]} role="alert">
-              {t("errorLoadingProjects")}{" "}
-              {getErrorMessage(projectsError as { code?: string }, tErrors)}
-            </p>
+            <div className={styles["workspace-error"]} role="alert">
+              <Text variant="small" as="span">
+                {t("errorLoadingProjects")}{" "}
+                {getErrorMessage(projectsError as { code?: string }, tErrors)}
+              </Text>
+            </div>
           )}
           {isLoadingProjects || addUserToProjectMutation.isPending ? (
             <Loader variant="inline" />
@@ -378,7 +381,9 @@ export default function WorkspacePage() {
               })}
             </ul>
           ) : Array.isArray(projects) && projects.length === 0 ? (
-            <p className={styles["workspace-empty"]}>{t("noProjects")}</p>
+            <Text variant="body" className={styles["workspace-empty"]}>
+              {t("noProjects")}
+            </Text>
           ) : null}
         </section>
       </div>

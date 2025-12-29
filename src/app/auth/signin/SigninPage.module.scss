@@ -2,7 +2,8 @@
 @use "@/styles/variables/spacing" as *;
 @use "@/styles/variables/typography" as *;
 @use "@/styles/variables/borders" as *;
-@use "@/styles/variables/transitions" as *;
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/shadows" as *;
 
 .signin-page {
   width: 100%;
@@ -12,6 +13,22 @@
   justify-content: center;
   padding: $spacing-lg;
   background-color: $color-background;
+  animation: fadeIn $animation-duration-base $easing-ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY($spacing-sm);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .signin-container {
@@ -20,29 +37,33 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-lg;
+  animation: slideUp $animation-duration-slow $easing-smooth;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY($spacing-md);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .signin-title {
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
-  line-height: $line-height-tight;
-  color: $color-text;
-  margin: 0;
   text-align: center;
 }
 
 .signin-subtitle {
-  font-size: $font-size-base;
-  line-height: $line-height-normal;
-  color: $color-text-secondary;
-  margin: 0;
   text-align: center;
 }
 
 .signin-form {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
   width: 100%;
 }
 
@@ -51,52 +72,11 @@
   margin-top: -$spacing-sm;
 }
 
-.signin-error {
-  padding: $spacing-md;
-  border-radius: $border-radius-md;
-  background-color: $color-error-background;
-  color: $color-error-text;
-  font-size: $font-size-sm;
-  line-height: $line-height-normal;
-  text-align: center;
-
-  p {
-    margin: 0 0 $spacing-sm 0;
-  }
-}
 
 .signin-resend-verification {
   margin-top: $spacing-sm;
   display: flex;
   justify-content: center;
-}
-
-.signin-resend-button {
-  background: none;
-  border: none;
-  color: $color-primary;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  text-decoration: underline;
-  cursor: pointer;
-  padding: $spacing-xs;
-  transition: $transition-color;
-
-  &:hover:not(:disabled) {
-    color: $color-primary-hover;
-  }
-
-  &:focus {
-    outline: $border-width-thick solid $color-focus;
-    outline-offset: $border-width-thick;
-    border-radius: $border-radius-sm;
-  }
-
-  &:disabled {
-    color: $color-disabled;
-    cursor: not-allowed;
-    text-decoration: none;
-  }
 }
 
 .signin-footer {
@@ -112,10 +92,29 @@
   text-decoration: none;
   font-weight: $font-weight-medium;
   transition: $transition-color;
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: $color-primary;
+    transition: width $transition-base;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
 
   &:hover {
     color: $color-primary-hover;
-    text-decoration: underline;
+
+    &::after {
+      width: 100%;
+    }
   }
 
   &:focus {

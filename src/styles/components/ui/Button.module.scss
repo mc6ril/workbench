@@ -2,7 +2,8 @@
 @use "@/styles/variables/spacing" as *;
 @use "@/styles/variables/typography" as *;
 @use "@/styles/variables/borders" as *;
-@use "@/styles/variables/transitions" as *;
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/shadows" as *;
 
 .button {
   display: inline-flex;
@@ -16,17 +17,21 @@
   font-weight: $font-weight-medium;
   line-height: $line-height-normal;
   cursor: pointer;
-  transition: $transition-background, $transition-color, $transition-border;
+  transition: $transition-background, $transition-color, $transition-border, $transition-transform, $transition-shadow;
   text-align: center;
   text-decoration: none;
 
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
   &:focus {
-    outline: 2px solid $color-focus;
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: $shadow-focus;
   }
 
   &:focus:not(:focus-visible) {
-    outline: none;
+    box-shadow: none;
   }
 
   &:disabled {
@@ -43,6 +48,17 @@
   &:hover:not(:disabled) {
     background-color: $color-primary-hover;
     border-color: $color-primary-hover;
+    box-shadow: $shadow-button-hover;
+    transform: translateY(-1px);
+
+    @media (prefers-reduced-motion: reduce) {
+      transform: none;
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: $shadow-sm;
   }
 
   &:disabled {
@@ -60,12 +76,73 @@
   &:hover:not(:disabled) {
     border-color: transparent;
     background-color: $color-secondary-hover;
+    transform: translateY(-1px);
+
+    @media (prefers-reduced-motion: reduce) {
+      transform: none;
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
   }
 
   &:disabled {
     background-color: $color-disabled-background;
     color: $color-disabled-text;
     border-color: $color-border;
+  }
+}
+
+.button--outline {
+  background-color: transparent;
+  color: $color-primary;
+  border-color: $color-primary;
+
+  &:hover:not(:disabled) {
+    background-color: $color-primary;
+    color: $color-primary-text;
+    box-shadow: $shadow-button-hover;
+    transform: translateY(-1px);
+
+    @media (prefers-reduced-motion: reduce) {
+      transform: none;
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: $shadow-sm;
+  }
+
+  &:disabled {
+    background-color: transparent;
+    color: $color-disabled-text;
+    border-color: $color-disabled;
+  }
+}
+
+.button--ghost {
+  background-color: transparent;
+  color: $color-text;
+  border-color: transparent;
+
+  &:hover:not(:disabled) {
+    background-color: $color-secondary-hover;
+    transform: translateY(-1px);
+
+    @media (prefers-reduced-motion: reduce) {
+      transform: none;
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background-color: transparent;
+    color: $color-disabled-text;
   }
 }
 

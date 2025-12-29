@@ -10,7 +10,10 @@ import type { ResetPasswordInput } from "@/core/domain/auth.schema";
 import { ResetPasswordSchema } from "@/core/domain/auth.schema";
 
 import Button from "@/presentation/components/ui/Button";
+import Form from "@/presentation/components/ui/Form";
 import Input from "@/presentation/components/ui/Input";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 import { useResetPassword } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
@@ -69,14 +72,16 @@ const ResetPasswordPage = () => {
     return (
       <div className={styles["reset-password-page"]}>
         <div className={styles["reset-password-container"]}>
-          <h1 className={styles["reset-password-title"]}>{t("title")}</h1>
+          <Title variant="h1" className={styles["reset-password-title"]}>
+            {t("title")}
+          </Title>
           <div
             className={styles["reset-password-success"]}
             role="status"
             aria-live="polite"
           >
-            <p>{t("success.message")}</p>
-            <p>{t("success.instructions")}</p>
+            <Text variant="body">{t("success.message")}</Text>
+            <Text variant="body">{t("success.instructions")}</Text>
           </div>
           <div className={styles["reset-password-footer"]}>
             <Link href="/auth/signin" className={styles["reset-password-link"]}>
@@ -91,20 +96,19 @@ const ResetPasswordPage = () => {
   return (
     <div className={styles["reset-password-page"]}>
       <div className={styles["reset-password-container"]}>
-        <h1 className={styles["reset-password-title"]}>{t("title")}</h1>
-        <p className={styles["reset-password-subtitle"]}>{t("subtitle")}</p>
+        <Title variant="h1" className={styles["reset-password-title"]}>
+          {t("title")}
+        </Title>
+        <Text variant="body" className={styles["reset-password-subtitle"]}>
+          {t("subtitle")}
+        </Text>
 
-        <form
+        <Form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["reset-password-form"]}
+          error={errors.root?.message}
           noValidate
         >
-          {errors.root && (
-            <div className={styles["reset-password-error"]} role="alert">
-              {errors.root.message}
-            </div>
-          )}
-
           <Input
             label={tCommon("email")}
             type="email"
@@ -122,7 +126,7 @@ const ResetPasswordPage = () => {
             aria-label={t("buttonAriaLabel")}
             onClick={() => {}}
           />
-        </form>
+        </Form>
 
         <div className={styles["reset-password-footer"]}>
           <Link href="/auth/signin" className={styles["reset-password-link"]}>

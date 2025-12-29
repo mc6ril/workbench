@@ -26,18 +26,35 @@ $color-text-secondary: #4b5563;
 $color-border: rgba(0, 0, 0, 0.08);
 $color-border-dark: rgba(255, 255, 255, 0.145);
 
+// Success Colors
+$color-success: #16a34a;
+$color-success-background: #dcfce7;
+$color-success-text: #15803d;
+$color-success-ring: rgba(22, 163, 74, 0.3);
+
 // Error Colors
 $color-error: #dc2626;
 $color-error-background: #fee2e2;
 $color-error-text: #991b1b;
+$color-error-ring: rgba(220, 38, 38, 0.3);
+
+// Neutral Colors
+$color-neutral-50: #f9fafb;
+$color-neutral-100: #f3f4f6;
+$color-neutral-200: #e5e7eb;
+$color-neutral-300: #d1d5db;
+$color-neutral-400: #9ca3af;
+$color-neutral-500: #6b7280;
+$color-neutral-600: #4b5563;
+$color-neutral-700: #374151;
+$color-neutral-800: #1f2937;
+$color-neutral-900: #111827;
 
 // Focus Colors
 $color-focus: #2563eb;
 $color-focus-ring: rgba(37, 99, 235, 0.3);
-$color-error-ring: rgba(220, 38, 38, 0.3);
 
 // Disabled Colors
 $color-disabled: #9ca3af;
 $color-disabled-background: #f3f4f6;
 $color-disabled-text: #6b7280;
-

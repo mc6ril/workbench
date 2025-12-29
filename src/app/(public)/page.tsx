@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import Button from "@/presentation/components/ui/Button";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 
 import { useTranslation } from "@/shared/i18n";
 
@@ -44,35 +46,49 @@ const LandingPageContent = () => {
     <main className={styles["landing-page"]}>
       <div className={styles["landing-container"]}>
         <div className={styles["landing-header"]}>
-          <h1 className={styles["landing-title"]}>{t("title")}</h1>
-          <p className={styles["landing-subtitle"]}>{t("subtitle")}</p>
+          <Title variant="h1" className={styles["landing-title"]}>
+            {t("title")}
+          </Title>
+          <Text variant="body" className={styles["landing-subtitle"]}>
+            {t("subtitle")}
+          </Text>
         </div>
 
         <div className={styles["landing-content"]}>
           <section className={styles["landing-section"]}>
-            <h2 className={styles["landing-section-title"]}>
+            <Title variant="h2" className={styles["landing-section-title"]}>
               {t("purposeTitle")}
-            </h2>
-            <p className={styles["landing-section-text"]}>{t("purposeText")}</p>
+            </Title>
+            <Text variant="body" className={styles["landing-section-text"]}>
+              {t("purposeText")}
+            </Text>
           </section>
 
           <section className={styles["landing-section"]}>
-            <h2 className={styles["landing-section-title"]}>
+            <Title variant="h2" className={styles["landing-section-title"]}>
               {t("featuresTitle")}
-            </h2>
+            </Title>
             <ul className={styles["landing-features-list"]}>
               <li>
-                <strong>{t("backlogLabel")}</strong>: {t("backlogDescription")}
+                <Text variant="body" as="span">
+                  <strong>{t("backlogLabel")}</strong>: {t("backlogDescription")}
+                </Text>
               </li>
               <li>
-                <strong>{t("boardLabel")}</strong>: {t("boardDescription")}
+                <Text variant="body" as="span">
+                  <strong>{t("boardLabel")}</strong>: {t("boardDescription")}
+                </Text>
               </li>
               <li>
-                <strong>{t("epicsLabel")}</strong>: {t("epicsDescription")}
+                <Text variant="body" as="span">
+                  <strong>{t("epicsLabel")}</strong>: {t("epicsDescription")}
+                </Text>
               </li>
               <li>
-                <strong>{t("subtasksLabel")}</strong>:{" "}
-                {t("subtasksDescription")}
+                <Text variant="body" as="span">
+                  <strong>{t("subtasksLabel")}</strong>:{" "}
+                  {t("subtasksDescription")}
+                </Text>
               </li>
             </ul>
           </section>

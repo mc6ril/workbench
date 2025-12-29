@@ -11,7 +11,10 @@ import type { SignInInput } from "@/core/domain/auth.schema";
 import { SignInSchema } from "@/core/domain/auth.schema";
 
 import Button from "@/presentation/components/ui/Button";
+import Form from "@/presentation/components/ui/Form";
 import Input from "@/presentation/components/ui/Input";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 import { useResendVerification, useSignIn } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
@@ -129,32 +132,33 @@ const SigninPage = () => {
   return (
     <div className={styles["signin-page"]}>
       <div className={styles["signin-container"]}>
-        <h1 className={styles["signin-title"]}>{t("title")}</h1>
-        <p className={styles["signin-subtitle"]}>{t("subtitle")}</p>
+        <Title variant="h1" className={styles["signin-title"]}>
+          {t("title")}
+        </Title>
+        <Text variant="body" className={styles["signin-subtitle"]}>
+          {t("subtitle")}
+        </Text>
 
-        <form
+        <Form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["signin-form"]}
+          error={errors.root?.message}
           noValidate
         >
-          {errors.root && (
-            <div className={styles["signin-error"]} role="alert">
-              <p>{errors.root.message}</p>
-              {isEmailVerificationError && (
-                <div className={styles["signin-resend-verification"]}>
-                  <button
-                    type="button"
-                    onClick={handleResendVerification}
-                    disabled={resendVerificationMutation.isPending}
-                    className={styles["signin-resend-button"]}
-                    aria-label={t("resendVerification.buttonAriaLabel")}
-                  >
-                    {resendVerificationMutation.isPending
-                      ? tCommon("loading")
-                      : t("resendVerification.button")}
-                  </button>
-                </div>
-              )}
+          {isEmailVerificationError && errors.root && (
+            <div className={styles["signin-resend-verification"]}>
+              <Button
+                label={
+                  resendVerificationMutation.isPending
+                    ? tCommon("loading")
+                    : t("resendVerification.button")
+                }
+                onClick={handleResendVerification}
+                disabled={resendVerificationMutation.isPending}
+                variant="ghost"
+                type="button"
+                aria-label={t("resendVerification.buttonAriaLabel")}
+              />
             </div>
           )}
 
@@ -190,14 +194,14 @@ const SigninPage = () => {
             aria-label={t("buttonAriaLabel")}
             onClick={() => {}}
           />
-        </form>
+        </Form>
 
-        <p className={styles["signin-footer"]}>
+        <Text variant="small" className={styles["signin-footer"]}>
           {t("footer")}{" "}
           <Link href="/auth/signup" className={styles["signin-link"]}>
             {t("footerLink")}
           </Link>
-        </p>
+        </Text>
       </div>
     </div>
   );

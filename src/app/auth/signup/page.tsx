@@ -11,7 +11,10 @@ import type { SignUpInput } from "@/core/domain/auth.schema";
 import { SignUpSchema } from "@/core/domain/auth.schema";
 
 import Button from "@/presentation/components/ui/Button";
+import Form from "@/presentation/components/ui/Form";
 import Input from "@/presentation/components/ui/Input";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 import { useSignUp } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
@@ -94,13 +97,15 @@ const SignupPage = () => {
     return (
       <div className={styles["signup-page"]}>
         <div className={styles["signup-container"]}>
-          <h1 className={styles["signup-title"]}>{t("verification.title")}</h1>
-          <p className={styles["signup-subtitle"]}>
+          <Title variant="h1" className={styles["signup-title"]}>
+            {t("verification.title")}
+          </Title>
+          <Text variant="body" className={styles["signup-subtitle"]}>
             {t("verification.message")}
-          </p>
-          <p className={styles["signup-subtitle"]}>
+          </Text>
+          <Text variant="body" className={styles["signup-subtitle"]}>
             {t("verification.instructions")}
-          </p>
+          </Text>
           <div className={styles["signup-footer"]}>
             <Link href="/auth/signin" className={styles["signup-link"]}>
               {t("verification.backToSignin")}
@@ -114,19 +119,19 @@ const SignupPage = () => {
   return (
     <div className={styles["signup-page"]}>
       <div className={styles["signup-container"]}>
-        <h1 className={styles["signup-title"]}>{t("title")}</h1>
-        <p className={styles["signup-subtitle"]}>{t("subtitle")}</p>
+        <Title variant="h1" className={styles["signup-title"]}>
+          {t("title")}
+        </Title>
+        <Text variant="body" className={styles["signup-subtitle"]}>
+          {t("subtitle")}
+        </Text>
 
-        <form
+        <Form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["signup-form"]}
+          error={errors.root?.message}
           noValidate
         >
-          {errors.root && (
-            <div className={styles["signup-error"]} role="alert">
-              {errors.root.message}
-            </div>
-          )}
 
           <Input
             label={tCommon("email")}
@@ -154,14 +159,14 @@ const SignupPage = () => {
             aria-label={t("buttonAriaLabel")}
             onClick={() => {}}
           />
-        </form>
+        </Form>
 
-        <p className={styles["signup-footer"]}>
+        <Text variant="small" className={styles["signup-footer"]}>
           {t("footer")}{" "}
           <Link href="/auth/signin" className={styles["signup-link"]}>
             {t("footerLink")}
           </Link>
-        </p>
+        </Text>
       </div>
     </div>
   );
