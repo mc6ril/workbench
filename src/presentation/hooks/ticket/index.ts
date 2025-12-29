@@ -1,1 +1,1 @@
-export { useTickets } from "./useTickets";
+export { useProjectTickets } from "./useProjectTickets";

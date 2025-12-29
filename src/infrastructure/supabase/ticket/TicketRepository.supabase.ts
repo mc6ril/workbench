@@ -7,6 +7,7 @@ import {
 import type {
   CreateTicketInput,
   Ticket,
+  TicketFilters,
   UpdateTicketInput,
 } from "@/core/domain/ticket.schema";
 
@@ -52,13 +53,28 @@ export const createTicketRepository = (
     }
   },
 
-  async listByProject(projectId: string): Promise<Ticket[]> {
+  async listByProject(
+    projectId: string,
+    filters?: TicketFilters
+  ): Promise<Ticket[]> {
     try {
-      const { data, error } = await client
+      let query = client
         .from("tickets")
         .select("*")
-        .eq("project_id", projectId)
-        .order("created_at", { ascending: false });
+        .eq("project_id", projectId);
+
+      // Apply filters if provided
+      if (filters?.status) {
+        query = query.eq("status", filters.status);
+      }
+
+      if (filters?.epicId) {
+        query = query.eq("epic_id", filters.epicId);
+      }
+
+      const { data, error } = await query.order("created_at", {
+        ascending: false,
+      });
 
       if (error) {
         handleRepositoryError(error, "Ticket");

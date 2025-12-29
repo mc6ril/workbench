@@ -1,6 +1,7 @@
 import type {
   CreateTicketInput,
   Ticket,
+  TicketFilters,
   UpdateTicketInput,
 } from "@/core/domain/ticket.schema";
 
@@ -10,7 +11,7 @@ import type {
  */
 export type TicketRepositoryMock = {
   findById: jest.Mock<Promise<Ticket | null>, [string]>;
-  listByProject: jest.Mock<Promise<Ticket[]>, [string]>;
+  listByProject: jest.Mock<Promise<Ticket[]>, [string, TicketFilters?]>;
   listByStatus: jest.Mock<Promise<Ticket[]>, [string, string]>;
   create: jest.Mock<Promise<Ticket>, [CreateTicketInput]>;
   update: jest.Mock<Promise<Ticket>, [string, UpdateTicketInput]>;
@@ -32,7 +33,7 @@ export const createTicketRepositoryMock = (
 ): TicketRepositoryMock => {
   const base: TicketRepositoryMock = {
     findById: jest.fn<Promise<Ticket | null>, [string]>(),
-    listByProject: jest.fn<Promise<Ticket[]>, [string]>(),
+    listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(),
     listByStatus: jest.fn<Promise<Ticket[]>, [string, string]>(),
     create: jest.fn<Promise<Ticket>, [CreateTicketInput]>(),
     update: jest.fn<Promise<Ticket>, [string, UpdateTicketInput]>(),

@@ -1,6 +1,7 @@
 import type {
   CreateTicketInput,
   Ticket,
+  TicketFilters,
   UpdateTicketInput,
 } from "@/core/domain/ticket.schema";
 
@@ -20,10 +21,14 @@ export type TicketRepository = {
   /**
    * Get all tickets for a project.
    * @param projectId - Project ID
+   * @param filters - Optional filters for ticket filtering
    * @returns Array of tickets
    * @throws DatabaseError if database operation fails
    */
-  listByProject(projectId: string): Promise<Ticket[]>;
+  listByProject(
+    projectId: string,
+    filters?: TicketFilters
+  ): Promise<Ticket[]>;
 
   /**
    * Get tickets by status.

@@ -1,3 +1,5 @@
+import type { TicketFilters } from "@/core/domain/ticket.schema";
+
 /**
  * Centralized query key factory for React Query.
  * Provides type-safe query keys following hierarchical pattern.
@@ -21,6 +23,14 @@ const queryKeysObject = {
   projects: {
     all: () => ["projects"] as const,
     detail: (id: string) => ["projects", id] as const,
+    tickets: (projectId: string, filters?: TicketFilters) => {
+      // Create stable query key by extracting filter values
+      // This ensures identical filter values create the same key regardless of object reference
+      const filterKey = filters
+        ? [filters.status ?? null, filters.epicId ?? null]
+        : null;
+      return ["projects", projectId, "tickets", filterKey] as const;
+    },
   },
   tickets: {
     all: () => ["tickets"] as const,

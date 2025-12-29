@@ -50,3 +50,13 @@ export const UpdateTicketInputSchema = z.object({
 });
 
 export type UpdateTicketInput = z.infer<typeof UpdateTicketInputSchema>;
+
+/**
+ * Filters for querying tickets.
+ * Used for future filtering support in ticket queries.
+ */
+export type TicketFilters = {
+  status?: string;
+  epicId?: string;
+  // Future filtering options
+};
