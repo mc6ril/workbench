@@ -19,10 +19,10 @@ export const PUBLIC_ROUTES: readonly string[] = Object.freeze([
 /**
  * Protected routes that require authentication.
  * These routes are protected by middleware and require a valid session.
- * Includes /myworkspace and all project-specific routes (/{projectId}/...)
+ * Includes /workspace and all project-specific routes (/{projectId}/...)
  */
 export const PROTECTED_ROUTES: readonly string[] = Object.freeze([
-  "/myworkspace",
+  "/workspace",
 ]);
 
 /**

@@ -83,7 +83,7 @@ const VerifyEmailContent = () => {
   useEffect(() => {
     if (verifyEmailMutation.isSuccess && verifyEmailMutation.data?.session) {
       // Auto-login successful, redirect to workspace
-      router.push("/myworkspace");
+      router.push("/workspace");
     }
   }, [verifyEmailMutation.isSuccess, verifyEmailMutation.data, router]);
 

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -23,14 +22,16 @@ import {
   useUpdateUser,
 } from "@/presentation/hooks";
 
+import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import { buildProjectRoute } from "@/shared/utils/routes";
 
-import styles from "./HomePage.module.scss";
+import styles from "./WorkspacePage.module.scss";
 
 type CreateProjectFormData = CreateProjectInput;
 
-export default function MyWorkspace() {
+export default function WorkspacePage() {
   const router = useRouter();
   const { data: session, isLoading: isLoadingSession } = useSession();
   const {
@@ -76,12 +77,9 @@ export default function MyWorkspace() {
       await addUserToProjectMutation.mutateAsync({
         projectId: projectId.trim(),
       });
-      // Clear the input on success
       setProjectId("");
-      // Manually refetch projects to ensure UI updates
       await refetchProjects();
     } catch (err) {
-      // Error handling is done by the mutation
       const error = err as { code?: string };
       const errorMessage = getErrorMessage(error, tErrors);
       setError(errorMessage);
@@ -93,14 +91,12 @@ export default function MyWorkspace() {
       const error = createProjectMutation.error as { code?: string };
       const errorMessage = getErrorMessage(error, tErrors);
 
-      // Map domain errors to form fields
       if (error.code === "CONSTRAINT_VIOLATION") {
         setFormError("name", {
           type: "server",
           message: errorMessage,
         });
       } else {
-        // General error - set on root
         setFormError("root", {
           type: "server",
           message: errorMessage,
@@ -111,16 +107,16 @@ export default function MyWorkspace() {
 
   useEffect(() => {
     if (createProjectMutation.isSuccess && createProjectMutation.data) {
-      // Reset submitting ref
       isSubmittingRef.current = false;
-      // Redirect to project page after successful creation
-      router.push(`/projects/${createProjectMutation.data.id}`);
+      // Redirect to project board using new route pattern
+      router.push(
+        buildProjectRoute(createProjectMutation.data.id, PROJECT_VIEWS.BOARD)
+      );
     }
   }, [createProjectMutation.isSuccess, createProjectMutation.data, router]);
 
   useEffect(() => {
     if (createProjectMutation.error) {
-      // Reset submitting ref on error
       isSubmittingRef.current = false;
     }
   }, [createProjectMutation.error]);
@@ -128,7 +124,6 @@ export default function MyWorkspace() {
   const onCreateProjectSubmit: SubmitHandler<CreateProjectFormData> = async (
     data
   ) => {
-    // Prevent duplicate submissions using ref (faster than isPending)
     if (isSubmittingRef.current || createProjectMutation.isPending) {
       return;
     }
@@ -137,22 +132,14 @@ export default function MyWorkspace() {
     try {
       await createProjectMutation.mutateAsync(data);
     } finally {
-      // Reset after a short delay to allow mutation state to update
       setTimeout(() => {
         isSubmittingRef.current = false;
       }, 100);
     }
   };
 
-  // Determine if user has projects (for conditional rendering)
-  // Only consider it as "has projects" if projects is defined and is a non-empty array
-  // If projects is undefined, we're still loading or there's an error
   const hasProjects = Array.isArray(projects) && projects.length > 0;
 
-  // Loading state - wait for both session and projects to load
-  // Also wait if projects is undefined (initial state before first fetch completes)
-  // Wait for both isLoadingProjects AND isFetchingProjects to be false to avoid rendering during refetches
-  // Only render content when we have a definitive answer: projects is an array (empty or not) or there's an error
   const isInitialLoad =
     isLoadingSession ||
     isLoadingProjects ||
@@ -161,23 +148,23 @@ export default function MyWorkspace() {
 
   if (isInitialLoad) {
     return (
-      <main className={styles["home-page"]}>
+      <main className={styles["workspace-page"]}>
         <Loader variant="full-page" />
       </main>
     );
   }
 
   return (
-    <main className={styles["home-page"]}>
-      <div className={styles["home-container"]}>
-        <div className={styles["home-header"]}>
-          <h1 className={styles["home-title"]}>{t("welcomeTitle")}</h1>
+    <main className={styles["workspace-page"]}>
+      <div className={styles["workspace-container"]}>
+        <div className={styles["workspace-header"]}>
+          <h1 className={styles["workspace-title"]}>{t("welcomeTitle")}</h1>
           {session && (
-            <p className={styles["home-user-info"]}>
+            <p className={styles["workspace-user-info"]}>
               {t("signedInAs")} <strong>{session.email}</strong>
             </p>
           )}
-          <div className={styles["home-user-actions"]}>
+          <div className={styles["workspace-user-actions"]}>
             <Button
               label={t("logoutButton")}
               onClick={() => signOutMutation.mutate()}
@@ -211,7 +198,7 @@ export default function MyWorkspace() {
             />
           </div>
           {showUpdateUserForm && (
-            <div className={styles["home-update-user-form"]}>
+            <div className={styles["workspace-update-user-form"]}>
               <Input
                 label={t("newEmailLabel")}
                 type="email"
@@ -227,7 +214,7 @@ export default function MyWorkspace() {
                 placeholder={t("newPasswordPlaceholder")}
                 autoComplete="new-password"
               />
-              <div className={styles["home-update-user-actions"]}>
+              <div className={styles["workspace-update-user-actions"]}>
                 <Button
                   label={t("saveButton")}
                   onClick={() => {
@@ -276,20 +263,20 @@ export default function MyWorkspace() {
         </div>
 
         {!hasProjects && (
-          <section className={styles["home-section"]}>
-            <h2 className={styles["home-section-title"]}>
+          <section className={styles["workspace-section"]}>
+            <h2 className={styles["workspace-section-title"]}>
               {t("createProjectTitle")}
             </h2>
-            <p className={styles["home-section-description"]}>
+            <p className={styles["workspace-section-description"]}>
               {t("createProjectDescription")}
             </p>
             <form
               onSubmit={handleSubmit(onCreateProjectSubmit)}
-              className={styles["home-create-form"]}
+              className={styles["workspace-create-form"]}
               noValidate
             >
               {errors.root && (
-                <div className={styles["home-error"]} role="alert">
+                <div className={styles["workspace-error"]} role="alert">
                   {errors.root.message}
                 </div>
               )}
@@ -317,14 +304,14 @@ export default function MyWorkspace() {
         )}
 
         {!hasProjects && (
-          <section className={styles["home-section"]}>
-            <h2 className={styles["home-section-title"]}>
+          <section className={styles["workspace-section"]}>
+            <h2 className={styles["workspace-section-title"]}>
               {t("accessProjectTitle")}
             </h2>
-            <p className={styles["home-section-description"]}>
+            <p className={styles["workspace-section-description"]}>
               {t("accessProjectDescription")}
             </p>
-            <div className={styles["home-access-form"]}>
+            <div className={styles["workspace-access-form"]}>
               <Input
                 label={t("projectIdLabel")}
                 type="text"
@@ -348,12 +335,12 @@ export default function MyWorkspace() {
           </section>
         )}
 
-        <section className={styles["home-section"]}>
-          <h2 className={styles["home-section-title"]}>
+        <section className={styles["workspace-section"]}>
+          <h2 className={styles["workspace-section-title"]}>
             {t("yourProjectsTitle")}
           </h2>
           {projectsError && (
-            <p className={styles["home-error"]} role="alert">
+            <p className={styles["workspace-error"]} role="alert">
               {t("errorLoadingProjects")}{" "}
               {getErrorMessage(projectsError as { code?: string }, tErrors)}
             </p>
@@ -361,7 +348,7 @@ export default function MyWorkspace() {
           {isLoadingProjects || addUserToProjectMutation.isPending ? (
             <Loader variant="inline" />
           ) : Array.isArray(projects) && projects.length > 0 ? (
-            <ul className={styles["home-projects-list"]}>
+            <ul className={styles["workspace-projects-list"]}>
               {projects.map((project) => {
                 const roleLabel =
                   project.role === "admin"
@@ -370,25 +357,28 @@ export default function MyWorkspace() {
                       ? t("roleMember")
                       : t("roleViewer");
                 return (
-                  <li key={project.id} className={styles["home-project-item"]}>
-                    <Link
-                      href={`/projects/${project.id}`}
-                      className={styles["home-project-link"]}
+                  <li
+                    key={project.id}
+                    className={styles["workspace-project-item"]}
+                  >
+                    <a
+                      href={buildProjectRoute(project.id, PROJECT_VIEWS.BOARD)}
+                      className={styles["workspace-project-link"]}
                       aria-label={`${project.name}, ${t("roleAriaLabel")}: ${roleLabel}`}
                     >
-                      <span className={styles["home-project-name"]}>
+                      <span className={styles["workspace-project-name"]}>
                         {project.name}
                       </span>
-                      <span className={styles["home-project-role"]}>
+                      <span className={styles["workspace-project-role"]}>
                         {roleLabel}
                       </span>
-                    </Link>
+                    </a>
                   </li>
                 );
               })}
             </ul>
           ) : Array.isArray(projects) && projects.length === 0 ? (
-            <p className={styles["home-empty"]}>{t("noProjects")}</p>
+            <p className={styles["workspace-empty"]}>{t("noProjects")}</p>
           ) : null}
         </section>
       </div>

@@ -54,9 +54,18 @@ function createSupabaseClientForMiddleware(request: NextRequest) {
 }
 
 /**
- * Next.js middleware for route protection.
- * Checks authentication for protected routes and redirects unauthenticated users.
- * Also redirects authenticated users away from auth pages (signin/signup).
+ * Next.js middleware for route optimization (UX redirects).
+ * 
+ * IMPORTANT: This is NOT the source of truth for security.
+ * - Security is enforced by AuthLayout and ProjectLayout (server components)
+ * - RLS policies at the database level are the ultimate source of truth
+ * 
+ * This middleware provides:
+ * - UX optimization: early redirects for better user experience
+ * - Route filtering: prevents loading unnecessary pages
+ * - Email verification checks: redirects unverified users
+ * 
+ * On error, fails open (allows access) - layouts and RLS will still protect.
  */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -76,7 +85,7 @@ export async function middleware(request: NextRequest) {
 
     // If user is authenticated and trying to access auth pages, redirect to workspace
     if (session && isAuthPage) {
-      return NextResponse.redirect(new URL("/myworkspace", request.url));
+      return NextResponse.redirect(new URL("/workspace", request.url));
     }
 
     // If this is a protected route and user is not authenticated, redirect to signin
@@ -106,7 +115,11 @@ export async function middleware(request: NextRequest) {
     return response;
   } catch (error) {
     // On error, fail open (allow access) to prevent lockout
-    // RLS policies will still protect data at database level
+    // This is safe because:
+    // 1. AuthLayout will check authentication again (server component)
+    // 2. ProjectLayout will check project access via RLS (server component)
+    // 3. RLS policies at database level are the ultimate source of truth
+    // Middleware is optimization only, not security
     console.error("[Middleware] Authentication error:", error);
     return NextResponse.next();
   }
