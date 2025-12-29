@@ -4,16 +4,15 @@ import { Suspense, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import Loader from "@/presentation/components/ui/Loader";
 import { useVerifyEmail } from "@/presentation/hooks";
 
-import Loader from "@/presentation/components/ui/Loader";
 import { useTranslation } from "@/shared/i18n";
+import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 import styles from "./VerifyEmailPage.module.scss";
 
 const VerifyEmailPage = () => {
-  const tCommon = useTranslation("common");
-
   return (
     <Suspense
       fallback={
@@ -32,7 +31,7 @@ const VerifyEmailContent = () => {
   const searchParams = useSearchParams();
   const verifyEmailMutation = useVerifyEmail();
   const t = useTranslation("pages.verifyEmail");
-  const tCommon = useTranslation("common");
+  const tErrors = useTranslation("errors");
 
   // Extract token/code and email from URL parameters using useMemo to avoid unnecessary re-renders
   // Supabase can redirect with either:
@@ -54,8 +53,7 @@ const VerifyEmailContent = () => {
     // For code format, validate that type is either missing or "email"
     // Reject codes with type="recovery" or other types to prevent misuse
     const isValidCodeFormat =
-      codeParam !== null &&
-      (typeParam === null || typeParam === "email"); // No type or type must be "email"
+      codeParam !== null && (typeParam === null || typeParam === "email"); // No type or type must be "email"
 
     return {
       token: actualToken,
@@ -89,37 +87,15 @@ const VerifyEmailContent = () => {
     }
   }, [verifyEmailMutation.isSuccess, verifyEmailMutation.data, router]);
 
-  // Memoize error messages to avoid recreating them on every render
-  const errorMessages = useMemo(
-    () => ({
-      invalidToken: t("errors.invalidToken"),
-      verificationError: t("errors.verificationError"),
-      generic: t("errors.generic"),
-    }),
-    [t]
-  );
-
   // Determine error message using useMemo for performance
   const errorMessage = useMemo((): string | null => {
     if (!verifyEmailMutation.error) {
       return null;
     }
 
-    const error = verifyEmailMutation.error as {
-      message?: string;
-      code?: string;
-    };
-
-    if (error.code === "INVALID_TOKEN") {
-      return errorMessages.invalidToken;
-    }
-
-    if (error.code === "EMAIL_VERIFICATION_ERROR") {
-      return errorMessages.verificationError;
-    }
-
-    return error.message || errorMessages.generic;
-  }, [verifyEmailMutation.error, errorMessages]);
+    const error = verifyEmailMutation.error as { code?: string };
+    return getErrorMessage(error, tErrors);
+  }, [verifyEmailMutation.error, tErrors]);
 
   // Show error if token is missing
   // Email is optional (code format doesn't require email)

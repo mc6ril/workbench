@@ -6,7 +6,11 @@ import type {
   ProjectRole,
   ProjectWithRole,
 } from "@/core/domain/project.schema";
-import { createNotFoundError } from "@/core/domain/repositoryError";
+import {
+  createConstraintError,
+  createDatabaseError,
+  createNotFoundError,
+} from "@/core/domain/repositoryError";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type { ProjectRow } from "@/infrastructure/supabase/types";
@@ -80,7 +84,7 @@ export const createProjectRepository = (
       return data.map((row: unknown) => {
         if (!isObject(row)) {
           handleRepositoryError(
-            new Error("Invalid project data structure"),
+            createDatabaseError("Invalid project data structure"),
             "Project"
           );
         }
@@ -93,7 +97,7 @@ export const createProjectRepository = (
           .project_members;
         if (!Array.isArray(members) || members.length === 0) {
           handleRepositoryError(
-            new Error("Project member role not found"),
+            createDatabaseError("Project member role not found"),
             "Project"
           );
         }
@@ -101,7 +105,7 @@ export const createProjectRepository = (
         const roleValue = members[0]?.role;
         if (!roleValue || !isProjectRole(roleValue)) {
           handleRepositoryError(
-            new Error(`Invalid project role: ${roleValue}`),
+            createDatabaseError(`Invalid project role: ${roleValue}`),
             "Project"
           );
         }
@@ -158,7 +162,7 @@ export const createProjectRepository = (
 
         if (!projectDataFromRpc) {
           handleRepositoryError(
-            new Error(
+            createDatabaseError(
               "No project data returned from get_project_by_id function"
             ),
             "Project"
@@ -172,7 +176,7 @@ export const createProjectRepository = (
 
         if (!projectRow) {
           handleRepositoryError(
-            new Error("No project data returned after creation"),
+            createDatabaseError("No project data returned after creation"),
             "Project"
           );
         }
@@ -182,7 +186,9 @@ export const createProjectRepository = (
 
       // If we get here, something went wrong
       handleRepositoryError(
-        new Error("No project data returned from create_project function"),
+        createDatabaseError(
+          "No project data returned from create_project function"
+        ),
         "Project"
       );
     } catch (error) {
@@ -200,7 +206,10 @@ export const createProjectRepository = (
       if (input.name !== undefined) {
         if (!isNonEmptyString(input.name)) {
           handleRepositoryError(
-            new Error("Project name cannot be empty"),
+            createConstraintError(
+              "PROJECT_NAME_REQUIRED",
+              "Project name cannot be empty"
+            ),
             "Project"
           );
         }
@@ -260,7 +269,7 @@ export const createProjectRepository = (
       } = await client.auth.getSession();
       if (!session?.user?.id) {
         handleRepositoryError(
-          new Error("User must be authenticated"),
+          createDatabaseError("User must be authenticated"),
           "Project"
         );
       }

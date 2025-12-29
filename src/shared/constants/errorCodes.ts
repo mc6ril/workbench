@@ -7,7 +7,7 @@
  * Authentication error codes.
  * Used for authentication-related domain errors.
  */
-export const AUTH_ERROR_CODES = [
+export const AUTH_ERROR_CODES = Object.freeze([
   "INVALID_CREDENTIALS",
   "EMAIL_ALREADY_EXISTS",
   "WEAK_PASSWORD",
@@ -16,7 +16,7 @@ export const AUTH_ERROR_CODES = [
   "EMAIL_VERIFICATION_ERROR",
   "PASSWORD_RESET_ERROR",
   "INVALID_TOKEN",
-] as const;
+]);
 
 export type AuthErrorCode = (typeof AUTH_ERROR_CODES)[number];
 
@@ -24,10 +24,10 @@ export type AuthErrorCode = (typeof AUTH_ERROR_CODES)[number];
  * Repository error codes.
  * Used for repository-related domain errors.
  */
-export const REPOSITORY_ERROR_CODES = [
+export const REPOSITORY_ERROR_CODES = Object.freeze([
   "NOT_FOUND",
   "CONSTRAINT_VIOLATION",
   "DATABASE_ERROR",
-] as const;
+]);
 
 export type RepositoryErrorCode = (typeof REPOSITORY_ERROR_CODES)[number];

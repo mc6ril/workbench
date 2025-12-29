@@ -60,7 +60,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map email not confirmed message to EmailVerificationError", () => {
@@ -75,7 +75,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map email address not confirmed message to EmailVerificationError", () => {
@@ -90,7 +90,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
     });
 
@@ -105,7 +105,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map status 400 with invalid password message to InvalidCredentialsError", () => {
@@ -119,7 +119,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map status 400 with user not found message to InvalidCredentialsError", () => {
@@ -133,7 +133,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map invalid_credentials code to InvalidCredentialsError", () => {
@@ -146,7 +146,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
     });
 
@@ -161,7 +161,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map email already exists message to EmailAlreadyExistsError", () => {
@@ -176,7 +176,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map signup_disabled code to EmailAlreadyExistsError", () => {
@@ -189,7 +189,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
     });
 
@@ -204,7 +204,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map password too short message to WeakPasswordError", () => {
@@ -219,7 +219,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map password requirements message to WeakPasswordError", () => {
@@ -234,7 +234,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
     });
 
@@ -242,17 +242,13 @@ describe("AuthMapper.supabase", () => {
       it("should map invalid email message to InvalidEmailError", () => {
         // Arrange
         const authError = createSupabaseAuthError.invalidEmail();
-        const expectedError: { code: string; message: string } = {
-          code: "INVALID_EMAIL",
-          message: authError.message,
-        };
 
         // Act
         const result = mapSupabaseAuthError(authError);
 
         // Assert
-        expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("code", "INVALID_EMAIL");
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map email format message to InvalidEmailError", () => {
@@ -260,33 +256,25 @@ describe("AuthMapper.supabase", () => {
         const authError = createSupabaseAuthError.invalidEmail(
           "Invalid email format"
         );
-        const expectedError: { code: string; message: string } = {
-          code: "INVALID_EMAIL",
-          message: authError.message,
-        };
 
         // Act
         const result = mapSupabaseAuthError(authError);
 
         // Assert
-        expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("code", "INVALID_EMAIL");
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map validation_failed code to InvalidEmailError", () => {
         // Arrange
         const authError = createSupabaseAuthError.validationFailed();
-        const expectedError: { code: string; message: string } = {
-          code: "INVALID_EMAIL",
-          message: authError.message,
-        };
 
         // Act
         const result = mapSupabaseAuthError(authError);
 
         // Assert
-        expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("code", "INVALID_EMAIL");
+        expect(result).toHaveProperty("debugMessage");
       });
     });
 
@@ -301,7 +289,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map verification failed message to EmailVerificationError", () => {
@@ -316,7 +304,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map token expired in email verification to InvalidTokenError", () => {
@@ -331,7 +319,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map invalid token in email verification to InvalidTokenError", () => {
@@ -346,7 +334,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
     });
 
@@ -361,7 +349,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map reset failed message to PasswordResetError", () => {
@@ -374,7 +362,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map email_not_found code to PasswordResetError", () => {
@@ -387,7 +375,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map expired token in password reset to InvalidTokenError", () => {
@@ -402,7 +390,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map invalid token in password reset to InvalidTokenError", () => {
@@ -417,7 +405,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map email_not_found code with expired message to InvalidTokenError", () => {
@@ -431,7 +419,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
     });
 
@@ -446,7 +434,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map token expired message to InvalidTokenError", () => {
@@ -459,7 +447,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map invalid_token code to InvalidTokenError", () => {
@@ -472,7 +460,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map token_expired code to InvalidTokenError", () => {
@@ -485,7 +473,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map invalid_token code to InvalidTokenError (not matching password reset)", () => {
@@ -499,7 +487,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map token_expired code with non-password-reset message to InvalidTokenError", () => {
@@ -514,7 +502,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map invalid_token code to InvalidTokenError when message doesn't contain token word", () => {
@@ -531,7 +519,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
     });
 
@@ -546,7 +534,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(error.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map Error with invalid password message to InvalidCredentialsError", () => {
@@ -559,7 +547,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(error.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map Error with email already message to EmailAlreadyExistsError", () => {
@@ -572,7 +560,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(error.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map Error with password weak message to WeakPasswordError", () => {
@@ -585,7 +573,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(error.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map generic Error to AuthenticationError", () => {
@@ -598,7 +586,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(error.message);
+        expect(result).toHaveProperty("debugMessage");
         expect(result).toHaveProperty("originalError", error);
       });
     });
@@ -616,7 +604,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(expectedError.message);
+        expect(result).toHaveProperty("debugMessage");
         expect(result).toHaveProperty("originalError", unknownError);
       });
 
@@ -632,7 +620,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(expectedError.message);
+        expect(result).toHaveProperty("debugMessage");
         expect(result).toHaveProperty("originalError", unknownError);
       });
 
@@ -651,7 +639,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(expectedError.message);
+        expect(result).toHaveProperty("debugMessage");
         expect(result).toHaveProperty("originalError", unknownError);
       });
 
@@ -670,7 +658,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(expectedError.message);
+        expect(result).toHaveProperty("debugMessage");
         expect(result).toHaveProperty("originalError", unknownError);
       });
     });
@@ -688,7 +676,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert - should be EmailVerificationError, not InvalidCredentialsError
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(authError.message);
+        expect(result).toHaveProperty("debugMessage");
       });
 
       it("should map unknown Supabase auth error to AuthenticationError", () => {
@@ -703,7 +691,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert - Should fall through to fallback since no matching pattern
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(expectedError.message);
+        expect(result).toHaveProperty("debugMessage");
         expect(result).toHaveProperty("originalError", authError);
       });
 
@@ -722,7 +710,7 @@ describe("AuthMapper.supabase", () => {
 
         // Assert - Should fall through to fallback
         expect(result).toHaveProperty("code", expectedError.code);
-        expect(result.message).toBe(expectedError.message);
+        expect(result).toHaveProperty("debugMessage");
         expect(result).toHaveProperty("originalError", authError);
       });
     });

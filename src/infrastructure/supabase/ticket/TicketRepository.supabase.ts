@@ -1,6 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { createNotFoundError } from "@/core/domain/repositoryError";
+import {
+  createDatabaseError,
+  createNotFoundError,
+} from "@/core/domain/repositoryError";
 import type {
   CreateTicketInput,
   Ticket,
@@ -116,7 +119,7 @@ export const createTicketRepository = (
 
       if (!data) {
         handleRepositoryError(
-          new Error("No data returned from insert"),
+          createDatabaseError("No data returned from insert"),
           "Ticket"
         );
       }

@@ -140,8 +140,8 @@ describe("updatePassword", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "INVALID_TOKEN",
-        message: "Token is invalid or expired",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.updatePassword).toHaveBeenCalledTimes(1);
   });
@@ -165,8 +165,8 @@ describe("updatePassword", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "PASSWORD_RESET_ERROR",
-        message: "Password reset failed",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.updatePassword).toHaveBeenCalledTimes(1);
   });
@@ -192,8 +192,8 @@ describe("updatePassword", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "AUTHENTICATION_ERROR",
-        message: "Update password failed",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.updatePassword).toHaveBeenCalledTimes(1);
   });

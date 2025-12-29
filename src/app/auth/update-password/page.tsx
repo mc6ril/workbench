@@ -16,6 +16,7 @@ import Loader from "@/presentation/components/ui/Loader";
 import { useUpdatePassword } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
+import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 import styles from "./UpdatePasswordPage.module.scss";
 
@@ -41,8 +42,6 @@ const createUpdatePasswordFormSchema = (t: (key: string) => string) => {
 };
 
 const UpdatePasswordPage = () => {
-  const tCommon = useTranslation("common");
-
   return (
     <Suspense
       fallback={
@@ -61,7 +60,7 @@ const UpdatePasswordContent = () => {
   const searchParams = useSearchParams();
   const updatePasswordMutation = useUpdatePassword();
   const t = useTranslation("pages.updatePassword");
-  const tCommon = useTranslation("common");
+  const tErrors = useTranslation("errors");
 
   // Extract token/code and email from URL parameters using useMemo
   // Supabase can redirect with either token or code parameter
@@ -105,43 +104,29 @@ const UpdatePasswordContent = () => {
     mode: "onBlur",
   });
 
-  // Memoize error messages to avoid recreating them on every render
-  const errorMessages = useMemo(
-    () => ({
-      invalidToken: t("errors.invalidToken"),
-      passwordResetError: t("errors.passwordResetError"),
-      generic: t("errors.generic"),
-    }),
-    [t]
-  );
-
   useEffect(() => {
     if (updatePasswordMutation.error) {
-      const error = updatePasswordMutation.error as {
-        message?: string;
-        code?: string;
-      };
+      const error = updatePasswordMutation.error as { code?: string };
+      const errorMessage = getErrorMessage(error, tErrors);
 
       // Map domain errors
-      if (error.code === "INVALID_TOKEN") {
+      if (
+        error.code === "INVALID_TOKEN" ||
+        error.code === "PASSWORD_RESET_ERROR"
+      ) {
         setError("root", {
           type: "server",
-          message: errorMessages.invalidToken,
-        });
-      } else if (error.code === "PASSWORD_RESET_ERROR") {
-        setError("root", {
-          type: "server",
-          message: errorMessages.passwordResetError,
+          message: errorMessage,
         });
       } else {
         // General error - set on root
         setError("root", {
           type: "server",
-          message: error.message || errorMessages.generic,
+          message: errorMessage,
         });
       }
     }
-  }, [updatePasswordMutation.error, setError, errorMessages]);
+  }, [updatePasswordMutation.error, setError, tErrors]);
 
   // Redirect to workspace after successful password update
   useEffect(() => {

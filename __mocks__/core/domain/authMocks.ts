@@ -84,75 +84,77 @@ export const validEmail = "test@example.com";
 
 /**
  * Factory for creating authentication errors.
+ * These mocks use debugMessage for logging purposes only.
+ * User-facing messages should be translated in the presentation layer using i18n.
  */
 export const createAuthError = {
   /**
    * Create an AuthenticationError.
    */
   authentication: (
-    message: string = "Authentication failed"
+    debugMessage: string = "Authentication failed"
   ): AuthenticationError => ({
     code: "AUTHENTICATION_ERROR",
-    message,
+    debugMessage,
   }),
 
   /**
    * Create an EmailAlreadyExistsError.
    */
   emailAlreadyExists: (
-    message: string = "Email already registered"
+    debugMessage: string = "Email already registered"
   ): EmailAlreadyExistsError => ({
     code: "EMAIL_ALREADY_EXISTS",
-    message,
+    debugMessage,
   }),
 
   /**
    * Create an EmailVerificationError.
    */
   emailVerification: (
-    message: string = "Email verification failed"
+    debugMessage: string = "Email verification failed"
   ): EmailVerificationError => ({
     code: "EMAIL_VERIFICATION_ERROR",
-    message,
+    debugMessage,
   }),
 
   /**
    * Create an InvalidCredentialsError.
    */
   invalidCredentials: (
-    message: string = "Invalid email or password"
+    debugMessage: string = "Invalid email or password"
   ): InvalidCredentialsError => ({
     code: "INVALID_CREDENTIALS",
-    message,
+    debugMessage,
   }),
 
   /**
    * Create an InvalidTokenError.
    */
   invalidToken: (
-    message: string = "Token is invalid or expired"
+    debugMessage: string = "Token is invalid or expired"
   ): InvalidTokenError => ({
     code: "INVALID_TOKEN",
-    message,
+    debugMessage,
   }),
 
   /**
    * Create a PasswordResetError.
    */
   passwordReset: (
-    message: string = "Password reset failed"
+    debugMessage: string = "Password reset failed"
   ): PasswordResetError => ({
     code: "PASSWORD_RESET_ERROR",
-    message,
+    debugMessage,
   }),
 
   /**
    * Create a WeakPasswordError.
    */
   weakPassword: (
-    message: string = "Password is too weak"
+    debugMessage: string = "Password is too weak"
   ): WeakPasswordError => ({
     code: "WEAK_PASSWORD",
-    message,
+    debugMessage,
   }),
 };

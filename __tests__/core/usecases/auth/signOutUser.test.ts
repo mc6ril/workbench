@@ -38,8 +38,8 @@ describe("signOutUser", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "AUTHENTICATION_ERROR",
-        message: "Sign out failed",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.signOut).toHaveBeenCalledTimes(1);
   });

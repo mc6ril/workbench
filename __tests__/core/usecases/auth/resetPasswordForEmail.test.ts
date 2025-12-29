@@ -77,8 +77,8 @@ describe("resetPasswordForEmail", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "PASSWORD_RESET_ERROR",
-        message: "Email not found",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.resetPasswordForEmail).toHaveBeenCalledTimes(1);
   });
@@ -103,8 +103,8 @@ describe("resetPasswordForEmail", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "AUTHENTICATION_ERROR",
-        message: "Reset password failed",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.resetPasswordForEmail).toHaveBeenCalledTimes(1);
   });

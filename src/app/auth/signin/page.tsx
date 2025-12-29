@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
@@ -15,6 +15,7 @@ import Input from "@/presentation/components/ui/Input";
 import { useResendVerification, useSignIn } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
+import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 import styles from "./SigninPage.module.scss";
 
@@ -27,6 +28,7 @@ const SigninPage = () => {
   const resendVerificationMutation = useResendVerification();
   const t = useTranslation("pages.signin");
   const tCommon = useTranslation("common");
+  const tErrors = useTranslation("errors");
 
   // Check if redirected from middleware due to unverified email
   const isUnverifiedRedirect = searchParams.get("unverified") === "true";
@@ -42,59 +44,49 @@ const SigninPage = () => {
     mode: "onBlur",
   });
 
-  // Memoize error messages to avoid recreating them on every render
-  const errorMessages = useMemo(
-    () => ({
-      invalidCredentials: t("errors.invalidCredentials"),
-      invalidEmail: t("errors.invalidEmail"),
-      emailNotVerified: t("errors.emailNotVerified"),
-      generic: t("errors.generic"),
-    }),
-    [t]
-  );
-
   // Show unverified email error if redirected from middleware
   useEffect(() => {
     if (isUnverifiedRedirect) {
       setError("root", {
         type: "server",
-        message: errorMessages.emailNotVerified,
+        message: tErrors("auth.EMAIL_VERIFICATION_ERROR"),
       });
     }
-  }, [isUnverifiedRedirect, setError, errorMessages]);
+  }, [isUnverifiedRedirect, setError, tErrors]);
 
   useEffect(() => {
     if (signInMutation.error) {
-      const error = signInMutation.error as { message?: string; code?: string };
+      const error = signInMutation.error as { code?: string };
+      const errorMessage = getErrorMessage(error, tErrors);
 
       // Map domain errors to form fields
       if (error.code === "EMAIL_VERIFICATION_ERROR") {
         // Unverified user trying to sign in
         setError("root", {
           type: "server",
-          message: error.message || errorMessages.emailNotVerified,
+          message: errorMessage,
         });
       } else if (error.code === "INVALID_CREDENTIALS") {
         // Invalid credentials can be either email or password issue
         // Set on root to show general error message
         setError("root", {
           type: "server",
-          message: error.message || errorMessages.invalidCredentials,
+          message: errorMessage,
         });
       } else if (error.code === "INVALID_EMAIL") {
         setError("email", {
           type: "server",
-          message: error.message || errorMessages.invalidEmail,
+          message: errorMessage,
         });
       } else {
         // General error - set on root
         setError("root", {
           type: "server",
-          message: error.message || errorMessages.generic,
+          message: errorMessage,
         });
       }
     }
-  }, [signInMutation.error, setError, errorMessages]);
+  }, [signInMutation.error, setError, tErrors]);
 
   // Handle resend verification success
   useEffect(() => {

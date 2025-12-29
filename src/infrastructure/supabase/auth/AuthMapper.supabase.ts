@@ -34,70 +34,64 @@ export const mapSupabaseSessionToDomain = (
  * Creates an invalid credentials error.
  */
 const createInvalidCredentialsError = (
-  message: string = "Invalid email or password"
+  debugMessage?: string
 ): InvalidCredentialsError => ({
   code: "INVALID_CREDENTIALS",
-  message,
+  debugMessage,
 });
 
 /**
  * Creates an email already exists error.
  */
 const createEmailAlreadyExistsError = (
-  message: string = "Email is already registered"
+  debugMessage?: string
 ): EmailAlreadyExistsError => ({
   code: "EMAIL_ALREADY_EXISTS",
-  message,
+  debugMessage,
 });
 
 /**
  * Creates a weak password error.
  */
-const createWeakPasswordError = (
-  message: string = "Password does not meet requirements"
-): WeakPasswordError => ({
+const createWeakPasswordError = (debugMessage?: string): WeakPasswordError => ({
   code: "WEAK_PASSWORD",
-  message,
+  debugMessage,
 });
 
 /**
  * Creates an invalid email error.
  */
-const createInvalidEmailError = (
-  message: string = "Invalid email format"
-): InvalidEmailError => ({
+const createInvalidEmailError = (debugMessage?: string): InvalidEmailError => ({
   code: "INVALID_EMAIL",
-  message,
+  debugMessage,
 });
 
 /**
  * Creates an email verification error.
  */
 const createEmailVerificationError = (
-  message: string = "Email verification failed"
+  debugMessage?: string
 ): EmailVerificationError => ({
   code: "EMAIL_VERIFICATION_ERROR",
-  message,
+  debugMessage,
 });
 
 /**
  * Creates a password reset error.
  */
 const createPasswordResetError = (
-  message: string = "Password reset failed"
+  debugMessage?: string
 ): PasswordResetError => ({
   code: "PASSWORD_RESET_ERROR",
-  message,
+  debugMessage,
 });
 
 /**
  * Creates an invalid token error.
  */
-const createInvalidTokenError = (
-  message: string = "Invalid or expired token"
-): InvalidTokenError => ({
+const createInvalidTokenError = (debugMessage?: string): InvalidTokenError => ({
   code: "INVALID_TOKEN",
-  message,
+  debugMessage,
 });
 
 /**
@@ -236,18 +230,28 @@ export const mapSupabaseAuthError = (error: unknown): AuthenticationFailure => {
       return createWeakPasswordError(error.message);
     }
 
-    // Generic authentication error
+    // Generic authentication error - keep original message for debugging only.
     return {
       code: "AUTHENTICATION_ERROR",
-      message: error.message,
+      debugMessage: error.message,
       originalError: error,
     };
   }
 
   // Fallback for unknown errors
+  const debugMessage =
+    error && typeof error === "object" && "message" in error
+      ? String(
+          (error as { message?: unknown }).message ||
+            "An unknown authentication error occurred"
+        )
+      : error && typeof error === "string"
+        ? error
+        : "An unknown authentication error occurred";
+
   return {
     code: "AUTHENTICATION_ERROR",
-    message: "An unknown authentication error occurred",
+    debugMessage,
     originalError: error,
   };
 };

@@ -63,8 +63,8 @@ describe("getCurrentSession", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "AUTHENTICATION_ERROR",
-        message: "Session retrieval failed",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.getSession).toHaveBeenCalledTimes(1);
   });

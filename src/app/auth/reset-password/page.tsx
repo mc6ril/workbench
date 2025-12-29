@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
@@ -14,6 +14,7 @@ import Input from "@/presentation/components/ui/Input";
 import { useResetPassword } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
+import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 import styles from "./ResetPasswordPage.module.scss";
 
@@ -23,6 +24,7 @@ const ResetPasswordPage = () => {
   const resetPasswordMutation = useResetPassword();
   const t = useTranslation("pages.resetPassword");
   const tCommon = useTranslation("common");
+  const tErrors = useTranslation("errors");
 
   const {
     register,
@@ -34,21 +36,10 @@ const ResetPasswordPage = () => {
     mode: "onBlur",
   });
 
-  // Memoize error messages to avoid recreating them on every render
-  const errorMessages = useMemo(
-    () => ({
-      invalidEmail: t("errors.invalidEmail"),
-      generic: t("errors.generic"),
-    }),
-    [t]
-  );
-
   useEffect(() => {
     if (resetPasswordMutation.error) {
-      const error = resetPasswordMutation.error as {
-        message?: string;
-        code?: string;
-      };
+      const error = resetPasswordMutation.error as { code?: string };
+      const errorMessage = getErrorMessage(error, tErrors);
 
       // Map domain errors to form fields
       if (
@@ -57,17 +48,17 @@ const ResetPasswordPage = () => {
       ) {
         setError("email", {
           type: "server",
-          message: error.message || errorMessages.invalidEmail,
+          message: errorMessage,
         });
       } else {
         // General error - set on root
         setError("root", {
           type: "server",
-          message: error.message || errorMessages.generic,
+          message: errorMessage,
         });
       }
     }
-  }, [resetPasswordMutation.error, setError, errorMessages]);
+  }, [resetPasswordMutation.error, setError, tErrors]);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     resetPasswordMutation.mutate(data);

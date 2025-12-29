@@ -5,10 +5,16 @@
 
 /**
  * Base repository error type.
+ * Errors contain only codes and metadata - no user-facing messages.
+ * User-facing messages are translated in the presentation layer using i18n.
  */
 export type RepositoryError = {
-  message: string;
   code: string;
+  /**
+   * Optional debug message for logging purposes only.
+   * Never shown to users - use error.code with i18n for user-facing messages.
+   */
+  debugMessage?: string;
 };
 
 /**
@@ -38,31 +44,34 @@ export type DatabaseError = RepositoryError & {
 
 /**
  * Error factory functions.
+ * These functions create errors with codes and metadata only.
+ * User-facing messages are translated in the presentation layer using i18n.
  */
 export const createNotFoundError = (
   entityType: string,
-  entityId: string
+  entityId: string,
+  debugMessage?: string
 ): NotFoundError => ({
   code: "NOT_FOUND",
-  message: `${entityType} with id ${entityId} not found`,
   entityType,
   entityId,
+  debugMessage: debugMessage ?? `${entityType} with id ${entityId} not found`,
 });
 
 export const createConstraintError = (
   constraint: string,
-  message?: string
+  debugMessage?: string
 ): ConstraintError => ({
   code: "CONSTRAINT_VIOLATION",
-  message: message ?? `Database constraint violation: ${constraint}`,
   constraint,
+  debugMessage: debugMessage ?? `Database constraint violation: ${constraint}`,
 });
 
 export const createDatabaseError = (
-  message: string,
+  debugMessage: string,
   originalError?: unknown
 ): DatabaseError => ({
   code: "DATABASE_ERROR",
-  message,
+  debugMessage,
   originalError,
 });

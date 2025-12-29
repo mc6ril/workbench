@@ -109,8 +109,8 @@ describe("signUpUser", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "EMAIL_ALREADY_EXISTS",
-        message: "Email already registered",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.signUp).toHaveBeenCalledTimes(1);
   });
@@ -131,8 +131,8 @@ describe("signUpUser", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "WEAK_PASSWORD",
-        message: "Password is too weak",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.signUp).toHaveBeenCalledTimes(1);
   });
@@ -153,8 +153,8 @@ describe("signUpUser", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "AUTHENTICATION_ERROR",
-        message: "Authentication failed",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.signUp).toHaveBeenCalledTimes(1);
   });

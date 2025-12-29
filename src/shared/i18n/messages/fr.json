@@ -165,5 +165,23 @@
     }
   },
   "forms": {},
-  "errors": {}
+  "errors": {
+    "generic": "Une erreur s'est produite",
+    "auth": {
+      "INVALID_CREDENTIALS": "Email ou mot de passe invalide",
+      "EMAIL_ALREADY_EXISTS": "Cette adresse email est déjà utilisée",
+      "WEAK_PASSWORD": "Le mot de passe ne respecte pas les exigences de sécurité",
+      "INVALID_EMAIL": "Adresse email invalide",
+      "AUTHENTICATION_ERROR": "Une erreur d'authentification s'est produite",
+      "EMAIL_VERIFICATION_ERROR": "Une erreur s'est produite lors de la vérification de l'email",
+      "PASSWORD_RESET_ERROR": "Une erreur s'est produite lors de la réinitialisation du mot de passe",
+      "INVALID_TOKEN": "Le lien est invalide ou a expiré. Veuillez en demander un nouveau"
+    },
+    "repository": {
+      "NOT_FOUND": "Ressource introuvable",
+      "NOT_FOUND_WITH_ENTITY": "{entityType} avec l'ID {entityId} introuvable",
+      "CONSTRAINT_VIOLATION": "Une contrainte de base de données a été violée",
+      "DATABASE_ERROR": "Une erreur de base de données s'est produite"
+    }
+  }
 }

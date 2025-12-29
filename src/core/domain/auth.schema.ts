@@ -39,10 +39,16 @@ export type SignInInput = z.infer<typeof SignInSchema>;
 
 /**
  * Base authentication error type.
+ * Errors contain only codes and metadata - no user-facing messages.
+ * User-facing messages are translated in the presentation layer using i18n.
  */
 export type AuthError = {
-  message: string;
   code: string;
+  /**
+   * Optional debug message for logging purposes only.
+   * Never shown to users - use error.code with i18n for user-facing messages.
+   */
+  debugMessage?: string;
 };
 
 /**

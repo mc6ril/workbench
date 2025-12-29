@@ -215,8 +215,8 @@ describe("updateUser", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "AUTHENTICATION_ERROR",
-        message: "Update user failed",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.updateUser).toHaveBeenCalledTimes(1);
   });

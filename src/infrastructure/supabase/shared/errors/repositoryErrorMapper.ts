@@ -13,7 +13,7 @@ import {
  */
 export const mapSupabaseError = (
   error: unknown,
-  entityType: string = "Entity"
+  _entityType: string = "Entity"
 ): RepositoryError => {
   // Handle Supabase PostgrestError
   if (
@@ -33,7 +33,12 @@ export const mapSupabaseError = (
     // Map specific Supabase error codes to domain errors
     if (supabaseError.code === "PGRST116") {
       // Not found (no rows returned)
-      return createDatabaseError(`${entityType} not found`, supabaseError);
+      // Use Supabase-provided message for debugging instead of a user-facing message.
+      const debugMessage =
+        supabaseError.message ||
+        supabaseError.details ||
+        `Supabase error: ${supabaseError.code}`;
+      return createDatabaseError(debugMessage, supabaseError);
     }
 
     if (
@@ -44,7 +49,7 @@ export const mapSupabaseError = (
       // Constraint violation (unique, foreign key, check)
       return createConstraintError(
         supabaseError.code,
-        supabaseError.message || supabaseError.details
+        supabaseError.message || supabaseError.details || undefined
       );
     }
 
@@ -61,17 +66,19 @@ export const mapSupabaseError = (
 
       // Use original Supabase message for debugging/logging purposes
       // The presentation layer will handle user-friendly translation based on constraint
-      const message =
+      const debugMessage =
         supabaseError.message || supabaseError.details || undefined;
 
-      return createConstraintError(constraint, message);
+      return createConstraintError(constraint, debugMessage);
     }
 
-    // Generic database error
-    return createDatabaseError(
-      supabaseError.message || `Database error: ${supabaseError.code}`,
-      supabaseError
-    );
+    // Generic database error - keep original Supabase message for debugging.
+    const debugMessage =
+      supabaseError.message ||
+      supabaseError.details ||
+      `Supabase error: ${supabaseError.code}`;
+
+    return createDatabaseError(debugMessage, supabaseError);
   }
 
   // Handle generic errors
@@ -80,8 +87,5 @@ export const mapSupabaseError = (
   }
 
   // Fallback for unknown errors
-  return createDatabaseError(
-    `Unknown error occurred while accessing ${entityType}`,
-    error
-  );
+  return createDatabaseError("Unknown repository error", error);
 };

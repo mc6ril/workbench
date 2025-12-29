@@ -39,8 +39,8 @@ describe("deleteUser", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "AUTHENTICATION_ERROR",
-        message: "Delete user failed",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.deleteUser).toHaveBeenCalledTimes(1);
   });

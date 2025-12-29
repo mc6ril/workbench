@@ -126,8 +126,8 @@ describe("verifyEmail", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "INVALID_TOKEN",
-        message: "Token is invalid or expired",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.verifyEmail).toHaveBeenCalledTimes(1);
   });
@@ -151,8 +151,8 @@ describe("verifyEmail", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "EMAIL_VERIFICATION_ERROR",
-        message: "Email verification failed",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.verifyEmail).toHaveBeenCalledTimes(1);
   });
@@ -178,8 +178,8 @@ describe("verifyEmail", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "AUTHENTICATION_ERROR",
-        message: "Verify email failed",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.verifyEmail).toHaveBeenCalledTimes(1);
   });

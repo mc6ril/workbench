@@ -69,8 +69,8 @@ describe("resendVerificationEmail", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "EMAIL_VERIFICATION_ERROR",
-        message: "Resend verification email failed",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.resendVerificationEmail).toHaveBeenCalledTimes(1);
   });
@@ -93,8 +93,8 @@ describe("resendVerificationEmail", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "AUTHENTICATION_ERROR",
-        message: "Resend verification email failed",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.resendVerificationEmail).toHaveBeenCalledTimes(1);
   });

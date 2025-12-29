@@ -94,8 +94,8 @@ describe("signInUser", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "INVALID_CREDENTIALS",
-        message: "Invalid email or password",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.signIn).toHaveBeenCalledTimes(1);
   });
@@ -116,8 +116,8 @@ describe("signInUser", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "AUTHENTICATION_ERROR",
-        message: "Authentication failed",
       });
+      expect(error).toHaveProperty("debugMessage");
     }
     expect(repository.signIn).toHaveBeenCalledTimes(1);
   });

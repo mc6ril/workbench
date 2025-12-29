@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
@@ -15,6 +15,7 @@ import Input from "@/presentation/components/ui/Input";
 import { useSignUp } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
+import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 import styles from "./SignupPage.module.scss";
 
@@ -25,6 +26,7 @@ const SignupPage = () => {
   const signUpMutation = useSignUp();
   const t = useTranslation("pages.signup");
   const tCommon = useTranslation("common");
+  const tErrors = useTranslation("errors");
 
   const {
     register,
@@ -36,19 +38,10 @@ const SignupPage = () => {
     mode: "onBlur",
   });
 
-  // Memoize error messages to avoid recreating them on every render
-  const errorMessages = useMemo(
-    () => ({
-      invalidEmail: t("errors.invalidEmail"),
-      weakPassword: t("errors.weakPassword"),
-      generic: t("errors.generic"),
-    }),
-    [t]
-  );
-
   useEffect(() => {
     if (signUpMutation.error) {
-      const error = signUpMutation.error as { message?: string; code?: string };
+      const error = signUpMutation.error as { code?: string };
+      const errorMessage = getErrorMessage(error, tErrors);
 
       // Map domain errors to form fields
       if (
@@ -57,22 +50,22 @@ const SignupPage = () => {
       ) {
         setError("email", {
           type: "server",
-          message: error.message || errorMessages.invalidEmail,
+          message: errorMessage,
         });
       } else if (error.code === "WEAK_PASSWORD") {
         setError("password", {
           type: "server",
-          message: error.message || errorMessages.weakPassword,
+          message: errorMessage,
         });
       } else {
         // General error - set on root
         setError("root", {
           type: "server",
-          message: error.message || errorMessages.generic,
+          message: errorMessage,
         });
       }
     }
-  }, [signUpMutation.error, setError, errorMessages]);
+  }, [signUpMutation.error, setError, tErrors]);
 
   useEffect(() => {
     if (signUpMutation.isSuccess && signUpMutation.data) {

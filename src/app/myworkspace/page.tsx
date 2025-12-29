@@ -24,6 +24,7 @@ import {
 } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
+import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 import styles from "./HomePage.module.scss";
 
@@ -51,6 +52,7 @@ export default function MyWorkspace() {
   const [newPassword, setNewPassword] = useState("");
   const isSubmittingRef = useRef(false);
   const t = useTranslation("pages.home");
+  const tErrors = useTranslation("errors");
 
   const {
     register,
@@ -80,34 +82,32 @@ export default function MyWorkspace() {
       await refetchProjects();
     } catch (err) {
       // Error handling is done by the mutation
-      const errorMessage =
-        (err as { message?: string })?.message || t("failedToAddToProject");
+      const error = err as { code?: string };
+      const errorMessage = getErrorMessage(error, tErrors);
       setError(errorMessage);
     }
   };
 
   useEffect(() => {
     if (createProjectMutation.error) {
-      const error = createProjectMutation.error as {
-        message?: string;
-        code?: string;
-      };
+      const error = createProjectMutation.error as { code?: string };
+      const errorMessage = getErrorMessage(error, tErrors);
 
       // Map domain errors to form fields
       if (error.code === "CONSTRAINT_VIOLATION") {
         setFormError("name", {
           type: "server",
-          message: error.message || t("errors.generic"),
+          message: errorMessage,
         });
       } else {
         // General error - set on root
         setFormError("root", {
           type: "server",
-          message: error.message || t("errors.generic"),
+          message: errorMessage,
         });
       }
     }
-  }, [createProjectMutation.error, setFormError, t]);
+  }, [createProjectMutation.error, setFormError, tErrors]);
 
   useEffect(() => {
     if (createProjectMutation.isSuccess && createProjectMutation.data) {
@@ -355,8 +355,7 @@ export default function MyWorkspace() {
           {projectsError && (
             <p className={styles["home-error"]} role="alert">
               {t("errorLoadingProjects")}{" "}
-              {(projectsError as { message?: string })?.message ||
-                t("unknownError")}
+              {getErrorMessage(projectsError as { code?: string }, tErrors)}
             </p>
           )}
           {isLoadingProjects || addUserToProjectMutation.isPending ? (

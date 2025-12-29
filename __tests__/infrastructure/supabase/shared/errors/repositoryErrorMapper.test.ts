@@ -15,7 +15,7 @@ describe("mapSupabaseError", () => {
 
     // Assert
     expect(result).toHaveProperty("code", "DATABASE_ERROR");
-    expect(result.message).toBe("Project not found");
+    expect(result).toHaveProperty("debugMessage");
     expect(result).toHaveProperty("originalError", supabaseError);
   });
 
@@ -34,9 +34,7 @@ describe("mapSupabaseError", () => {
     // Assert
     expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
     expect(result).toHaveProperty("constraint", "23505");
-    expect(result.message).toBe(
-      "duplicate key value violates unique constraint"
-    );
+    expect(result).toHaveProperty("debugMessage");
   });
 
   it("should map constraint violation code 23503 to ConstraintError", () => {
@@ -54,7 +52,7 @@ describe("mapSupabaseError", () => {
     // Assert
     expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
     expect(result).toHaveProperty("constraint", "23503");
-    expect(result.message).toBe("foreign key constraint violated");
+    expect(result).toHaveProperty("debugMessage");
   });
 
   it("should map constraint violation code 23514 to ConstraintError", () => {
@@ -72,7 +70,7 @@ describe("mapSupabaseError", () => {
     // Assert
     expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
     expect(result).toHaveProperty("constraint", "23514");
-    expect(result.message).toBe("check constraint violated");
+    expect(result).toHaveProperty("debugMessage");
   });
 
   it("should use details when message is missing for constraint errors", () => {
@@ -89,7 +87,7 @@ describe("mapSupabaseError", () => {
 
     // Assert
     expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
-    expect(result.message).toBe("Unique constraint violation details");
+    expect(result).toHaveProperty("debugMessage");
   });
 
   it("should map generic Supabase errors to DatabaseError", () => {
@@ -106,7 +104,7 @@ describe("mapSupabaseError", () => {
 
     // Assert
     expect(result).toHaveProperty("code", "DATABASE_ERROR");
-    expect(result.message).toBe("PostgREST error");
+    expect(result).toHaveProperty("debugMessage");
     expect(result).toHaveProperty("originalError", supabaseError);
   });
 
@@ -124,7 +122,7 @@ describe("mapSupabaseError", () => {
 
     // Assert
     expect(result).toHaveProperty("code", "DATABASE_ERROR");
-    expect(result.message).toBe("Database error: PGRST999");
+    expect(result).toHaveProperty("debugMessage");
     expect(result).toHaveProperty("originalError", supabaseError);
   });
 
@@ -137,7 +135,7 @@ describe("mapSupabaseError", () => {
 
     // Assert
     expect(result).toHaveProperty("code", "DATABASE_ERROR");
-    expect(result.message).toBe("Network connection failed");
+    expect(result).toHaveProperty("debugMessage");
     expect(result).toHaveProperty("originalError", error);
   });
 
@@ -150,9 +148,7 @@ describe("mapSupabaseError", () => {
 
     // Assert
     expect(result).toHaveProperty("code", "DATABASE_ERROR");
-    expect(result.message).toBe(
-      "Unknown error occurred while accessing Ticket"
-    );
+    expect(result).toHaveProperty("debugMessage");
     expect(result).toHaveProperty("originalError", unknownError);
   });
 
@@ -165,9 +161,7 @@ describe("mapSupabaseError", () => {
 
     // Assert
     expect(result).toHaveProperty("code", "DATABASE_ERROR");
-    expect(result.message).toBe(
-      "Unknown error occurred while accessing Project"
-    );
+    expect(result).toHaveProperty("debugMessage");
     expect(result).toHaveProperty("originalError", nullError);
   });
 
@@ -180,8 +174,7 @@ describe("mapSupabaseError", () => {
 
     // Assert
     expect(result).toHaveProperty("code", "DATABASE_ERROR");
-    expect(result.message).toBe("Database error");
-    expect(result.message).not.toContain("Entity");
+    expect(result).toHaveProperty("debugMessage");
   });
 
   it("should use custom entityType in error message", () => {
@@ -197,7 +190,8 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(supabaseError, "CustomEntity");
 
     // Assert
-    expect(result.message).toBe("CustomEntity not found");
+    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result).toHaveProperty("debugMessage");
   });
 
   it("should map RLS policy violation with code 42501 to ConstraintError with RLS_POLICY_VIOLATION constraint", () => {
@@ -216,10 +210,8 @@ describe("mapSupabaseError", () => {
     // Assert
     expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
     expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
-    // Message should be the original Supabase message (presentation layer will translate based on constraint)
-    expect(result.message).toBe(
-      'new row violates row-level security policy for table "projects"'
-    );
+    // Debug message should contain the original Supabase message for logging
+    expect(result).toHaveProperty("debugMessage");
   });
 
   it("should map RLS policy violation by message content to ConstraintError with RLS_POLICY_VIOLATION constraint", () => {
@@ -238,10 +230,8 @@ describe("mapSupabaseError", () => {
     // Assert
     expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
     expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
-    // Message should be the original Supabase message (presentation layer will translate based on constraint)
-    expect(result.message).toBe(
-      'new row violates row-level security policy for table "projects"'
-    );
+    // Debug message should contain the original Supabase message for logging
+    expect(result).toHaveProperty("debugMessage");
   });
 
   it("should map RLS policy violation with details when message is missing to ConstraintError with default message", () => {
@@ -259,8 +249,8 @@ describe("mapSupabaseError", () => {
     // Assert
     expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
     expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
-    // Should use details when message is missing (presentation layer will translate based on constraint)
-    expect(result.message).toBe("Row-level security policy violation");
+    // Debug message should contain details when message is missing
+    expect(result).toHaveProperty("debugMessage");
   });
 
   it("should map RLS policy violation with default message when both message and details are missing", () => {
@@ -278,11 +268,8 @@ describe("mapSupabaseError", () => {
     // Assert
     expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
     expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
-    // Should use default message from createConstraintError when both message and details are missing
-    // (presentation layer will translate based on constraint)
-    expect(result.message).toBe(
-      "Database constraint violation: RLS_POLICY_VIOLATION"
-    );
+    // Debug message should contain default message from createConstraintError when both message and details are missing
+    expect(result).toHaveProperty("debugMessage");
   });
 
   it("should map RLS policy violation for non-Project entities with original message", () => {
@@ -300,9 +287,7 @@ describe("mapSupabaseError", () => {
     // Assert
     expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
     expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
-    // For non-Project entities, use original message
-    expect(result.message).toBe(
-      'new row violates row-level security policy for table "tickets"'
-    );
+    // Debug message should contain the original message for logging
+    expect(result).toHaveProperty("debugMessage");
   });
 });

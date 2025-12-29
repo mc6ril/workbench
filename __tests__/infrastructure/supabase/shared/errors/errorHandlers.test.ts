@@ -42,7 +42,7 @@ describe("handleRepositoryError", () => {
       handleRepositoryError(unknownError, "Test");
     } catch (error) {
       expect(error).toHaveProperty("code", "DATABASE_ERROR");
-      expect(error).toHaveProperty("message");
+      expect(error).toHaveProperty("debugMessage");
     }
   });
 
@@ -57,7 +57,7 @@ describe("handleRepositoryError", () => {
       handleRepositoryError(genericError, "Test");
     } catch (error) {
       expect(error).toHaveProperty("code", "DATABASE_ERROR");
-      expect(error).toHaveProperty("message");
+      expect(error).toHaveProperty("debugMessage");
     }
   });
 });
@@ -71,7 +71,7 @@ describe("handleAuthError", () => {
     // Arrange
     const domainAuthError = {
       code: "INVALID_CREDENTIALS",
-      message: "Invalid email or password",
+      debugMessage: "Invalid email or password",
     };
 
     expect(() => {
@@ -90,12 +90,15 @@ describe("handleAuthError", () => {
   it("should re-throw different domain auth error codes", () => {
     // Arrange - test multiple auth error codes
     const authErrors = [
-      { code: "EMAIL_ALREADY_EXISTS", message: "Email already registered" },
-      { code: "WEAK_PASSWORD", message: "Password is too weak" },
-      { code: "INVALID_TOKEN", message: "Token is invalid" },
+      {
+        code: "EMAIL_ALREADY_EXISTS",
+        debugMessage: "Email already registered",
+      },
+      { code: "WEAK_PASSWORD", debugMessage: "Password is too weak" },
+      { code: "INVALID_TOKEN", debugMessage: "Token is invalid" },
       {
         code: "EMAIL_VERIFICATION_ERROR",
-        message: "Email verification failed",
+        debugMessage: "Email verification failed",
       },
     ];
 
@@ -130,7 +133,7 @@ describe("handleAuthError", () => {
       // Verify that the error was mapped (not the original error)
       expect(error).not.toBe(unknownError);
       expect(error).toHaveProperty("code");
-      expect(error).toHaveProperty("message");
+      expect(error).toHaveProperty("debugMessage");
     }
   });
 
@@ -138,7 +141,7 @@ describe("handleAuthError", () => {
     // Arrange - error with code that doesn't match auth error pattern
     const nonAuthError = {
       code: "DATABASE_ERROR",
-      message: "Database connection failed",
+      debugMessage: "Database connection failed",
     };
 
     expect(() => {
@@ -151,7 +154,7 @@ describe("handleAuthError", () => {
       // Verify that the error was mapped (not the original error)
       expect(error).not.toBe(nonAuthError);
       expect(error).toHaveProperty("code");
-      expect(error).toHaveProperty("message");
+      expect(error).toHaveProperty("debugMessage");
     }
   });
 
@@ -172,8 +175,7 @@ describe("handleAuthError", () => {
       // Verify that the error was mapped to domain error
       expect(error).not.toBe(supabaseAuthError);
       expect(error).toHaveProperty("code");
-      expect(error).toHaveProperty("message");
+      expect(error).toHaveProperty("debugMessage");
     }
   });
 });
-

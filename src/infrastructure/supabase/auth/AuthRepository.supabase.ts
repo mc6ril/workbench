@@ -1,8 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type {
+  AuthenticationError,
   AuthResult,
   AuthSession,
+  EmailVerificationError,
+  InvalidTokenError,
   ResetPasswordInput,
   SignInInput,
   SignUpInput,
@@ -46,7 +49,11 @@ export const createAuthRepository = (
 
       // Session exists: user is automatically logged in (email verification not required or already verified)
       if (!data.user) {
-        handleAuthError(new Error("User data not returned from signup"));
+        const error: AuthenticationError = {
+          code: "AUTHENTICATION_ERROR",
+          debugMessage: "User data not returned from signup",
+        };
+        handleAuthError(error);
       }
 
       const session = mapSupabaseSessionToDomain(
@@ -72,7 +79,11 @@ export const createAuthRepository = (
       }
 
       if (!data.session || !data.user) {
-        handleAuthError(new Error("No session or user returned from signin"));
+        const error: AuthenticationError = {
+          code: "AUTHENTICATION_ERROR",
+          debugMessage: "No session or user returned from signin",
+        };
+        handleAuthError(error);
       }
 
       const session = mapSupabaseSessionToDomain(
@@ -123,9 +134,11 @@ export const createAuthRepository = (
 
         const userEmail = user.email;
         if (!userEmail) {
-          handleAuthError(
-            new Error("User email not found in authenticated user data")
-          );
+          const error: AuthenticationError = {
+            code: "AUTHENTICATION_ERROR",
+            debugMessage: "User email not found in authenticated user data",
+          };
+          handleAuthError(error);
         }
 
         // Map authenticated user directly to AuthSession
@@ -153,7 +166,11 @@ export const createAuthRepository = (
 
         const userEmail = session.user.email;
         if (!userEmail) {
-          handleAuthError(new Error("User email not found in session"));
+          const error: AuthenticationError = {
+            code: "AUTHENTICATION_ERROR",
+            debugMessage: "User email not found in session",
+          };
+          handleAuthError(error);
         }
 
         return mapSupabaseSessionToDomain(session, userEmail);
@@ -231,11 +248,12 @@ export const createAuthRepository = (
         }
 
         // If no session, the code might be invalid or expired
-        handleAuthError(
-          new Error(
-            "Unable to reset password. The reset code may be invalid or expired. Please request a new password reset email."
-          )
-        );
+        const error: InvalidTokenError = {
+          code: "INVALID_TOKEN",
+          debugMessage:
+            "Unable to reset password. The reset code may be invalid or expired. Please request a new password reset email.",
+        };
+        handleAuthError(error);
       }
 
       // Standard password reset with email and token
@@ -251,9 +269,11 @@ export const createAuthRepository = (
       }
 
       if (!verifyData.session || !verifyData.user) {
-        handleAuthError(
-          new Error("No session or user returned from token verification")
-        );
+        const error: InvalidTokenError = {
+          code: "INVALID_TOKEN",
+          debugMessage: "No session or user returned from token verification",
+        };
+        handleAuthError(error);
       }
 
       // Update the password
@@ -314,11 +334,12 @@ export const createAuthRepository = (
         }
 
         // If no session, the code might be invalid or expired
-        handleAuthError(
-          new Error(
-            "Unable to verify email. The verification code may be invalid or expired. Please request a new verification email."
-          )
-        );
+        const error: EmailVerificationError = {
+          code: "EMAIL_VERIFICATION_ERROR",
+          debugMessage:
+            "Unable to verify email. The verification code may be invalid or expired. Please request a new verification email.",
+        };
+        handleAuthError(error);
       }
 
       // Standard verification with email and token
@@ -333,9 +354,11 @@ export const createAuthRepository = (
       }
 
       if (!data.session || !data.user) {
-        handleAuthError(
-          new Error("No session or user returned from email verification")
-        );
+        const error: EmailVerificationError = {
+          code: "EMAIL_VERIFICATION_ERROR",
+          debugMessage: "No session or user returned from email verification",
+        };
+        handleAuthError(error);
       }
 
       const userEmail = data.user.email || input.email || "";
@@ -413,9 +436,12 @@ export const createAuthRepository = (
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.error || `Failed to delete user: ${response.statusText}`
-        );
+        const error: AuthenticationError = {
+          code: "AUTHENTICATION_ERROR",
+          debugMessage:
+            errorData.error || `Failed to delete user: ${response.statusText}`,
+        };
+        handleAuthError(error);
       }
 
       // User deletion successful
