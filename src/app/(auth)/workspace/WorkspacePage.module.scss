@@ -4,14 +4,14 @@
 @use "@/styles/variables/borders" as *;
 @use "@/styles/variables/transitions" as *;
 
-.home-page {
+.workspace-page {
   width: 100%;
   min-height: 100vh;
   padding: $spacing-lg;
   background-color: $color-background;
 }
 
-.home-container {
+.workspace-container {
   width: 100%;
   max-width: 50rem; // 800px
   margin: 0 auto;
@@ -20,13 +20,13 @@
   gap: $spacing-xl;
 }
 
-.home-header {
+.workspace-header {
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
 }
 
-.home-title {
+.workspace-title {
   font-size: $font-size-2xl;
   font-weight: $font-weight-bold;
   line-height: $line-height-tight;
@@ -34,7 +34,7 @@
   margin: 0;
 }
 
-.home-user-info {
+.workspace-user-info {
   font-size: $font-size-base;
   line-height: $line-height-normal;
   color: $color-text-secondary;
@@ -46,14 +46,14 @@
   }
 }
 
-.home-user-actions {
+.workspace-user-actions {
   display: flex;
   gap: $spacing-md;
   flex-wrap: wrap;
   margin-top: $spacing-md;
 }
 
-.home-update-user-form {
+.workspace-update-user-form {
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
@@ -64,19 +64,13 @@
   background-color: $color-secondary;
 }
 
-.home-update-user-actions {
+.workspace-update-user-actions {
   display: flex;
   gap: $spacing-md;
   flex-wrap: wrap;
 }
 
-.home-actions {
-  display: flex;
-  gap: $spacing-md;
-  flex-wrap: wrap;
-}
-
-.home-section {
+.workspace-section {
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
@@ -86,7 +80,7 @@
   background-color: $color-secondary;
 }
 
-.home-section-title {
+.workspace-section-title {
   font-size: $font-size-xl;
   font-weight: $font-weight-semibold;
   line-height: $line-height-tight;
@@ -94,21 +88,21 @@
   margin: 0;
 }
 
-.home-section-description {
+.workspace-section-description {
   font-size: $font-size-sm;
   line-height: $line-height-normal;
   color: $color-text-secondary;
   margin: 0;
 }
 
-.home-access-form,
-.home-create-form {
+.workspace-access-form,
+.workspace-create-form {
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
 }
 
-.home-empty {
+.workspace-empty {
   font-size: $font-size-base;
   line-height: $line-height-normal;
   color: $color-text-secondary;
@@ -117,7 +111,7 @@
   text-align: center;
 }
 
-.home-error {
+.workspace-error {
   font-size: $font-size-sm;
   line-height: $line-height-normal;
   color: $color-error-text;
@@ -127,7 +121,7 @@
   margin: 0 0 $spacing-md 0;
 }
 
-.home-projects-list {
+.workspace-projects-list {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -136,11 +130,11 @@
   gap: $spacing-sm;
 }
 
-.home-project-item {
+.workspace-project-item {
   margin: 0;
 }
 
-.home-project-link {
+.workspace-project-link {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -167,11 +161,11 @@
   }
 }
 
-.home-project-name {
+.workspace-project-name {
   flex: 1;
 }
 
-.home-project-role {
+.workspace-project-role {
   padding: $spacing-xs $spacing-sm;
   border-radius: $border-radius-sm;
   background-color: $color-secondary;

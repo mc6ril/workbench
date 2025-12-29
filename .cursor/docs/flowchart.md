@@ -19,93 +19,54 @@ See `docs/row-level-security.md` for detailed information about RLS policies and
 
 ```mermaid
 flowchart TD
-   R[ROOT] --> H[Home Dashboard]
-   R --> BL[Backlog]
-   R --> BD[Board]
-   R --> EP[Epics]
-   R --> TK[Ticket Detail]
-   R --> SE[Settings]
-
-   H --> H1[Quick Add Ticket]
-   H --> H2[My Work]
-   H --> H3[Recent Activity]
-   H --> H4[Shortcuts]
-
-   BL --> BL1[Ticket List]
-   BL --> BL2[Filters and Search]
-   BL --> BL3[Sort]
-   BL --> BL4[Bulk Actions]
-   BL --> BL5[Create Ticket]
-
-   BD --> BD1[Board View]
-   BD --> BD2[Columns Config]
-   BD --> BD3[Drag and Drop]
-   BD --> BD4[Swimlanes Optional]
-   BD --> BD5[Board Filters]
-
-   EP --> EP1[Epics List]
-   EP --> EP2[Create Epic]
-   EP --> EP3[Epic Detail]
-   EP3 --> EP31[Epic Tickets]
-   EP3 --> EP32[Epic Progress]
-
-   TK --> TK1[Overview]
-   TK --> TK2[Edit Fields]
-   TK --> TK3[Comments Optional]
-   TK --> TK4[Subtasks]
-   TK --> TK5[Link to Epic]
-   TK --> TK6[History Optional]
-
-   SE --> SE1[Project Settings]
-   SE --> SE2[Statuses and Columns]
-   SE --> SE3[Priorities]
-   SE --> SE4[Labels Optional]
-   SE --> SE5[Export and Import]
-   SE --> SE6[Theme Optional]
+   R[ROOT /] --> L[Landing Page]
+   R --> AUTH[Auth Pages]
+   AUTH --> SIGNIN[/auth/signin]
+   AUTH --> SIGNUP[/auth/signup]
+   AUTH --> VERIFY[/auth/verify-email]
+   AUTH --> RESET[/auth/reset-password]
+   AUTH --> UPDATE[/auth/update-password]
+   
+   R --> PROTECTED[(auth) Route Group]
+   PROTECTED --> WS[/workspace]
+   PROTECTED --> PROJ[/:projectId]
+   
+   PROJ --> BOARD[/:projectId/board]
+   PROJ --> BACKLOG[/:projectId/backlog]
+   PROJ --> EPICS[/:projectId/epics]
+   PROJ --> SETTINGS[/:projectId/settings]
 ```
+
+**Note**: For detailed user flows and route guard architecture, see `docs/architecture/user-flows.md`.
 
 ## 2. Complete End-to-End User Flow
 
 ```mermaid
 stateDiagram-v2
-   [*] --> Authenticate
-   Authenticate --> Home : authenticated & project member
+   [*] --> Landing
+   Landing --> SignIn: click sign in
+   Landing --> SignUp: click sign up
+   Landing --> Workspace: session exists (auto redirect)
    
-   Home --> Backlog : has view access
-   Home --> Board : has view access
-   Home --> Epics : has view access
-   Home --> Settings : has view access
-
-   Backlog --> CreateTicket : add ticket (if admin/member)
-   CreateTicket --> Backlog : saved
-
-   Backlog --> TicketDetail : open ticket
-   Board --> TicketDetail : open ticket card
-   Epics --> TicketDetail : open ticket from epic
-
-   TicketDetail --> EditTicket : edit fields (if admin/member)
-   EditTicket --> TicketDetail : saved
-
-   TicketDetail --> CreateSubtask : add subtask (if admin/member)
-   CreateSubtask --> TicketDetail : saved
-
-   TicketDetail --> LinkEpic : assign epic (if admin/member)
-   LinkEpic --> TicketDetail : saved
-
-   Backlog --> Board : send to board
-   Board --> MoveTicket : drag card (if admin/member)
-   MoveTicket --> Board : status and position updated
-
-   Settings --> ConfigureColumns : edit columns (if admin/member)
-   ConfigureColumns --> Board : board updated
-
-   Epics --> CreateEpic : add epic (if admin/member)
-   CreateEpic --> Epics : saved
-   Epics --> EpicDetail : open epic
-   EpicDetail --> TicketDetail : open linked ticket
-
-   TicketDetail --> [*]
+   SignIn --> Workspace: authenticated
+   SignUp --> VerifyEmail: signup success
+   VerifyEmail --> Workspace: email verified
+   
+   Workspace --> CreateProject: no projects
+   Workspace --> ProjectBoard: select project
+   Workspace --> Landing: logout
+   CreateProject --> ProjectBoard: project created
+   
+   ProjectBoard --> ProjectBacklog: navigate
+   ProjectBoard --> ProjectEpics: navigate
+   ProjectBoard --> ProjectSettings: navigate
+   
+   ProjectBacklog --> ProjectBoard: navigate
+   ProjectEpics --> ProjectBoard: navigate
+   ProjectSettings --> ProjectBoard: navigate
 ```
+
+**Note**: For detailed route guard flow and layout responsibilities, see `docs/architecture/user-flows.md`.
 
 **Access Control Notes:**
 - All users must be authenticated to access any feature
@@ -113,7 +74,46 @@ stateDiagram-v2
 - Only users with `admin` or `member` roles can create, update, or delete data
 - Only users with `admin` role can delete projects or manage project members
 
-## 3. Domain and Use Cases (Clean Architecture Map)
+## 3. Route & Layout Guard Flow
+
+```mermaid
+flowchart TD
+   REQ[Request] --> MIDDLEWARE{Middleware<br/>Optional Routing Optimization}
+   MIDDLEWARE -->|Public Route| PUBLIC[Public Routes]
+   MIDDLEWARE -->|Protected Route| AUTH_LAYOUT[(auth) Layout]
+   
+   PUBLIC --> LANDING_LAYOUT[Landing Layout<br/>(public) route group]
+   LANDING_LAYOUT -->|Session Exists| REDIRECT_WS[Redirect to /workspace]
+   LANDING_LAYOUT -->|No Session| LANDING[/ Landing Page]
+   PUBLIC --> AUTH_PAGES[/auth/* Auth Pages]
+   
+   AUTH_LAYOUT -->|No Session| REDIRECT_LANDING[Redirect to /]
+   AUTH_LAYOUT -->|Session OK| CHILD{Child Route}
+   
+   CHILD -->|/workspace| WS_LAYOUT[Workspace Layout]
+   CHILD -->|/:projectId| PROJ_LAYOUT[Project Layout]
+   
+   WS_LAYOUT --> WS_PAGE[Workspace Page<br/>Client: useProjects]
+   
+   PROJ_LAYOUT -->|getProject = null| REDIRECT_WS[Redirect to /workspace]
+   PROJ_LAYOUT -->|getProject OK| PROJ_CHILD{Project Child}
+   
+   PROJ_CHILD -->|/:projectId| REDIRECT_BOARD[Redirect to /:projectId/board]
+   PROJ_CHILD -->|/:projectId/board| BOARD_PAGE[Board Page<br/>Client: useProject(projectId)<br/>useProjectTickets(projectId)]
+   PROJ_CHILD -->|/:projectId/backlog| BACKLOG_PAGE[Backlog Page<br/>Client: useProject(projectId)<br/>useProjectTickets(projectId, filters)]
+   PROJ_CHILD -->|/:projectId/epics| EPICS_PAGE[Epics Page<br/>Client: useProject(projectId)<br/>useProjectEpics(projectId)]
+   PROJ_CHILD -->|/:projectId/settings| SETTINGS_PAGE[Settings Page<br/>Client: useProject(projectId)<br/>useProjectMembers(projectId)]
+```
+
+**Security Architecture Notes:**
+- **Middleware** is an optimization layer for UX redirects and route filtering. It is NOT the source of truth for security.
+- **AuthLayout** and **ProjectLayout** (server components) are the primary security guards, checking authentication and access before rendering.
+- **RLS (Row Level Security)** at the database level is the ultimate source of truth for data access control.
+- This layered approach ensures security even if middleware is bypassed or misconfigured.
+
+**Note**: For detailed documentation on route structure and layout responsibilities, see `docs/architecture/user-flows.md`.
+
+## 4. Domain and Use Cases (Clean Architecture Map)
 
 This diagram serves as a "build plan": each node represents a building block.
 
@@ -126,14 +126,21 @@ flowchart LR
    end
 
    subgraph UI[UI Pages]
-      UI1[Backlog Page]
-      UI2[Board Page]
-      UI3[Epics Page]
-      UI4[Ticket Detail Page]
-      UI5[Settings Page]
+      UI1[Workspace Page]
+      UI2[Board Page /:projectId/board]
+      UI3[Backlog Page /:projectId/backlog]
+      UI4[Epics Page /:projectId/epics]
+      UI5[Settings Page /:projectId/settings]
+      UI6[Ticket Detail Page]
    end
 
    subgraph APP[Application Use Cases]
+      subgraph PROJ_UC[Project Use Cases]
+         UC_PROJ1[List Projects]
+         UC_PROJ2[Create Project]
+         UC_PROJ3[Get Project]
+         UC_PROJ4[Add User to Project]
+      end
       UC1[Create Ticket]
       UC2[Update Ticket]
       UC3[Delete Ticket]
@@ -181,11 +188,9 @@ flowchart LR
    A1 --> UI5
    A3 --> A2
 
-   UI1 --> UC1
-   UI1 --> UC4
-   UI1 --> UC12
-   UI1 --> UC2
-   UI1 --> UC3
+   UI1 --> UC_PROJ1
+   UI1 --> UC_PROJ2
+   UI1 --> UC_PROJ4
 
    UI2 --> UC8
    UI2 --> UC9
@@ -204,6 +209,11 @@ flowchart LR
 
    UI5 --> UC10
 
+   UC_PROJ1 --> D5
+   UC_PROJ2 --> D5
+   UC_PROJ3 --> D5
+   UC_PROJ4 --> D5
+   UC_PROJ4 --> D6
    UC1 --> D1
    UC2 --> D1
    UC3 --> D1
@@ -220,6 +230,10 @@ flowchart LR
    UC10 --> D3
    UC10 --> D4
 
+   UC_PROJ1 --> P4
+   UC_PROJ2 --> P4
+   UC_PROJ3 --> P4
+   UC_PROJ4 --> P4
    UC1 --> P1
    UC2 --> P1
    UC3 --> P1
@@ -255,7 +269,7 @@ flowchart LR
 - Project membership is checked before any data access
 - Edit operations require admin or member role (enforced by RLS)
 
-## 4. Detailed Drag and Drop Flow (Board)
+## 5. Detailed Drag and Drop Flow (Board)
 
 ```mermaid
 sequenceDiagram

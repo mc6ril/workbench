@@ -13,7 +13,7 @@ export function isPublicRoute(pathname: string): boolean {
 /**
  * Check if a pathname is a protected route.
  * Protected routes include:
- * - Exact matches in PROTECTED_ROUTES (e.g., /myworkspace)
+ * - Exact matches in PROTECTED_ROUTES (e.g., /workspace)
  * - Project routes following the pattern /{projectId}/{view}
  *
  * @param pathname - The pathname to check

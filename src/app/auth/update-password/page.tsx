@@ -135,7 +135,7 @@ const UpdatePasswordContent = () => {
       updatePasswordMutation.data?.session
     ) {
       // Auto-login successful, redirect to workspace
-      router.push("/myworkspace");
+      router.push("/workspace");
     }
   }, [updatePasswordMutation.isSuccess, updatePasswordMutation.data, router]);
 
