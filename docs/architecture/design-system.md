@@ -18,61 +18,73 @@ This document describes the design system tokens and principles used throughout 
 The color system is organized into semantic categories:
 
 #### Primary Colors
+
 - `$color-primary`: Main brand color (#171717)
 - `$color-primary-hover`: Hover state for primary elements (#383838)
 - `$color-primary-text`: Text color on primary background (#f9fafb)
 
 #### Secondary Colors
+
 - `$color-secondary`: Secondary brand color (#ffffff)
 - `$color-secondary-hover`: Hover state for secondary elements
 
 #### Success Colors
+
 - `$color-success`: Success state color (#16a34a)
 - `$color-success-background`: Background for success messages (#dcfce7)
 - `$color-success-text`: Text color for success messages (#15803d)
 - `$color-success-ring`: Focus ring color for success states
 
 #### Error Colors
+
 - `$color-error`: Error state color (#dc2626)
 - `$color-error-background`: Background for error messages (#fee2e2)
 - `$color-error-text`: Text color for error messages (#991b1b)
 - `$color-error-ring`: Focus ring color for error states
 
 #### Neutral Colors
+
 A complete neutral palette from 50 (lightest) to 900 (darkest):
+
 - `$color-neutral-50` through `$color-neutral-900`
 
 #### Background & Foreground
+
 - `$color-background`: Main background color (#ffffff)
 - `$color-background-dark`: Dark mode background (#0a0a0a)
 - `$color-foreground`: Main foreground color (#171717)
 - `$color-foreground-dark`: Dark mode foreground (#ededed)
 
 #### Text Colors
+
 - `$color-text`: Primary text color (#171717)
 - `$color-text-secondary`: Secondary text color (#4b5563)
 
 #### Border Colors
+
 - `$color-border`: Default border color
 - `$color-border-dark`: Dark mode border color
 
 #### Focus Colors
+
 - `$color-focus`: Focus indicator color (#2563eb)
 - `$color-focus-ring`: Focus ring color with transparency
 
 #### Disabled Colors
+
 - `$color-disabled`: Disabled element color
 - `$color-disabled-background`: Disabled background color
 - `$color-disabled-text`: Disabled text color
 
 **Usage Example:**
+
 ```scss
 @use "@/styles/variables/colors" as *;
 
 .button {
   background-color: $color-primary;
   color: $color-primary-text;
-  
+
   &:hover {
     background-color: $color-primary-hover;
   }
@@ -82,11 +94,14 @@ A complete neutral palette from 50 (lightest) to 900 (darkest):
 ### Typography (`styles/variables/typography.scss`)
 
 #### Font Families
+
 - `$font-family-sans`: System sans-serif font stack
 - `$font-family-mono`: Monospace font stack
 
 #### Font Sizes
+
 Scale from extra small to extra large:
+
 - `$font-size-xs`: 0.75rem (12px)
 - `$font-size-sm`: 0.875rem (14px)
 - `$font-size-base`: 1rem (16px)
@@ -97,18 +112,21 @@ Scale from extra small to extra large:
 - `$font-size-4xl`: 2.25rem (36px)
 
 #### Font Weights
+
 - `$font-weight-normal`: 400
 - `$font-weight-medium`: 500
 - `$font-weight-semibold`: 600
 - `$font-weight-bold`: 700
 
 #### Line Heights
+
 - `$line-height-tight`: 1.25
 - `$line-height-normal`: 1.5
 - `$line-height-relaxed`: 1.6
 - `$line-height-loose`: 2
 
 **Usage Example:**
+
 ```scss
 @use "@/styles/variables/typography" as *;
 
@@ -125,9 +143,11 @@ Scale from extra small to extra large:
 Spacing uses a consistent 4px base unit scale:
 
 #### Base Unit
+
 - `$spacing-unit`: 0.25rem (4px)
 
 #### Spacing Scale
+
 - `$spacing-xs`: 0.25rem (4px)
 - `$spacing-sm`: 0.5rem (8px)
 - `$spacing-md`: 1rem (16px)
@@ -137,6 +157,7 @@ Spacing uses a consistent 4px base unit scale:
 - `$spacing-3xl`: 4rem (64px)
 
 #### Component-Specific Spacing
+
 - `$spacing-input-padding-x`: 1.25rem (20px)
 - `$spacing-input-padding-y`: 0.75rem (12px)
 - `$spacing-button-padding-x`: 1.25rem (20px)
@@ -144,9 +165,11 @@ Spacing uses a consistent 4px base unit scale:
 - `$spacing-button-height`: 3rem (48px)
 
 #### Container Widths
+
 - `$container-max-width`: 25rem (400px)
 
 **Usage Example:**
+
 ```scss
 @use "@/styles/variables/spacing" as *;
 
@@ -162,6 +185,7 @@ Spacing uses a consistent 4px base unit scale:
 Elevation system for depth and hierarchy:
 
 #### Shadow Levels
+
 - `$shadow-sm`: Subtle shadow for slight elevation
 - `$shadow-base`: Default shadow for cards and containers
 - `$shadow-md`: Medium shadow for elevated elements
@@ -170,25 +194,29 @@ Elevation system for depth and hierarchy:
 - `$shadow-2xl`: Maximum shadow for maximum elevation
 
 #### Inner Shadows
+
 - `$shadow-inner`: Inset shadow for pressed states
 
 #### Focus Shadows
+
 - `$shadow-focus`: Focus ring shadow (blue)
 - `$shadow-focus-error`: Error focus ring shadow (red)
 - `$shadow-focus-success`: Success focus ring shadow (green)
 
 #### Component-Specific Shadows
+
 - `$shadow-button-hover`: Shadow for button hover state
 - `$shadow-card`: Shadow for card components
 - `$shadow-modal`: Shadow for modal dialogs
 
 **Usage Example:**
+
 ```scss
 @use "@/styles/variables/shadows" as *;
 
 .card {
   box-shadow: $shadow-card;
-  
+
   &:hover {
     box-shadow: $shadow-md;
   }
@@ -200,6 +228,7 @@ Elevation system for depth and hierarchy:
 Animation system with accessibility support:
 
 #### Animation Durations
+
 - `$animation-duration-instant`: 0ms (for reduced motion)
 - `$animation-duration-fast`: 150ms
 - `$animation-duration-base`: 200ms
@@ -207,6 +236,7 @@ Animation system with accessibility support:
 - `$animation-duration-slower`: 500ms
 
 #### Easing Functions
+
 - `$easing-linear`: Linear easing
 - `$easing-ease-in`: Ease in
 - `$easing-ease-out`: Ease out
@@ -215,6 +245,7 @@ Animation system with accessibility support:
 - `$easing-bounce`: Bounce effect
 
 #### Common Transitions
+
 - `$transition-base`: Base transition (200ms ease-in-out)
 - `$transition-color`: Color transition
 - `$transition-background`: Background color transition
@@ -224,24 +255,50 @@ Animation system with accessibility support:
 - `$transition-shadow`: Box shadow transition
 
 #### Animation Delays
+
 - `$animation-delay-none`: 0ms
 - `$animation-delay-short`: 50ms
 - `$animation-delay-medium`: 100ms
 - `$animation-delay-long`: 200ms
 
 **Usage Example:**
+
 ```scss
 @use "@/styles/variables/animations" as *;
 
 .button {
   transition: $transition-background, $transition-transform;
-  
+
   &:hover {
     transform: translateY(-2px);
   }
-  
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
+  }
+}
+```
+
+### Breakpoints (`styles/variables/breakpoints.scss`)
+
+Responsive breakpoint system for mobile-first design:
+
+#### Breakpoint Scale
+
+- `$breakpoint-sm`: 640px (Mobile)
+- `$breakpoint-md`: 768px (Tablet)
+- `$breakpoint-lg`: 1024px (Desktop)
+- `$breakpoint-xl`: 1280px (Large Desktop)
+- `$breakpoint-2xl`: 1536px (Extra Large Desktop)
+
+**Usage Example:**
+
+```scss
+@use "@/styles/variables/breakpoints" as *;
+
+@media (min-width: $breakpoint-md) {
+  .container {
+    max-width: 1200px;
   }
 }
 ```
@@ -249,20 +306,24 @@ Animation system with accessibility support:
 ### Borders (`styles/variables/borders.scss`)
 
 #### Border Width
+
 - `$border-width`: 1px
 - `$border-width-thick`: 2px
 
 #### Border Radius
+
 - `$border-radius-sm`: 0.25rem (4px)
 - `$border-radius-md`: 0.375rem (6px)
 - `$border-radius-lg`: 0.5rem (8px)
 - `$border-radius-full`: 9999px (fully rounded)
 
 #### Component-Specific Radius
+
 - `$border-radius-input`: 0.375rem (6px)
 - `$border-radius-button`: 9999px (fully rounded)
 
 **Usage Example:**
+
 ```scss
 @use "@/styles/variables/borders" as *;
 
@@ -283,6 +344,7 @@ All variables should be imported using the `@use` directive with the `as *` name
 @use "@/styles/variables/shadows" as *;
 @use "@/styles/variables/animations" as *;
 @use "@/styles/variables/borders" as *;
+@use "@/styles/variables/breakpoints" as *;
 ```
 
 ## Best Practices
@@ -325,4 +387,3 @@ When migrating existing code to use design tokens:
 - Custom theme support
 - Design token export for other platforms
 - Visual design system documentation (Storybook)
-
