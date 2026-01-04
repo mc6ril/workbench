@@ -1,9 +1,15 @@
 import {
   hasErrorCode,
+  isArray,
+  isDefined,
   isErrorWithCode,
   isNonEmptyArray,
   isNonEmptyString,
+  isNotNull,
+  isNotUndefined,
+  isNumber,
   isObject,
+  isProjectRole,
   isString,
 } from "@/shared/utils/guards";
 
@@ -142,10 +148,11 @@ describe("guards", () => {
     it("should return true when error has one of the specified codes", () => {
       expect(hasErrorCode({ code: "NOT_FOUND" }, ["NOT_FOUND"])).toBe(true);
       expect(
-        hasErrorCode(
-          { code: "DATABASE_ERROR" },
-          ["NOT_FOUND", "DATABASE_ERROR", "CONSTRAINT_VIOLATION"]
-        )
+        hasErrorCode({ code: "DATABASE_ERROR" }, [
+          "NOT_FOUND",
+          "DATABASE_ERROR",
+          "CONSTRAINT_VIOLATION",
+        ])
       ).toBe(true);
     });
 
@@ -154,10 +161,7 @@ describe("guards", () => {
         false
       );
       expect(
-        hasErrorCode(
-          { code: "CUSTOM_ERROR" },
-          ["NOT_FOUND", "DATABASE_ERROR"]
-        )
+        hasErrorCode({ code: "CUSTOM_ERROR" }, ["NOT_FOUND", "DATABASE_ERROR"])
       ).toBe(false);
     });
 
@@ -226,5 +230,218 @@ describe("guards", () => {
       }
     });
   });
-});
 
+  describe("isNumber", () => {
+    it("should return true for numbers", () => {
+      expect(isNumber(0)).toBe(true);
+      expect(isNumber(123)).toBe(true);
+      expect(isNumber(-456)).toBe(true);
+      expect(isNumber(0.5)).toBe(true);
+      expect(isNumber(Infinity)).toBe(true);
+      expect(isNumber(-Infinity)).toBe(true);
+      expect(isNumber(NaN)).toBe(true);
+    });
+
+    it("should return false for non-numbers", () => {
+      expect(isNumber(null)).toBe(false);
+      expect(isNumber(undefined)).toBe(false);
+      expect(isNumber("123")).toBe(false);
+      expect(isNumber(true)).toBe(false);
+      expect(isNumber({})).toBe(false);
+      expect(isNumber([])).toBe(false);
+    });
+
+    it("should narrow type correctly", () => {
+      const value: unknown = 42;
+      if (isNumber(value)) {
+        // TypeScript should recognize value as number
+        expect(value.toFixed(2)).toBe("42.00");
+      }
+    });
+  });
+
+  describe("isArray", () => {
+    it("should return true for arrays", () => {
+      expect(isArray([])).toBe(true);
+      expect(isArray([1, 2, 3])).toBe(true);
+      expect(isArray(["a", "b"])).toBe(true);
+      expect(isArray([{}])).toBe(true);
+    });
+
+    it("should return false for non-arrays", () => {
+      expect(isArray(null)).toBe(false);
+      expect(isArray(undefined)).toBe(false);
+      expect(isArray("string")).toBe(false);
+      expect(isArray(123)).toBe(false);
+      expect(isArray({})).toBe(false);
+    });
+
+    it("should narrow type correctly", () => {
+      const value: unknown = [1, 2, 3];
+      if (isArray<number>(value)) {
+        // TypeScript should recognize value as number[]
+        expect(value[0]).toBe(1);
+        expect(value.length).toBe(3);
+      }
+    });
+
+    it("should work with typed arrays", () => {
+      const numbers: unknown = [1, 2, 3];
+      if (isArray<number>(numbers)) {
+        expect(numbers).toEqual([1, 2, 3]);
+      }
+
+      const strings: unknown = ["a", "b", "c"];
+      if (isArray<string>(strings)) {
+        expect(strings).toEqual(["a", "b", "c"]);
+      }
+    });
+
+    it("should return true for empty arrays", () => {
+      expect(isArray<number>([])).toBe(true);
+      expect(isArray<string>([])).toBe(true);
+    });
+  });
+
+  describe("isDefined", () => {
+    it("should return true for defined values", () => {
+      expect(isDefined(0)).toBe(true);
+      expect(isDefined("")).toBe(true);
+      expect(isDefined(false)).toBe(true);
+      expect(isDefined({})).toBe(true);
+      expect(isDefined([])).toBe(true);
+    });
+
+    it("should return false for undefined", () => {
+      expect(isDefined(undefined)).toBe(false);
+    });
+
+    it("should return false for null", () => {
+      expect(isDefined(null)).toBe(false);
+    });
+
+    it("should narrow type correctly", () => {
+      const value: string | undefined | null = "test";
+      if (isDefined(value)) {
+        // TypeScript should recognize value as string
+        expect(value.length).toBe(4);
+      }
+
+      const value2: number | undefined | null = 42;
+      if (isDefined(value2)) {
+        // TypeScript should recognize value2 as number
+        expect(value2.toFixed(2)).toBe("42.00");
+      }
+    });
+
+    it("should handle falsy but defined values", () => {
+      expect(isDefined(0)).toBe(true);
+      expect(isDefined("")).toBe(true);
+      expect(isDefined(false)).toBe(true);
+    });
+  });
+
+  describe("isNotNull", () => {
+    it("should return true for non-null values", () => {
+      expect(isNotNull(0)).toBe(true);
+      expect(isNotNull("")).toBe(true);
+      expect(isNotNull(false)).toBe(true);
+      expect(isNotNull(undefined)).toBe(true);
+      expect(isNotNull({})).toBe(true);
+      expect(isNotNull([])).toBe(true);
+    });
+
+    it("should return false for null", () => {
+      expect(isNotNull(null)).toBe(false);
+    });
+
+    it("should narrow type correctly", () => {
+      const value: string | null = "test";
+      if (isNotNull(value)) {
+        // TypeScript should recognize value as string
+        expect(value.length).toBe(4);
+      }
+
+      const value2: number | null = 42;
+      if (isNotNull(value2)) {
+        // TypeScript should recognize value2 as number
+        expect(value2.toFixed(2)).toBe("42.00");
+      }
+    });
+
+    it("should allow undefined values", () => {
+      const value: string | null | undefined = undefined;
+      if (isNotNull(value)) {
+        // TypeScript should recognize value as string | undefined
+        expect(value).toBeUndefined();
+      }
+    });
+  });
+
+  describe("isNotUndefined", () => {
+    it("should return true for non-undefined values", () => {
+      expect(isNotUndefined(0)).toBe(true);
+      expect(isNotUndefined("")).toBe(true);
+      expect(isNotUndefined(false)).toBe(true);
+      expect(isNotUndefined(null)).toBe(true);
+      expect(isNotUndefined({})).toBe(true);
+      expect(isNotUndefined([])).toBe(true);
+    });
+
+    it("should return false for undefined", () => {
+      expect(isNotUndefined(undefined)).toBe(false);
+    });
+
+    it("should narrow type correctly", () => {
+      const value: string | undefined = "test";
+      if (isNotUndefined(value)) {
+        // TypeScript should recognize value as string
+        expect(value.length).toBe(4);
+      }
+
+      const value2: number | undefined = 42;
+      if (isNotUndefined(value2)) {
+        // TypeScript should recognize value2 as number
+        expect(value2.toFixed(2)).toBe("42.00");
+      }
+    });
+
+    it("should allow null values", () => {
+      const value: string | undefined | null = null;
+      if (isNotUndefined(value)) {
+        // TypeScript should recognize value as string | null
+        expect(value).toBeNull();
+      }
+    });
+  });
+
+  describe("isProjectRole", () => {
+    it("should return true for valid project roles", () => {
+      expect(isProjectRole("admin")).toBe(true);
+      expect(isProjectRole("member")).toBe(true);
+      expect(isProjectRole("viewer")).toBe(true);
+    });
+
+    it("should return false for invalid project roles", () => {
+      expect(isProjectRole("invalid")).toBe(false);
+      expect(isProjectRole("ADMIN")).toBe(false);
+      expect(isProjectRole("Admin")).toBe(false);
+      expect(isProjectRole("")).toBe(false);
+      expect(isProjectRole("guest")).toBe(false);
+    });
+
+    it("should narrow type correctly", () => {
+      const role: string = "admin";
+      if (isProjectRole(role)) {
+        // TypeScript should recognize role as ProjectRole
+        expect(role).toBe("admin");
+      }
+    });
+
+    it("should handle case sensitivity", () => {
+      expect(isProjectRole("admin")).toBe(true);
+      expect(isProjectRole("ADMIN")).toBe(false);
+      expect(isProjectRole("Admin")).toBe(false);
+    });
+  });
+});

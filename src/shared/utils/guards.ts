@@ -29,6 +29,53 @@ export function isString(value: unknown): value is string {
 }
 
 /**
+ * Type guard to check if a value is a number.
+ */
+export function isNumber(value: unknown): value is number {
+  return typeof value === "number";
+}
+
+/**
+ * Type guard to check if a value is an array.
+ * @template T The element type of the array
+ * @param value - Value to check
+ * @returns true if value is an array
+ */
+export function isArray<T>(value: unknown): value is T[] {
+  return Array.isArray(value);
+}
+
+/**
+ * Type guard to check if a value is defined (not undefined or null).
+ * @template T The type of the value when defined
+ * @param value - Value to check
+ * @returns true if value is not undefined or null
+ */
+export function isDefined<T>(value: T | undefined | null): value is T {
+  return value !== undefined && value !== null;
+}
+
+/**
+ * Type guard to check if a value is not null.
+ * @template T The type of the value when not null
+ * @param value - Value to check
+ * @returns true if value is not null
+ */
+export function isNotNull<T>(value: T | null): value is T {
+  return value !== null;
+}
+
+/**
+ * Type guard to check if a value is not undefined.
+ * @template T The type of the value when not undefined
+ * @param value - Value to check
+ * @returns true if value is not undefined
+ */
+export function isNotUndefined<T>(value: T | undefined): value is T {
+  return value !== undefined;
+}
+
+/**
  * Type guard to check if an error object has a code property.
  * Useful for checking domain errors vs unknown errors.
  */
