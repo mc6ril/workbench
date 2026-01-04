@@ -3,14 +3,24 @@
 import { useMemo } from "react";
 
 import { getLocale } from "@/shared/i18n/config";
+import { createPluralKey } from "@/shared/i18n/dynamic";
 import messagesFr from "@/shared/i18n/messages/fr.json";
 import type { TranslationMessages } from "@/shared/i18n/types";
+import { interpolateTranslation } from "@/shared/i18n/utils";
 
 /**
  * Simple translation function that returns a function to get translations from a namespace.
+ * Supports interpolation, pluralization, and nested keys.
  *
  * @param namespace - The namespace to use (e.g., "common", "pages.signup")
  * @returns A function that takes a key and returns the translated string
+ *
+ * @example
+ * ```tsx
+ * const t = useTranslation("common");
+ * t("loading"); // "Chargement en cours..."
+ * t("welcome", { name: "John" }); // "Bienvenue, John!"
+ * ```
  */
 export function useTranslation(namespace: string) {
   const locale = getLocale();
@@ -61,56 +71,76 @@ export function useTranslation(namespace: string) {
   }, [messages, namespace]);
 
   return useMemo(() => {
-    return (key: string, params?: Record<string, string | number>): string => {
+    return (
+      key: string,
+      params?: Record<string, string | number> & { count?: number }
+    ): string => {
       if (!namespaceMessages) {
         console.warn(`Namespace "${namespace}" not found in translations`);
         return key;
       }
 
-      // Handle nested keys like "errors.invalidEmail"
-      const keyParts = key.split(".");
-      let translationValue: string | Record<string, unknown> | undefined =
-        namespaceMessages;
+      // Helper function to get value from namespaceMessages
+      const getValueFromNamespace = (
+        k: string
+      ): string | Record<string, unknown> | undefined => {
+        const keyParts = k.split(".");
+        let current: unknown = namespaceMessages;
 
-      for (const part of keyParts) {
-        if (
-          translationValue &&
-          typeof translationValue === "object" &&
-          part in translationValue
-        ) {
-          translationValue = (
-            translationValue as Record<string, string | Record<string, unknown>>
-          )[part];
-        } else {
-          console.warn(
-            `Translation key "${key}" not found in namespace "${namespace}"`
-          );
-          return key;
+        for (const part of keyParts) {
+          if (
+            current &&
+            typeof current === "object" &&
+            part in current &&
+            typeof (current as Record<string, unknown>)[part] === "object"
+          ) {
+            current = (current as Record<string, unknown>)[part];
+          } else if (
+            current &&
+            typeof current === "object" &&
+            part in current &&
+            typeof (current as Record<string, unknown>)[part] === "string"
+          ) {
+            return (current as Record<string, string>)[part];
+          } else {
+            return undefined;
+          }
+        }
+
+        return typeof current === "string" ? current : undefined;
+      };
+
+      // Handle pluralization: if params contains 'count', try pluralized key first
+      let translationKey = key;
+      if (params && typeof params.count === "number") {
+        const pluralKey = createPluralKey(key, params.count);
+        // Try pluralized key first, fallback to base key
+        const pluralValue = getValueFromNamespace(pluralKey);
+        if (pluralValue && typeof pluralValue === "string") {
+          translationKey = pluralKey;
         }
       }
 
-      // If the value is an object, it's not a valid translation
-      if (typeof translationValue !== "string") {
+      // Get translation value
+      const translationValue = getValueFromNamespace(translationKey);
+
+      if (!translationValue || typeof translationValue !== "string") {
         console.warn(
-          `Translation key "${key}" in namespace "${namespace}" is not a string`
+          `Translation key "${translationKey}" not found in namespace "${namespace}"`
         );
         return key;
       }
 
-      let translation = translationValue;
-
-      // Simple interpolation: replace {key} with values from params
+      // Interpolate translation using utility function
+      // Filter out 'count' parameter as it's only used for pluralization, not interpolation
       if (params) {
-        Object.entries(params).forEach(([paramKey, paramValue]) => {
-          translation = translation.replace(
-            new RegExp(`\\{${paramKey}\\}`, "g"),
-            String(paramValue)
-          );
-        });
+        const { count: _count, ...interpolationParams } = params;
+        if (Object.keys(interpolationParams).length > 0) {
+          return interpolateTranslation(translationValue, interpolationParams);
+        }
       }
 
-      return translation;
+      return translationValue;
     };
   }, [namespaceMessages, namespace]);
 }
-

@@ -31,3 +31,36 @@ export type TranslationMessages = {
   forms: Record<string, string | Record<string, unknown>>;
   errors: Record<string, string | Record<string, unknown>>;
 };
+
+/**
+ * Namespace paths for translation namespaces.
+ * Used to ensure type safety when specifying namespaces.
+ */
+export type Namespace =
+  | "common"
+  | "pages.signup"
+  | "pages.signin"
+  | "pages.verifyEmail"
+  | "pages.resetPassword"
+  | "pages.updatePassword"
+  | "pages.home"
+  | "pages.landing"
+  | "forms"
+  | "errors";
+
+/**
+ * Parameters for translation function interpolation.
+ * Supports string and number values, with optional count for pluralization.
+ */
+export type TranslationParams = Record<string, string | number> & {
+  count?: number;
+};
+
+/**
+ * Translation function type.
+ * Takes a key and optional parameters, returns the translated string.
+ */
+export type TranslationFunction = (
+  key: string,
+  params?: TranslationParams
+) => string;
