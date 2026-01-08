@@ -1,5 +1,5 @@
-import type { Ticket } from "@/core/domain/ticket.schema";
-import { TicketSchema } from "@/core/domain/ticket.schema";
+import type { Ticket } from "@/core/domain/schema/ticket.schema";
+import { TicketSchema } from "@/core/domain/schema/ticket.schema";
 
 import type { TicketRow } from "@/infrastructure/supabase/types";
 

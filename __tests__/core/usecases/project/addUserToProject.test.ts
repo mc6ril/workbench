@@ -1,8 +1,8 @@
-import type { Project } from "@/core/domain/project.schema";
 import {
   createConstraintError,
   createNotFoundError,
 } from "@/core/domain/repositoryError";
+import type { Project } from "@/core/domain/schema/project.schema";
 
 import { addUserToProject } from "@/core/usecases/project/addUserToProject";
 

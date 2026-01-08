@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateProjectInput } from "@/core/domain/project.schema";
+import type { CreateProjectInput } from "@/core/domain/schema/project.schema";
 
 import { createProject } from "@/core/usecases/project/createProject";
 

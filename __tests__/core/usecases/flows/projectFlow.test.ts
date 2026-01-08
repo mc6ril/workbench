@@ -1,9 +1,9 @@
-import type { Project } from "@/core/domain/project.schema";
-import type { ProjectWithRole } from "@/core/domain/project.schema";
 import {
   createConstraintError,
   createNotFoundError,
 } from "@/core/domain/repositoryError";
+import type { Project } from "@/core/domain/schema/project.schema";
+import type { ProjectWithRole } from "@/core/domain/schema/project.schema";
 
 import { addUserToProject } from "@/core/usecases/project/addUserToProject";
 import { getProject } from "@/core/usecases/project/getProject";
@@ -63,7 +63,11 @@ describe("Project Flow Tests", () => {
       expect(projectResult?.name).toBe("Test Project");
 
       // Act - Step 3: Add user to project
-      const addedProjectResult = await addUserToProject(repository, projectId, "member");
+      const addedProjectResult = await addUserToProject(
+        repository,
+        projectId,
+        "member"
+      );
 
       // Assert - Step 3: User should be added to project
       expect(repository.addCurrentUserAsMember).toHaveBeenCalledTimes(1);
@@ -181,4 +185,3 @@ describe("Project Flow Tests", () => {
     });
   });
 });
-

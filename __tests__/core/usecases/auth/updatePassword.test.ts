@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { AuthResult } from "@/core/domain/auth.schema";
+import type { AuthResult } from "@/core/domain/schema/auth.schema";
 
 import { updatePassword } from "@/core/usecases/auth/updatePassword";
 

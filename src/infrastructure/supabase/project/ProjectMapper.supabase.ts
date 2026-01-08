@@ -4,9 +4,10 @@ import type {
   Project,
   ProjectRole,
   ProjectWithRole,
-} from "@/core/domain/project.schema";
-import { ProjectSchema } from "@/core/domain/project.schema";
+} from "@/core/domain/schema/project.schema";
+import { ProjectSchema } from "@/core/domain/schema/project.schema";
 
+import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type { ProjectRow } from "@/infrastructure/supabase/types";
 
 /**
@@ -29,26 +30,12 @@ export const mapProjectRowToDomain = (row: ProjectRow): Project => {
 
     return ProjectSchema.parse(cleanData);
   } catch (error) {
-    // Log detailed error for debugging
     if (error instanceof z.ZodError) {
-      console.error("Project mapping error:", {
-        originalRow: row,
-        rowIdType: typeof row.id,
-        rowIdValue: row.id,
-        cleanedData: {
-          id: String(row.id).trim(),
-          name: String(row.name).trim(),
-          createdAt: row.created_at,
-          updatedAt: row.updated_at,
-        },
-        zodIssues: error.issues,
-      });
-      // Throw a more descriptive error
-      throw new Error(
+      return handleRepositoryError(
         `Failed to map project: ${error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")}`
       );
     }
-    throw error;
+    return handleRepositoryError(error, "ProjectMapper");
   }
 };
 

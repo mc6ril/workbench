@@ -1,7 +1,7 @@
 import {
   type ResetPasswordInput,
   ResetPasswordSchema,
-} from "@/core/domain/auth.schema";
+} from "@/core/domain/schema/auth.schema";
 
 import type { AuthRepository } from "@/core/ports/authRepository";
 

@@ -6,7 +6,7 @@ import type {
   SignUpInput,
   UpdatePasswordInput,
   VerifyEmailInput,
-} from "@/core/domain/auth.schema";
+} from "@/core/domain/schema/auth.schema";
 
 /**
  * Mock type for AuthRepository.
@@ -74,4 +74,3 @@ export const createAuthRepositoryMock = (
     ...overrides,
   };
 };
-

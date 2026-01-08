@@ -1,4 +1,4 @@
-import type { AuthSession } from "@/core/domain/auth.schema";
+import type { AuthSession } from "@/core/domain/schema/auth.schema";
 
 import type { AuthRepository } from "@/core/ports/authRepository";
 

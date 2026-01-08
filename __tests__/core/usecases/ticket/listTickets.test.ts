@@ -1,7 +1,4 @@
-import type {
-  Ticket,
-  TicketFilters,
-} from "@/core/domain/ticket.schema";
+import type { Ticket, TicketFilters } from "@/core/domain/schema/ticket.schema";
 
 import { listTickets } from "@/core/usecases/ticket/listTickets";
 
@@ -41,7 +38,9 @@ describe("listTickets", () => {
     // Arrange
     const tickets: Ticket[] = [mockTicket1, mockTicket2];
     const repository = createTicketRepositoryMock({
-      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(async () => tickets),
+      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(
+        async () => tickets
+      ),
     });
 
     // Act
@@ -67,7 +66,9 @@ describe("listTickets", () => {
   it("should return empty array when no tickets", async () => {
     // Arrange
     const repository = createTicketRepositoryMock({
-      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(async () => []),
+      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(
+        async () => []
+      ),
     });
 
     // Act
@@ -84,9 +85,11 @@ describe("listTickets", () => {
     // Arrange
     const repositoryError = new Error("Database connection failed");
     const repository = createTicketRepositoryMock({
-      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(async () => {
-        throw repositoryError;
-      }),
+      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(
+        async () => {
+          throw repositoryError;
+        }
+      ),
     });
 
     // Act & Assert
@@ -101,7 +104,9 @@ describe("listTickets", () => {
     // Arrange
     const differentProjectId = "456e7890-e89b-12d3-a456-426614174001";
     const repository = createTicketRepositoryMock({
-      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(async () => []),
+      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(
+        async () => []
+      ),
     });
 
     // Act
@@ -109,7 +114,10 @@ describe("listTickets", () => {
 
     // Assert
     expect(repository.listByProject).toHaveBeenCalledTimes(1);
-    expect(repository.listByProject).toHaveBeenCalledWith(differentProjectId, undefined);
+    expect(repository.listByProject).toHaveBeenCalledWith(
+      differentProjectId,
+      undefined
+    );
     expect(repository.listByProject).not.toHaveBeenCalledWith(projectId);
   });
 
@@ -118,7 +126,9 @@ describe("listTickets", () => {
     const tickets: Ticket[] = [mockTicket1];
     const filters = { status: "todo" };
     const repository = createTicketRepositoryMock({
-      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(async () => tickets),
+      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(
+        async () => tickets
+      ),
     });
 
     // Act
@@ -130,4 +140,3 @@ describe("listTickets", () => {
     expect(result).toEqual(tickets);
   });
 });
-

@@ -6,7 +6,7 @@ import type {
   SignUpInput,
   UpdatePasswordInput,
   VerifyEmailInput,
-} from "@/core/domain/auth.schema";
+} from "@/core/domain/schema/auth.schema";
 
 /**
  * Repository contract for Authentication operations.

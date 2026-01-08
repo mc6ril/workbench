@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { ResetPasswordInput } from "@/core/domain/auth.schema";
+import type { ResetPasswordInput } from "@/core/domain/schema/auth.schema";
 
 import { resetPasswordForEmail } from "@/core/usecases/auth/resetPasswordForEmail";
 

@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { ResetPasswordInput } from "@/core/domain/auth.schema";
-import { ResetPasswordSchema } from "@/core/domain/auth.schema";
+import type { ResetPasswordInput } from "@/core/domain/schema/auth.schema";
+import { ResetPasswordSchema } from "@/core/domain/schema/auth.schema";
 
 import Button from "@/presentation/components/ui/Button";
 import Form from "@/presentation/components/ui/Form";
