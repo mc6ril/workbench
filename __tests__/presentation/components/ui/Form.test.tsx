@@ -84,10 +84,10 @@ describe("Form Component", () => {
 
     // Assert
     const form = container.querySelector("form");
-    expect(form).toHaveAttribute("aria-describedby", "form-error");
+    expect(form).toHaveAttribute("aria-describedby", "a11y-form-error");
     
     const error = screen.getByText("Form error");
-    expect(error).toHaveAttribute("id", "form-error");
+    expect(error).toHaveAttribute("id", "a11y-form-error");
   });
 
   it("should use aria-label when provided", () => {
@@ -116,7 +116,7 @@ describe("Form Component", () => {
     const form = container.querySelector("form");
     const describedBy = form?.getAttribute("aria-describedby");
     expect(describedBy).toContain("custom-id");
-    expect(describedBy).toContain("form-error");
+    expect(describedBy).toContain("a11y-form-error");
   });
 
   it("should apply custom className", () => {

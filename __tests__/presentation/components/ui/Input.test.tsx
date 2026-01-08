@@ -84,7 +84,7 @@ describe("Input Component", () => {
 
     // Assert
     const input = screen.getByLabelText(/email address/i);
-    expect(input).toHaveAttribute("id", "input-email-address");
+    expect(input).toHaveAttribute("id", "a11y-input-email-address");
   });
 
   it("should associate error message with input via aria-describedby", () => {
@@ -93,7 +93,7 @@ describe("Input Component", () => {
 
     // Assert
     const input = screen.getByLabelText(/email/i);
-    const errorId = "email-error";
+    const errorId = "a11y-input-email-error";
     expect(input).toHaveAttribute("aria-describedby", errorId);
     expect(screen.getByText("Invalid email")).toHaveAttribute("id", errorId);
   });
