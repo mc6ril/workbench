@@ -4,13 +4,13 @@ import { Suspense, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
 import Loader from "@/presentation/components/ui/Loader";
 import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
 import { useVerifyEmail } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
-import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 import styles from "./VerifyEmailPage.module.scss";
 
@@ -33,7 +33,6 @@ const VerifyEmailContent = () => {
   const searchParams = useSearchParams();
   const verifyEmailMutation = useVerifyEmail();
   const t = useTranslation("pages.verifyEmail");
-  const tErrors = useTranslation("errors");
 
   // Extract token/code and email from URL parameters using useMemo to avoid unnecessary re-renders
   // Supabase can redirect with either:
@@ -89,16 +88,6 @@ const VerifyEmailContent = () => {
     }
   }, [verifyEmailMutation.isSuccess, verifyEmailMutation.data, router]);
 
-  // Determine error message using useMemo for performance
-  const errorMessage = useMemo((): string | null => {
-    if (!verifyEmailMutation.error) {
-      return null;
-    }
-
-    const error = verifyEmailMutation.error as { code?: string };
-    return getErrorMessage(error, tErrors);
-  }, [verifyEmailMutation.error, tErrors]);
-
   // Show error if token is missing
   // Email is optional (code format doesn't require email)
   if (!token) {
@@ -108,8 +97,11 @@ const VerifyEmailContent = () => {
           <Title variant="h1" className={styles["verify-email-title"]}>
             {t("title")}
           </Title>
-          <div className={styles["verify-email-error"]} role="alert">
-            {t("errors.missingToken")}
+          <div className={styles["verify-email-error"]}>
+            <ErrorMessage
+              error={{ code: "INVALID_TOKEN" }}
+              aria-label={t("errors.missingToken")}
+            />
           </div>
           <div className={styles["verify-email-footer"]}>
             <Link href="/auth/signin" className={styles["verify-email-link"]}>
@@ -130,9 +122,11 @@ const VerifyEmailContent = () => {
 
         {verifyEmailMutation.isPending && <Loader variant="inline" />}
 
-        {errorMessage && (
-          <div className={styles["verify-email-error"]} role="alert">
-            {errorMessage}
+        {verifyEmailMutation.error && (
+          <div className={styles["verify-email-error"]}>
+            <ErrorMessage
+              error={verifyEmailMutation.error as { code?: string }}
+            />
           </div>
         )}
 
@@ -147,7 +141,7 @@ const VerifyEmailContent = () => {
           </div>
         )}
 
-        {errorMessage && (
+        {verifyEmailMutation.error && (
           <div className={styles["verify-email-footer"]}>
             <Link href="/auth/signin" className={styles["verify-email-link"]}>
               {t("backToSignin")}

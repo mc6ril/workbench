@@ -30,6 +30,7 @@ import {
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import { shouldShowLoading } from "@/shared/utils";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
 import styles from "./WorkspacePage.module.scss";
@@ -145,13 +146,16 @@ const WorkspacePage = () => {
 
   const hasProjects = Array.isArray(projects) && projects.length > 0;
 
-  const isInitialLoad =
-    isLoadingSession ||
-    isLoadingProjects ||
-    isFetchingProjects ||
-    projects === undefined;
+  const shouldShowInitialLoader = shouldShowLoading({
+    isLoading:
+      isLoadingSession ||
+      isLoadingProjects ||
+      isFetchingProjects ||
+      projects === undefined,
+    isFetching: isFetchingProjects,
+  });
 
-  if (isInitialLoad) {
+  if (shouldShowInitialLoader) {
     return (
       <main className={styles["workspace-page"]}>
         <Loader variant="full-page" />
@@ -353,7 +357,10 @@ const WorkspacePage = () => {
               onRetry={refetchProjects}
             />
           )}
-          {isLoadingProjects || addUserToProjectMutation.isPending ? (
+          {shouldShowLoading({
+            isLoading: isLoadingProjects,
+            isPending: addUserToProjectMutation.isPending,
+          }) ? (
             <Loader variant="inline" />
           ) : Array.isArray(projects) && projects.length > 0 ? (
             <ul className={styles["workspace-projects-list"]}>
