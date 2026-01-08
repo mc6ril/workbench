@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generated coverage files
+    "coverage/**",
   ]),
   // Custom rules aligned with project conventions
   {

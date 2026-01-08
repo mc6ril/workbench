@@ -44,9 +44,7 @@ describe("Title Component", () => {
 
   it("should apply custom className", () => {
     // Arrange & Act
-    const { container } = render(
-      <Title className="custom-class">Title</Title>
-    );
+    render(<Title className="custom-class">Title</Title>);
 
     // Assert
     const heading = screen.getByRole("heading");
