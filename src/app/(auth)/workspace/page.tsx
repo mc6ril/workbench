@@ -10,6 +10,8 @@ import type { CreateProjectInput } from "@/core/domain/project.schema";
 import { CreateProjectInputSchema } from "@/core/domain/project.schema";
 
 import Button from "@/presentation/components/ui/Button";
+import EmptyState from "@/presentation/components/ui/EmptyState";
+import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
 import Form from "@/presentation/components/ui/Form";
 import Input from "@/presentation/components/ui/Input";
 import Loader from "@/presentation/components/ui/Loader";
@@ -346,12 +348,10 @@ const WorkspacePage = () => {
             {t("yourProjectsTitle")}
           </Title>
           {projectsError && (
-            <div className={styles["workspace-error"]} role="alert">
-              <Text variant="small" as="span">
-                {t("errorLoadingProjects")}{" "}
-                {getErrorMessage(projectsError as { code?: string }, tErrors)}
-              </Text>
-            </div>
+            <ErrorMessage
+              error={projectsError as { code?: string }}
+              onRetry={refetchProjects}
+            />
           )}
           {isLoadingProjects || addUserToProjectMutation.isPending ? (
             <Loader variant="inline" />
@@ -386,9 +386,7 @@ const WorkspacePage = () => {
               })}
             </ul>
           ) : Array.isArray(projects) && projects.length === 0 ? (
-            <Text variant="body" className={styles["workspace-empty"]}>
-              {t("noProjects")}
-            </Text>
+            <EmptyState title={t("noProjects")} />
           ) : null}
         </section>
       </div>

@@ -5,7 +5,11 @@
     "email": "Email",
     "password": "Mot de passe",
     "signIn": "Se connecter",
-    "signUp": "S'inscrire"
+    "signUp": "S'inscrire",
+    "emptyState": {
+      "defaultTitle": "Aucun élément",
+      "defaultMessage": "Il n'y a pas encore d'éléments à afficher."
+    }
   },
   "pages": {
     "signup": {
@@ -167,6 +171,8 @@
   "forms": {},
   "errors": {
     "generic": "Une erreur s'est produite",
+    "retry": "Réessayer",
+    "retryAriaLabel": "Réessayer l'opération",
     "auth": {
       "INVALID_CREDENTIALS": "Email ou mot de passe invalide",
       "EMAIL_ALREADY_EXISTS": "Cette adresse email est déjà utilisée",
