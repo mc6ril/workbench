@@ -14,12 +14,12 @@ import type { TranslationFunction } from "./types";
  * createPluralKey("items", 5); // "items_other"
  * ```
  */
-export function createPluralKey(baseKey: string, count: number): string {
+export const createPluralKey = (baseKey: string, count: number): string => {
   if (count === 1) {
     return baseKey;
   }
   return `${baseKey}_other`;
-}
+};
 
 /**
  * Creates a type-safe interpolation wrapper for translation functions.
@@ -35,13 +35,13 @@ export function createPluralKey(baseKey: string, count: number): string {
  * const message = translate("welcome", { name: "John" }); // "Bienvenue, John!"
  * ```
  */
-export function createInterpolatedTranslation(
+export const createInterpolatedTranslation = (
   t: TranslationFunction
-): (key: string, params?: Record<string, string | number>) => string {
+): ((key: string, params?: Record<string, string | number>) => string) => {
   return (key: string, params?: Record<string, string | number>): string => {
     return t(key, params);
   };
-}
+};
 
 /**
  * Returns a translation key based on a boolean condition.
@@ -58,10 +58,10 @@ export function createInterpolatedTranslation(
  * const label = t(labelKey);
  * ```
  */
-export function getConditionalTranslation(
+export const getConditionalTranslation = (
   condition: boolean,
   trueKey: string,
   falseKey: string
-): string {
+): string => {
   return condition ? trueKey : falseKey;
-}
+};

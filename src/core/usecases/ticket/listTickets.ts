@@ -1,7 +1,4 @@
-import type {
-  Ticket,
-  TicketFilters,
-} from "@/core/domain/ticket.schema";
+import type { Ticket, TicketFilters } from "@/core/domain/ticket.schema";
 
 import type { TicketRepository } from "@/core/ports/ticketRepository";
 
@@ -14,10 +11,10 @@ import type { TicketRepository } from "@/core/ports/ticketRepository";
  * @returns Array of tickets
  * @throws DatabaseError if database operation fails
  */
-export async function listTickets(
+export const listTickets = async (
   repository: TicketRepository,
   projectId: string,
   filters?: TicketFilters
-): Promise<Ticket[]> {
+): Promise<Ticket[]> => {
   return repository.listByProject(projectId, filters);
-}
+};

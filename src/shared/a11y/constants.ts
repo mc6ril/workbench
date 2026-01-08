@@ -16,7 +16,7 @@
  * getAccessibilityId('form-email-input') // Returns: 'a11y-form-email-input'
  * ```
  */
-export function getAccessibilityId(key: string): string {
+export const getAccessibilityId = (key: string): string => {
   // Convert key to kebab-case if needed and ensure it starts with a11y- prefix
   const normalizedKey = key
     .replace(/([A-Z])/g, "-$1")
@@ -25,13 +25,13 @@ export function getAccessibilityId(key: string): string {
     .replace(/-+/g, "-");
 
   return `a11y-${normalizedKey}`;
-}
+};
 
 /**
  * ARIA label constants for common button actions.
  * These can be used with i18n system for user-facing labels.
  */
-export const BUTTON_LABELS = {
+export const BUTTON_LABELS = Object.freeze({
   CLOSE: "close",
   SUBMIT: "submit",
   CANCEL: "cancel",
@@ -51,13 +51,13 @@ export const BUTTON_LABELS = {
   COLLAPSE: "collapse",
   MENU: "menu",
   MORE: "more",
-} as const;
+});
 
 /**
  * ARIA label constants for form-related elements.
  * These can be used with i18n system for user-facing labels.
  */
-export const FORM_LABELS = {
+export const FORM_LABELS = Object.freeze({
   REQUIRED: "required",
   OPTIONAL: "optional",
   ERROR: "error",
@@ -67,13 +67,13 @@ export const FORM_LABELS = {
   LABEL: "label",
   FIELD: "field",
   VALIDATION: "validation",
-} as const;
+});
 
 /**
  * ARIA label constants for navigation elements.
  * These can be used with i18n system for user-facing labels.
  */
-export const NAVIGATION_LABELS = {
+export const NAVIGATION_LABELS = Object.freeze({
   MENU: "menu",
   SIDEBAR: "sidebar",
   BREADCRUMB: "breadcrumb",
@@ -81,13 +81,13 @@ export const NAVIGATION_LABELS = {
   TABS: "tabs",
   SKIP_TO_CONTENT: "skipToContent",
   MAIN_NAVIGATION: "mainNavigation",
-} as const;
+});
 
 /**
  * ARIA label constants for status and feedback messages.
  * These can be used with i18n system for user-facing labels.
  */
-export const STATUS_LABELS = {
+export const STATUS_LABELS = Object.freeze({
   LOADING: "loading",
   ERROR: "error",
   SUCCESS: "success",
@@ -95,13 +95,13 @@ export const STATUS_LABELS = {
   INFO: "info",
   EMPTY_STATE: "emptyState",
   NO_RESULTS: "noResults",
-} as const;
+});
 
 /**
  * ARIA role constants following ARIA specification.
  * These are the valid values for the `role` attribute.
  */
-export const ARIA_ROLES = {
+export const ARIA_ROLES = Object.freeze({
   BUTTON: "button",
   DIALOG: "dialog",
   ALERTDIALOG: "alertdialog",
@@ -138,83 +138,83 @@ export const ARIA_ROLES = {
   HEADING: "heading",
   PRESENTATION: "presentation",
   NONE: "none",
-} as const;
+});
 
 /**
  * ARIA live region priority values.
  * Controls how screen readers announce changes to live regions.
  */
-export const ARIA_LIVE_VALUES = {
+export const ARIA_LIVE_VALUES = Object.freeze({
   POLITE: "polite",
   ASSERTIVE: "assertive",
   OFF: "off",
-} as const;
+});
 
 /**
  * ARIA expanded state values.
  * Indicates whether a collapsible element is expanded or collapsed.
  */
-export const ARIA_EXPANDED_VALUES = {
+export const ARIA_EXPANDED_VALUES = Object.freeze({
   TRUE: "true",
   FALSE: "false",
-} as const;
+});
 
 /**
  * ARIA selected state values.
  * Indicates whether an element is selected.
  */
-export const ARIA_SELECTED_VALUES = {
+export const ARIA_SELECTED_VALUES = Object.freeze({
   TRUE: "true",
   FALSE: "false",
-} as const;
+});
 
 /**
  * ARIA hidden state values.
  * Indicates whether an element is hidden from assistive technologies.
  */
-export const ARIA_HIDDEN_VALUES = {
+export const ARIA_HIDDEN_VALUES = Object.freeze({
   TRUE: "true",
   FALSE: "false",
-} as const;
+});
 
 /**
  * ARIA invalid state values.
  * Indicates whether an element's value is invalid.
  */
-export const ARIA_INVALID_VALUES = {
+export const ARIA_INVALID_VALUES = Object.freeze({
   TRUE: "true",
   FALSE: "false",
   GRAMMAR: "grammar",
   SPELLING: "spelling",
-} as const;
+});
 
 /**
  * ARIA required state values.
  * Indicates whether an element is required.
  */
-export const ARIA_REQUIRED_VALUES = {
+export const ARIA_REQUIRED_VALUES = Object.freeze({
   TRUE: "true",
   FALSE: "false",
-} as const;
+});
 
 /**
  * ARIA checked state values.
  * Indicates whether a checkbox, radio button, or switch is checked.
  */
-export const ARIA_CHECKED_VALUES = {
+export const ARIA_CHECKED_VALUES = Object.freeze({
   TRUE: "true",
   FALSE: "false",
   MIXED: "mixed",
-} as const;
+});
 
 /**
  * ARIA orientation values.
  * Indicates the orientation of an element (horizontal or vertical).
  */
-export const ARIA_ORIENTATION_VALUES = {
+export const ARIA_ORIENTATION_VALUES = Object.freeze({
   HORIZONTAL: "horizontal",
   VERTICAL: "vertical",
-} as const;
+});
 
 /**
  * Type for ARIA live region priority values.

@@ -2,11 +2,7 @@
 
 import { use } from "react";
 
-export default function BoardPage({
-  params,
-}: {
-  params: Promise<{ projectId: string }>;
-}) {
+const BoardPage = ({ params }: { params: Promise<{ projectId: string }> }) => {
   const { projectId } = use(params);
 
   return (
@@ -15,5 +11,6 @@ export default function BoardPage({
       <p>Project ID: {projectId}</p>
     </div>
   );
-}
+};
 
+export default BoardPage;

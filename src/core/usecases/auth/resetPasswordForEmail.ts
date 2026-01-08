@@ -14,13 +14,13 @@ import type { AuthRepository } from "@/core/ports/authRepository";
  * @throws PasswordResetError if email not found or reset fails
  * @throws AuthenticationFailure for other authentication errors
  */
-export async function resetPasswordForEmail(
+export const resetPasswordForEmail = async (
   repository: AuthRepository,
   input: ResetPasswordInput
-): Promise<void> {
+): Promise<void> => {
   // Validate input with Zod schema
   const validatedInput = ResetPasswordSchema.parse(input);
 
   // Call repository to send password reset email
   return repository.resetPasswordForEmail(validatedInput);
-}
+};

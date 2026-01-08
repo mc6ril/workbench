@@ -17,13 +17,13 @@ import type { AuthRepository } from "@/core/ports/authRepository";
  * @throws EmailVerificationError for other verification errors
  * @throws AuthenticationFailure for other authentication errors
  */
-export async function verifyEmail(
+export const verifyEmail = async (
   repository: AuthRepository,
   input: VerifyEmailInput
-): Promise<AuthResult> {
+): Promise<AuthResult> => {
   // Validate input with Zod schema
   const validatedInput = VerifyEmailSchema.parse(input);
 
   // Call repository to verify email token
   return repository.verifyEmail(validatedInput);
-}
+};

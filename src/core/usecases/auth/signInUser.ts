@@ -13,13 +13,13 @@ import type { AuthRepository } from "@/core/ports/authRepository";
  * @throws InvalidCredentialsError if credentials are invalid
  * @throws AuthenticationFailure for other authentication errors
  */
-export async function signInUser(
+export const signInUser = async (
   repository: AuthRepository,
   input: SignInInput
-): Promise<AuthResult> {
+): Promise<AuthResult> => {
   // Validate input with Zod schema
   const validatedInput = SignInSchema.parse(input);
 
   // Call repository to authenticate user
   return repository.signIn(validatedInput);
-}
+};

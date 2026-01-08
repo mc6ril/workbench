@@ -71,7 +71,8 @@ const LandingPageContent = () => {
             <ul className={styles["landing-features-list"]}>
               <li>
                 <Text variant="body" as="span">
-                  <strong>{t("backlogLabel")}</strong>: {t("backlogDescription")}
+                  <strong>{t("backlogLabel")}</strong>:{" "}
+                  {t("backlogDescription")}
                 </Text>
               </li>
               <li>
@@ -116,7 +117,7 @@ const LandingPageContent = () => {
   );
 };
 
-export default function LandingPage() {
+const LandingPage = () => {
   const tCommon = useTranslation("common");
 
   return (
@@ -124,4 +125,6 @@ export default function LandingPage() {
       <LandingPageContent />
     </Suspense>
   );
-}
+};
+
+export default LandingPage;

@@ -10,11 +10,11 @@ import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/cli
  * Checks if user is authenticated and redirects to /workspace if session exists.
  * If no session, shows landing page.
  */
-export default async function LandingLayout({
+const LandingLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
   try {
     // Create server client with cookie handling
     const supabaseClient = await createSupabaseServerClient();
@@ -46,5 +46,6 @@ export default async function LandingLayout({
 
   // No session, show landing page
   return <>{children}</>;
-}
+};
 
+export default LandingLayout;

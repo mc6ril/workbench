@@ -34,7 +34,7 @@ import styles from "./WorkspacePage.module.scss";
 
 type CreateProjectFormData = CreateProjectInput;
 
-export default function WorkspacePage() {
+const WorkspacePage = () => {
   const router = useRouter();
   const { data: session, isLoading: isLoadingSession } = useSession();
   const {
@@ -272,7 +272,10 @@ export default function WorkspacePage() {
             <Title variant="h2" className={styles["workspace-section-title"]}>
               {t("createProjectTitle")}
             </Title>
-            <Text variant="small" className={styles["workspace-section-description"]}>
+            <Text
+              variant="small"
+              className={styles["workspace-section-description"]}
+            >
               {t("createProjectDescription")}
             </Text>
             <Form
@@ -281,7 +284,6 @@ export default function WorkspacePage() {
               error={errors.root?.message}
               noValidate
             >
-
               <Input
                 label={t("projectNameLabel")}
                 type="text"
@@ -309,7 +311,10 @@ export default function WorkspacePage() {
             <Title variant="h2" className={styles["workspace-section-title"]}>
               {t("accessProjectTitle")}
             </Title>
-            <Text variant="small" className={styles["workspace-section-description"]}>
+            <Text
+              variant="small"
+              className={styles["workspace-section-description"]}
+            >
               {t("accessProjectDescription")}
             </Text>
             <div className={styles["workspace-access-form"]}>
@@ -389,4 +394,6 @@ export default function WorkspacePage() {
       </div>
     </main>
   );
-}
+};
+
+export default WorkspacePage;

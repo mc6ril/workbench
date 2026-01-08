@@ -10,11 +10,11 @@ import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/cli
  * Checks authentication and redirects to landing page if no session or on error (fail-closed).
  * This layout does NOT pass data to children - all data fetching happens in client pages.
  */
-export default async function AuthLayout({
+const AuthLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
   try {
     // Create server client with cookie handling
     const supabaseClient = await createSupabaseServerClient();
@@ -47,4 +47,6 @@ export default async function AuthLayout({
 
   // User is authenticated, render children
   return <>{children}</>;
-}
+};
+
+export default AuthLayout;

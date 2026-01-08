@@ -35,7 +35,7 @@ const FOCUSABLE_SELECTOR =
  * @param container - The container element to search within
  * @returns Array of focusable elements
  */
-function getFocusableElements(container: HTMLElement): HTMLElement[] {
+const getFocusableElements = (container: HTMLElement): HTMLElement[] => {
   const elements = Array.from(
     container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
   );
@@ -47,7 +47,7 @@ function getFocusableElements(container: HTMLElement): HTMLElement[] {
       el.offsetParent !== null
     );
   });
-}
+};
 
 /**
  * Traps keyboard focus within the specified element.
@@ -61,7 +61,7 @@ function getFocusableElements(container: HTMLElement): HTMLElement[] {
  * cleanup();
  * ```
  */
-export function trapFocus(element: HTMLElement): () => void {
+export const trapFocus = (element: HTMLElement): (() => void) => {
   const previouslyFocusedElement = document.activeElement as HTMLElement | null;
   const focusableElements = getFocusableElements(element);
 
@@ -132,7 +132,7 @@ export function trapFocus(element: HTMLElement): () => void {
       previouslyFocusedElement.focus();
     }
   };
-}
+};
 
 /**
  * Returns focus to the specified element.
@@ -147,11 +147,11 @@ export function trapFocus(element: HTMLElement): () => void {
  * returnFocus(triggerButton);
  * ```
  */
-export function returnFocus(element: HTMLElement): void {
+export const returnFocus = (element: HTMLElement): void => {
   if (element && typeof element.focus === "function") {
     element.focus();
   }
-}
+};
 
 /**
  * Finds and focuses the first focusable element within a container.
@@ -161,12 +161,12 @@ export function returnFocus(element: HTMLElement): void {
  * focusFirstFocusable(modalElement);
  * ```
  */
-export function focusFirstFocusable(container: HTMLElement): void {
+export const focusFirstFocusable = (container: HTMLElement): void => {
   const focusableElements = getFocusableElements(container);
   if (focusableElements.length > 0) {
     focusableElements[0].focus();
   }
-}
+};
 
 /**
  * Finds and focuses the last focusable element within a container.
@@ -176,13 +176,13 @@ export function focusFirstFocusable(container: HTMLElement): void {
  * focusLastFocusable(modalElement);
  * ```
  */
-export function focusLastFocusable(container: HTMLElement): void {
+export const focusLastFocusable = (container: HTMLElement): void => {
   const focusableElements = getFocusableElements(container);
   if (focusableElements.length > 0) {
     const lastElement = focusableElements[focusableElements.length - 1];
     lastElement.focus();
   }
-}
+};
 
 /**
  * Sets the aria-label attribute on an element.
@@ -193,9 +193,9 @@ export function focusLastFocusable(container: HTMLElement): void {
  * setAriaLabel(buttonElement, 'Close dialog');
  * ```
  */
-export function setAriaLabel(element: HTMLElement, label: string): void {
+export const setAriaLabel = (element: HTMLElement, label: string): void => {
   element.setAttribute("aria-label", label);
-}
+};
 
 /**
  * Sets the aria-describedby attribute on an element.
@@ -208,7 +208,7 @@ export function setAriaLabel(element: HTMLElement, label: string): void {
  * setAriaDescribedBy(inputElement, 'error-message-id');
  * ```
  */
-export function setAriaDescribedBy(element: HTMLElement, id: string): void {
+export const setAriaDescribedBy = (element: HTMLElement, id: string): void => {
   const existing = element.getAttribute("aria-describedby");
   if (existing) {
     // Split existing IDs and check for duplicates
@@ -219,7 +219,7 @@ export function setAriaDescribedBy(element: HTMLElement, id: string): void {
   } else {
     element.setAttribute("aria-describedby", id);
   }
-}
+};
 
 /**
  * Sets the aria-live attribute on an element.
@@ -230,12 +230,12 @@ export function setAriaDescribedBy(element: HTMLElement, id: string): void {
  * setAriaLive(statusElement, 'assertive');
  * ```
  */
-export function setAriaLive(
+export const setAriaLive = (
   element: HTMLElement,
   priority: AriaLivePriority
-): void {
+): void => {
   element.setAttribute("aria-live", priority);
-}
+};
 
 /**
  * Hidden live region element for screen reader announcements.
@@ -252,7 +252,7 @@ let pendingAnnouncementTimeout: number | null = null;
  * Gets or creates the hidden live region element for announcements.
  * @returns The live region element
  */
-function getLiveRegionElement(): HTMLElement {
+const getLiveRegionElement = (): HTMLElement => {
   if (!liveRegionElement) {
     liveRegionElement = document.createElement("div");
     liveRegionElement.setAttribute("aria-live", "polite");
@@ -265,7 +265,7 @@ function getLiveRegionElement(): HTMLElement {
     document.body.appendChild(liveRegionElement);
   }
   return liveRegionElement;
-}
+};
 
 /**
  * Announces a message to screen readers using a live region.
@@ -279,10 +279,10 @@ function getLiveRegionElement(): HTMLElement {
  * announceToScreenReader('Error: Please check your input', 'assertive');
  * ```
  */
-export function announceToScreenReader(
+export const announceToScreenReader = (
   message: string,
   priority: AriaLivePriority = "polite"
-): void {
+): void => {
   const liveRegion = getLiveRegionElement();
   liveRegion.setAttribute("aria-live", priority);
   liveRegion.setAttribute("aria-atomic", "true");
@@ -304,7 +304,7 @@ export function announceToScreenReader(
       pendingAnnouncementTimeout = null;
     }, 100);
   });
-}
+};
 
 /**
  * Checks if a keyboard event is the Escape key.
@@ -317,9 +317,9 @@ export function announceToScreenReader(
  * }
  * ```
  */
-export function isEscapeKey(event: KeyboardEvent): boolean {
+export const isEscapeKey = (event: KeyboardEvent): boolean => {
   return event.key === "Escape" || event.keyCode === 27;
-}
+};
 
 /**
  * Checks if a keyboard event is the Enter key.
@@ -332,9 +332,9 @@ export function isEscapeKey(event: KeyboardEvent): boolean {
  * }
  * ```
  */
-export function isEnterKey(event: KeyboardEvent): boolean {
+export const isEnterKey = (event: KeyboardEvent): boolean => {
   return event.key === "Enter" || event.keyCode === 13;
-}
+};
 
 /**
  * Checks if a keyboard event is the Space key.
@@ -348,9 +348,9 @@ export function isEnterKey(event: KeyboardEvent): boolean {
  * }
  * ```
  */
-export function isSpaceKey(event: KeyboardEvent): boolean {
+export const isSpaceKey = (event: KeyboardEvent): boolean => {
   return event.key === " " || event.key === "Spacebar" || event.keyCode === 32;
-}
+};
 
 /**
  * Handles keyboard navigation by calling appropriate handlers based on the pressed key.
@@ -365,10 +365,10 @@ export function isSpaceKey(event: KeyboardEvent): boolean {
  * });
  * ```
  */
-export function handleKeyboardNavigation(
+export const handleKeyboardNavigation = (
   event: KeyboardEvent,
   handlers: KeyboardHandlers
-): void {
+): void => {
   if (isEscapeKey(event) && handlers.onEscape) {
     event.preventDefault();
     handlers.onEscape();
@@ -410,4 +410,4 @@ export function handleKeyboardNavigation(
     handlers.onArrowRight();
     return;
   }
-}
+};

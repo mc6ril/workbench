@@ -35,9 +35,12 @@ export type SafeResult<T> =
  * const data = validateWithSchema(schema, { name: "John" });
  * ```
  */
-export function validateWithSchema<T>(schema: z.ZodType<T>, data: unknown): T {
+export const validateWithSchema = <T>(
+  schema: z.ZodType<T>,
+  data: unknown
+): T => {
   return schema.parse(data);
-}
+};
 
 /**
  * Safely validates data against a Zod schema without throwing.
@@ -59,10 +62,10 @@ export function validateWithSchema<T>(schema: z.ZodType<T>, data: unknown): T {
  * }
  * ```
  */
-export function safeValidateWithSchema<T>(
+export const safeValidateWithSchema = <T>(
   schema: z.ZodType<T>,
   data: unknown
-): SafeResult<T> {
+): SafeResult<T> => {
   const result = schema.safeParse(data);
   if (result.success) {
     return {
@@ -74,7 +77,7 @@ export function safeValidateWithSchema<T>(
     success: false,
     error: result.error,
   };
-}
+};
 
 /**
  * Formats Zod validation errors into a field-to-message mapping.
@@ -90,9 +93,9 @@ export function safeValidateWithSchema<T>(
  * // { "email": "Invalid email format", "profile.name": "Required" }
  * ```
  */
-export function formatValidationErrors(
+export const formatValidationErrors = (
   error: ZodError
-): Record<string, string> {
+): Record<string, string> => {
   const errors: Record<string, string> = {};
 
   for (const issue of error.issues) {
@@ -102,7 +105,7 @@ export function formatValidationErrors(
   }
 
   return errors;
-}
+};
 
 /**
  * Email validation schema.
@@ -129,9 +132,9 @@ const urlSchema = z.string().url();
  * validateEmail("invalid"); // false
  * ```
  */
-export function validateEmail(email: string): boolean {
+export const validateEmail = (email: string): boolean => {
   return emailSchema.safeParse(email).success;
-}
+};
 
 /**
  * Validates URL format using Zod.
@@ -146,9 +149,9 @@ export function validateEmail(email: string): boolean {
  * validateUrl("invalid"); // false
  * ```
  */
-export function validateUrl(url: string): boolean {
+export const validateUrl = (url: string): boolean => {
   return urlSchema.safeParse(url).success;
-}
+};
 
 /**
  * Checks if a value is required (non-empty).
@@ -164,6 +167,6 @@ export function validateUrl(url: string): boolean {
  * validateRequired(null); // false
  * ```
  */
-export function validateRequired(value: unknown): boolean {
+export const validateRequired = (value: unknown): boolean => {
   return isNonEmptyString(value);
-}
+};
