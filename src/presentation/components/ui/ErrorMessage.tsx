@@ -4,6 +4,7 @@ import React from "react";
 
 import styles from "@/styles/components/ui/ErrorMessage.module.scss";
 
+import { getAccessibilityId } from "@/shared/a11y";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
@@ -29,7 +30,7 @@ const ErrorMessage = ({
   }
 
   const errorMessage = getErrorMessage(error, tErrors);
-  const errorId = "error-message";
+  const errorId = getAccessibilityId("error-message");
 
   const errorClasses = [styles["error-message"], className]
     .filter(Boolean)

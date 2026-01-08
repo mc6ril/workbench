@@ -139,7 +139,7 @@ export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;
 /**
  * Zod schema for password update input.
  * Validates password requirements and token presence.
- * Email is optional when using code format (Supabase redirects with code only).
+ * Email is optional when using code format (external systems may redirect with code only).
  * Accepts valid email string, empty string, or undefined.
  */
 export const UpdatePasswordSchema = z.object({
@@ -182,7 +182,7 @@ export type UpdatePasswordFormInput = z.infer<typeof UpdatePasswordFormSchema>;
 /**
  * Zod schema for email verification input.
  * Validates email format and token presence.
- * Email is optional when using code format (Supabase redirects with code only).
+ * Email is optional when using code format (external systems may redirect with code only).
  * Accepts valid email string, empty string, or undefined.
  */
 export const VerifyEmailSchema = z.object({

@@ -3,6 +3,8 @@ import React, { memo } from "react";
 
 import styles from "@/styles/components/ui/Form.module.scss";
 
+import { getAccessibilityId } from "@/shared/a11y";
+
 type Props = FormHTMLAttributes<HTMLFormElement> & {
   children: ReactNode;
   legend?: string;
@@ -21,10 +23,9 @@ const Form = ({
   ...formProps
 }: Props) => {
   const formClasses = [styles.form, className].filter(Boolean).join(" ");
-  const errorId = error ? "form-error" : undefined;
-  const describedBy = [ariaDescribedBy, errorId]
-    .filter(Boolean)
-    .join(" ") || undefined;
+  const errorId = error ? getAccessibilityId("form-error") : undefined;
+  const describedBy =
+    [ariaDescribedBy, errorId].filter(Boolean).join(" ") || undefined;
 
   return (
     <form
@@ -55,4 +56,3 @@ const Form = ({
 };
 
 export default memo(Form);
-

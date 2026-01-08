@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /**
  * Zod schema for Ticket entity.
- * Validates data coming from Supabase or external sources.
+ * Validates data coming from external sources.
  */
 export const TicketSchema = z.object({
   id: z.string().uuid(),

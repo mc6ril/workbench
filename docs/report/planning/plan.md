@@ -29,6 +29,7 @@ This document outlines the comprehensive development plan for Workbench, a modul
 | Setup | Development Tools   | VS Code Configuration        | Setup .vscode/ settings, extensions recommendations, debug configuration                | Done   |
 | Setup | Development Tools   | Environment Variables        | Setup .env.example, .env.local template, and environment validation                     | Done   |
 | Setup | Development Tools   | Scripts                      | Add npm scripts (dev, build, start, lint, test, type-check)                             | Done   |
+| Setup | Development Tools   | Git Hooks (Husky)            | Setup Husky with pre-commit hook for linting and testing                                | Done   |
 
 ### 1.2 Testing Setup
 
@@ -79,11 +80,11 @@ Simple implementation screens to verify authentication and user privilege system
 | Shared | Accessibility | A11y Utilities            | Create accessibility utilities and constants in shared/a11y/                                | Pending |
 | Shared | Accessibility | A11y Constants            | Define accessibility ID generators and ARIA label constants                                 | Pending |
 | Shared | I18n          | Translation System        | Setup i18n system with translation files (fr.json) and useTranslation hook                  | Pending |
-| Shared | Utils         | Type Utilities            | Create common TypeScript utility types and helpers                                          | Pending |
-| Shared | Utils         | Validation Utilities      | Create validation utilities and error handling helpers                                      | Pending |
-| Shared | Observability | Logging & Error System    | Design centralized logging and error-handling utilities (log levels, correlation ids, etc.) | Pending |
-| Shared | Observability | Loading & Status Handling | Create shared loading/error/empty-state patterns for React Query and UI components          | Pending |
-| Shared | Constants     | App Constants             | Define application-wide constants (routes, keys, limits)                                    | Pending |
+| Shared | Utils         | Type Utilities            | Create common TypeScript utility types and helpers                                          | Done    |
+| Shared | Utils         | Validation Utilities      | Create validation utilities and error handling helpers                                      | Done    |
+| Shared | Observability | Logging & Error System    | Design centralized logging and error-handling utilities (log levels, correlation ids, etc.) | Done    |
+| Shared | Observability | Loading & Status Handling | Create shared loading/error/empty-state patterns for React Query and UI components          | Done    |
+| Shared | Constants     | App Constants             | Define application-wide constants (routes, keys, limits)                                    | Done    |
 
 ---
 
@@ -476,13 +477,14 @@ Simple implementation screens to verify authentication and user privilege system
 
 ### 13.1 Build & Deployment
 
-| Area       | Sub Area | Title                     | Description                                                | Status  |
-| ---------- | -------- | ------------------------- | ---------------------------------------------------------- | ------- |
-| Deployment | Build    | Production Build          | Configure production build with optimizations              | Pending |
-| Deployment | Build    | Environment Configuration | Setup environment configuration for different environments | Pending |
-| Deployment | Build    | Build Verification        | Create build verification scripts                          | Pending |
-| Deployment | CI/CD    | GitHub Actions            | Setup GitHub Actions for CI/CD (lint, test, build)         | Pending |
-| Deployment | CI/CD    | Deployment Pipeline       | Setup deployment pipeline (Vercel, Netlify, or custom)     | Pending |
+| Area       | Sub Area | Title                     | Description                                                              | Status  |
+| ---------- | -------- | ------------------------- | ------------------------------------------------------------------------ | ------- |
+| Deployment | Build    | Production Build          | Configure production build with optimizations                            | Pending |
+| Deployment | Build    | Environment Configuration | Setup environment configuration for different environments               | Pending |
+| Deployment | Build    | Build Verification        | Create build verification scripts                                        | Pending |
+| Deployment | CI/CD    | Git Hooks (Local)         | Setup Husky pre-commit hooks for linting and testing (local development) | Done    |
+| Deployment | CI/CD    | GitHub Actions            | Setup GitHub Actions for CI/CD (lint, test, build)                       | Pending |
+| Deployment | CI/CD    | Deployment Pipeline       | Setup deployment pipeline (Vercel, Netlify, or custom)                   | Pending |
 
 ### 13.2 Database Management
 
