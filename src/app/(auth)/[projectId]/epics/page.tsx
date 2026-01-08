@@ -2,11 +2,7 @@
 
 import { use } from "react";
 
-export default function EpicsPage({
-  params,
-}: {
-  params: Promise<{ projectId: string }>;
-}) {
+const EpicsPage = ({ params }: { params: Promise<{ projectId: string }> }) => {
   const { projectId } = use(params);
 
   return (
@@ -15,5 +11,6 @@ export default function EpicsPage({
       <p>Project ID: {projectId}</p>
     </div>
   );
-}
+};
 
+export default EpicsPage;

@@ -8,9 +8,8 @@ import type { ProjectRepository } from "@/core/ports/projectRepository";
  * @returns True if user has access to at least one project, false otherwise
  * @throws DatabaseError if database operation fails
  */
-export async function hasProjectAccess(
+export const hasProjectAccess = async (
   repository: ProjectRepository
-): Promise<boolean> {
+): Promise<boolean> => {
   return repository.hasProjectAccess();
-}
-
+};

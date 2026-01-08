@@ -19,13 +19,13 @@ const ResendVerificationEmailSchema = z.object({
  * @throws EmailVerificationError if resend fails
  * @throws AuthenticationFailure for other authentication errors
  */
-export async function resendVerificationEmail(
+export const resendVerificationEmail = async (
   repository: AuthRepository,
   email: string
-): Promise<void> {
+): Promise<void> => {
   // Validate input with Zod schema
   const validatedInput = ResendVerificationEmailSchema.parse({ email });
 
   // Call repository to resend verification email
   return repository.resendVerificationEmail(validatedInput.email);
-}
+};

@@ -9,9 +9,8 @@ import type { AuthRepository } from "@/core/ports/authRepository";
  * @returns Current session or null if no session exists
  * @throws AuthenticationFailure if session retrieval fails
  */
-export async function getCurrentSession(
+export const getCurrentSession = async (
   repository: AuthRepository
-): Promise<AuthSession | null> {
+): Promise<AuthSession | null> => {
   return repository.getSession();
-}
-
+};

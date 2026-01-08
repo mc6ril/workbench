@@ -15,10 +15,10 @@ import type { ProjectRepository } from "@/core/ports/projectRepository";
  * @throws ConstraintError if user is already a member
  * @throws DatabaseError if adding user fails or permission denied
  */
-export async function addUserToProject(
+export const addUserToProject = async (
   projectRepository: ProjectRepository,
   projectId: string,
   role: "admin" | "member" | "viewer" = "viewer"
-): Promise<Project> {
+): Promise<Project> => {
   return projectRepository.addCurrentUserAsMember(projectId, role);
-}
+};

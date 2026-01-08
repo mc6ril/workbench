@@ -2,11 +2,11 @@
 
 import { use } from "react";
 
-export default function BacklogPage({
+const BacklogPage = ({
   params,
 }: {
   params: Promise<{ projectId: string }>;
-}) {
+}) => {
   const { projectId } = use(params);
 
   return (
@@ -15,5 +15,6 @@ export default function BacklogPage({
       <p>Project ID: {projectId}</p>
     </div>
   );
-}
+};
 
+export default BacklogPage;

@@ -109,7 +109,7 @@ src/
 **Structure example:**
 
 ```typescript
-export async function listProducts(repo: ProductRepository) {
+export const listProducts = (repo: ProductRepository) => {
   return repo.list();
 }
 ```
@@ -181,7 +181,7 @@ export const productRepositorySupabase: ProductRepository = {
 **Recommended structure:**
 
 ```typescript
-export function useProducts() {
+export const useProducts = () => {
   return useQuery({
     queryKey: ["products"],
     queryFn: () => listProducts(productRepositorySupabase),

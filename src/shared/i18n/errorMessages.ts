@@ -40,16 +40,16 @@ const REPOSITORY_ERROR_TRANSLATION_KEYS: Readonly<
 /**
  * Type guard to check if a string is an AuthErrorCode.
  */
-function isAuthErrorCode(code: string): code is AuthErrorCode {
+const isAuthErrorCode = (code: string): code is AuthErrorCode => {
   return AUTH_ERROR_CODES.includes(code as AuthErrorCode);
-}
+};
 
 /**
  * Type guard to check if a string is a RepositoryErrorCode.
  */
-function isRepositoryErrorCode(code: string): code is RepositoryErrorCode {
+const isRepositoryErrorCode = (code: string): code is RepositoryErrorCode => {
   return REPOSITORY_ERROR_CODES.includes(code as RepositoryErrorCode);
-}
+};
 
 /**
  * Gets a user-facing error message from an error code.
@@ -59,10 +59,10 @@ function isRepositoryErrorCode(code: string): code is RepositoryErrorCode {
  * @param tErrors - Translation function for errors namespace
  * @returns Translated error message
  */
-export function getErrorMessage(
+export const getErrorMessage = (
   error: { code?: string } | null | undefined,
   tErrors: (key: string, params?: Record<string, string | number>) => string
-): string {
+): string => {
   if (!error || !error.code) {
     return tErrors("generic");
   }
@@ -97,4 +97,4 @@ export function getErrorMessage(
 
   // Fallback for unknown error codes
   return tErrors("generic");
-}
+};

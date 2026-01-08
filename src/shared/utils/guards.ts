@@ -10,30 +10,30 @@ import { PROJECT_ROLES } from "@/shared/constants";
 /**
  * Type guard to check if a value is an object (not null, not array).
  */
-export function isObject(value: unknown): value is Record<string, unknown> {
+export const isObject = (value: unknown): value is Record<string, unknown> => {
   return value !== null && typeof value === "object" && !Array.isArray(value);
-}
+};
 
 /**
  * Type guard to check if a value is a non-empty string.
  */
-export function isNonEmptyString(value: unknown): value is string {
+export const isNonEmptyString = (value: unknown): value is string => {
   return typeof value === "string" && value.trim().length > 0;
-}
+};
 
 /**
  * Type guard to check if a value is a string (can be empty).
  */
-export function isString(value: unknown): value is string {
+export const isString = (value: unknown): value is string => {
   return typeof value === "string";
-}
+};
 
 /**
  * Type guard to check if a value is a number.
  */
-export function isNumber(value: unknown): value is number {
+export const isNumber = (value: unknown): value is number => {
   return typeof value === "number";
-}
+};
 
 /**
  * Type guard to check if a value is an array.
@@ -41,9 +41,9 @@ export function isNumber(value: unknown): value is number {
  * @param value - Value to check
  * @returns true if value is an array
  */
-export function isArray<T>(value: unknown): value is T[] {
+export const isArray = <T>(value: unknown): value is T[] => {
   return Array.isArray(value);
-}
+};
 
 /**
  * Type guard to check if a value is defined (not undefined or null).
@@ -51,9 +51,9 @@ export function isArray<T>(value: unknown): value is T[] {
  * @param value - Value to check
  * @returns true if value is not undefined or null
  */
-export function isDefined<T>(value: T | undefined | null): value is T {
+export const isDefined = <T>(value: T | undefined | null): value is T => {
   return value !== undefined && value !== null;
-}
+};
 
 /**
  * Type guard to check if a value is not null.
@@ -61,9 +61,9 @@ export function isDefined<T>(value: T | undefined | null): value is T {
  * @param value - Value to check
  * @returns true if value is not null
  */
-export function isNotNull<T>(value: T | null): value is T {
+export const isNotNull = <T>(value: T | null): value is T => {
   return value !== null;
-}
+};
 
 /**
  * Type guard to check if a value is not undefined.
@@ -71,46 +71,55 @@ export function isNotNull<T>(value: T | null): value is T {
  * @param value - Value to check
  * @returns true if value is not undefined
  */
-export function isNotUndefined<T>(value: T | undefined): value is T {
+export const isNotUndefined = <T>(value: T | undefined): value is T => {
   return value !== undefined;
-}
+};
 
 /**
  * Type guard to check if an error object has a code property.
  * Useful for checking domain errors vs unknown errors.
  */
-export function isErrorWithCode(
+export const isErrorWithCode = (
   error: unknown
-): error is { code: string; [key: string]: unknown } {
+): error is { code: string; [key: string]: unknown } => {
   return isObject(error) && "code" in error && typeof error.code === "string";
-}
+};
 
 /**
  * Checks if an error has one of the specified error codes.
  * Useful for determining if an error should be re-thrown vs wrapped.
  */
-export function hasErrorCode(
+export const hasErrorCode = (
   error: unknown,
   codes: string[]
-): error is { code: string; [key: string]: unknown } {
+): error is { code: string; [key: string]: unknown } => {
   if (!isErrorWithCode(error)) {
     return false;
   }
   return codes.includes(error.code);
-}
+};
 
 /**
  * Checks if a value is a non-empty array.
  */
-export function isNonEmptyArray<T>(value: unknown): value is T[] {
+export const isNonEmptyArray = <T>(value: unknown): value is T[] => {
   return Array.isArray(value) && value.length > 0;
-}
+};
 
 /**
  * Type guard to check if a string is a valid ProjectRole.
  * @param value - String to check
  * @returns true if value is a valid ProjectRole
  */
-export function isProjectRole(value: string): value is ProjectRole {
+export const isProjectRole = (value: string): value is ProjectRole => {
   return PROJECT_ROLES.includes(value as ProjectRole);
-}
+};
+
+export const isPlainObject = (
+  value: unknown
+): value is Record<string, unknown> => {
+  if (!isObject(value)) {
+    return false;
+  }
+  return Object.getPrototypeOf(value) === Object.prototype;
+};

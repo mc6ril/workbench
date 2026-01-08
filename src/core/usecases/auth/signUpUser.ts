@@ -12,10 +12,10 @@ import type { AuthRepository } from "@/core/ports/authRepository";
  * @returns Authentication result with session (or null session with requiresEmailVerification flag if email verification is required)
  * @throws AuthenticationFailure if signup fails (email already exists, weak password, etc.)
  */
-export async function signUpUser(
+export const signUpUser = async (
   repository: AuthRepository,
   input: SignUpInput
-): Promise<AuthResult> {
+): Promise<AuthResult> => {
   // Validate input with Zod schema
   const validatedInput = SignUpSchema.parse(input);
 
@@ -23,4 +23,4 @@ export async function signUpUser(
   // Repository will return session if user is automatically logged in,
   // or null session with requiresEmailVerification: true if email verification is required
   return repository.signUp(validatedInput);
-}
+};

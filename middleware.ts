@@ -11,7 +11,7 @@ const SUPABASE_PUBLISHABLE_KEY =
  * Create Supabase client for Edge Runtime (middleware).
  * Uses @supabase/ssr to handle sessions via cookies.
  */
-function createSupabaseClientForMiddleware(request: NextRequest) {
+const createSupabaseClientForMiddleware = (request: NextRequest) => {
   if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
     throw new Error(
       "Missing required environment variables for Supabase client"
@@ -51,23 +51,25 @@ function createSupabaseClientForMiddleware(request: NextRequest) {
   });
 
   return { supabase, response: supabaseResponse };
-}
+};
 
 /**
  * Next.js middleware for route optimization (UX redirects).
- * 
+ *
  * IMPORTANT: This is NOT the source of truth for security.
  * - Security is enforced by AuthLayout and ProjectLayout (server components)
  * - RLS policies at the database level are the ultimate source of truth
- * 
+ *
  * This middleware provides:
  * - UX optimization: early redirects for better user experience
  * - Route filtering: prevents loading unnecessary pages
  * - Email verification checks: redirects unverified users
- * 
+ *
  * On error, fails open (allows access) - layouts and RLS will still protect.
  */
-export async function middleware(request: NextRequest) {
+export const middleware = async (
+  request: NextRequest
+): Promise<NextResponse> => {
   const { pathname } = request.nextUrl;
 
   // Check if this is an auth page (signin/signup)
@@ -123,7 +125,7 @@ export async function middleware(request: NextRequest) {
     console.error("[Middleware] Authentication error:", error);
     return NextResponse.next();
   }
-}
+};
 
 /**
  * Middleware configuration.

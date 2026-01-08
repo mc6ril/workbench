@@ -11,13 +11,13 @@ import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/cli
  * If user has no access (returns null), redirects to /workspace.
  * This layout does NOT pass project data to children - all data fetching happens in client pages.
  */
-export default async function ProjectLayout({
+const ProjectLayout = async ({
   children,
   params,
 }: Readonly<{
   children: React.ReactNode;
   params: Promise<{ projectId: string }>;
-}>) {
+}>) => {
   const { projectId } = await params;
 
   try {
@@ -52,5 +52,6 @@ export default async function ProjectLayout({
   // User has access, render children
   // Note: We don't pass project data here - client pages fetch via React Query
   return <>{children}</>;
-}
+};
 
+export default ProjectLayout;

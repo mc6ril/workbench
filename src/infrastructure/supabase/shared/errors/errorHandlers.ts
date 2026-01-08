@@ -16,10 +16,10 @@ import { mapSupabaseError } from "./repositoryErrorMapper";
  * @param entityType - Type of entity for context (e.g., "Project", "Ticket")
  * @throws Domain repository error (if code matches) or mapped repository error
  */
-export function handleRepositoryError(
+export const handleRepositoryError = (
   error: unknown,
   entityType: string = "Entity"
-): never {
+): never => {
   // Re-throw domain repository errors (errors with codes in REPOSITORY_ERROR_CODES)
   if (hasErrorCode(error, [...REPOSITORY_ERROR_CODES])) {
     throw error;
@@ -27,7 +27,7 @@ export function handleRepositoryError(
 
   // Map and throw unknown errors
   throw mapSupabaseError(error, entityType);
-}
+};
 
 /**
  * Standardized error handling for authentication methods.
@@ -36,7 +36,7 @@ export function handleRepositoryError(
  * @param error - Error caught in try/catch block
  * @throws Domain auth error (if code matches) or mapped auth error
  */
-export function handleAuthError(error: unknown): never {
+export const handleAuthError = (error: unknown): never => {
   // Re-throw domain auth errors (errors with codes in AUTH_ERROR_CODES)
   if (hasErrorCode(error, [...AUTH_ERROR_CODES])) {
     throw error;
@@ -44,4 +44,4 @@ export function handleAuthError(error: unknown): never {
 
   // Map and throw unknown errors
   throw mapSupabaseAuthError(error);
-}
+};

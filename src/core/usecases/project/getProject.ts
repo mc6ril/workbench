@@ -10,9 +10,9 @@ import type { ProjectRepository } from "@/core/ports/projectRepository";
  * @returns Project or null if not found
  * @throws DatabaseError if database operation fails
  */
-export async function getProject(
+export const getProject = async (
   repository: ProjectRepository,
   id: string
-): Promise<Project | null> {
+): Promise<Project | null> => {
   return repository.findById(id);
-}
+};

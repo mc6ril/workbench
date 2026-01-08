@@ -7,6 +7,6 @@ import type { AuthRepository } from "@/core/ports/authRepository";
  * @param repository - Auth repository
  * @throws AuthenticationFailure if deletion fails
  */
-export async function deleteUser(repository: AuthRepository): Promise<void> {
+export const deleteUser = async (repository: AuthRepository): Promise<void> => {
   return repository.deleteUser();
-}
+};

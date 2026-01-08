@@ -6,9 +6,9 @@ import type { TranslationMessages } from "./types";
  * @param str - The string to escape
  * @returns The escaped string safe for use in regex
  */
-function escapeRegex(str: string): string {
+const escapeRegex = (str: string): string => {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
+};
 
 /**
  * Interpolates a translation string by replacing placeholders with values.
@@ -23,10 +23,10 @@ function escapeRegex(str: string): string {
  * interpolateTranslation("Count: {count}", { count: 5 }); // "Count: 5"
  * ```
  */
-export function interpolateTranslation(
+export const interpolateTranslation = (
   translation: string,
   params: Record<string, string | number>
-): string {
+): string => {
   let result = translation;
 
   Object.entries(params).forEach(([key, value]) => {
@@ -40,7 +40,7 @@ export function interpolateTranslation(
   });
 
   return result;
-}
+};
 
 /**
  * Validates that a translation key exists in the given namespace.
@@ -56,11 +56,11 @@ export function interpolateTranslation(
  * validateTranslationKey("invalidKey", "common", messages); // false
  * ```
  */
-export function validateTranslationKey(
+export const validateTranslationKey = (
   key: string,
   namespace: string,
   messages: TranslationMessages
-): boolean {
+): boolean => {
   const namespaceValue = getNamespaceValue(messages, namespace);
   if (!namespaceValue) {
     return false;
@@ -90,7 +90,7 @@ export function validateTranslationKey(
   }
 
   return typeof current === "string";
-}
+};
 
 /**
  * Gets the translation value for a given namespace and key.
@@ -106,11 +106,11 @@ export function validateTranslationKey(
  * getTranslationValue(messages, "pages.signup", "errors.invalidEmail"); // "Adresse email invalide"
  * ```
  */
-export function getTranslationValue(
+export const getTranslationValue = (
   messages: TranslationMessages,
   namespace: string,
   key: string
-): string | undefined {
+): string | undefined => {
   const namespaceValue = getNamespaceValue(messages, namespace);
   if (!namespaceValue) {
     return undefined;
@@ -140,7 +140,7 @@ export function getTranslationValue(
   }
 
   return typeof current === "string" ? current : undefined;
-}
+};
 
 /**
  * Gets the namespace value from the messages object.
@@ -149,10 +149,10 @@ export function getTranslationValue(
  * @param path - The namespace path (e.g., "common" or "pages.signup")
  * @returns The namespace value, or undefined if not found
  */
-function getNamespaceValue(
+const getNamespaceValue = (
   messages: TranslationMessages,
   path: string
-): Record<string, string | Record<string, unknown>> | undefined {
+): Record<string, string | Record<string, unknown>> | undefined => {
   const parts = path.split(".");
   let current: unknown = messages;
 
@@ -174,4 +174,4 @@ function getNamespaceValue(
   }
 
   return undefined;
-}
+};

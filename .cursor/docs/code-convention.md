@@ -158,7 +158,7 @@ export const useFilterStore = create<FilterState>((set) => ({
 ### Example
 
 ```typescript
-export function useProducts() {
+export const useProducts = () => {
   return useQuery({
     queryKey: ["products"],
     queryFn: () => listProducts(productRepositorySupabase),
@@ -265,6 +265,7 @@ enum ProductStatus {
 
 - ✅ **Name functions** according to what they actually do
 - ✅ **Prefer pure functions**
+- ✅ **Prefer arrow functions**
 - ✅ **Split long components**
 - ✅ **Use `async/await`** rather than `.then()`
 - ✅ **Always type** return values of public functions

@@ -7,6 +7,8 @@ import type { AuthRepository } from "@/core/ports/authRepository";
  * @param repository - Auth repository
  * @throws AuthenticationFailure if signout fails
  */
-export async function signOutUser(repository: AuthRepository): Promise<void> {
+export const signOutUser = async (
+  repository: AuthRepository
+): Promise<void> => {
   return repository.signOut();
-}
+};

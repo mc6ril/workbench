@@ -5,7 +5,8 @@ import Loader from "@/presentation/components/ui/Loader";
 /**
  * Loading state for project routes.
  */
-export default function ProjectLoading() {
+const ProjectLoading = () => {
   return <Loader variant="full-page" />;
-}
+};
 
+export default ProjectLoading;

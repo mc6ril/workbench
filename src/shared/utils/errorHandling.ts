@@ -17,9 +17,9 @@ import { ZodError } from "zod";
  * }
  * ```
  */
-export function isValidationError(error: unknown): error is ZodError {
+export const isValidationError = (error: unknown): error is ZodError => {
   return error instanceof ZodError;
-}
+};
 
 /**
  * Checks if an error is a network error.
@@ -45,9 +45,8 @@ export function isValidationError(error: unknown): error is ZodError {
  * This function uses minimal heuristics (TypeError with fetch/network keywords).
  * Different environments (browser, Node.js, Supabase) may produce different error patterns.
  */
-export function isNetworkError(error: unknown): boolean {
+export const isNetworkError = (error: unknown): boolean => {
   return (
     error instanceof TypeError && /fetch|network/i.test(error.message || "")
   );
-}
-
+};

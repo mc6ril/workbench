@@ -22,7 +22,7 @@ import { interpolateTranslation } from "@/shared/i18n/utils";
  * t("welcome", { name: "John" }); // "Bienvenue, John!"
  * ```
  */
-export function useTranslation(namespace: string) {
+export const useTranslation = (namespace: string) => {
   const locale = getLocale();
 
   // Get messages for current locale
@@ -143,4 +143,4 @@ export function useTranslation(namespace: string) {
       return translationValue;
     };
   }, [namespaceMessages, namespace]);
-}
+};

@@ -14,10 +14,10 @@ import type { AuthRepository } from "@/core/ports/authRepository";
  * @param input - User update input (email, password, or data - all optional)
  * @throws AuthenticationFailure if update fails
  */
-export async function updateUser(
+export const updateUser = async (
   repository: AuthRepository,
   input: UpdateUserInput
-): Promise<void> {
+): Promise<void> => {
   // Validate input with Zod schema
   const validatedInput = UpdateUserSchema.parse(input);
 
@@ -53,4 +53,4 @@ export async function updateUser(
 
   // Call repository to update user
   return repository.updateUser(updateData);
-}
+};

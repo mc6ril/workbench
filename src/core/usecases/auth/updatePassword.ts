@@ -17,13 +17,13 @@ import type { AuthRepository } from "@/core/ports/authRepository";
  * @throws PasswordResetError for other password reset errors
  * @throws AuthenticationFailure for other authentication errors
  */
-export async function updatePassword(
+export const updatePassword = async (
   repository: AuthRepository,
   input: UpdatePasswordInput
-): Promise<AuthResult> {
+): Promise<AuthResult> => {
   // Validate input with Zod schema
   const validatedInput = UpdatePasswordSchema.parse(input);
 
   // Call repository to verify token and update password
   return repository.updatePassword(validatedInput);
-}
+};
