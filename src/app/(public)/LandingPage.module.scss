@@ -30,7 +30,7 @@
 
 .landing-container {
   width: 100%;
-  max-width: 50rem; // 800px
+  max-width: $spacing-container-max-width;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -102,7 +102,9 @@
   border: $border-width solid $color-border;
   border-radius: $border-radius-md;
   background-color: $color-secondary;
-  transition: transform $transition-base, box-shadow $transition-base;
+  transition:
+    transform $transition-base,
+    box-shadow $transition-base;
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
@@ -131,4 +133,3 @@
   justify-content: center;
   padding: $spacing-lg 0;
 }
-

@@ -21,7 +21,7 @@
 .empty-state__message {
   color: $color-text-secondary;
   margin: 0;
-  max-width: 30rem;
+  max-width: $spacing-empty-state-max-width;
 }
 
 .empty-state__action {

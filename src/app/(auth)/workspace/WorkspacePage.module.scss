@@ -30,7 +30,7 @@
 
 .workspace-container {
   width: 100%;
-  max-width: 50rem; // 800px
+  max-width: $spacing-container-max-width;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -160,7 +160,9 @@
   text-decoration: none;
   font-size: $font-size-base;
   line-height: $line-height-normal;
-  transition: $transition-background, $transition-border, $transition-transform, $transition-shadow;
+  transition:
+    $transition-background, $transition-border, $transition-transform,
+    $transition-shadow;
 
   @media (prefers-reduced-motion: reduce) {
     transition: $transition-background, $transition-border;

@@ -3,6 +3,8 @@ import React, { forwardRef } from "react";
 
 import styles from "@/styles/components/ui/Input.module.scss";
 
+import { getAccessibilityId } from "@/shared/a11y";
+
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
   error?: string;
@@ -21,8 +23,9 @@ const Input = forwardRef<HTMLInputElement, Props>(
     },
     ref
   ) => {
-    const inputId = id || `input-${label.toLowerCase().replace(/\s+/g, "-")}`;
-    const errorId = error ? `${inputId}-error` : undefined;
+    const baseKey = `input-${label.toLowerCase().replace(/\s+/g, "-")}`;
+    const inputId = id || getAccessibilityId(baseKey);
+    const errorId = error ? getAccessibilityId(`${baseKey}-error`) : undefined;
     const describedBy =
       [ariaDescribedBy, errorId].filter(Boolean).join(" ") || undefined;
 

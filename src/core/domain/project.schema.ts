@@ -9,7 +9,7 @@ const uuidRegex =
 
 /**
  * Zod schema for Project entity.
- * Validates data coming from Supabase or external sources.
+ * Validates data coming from external sources.
  */
 export const ProjectSchema = z.object({
   id: z
