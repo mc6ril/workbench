@@ -53,10 +53,10 @@ export type UpdateTicketInput = z.infer<typeof UpdateTicketInputSchema>;
 
 /**
  * Filters for querying tickets.
- * Used for future filtering support in ticket queries.
+ * Used for filtering support in ticket queries.
  */
 export type TicketFilters = {
   status?: string;
   epicId?: string;
-  // Future filtering options
+  parentId?: string | null; // null to filter tickets without parent, string to filter by specific parent
 };
