@@ -16,6 +16,10 @@ export type TicketRepositoryMock = {
   create: jest.Mock<Promise<Ticket>, [CreateTicketInput]>;
   update: jest.Mock<Promise<Ticket>, [string, UpdateTicketInput]>;
   delete: jest.Mock<Promise<void>, [string]>;
+  updatePositions: jest.Mock<
+    Promise<Ticket[]>,
+    [Array<{ id: string; position: number }>]
+  >;
 };
 
 type TicketRepositoryMockOverrides = Partial<TicketRepositoryMock>;
@@ -38,6 +42,10 @@ export const createTicketRepositoryMock = (
     create: jest.fn<Promise<Ticket>, [CreateTicketInput]>(),
     update: jest.fn<Promise<Ticket>, [string, UpdateTicketInput]>(),
     delete: jest.fn<Promise<void>, [string]>(),
+    updatePositions: jest.fn<
+      Promise<Ticket[]>,
+      [Array<{ id: string; position: number }>]
+    >(),
   };
 
   return {

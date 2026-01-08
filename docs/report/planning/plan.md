@@ -92,28 +92,28 @@ Simple implementation screens to verify authentication and user privilege system
 
 ### 2.1 Domain Models
 
-| Area   | Sub Area       | Title          | Description                                                                              | Status  |
-| ------ | -------------- | -------------- | ---------------------------------------------------------------------------------------- | ------- |
-| Domain | Entities       | Project Entity | Define Project domain entity with business rules and validation                          | Pending |
-| Domain | Entities       | Ticket Entity  | Define Ticket domain entity (id, title, description, status, position, epicId, parentId) | Pending |
-| Domain | Entities       | Epic Entity    | Define Epic domain entity (id, name, description, progress calculation)                  | Pending |
-| Domain | Entities       | Board Entity   | Define Board domain entity (id, projectId, columns configuration)                        | Pending |
-| Domain | Entities       | Column Entity  | Define Column domain entity (id, boardId, name, status, position, order)                 | Pending |
-| Domain | Schemas        | Ticket Schema  | Create Zod schema for Ticket with validation rules                                       | Pending |
-| Domain | Schemas        | Epic Schema    | Create Zod schema for Epic with validation rules                                         | Pending |
-| Domain | Schemas        | Board Schema   | Create Zod schema for Board and Column with validation rules                             | Pending |
-| Domain | Business Rules | Ticket Rules   | Implement business rules (max one parent, max one epic, status validation)               | Pending |
-| Domain | Business Rules | Epic Rules     | Implement Epic business rules (ticket assignment constraints)                            | Pending |
-| Domain | Business Rules | Board Rules    | Implement Board rules (column ordering, status uniqueness)                               | Pending |
+| Area   | Sub Area       | Title          | Description                                                                              | Status |
+| ------ | -------------- | -------------- | ---------------------------------------------------------------------------------------- | ------ |
+| Domain | Entities       | Project Entity | Define Project domain entity with business rules and validation                          | Done   |
+| Domain | Entities       | Ticket Entity  | Define Ticket domain entity (id, title, description, status, position, epicId, parentId) | Done   |
+| Domain | Entities       | Epic Entity    | Define Epic domain entity (id, name, description, progress calculation)                  | Done   |
+| Domain | Entities       | Board Entity   | Define Board domain entity (id, projectId, columns configuration)                        | Done   |
+| Domain | Entities       | Column Entity  | Define Column domain entity (id, boardId, name, status, position, order)                 | Done   |
+| Domain | Schemas        | Ticket Schema  | Create Zod schema for Ticket with validation rules                                       | Done   |
+| Domain | Schemas        | Epic Schema    | Create Zod schema for Epic with validation rules                                         | Done   |
+| Domain | Schemas        | Board Schema   | Create Zod schema for Board and Column with validation rules                             | Done   |
+| Domain | Business Rules | Ticket Rules   | Implement business rules (max one parent, max one epic, status validation)               | Done   |
+| Domain | Business Rules | Epic Rules     | Implement Epic business rules (ticket assignment constraints)                            | Done   |
+| Domain | Business Rules | Board Rules    | Implement Board rules (column ordering, status uniqueness)                               | Done   |
 
 ### 2.2 Repository Ports
 
-| Area  | Sub Area   | Title                       | Description                                                                    | Status  |
-| ----- | ---------- | --------------------------- | ------------------------------------------------------------------------------ | ------- |
-| Ports | Interfaces | TicketRepository Interface  | Define TicketRepository port with CRUD operations, filtering, position updates | Pending |
-| Ports | Interfaces | EpicRepository Interface    | Define EpicRepository port with CRUD operations and ticket assignment          | Pending |
-| Ports | Interfaces | BoardRepository Interface   | Define BoardRepository port for board and column management                    | Pending |
-| Ports | Interfaces | ProjectRepository Interface | Define ProjectRepository port for project operations                           | Pending |
+| Area  | Sub Area   | Title                       | Description                                                                    | Status |
+| ----- | ---------- | --------------------------- | ------------------------------------------------------------------------------ | ------ |
+| Ports | Interfaces | TicketRepository Interface  | Define TicketRepository port with CRUD operations, filtering, position updates | Done   |
+| Ports | Interfaces | EpicRepository Interface    | Define EpicRepository port with CRUD operations and ticket assignment          | Done   |
+| Ports | Interfaces | BoardRepository Interface   | Define BoardRepository port for board and column management                    | Done   |
+| Ports | Interfaces | ProjectRepository Interface | Define ProjectRepository port for project operations                           | Done   |
 
 ### 2.3 Use Cases
 

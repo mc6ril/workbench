@@ -63,4 +63,17 @@ export type TicketRepository = {
    * @throws DatabaseError if database operation fails
    */
   delete(id: string): Promise<void>;
+
+  /**
+   * Bulk update ticket positions.
+   * Used for drag-and-drop reordering of tickets within a column or board.
+   * @param ticketPositions - Array of ticket ID and position pairs
+   * @returns Array of updated tickets
+   * @throws NotFoundError if any ticket not found
+   * @throws ConstraintError if constraint violation occurs
+   * @throws DatabaseError if database operation fails
+   */
+  updatePositions(
+    ticketPositions: Array<{ id: string; position: number }>
+  ): Promise<Ticket[]>;
 };
