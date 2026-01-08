@@ -1,8 +1,8 @@
-import type { AuthResult } from "@/core/domain/auth.schema";
+import type { AuthResult } from "@/core/domain/schema/auth.schema";
 import {
   type UpdatePasswordInput,
   UpdatePasswordSchema,
-} from "@/core/domain/auth.schema";
+} from "@/core/domain/schema/auth.schema";
 
 import type { AuthRepository } from "@/core/ports/authRepository";
 

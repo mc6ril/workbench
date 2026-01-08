@@ -9,7 +9,7 @@ import type {
   Ticket,
   TicketFilters,
   UpdateTicketInput,
-} from "@/core/domain/ticket.schema";
+} from "@/core/domain/schema/ticket.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type { TicketRow } from "@/infrastructure/supabase/types";
@@ -40,7 +40,7 @@ export const createTicketRepository = (
         .single();
 
       if (error) {
-        handleRepositoryError(error, "Ticket");
+        return handleRepositoryError(error, "Ticket");
       }
 
       if (!data) {
@@ -49,7 +49,7 @@ export const createTicketRepository = (
 
       return mapTicketRowToDomain(data as TicketRow);
     } catch (error) {
-      handleRepositoryError(error, "Ticket");
+      return handleRepositoryError(error, "Ticket");
     }
   },
 
@@ -77,7 +77,7 @@ export const createTicketRepository = (
       });
 
       if (error) {
-        handleRepositoryError(error, "Ticket");
+        return handleRepositoryError(error, "Ticket");
       }
 
       if (!data) {
@@ -86,7 +86,7 @@ export const createTicketRepository = (
 
       return mapTicketRowsToDomain(data as TicketRow[]);
     } catch (error) {
-      handleRepositoryError(error, "Ticket");
+      return handleRepositoryError(error, "Ticket");
     }
   },
 
@@ -100,7 +100,7 @@ export const createTicketRepository = (
         .order("position", { ascending: true });
 
       if (error) {
-        handleRepositoryError(error, "Ticket");
+        return handleRepositoryError(error, "Ticket");
       }
 
       if (!data) {
@@ -109,7 +109,7 @@ export const createTicketRepository = (
 
       return mapTicketRowsToDomain(data as TicketRow[]);
     } catch (error) {
-      handleRepositoryError(error, "Ticket");
+      return handleRepositoryError(error, "Ticket");
     }
   },
 
@@ -130,11 +130,11 @@ export const createTicketRepository = (
         .single();
 
       if (error) {
-        handleRepositoryError(error, "Ticket");
+        return handleRepositoryError(error, "Ticket");
       }
 
       if (!data) {
-        handleRepositoryError(
+        return handleRepositoryError(
           createDatabaseError("No data returned from insert"),
           "Ticket"
         );
@@ -142,7 +142,7 @@ export const createTicketRepository = (
 
       return mapTicketRowToDomain(data as TicketRow);
     } catch (error) {
-      handleRepositoryError(error, "Ticket");
+      return handleRepositoryError(error, "Ticket");
     }
   },
 
@@ -177,16 +177,19 @@ export const createTicketRepository = (
         .single();
 
       if (error) {
-        handleRepositoryError(error, "Ticket");
+        return handleRepositoryError(error, "Ticket");
       }
 
       if (!data) {
-        handleRepositoryError(createNotFoundError("Ticket", id), "Ticket");
+        return handleRepositoryError(
+          createNotFoundError("Ticket", id),
+          "Ticket"
+        );
       }
 
       return mapTicketRowToDomain(data as TicketRow);
     } catch (error) {
-      handleRepositoryError(error, "Ticket");
+      return handleRepositoryError(error, "Ticket");
     }
   },
 
@@ -195,10 +198,10 @@ export const createTicketRepository = (
       const { error } = await client.from("tickets").delete().eq("id", id);
 
       if (error) {
-        handleRepositoryError(error, "Ticket");
+        return handleRepositoryError(error, "Ticket");
       }
     } catch (error) {
-      handleRepositoryError(error, "Ticket");
+      return handleRepositoryError(error, "Ticket");
     }
   },
 });

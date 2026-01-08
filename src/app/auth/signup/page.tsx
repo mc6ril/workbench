@@ -7,8 +7,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { SignUpInput } from "@/core/domain/auth.schema";
-import { SignUpSchema } from "@/core/domain/auth.schema";
+import type { SignUpInput } from "@/core/domain/schema/auth.schema";
+import { SignUpSchema } from "@/core/domain/schema/auth.schema";
 
 import Button from "@/presentation/components/ui/Button";
 import Form from "@/presentation/components/ui/Form";
@@ -132,7 +132,6 @@ const SignupPage = () => {
           error={errors.root?.message}
           noValidate
         >
-
           <Input
             label={tCommon("email")}
             type="email"

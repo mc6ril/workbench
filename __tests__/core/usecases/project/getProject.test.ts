@@ -1,4 +1,4 @@
-import type { Project } from "@/core/domain/project.schema";
+import type { Project } from "@/core/domain/schema/project.schema";
 
 import { getProject } from "@/core/usecases/project/getProject";
 

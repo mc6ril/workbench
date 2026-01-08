@@ -1,16 +1,16 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type {
-  CreateProjectInput,
-  Project,
-  ProjectRole,
-  ProjectWithRole,
-} from "@/core/domain/project.schema";
 import {
   createConstraintError,
   createDatabaseError,
   createNotFoundError,
 } from "@/core/domain/repositoryError";
+import type {
+  CreateProjectInput,
+  Project,
+  ProjectRole,
+  ProjectWithRole,
+} from "@/core/domain/schema/project.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type { ProjectRow } from "@/infrastructure/supabase/types";
@@ -56,7 +56,7 @@ export const createProjectRepository = (
 
       return mapProjectRowToDomain(data as ProjectRow);
     } catch (error) {
-      handleRepositoryError(error, "Project");
+      return handleRepositoryError(error, "Project");
     }
   },
 
@@ -96,7 +96,7 @@ export const createProjectRepository = (
         const members = (row as { project_members?: Array<{ role?: string }> })
           .project_members;
         if (!Array.isArray(members) || members.length === 0) {
-          handleRepositoryError(
+          return handleRepositoryError(
             createDatabaseError("Project member role not found"),
             "Project"
           );
@@ -104,7 +104,7 @@ export const createProjectRepository = (
 
         const roleValue = members[0]?.role;
         if (!roleValue || !isProjectRole(roleValue)) {
-          handleRepositoryError(
+          return handleRepositoryError(
             createDatabaseError(`Invalid project role: ${roleValue}`),
             "Project"
           );
@@ -113,7 +113,7 @@ export const createProjectRepository = (
         return mapProjectToProjectWithRole(project, roleValue);
       });
     } catch (error) {
-      handleRepositoryError(error, "Project");
+      return handleRepositoryError(error, "Project");
     }
   },
 
@@ -185,14 +185,14 @@ export const createProjectRepository = (
       }
 
       // If we get here, something went wrong
-      handleRepositoryError(
+      return handleRepositoryError(
         createDatabaseError(
           "No project data returned from create_project function"
         ),
         "Project"
       );
     } catch (error) {
-      handleRepositoryError(error, "Project");
+      return handleRepositoryError(error, "Project");
     }
   },
 
@@ -220,7 +220,10 @@ export const createProjectRepository = (
         // No fields to update, return existing project
         const existing = await this.findById(id);
         if (!existing) {
-          handleRepositoryError(createNotFoundError("Project", id), "Project");
+          return handleRepositoryError(
+            createNotFoundError("Project", id),
+            "Project"
+          );
         }
         return existing;
       }
@@ -242,7 +245,7 @@ export const createProjectRepository = (
 
       return mapProjectRowToDomain(data as ProjectRow);
     } catch (error) {
-      handleRepositoryError(error, "Project");
+      return handleRepositoryError(error, "Project");
     }
   },
 
@@ -268,7 +271,7 @@ export const createProjectRepository = (
         data: { session },
       } = await client.auth.getSession();
       if (!session?.user?.id) {
-        handleRepositoryError(
+        return handleRepositoryError(
           createDatabaseError("User must be authenticated"),
           "Project"
         );
@@ -292,13 +295,13 @@ export const createProjectRepository = (
           (insertError.message &&
             insertError.message.includes("foreign key constraint"))
         ) {
-          handleRepositoryError(
+          return handleRepositoryError(
             createNotFoundError("Project", projectId),
             "Project"
           );
         }
         // Other errors (constraint violation, permission denied, etc.) are re-thrown as-is
-        handleRepositoryError(insertError, "Project");
+        return handleRepositoryError(insertError, "Project");
       }
 
       // Fetch the project after successful insertion (user is now a member, so RLS allows access)
@@ -306,7 +309,7 @@ export const createProjectRepository = (
       const project = await this.findById(projectId);
       if (!project) {
         // This shouldn't happen since insert succeeded, but handle it just in case
-        handleRepositoryError(
+        return handleRepositoryError(
           createNotFoundError("Project", projectId),
           "Project"
         );
@@ -314,7 +317,7 @@ export const createProjectRepository = (
 
       return project;
     } catch (error) {
-      handleRepositoryError(error, "Project");
+      return handleRepositoryError(error, "Project");
     }
   },
 
@@ -332,7 +335,7 @@ export const createProjectRepository = (
       // Default to false if data is null/undefined
       return Boolean(data);
     } catch (error) {
-      handleRepositoryError(error, "Project");
+      return handleRepositoryError(error, "Project");
     }
   },
 });

@@ -10,7 +10,7 @@ import type {
   SignInInput,
   SignUpInput,
   WeakPasswordError,
-} from "@/core/domain/auth.schema";
+} from "@/core/domain/schema/auth.schema";
 
 /**
  * Mock authentication session for testing.

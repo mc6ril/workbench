@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { CreateProjectInput } from "@/core/domain/project.schema";
-import { CreateProjectInputSchema } from "@/core/domain/project.schema";
+import type { CreateProjectInput } from "@/core/domain/schema/project.schema";
+import { CreateProjectInputSchema } from "@/core/domain/schema/project.schema";
 
 import Button from "@/presentation/components/ui/Button";
 import EmptyState from "@/presentation/components/ui/EmptyState";

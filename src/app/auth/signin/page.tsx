@@ -7,8 +7,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { SignInInput } from "@/core/domain/auth.schema";
-import { SignInSchema } from "@/core/domain/auth.schema";
+import type { SignInInput } from "@/core/domain/schema/auth.schema";
+import { SignInSchema } from "@/core/domain/schema/auth.schema";
 
 import Button from "@/presentation/components/ui/Button";
 import Form from "@/presentation/components/ui/Form";

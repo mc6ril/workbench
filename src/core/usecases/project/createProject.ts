@@ -1,8 +1,8 @@
-import type { Project } from "@/core/domain/project.schema";
+import type { Project } from "@/core/domain/schema/project.schema";
 import {
   type CreateProjectInput,
   CreateProjectInputSchema,
-} from "@/core/domain/project.schema";
+} from "@/core/domain/schema/project.schema";
 
 import type { ProjectRepository } from "@/core/ports/projectRepository";
 

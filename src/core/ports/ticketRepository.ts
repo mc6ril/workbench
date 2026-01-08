@@ -3,7 +3,7 @@ import type {
   Ticket,
   TicketFilters,
   UpdateTicketInput,
-} from "@/core/domain/ticket.schema";
+} from "@/core/domain/schema/ticket.schema";
 
 /**
  * Repository contract for Ticket operations.
@@ -25,10 +25,7 @@ export type TicketRepository = {
    * @returns Array of tickets
    * @throws DatabaseError if database operation fails
    */
-  listByProject(
-    projectId: string,
-    filters?: TicketFilters
-  ): Promise<Ticket[]>;
+  listByProject(projectId: string, filters?: TicketFilters): Promise<Ticket[]>;
 
   /**
    * Get tickets by status.

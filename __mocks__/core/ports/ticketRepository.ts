@@ -3,7 +3,7 @@ import type {
   Ticket,
   TicketFilters,
   UpdateTicketInput,
-} from "@/core/domain/ticket.schema";
+} from "@/core/domain/schema/ticket.schema";
 
 /**
  * Mock type for TicketRepository.

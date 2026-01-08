@@ -1,5 +1,5 @@
-import type { AuthResult, AuthSession } from "@/core/domain/auth.schema";
-import type { ProjectWithRole } from "@/core/domain/project.schema";
+import type { AuthResult, AuthSession } from "@/core/domain/schema/auth.schema";
+import type { ProjectWithRole } from "@/core/domain/schema/project.schema";
 
 import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
 import { signInUser } from "@/core/usecases/auth/signInUser";
@@ -66,13 +66,17 @@ describe("Auth Flow Tests", () => {
       // Arrange
       const repositoryError = createAuthError.emailAlreadyExists();
       const authRepository = createAuthRepositoryMock({
-        signUp: jest.fn<Promise<AuthResult>, [typeof mockSignUpInput]>(async () => {
-          throw repositoryError;
-        }),
+        signUp: jest.fn<Promise<AuthResult>, [typeof mockSignUpInput]>(
+          async () => {
+            throw repositoryError;
+          }
+        ),
       });
 
       // Act & Assert
-      await expect(signUpUser(authRepository, mockSignUpInput)).rejects.toMatchObject({
+      await expect(
+        signUpUser(authRepository, mockSignUpInput)
+      ).rejects.toMatchObject({
         code: "EMAIL_ALREADY_EXISTS",
       });
       expect(authRepository.signUp).toHaveBeenCalledTimes(1);
@@ -96,7 +100,9 @@ describe("Auth Flow Tests", () => {
         signIn: jest.fn<Promise<AuthResult>, [typeof mockSignInInput]>(
           async () => mockAuthResult
         ),
-        getSession: jest.fn<Promise<AuthSession | null>, []>(async () => mockAuthSession),
+        getSession: jest.fn<Promise<AuthSession | null>, []>(
+          async () => mockAuthSession
+        ),
       });
 
       const projectRepository = createProjectRepositoryMock({
@@ -136,13 +142,17 @@ describe("Auth Flow Tests", () => {
       // Arrange
       const repositoryError = createAuthError.invalidCredentials();
       const authRepository = createAuthRepositoryMock({
-        signIn: jest.fn<Promise<AuthResult>, [typeof mockSignInInput]>(async () => {
-          throw repositoryError;
-        }),
+        signIn: jest.fn<Promise<AuthResult>, [typeof mockSignInInput]>(
+          async () => {
+            throw repositoryError;
+          }
+        ),
       });
 
       // Act & Assert
-      await expect(signInUser(authRepository, mockSignInInput)).rejects.toMatchObject({
+      await expect(
+        signInUser(authRepository, mockSignInInput)
+      ).rejects.toMatchObject({
         code: "INVALID_CREDENTIALS",
       });
       expect(authRepository.signIn).toHaveBeenCalledTimes(1);
@@ -177,4 +187,3 @@ describe("Auth Flow Tests", () => {
     });
   });
 });
-

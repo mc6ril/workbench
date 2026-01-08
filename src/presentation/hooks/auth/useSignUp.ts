@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { SignUpInput } from "@/core/domain/auth.schema";
+import type { SignUpInput } from "@/core/domain/schema/auth.schema";
 
 import { signUpUser } from "@/core/usecases/auth/signUpUser";
 

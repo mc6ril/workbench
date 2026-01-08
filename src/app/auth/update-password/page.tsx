@@ -8,12 +8,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ZodError } from "zod";
 
-import type { UpdatePasswordInput } from "@/core/domain/auth.schema";
+import type { UpdatePasswordInput } from "@/core/domain/schema/auth.schema";
 import {
   type UpdatePasswordFormInput,
   UpdatePasswordFormSchema,
   UpdatePasswordSchema,
-} from "@/core/domain/auth.schema";
+} from "@/core/domain/schema/auth.schema";
 
 import Button from "@/presentation/components/ui/Button";
 import Form from "@/presentation/components/ui/Form";

@@ -10,7 +10,7 @@ import type {
   InvalidTokenError,
   PasswordResetError,
   WeakPasswordError,
-} from "@/core/domain/auth.schema";
+} from "@/core/domain/schema/auth.schema";
 
 /**
  * Maps Supabase Session to domain AuthSession.

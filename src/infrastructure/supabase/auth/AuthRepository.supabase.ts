@@ -12,7 +12,7 @@ import type {
   SignUpInput,
   UpdatePasswordInput,
   VerifyEmailInput,
-} from "@/core/domain/auth.schema";
+} from "@/core/domain/schema/auth.schema";
 
 import { mapSupabaseSessionToDomain } from "@/infrastructure/supabase/auth/AuthMapper.supabase";
 import { handleAuthError } from "@/infrastructure/supabase/shared/errors/errorHandlers";

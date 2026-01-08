@@ -1,4 +1,4 @@
-import type { Ticket, TicketFilters } from "@/core/domain/ticket.schema";
+import type { Ticket, TicketFilters } from "@/core/domain/schema/ticket.schema";
 
 import type { TicketRepository } from "@/core/ports/ticketRepository";
 

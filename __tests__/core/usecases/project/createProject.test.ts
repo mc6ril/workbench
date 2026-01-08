@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { Project } from "@/core/domain/project.schema";
+import type { Project } from "@/core/domain/schema/project.schema";
 
 import { createProject } from "@/core/usecases/project/createProject";
 

@@ -1,5 +1,5 @@
-import type { ProjectWithRole } from "@/core/domain/project.schema";
-import type { Ticket, TicketFilters } from "@/core/domain/ticket.schema";
+import type { ProjectWithRole } from "@/core/domain/schema/project.schema";
+import type { Ticket, TicketFilters } from "@/core/domain/schema/ticket.schema";
 
 import { listProjects } from "@/core/usecases/project/listProjects";
 import { listTickets } from "@/core/usecases/ticket/listTickets";

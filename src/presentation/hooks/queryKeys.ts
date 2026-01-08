@@ -1,4 +1,4 @@
-import type { TicketFilters } from "@/core/domain/ticket.schema";
+import type { TicketFilters } from "@/core/domain/schema/ticket.schema";
 
 /**
  * Centralized query key factory for React Query.
