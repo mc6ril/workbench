@@ -4,6 +4,7 @@ import type {
   AuthenticationError,
   AuthResult,
   AuthSession,
+  EmailAlreadyExistsError,
   EmailVerificationError,
   InvalidTokenError,
   ResetPasswordInput,
@@ -39,6 +40,26 @@ export const createAuthRepository = (
         handleAuthError(error);
       }
 
+      // Check if user already exists
+      // Supabase may return a success even when email exists (for security reasons when "Confirm email" is enabled)
+      // We detect this by checking:
+      // 1. If email_confirmed_at is set (user exists and is confirmed)
+      // 2. If identities array is empty (indicates email is already in use per Supabase docs)
+      if (data.user) {
+        const hasConfirmedEmail = !!data.user.email_confirmed_at;
+        const hasEmptyIdentities =
+          !data.user.identities || data.user.identities.length === 0;
+
+        // If user has confirmed email OR has empty identities, they already exist
+        if (hasConfirmedEmail || hasEmptyIdentities) {
+          const emailAlreadyExistsError: EmailAlreadyExistsError = {
+            code: "EMAIL_ALREADY_EXISTS",
+            debugMessage: "User with this email already exists",
+          };
+          handleAuthError(emailAlreadyExistsError);
+        }
+      }
+
       // Handle email verification case: Supabase returns null session when email verification is required
       if (!data.session) {
         return {
@@ -48,22 +69,23 @@ export const createAuthRepository = (
       }
 
       // Session exists: user is automatically logged in (email verification not required or already verified)
-      if (!data.user) {
+      if (!data.user || !data.session) {
         const error: AuthenticationError = {
           code: "AUTHENTICATION_ERROR",
-          debugMessage: "User data not returned from signup",
+          debugMessage: "User data or session not returned from signup",
         };
         handleAuthError(error);
       }
 
+      // TypeScript: data.session and data.user are guaranteed to be non-null after the check above
       const session = mapSupabaseSessionToDomain(
-        data.session,
-        data.user.email || input.email
+        data.session!,
+        data.user!.email || input.email
       );
 
       return { session, requiresEmailVerification: false };
     } catch (error) {
-      handleAuthError(error);
+      return handleAuthError(error);
     }
   },
 
@@ -86,15 +108,16 @@ export const createAuthRepository = (
         handleAuthError(error);
       }
 
+      // TypeScript: data.session and data.user are guaranteed to be non-null after the check above
       const session = mapSupabaseSessionToDomain(
-        data.session,
-        data.user.email || input.email
+        data.session!,
+        data.user!.email || input.email
       );
 
       // SignIn always returns a session (no email verification needed for existing users)
       return { session, requiresEmailVerification: false };
     } catch (error) {
-      handleAuthError(error);
+      return handleAuthError(error);
     }
   },
 
@@ -141,12 +164,13 @@ export const createAuthRepository = (
           handleAuthError(error);
         }
 
+        // TypeScript: userEmail is guaranteed to be non-null after the check above
         // Map authenticated user directly to AuthSession
         // Note: accessToken is empty string for server-side checks as getUser()
         // doesn't return tokens, but we only need user info for authentication verification
         return {
           userId: user.id,
-          email: userEmail,
+          email: userEmail!,
           accessToken: "", // Not available from getUser(), but not needed for server-side auth checks
         };
       } else {
@@ -173,10 +197,11 @@ export const createAuthRepository = (
           handleAuthError(error);
         }
 
-        return mapSupabaseSessionToDomain(session, userEmail);
+        // TypeScript: userEmail is guaranteed to be non-null after the check above
+        return mapSupabaseSessionToDomain(session, userEmail!);
       }
     } catch (error) {
-      handleAuthError(error);
+      return handleAuthError(error);
     }
   },
 
@@ -257,9 +282,19 @@ export const createAuthRepository = (
       }
 
       // Standard password reset with email and token
+      // TypeScript: input.email is guaranteed to be non-empty after the check above
+      if (!input.email) {
+        const error: InvalidTokenError = {
+          code: "INVALID_TOKEN",
+          debugMessage: "Email is required for password reset",
+        };
+        handleAuthError(error);
+      }
+
+      // TypeScript: input.email is guaranteed to be non-empty after the check above
       const { data: verifyData, error: verifyError } =
         await client.auth.verifyOtp({
-          email: input.email,
+          email: input.email!,
           token: input.token,
           type: "recovery",
         });
@@ -276,6 +311,7 @@ export const createAuthRepository = (
         handleAuthError(error);
       }
 
+      // TypeScript: verifyData.session and verifyData.user are guaranteed to be non-null after the check above
       // Update the password
       const { error: updateError } = await client.auth.updateUser({
         password: input.password,
@@ -286,12 +322,15 @@ export const createAuthRepository = (
       }
 
       // Map session to domain
-      const userEmail = verifyData.user.email || input.email;
-      const session = mapSupabaseSessionToDomain(verifyData.session, userEmail);
+      const userEmail = verifyData.user!.email || input.email!;
+      const session = mapSupabaseSessionToDomain(
+        verifyData.session!,
+        userEmail
+      );
 
       return { session, requiresEmailVerification: false };
     } catch (error) {
-      handleAuthError(error);
+      return handleAuthError(error);
     }
   },
 
@@ -343,8 +382,18 @@ export const createAuthRepository = (
       }
 
       // Standard verification with email and token
+      // TypeScript: input.email is guaranteed to be non-empty after the check above
+      if (!input.email) {
+        const error: EmailVerificationError = {
+          code: "EMAIL_VERIFICATION_ERROR",
+          debugMessage: "Email is required for email verification",
+        };
+        handleAuthError(error);
+      }
+
+      // TypeScript: input.email is guaranteed to be non-empty after the check above
       const { data, error } = await client.auth.verifyOtp({
-        email: input.email,
+        email: input.email!,
         token: input.token,
         type: "email",
       });
@@ -361,12 +410,13 @@ export const createAuthRepository = (
         handleAuthError(error);
       }
 
-      const userEmail = data.user.email || input.email || "";
-      const session = mapSupabaseSessionToDomain(data.session, userEmail);
+      // TypeScript: data.session and data.user are guaranteed to be non-null after the check above
+      const userEmail = data.user!.email || input.email! || "";
+      const session = mapSupabaseSessionToDomain(data.session!, userEmail);
 
       return { session, requiresEmailVerification: false };
     } catch (error) {
-      handleAuthError(error);
+      return handleAuthError(error);
     }
   },
 
