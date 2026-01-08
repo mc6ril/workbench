@@ -6,9 +6,14 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { ZodError } from "zod";
 
 import type { UpdatePasswordInput } from "@/core/domain/auth.schema";
+import {
+  type UpdatePasswordFormInput,
+  UpdatePasswordFormSchema,
+  UpdatePasswordSchema,
+} from "@/core/domain/auth.schema";
 
 import Button from "@/presentation/components/ui/Button";
 import Form from "@/presentation/components/ui/Form";
@@ -22,27 +27,6 @@ import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 import styles from "./UpdatePasswordPage.module.scss";
-
-/**
- * Creates Zod schema for update password form with i18n messages.
- * Validates password requirements and confirmation match.
- */
-const createUpdatePasswordFormSchema = (t: (key: string) => string) => {
-  return z
-    .object({
-      password: z
-        .string()
-        .min(6, t("validation.passwordMinLength"))
-        .max(100, t("validation.passwordMaxLength")),
-      confirmPassword: z
-        .string()
-        .min(1, t("validation.confirmPasswordRequired")),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: t("validation.passwordsDoNotMatch"),
-      path: ["confirmPassword"],
-    });
-};
 
 const UpdatePasswordPage = () => {
   return (
@@ -89,13 +73,7 @@ const UpdatePasswordContent = () => {
     };
   }, [searchParams]);
 
-  // Create schema with i18n messages
-  const updatePasswordFormSchema = useMemo(
-    () => createUpdatePasswordFormSchema(t),
-    [t]
-  );
-
-  type FormData = z.infer<typeof updatePasswordFormSchema>;
+  type FormData = UpdatePasswordFormInput;
 
   const {
     register,
@@ -103,9 +81,41 @@ const UpdatePasswordContent = () => {
     formState: { errors },
     setError,
   } = useForm<FormData>({
-    resolver: zodResolver(updatePasswordFormSchema),
+    resolver: zodResolver(UpdatePasswordFormSchema),
     mode: "onBlur",
   });
+
+  /**
+   * Maps domain validation error messages to i18n messages.
+   * This keeps i18n in the presentation layer while using domain schemas.
+   */
+  const getTranslatedErrorMessage = (
+    field: keyof FormData,
+    message: string | undefined
+  ): string | undefined => {
+    if (!message) {
+      return undefined;
+    }
+
+    // Map domain error messages to i18n keys
+    if (message.includes("at least")) {
+      return t("validation.passwordMinLength");
+    }
+    if (message.includes("less than")) {
+      return t("validation.passwordMaxLength");
+    }
+    if (message.includes("confirmation is required")) {
+      return t("validation.confirmPasswordRequired");
+    }
+    if (message.includes("do not match")) {
+      return t("validation.passwordsDoNotMatch");
+    }
+    if (message.includes("Invalid email format")) {
+      return t("errors.invalidEmail");
+    }
+
+    return message;
+  };
 
   useEffect(() => {
     if (updatePasswordMutation.error) {
@@ -151,11 +161,42 @@ const UpdatePasswordContent = () => {
       return;
     }
 
+    // Build UpdatePasswordInput and validate with domain schema
     const updatePasswordInput: UpdatePasswordInput = {
       password: data.password,
       token,
       email: email || "", // Empty string if email not provided (code format)
     };
+
+    // Validate with domain schema before sending to API
+    // This ensures data matches domain requirements (token, email format, etc.)
+    try {
+      UpdatePasswordSchema.parse(updatePasswordInput);
+    } catch (error) {
+      // Domain validation error - should not happen if form validation passed
+      // but we validate again for safety
+      let errorMessage = t("errors.validationFailed");
+
+      // Extract and translate specific validation error messages from Zod
+      if (error instanceof ZodError) {
+        const firstIssue = error.issues[0];
+        if (firstIssue?.message) {
+          const translated = getTranslatedErrorMessage(
+            "password",
+            firstIssue.message
+          );
+          if (translated) {
+            errorMessage = translated;
+          }
+        }
+      }
+
+      setError("root", {
+        type: "validation",
+        message: errorMessage,
+      });
+      return;
+    }
 
     updatePasswordMutation.mutate(updatePasswordInput);
   };
@@ -206,7 +247,10 @@ const UpdatePasswordContent = () => {
             type="password"
             autoComplete="new-password"
             required
-            error={errors.password?.message}
+            error={getTranslatedErrorMessage(
+              "password",
+              errors.password?.message
+            )}
             {...register("password")}
           />
 
@@ -215,7 +259,10 @@ const UpdatePasswordContent = () => {
             type="password"
             autoComplete="new-password"
             required
-            error={errors.confirmPassword?.message}
+            error={getTranslatedErrorMessage(
+              "confirmPassword",
+              errors.confirmPassword?.message
+            )}
             {...register("confirmPassword")}
           />
 

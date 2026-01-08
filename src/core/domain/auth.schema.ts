@@ -1,5 +1,22 @@
 import { z } from "zod";
 
+import { APP_LIMITS } from "@/shared/constants/app";
+
+/**
+ * Reusable Zod schema for password validation.
+ * Validates password length requirements.
+ */
+const PasswordSchema = z
+  .string()
+  .min(
+    APP_LIMITS.PASSWORD.MIN_LENGTH,
+    `Password must be at least ${APP_LIMITS.PASSWORD.MIN_LENGTH} characters`
+  )
+  .max(
+    APP_LIMITS.PASSWORD.MAX_LENGTH,
+    `Password must be less than ${APP_LIMITS.PASSWORD.MAX_LENGTH} characters`
+  );
+
 /**
  * Zod schema for user signup input.
  * Validates email format and password requirements.
@@ -9,10 +26,7 @@ export const SignUpSchema = z.object({
     .string()
     .min(1, "Email is required")
     .email({ message: "Invalid email format" }),
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .max(100, "Password must be less than 100 characters"),
+  password: PasswordSchema,
 });
 
 /**
@@ -129,10 +143,7 @@ export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;
  * Accepts valid email string, empty string, or undefined.
  */
 export const UpdatePasswordSchema = z.object({
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .max(100, "Password must be less than 100 characters"),
+  password: PasswordSchema,
   token: z.string().min(1, "Token is required"),
   email: z
     .union([
@@ -146,6 +157,27 @@ export const UpdatePasswordSchema = z.object({
  * Password update input type.
  */
 export type UpdatePasswordInput = z.infer<typeof UpdatePasswordSchema>;
+
+/**
+ * Zod schema for update password form (UI validation).
+ * Includes password confirmation field for form validation.
+ * This schema is used in the presentation layer for form validation.
+ * The domain schema (UpdatePasswordSchema) is used for API validation.
+ */
+export const UpdatePasswordFormSchema = z
+  .object({
+    password: PasswordSchema,
+    confirmPassword: z.string().min(1, "Password confirmation is required"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+/**
+ * Update password form input type.
+ */
+export type UpdatePasswordFormInput = z.infer<typeof UpdatePasswordFormSchema>;
 
 /**
  * Zod schema for email verification input.
@@ -174,11 +206,7 @@ export type VerifyEmailInput = z.infer<typeof VerifyEmailSchema>;
  */
 export const UpdateUserSchema = z.object({
   email: z.string().email("Invalid email format").optional(),
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .max(100, "Password must be less than 100 characters")
-    .optional(),
+  password: PasswordSchema.optional(),
   data: z.record(z.string(), z.unknown()).optional(),
 });
 
