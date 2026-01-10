@@ -38,3 +38,24 @@ export const UpdateEpicInputSchema = z.object({
 });
 
 export type UpdateEpicInput = z.infer<typeof UpdateEpicInputSchema>;
+
+/**
+ * Epic with progress calculation.
+ * Used when listing epics to display progress indicator.
+ */
+export type EpicWithProgress = Epic & {
+  progress: number; // Progress percentage (0-100)
+};
+
+/**
+ * Epic detail with progress and assigned tickets.
+ * Used when retrieving epic details to show full epic information.
+ */
+export type EpicDetail = Epic & {
+  progress: number; // Progress percentage (0-100)
+  tickets: Array<{
+    id: string;
+    title: string;
+    status: string;
+  }>; // Tickets assigned to epic (minimal ticket info)
+};
