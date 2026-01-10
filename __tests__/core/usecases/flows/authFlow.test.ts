@@ -53,13 +53,14 @@ describe("Auth Flow Tests", () => {
       expect(signUpResult.requiresEmailVerification).toBe(true);
       expect(signUpResult.session).toBeNull();
 
-      // Act - Step 2: Get current session (should return null as email not verified)
-      const sessionResult = await getCurrentSession(authRepository);
-
-      // Assert - Step 2: Session should be null before email verification
+      // Act & Assert - Step 2: Get current session (should throw NotFoundError as email not verified)
+      await expect(getCurrentSession(authRepository)).rejects.toMatchObject({
+        code: "NOT_FOUND",
+        entityType: "Session",
+        entityId: "",
+      });
       expect(authRepository.getSession).toHaveBeenCalledTimes(1);
       expect(authRepository.getSession).toHaveBeenCalledWith();
-      expect(sessionResult).toBeNull();
     });
 
     it("should handle error propagation in signup flow", async () => {
@@ -125,7 +126,7 @@ describe("Auth Flow Tests", () => {
       expect(authRepository.getSession).toHaveBeenCalledTimes(1);
       expect(authRepository.getSession).toHaveBeenCalledWith();
       expect(sessionResult).toEqual(mockAuthSession);
-      expect(sessionResult?.email).toBe(mockAuthSession.email);
+      expect(sessionResult.email).toBe(mockAuthSession.email);
 
       // Act - Step 3: List projects
       const projectsResult = await listProjects(projectRepository);

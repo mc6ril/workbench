@@ -20,13 +20,10 @@ const LandingLayout = async ({
     const supabaseClient = await createSupabaseServerClient();
     const authRepository = createAuthRepository(supabaseClient);
 
-    // Check if user is authenticated
-    const session = await getCurrentSession(authRepository);
-
+    // Check if user is authenticated (throws NotFoundError if no session)
     // If authenticated, redirect to workspace
-    if (session) {
-      redirect("/workspace");
-    }
+    await getCurrentSession(authRepository);
+    redirect("/workspace");
   } catch (error) {
     // Next.js redirect() throws a special error that must be re-thrown
     if (
@@ -39,7 +36,8 @@ const LandingLayout = async ({
       throw error;
     }
 
-    // On error, show landing page (fail-open for public route)
+    // On NotFoundError (no session), show landing page (fail-open for public route)
+    // On other errors, also show landing page (fail-open)
     // User can still access landing even if auth check fails
     console.error("[LandingLayout] Auth check error:", error);
   }

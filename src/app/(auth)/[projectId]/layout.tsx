@@ -25,7 +25,6 @@ const ProjectLayout = async ({
     const supabaseClient = await createSupabaseServerClient();
     const projectRepository = createProjectRepository(supabaseClient);
 
-    // Check project access using getProject (throws NotFoundError if no access)
     // If project not found or user has no access (per RLS), NotFoundError is thrown
     await getProject(projectRepository, projectId);
   } catch (error) {

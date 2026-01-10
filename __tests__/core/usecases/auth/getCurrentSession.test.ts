@@ -30,19 +30,20 @@ describe("getCurrentSession", () => {
     expect(result).toEqual(mockSession);
   });
 
-  it("should return null when no session exists", async () => {
+  it("should throw NotFoundError when no session exists", async () => {
     // Arrange
     const repository = createAuthRepositoryMock({
       getSession: jest.fn<Promise<AuthSession | null>, []>(async () => null),
     });
 
-    // Act
-    const result = await getCurrentSession(repository);
-
-    // Assert
+    // Act & Assert
+    await expect(getCurrentSession(repository)).rejects.toMatchObject({
+      code: "NOT_FOUND",
+      entityType: "Session",
+      entityId: "",
+    });
     expect(repository.getSession).toHaveBeenCalledTimes(1);
     expect(repository.getSession).toHaveBeenCalledWith();
-    expect(result).toBeNull();
   });
 
   it("should propagate authentication error from repository", async () => {

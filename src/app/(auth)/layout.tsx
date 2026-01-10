@@ -20,13 +20,9 @@ const AuthLayout = async ({
     const supabaseClient = await createSupabaseServerClient();
     const authRepository = createAuthRepository(supabaseClient);
 
-    // Load session using server client (reads from cookies)
-    const session = await getCurrentSession(authRepository);
-
-    // If no session, redirect to landing (fail-closed)
-    if (!session) {
-      redirect("/");
-    }
+    // Load session using server client (throws NotFoundError if no session)
+    // If user not authenticated, NotFoundError is thrown and caught below
+    await getCurrentSession(authRepository);
   } catch (error) {
     // Next.js redirect() throws a special error that must be re-thrown
     if (
