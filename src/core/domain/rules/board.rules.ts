@@ -209,3 +209,43 @@ export const validateBoardWithColumns = (
 
   return { success: true };
 };
+
+/**
+ * Returns default board configuration (Todo, In Progress, Done).
+ * Used when no board configuration exists for a project.
+ * Note: boardId will be set in usecase after board creation/retrieval.
+ *
+ * @param projectId - Project ID (not used currently but kept for future use)
+ * @returns Default column configuration inputs
+ */
+export const getDefaultBoardConfiguration = (
+  _projectId: string
+): {
+  columns: CreateColumnInput[];
+} => {
+  return {
+    columns: [
+      {
+        boardId: "", // Will be set in usecase after board creation
+        name: "Todo",
+        status: "todo",
+        position: 0,
+        visible: true,
+      },
+      {
+        boardId: "", // Will be set in usecase after board creation
+        name: "In Progress",
+        status: "in-progress",
+        position: 1,
+        visible: true,
+      },
+      {
+        boardId: "", // Will be set in usecase after board creation
+        name: "Done",
+        status: "completed",
+        position: 2,
+        visible: true,
+      },
+    ],
+  };
+};

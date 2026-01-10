@@ -35,6 +35,7 @@ export const ColumnSchema = z.object({
   name: z.string().min(1, "Column name must not be empty"),
   status: z.string().min(1, "Column status must not be empty"),
   position: z.number().int().nonnegative("Position must be non-negative"),
+  visible: z.boolean().default(true),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
@@ -52,6 +53,7 @@ export const CreateColumnInputSchema = z.object({
   name: z.string().min(1, "Column name must not be empty"),
   status: z.string().min(1, "Column status must not be empty"),
   position: z.number().int().nonnegative().default(0),
+  visible: z.boolean().default(true).optional(),
 });
 
 export type CreateColumnInput = z.infer<typeof CreateColumnInputSchema>;
@@ -63,6 +65,38 @@ export const UpdateColumnInputSchema = z.object({
   name: z.string().min(1, "Column name must not be empty").optional(),
   status: z.string().min(1, "Column status must not be empty").optional(),
   position: z.number().int().nonnegative().optional(),
+  visible: z.boolean().optional(),
 });
 
 export type UpdateColumnInput = z.infer<typeof UpdateColumnInputSchema>;
+
+/**
+ * Input for configuring board columns.
+ * Represents a complete board configuration with all columns.
+ * Supports idempotent behavior: updating existing columns by ID, creating new ones.
+ */
+export const ConfigureColumnsInputSchema = z.object({
+  projectId: z.string().uuid(), // Project ID to find/create board
+  columns: z
+    .array(
+      z.object({
+        id: z.string().uuid().optional(), // Optional: if provided, update existing; if not, create new
+        name: z.string().min(1, "Column name must not be empty"),
+        status: z.string().min(1, "Column status must not be empty"),
+        position: z.number().int().nonnegative(),
+        visible: z.boolean().default(true),
+      })
+    )
+    .min(1, "At least one column is required"),
+});
+
+export type ConfigureColumnsInput = z.infer<typeof ConfigureColumnsInputSchema>;
+
+/**
+ * Board configuration with columns.
+ * Used when retrieving board configuration.
+ */
+export type BoardConfiguration = {
+  board: Board;
+  columns: Column[];
+};

@@ -25,13 +25,9 @@ const ProjectLayout = async ({
     const supabaseClient = await createSupabaseServerClient();
     const projectRepository = createProjectRepository(supabaseClient);
 
-    // Check project access using getProject (RLS will filter if no access)
-    const project = await getProject(projectRepository, projectId);
-
-    // If project is null, user has no access (per RLS), redirect to workspace
-    if (!project) {
-      redirect("/workspace");
-    }
+    // Check project access using getProject (throws NotFoundError if no access)
+    // If project not found or user has no access (per RLS), NotFoundError is thrown
+    await getProject(projectRepository, projectId);
   } catch (error) {
     // Next.js redirect() throws a special error that must be re-thrown
     if (

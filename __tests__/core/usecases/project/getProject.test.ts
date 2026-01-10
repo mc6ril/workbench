@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import type { Project } from "@/core/domain/schema/project.schema";
 
 import { getProject } from "@/core/usecases/project/getProject";
@@ -30,24 +32,34 @@ describe("getProject", () => {
     expect(repository.findById).toHaveBeenCalledTimes(1);
     expect(repository.findById).toHaveBeenCalledWith(projectId);
     expect(result).toEqual(mockProject);
-    expect(result).not.toBeNull();
-    expect(result?.id).toBe(projectId);
-    expect(result?.name).toBe("Test Project");
+    expect(result.id).toBe(projectId);
+    expect(result.name).toBe("Test Project");
   });
 
-  it("should return null when project not found", async () => {
+  it("should throw NotFoundError when project not found", async () => {
     // Arrange
     const repository = createProjectRepositoryMock({
       findById: jest.fn<Promise<Project | null>, [string]>(async () => null),
     });
 
-    // Act
-    const result = await getProject(repository, projectId);
-
-    // Assert
+    // Act & Assert
+    await expect(getProject(repository, projectId)).rejects.toMatchObject({
+      code: "NOT_FOUND",
+      entityType: "Project",
+      entityId: projectId,
+    });
     expect(repository.findById).toHaveBeenCalledTimes(1);
     expect(repository.findById).toHaveBeenCalledWith(projectId);
-    expect(result).toBeNull();
+  });
+
+  it("should throw ZodError on invalid input (non-UUID)", async () => {
+    // Arrange
+    const invalidId = "invalid-uuid";
+    const repository = createProjectRepositoryMock();
+
+    // Act & Assert
+    await expect(getProject(repository, invalidId)).rejects.toThrow(z.ZodError);
+    expect(repository.findById).not.toHaveBeenCalled();
   });
 
   it("should propagate repository errors", async () => {
@@ -92,6 +104,6 @@ describe("getProject", () => {
     // Assert
     expect(repository.findById).toHaveBeenCalledWith(differentProjectId);
     expect(result).toEqual(differentProject);
-    expect(result?.id).toBe(differentProjectId);
+    expect(result.id).toBe(differentProjectId);
   });
 });
