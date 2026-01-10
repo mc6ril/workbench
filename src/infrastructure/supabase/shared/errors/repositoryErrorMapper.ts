@@ -1,7 +1,8 @@
 import {
   createConstraintError,
   createDatabaseError,
-  type RepositoryError,
+  createNotFoundError,
+  type RepositoryErrorUnion,
 } from "@/core/domain/repositoryError";
 
 /**
@@ -9,12 +10,14 @@ import {
  *
  * @param error - Supabase error or unknown error
  * @param entityType - Type of entity for context (e.g., "Project", "Ticket")
- * @returns Domain repository error
+ * @param entityId - Optional entity ID for NotFoundError
+ * @returns Domain repository error union
  */
 export const mapSupabaseError = (
   error: unknown,
-  _entityType: string = "Entity"
-): RepositoryError => {
+  entityType: string = "Entity",
+  entityId?: string
+): RepositoryErrorUnion => {
   // Handle Supabase PostgrestError
   if (
     error &&
@@ -38,7 +41,11 @@ export const mapSupabaseError = (
         supabaseError.message ||
         supabaseError.details ||
         `Supabase error: ${supabaseError.code}`;
-      return createDatabaseError(debugMessage, supabaseError);
+      return createNotFoundError(
+        entityType,
+        entityId || "unknown",
+        debugMessage
+      );
     }
 
     if (

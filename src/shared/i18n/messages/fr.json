@@ -190,6 +190,17 @@
       "NOT_FOUND_WITH_ENTITY": "{entityType} avec l'ID {entityId} introuvable",
       "CONSTRAINT_VIOLATION": "Une contrainte de base de données a été violée",
       "DATABASE_ERROR": "Une erreur de base de données s'est produite"
+    },
+    "domain": {
+      "INVALID_TICKET_PARENT": "Le ticket ne peut pas être son propre parent",
+      "INVALID_TICKET_PARENT_MULTI_LEVEL": "L'imbrication multi-niveaux n'est pas autorisée",
+      "TICKET_PROJECT_MISMATCH": "Le ticket n'appartient pas au même projet",
+      "DUPLICATE_EPIC_ASSIGNMENT": "Le ticket est déjà assigné à un autre epic",
+      "INVALID_EPIC_TICKET_CONSISTENCY": "Incohérence dans l'assignation du ticket à l'epic",
+      "INVALID_COLUMN_ORDER": "Ordre de colonnes invalide",
+      "DUPLICATE_COLUMN_STATUS": "Statut de colonne en double",
+      "INVALID_BOARD_COLUMN_RELATIONSHIP": "La colonne n'appartient pas au tableau spécifié",
+      "MIXED_BOARD_COLUMNS": "Colonnes de plusieurs tableaux mélangées"
     }
   }
 }

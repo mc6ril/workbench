@@ -1,7 +1,7 @@
 import { mapSupabaseError } from "@/infrastructure/supabase/shared/errors/repositoryErrorMapper";
 
 describe("mapSupabaseError", () => {
-  it("should map Supabase PGRST116 error to DatabaseError", () => {
+  it("should map Supabase PGRST116 error to NotFoundError", () => {
     // Arrange
     const supabaseError = {
       code: "PGRST116",
@@ -14,9 +14,10 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(supabaseError, "Project");
 
     // Assert
-    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result).toHaveProperty("code", "NOT_FOUND");
+    expect(result).toHaveProperty("entityType", "Project");
+    expect(result).toHaveProperty("entityId", "unknown");
     expect(result).toHaveProperty("debugMessage");
-    expect(result).toHaveProperty("originalError", supabaseError);
   });
 
   it("should map constraint violation code 23505 to ConstraintError", () => {
@@ -177,7 +178,7 @@ describe("mapSupabaseError", () => {
     expect(result).toHaveProperty("debugMessage");
   });
 
-  it("should use custom entityType in error message", () => {
+  it("should use custom entityType in NotFoundError", () => {
     // Arrange
     const supabaseError = {
       code: "PGRST116",
@@ -187,10 +188,12 @@ describe("mapSupabaseError", () => {
     };
 
     // Act
-    const result = mapSupabaseError(supabaseError, "CustomEntity");
+    const result = mapSupabaseError(supabaseError, "CustomEntity", "custom-id-123");
 
     // Assert
-    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result).toHaveProperty("code", "NOT_FOUND");
+    expect(result).toHaveProperty("entityType", "CustomEntity");
+    expect(result).toHaveProperty("entityId", "custom-id-123");
     expect(result).toHaveProperty("debugMessage");
   });
 
