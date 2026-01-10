@@ -204,4 +204,124 @@ export const createTicketRepository = (
       return handleRepositoryError(error, "Ticket");
     }
   },
+
+  async updatePositions(
+    ticketPositions: Array<{ id: string; position: number }>
+  ): Promise<Ticket[]> {
+    try {
+      const updatedTickets: Ticket[] = [];
+
+      for (const { id, position } of ticketPositions) {
+        const { data, error } = await client
+          .from("tickets")
+          .update({ position })
+          .eq("id", id)
+          .select()
+          .single();
+
+        if (error) {
+          return handleRepositoryError(error, "Ticket", id);
+        }
+
+        if (!data) {
+          return handleRepositoryError(
+            createNotFoundError("Ticket", id),
+            "Ticket",
+            id
+          );
+        }
+
+        updatedTickets.push(mapTicketRowToDomain(data as TicketRow));
+      }
+
+      return updatedTickets;
+    } catch (error) {
+      return handleRepositoryError(error, "Ticket");
+    }
+  },
+
+  async moveTicket(
+    id: string,
+    status: string,
+    position: number
+  ): Promise<Ticket> {
+    try {
+      const { data, error } = await client
+        .from("tickets")
+        .update({ status, position })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        return handleRepositoryError(error, "Ticket", id);
+      }
+
+      if (!data) {
+        return handleRepositoryError(
+          createNotFoundError("Ticket", id),
+          "Ticket",
+          id
+        );
+      }
+
+      return mapTicketRowToDomain(data as TicketRow);
+    } catch (error) {
+      return handleRepositoryError(error, "Ticket", id);
+    }
+  },
+
+  async assignToEpic(ticketId: string, epicId: string): Promise<Ticket> {
+    try {
+      const { data, error } = await client
+        .from("tickets")
+        .update({ epic_id: epicId })
+        .eq("id", ticketId)
+        .select()
+        .single();
+
+      if (error) {
+        return handleRepositoryError(error, "Ticket", ticketId);
+      }
+
+      if (!data) {
+        return handleRepositoryError(
+          createNotFoundError("Ticket", ticketId),
+          "Ticket",
+          ticketId
+        );
+      }
+
+      return mapTicketRowToDomain(data as TicketRow);
+    } catch (error) {
+      return handleRepositoryError(error, "Ticket", ticketId);
+    }
+  },
+
+  async unassignFromEpic(ticketId: string): Promise<Ticket> {
+    try {
+      const { data, error } = await client
+        .from("tickets")
+        .update({ epic_id: null })
+        .eq("id", ticketId)
+        .select()
+        .single();
+
+      if (error) {
+        return handleRepositoryError(error, "Ticket", ticketId);
+      }
+
+      if (!data) {
+        return handleRepositoryError(
+          createNotFoundError("Ticket", ticketId),
+          "Ticket",
+          ticketId
+        );
+      }
+
+      return mapTicketRowToDomain(data as TicketRow);
+    } catch (error) {
+      return handleRepositoryError(error, "Ticket", ticketId);
+    }
+  },
 });

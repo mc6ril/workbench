@@ -52,6 +52,32 @@ export const UpdateTicketInputSchema = z.object({
 export type UpdateTicketInput = z.infer<typeof UpdateTicketInputSchema>;
 
 /**
+ * Input for creating a subtask (parentId is required).
+ */
+export const CreateSubtaskInputSchema = CreateTicketInputSchema.extend({
+  parentId: z.string().uuid(), // Required, not optional
+});
+
+export type CreateSubtaskInput = z.infer<typeof CreateSubtaskInputSchema>;
+
+/**
+ * Input for reordering tickets.
+ * Used for bulk position updates within a column or board.
+ */
+export const ReorderTicketInputSchema = z.object({
+  ticketPositions: z
+    .array(
+      z.object({
+        id: z.string().uuid(),
+        position: z.number().int().nonnegative(),
+      })
+    )
+    .min(1, "At least one ticket position is required"),
+});
+
+export type ReorderTicketInput = z.infer<typeof ReorderTicketInputSchema>;
+
+/**
  * Filters for querying tickets.
  * Used for filtering support in ticket queries.
  */

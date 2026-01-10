@@ -15,8 +15,6 @@ export type EpicRepositoryMock = {
   create: jest.Mock<Promise<Epic>, [CreateEpicInput]>;
   update: jest.Mock<Promise<Epic>, [string, UpdateEpicInput]>;
   delete: jest.Mock<Promise<void>, [string]>;
-  assignTicketToEpic: jest.Mock<Promise<Ticket>, [string, string]>;
-  unassignTicketFromEpic: jest.Mock<Promise<Ticket>, [string]>;
   listTicketsByEpic: jest.Mock<Promise<Ticket[]>, [string]>;
 };
 
@@ -39,8 +37,6 @@ export const createEpicRepositoryMock = (
     create: jest.fn<Promise<Epic>, [CreateEpicInput]>(),
     update: jest.fn<Promise<Epic>, [string, UpdateEpicInput]>(),
     delete: jest.fn<Promise<void>, [string]>(),
-    assignTicketToEpic: jest.fn<Promise<Ticket>, [string, string]>(),
-    unassignTicketFromEpic: jest.fn<Promise<Ticket>, [string]>(),
     listTicketsByEpic: jest.fn<Promise<Ticket[]>, [string]>(),
   };
 

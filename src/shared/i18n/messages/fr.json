@@ -195,6 +195,7 @@
       "INVALID_TICKET_PARENT": "Le ticket ne peut pas être son propre parent",
       "INVALID_TICKET_PARENT_MULTI_LEVEL": "L'imbrication multi-niveaux n'est pas autorisée",
       "TICKET_PROJECT_MISMATCH": "Le ticket n'appartient pas au même projet",
+      "TICKET_HAS_SUBTASKS": "Le ticket ne peut pas être supprimé car il contient des sous-tâches",
       "DUPLICATE_EPIC_ASSIGNMENT": "Le ticket est déjà assigné à un autre epic",
       "INVALID_EPIC_TICKET_CONSISTENCY": "Incohérence dans l'assignation du ticket à l'epic",
       "INVALID_COLUMN_ORDER": "Ordre de colonnes invalide",
