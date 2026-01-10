@@ -31,8 +31,10 @@ export const mapProjectRowToDomain = (row: ProjectRow): Project => {
     return ProjectSchema.parse(cleanData);
   } catch (error) {
     if (error instanceof z.ZodError) {
+      const debugMessage = `Failed to map project: ${error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")}`;
       return handleRepositoryError(
-        `Failed to map project: ${error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")}`
+        new Error(debugMessage),
+        "ProjectMapper"
       );
     }
     return handleRepositoryError(error, "ProjectMapper");

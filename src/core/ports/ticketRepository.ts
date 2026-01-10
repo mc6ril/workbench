@@ -76,4 +76,40 @@ export type TicketRepository = {
   updatePositions(
     ticketPositions: Array<{ id: string; position: number }>
   ): Promise<Ticket[]>;
+
+  /**
+   * Move a ticket to a new status/column and position.
+   * Updates both status and position in a single atomic operation.
+   * Used for drag-and-drop operations on the board.
+   * @param id - Ticket ID
+   * @param status - New status/column
+   * @param position - New position within the column
+   * @returns Updated ticket
+   * @throws NotFoundError if ticket not found
+   * @throws ConstraintError if constraint violation occurs
+   * @throws DatabaseError if database operation fails
+   */
+  moveTicket(id: string, status: string, position: number): Promise<Ticket>;
+
+  /**
+   * Assign a ticket to an epic.
+   * Updates the ticket's epicId field to reference the epic.
+   * @param ticketId - Ticket ID to assign
+   * @param epicId - Epic ID to assign ticket to
+   * @returns Updated ticket with epicId set
+   * @throws NotFoundError if ticket not found
+   * @throws ConstraintError if constraint violation occurs
+   * @throws DatabaseError if database operation fails
+   */
+  assignToEpic(ticketId: string, epicId: string): Promise<Ticket>;
+
+  /**
+   * Unassign a ticket from its epic.
+   * Sets the ticket's epicId field to null.
+   * @param ticketId - Ticket ID to unassign
+   * @returns Updated ticket with epicId set to null
+   * @throws NotFoundError if ticket not found
+   * @throws DatabaseError if database operation fails
+   */
+  unassignFromEpic(ticketId: string): Promise<Ticket>;
 };

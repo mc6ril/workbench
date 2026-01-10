@@ -56,29 +56,6 @@ export type EpicRepository = {
   delete(id: string): Promise<void>;
 
   /**
-   * Assign a ticket to an epic.
-   * Updates the ticket's epicId field to reference this epic.
-   * Note: Business rules should validate that ticket and epic belong to the same project.
-   * @param ticketId - Ticket ID to assign
-   * @param epicId - Epic ID to assign ticket to
-   * @returns Updated ticket with epicId set
-   * @throws NotFoundError if ticket or epic not found
-   * @throws ConstraintError if ticket is already assigned to another epic
-   * @throws DatabaseError if database operation fails
-   */
-  assignTicketToEpic(ticketId: string, epicId: string): Promise<Ticket>;
-
-  /**
-   * Unassign a ticket from its epic.
-   * Sets the ticket's epicId field to null.
-   * @param ticketId - Ticket ID to unassign
-   * @returns Updated ticket with epicId set to null
-   * @throws NotFoundError if ticket not found
-   * @throws DatabaseError if database operation fails
-   */
-  unassignTicketFromEpic(ticketId: string): Promise<Ticket>;
-
-  /**
    * List all tickets assigned to an epic.
    * @param epicId - Epic ID
    * @returns Array of tickets assigned to the epic

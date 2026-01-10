@@ -20,6 +20,9 @@ export type TicketRepositoryMock = {
     Promise<Ticket[]>,
     [Array<{ id: string; position: number }>]
   >;
+  moveTicket: jest.Mock<Promise<Ticket>, [string, string, number]>;
+  assignToEpic: jest.Mock<Promise<Ticket>, [string, string]>;
+  unassignFromEpic: jest.Mock<Promise<Ticket>, [string]>;
 };
 
 type TicketRepositoryMockOverrides = Partial<TicketRepositoryMock>;
@@ -46,6 +49,9 @@ export const createTicketRepositoryMock = (
       Promise<Ticket[]>,
       [Array<{ id: string; position: number }>]
     >(),
+    moveTicket: jest.fn<Promise<Ticket>, [string, string, number]>(),
+    assignToEpic: jest.fn<Promise<Ticket>, [string, string]>(),
+    unassignFromEpic: jest.fn<Promise<Ticket>, [string]>(),
   };
 
   return {

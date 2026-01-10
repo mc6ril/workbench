@@ -1,32 +1,33 @@
+import { isRepositoryError } from "@/core/domain/repositoryError.guards";
+
 import { mapSupabaseAuthError } from "@/infrastructure/supabase/auth/AuthMapper.supabase";
 
-import {
-  AUTH_ERROR_CODES,
-  REPOSITORY_ERROR_CODES,
-} from "@/shared/constants/errorCodes";
+import { AUTH_ERROR_CODES } from "@/shared/constants/errorCodes";
 import { hasErrorCode } from "@/shared/utils/guards";
 
 import { mapSupabaseError } from "./repositoryErrorMapper";
 
 /**
  * Standardized error handling for repository methods.
- * Re-throws domain repository errors (with matching codes) and wraps unknown errors.
+ * Re-throws domain repository errors and wraps unknown errors.
  *
  * @param error - Error caught in try/catch block
  * @param entityType - Type of entity for context (e.g., "Project", "Ticket")
- * @throws Domain repository error (if code matches) or mapped repository error
+ * @param entityId - Optional entity ID for NotFoundError mapping
+ * @throws Domain repository error (if already a RepositoryError) or mapped repository error
  */
 export const handleRepositoryError = (
   error: unknown,
-  entityType: string = "Entity"
+  entityType: string = "Entity",
+  entityId?: string
 ): never => {
-  // Re-throw domain repository errors (errors with codes in REPOSITORY_ERROR_CODES)
-  if (hasErrorCode(error, [...REPOSITORY_ERROR_CODES])) {
+  // Re-throw domain repository errors (use type guard instead of code list)
+  if (isRepositoryError(error)) {
     throw error;
   }
 
   // Map and throw unknown errors
-  throw mapSupabaseError(error, entityType);
+  throw mapSupabaseError(error, entityType, entityId);
 };
 
 /**

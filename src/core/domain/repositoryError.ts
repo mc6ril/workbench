@@ -43,6 +43,11 @@ export type DatabaseError = RepositoryError & {
 };
 
 /**
+ * Union type of all repository error types.
+ */
+export type RepositoryErrorUnion = NotFoundError | ConstraintError | DatabaseError;
+
+/**
  * Error factory functions.
  * These functions create errors with codes and metadata only.
  * User-facing messages are translated in the presentation layer using i18n.
