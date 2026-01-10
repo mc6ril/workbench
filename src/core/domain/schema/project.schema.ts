@@ -49,3 +49,11 @@ export type ProjectRole = "admin" | "member" | "viewer";
 export type ProjectWithRole = Project & {
   role: ProjectRole;
 };
+
+/**
+ * Input schema for getting a project by ID.
+ * Used internally for validation in getProject usecase.
+ */
+export const GetProjectInputSchema = z.object({
+  id: z.string().uuid("Project ID must be a valid UUID"),
+});

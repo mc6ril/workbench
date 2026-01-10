@@ -117,25 +117,25 @@ Simple implementation screens to verify authentication and user privilege system
 
 ### 2.3 Use Cases
 
-| Area      | Sub Area | Title                            | Description                                                                 | Status  |
-| --------- | -------- | -------------------------------- | --------------------------------------------------------------------------- | ------- |
-| Use Cases | Ticket   | Create Ticket Use Case           | Implement createTicket use case with validation and repository call         | Pending |
-| Use Cases | Ticket   | Update Ticket Use Case           | Implement updateTicket use case for title, description, and field updates   | Pending |
-| Use Cases | Ticket   | Delete Ticket Use Case           | Implement deleteTicket use case with cascade checks for subtasks            | Pending |
-| Use Cases | Ticket   | List Tickets Use Case            | Implement listTickets use case with filtering and sorting support           | Pending |
-| Use Cases | Ticket   | Get Ticket Detail Use Case       | Implement getTicketDetail use case with full ticket data                    | Pending |
-| Use Cases | Ticket   | Move Ticket Use Case             | Implement moveTicket use case for board drag-and-drop (status and position) | Pending |
-| Use Cases | Ticket   | Reorder Ticket Use Case          | Implement reorderTicket use case for within-column reordering               | Pending |
-| Use Cases | Ticket   | Assign Ticket to Epic Use Case   | Implement assignTicketToEpic use case with validation                       | Pending |
-| Use Cases | Ticket   | Create Subtask Use Case          | Implement createSubtask use case ensuring single-level nesting              | Pending |
-| Use Cases | Epic     | Create Epic Use Case             | Implement createEpic use case with validation                               | Pending |
-| Use Cases | Epic     | Update Epic Use Case             | Implement updateEpic use case for name and description                      | Pending |
-| Use Cases | Epic     | Delete Epic Use Case             | Implement deleteEpic use case with ticket unassignment                      | Pending |
-| Use Cases | Epic     | List Epics Use Case              | Implement listEpics use case with progress calculation                      | Pending |
-| Use Cases | Epic     | Get Epic Detail Use Case         | Implement getEpicDetail use case with linked tickets and progress           | Pending |
-| Use Cases | Board    | Configure Columns Use Case       | Implement configureColumns use case for board column management             | Pending |
-| Use Cases | Board    | Get Board Configuration Use Case | Implement getBoardConfiguration use case                                    | Pending |
-| Use Cases | Project  | Get Project Use Case             | Implement getProject use case for single-project support                    | Pending |
+| Area      | Sub Area | Title                            | Description                                                                 | Status |
+| --------- | -------- | -------------------------------- | --------------------------------------------------------------------------- | ------ |
+| Use Cases | Ticket   | Create Ticket Use Case           | Implement createTicket use case with validation and repository call         | Done   |
+| Use Cases | Ticket   | Update Ticket Use Case           | Implement updateTicket use case for title, description, and field updates   | Done   |
+| Use Cases | Ticket   | Delete Ticket Use Case           | Implement deleteTicket use case with cascade checks for subtasks            | Done   |
+| Use Cases | Ticket   | List Tickets Use Case            | Implement listTickets use case with filtering and sorting support           | Done   |
+| Use Cases | Ticket   | Get Ticket Detail Use Case       | Implement getTicketDetail use case with full ticket data                    | Done   |
+| Use Cases | Ticket   | Move Ticket Use Case             | Implement moveTicket use case for board drag-and-drop (status and position) | Done   |
+| Use Cases | Ticket   | Reorder Ticket Use Case          | Implement reorderTicket use case for within-column reordering               | Done   |
+| Use Cases | Ticket   | Assign Ticket to Epic Use Case   | Implement assignTicketToEpic use case with validation                       | Done   |
+| Use Cases | Ticket   | Create Subtask Use Case          | Implement createSubtask use case ensuring single-level nesting              | Done   |
+| Use Cases | Epic     | Create Epic Use Case             | Implement createEpic use case with validation                               | Done   |
+| Use Cases | Epic     | Update Epic Use Case             | Implement updateEpic use case for name and description                      | Done   |
+| Use Cases | Epic     | Delete Epic Use Case             | Implement deleteEpic use case with ticket unassignment                      | Done   |
+| Use Cases | Epic     | List Epics Use Case              | Implement listEpics use case with progress calculation                      | Done   |
+| Use Cases | Epic     | Get Epic Detail Use Case         | Implement getEpicDetail use case with linked tickets and progress           | Done   |
+| Use Cases | Board    | Configure Columns Use Case       | Implement configureColumns use case for board column management             | Done   |
+| Use Cases | Board    | Get Board Configuration Use Case | Implement getBoardConfiguration use case                                    | Done   |
+| Use Cases | Project  | Get Project Use Case             | Implement getProject use case for single-project support                    | Done   |
 
 ---
 

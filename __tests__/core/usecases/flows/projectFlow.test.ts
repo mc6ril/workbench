@@ -59,8 +59,8 @@ describe("Project Flow Tests", () => {
       expect(repository.findById).toHaveBeenCalledTimes(1);
       expect(repository.findById).toHaveBeenCalledWith(projectId);
       expect(projectResult).toEqual(mockProject);
-      expect(projectResult?.id).toBe(projectId);
-      expect(projectResult?.name).toBe("Test Project");
+      expect(projectResult.id).toBe(projectId);
+      expect(projectResult.name).toBe("Test Project");
 
       // Act - Step 3: Add user to project
       const addedProjectResult = await addUserToProject(
@@ -96,9 +96,16 @@ describe("Project Flow Tests", () => {
       const projectsResult = await listProjects(repository);
       expect(projectsResult).toHaveLength(1);
 
-      // Act - Step 2: Get project (should return null)
-      const projectResult = await getProject(repository, notFoundProjectId);
-      expect(projectResult).toBeNull();
+      // Act & Assert - Step 2: Get project (should throw NotFoundError)
+      await expect(
+        getProject(repository, notFoundProjectId)
+      ).rejects.toMatchObject({
+        code: "NOT_FOUND",
+        entityType: "Project",
+        entityId: notFoundProjectId,
+      });
+      expect(repository.findById).toHaveBeenCalledTimes(1);
+      expect(repository.findById).toHaveBeenCalledWith(notFoundProjectId);
 
       // Act - Step 3: Try to add user to non-existent project (should throw)
       const notFoundError = createNotFoundError("Project", notFoundProjectId);

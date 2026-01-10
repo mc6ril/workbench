@@ -18,6 +18,7 @@ describe("Board Business Rules", () => {
     name: "To Do",
     status: "todo",
     position: 0,
+    visible: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,
