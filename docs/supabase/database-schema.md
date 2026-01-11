@@ -467,27 +467,25 @@ See Sub-Ticket 15.4 for seed data implementation details.
 
 This schema is implemented via database migrations. The migrations include:
 
-### Core Schema (Migration 000001)
+### Initial Schema Migration (000001 - Consolidated)
+
+The initial schema migration (`000001_initial_schema.sql`) is a **consolidated migration** that creates the complete database schema in a single file:
 
 1. Create all tables in dependency order (projects → boards/epics → columns/tickets)
 2. Add all foreign key constraints
 3. Add all unique constraints
-4. Add position check constraints (`position >= 0`)
-5. Create all indexes
+4. Add all CHECK constraints:
+   - Position constraints: `position >= 0` for tickets and columns
+   - String length validation: `length(trim(field)) > 0` for:
+     - `projects.name`
+     - `tickets.title`, `tickets.status`
+     - `epics.name`
+     - `columns.name`, `columns.status`
+5. Create all indexes (including performance indexes like `idx_tickets_project_epic`)
 6. Set up triggers for `updated_at` timestamps
+7. Include `visible` field on columns table (`visible boolean NOT NULL DEFAULT true`)
 
-### Additional Constraints (Migration 000008)
-
-1. Add CHECK constraints for string length validation:
-   - `length(trim(name)) > 0` for projects.name, epics.name, columns.name
-   - `length(trim(title)) > 0` for tickets.title
-   - `length(trim(status)) > 0` for tickets.status, columns.status
-
-### Schema Updates (Migration 000009)
-
-1. Add `visible` field to columns table:
-   - `visible boolean NOT NULL DEFAULT true`
-   - Matches domain schema requirement
+**Note**: This consolidated migration includes elements that were previously in separate migrations (000008, 000009, 000010). These are now included in the initial schema migration for simpler database setup.
 
 All migrations are idempotent and can be safely re-run.
 

@@ -26,14 +26,21 @@ Migration files follow the naming convention:
 
 **File**: `supabase/migrations/000001_initial_schema.sql`
 
-This migration creates the initial database schema:
+This **consolidated** migration creates the complete initial database schema in a single file:
 
 - **Tables**: `projects`, `tickets`, `epics`, `boards`, `columns`
 - **Foreign Keys**: All relationships between entities
 - **Unique Constraints**: Board per project, column status/position per board
-- **Check Constraints**: Position >= 0 for tickets and columns
-- **Indexes**: Performance indexes on foreign keys and frequently queried fields
+- **Check Constraints**: 
+  - Position >= 0 for tickets and columns
+  - String length validation (non-empty after trim) for: projects.name, tickets.title, tickets.status, epics.name, columns.name, columns.status
+- **Indexes**: 
+  - Performance indexes on foreign keys and frequently queried fields
+  - Composite indexes including `idx_tickets_project_epic` for performance optimization
 - **Triggers**: Automatic `updated_at` timestamp updates
+- **Features**: `visible` field on columns table (default: true)
+
+This migration consolidates elements that were previously in separate migrations (000008, 000009, 000010) into a single, well-organized initial schema migration.
 
 See `docs/database-schema.md` for detailed schema documentation.
 
@@ -45,7 +52,7 @@ This migration inserts initial seed data:
 
 - **Default Project**: One project named "My Workbench"
 - **Default Board**: One board linked to the default project
-- **Default Columns**: Three columns with status values:
+- **Default Columns**: Three columns with status values (all with `visible = true`):
   - "To Do" (status: `todo`, position: 0)
   - "In Progress" (status: `in_progress`, position: 1)
   - "Done" (status: `done`, position: 2)
