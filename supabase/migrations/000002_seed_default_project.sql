@@ -43,7 +43,7 @@ ON CONFLICT (id) DO NOTHING;
 -- Status values: 'todo', 'in_progress', 'done'
 -- These status values will be used in tickets.status
 
-INSERT INTO columns (id, board_id, name, status, position, created_at, updated_at)
+INSERT INTO columns (id, board_id, name, status, position, visible, created_at, updated_at)
 VALUES
   (
     '00000000-0000-0000-0000-000000000010',
@@ -51,6 +51,7 @@ VALUES
     'To Do',
     'todo',
     0,
+    true,
     now(),
     now()
   ),
@@ -60,6 +61,7 @@ VALUES
     'In Progress',
     'in_progress',
     1,
+    true,
     now(),
     now()
   ),
@@ -69,6 +71,7 @@ VALUES
     'Done',
     'done',
     2,
+    true,
     now(),
     now()
   )
@@ -77,4 +80,5 @@ SET
   name = EXCLUDED.name,
   status = EXCLUDED.status,
   position = EXCLUDED.position,
+  visible = EXCLUDED.visible,
   updated_at = now();

@@ -8,23 +8,16 @@ Migrations are numbered sequentially and applied in order:
 
 ### Core Migrations (Required)
 
-- `000001_initial_schema.sql` - Creates initial database schema (projects, tickets, epics, boards, columns)
+- `000001_initial_schema.sql` - **Consolidated initial database schema** - Creates all tables, constraints (including string length validation), indexes (including performance indexes), triggers, and includes the `visible` field on columns table. This migration combines elements from the original 000001, 000008, 000009, and 000010 migrations into a single, well-organized initial schema migration for fresh database setups.
 - `000002_seed_default_project.sql` - Inserts default project, board, and columns (seed data)
 - `000003_add_project_members_and_rls.sql` - Adds project_members table and Row Level Security policies
 - `000004_auto_add_creator_as_admin.sql` - Auto-adds project creator as admin via trigger
 - `000005_allow_users_to_add_themselves_as_viewer.sql` - Allows authenticated users to add themselves as viewer to projects
 
-### Database Constraints and Schema Updates
-
-- `000008_add_string_length_check_constraints.sql` - Adds CHECK constraints for string length validation (ticket 47)
-- `000009_add_visible_field_to_columns.sql` - Adds visible field to columns table to match domain schema (ticket 46)
-- `000010_add_performance_indexes.sql` - Adds composite indexes for performance optimization (ticket 48)
-
 ### Project Creation Fix
 
 - `000006_fix_project_creation_rls.sql` - Fixes RLS policies for project creation (ensures permissions and working policies)
 - `000007_bypass_rls_with_function.sql` - Creates SECURITY DEFINER functions to bypass RLS for project creation
-- `000009_restore_missing_project_policies.sql` - Restores missing SELECT, UPDATE, and DELETE policies for projects table
 
 ## Running Migrations
 
@@ -46,9 +39,29 @@ The seed migration (`000002_seed_default_project.sql`) creates:
 
 - Default project: "My Workbench"
 - Default board linked to the project
-- Three default columns: "To Do", "In Progress", "Done"
+- Three default columns: "To Do", "In Progress", "Done" (all with `visible = true`)
 
 The seed migration is **idempotent** - safe to run multiple times. See [docs/migrations.md](../../docs/migrations.md) for more details.
+
+## Consolidated Initial Schema
+
+The `000001_initial_schema.sql` migration is a consolidated migration that includes:
+
+- **Tables**: projects, boards, columns, epics, tickets
+- **Constraints**: 
+  - All foreign key constraints
+  - All unique constraints
+  - All CHECK constraints (position >= 0, string length validation for non-empty fields)
+- **Indexes**: 
+  - All single-column indexes
+  - All composite indexes (including `idx_tickets_project_epic` for performance)
+- **Triggers**: 
+  - `update_updated_at_column()` function
+  - All `updated_at` triggers for automatic timestamp updates
+- **Features**: 
+  - `visible` field on columns table (default: true)
+
+This consolidated migration makes it easier to set up fresh databases with the complete schema in a single step. The migration is idempotent and can be safely applied multiple times.
 
 ## Creating New Migrations
 
