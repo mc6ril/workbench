@@ -16,6 +16,7 @@ export type ColumnRow = {
   name: string;
   status: string;
   position: number;
+  visible: boolean;
   created_at: string;
   updated_at: string;
 };

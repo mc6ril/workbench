@@ -14,6 +14,11 @@ Migrations are numbered sequentially and applied in order:
 - `000004_auto_add_creator_as_admin.sql` - Auto-adds project creator as admin via trigger
 - `000005_allow_users_to_add_themselves_as_viewer.sql` - Allows authenticated users to add themselves as viewer to projects
 
+### Database Constraints and Schema Updates
+
+- `000008_add_string_length_check_constraints.sql` - Adds CHECK constraints for string length validation (ticket 47)
+- `000009_add_visible_field_to_columns.sql` - Adds visible field to columns table to match domain schema (ticket 46)
+
 ### Project Creation Fix
 
 - `000006_fix_project_creation_rls.sql` - Fixes RLS policies for project creation (ensures permissions and working policies)
