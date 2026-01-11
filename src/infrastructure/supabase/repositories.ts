@@ -6,6 +6,8 @@
 import { createSupabaseBrowserClient } from "@/infrastructure/supabase/shared/client-browser";
 
 import { createAuthRepository } from "./auth/AuthRepository.supabase";
+import { createBoardRepository } from "./board/BoardRepository.supabase";
+import { createEpicRepository } from "./epic/EpicRepository.supabase";
 import { createProjectRepository } from "./project/ProjectRepository.supabase";
 import { createTicketRepository } from "./ticket/TicketRepository.supabase";
 
@@ -19,8 +21,16 @@ export const projectRepository = createProjectRepository(
 export const ticketRepository = createTicketRepository(
   createSupabaseBrowserClient()
 );
+export const epicRepository = createEpicRepository(
+  createSupabaseBrowserClient()
+);
+export const boardRepository = createBoardRepository(
+  createSupabaseBrowserClient()
+);
 
 // Factory functions for server contexts (Server Components, Server Actions)
 export { createAuthRepository } from "./auth/AuthRepository.supabase";
+export { createBoardRepository } from "./board/BoardRepository.supabase";
+export { createEpicRepository } from "./epic/EpicRepository.supabase";
 export { createProjectRepository } from "./project/ProjectRepository.supabase";
 export { createTicketRepository } from "./ticket/TicketRepository.supabase";
