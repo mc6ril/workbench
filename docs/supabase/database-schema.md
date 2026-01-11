@@ -69,12 +69,16 @@ The project_members table links users to projects with specific roles for access
 
 The projects table stores project information. For the MVP, we assume a single project, but the schema supports multiple projects for future extensibility.
 
-| Column     | Type        | Constraints           | Description           |
-| ---------- | ----------- | --------------------- | --------------------- |
-| id         | uuid        | PRIMARY KEY, NOT NULL | Unique identifier     |
-| name       | text        | NOT NULL              | Project name          |
-| created_at | timestamptz | NOT NULL, DEFAULT now | Creation timestamp    |
-| updated_at | timestamptz | NOT NULL, DEFAULT now | Last update timestamp |
+| Column     | Type        | Constraints                              | Description           |
+| ---------- | ----------- | ---------------------------------------- | --------------------- |
+| id         | uuid        | PRIMARY KEY, NOT NULL                    | Unique identifier     |
+| name       | text        | NOT NULL, CHECK (length(trim(name)) > 0) | Project name          |
+| created_at | timestamptz | NOT NULL, DEFAULT now                    | Creation timestamp    |
+| updated_at | timestamptz | NOT NULL, DEFAULT now                    | Last update timestamp |
+
+**Check Constraints:**
+
+- `length(trim(name)) > 0`: Name must be non-empty after trimming whitespace (database-level constraint)
 
 **Indexes:**
 
@@ -95,9 +99,9 @@ The tickets table stores all work items (both regular tickets and sub-tasks).
 | ----------- | ----------- | ------------------------------------------ | ------------------------------------------------ |
 | id          | uuid        | PRIMARY KEY, NOT NULL                      | Unique identifier                                |
 | project_id  | uuid        | FOREIGN KEY, NOT NULL                      | Reference to projects.id                         |
-| title       | text        | NOT NULL, CHECK (length > 0)               | Ticket title (required, non-empty)               |
+| title       | text        | NOT NULL, CHECK (length(trim(title)) > 0)  | Ticket title (required, non-empty)               |
 | description | text        |                                            | Optional ticket description                      |
-| status      | text        | NOT NULL                                   | Ticket status (references columns.status)        |
+| status      | text        | NOT NULL, CHECK (length(trim(status)) > 0) | Ticket status (references columns.status)        |
 | position    | integer     | NOT NULL, CHECK (position >= 0), DEFAULT 0 | Position within status/column                    |
 | epic_id     | uuid        | FOREIGN KEY                                | Optional reference to epics.id                   |
 | parent_id   | uuid        | FOREIGN KEY                                | Optional reference to tickets.id (for sub-tasks) |
@@ -127,7 +131,8 @@ The tickets table stores all work items (both regular tickets and sub-tasks).
 **Check Constraints:**
 
 - `position >= 0`: Position must be non-negative
-- `length(title) > 0`: Title must be non-empty (handled in application layer or trigger)
+- `length(trim(title)) > 0`: Title must be non-empty after trimming whitespace (database-level constraint)
+- `length(trim(status)) > 0`: Status must be non-empty after trimming whitespace (database-level constraint)
 
 **Business Rules:**
 
@@ -142,14 +147,14 @@ The tickets table stores all work items (both regular tickets and sub-tasks).
 
 The epics table stores epic (feature group) information.
 
-| Column      | Type        | Constraints                  | Description                     |
-| ----------- | ----------- | ---------------------------- | ------------------------------- |
-| id          | uuid        | PRIMARY KEY, NOT NULL        | Unique identifier               |
-| project_id  | uuid        | FOREIGN KEY, NOT NULL        | Reference to projects.id        |
-| name        | text        | NOT NULL, CHECK (length > 0) | Epic name (required, non-empty) |
-| description | text        |                              | Optional epic description       |
-| created_at  | timestamptz | NOT NULL, DEFAULT now        | Creation timestamp              |
-| updated_at  | timestamptz | NOT NULL, DEFAULT now        | Last update timestamp           |
+| Column      | Type        | Constraints                              | Description                     |
+| ----------- | ----------- | ---------------------------------------- | ------------------------------- |
+| id          | uuid        | PRIMARY KEY, NOT NULL                    | Unique identifier               |
+| project_id  | uuid        | FOREIGN KEY, NOT NULL                    | Reference to projects.id        |
+| name        | text        | NOT NULL, CHECK (length(trim(name)) > 0) | Epic name (required, non-empty) |
+| description | text        |                                          | Optional epic description       |
+| created_at  | timestamptz | NOT NULL, DEFAULT now                    | Creation timestamp              |
+| updated_at  | timestamptz | NOT NULL, DEFAULT now                    | Last update timestamp           |
 
 **Foreign Keys:**
 
@@ -162,7 +167,7 @@ The epics table stores epic (feature group) information.
 
 **Check Constraints:**
 
-- `length(name) > 0`: Name must be non-empty (handled in application layer or trigger)
+- `length(trim(name)) > 0`: Name must be non-empty after trimming whitespace (database-level constraint)
 
 **Notes:**
 
@@ -210,9 +215,10 @@ The columns table stores board column (status) definitions.
 | ---------- | ----------- | ------------------------------------------ | ------------------------------------------ |
 | id         | uuid        | PRIMARY KEY, NOT NULL                      | Unique identifier                          |
 | board_id   | uuid        | FOREIGN KEY, NOT NULL                      | Reference to boards.id                     |
-| name       | text        | NOT NULL, CHECK (length > 0)               | Column display name                        |
-| status     | text        | NOT NULL                                   | Status identifier (used in tickets.status) |
+| name       | text        | NOT NULL, CHECK (length(trim(name)) > 0)   | Column display name                        |
+| status     | text        | NOT NULL, CHECK (length(trim(status)) > 0) | Status identifier (used in tickets.status) |
 | position   | integer     | NOT NULL, CHECK (position >= 0), DEFAULT 0 | Column order within board                  |
+| visible    | boolean     | NOT NULL, DEFAULT true                     | Whether the column is visible in the board |
 | created_at | timestamptz | NOT NULL, DEFAULT now                      | Creation timestamp                         |
 | updated_at | timestamptz | NOT NULL, DEFAULT now                      | Last update timestamp                      |
 
@@ -236,13 +242,15 @@ The columns table stores board column (status) definitions.
 **Check Constraints:**
 
 - `position >= 0`: Position must be non-negative
-- `length(name) > 0`: Name must be non-empty (handled in application layer or trigger)
+- `length(trim(name)) > 0`: Name must be non-empty after trimming whitespace (database-level constraint)
+- `length(trim(status)) > 0`: Status must be non-empty after trimming whitespace (database-level constraint)
 
 **Notes:**
 
 - Status values in `tickets.status` must match a `status` value in `columns` for the project's board
 - Columns are ordered by `position`
 - Column `status` is used as the value stored in `tickets.status`
+- Column `visible` controls whether the column is displayed in the board (default: true)
 
 ---
 
@@ -358,10 +366,14 @@ The columns table stores board column (status) definitions.
 
 ### Check Constraints
 
-- `tickets.position >= 0`
-- `columns.position >= 0`
-- `length(title) > 0` (tickets, enforced in application layer)
-- `length(name) > 0` (epics, columns, enforced in application layer)
+- `tickets.position >= 0`: Position must be non-negative
+- `columns.position >= 0`: Position must be non-negative
+- `length(trim(tickets.title)) > 0`: Ticket title must be non-empty (database-level constraint)
+- `length(trim(tickets.status)) > 0`: Ticket status must be non-empty (database-level constraint)
+- `length(trim(projects.name)) > 0`: Project name must be non-empty (database-level constraint)
+- `length(trim(epics.name)) > 0`: Epic name must be non-empty (database-level constraint)
+- `length(trim(columns.name)) > 0`: Column name must be non-empty (database-level constraint)
+- `length(trim(columns.status)) > 0`: Column status must be non-empty (database-level constraint)
 
 ### Not Null Constraints
 
@@ -401,8 +413,7 @@ The following rules are enforced in application logic (usecases/repositories) ra
 
 1. **Status Validation**: `tickets.status` must match a `columns.status` for the project's board
 2. **Single-Level Nesting**: Tickets with `parent_id` cannot have sub-tasks
-3. **Non-Empty Strings**: Title, name fields must be non-empty (can use CHECK constraints or application validation)
-4. **Position Uniqueness**: Position uniqueness per status/board is managed in application layer for flexibility
+3. **Position Uniqueness**: Position uniqueness per status/board is managed in application layer for flexibility
 
 ### Database-Level Enforcement
 
@@ -410,7 +421,8 @@ The following rules are enforced in application logic (usecases/repositories) ra
 - Primary key uniqueness
 - Unique constraints (project_id on boards, status/position on columns)
 - NOT NULL constraints on required fields
-- Check constraints on position values
+- Check constraints on position values (position >= 0)
+- Check constraints on string length (all text fields must be non-empty after trimming)
 
 ---
 
@@ -452,14 +464,31 @@ See Sub-Ticket 15.4 for seed data implementation details.
 
 ## Migration Notes
 
-This schema will be implemented via database migrations (Sub-Ticket 15.3). The migration should:
+This schema is implemented via database migrations. The migrations include:
+
+### Core Schema (Migration 000001)
 
 1. Create all tables in dependency order (projects → boards/epics → columns/tickets)
 2. Add all foreign key constraints
 3. Add all unique constraints
-4. Add all check constraints
+4. Add position check constraints (`position >= 0`)
 5. Create all indexes
-6. Set up triggers for `updated_at` timestamps (if using triggers, otherwise handled in application)
+6. Set up triggers for `updated_at` timestamps
+
+### Additional Constraints (Migration 000008)
+
+1. Add CHECK constraints for string length validation:
+   - `length(trim(name)) > 0` for projects.name, epics.name, columns.name
+   - `length(trim(title)) > 0` for tickets.title
+   - `length(trim(status)) > 0` for tickets.status, columns.status
+
+### Schema Updates (Migration 000009)
+
+1. Add `visible` field to columns table:
+   - `visible boolean NOT NULL DEFAULT true`
+   - Matches domain schema requirement
+
+All migrations are idempotent and can be safely re-run.
 
 ---
 
