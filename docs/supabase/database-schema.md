@@ -402,6 +402,7 @@ All primary keys, foreign keys, and essential fields are NOT NULL.
 - `tickets.position` (for ordering)
 - `columns.position` (for ordering)
 - `tickets(project_id, status, position)` (composite index for board queries)
+- `tickets(project_id, epic_id)` (composite index for queries filtering tickets by project and epic)
 
 ---
 

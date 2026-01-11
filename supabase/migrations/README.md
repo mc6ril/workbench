@@ -18,6 +18,7 @@ Migrations are numbered sequentially and applied in order:
 
 - `000008_add_string_length_check_constraints.sql` - Adds CHECK constraints for string length validation (ticket 47)
 - `000009_add_visible_field_to_columns.sql` - Adds visible field to columns table to match domain schema (ticket 46)
+- `000010_add_performance_indexes.sql` - Adds composite indexes for performance optimization (ticket 48)
 
 ### Project Creation Fix
 
