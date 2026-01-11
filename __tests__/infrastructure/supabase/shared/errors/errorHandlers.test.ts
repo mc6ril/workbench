@@ -60,6 +60,44 @@ describe("handleRepositoryError", () => {
       expect(error).toHaveProperty("debugMessage");
     }
   });
+
+  it("should map network errors via mapSupabaseError", () => {
+    // Arrange - TypeError with network/fetch keyword (network error)
+    const networkError = new TypeError("Failed to fetch");
+
+    expect(() => {
+      handleRepositoryError(networkError, "Ticket", "ticket-123");
+    }).toThrow();
+
+    try {
+      handleRepositoryError(networkError, "Ticket", "ticket-123");
+    } catch (error) {
+      expect(error).toHaveProperty("code", "DATABASE_ERROR");
+      expect(error).toHaveProperty("debugMessage");
+      expect((error as { debugMessage?: string }).debugMessage).toContain(
+        "Network error"
+      );
+    }
+  });
+
+  it("should handle errors with entity context", () => {
+    // Arrange
+    const error = new Error("Test error");
+    const entityType = "Project";
+    const entityId = "project-123";
+
+    expect(() => {
+      handleRepositoryError(error, entityType, entityId);
+    }).toThrow();
+
+    try {
+      handleRepositoryError(error, entityType, entityId);
+    } catch (thrownError) {
+      expect(thrownError).toHaveProperty("code", "DATABASE_ERROR");
+      // Verify error was mapped (not original error)
+      expect(thrownError).not.toBe(error);
+    }
+  });
 });
 
 describe("handleAuthError", () => {

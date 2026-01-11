@@ -24,10 +24,13 @@ const config: Config = {
   ],
   coverageDirectory: "coverage",
   coveragePathIgnorePatterns: ["/node_modules/", "/__tests__/"],
-  globals: {
-    "ts-jest": {
-      tsconfig: "<rootDir>/tsconfig.json",
-    },
+  transform: {
+    "^.+\\.tsx?$": [
+      "ts-jest",
+      {
+        tsconfig: "<rootDir>/tsconfig.json",
+      },
+    ],
   },
 };
 

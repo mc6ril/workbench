@@ -127,16 +127,62 @@ describe("mapSupabaseError", () => {
     expect(result).toHaveProperty("originalError", supabaseError);
   });
 
+  it("should map network errors to DatabaseError", () => {
+    // Arrange - TypeError with fetch/network keyword (as detected by isNetworkError)
+    const networkError = new TypeError("Failed to fetch");
+
+    // Act
+    const result = mapSupabaseError(networkError, "Project");
+
+    // Assert
+    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result).toHaveProperty("debugMessage");
+    expect(result.debugMessage).toContain("Network error");
+    expect(result.debugMessage).toContain("Failed to fetch");
+    expect(result).toHaveProperty("originalError", networkError);
+  });
+
+  it("should map network connection timeout errors to DatabaseError", () => {
+    // Arrange - Network error with timeout message
+    const timeoutError = new TypeError("Network request failed");
+
+    // Act
+    const result = mapSupabaseError(timeoutError, "Ticket");
+
+    // Assert
+    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result).toHaveProperty("debugMessage");
+    expect(result.debugMessage).toContain("Network error");
+    expect(result.debugMessage).toContain("Network request failed");
+    expect(result).toHaveProperty("originalError", timeoutError);
+  });
+
+  it("should prioritize network error detection over Supabase error detection", () => {
+    // Arrange - A TypeError with network keyword should be detected as network error
+    // even if it has properties that look like Supabase errors
+    const networkError = new TypeError("fetch failed");
+    // Add properties that might confuse error detection
+    (networkError as unknown as { code?: string; message?: string; details?: string }).code = "NETWORK_ERROR";
+    (networkError as unknown as { code?: string; message?: string; details?: string }).details = "Connection timeout";
+
+    // Act
+    const result = mapSupabaseError(networkError, "Project");
+
+    // Assert - Should be mapped as network error (DatabaseError with network prefix)
+    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result.debugMessage).toContain("Network error");
+  });
+
   it("should map Error instances to DatabaseError", () => {
-    // Arrange
-    const error = new Error("Network connection failed");
+    // Arrange - Generic Error (not a network error)
+    const error = new Error("Generic database error");
 
     // Act
     const result = mapSupabaseError(error, "Project");
 
     // Assert
     expect(result).toHaveProperty("code", "DATABASE_ERROR");
-    expect(result).toHaveProperty("debugMessage");
+    expect(result).toHaveProperty("debugMessage", "Generic database error");
     expect(result).toHaveProperty("originalError", error);
   });
 
