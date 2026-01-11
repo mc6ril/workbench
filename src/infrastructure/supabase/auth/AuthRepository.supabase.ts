@@ -148,6 +148,21 @@ export const createAuthRepository = (
         } = await client.auth.getUser();
 
         if (error) {
+          // "Auth session missing!" is a normal case (no session), not an error
+          // Return null silently instead of logging as error
+          const isAuthSessionMissingError =
+            error &&
+            typeof error === "object" &&
+            "name" in error &&
+            error.name === "AuthSessionMissingError" &&
+            "message" in error &&
+            error.message === "Auth session missing!";
+
+          if (isAuthSessionMissingError) {
+            return null;
+          }
+
+          // For other errors, handle normally
           handleAuthError(error);
         }
 

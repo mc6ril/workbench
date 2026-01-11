@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 
+import { isNotFoundError } from "@/core/domain/repositoryError.guards";
+
 import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
 
 import { createAuthRepository } from "@/infrastructure/supabase/repositories";
@@ -37,9 +39,11 @@ const LandingLayout = async ({
     }
 
     // On NotFoundError (no session), show landing page (fail-open for public route)
-    // On other errors, also show landing page (fail-open)
-    // User can still access landing even if auth check fails
-    console.error("[LandingLayout] Auth check error:", error);
+    // NotFoundError is normal on public pages - don't log it
+    // On other errors, also show landing page (fail-open) but log them
+    if (!isNotFoundError(error)) {
+      console.error("[LandingLayout] Auth check error:", error);
+    }
   }
 
   // No session, show landing page
