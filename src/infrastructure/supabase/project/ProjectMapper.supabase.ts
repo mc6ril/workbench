@@ -1,44 +1,29 @@
-import { z } from "zod";
-
 import type {
   Project,
   ProjectRole,
   ProjectWithRole,
 } from "@/core/domain/schema/project.schema";
-import { ProjectSchema } from "@/core/domain/schema/project.schema";
 
-import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type { ProjectRow } from "@/infrastructure/supabase/types";
+
+import { toDate } from "@/shared/utils/guards";
 
 /**
  * Maps a Supabase row to a domain Project entity.
- * Converts snake_case database fields to camelCase domain fields.
+ * Translates snake_case database fields to camelCase domain fields.
+ *
+ * Pure transformation function: only translates structure and converts types (no validation, no error handling).
  *
  * @param row - Supabase row data
  * @returns Domain Project entity
- * @throws Error if row data is invalid
  */
 export const mapProjectRowToDomain = (row: ProjectRow): Project => {
-  try {
-    // Clean the data before parsing (schema will handle UUID validation and normalization)
-    const cleanData = {
-      id: String(row.id).trim(),
-      name: String(row.name).trim(),
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-    };
-
-    return ProjectSchema.parse(cleanData);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      const debugMessage = `Failed to map project: ${error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")}`;
-      return handleRepositoryError(
-        new Error(debugMessage),
-        "ProjectMapper"
-      );
-    }
-    return handleRepositoryError(error, "ProjectMapper");
-  }
+  return {
+    id: row.id,
+    name: row.name,
+    createdAt: toDate(row.created_at),
+    updatedAt: toDate(row.updated_at),
+  };
 };
 
 /**
