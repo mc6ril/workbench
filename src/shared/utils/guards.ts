@@ -123,3 +123,22 @@ export const isPlainObject = (
   }
   return Object.getPrototypeOf(value) === Object.prototype;
 };
+
+/**
+ * Converts a value to a Date object.
+ * Handles both Date objects and date strings.
+ *
+ * Pure transformation function: throws simple Error on invalid date (not domain error).
+ * Error handling is done at repository level.
+ *
+ * @param value - Date object or date string
+ * @returns Date object
+ * @throws Error if value cannot be converted to a valid date
+ */
+export const toDate = (value: unknown): Date => {
+  const date = value instanceof Date ? value : new Date(String(value));
+  if (Number.isNaN(date.getTime())) {
+    throw new Error(`Invalid date value: ${String(value)}`);
+  }
+  return date;
+};
