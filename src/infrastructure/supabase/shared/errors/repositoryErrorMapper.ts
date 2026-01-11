@@ -5,8 +5,22 @@ import {
   type RepositoryErrorUnion,
 } from "@/core/domain/repositoryError";
 
+import { isNetworkError } from "@/shared/utils/errorHandling";
+
 /**
  * Maps Supabase errors to domain repository errors.
+ *
+ * This function converts infrastructure-specific errors (Supabase, network, etc.)
+ * into domain-level errors that can be handled consistently by usecases.
+ *
+ * Error Mapping Strategy:
+ * 1. Network errors (connection failures, timeouts) → DatabaseError
+ * 2. Not found errors (PGRST116) → NotFoundError
+ * 3. Constraint violations (23505, 23503, 23514) → ConstraintError
+ * 4. RLS policy violations (42501) → ConstraintError with RLS_POLICY_VIOLATION
+ * 5. Generic Supabase errors → DatabaseError
+ * 6. Generic Error instances → DatabaseError
+ * 7. Unknown errors → DatabaseError (fallback)
  *
  * @param error - Supabase error or unknown error
  * @param entityType - Type of entity for context (e.g., "Project", "Ticket")
@@ -18,6 +32,16 @@ export const mapSupabaseError = (
   entityType: string = "Entity",
   entityId?: string
 ): RepositoryErrorUnion => {
+  // Check for network errors first (before Supabase-specific errors)
+  // Network errors include connection failures, timeouts, and fetch failures
+  if (isNetworkError(error)) {
+    const networkError = error as Error;
+    return createDatabaseError(
+      `Network error: ${networkError.message}`,
+      networkError
+    );
+  }
+
   // Handle Supabase PostgrestError
   if (
     error &&
@@ -34,8 +58,8 @@ export const mapSupabaseError = (
     };
 
     // Map specific Supabase error codes to domain errors
+    // PGRST116: Not found (no rows returned)
     if (supabaseError.code === "PGRST116") {
-      // Not found (no rows returned)
       // Use Supabase-provided message for debugging instead of a user-facing message.
       const debugMessage =
         supabaseError.message ||
@@ -47,6 +71,11 @@ export const mapSupabaseError = (
         debugMessage
       );
     }
+
+    // Constraint violation errors
+    // 23505: Unique constraint violation
+    // 23503: Foreign key constraint violation
+    // 23514: Check constraint violation
 
     if (
       supabaseError.code === "23505" ||
@@ -61,6 +90,7 @@ export const mapSupabaseError = (
     }
 
     // RLS (Row-Level Security) policy violations
+    // 42501: Insufficient privilege (RLS policy violation)
     // These should be mapped to ConstraintError as they represent policy constraints
     if (
       supabaseError.code === "42501" ||
@@ -80,6 +110,7 @@ export const mapSupabaseError = (
     }
 
     // Generic database error - keep original Supabase message for debugging.
+    // This catches any other Supabase error codes not specifically handled above
     const debugMessage =
       supabaseError.message ||
       supabaseError.details ||
@@ -88,11 +119,13 @@ export const mapSupabaseError = (
     return createDatabaseError(debugMessage, supabaseError);
   }
 
-  // Handle generic errors
+  // Handle generic Error instances (e.g., TypeError, ReferenceError)
+  // These are mapped to DatabaseError with the error message preserved
   if (error instanceof Error) {
     return createDatabaseError(error.message, error);
   }
 
-  // Fallback for unknown errors
+  // Fallback for unknown error types (null, undefined, primitives, etc.)
+  // This ensures we always return a domain error, never throw infrastructure errors
   return createDatabaseError("Unknown repository error", error);
 };
