@@ -5,7 +5,7 @@ import React, { useMemo } from "react";
 import BoardColumn, {
   BoardColumnProps,
 } from "@/presentation/components/boardColumn/BoardColumn";
-import { Text } from "@/presentation/components/ui";
+import { Text, Title } from "@/presentation/components/ui";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
@@ -96,9 +96,9 @@ const BoardView = ({
       aria-labelledby={containerId}
       aria-label={t("ariaLabel")}
     >
-      <h2 id={containerId} className="visually-hidden">
+      <Title id={containerId} variant="h2" className="visually-hidden">
         {t("title")}
-      </h2>
+      </Title>
       <div className={styles["board-view__columns"]} role="list">
         {columns
           .filter((column) => column.isVisible !== false)

@@ -2,7 +2,13 @@
 
 import React from "react";
 
-import { Button, Input, Select, Stack } from "@/presentation/components/ui";
+import {
+  Button,
+  Input,
+  Select,
+  Stack,
+  Title,
+} from "@/presentation/components/ui";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
@@ -73,9 +79,9 @@ const TicketFilters = ({
       aria-labelledby={filtersId}
       aria-label={t("searchLabel")}
     >
-      <h2 id={filtersId} className="visually-hidden">
+      <Title id={filtersId} variant="h2" className="visually-hidden">
         {t("searchLabel")}
-      </h2>
+      </Title>
       <Stack
         as="div"
         direction="horizontal"
