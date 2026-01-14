@@ -198,7 +198,7 @@
         "emptyMessage": "Créez un ticket pour commencer à travailler",
         "errorTitle": "Erreur lors du chargement des tickets",
         "count": "{count} ticket",
-        "count_plural": "{count} tickets"
+        "count_other": "{count} tickets"
       },
       "filters": {
         "searchLabel": "Rechercher",
@@ -218,7 +218,7 @@
       "bulkActions": {
         "title": "Actions groupées",
         "selectedCount": "{count} ticket sélectionné",
-        "selectedCount_plural": "{count} tickets sélectionnés",
+        "selectedCount_other": "{count} tickets sélectionnés",
         "deleteLabel": "Supprimer",
         "moveLabel": "Déplacer",
         "changeStatusLabel": "Modifier le statut"
@@ -272,7 +272,7 @@
         "assigneeLabel": "Assigné à",
         "priorityLabel": "Priorité",
         "storyPointsLabel": "{count} point",
-        "storyPointsLabel_plural": "{count} points",
+        "storyPointsLabel_other": "{count} points",
         "openTicketLabel": "Ouvrir le ticket",
         "editTicketLabel": "Modifier le ticket"
       },
@@ -291,7 +291,7 @@
         "ariaLabel": "Liste des epics",
         "title": "Epics",
         "count": "{count} epic",
-        "count_plural": "{count} epics",
+        "count_other": "{count} epics",
         "emptyTitle": "Aucun epic",
         "emptyMessage": "Créez votre premier epic pour commencer",
         "errorTitle": "Erreur lors du chargement des epics"
