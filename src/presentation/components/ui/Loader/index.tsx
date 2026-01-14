@@ -2,6 +2,8 @@
 
 import React from "react";
 
+import { Text } from "@/presentation/components/ui";
+
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
@@ -85,7 +87,9 @@ const Loader = ({
       aria-busy="true"
     >
       <div className={styles["loader__spinner"]} aria-hidden="true" />
-      <p className={styles["loader__message"]}>{displayMessage}</p>
+      <Text as="p" variant="body" className={styles["loader__message"]}>
+        {displayMessage}
+      </Text>
     </div>
   );
 };

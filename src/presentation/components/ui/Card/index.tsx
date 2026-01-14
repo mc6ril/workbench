@@ -1,5 +1,7 @@
 import React, { useCallback } from "react";
 
+import { Title } from "@/presentation/components/ui";
+
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { isEnterKey, isSpaceKey } from "@/shared/a11y/utilities";
 
@@ -99,7 +101,9 @@ const Card = ({
       {title && (
         <div className={styles["card__header"]}>
           {typeof title === "string" ? (
-            <h3 className={styles["card__title"]}>{title}</h3>
+            <Title variant="h3" className={styles["card__title"]}>
+              {title}
+            </Title>
           ) : (
             title
           )}

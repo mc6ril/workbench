@@ -1,0 +1,49 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/typography" as *;
+
+.columns-configuration {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  border-radius: $border-radius-md;
+  background-color: $color-surface-subtle;
+}
+
+.columns-configuration__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-xs;
+}
+
+.columns-configuration__title {
+  margin: 0;
+  @include typography-body-strong;
+}
+
+.columns-configuration__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.columns-configuration__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-xs;
+}
+
+.columns-configuration__item-main {
+  flex: 1 1 auto;
+}
+
+.columns-configuration__item-actions {
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-xs;
+}
+

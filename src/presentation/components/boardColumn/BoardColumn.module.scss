@@ -1,0 +1,49 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/typography" as *;
+
+.board-column {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  min-width: 260px;
+  max-width: 340px;
+  padding: $spacing-sm;
+  border-radius: $border-radius-md;
+  background-color: $color-surface-subtle;
+}
+
+.board-column__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-xs;
+}
+
+.board-column__title {
+  margin: 0;
+  @include typography-body-strong;
+  color: $color-text-primary;
+}
+
+.board-column__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.board-column__list-item {
+  list-style: none;
+}
+
+.board-column__empty {
+  padding: $spacing-sm;
+  border-radius: $border-radius-sm;
+  border: 1px dashed $color-border-subtle;
+  color: $color-text-secondary;
+}

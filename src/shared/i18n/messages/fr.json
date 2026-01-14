@@ -244,6 +244,48 @@
         "selectTicketLabel": "Sélectionner le ticket"
       }
     },
+    "board": {
+      "view": {
+        "title": "Tableau de bord",
+        "ariaLabel": "Vue tableau de bord",
+        "loading": "Chargement du tableau...",
+        "emptyMessage": "Aucun ticket à afficher dans le tableau"
+      },
+      "column": {
+        "ariaLabel": "Colonne {title}",
+        "dropZoneAriaLabel": "Zone de dépôt pour la colonne {title}",
+        "emptyDropZoneAriaLabel": "Zone de dépôt vide pour la colonne {title}",
+        "emptyColumnPlaceholder": "Aucun ticket"
+      },
+      "filters": {
+        "searchLabel": "Rechercher",
+        "searchPlaceholder": "Rechercher par titre ou description",
+        "statusLabel": "Statut",
+        "epicLabel": "Epic",
+        "assigneeLabel": "Assigné à",
+        "resetLabel": "Réinitialiser les filtres"
+      },
+      "ticketCard": {
+        "ticketAriaLabel": "Ticket",
+        "statusLabel": "Statut",
+        "epicLabel": "Epic",
+        "assigneeLabel": "Assigné à",
+        "priorityLabel": "Priorité",
+        "storyPointsLabel": "{count} point",
+        "storyPointsLabel_plural": "{count} points",
+        "openTicketLabel": "Ouvrir le ticket",
+        "editTicketLabel": "Modifier le ticket"
+      },
+      "columnsConfiguration": {
+        "title": "Configuration des colonnes",
+        "ariaLabel": "Configuration des colonnes du tableau",
+        "closeLabel": "Fermer",
+        "moveUpLabel": "Monter",
+        "moveDownLabel": "Descendre",
+        "moveUpAriaLabel": "Déplacer la colonne {title} vers le haut",
+        "moveDownAriaLabel": "Déplacer la colonne {title} vers le bas"
+      }
+    },
     "landing": {
       "title": "Workbench",
       "subtitle": "Un outil léger et personnel de gestion de tâches et de projets",

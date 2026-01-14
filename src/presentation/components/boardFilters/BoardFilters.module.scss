@@ -1,0 +1,32 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/breakpoints" as *;
+
+.board-filters {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.board-filters__row {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+}
+
+.board-filters__field {
+  flex: 1 1 0;
+}
+
+.board-filters__actions {
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-xs;
+  justify-content: flex-start;
+}
+

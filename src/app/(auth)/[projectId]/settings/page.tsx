@@ -2,6 +2,8 @@
 
 import { use } from "react";
 
+import { Title } from "@/presentation/components/ui";
+
 const SettingsPage = ({
   params,
 }: {
@@ -11,7 +13,7 @@ const SettingsPage = ({
 
   return (
     <div>
-      <h1>Settings View</h1>
+      <Title variant="h1">Settings View</Title>
       <p>Project ID: {projectId}</p>
     </div>
   );

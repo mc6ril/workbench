@@ -2,6 +2,8 @@
 
 import { use } from "react";
 
+import { Title } from "@/presentation/components/ui";
+
 const BacklogPage = ({
   params,
 }: {
@@ -11,7 +13,7 @@ const BacklogPage = ({
 
   return (
     <div>
-      <h1>Backlog View</h1>
+      <Title variant="h1">Backlog View</Title>
       <p>Project ID: {projectId}</p>
     </div>
   );
