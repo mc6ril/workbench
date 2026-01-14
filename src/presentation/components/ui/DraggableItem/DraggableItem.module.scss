@@ -1,0 +1,33 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/animations" as *;
+
+.draggable-item {
+  cursor: grab;
+  transition: $transition-opacity, $transition-transform;
+  position: relative;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  &:focus {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+  }
+
+  &:hover:not(.draggable-item--disabled) {
+    opacity: 0.9;
+  }
+}
+
+.draggable-item--dragging {
+  cursor: grabbing;
+  opacity: 0.5;
+  z-index: 1000;
+}
+
+.draggable-item--disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

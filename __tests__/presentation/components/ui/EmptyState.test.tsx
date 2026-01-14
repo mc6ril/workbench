@@ -83,7 +83,10 @@ describe("EmptyState Component", () => {
   it("should use custom aria-label when provided", () => {
     // Arrange & Act
     render(
-      <EmptyState title="No items" aria-label="Custom empty state label" />
+      <EmptyState
+        title="No items"
+        ariaLabel="Custom empty state label"
+      />
     );
 
     // Assert
@@ -121,5 +124,60 @@ describe("EmptyState Component", () => {
       /il n'y a pas encore d'éléments à afficher/i
     );
     expect(message).toBeInTheDocument();
+  });
+
+  it("should render icon when provided", () => {
+    // Arrange & Act
+    const TestIcon = () => <svg data-testid="test-icon" />;
+    render(<EmptyState title="No items" icon={<TestIcon />} />);
+
+    // Assert
+    const icon = screen.getByTestId("test-icon");
+    expect(icon).toBeInTheDocument();
+    const iconContainer = icon.closest('[aria-hidden="true"]');
+    expect(iconContainer).toBeInTheDocument();
+  });
+
+  it("should not render icon when not provided", () => {
+    // Arrange & Act
+    render(<EmptyState title="No items" />);
+
+    // Assert
+    const status = screen.getByRole("status");
+    const iconContainer = status.querySelector('[aria-hidden="true"]');
+    expect(iconContainer).toBeNull();
+  });
+
+  it("should associate title and message via aria-describedby", () => {
+    // Arrange & Act
+    render(<EmptyState title="No items" message="Custom message" />);
+
+    // Assert
+    const status = screen.getByRole("status");
+    const describedBy = status.getAttribute("aria-describedby");
+    expect(describedBy).toBeTruthy();
+    expect(describedBy).toContain("a11y-empty-state-title");
+    expect(describedBy).toContain("a11y-empty-state-message");
+  });
+
+  it("should have accessibility ID generated", () => {
+    // Arrange & Act
+    render(<EmptyState title="No items" />);
+
+    // Assert
+    const status = screen.getByRole("status");
+    expect(status).toHaveAttribute("id", "a11y-empty-state");
+  });
+
+  it("should have title and message IDs for accessibility", () => {
+    // Arrange & Act
+    render(<EmptyState title="No items" message="Custom message" />);
+
+    // Assert
+    const title = screen.getByRole("heading", { level: 2 });
+    expect(title).toHaveAttribute("id", "a11y-empty-state-title");
+
+    const message = screen.getByText("Custom message");
+    expect(message).toHaveAttribute("id", "a11y-empty-state-message");
   });
 });

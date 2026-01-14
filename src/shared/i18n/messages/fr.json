@@ -6,6 +6,8 @@
     "password": "Mot de passe",
     "signIn": "Se connecter",
     "signUp": "S'inscrire",
+    "dismiss": "Fermer",
+    "dismissAriaLabel": "Fermer le message d'erreur",
     "emptyState": {
       "defaultTitle": "Aucun élément",
       "defaultMessage": "Il n'y a pas encore d'éléments à afficher."

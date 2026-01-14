@@ -1,0 +1,39 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/shadows" as *;
+
+.tooltip {
+  position: absolute;
+  z-index: 9999;
+  padding: $spacing-xs $spacing-sm;
+  background-color: $color-neutral-900;
+  color: $color-primary-text;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-lg;
+  white-space: nowrap;
+  pointer-events: none;
+  max-width: 200px;
+  word-wrap: break-word;
+  white-space: normal;
+  animation: tooltip-fade-in 0.15s ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes tooltip-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

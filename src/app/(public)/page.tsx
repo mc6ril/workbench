@@ -4,9 +4,7 @@ import { Suspense, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import Button from "@/presentation/components/ui/Button";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import { Button, Text, Title } from "@/presentation/components/ui";
 
 import { useTranslation } from "@/shared/i18n";
 

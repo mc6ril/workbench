@@ -1,0 +1,31 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/animations" as *;
+
+.droppable-zone {
+  min-height: 100px;
+  transition: $transition-background, $transition-border;
+  border: $border-width dashed transparent;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  &:focus {
+    outline: 2px solid $color-focus;
+    outline-offset: 2px;
+  }
+}
+
+.droppable-zone--over {
+  background-color: $color-primary;
+  background-color: rgba(37, 99, 235, 0.05);
+  border-color: $color-focus;
+  border-style: solid;
+}
+
+.droppable-zone--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

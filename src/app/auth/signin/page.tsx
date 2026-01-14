@@ -10,11 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { SignInInput } from "@/core/domain/schema/auth.schema";
 import { SignInSchema } from "@/core/domain/schema/auth.schema";
 
-import Button from "@/presentation/components/ui/Button";
-import Form from "@/presentation/components/ui/Form";
-import Input from "@/presentation/components/ui/Input";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import { Button, Form, Input, Text, Title } from "@/presentation/components/ui";
 import { useResendVerification, useSignIn } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
@@ -155,7 +151,7 @@ const SigninPage = () => {
                 }
                 onClick={handleResendVerification}
                 disabled={resendVerificationMutation.isPending}
-                variant="ghost"
+                variant="secondary"
                 type="button"
                 aria-label={t("resendVerification.buttonAriaLabel")}
               />

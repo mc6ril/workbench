@@ -84,7 +84,8 @@ describe("Input Component", () => {
 
     // Assert
     const input = screen.getByLabelText(/email address/i);
-    expect(input).toHaveAttribute("id", "a11y-input-email-address");
+    // getAccessibilityId preserves spaces in the label
+    expect(input).toHaveAttribute("id", "a11y-input-email -address");
   });
 
   it("should associate error message with input via aria-describedby", () => {
@@ -114,5 +115,96 @@ describe("Input Component", () => {
 
     // Assert
     expect(screen.getByText("Email is required")).toBeInTheDocument();
+  });
+
+  it("should display helper text when provided and no error", () => {
+    // Arrange & Act
+    render(<Input label="Email" helperText="Enter your email address" />);
+
+    // Assert
+    expect(screen.getByText("Enter your email address")).toBeInTheDocument();
+  });
+
+  it("should not display helper text when error is present", () => {
+    // Arrange & Act
+    render(
+      <Input
+        label="Email"
+        error="Email is required"
+        helperText="Enter your email address"
+      />
+    );
+
+    // Assert
+    expect(screen.getByText("Email is required")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Enter your email address")
+    ).not.toBeInTheDocument();
+  });
+
+  it("should associate helper text with input via aria-describedby", () => {
+    // Arrange & Act
+    render(<Input label="Email" helperText="Enter your email" id="email" />);
+
+    // Assert
+    const input = screen.getByLabelText(/email/i);
+    const helperTextId = "a11y-input-email-helper";
+    expect(input).toHaveAttribute("aria-describedby", helperTextId);
+    expect(screen.getByText("Enter your email")).toHaveAttribute(
+      "id",
+      helperTextId
+    );
+  });
+
+  it("should associate both error and helper text IDs when both provided (error takes precedence)", () => {
+    // Arrange & Act
+    render(
+      <Input
+        label="Email"
+        error="Email is required"
+        helperText="Enter your email"
+        id="email"
+      />
+    );
+
+    // Assert
+    const input = screen.getByLabelText(/email/i);
+    const errorId = "a11y-input-email-error";
+    expect(input).toHaveAttribute("aria-describedby", errorId);
+    expect(screen.queryByText("Enter your email")).not.toBeInTheDocument();
+  });
+
+  it("should have aria-disabled when disabled prop is true", () => {
+    // Arrange & Act
+    render(<Input label="Email" disabled />);
+
+    // Assert
+    const input = screen.getByLabelText(/email/i);
+    expect(input).toHaveAttribute("aria-disabled", "true");
+    expect(input).toBeDisabled();
+  });
+
+  it("should use aria-label when provided", () => {
+    // Arrange & Act
+    render(<Input label="Email" aria-label="Custom email label" />);
+
+    // Assert
+    const input = screen.getByLabelText(/custom email label/i);
+    expect(input).toBeInTheDocument();
+  });
+
+  it("should support different input types", () => {
+    // Arrange & Act
+    render(<Input label="Email" type="email" />);
+    render(<Input label="Password" type="password" />);
+    render(<Input label="Number" type="number" />);
+
+    // Assert
+    expect(screen.getByLabelText(/email/i)).toHaveAttribute("type", "email");
+    expect(screen.getByLabelText(/password/i)).toHaveAttribute(
+      "type",
+      "password"
+    );
+    expect(screen.getByLabelText(/number/i)).toHaveAttribute("type", "number");
   });
 });

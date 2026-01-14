@@ -15,12 +15,7 @@ import {
   UpdatePasswordSchema,
 } from "@/core/domain/schema/auth.schema";
 
-import Button from "@/presentation/components/ui/Button";
-import Form from "@/presentation/components/ui/Form";
-import Input from "@/presentation/components/ui/Input";
-import Loader from "@/presentation/components/ui/Loader";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import { Button, Form, Input, Loader, Text, Title } from "@/presentation/components/ui";
 import { useUpdatePassword } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
