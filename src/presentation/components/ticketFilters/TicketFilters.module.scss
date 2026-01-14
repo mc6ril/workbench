@@ -1,0 +1,31 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/breakpoints" as *;
+
+.ticket-filters {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.ticket-filters__row {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+}
+
+.ticket-filters__field {
+  flex: 1 1 0;
+}
+
+.ticket-filters__actions {
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-xs;
+  justify-content: flex-start;
+}

@@ -1,0 +1,29 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/breakpoints" as *;
+
+.bulk-actions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.bulk-actions__summary {
+  @include typography-caption;
+  color: $color-text-secondary;
+}
+
+.bulk-actions__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+}
+
+@media (min-width: $breakpoint-md) {
+  .bulk-actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

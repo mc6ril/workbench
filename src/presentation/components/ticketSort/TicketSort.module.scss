@@ -1,0 +1,18 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/borders" as *;
+
+.ticket-sort {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.ticket-sort__field {
+  min-width: 0;
+}
+
+.ticket-sort__direction {
+  display: flex;
+  gap: $spacing-xs;
+}

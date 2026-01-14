@@ -1,0 +1,88 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/breakpoints" as *;
+
+.ticket-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $border-radius-md;
+  background-color: $color-surface;
+  box-shadow: $shadow-sm;
+  transition:
+    background-color $transition-fast ease-in-out,
+    box-shadow $transition-fast ease-in-out;
+
+  &:hover {
+    background-color: $color-surface-hover;
+    box-shadow: $shadow-md;
+  }
+}
+
+.ticket-list-item--selected {
+  border: 1px solid $color-primary;
+  box-shadow: $shadow-md;
+}
+
+.ticket-list-item__selection {
+  flex: 0 0 auto;
+  padding-top: $spacing-xs;
+}
+
+.ticket-list-item__content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.ticket-list-item__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.ticket-list-item__title {
+  @include typography-body-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.ticket-list-item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.ticket-list-item__epic {
+  @include typography-caption;
+  color: $color-text-secondary;
+}
+
+.ticket-list-item__status {
+  @include typography-caption;
+}
+
+.ticket-list-item__description {
+  @include typography-body-sm;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.ticket-list-item__actions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: row;
+    align-items: center;
+  }
+}

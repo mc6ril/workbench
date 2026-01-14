@@ -1,0 +1,36 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/breakpoints" as *;
+
+.create-ticket-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.create-ticket-form__fields {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.create-ticket-form__field {
+  flex: 1 1 100%;
+
+  @media (min-width: $breakpoint-md) {
+    &--half {
+      flex-basis: calc(50% - $spacing-sm);
+    }
+  }
+}
+
+.create-ticket-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
