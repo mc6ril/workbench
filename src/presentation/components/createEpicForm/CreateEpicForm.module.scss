@@ -1,0 +1,23 @@
+@use "@/styles/variables/spacing" as *;
+
+.create-epic-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.create-epic-form__fields {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.create-epic-form__field {
+  width: 100%;
+}
+
+.create-epic-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+}

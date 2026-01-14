@@ -286,6 +286,45 @@
         "moveDownAriaLabel": "Déplacer la colonne {title} vers le bas"
       }
     },
+    "epics": {
+      "epicsList": {
+        "ariaLabel": "Liste des epics",
+        "title": "Epics",
+        "count": "{count} epic",
+        "count_plural": "{count} epics",
+        "emptyTitle": "Aucun epic",
+        "emptyMessage": "Créez votre premier epic pour commencer",
+        "errorTitle": "Erreur lors du chargement des epics"
+      },
+      "epicCard": {
+        "epicAriaLabel": "Epic",
+        "progressLabel": "{progress}% complété",
+        "viewDetailLabel": "Voir les détails",
+        "editLabel": "Modifier",
+        "deleteLabel": "Supprimer"
+      },
+      "createEpicForm": {
+        "title": "Créer un epic",
+        "fields": {
+          "name": "Nom",
+          "description": "Description"
+        },
+        "submitButton": "Créer",
+        "cancelButton": "Annuler",
+        "errorGeneric": "Une erreur s'est produite lors de la création de l'epic"
+      },
+      "epicDetail": {
+        "title": "Détails de l'epic",
+        "ticketsTitle": "Tickets associés",
+        "noTickets": "Aucun ticket associé",
+        "editLabel": "Modifier",
+        "deleteLabel": "Supprimer"
+      },
+      "epicProgress": {
+        "ariaLabel": "Progression de l'epic",
+        "progressLabel": "{progress}% complété"
+      }
+    },
     "landing": {
       "title": "Workbench",
       "subtitle": "Un outil léger et personnel de gestion de tâches et de projets",
