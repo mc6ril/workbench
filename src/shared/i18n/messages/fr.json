@@ -154,6 +154,37 @@
         "projectNameRequired": "Le nom du projet est requis",
         "projectNameTooShort": "Le nom du projet doit contenir au moins 1 caractère",
         "generic": "Une erreur s'est produite lors de la création du projet"
+      },
+      "quickAddTicket": {
+        "title": "Titre du ticket",
+        "placeholder": "Entrez le titre du ticket",
+        "submitButton": "Ajouter",
+        "submitButtonAriaLabel": "Ajouter le ticket"
+      },
+      "myWorkWidget": {
+        "title": "Mon travail",
+        "emptyMessage": "Aucun ticket actif",
+        "ticketAriaLabel": "Ticket",
+        "statusLabel": "Statut"
+      },
+      "recentActivityWidget": {
+        "title": "Activité récente",
+        "emptyMessage": "Aucune activité récente",
+        "activityAriaLabel": "Activité",
+        "types": {
+          "ticket_created": "Ticket créé",
+          "ticket_updated": "Ticket modifié",
+          "ticket_completed": "Ticket terminé"
+        }
+      },
+      "shortcutsWidget": {
+        "title": "Raccourcis",
+        "shortcuts": {
+          "board": "Tableau",
+          "backlog": "Backlog",
+          "epics": "Epics",
+          "settings": "Paramètres"
+        }
       }
     },
     "landing": {

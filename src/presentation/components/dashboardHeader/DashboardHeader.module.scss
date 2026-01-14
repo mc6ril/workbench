@@ -1,0 +1,45 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/breakpoints" as *;
+
+.dashboard-header {
+  width: 100%;
+  margin-bottom: $spacing-xl;
+}
+
+.dashboard-header__content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  align-items: flex-start;
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.dashboard-header__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.dashboard-header__title {
+  margin: 0;
+}
+
+.dashboard-header__subtitle {
+  margin: 0;
+  color: $color-text-secondary;
+}
+
+.dashboard-header__actions {
+  display: flex;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+  align-items: center;
+}
