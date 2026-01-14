@@ -38,6 +38,42 @@ jest.mock("@/shared/i18n", () => ({
 }));
 
 describe("Loader Component", () => {
+  it("should render with medium size by default", () => {
+    // Arrange & Act
+    render(<Loader />);
+
+    // Assert
+    const loader = screen.getByRole("status");
+    expect(loader).toBeInTheDocument();
+  });
+
+  it("should render small size when specified", () => {
+    // Arrange & Act
+    render(<Loader size="small" />);
+
+    // Assert
+    const loader = screen.getByRole("status");
+    expect(loader).toBeInTheDocument();
+  });
+
+  it("should render medium size when specified", () => {
+    // Arrange & Act
+    render(<Loader size="medium" />);
+
+    // Assert
+    const loader = screen.getByRole("status");
+    expect(loader).toBeInTheDocument();
+  });
+
+  it("should render large size when specified", () => {
+    // Arrange & Act
+    render(<Loader size="large" />);
+
+    // Assert
+    const loader = screen.getByRole("status");
+    expect(loader).toBeInTheDocument();
+  });
+
   it("should render full-page variant by default", () => {
     // Arrange & Act
     render(<Loader />);
@@ -45,7 +81,6 @@ describe("Loader Component", () => {
     // Assert
     const loader = screen.getByRole("status");
     expect(loader).toBeInTheDocument();
-    // Note: className check may not work with mocked styles, so we verify structure instead
   });
 
   it("should render inline variant when specified", () => {
@@ -84,6 +119,25 @@ describe("Loader Component", () => {
     const loader = screen.getByRole("status");
     expect(loader).toHaveAttribute("aria-live", "polite");
     expect(loader).toHaveAttribute("aria-label", "Chargement du contenu");
+    expect(loader).toHaveAttribute("aria-busy", "true");
+  });
+
+  it("should use custom aria-label when provided", () => {
+    // Arrange & Act
+    render(<Loader ariaLabel="Custom loading label" />);
+
+    // Assert
+    const loader = screen.getByRole("status");
+    expect(loader).toHaveAttribute("aria-label", "Custom loading label");
+  });
+
+  it("should have accessibility ID generated", () => {
+    // Arrange & Act
+    render(<Loader />);
+
+    // Assert
+    const loader = screen.getByRole("status");
+    expect(loader).toHaveAttribute("id", "a11y-loader");
   });
 
   it("should accept custom className", () => {
@@ -99,11 +153,11 @@ describe("Loader Component", () => {
 
   it("should be memoized (no unnecessary re-renders with stable props)", () => {
     // Arrange
-    const { rerender } = render(<Loader variant="full-page" />);
+    const { rerender } = render(<Loader size="medium" />);
     screen.getByRole("status");
 
     // Act - rerender with same props
-    rerender(<Loader variant="full-page" />);
+    rerender(<Loader size="medium" />);
     const rerenderedLoader = screen.getByRole("status");
 
     // Assert - component should be memoized (same instance behavior)

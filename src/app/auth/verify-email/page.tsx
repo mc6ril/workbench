@@ -4,13 +4,16 @@ import { Suspense, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
-import Loader from "@/presentation/components/ui/Loader";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import {
+  ErrorMessage,
+  Loader,
+  Text,
+  Title,
+} from "@/presentation/components/ui";
 import { useVerifyEmail } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
+import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 import styles from "./VerifyEmailPage.module.scss";
 
@@ -33,6 +36,7 @@ const VerifyEmailContent = () => {
   const searchParams = useSearchParams();
   const verifyEmailMutation = useVerifyEmail();
   const t = useTranslation("pages.verifyEmail");
+  const tErrors = useTranslation("errors");
 
   // Extract token/code and email from URL parameters using useMemo to avoid unnecessary re-renders
   // Supabase can redirect with either:
@@ -99,7 +103,7 @@ const VerifyEmailContent = () => {
           </Title>
           <div className={styles["verify-email-error"]}>
             <ErrorMessage
-              error={{ code: "INVALID_TOKEN" }}
+              message={t("errors.missingToken")}
               aria-label={t("errors.missingToken")}
             />
           </div>
@@ -125,7 +129,10 @@ const VerifyEmailContent = () => {
         {verifyEmailMutation.error && (
           <div className={styles["verify-email-error"]}>
             <ErrorMessage
-              error={verifyEmailMutation.error as { code?: string }}
+              message={getErrorMessage(
+                verifyEmailMutation.error as { code?: string },
+                tErrors
+              )}
             />
           </div>
         )}

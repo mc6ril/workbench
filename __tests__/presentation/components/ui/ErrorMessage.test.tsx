@@ -5,12 +5,11 @@ import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
 // Mock i18n
 jest.mock("@/shared/i18n", () => ({
   useTranslation: jest.fn((namespace: string) => {
-    if (namespace === "errors") {
+    if (namespace === "common") {
       return (key: string) => {
         const translations: Record<string, string> = {
-          generic: "Une erreur s'est produite",
-          retry: "Réessayer",
-          retryAriaLabel: "Réessayer l'opération",
+          dismiss: "Fermer",
+          dismissAriaLabel: "Fermer le message d'erreur",
         };
         return translations[key] || key;
       };
@@ -19,97 +18,76 @@ jest.mock("@/shared/i18n", () => ({
   }),
 }));
 
-// Mock getErrorMessage
-jest.mock("@/shared/i18n/errorMessages", () => ({
-  getErrorMessage: jest.fn(
-    (
-      error: { code?: string } | null | undefined,
-      tErrors: (key: string) => string
-    ) => {
-      if (!error || !error.code) {
-        return tErrors("generic");
-      }
-      return `Error: ${error.code}`;
-    }
-  ),
-}));
-
 describe("ErrorMessage Component", () => {
-  it("should render error message when error is provided", () => {
+  it("should render error message when message is provided", () => {
     // Arrange & Act
-    render(<ErrorMessage error={{ code: "TEST_ERROR" }} />);
+    render(<ErrorMessage message="An error occurred" />);
 
     // Assert
     const alert = screen.getByRole("alert");
     expect(alert).toBeInTheDocument();
     expect(alert).toHaveAttribute("aria-live", "assertive");
+    expect(screen.getByText("An error occurred")).toBeInTheDocument();
   });
 
-  it("should not render when error is null", () => {
+  it("should display title when provided", () => {
     // Arrange & Act
-    const { container } = render(<ErrorMessage error={null} />);
+    render(<ErrorMessage message="An error occurred" title="Error Title" />);
 
     // Assert
-    expect(container.firstChild).toBeNull();
+    expect(screen.getByText("Error Title")).toBeInTheDocument();
+    const title = screen.getByText("Error Title");
+    expect(title.tagName).toBe("H3");
   });
 
-  it("should not render when error is undefined", () => {
+  it("should not display title when not provided", () => {
     // Arrange & Act
-    const { container } = render(<ErrorMessage error={undefined} />);
+    render(<ErrorMessage message="An error occurred" />);
 
     // Assert
-    expect(container.firstChild).toBeNull();
+    expect(screen.queryByRole("heading")).not.toBeInTheDocument();
   });
 
-  it("should display error message using getErrorMessage", () => {
-    // Arrange & Act
-    render(<ErrorMessage error={{ code: "TEST_ERROR" }} />);
-
-    // Assert
-    const errorText = screen.getByText(/error: test_error/i);
-    expect(errorText).toBeInTheDocument();
-  });
-
-  it("should render retry button when onRetry is provided", () => {
+  it("should render dismiss button when onDismiss is provided", () => {
     // Arrange
-    const handleRetry = jest.fn();
+    const handleDismiss = jest.fn();
 
     // Act
     render(
-      <ErrorMessage error={{ code: "TEST_ERROR" }} onRetry={handleRetry} />
+      <ErrorMessage message="An error occurred" onDismiss={handleDismiss} />
     );
 
     // Assert
-    const retryButton = screen.getByRole("button", { name: /réessayer/i });
-    expect(retryButton).toBeInTheDocument();
+    const dismissButton = screen.getByRole("button", { name: /fermer/i });
+    expect(dismissButton).toBeInTheDocument();
   });
 
-  it("should not render retry button when onRetry is not provided", () => {
+  it("should not render dismiss button when onDismiss is not provided", () => {
     // Arrange & Act
-    render(<ErrorMessage error={{ code: "TEST_ERROR" }} />);
+    render(<ErrorMessage message="An error occurred" />);
 
     // Assert
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 
-  it("should call onRetry when retry button is clicked", () => {
+  it("should call onDismiss when dismiss button is clicked", () => {
     // Arrange
-    const handleRetry = jest.fn();
+    const handleDismiss = jest.fn();
     render(
-      <ErrorMessage error={{ code: "TEST_ERROR" }} onRetry={handleRetry} />
+      <ErrorMessage message="An error occurred" onDismiss={handleDismiss} />
     );
 
     // Act
-    const retryButton = screen.getByRole("button", { name: /réessayer/i });
-    fireEvent.click(retryButton);
+    const dismissButton = screen.getByRole("button", { name: /fermer/i });
+    fireEvent.click(dismissButton);
 
     // Assert
-    expect(handleRetry).toHaveBeenCalledTimes(1);
+    expect(handleDismiss).toHaveBeenCalledTimes(1);
   });
 
   it("should have correct accessibility attributes", () => {
     // Arrange & Act
-    render(<ErrorMessage error={{ code: "TEST_ERROR" }} />);
+    render(<ErrorMessage message="An error occurred" />);
 
     // Assert
     const alert = screen.getByRole("alert");
@@ -121,8 +99,8 @@ describe("ErrorMessage Component", () => {
     // Arrange & Act
     render(
       <ErrorMessage
-        error={{ code: "TEST_ERROR" }}
-        aria-label="Custom error label"
+        message="An error occurred"
+        ariaLabel="Custom error label"
       />
     );
 
@@ -131,19 +109,50 @@ describe("ErrorMessage Component", () => {
     expect(alert).toHaveAttribute("aria-label", "Custom error label");
   });
 
-  it("should use error message as aria-label when aria-label is not provided", () => {
+  it("should use message as aria-label when aria-label is not provided", () => {
     // Arrange & Act
-    render(<ErrorMessage error={{ code: "TEST_ERROR" }} />);
+    render(<ErrorMessage message="An error occurred" />);
 
     // Assert
     const alert = screen.getByRole("alert");
-    expect(alert).toHaveAttribute("aria-label");
+    expect(alert).toHaveAttribute("aria-label", "An error occurred");
+  });
+
+  it("should associate title and message via aria-describedby when title exists", () => {
+    // Arrange & Act
+    render(<ErrorMessage message="An error occurred" title="Error Title" />);
+
+    // Assert
+    const alert = screen.getByRole("alert");
+    const describedBy = alert.getAttribute("aria-describedby");
+    expect(describedBy).toBeTruthy();
+    expect(describedBy).toContain("a11y-error-message-title");
+    expect(describedBy).toContain("a11y-error-message-text");
+  });
+
+  it("should have error icon with aria-hidden", () => {
+    // Arrange & Act
+    render(<ErrorMessage message="An error occurred" />);
+
+    // Assert
+    const icon = screen.getByRole("alert").querySelector("svg");
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("should have accessibility ID generated", () => {
+    // Arrange & Act
+    render(<ErrorMessage message="An error occurred" />);
+
+    // Assert
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveAttribute("id", "a11y-error-message");
   });
 
   it("should apply custom className", () => {
     // Arrange & Act
     const { container } = render(
-      <ErrorMessage error={{ code: "TEST_ERROR" }} className="custom-class" />
+      <ErrorMessage message="An error occurred" className="custom-class" />
     );
 
     // Assert

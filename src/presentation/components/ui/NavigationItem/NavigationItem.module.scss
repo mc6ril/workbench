@@ -1,0 +1,58 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/shadows" as *;
+
+.navigation-item {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navigation-item__link {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $border-radius-md;
+  transition: $transition-background, $transition-color;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  &:hover {
+    background-color: $color-secondary-hover;
+  }
+
+  &:focus {
+    outline: 2px solid $color-focus;
+    outline-offset: -2px;
+  }
+}
+
+.navigation-item--active .navigation-item__link {
+  background-color: $color-primary;
+  color: $color-primary-text;
+  font-weight: $font-weight-medium;
+
+  &:hover {
+    background-color: $color-primary-hover;
+  }
+}
+
+.navigation-item__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $spacing-md * 1.25; // 20px
+  height: $spacing-md * 1.25; // 20px
+  flex-shrink: 0;
+}
+
+.navigation-item__label {
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+}

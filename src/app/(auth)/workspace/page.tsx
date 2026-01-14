@@ -9,14 +9,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { CreateProjectInput } from "@/core/domain/schema/project.schema";
 import { CreateProjectInputSchema } from "@/core/domain/schema/project.schema";
 
-import Button from "@/presentation/components/ui/Button";
-import EmptyState from "@/presentation/components/ui/EmptyState";
-import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
-import Form from "@/presentation/components/ui/Form";
-import Input from "@/presentation/components/ui/Input";
-import Loader from "@/presentation/components/ui/Loader";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import {
+  Button,
+  EmptyState,
+  ErrorMessage,
+  Form,
+  Input,
+  Loader,
+  Text,
+  Title,
+} from "@/presentation/components/ui";
 import {
   useAddUserToProject,
   useCreateProject,
@@ -353,8 +355,10 @@ const WorkspacePage = () => {
           </Title>
           {projectsError && (
             <ErrorMessage
-              error={projectsError as { code?: string }}
-              onRetry={refetchProjects}
+              message={getErrorMessage(
+                projectsError as { code?: string },
+                tErrors
+              )}
             />
           )}
           {shouldShowLoading({

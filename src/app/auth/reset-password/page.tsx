@@ -9,11 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { ResetPasswordInput } from "@/core/domain/schema/auth.schema";
 import { ResetPasswordSchema } from "@/core/domain/schema/auth.schema";
 
-import Button from "@/presentation/components/ui/Button";
-import Form from "@/presentation/components/ui/Form";
-import Input from "@/presentation/components/ui/Input";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import { Button, Form, Input, Text, Title } from "@/presentation/components/ui";
 import { useResetPassword } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
