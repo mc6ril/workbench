@@ -3,7 +3,7 @@
 import React from "react";
 
 import { ErrorIcon } from "@/presentation/components/icons";
-import { Button, Title } from "@/presentation/components/ui";
+import { Button, Text, Title } from "@/presentation/components/ui";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
@@ -95,9 +95,14 @@ const ErrorMessage = ({
             </div>
           )}
         </div>
-        <p id={messageId} className={styles["error-message__text"]}>
+        <Text
+          id={messageId}
+          as="p"
+          variant="body"
+          className={styles["error-message__text"]}
+        >
           {message}
-        </p>
+        </Text>
       </div>
     </div>
   );
