@@ -1,0 +1,23 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/breakpoints" as *;
+
+.quick-add-ticket {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  width: 100%;
+}
+
+.quick-add-ticket__field {
+  width: 100%;
+}
+
+.quick-add-ticket__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.quick-add-ticket__error {
+  width: 100%;
+}
