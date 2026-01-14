@@ -3,8 +3,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
-import { Button, Title } from "@/presentation/components/ui";
-
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
@@ -197,16 +195,17 @@ const Modal = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className={styles["modal__header"]}>
-          <Title id={titleId} variant="h2" className={styles["modal__title"]}>
+          <h2 id={titleId} className={styles["modal__title"]}>
             {title}
-          </Title>
-          <Button
-            label={t("dismiss")}
-            onClick={handleCloseButtonClick}
-            variant="secondary"
-            aria-label={t("dismissAriaLabel")}
+          </h2>
+          <button
             type="button"
-          />
+            onClick={handleCloseButtonClick}
+            className={styles["modal__close-button"]}
+            aria-label={t("dismissAriaLabel")}
+          >
+            {t("dismiss")}
+          </button>
         </div>
         <div id={descriptionId} className={styles["modal__body"]}>
           {children}

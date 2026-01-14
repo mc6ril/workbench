@@ -55,6 +55,9 @@ const BoardView = ({
         aria-labelledby={containerId}
         aria-busy="true"
       >
+        <Title id={containerId} variant="h2" className="visually-hidden">
+          {t("title")}
+        </Title>
         <Text as="p" variant="body" className={styles["board-view__message"]}>
           {t("loading")}
         </Text>
@@ -69,6 +72,9 @@ const BoardView = ({
         aria-labelledby={containerId}
         aria-live="assertive"
       >
+        <Title id={containerId} variant="h2" className="visually-hidden">
+          {t("title")}
+        </Title>
         <Text as="p" variant="body" className={styles["board-view__message"]}>
           {errorMessage}
         </Text>
@@ -83,6 +89,9 @@ const BoardView = ({
         aria-labelledby={containerId}
         aria-live="polite"
       >
+        <Title id={containerId} variant="h2" className="visually-hidden">
+          {t("title")}
+        </Title>
         <Text as="p" variant="body" className={styles["board-view__message"]}>
           {t("emptyMessage")}
         </Text>

@@ -2,8 +2,6 @@
 
 import React from "react";
 
-import { Text, Title } from "@/presentation/components/ui";
-
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
@@ -82,17 +80,13 @@ const EmptyState = ({
           {icon}
         </div>
       )}
-      <Title id={titleId} variant="h2" className={styles["empty-state__title"]}>
+      <h2 id={titleId} className={styles["empty-state__title"]}>
         {title}
-      </Title>
+      </h2>
       {displayMessage && (
-        <Text
-          id={messageId}
-          variant="body"
-          className={styles["empty-state__message"]}
-        >
+        <p id={messageId} className={styles["empty-state__message"]}>
           {displayMessage}
-        </Text>
+        </p>
       )}
       {action && <div className={styles["empty-state__action"]}>{action}</div>}
     </div>

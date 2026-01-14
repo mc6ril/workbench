@@ -3,7 +3,6 @@
 import React from "react";
 
 import { ErrorIcon } from "@/presentation/components/icons";
-import { Button, Text, Title } from "@/presentation/components/ui";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
@@ -75,34 +74,26 @@ const ErrorMessage = ({
         <div className={styles["error-message__header"]}>
           <ErrorIcon className={styles["error-message__icon"]} />
           {title && (
-            <Title
-              id={titleId}
-              variant="h3"
-              className={styles["error-message__title"]}
-            >
+            <h3 id={titleId} className={styles["error-message__title"]}>
               {title}
-            </Title>
+            </h3>
           )}
           {onDismiss && (
             <div className={styles["error-message__dismiss"]}>
-              <Button
-                label={tCommon("dismiss") || "Dismiss"}
-                onClick={onDismiss}
-                variant="secondary"
+              <button
                 type="button"
+                onClick={onDismiss}
+                className={styles["error-message__dismiss-button"]}
                 aria-label={tCommon("dismissAriaLabel") || "Dismiss error"}
-              />
+              >
+                {tCommon("dismiss") || "Dismiss"}
+              </button>
             </div>
           )}
         </div>
-        <Text
-          id={messageId}
-          as="p"
-          variant="body"
-          className={styles["error-message__text"]}
-        >
+        <p id={messageId} className={styles["error-message__text"]}>
           {message}
-        </Text>
+        </p>
       </div>
     </div>
   );

@@ -84,6 +84,63 @@
   flex: 1;
 }
 
+.modal__close-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: $spacing-button-height;
+  padding: $spacing-button-padding-y $spacing-button-padding-x;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-button;
+  background-color: $color-secondary;
+  color: $color-text;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-normal;
+  cursor: pointer;
+  transition:
+    $transition-background, $transition-color, $transition-border,
+    $transition-transform, $transition-shadow;
+  text-align: center;
+  text-decoration: none;
+  flex-shrink: 0;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: $shadow-focus;
+  }
+
+  &:focus:not(:focus-visible) {
+    box-shadow: none;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: transparent;
+    background-color: $color-secondary-hover;
+    transform: translateY(-1px);
+
+    @media (prefers-reduced-motion: reduce) {
+      transform: none;
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    background-color: $color-disabled-background;
+    color: $color-disabled-text;
+    border-color: $color-border;
+  }
+}
+
 .modal__body {
   padding: $spacing-lg;
   overflow-y: auto;

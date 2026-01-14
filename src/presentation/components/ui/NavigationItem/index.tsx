@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-
-import { Link } from "@/presentation/components/ui";
+import Link from "next/link";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
@@ -80,7 +79,6 @@ const NavigationItem = ({
     <li id={navItemId} className={navItemClasses} role="none">
       <Link
         href={href}
-        variant="default"
         className={styles["navigation-item__link"]}
         aria-label={displayAriaLabel}
         onClick={onClick}

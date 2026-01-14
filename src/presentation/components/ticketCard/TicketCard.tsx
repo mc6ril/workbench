@@ -89,8 +89,7 @@ const TicketCard = ({
   const cardAriaLabel = `${t("ticketAriaLabel")}: ${ariaLabelParts.join(", ")}`;
 
   return (
-    <li
-      className={styles["ticket-card"]}
+    <div
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       aria-label={cardAriaLabel}
@@ -173,7 +172,7 @@ const TicketCard = ({
           )}
         </div>
       </Card>
-    </li>
+    </div>
   );
 };
 
