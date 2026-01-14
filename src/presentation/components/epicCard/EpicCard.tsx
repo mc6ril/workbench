@@ -72,7 +72,6 @@ const EpicCard = ({
   return (
     <li
       className={styles["epic-card"]}
-      aria-labelledby={titleId}
       aria-describedby={describedById}
       aria-label={cardAriaLabel}
     >
@@ -97,7 +96,7 @@ const EpicCard = ({
           </Text>
         )}
         <div className={styles["epic-card__progress"]}>
-          <EpicProgress progress={progress} />
+          <EpicProgress progress={progress} id={id} />
         </div>
         <div className={styles["epic-card__actions"]}>
           {onViewDetail && (

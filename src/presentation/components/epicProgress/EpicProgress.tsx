@@ -17,18 +17,21 @@ type Props = {
   ariaLabel?: string;
   /** Additional CSS class name */
   className?: string;
+  /** Optional unique identifier for generating unique accessibility IDs */
+  id?: string;
 };
 
 /**
  * EpicProgress component displays epic completion percentage with visual progress bar.
  * Includes full accessibility support with proper ARIA progressbar attributes.
  */
-const EpicProgress = ({ progress, ariaLabel, className }: Props) => {
+const EpicProgress = ({ progress, ariaLabel, className, id }: Props) => {
   const t = useTranslation("pages.epics.epicProgress");
 
   const clampedProgress = Math.max(0, Math.min(100, progress));
-  const progressId = getAccessibilityId("epic-progress");
-  const progressLabelId = getAccessibilityId("epic-progress-label");
+  const baseKey = id ? `epic-progress-${id}` : "epic-progress";
+  const progressId = getAccessibilityId(baseKey);
+  const progressLabelId = getAccessibilityId(`${baseKey}-label`);
 
   const displayAriaLabel = ariaLabel || t("ariaLabel") || "Epic progress";
   const progressText = t("progressLabel", { progress: clampedProgress });

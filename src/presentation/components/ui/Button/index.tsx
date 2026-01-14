@@ -73,11 +73,18 @@ const Button = ({
       }
 
       if (isEnterKey(event.nativeEvent) || isSpaceKey(event.nativeEvent)) {
+        // For submit buttons, don't prevent default on Enter or Space keys
+        // to allow native form submission behavior
+        if (type === "submit") {
+          // Let the form handle submission naturally
+          return;
+        }
+
         event.preventDefault();
         onClick();
       }
     },
-    [disabled, onClick]
+    [disabled, onClick, type]
   );
 
   const buttonClasses = [

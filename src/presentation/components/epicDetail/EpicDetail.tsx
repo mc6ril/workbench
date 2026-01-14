@@ -91,7 +91,7 @@ const EpicDetail = ({ epic, onEdit, onDelete, className }: Props) => {
       )}
 
       <div className={styles["epic-detail__progress"]}>
-        <EpicProgress progress={epic.progress} />
+        <EpicProgress progress={epic.progress} id={epic.id} />
       </div>
 
       <section
