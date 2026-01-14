@@ -1,0 +1,31 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/borders" as *;
+
+.epic-progress {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  width: 100%;
+}
+
+.epic-progress__bar {
+  width: 100%;
+  height: $spacing-sm;
+  background-color: $color-neutral-200;
+  border-radius: $border-radius-sm;
+  overflow: hidden;
+  position: relative;
+}
+
+.epic-progress__fill {
+  height: 100%;
+  background-color: $color-success;
+  border-radius: $border-radius-sm;
+  transition: width 0.3s ease;
+}
+
+.epic-progress__label {
+  color: $color-text-secondary;
+  text-align: right;
+}
