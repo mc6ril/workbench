@@ -187,6 +187,59 @@
         }
       }
     },
+    "backlog": {
+      "title": "Backlog",
+      "subtitle": "Gérez et organisez vos tickets",
+      "ticketList": {
+        "ariaLabel": "Liste des tickets du backlog",
+        "emptyTitle": "Aucun ticket dans le backlog",
+        "emptyMessage": "Créez un ticket pour commencer à travailler",
+        "errorTitle": "Erreur lors du chargement des tickets"
+      },
+      "filters": {
+        "searchLabel": "Rechercher",
+        "searchPlaceholder": "Rechercher par titre ou description",
+        "statusLabel": "Statut",
+        "epicLabel": "Epic",
+        "resetLabel": "Réinitialiser les filtres"
+      },
+      "sort": {
+        "label": "Trier par",
+        "fieldCreatedAt": "Date de création",
+        "fieldTitle": "Titre",
+        "fieldStatus": "Statut",
+        "directionAsc": "Ascendant",
+        "directionDesc": "Descendant"
+      },
+      "bulkActions": {
+        "title": "Actions groupées",
+        "selectedCount": "{count} ticket sélectionné",
+        "selectedCount_plural": "{count} tickets sélectionnés",
+        "deleteLabel": "Supprimer",
+        "moveLabel": "Déplacer",
+        "changeStatusLabel": "Modifier le statut"
+      },
+      "createTicketForm": {
+        "title": "Créer un ticket",
+        "fields": {
+          "title": "Titre",
+          "description": "Description",
+          "status": "Statut",
+          "epic": "Epic"
+        },
+        "submitButton": "Créer le ticket",
+        "cancelButton": "Annuler",
+        "errorGeneric": "Une erreur s'est produite lors de la création du ticket"
+      },
+      "ticketListItem": {
+        "ticketAriaLabel": "Ticket",
+        "statusLabel": "Statut",
+        "epicLabel": "Epic",
+        "openTicketLabel": "Ouvrir le ticket",
+        "editTicketLabel": "Modifier le ticket",
+        "selectTicketLabel": "Sélectionner le ticket"
+      }
+    },
     "landing": {
       "title": "Workbench",
       "subtitle": "Un outil léger et personnel de gestion de tâches et de projets",

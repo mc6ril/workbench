@@ -1,0 +1,36 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/breakpoints" as *;
+
+.ticket-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.ticket-list__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-sm;
+}
+
+.ticket-list__title {
+  margin: 0;
+}
+
+.ticket-list__meta {
+  @include typography-caption;
+  color: $color-text-secondary;
+}
+
+.ticket-list__items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
