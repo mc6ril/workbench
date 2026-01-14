@@ -67,12 +67,13 @@ const EpicCard = ({
   ariaLabelParts.push(t("progressLabel", { progress }));
 
   const cardAriaLabel = `${t("epicAriaLabel")}: ${ariaLabelParts.join(", ")}`;
+  const describedById = description ? descriptionId : undefined;
 
   return (
     <li
       className={styles["epic-card"]}
       aria-labelledby={titleId}
-      aria-describedby={descriptionId}
+      aria-describedby={describedById}
       aria-label={cardAriaLabel}
     >
       <Card className={styles["epic-card__card"]}>
