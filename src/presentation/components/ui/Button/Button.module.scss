@@ -152,6 +152,33 @@
   }
 }
 
+.button--ghost {
+  background-color: transparent;
+  color: $color-text;
+  border-color: transparent;
+
+  &:hover:not(:disabled) {
+    background-color: $color-surface-subtle;
+    color: $color-text;
+    transform: translateY(-1px);
+
+    @media (prefers-reduced-motion: reduce) {
+      transform: none;
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    background-color: $color-surface;
+  }
+
+  &:disabled {
+    background-color: transparent;
+    color: $color-disabled-text;
+    border-color: transparent;
+  }
+}
+
 .button--full-width {
   width: 100%;
 }

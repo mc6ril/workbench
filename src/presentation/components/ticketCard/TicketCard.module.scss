@@ -1,0 +1,63 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/typography" as *;
+
+.ticket-card {
+  list-style: none;
+}
+
+.ticket-card__card {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  box-shadow: $shadow-sm;
+  border-radius: $border-radius-md;
+  background-color: $color-surface;
+}
+
+.ticket-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-xs;
+}
+
+.ticket-card__title {
+  margin: 0;
+  @include typography-body;
+}
+
+.ticket-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.ticket-card__status {
+  background-color: $color-surface-subtle;
+}
+
+.ticket-card__priority {
+  background-color: $color-accent-subtle;
+}
+
+.ticket-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.ticket-card__epic,
+.ticket-card__assignee,
+.ticket-card__story-points {
+  color: $color-text-secondary;
+}
+
+.ticket-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-xs;
+}

@@ -10,8 +10,9 @@ import styles from "./Button.module.scss";
  * - primary: Emphasizes primary actions (default)
  * - secondary: For secondary actions
  * - danger: For destructive actions
+ * - ghost: Minimal style with no background or border
  */
-type ButtonVariant = "primary" | "secondary" | "danger";
+type ButtonVariant = "primary" | "secondary" | "danger" | "ghost";
 
 type Props = {
   /** Button label text */

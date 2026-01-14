@@ -1,0 +1,32 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/breakpoints" as *;
+
+.board-view {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.board-view__columns {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: $spacing-md;
+  overflow-x: auto;
+  padding-bottom: $spacing-sm;
+}
+
+.board-view__column-wrapper {
+  flex: 0 0 auto;
+}
+
+.board-view__message {
+  color: $color-text-secondary;
+}
+
+@media (max-width: $breakpoint-md) {
+  .board-view__columns {
+    gap: $spacing-sm;
+  }
+}

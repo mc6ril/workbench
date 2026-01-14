@@ -212,11 +212,11 @@ Simple implementation screens to verify authentication and user privilege system
 | Components | Backlog  | Ticket Sort            | Create TicketSort component with sort options (date, title, status) | Done    |
 | Components | Backlog  | Bulk Actions           | Create BulkActions component for multi-select and bulk operations   | Done    |
 | Components | Backlog  | Create Ticket Form     | Create CreateTicketForm component with modal or inline form         | Done    |
-| Components | Board    | Board View             | Create BoardView component with columns and drag-and-drop           | Pending |
-| Components | Board    | Board Column           | Create BoardColumn component displaying tickets in a column         | Pending |
-| Components | Board    | Ticket Card            | Create TicketCard component for board display with drag handle      | Pending |
-| Components | Board    | Columns Configuration  | Create ColumnsConfiguration component for managing board columns    | Pending |
-| Components | Board    | Board Filters          | Create BoardFilters component for filtering board tickets           | Pending |
+| Components | Board    | Board View             | Create BoardView component with columns and drag-and-drop           | Done    |
+| Components | Board    | Board Column           | Create BoardColumn component displaying tickets in a column         | Done    |
+| Components | Board    | Ticket Card            | Create TicketCard component for board display with drag handle      | Done    |
+| Components | Board    | Columns Configuration  | Create ColumnsConfiguration component for managing board columns    | Done    |
+| Components | Board    | Board Filters          | Create BoardFilters component for filtering board tickets           | Done    |
 | Components | Epics    | Epics List             | Create EpicsList component displaying all epics with progress       | Pending |
 | Components | Epics    | Epic Card              | Create EpicCard component showing epic name, description, progress  | Pending |
 | Components | Epics    | Create Epic Form       | Create CreateEpicForm component with modal form                     | Pending |
