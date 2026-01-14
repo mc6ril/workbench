@@ -8,6 +8,8 @@
     "signUp": "S'inscrire",
     "dismiss": "Fermer",
     "dismissAriaLabel": "Fermer le message d'erreur",
+    "submit": "Soumettre",
+    "cancel": "Annuler",
     "emptyState": {
       "defaultTitle": "Aucun élément",
       "defaultMessage": "Il n'y a pas encore d'éléments à afficher."
@@ -194,7 +196,9 @@
         "ariaLabel": "Liste des tickets du backlog",
         "emptyTitle": "Aucun ticket dans le backlog",
         "emptyMessage": "Créez un ticket pour commencer à travailler",
-        "errorTitle": "Erreur lors du chargement des tickets"
+        "errorTitle": "Erreur lors du chargement des tickets",
+        "count": "{count} ticket",
+        "count_plural": "{count} tickets"
       },
       "filters": {
         "searchLabel": "Rechercher",
