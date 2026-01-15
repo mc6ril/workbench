@@ -1,4 +1,10 @@
 {
+  "app": {
+    "metadata": {
+      "title": "Workbench",
+      "description": "Un outil léger et personnel de gestion de tâches et de projets"
+    }
+  },
   "common": {
     "loading": "Chargement en cours...",
     "loadingAriaLabel": "Chargement du contenu",

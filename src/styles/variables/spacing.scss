@@ -24,3 +24,13 @@ $spacing-button-height: $spacing-unit * 12; // 3rem (48px)
 $container-max-width: 25rem; // 400px
 $spacing-container-max-width: 50rem; // 800px
 $spacing-empty-state-max-width: 30rem; // 480px
+
+// Layout sizing (Dashboard shell)
+// Centralized values to avoid hardcoded sizes in layout SCSS modules.
+$layout-dashboard-sidebar-width: $spacing-unit * 72; // 18rem (288px)
+$layout-dashboard-sidebar-height: $spacing-unit * 16; // 4rem (64px) - reserved on mobile
+$layout-dashboard-header-height: $spacing-unit * 16; // 4rem (64px)
+$layout-dashboard-breadcrumbs-height: $spacing-unit * 10; // 2.5rem (40px)
+$layout-dashboard-content-min-height: 100vh;
+$layout-dashboard-main-min-height: 0;
+$layout-dashboard-main-padding: $spacing-lg;

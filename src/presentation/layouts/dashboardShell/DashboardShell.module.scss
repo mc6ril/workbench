@@ -1,0 +1,60 @@
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/breakpoints" as *;
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+
+.dashboard-shell {
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: $layout-dashboard-sidebar-height $layout-dashboard-content-min-height;
+  background-color: $color-background;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: $layout-dashboard-sidebar-width 1fr;
+    grid-template-rows: 1fr;
+  }
+}
+
+.dashboard-shell__sidebar {
+  width: 100%;
+  min-height: $layout-dashboard-sidebar-height;
+  border-bottom: $border-width solid $color-border;
+  background-color: $color-secondary;
+
+  @media (min-width: $breakpoint-md) {
+    min-height: 100vh;
+    border-bottom: none;
+    border-right: $border-width solid $color-border;
+  }
+}
+
+.dashboard-shell__content {
+  width: 100%;
+  min-height: $layout-dashboard-content-min-height;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: $layout-dashboard-header-height $layout-dashboard-breadcrumbs-height 1fr;
+}
+
+.dashboard-shell__header {
+  width: 100%;
+  min-height: $layout-dashboard-header-height;
+  border-bottom: $border-width solid $color-border;
+  background-color: $color-background;
+}
+
+.dashboard-shell__breadcrumbs {
+  width: 100%;
+  min-height: $layout-dashboard-breadcrumbs-height;
+  border-bottom: $border-width solid $color-border;
+  background-color: $color-background;
+}
+
+.dashboard-shell__main {
+  width: 100%;
+  min-height: $layout-dashboard-main-min-height;
+  padding: $layout-dashboard-main-padding;
+}
+
