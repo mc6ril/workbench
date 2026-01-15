@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
 import type { EpicDetail as EpicDetailType } from "@/core/domain/schema/epic.schema";
 
@@ -35,17 +35,17 @@ const EpicDetail = ({ epic, onEdit, onDelete, className }: Props) => {
   const descriptionId = `${detailId}-description`;
   const ticketsId = `${detailId}-tickets`;
 
-  const handleEdit = (): void => {
+  const handleEdit = useCallback((): void => {
     if (onEdit) {
       onEdit(epic.id);
     }
-  };
+  }, [epic.id, onEdit]);
 
-  const handleDelete = (): void => {
+  const handleDelete = useCallback((): void => {
     if (onDelete) {
       onDelete(epic.id);
     }
-  };
+  }, [epic.id, onDelete]);
 
   const detailClasses = [styles["epic-detail"], className]
     .filter(Boolean)
