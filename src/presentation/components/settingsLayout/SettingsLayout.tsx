@@ -138,12 +138,12 @@ const SettingsLayout = ({
       };
 
       handleKeyboardNavigation(event.nativeEvent, {
-        // Horizontal tablist: Left/Right
-        onArrowLeft: isDesktop ? undefined : selectPrevious,
-        onArrowRight: isDesktop ? undefined : selectNext,
-        // Vertical tablist: Up/Down
-        onArrowUp: isDesktop ? selectPrevious : undefined,
-        onArrowDown: isDesktop ? selectNext : undefined,
+        // Horizontal tablist: Left/Right (desktop)
+        onArrowLeft: isDesktop ? selectPrevious : undefined,
+        onArrowRight: isDesktop ? selectNext : undefined,
+        // Vertical tablist: Up/Down (mobile)
+        onArrowUp: isDesktop ? undefined : selectPrevious,
+        onArrowDown: isDesktop ? undefined : selectNext,
       });
 
       if (event.key === "Home") {
@@ -199,8 +199,8 @@ const SettingsLayout = ({
             role={ARIA_ROLES.TABLIST}
             aria-orientation={
               isDesktop
-                ? ARIA_ORIENTATION_VALUES.VERTICAL
-                : ARIA_ORIENTATION_VALUES.HORIZONTAL
+                ? ARIA_ORIENTATION_VALUES.HORIZONTAL
+                : ARIA_ORIENTATION_VALUES.VERTICAL
             }
             className={styles["settings-layout__tablist"]}
           >
