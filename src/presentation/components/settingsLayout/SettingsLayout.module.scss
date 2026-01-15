@@ -1,0 +1,94 @@
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/breakpoints" as *;
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+
+.settings-layout {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  width: 100%;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  &__title {
+    margin: 0;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+
+  &__nav {
+    width: 100%;
+  }
+
+  &__tablist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+  }
+
+  &__tab {
+    border: $border-width solid $color-border;
+    border-radius: $border-radius-md;
+    background: $color-surface;
+    color: $color-text-primary;
+    padding: $spacing-sm $spacing-md;
+    cursor: pointer;
+  }
+
+  &__tab:focus-visible {
+    outline: $border-width-thick solid $color-focus;
+    outline-offset: $spacing-xs;
+  }
+
+  &__tab[aria-disabled="true"] {
+    cursor: not-allowed;
+    color: $color-disabled-text;
+    background: $color-disabled-background;
+    border-color: $color-border-subtle;
+  }
+
+  &__tab--active {
+    background: $color-primary;
+    color: $color-primary-text;
+    border-color: $color-primary;
+  }
+
+  &__panel {
+    width: 100%;
+  }
+}
+
+@media (min-width: $breakpoint-md) {
+  .settings-layout {
+    &__body {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: $spacing-xl;
+    }
+
+    &__nav {
+      width: 16rem;
+      flex-shrink: 0;
+    }
+
+    &__tablist {
+      flex-direction: column;
+      gap: $spacing-xs;
+    }
+
+    &__panel {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}
+
