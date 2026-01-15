@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useCallback, useMemo, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { Title } from "@/presentation/components/ui";
 
@@ -14,6 +20,8 @@ import { handleKeyboardNavigation } from "@/shared/a11y/utilities";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./SettingsLayout.module.scss";
+
+const DESKTOP_MEDIA_QUERY = "(min-width: 768px)";
 
 export type SettingsTab = {
   id: string;
@@ -41,6 +49,31 @@ const SettingsLayout = ({
   const layoutId = useMemo(() => getAccessibilityId("settings-layout"), []);
   const tabListId = `${layoutId}-tablist`;
   const panelId = `${layoutId}-panel`;
+
+  const [isDesktop, setIsDesktop] = useState<boolean>(false);
+
+  useEffect(() => {
+    const mediaQueryList = window.matchMedia(DESKTOP_MEDIA_QUERY);
+
+    const update = (): void => {
+      setIsDesktop(mediaQueryList.matches);
+    };
+
+    update();
+
+    if (typeof mediaQueryList.addEventListener === "function") {
+      mediaQueryList.addEventListener("change", update);
+      return () => {
+        mediaQueryList.removeEventListener("change", update);
+      };
+    }
+
+    // Fallback for older browsers (not expected, but safe)
+    mediaQueryList.addListener(update);
+    return () => {
+      mediaQueryList.removeListener(update);
+    };
+  }, []);
 
   const enabledTabs = useMemo(
     () => tabs.filter((tab) => tab.isDisabled !== true),
@@ -86,39 +119,31 @@ const SettingsLayout = ({
 
   const handleTabKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLButtonElement>, tabId: string): void => {
+      const selectPrevious = (): void => {
+        const nextId = getNextEnabledTabId(tabId, "previous");
+        if (!nextId) {
+          return;
+        }
+        onTabChange(nextId);
+        focusTab(nextId);
+      };
+
+      const selectNext = (): void => {
+        const nextId = getNextEnabledTabId(tabId, "next");
+        if (!nextId) {
+          return;
+        }
+        onTabChange(nextId);
+        focusTab(nextId);
+      };
+
       handleKeyboardNavigation(event.nativeEvent, {
-        onArrowLeft: () => {
-          const nextId = getNextEnabledTabId(tabId, "previous");
-          if (!nextId) {
-            return;
-          }
-          onTabChange(nextId);
-          focusTab(nextId);
-        },
-        onArrowRight: () => {
-          const nextId = getNextEnabledTabId(tabId, "next");
-          if (!nextId) {
-            return;
-          }
-          onTabChange(nextId);
-          focusTab(nextId);
-        },
-        onArrowUp: () => {
-          const nextId = getNextEnabledTabId(tabId, "previous");
-          if (!nextId) {
-            return;
-          }
-          onTabChange(nextId);
-          focusTab(nextId);
-        },
-        onArrowDown: () => {
-          const nextId = getNextEnabledTabId(tabId, "next");
-          if (!nextId) {
-            return;
-          }
-          onTabChange(nextId);
-          focusTab(nextId);
-        },
+        // Horizontal tablist: Left/Right
+        onArrowLeft: isDesktop ? undefined : selectPrevious,
+        onArrowRight: isDesktop ? undefined : selectNext,
+        // Vertical tablist: Up/Down
+        onArrowUp: isDesktop ? selectPrevious : undefined,
+        onArrowDown: isDesktop ? selectNext : undefined,
       });
 
       if (event.key === "Home") {
@@ -140,7 +165,7 @@ const SettingsLayout = ({
         }
       }
     },
-    [enabledTabs, focusTab, getNextEnabledTabId, onTabChange]
+    [enabledTabs, focusTab, getNextEnabledTabId, isDesktop, onTabChange]
   );
 
   const containerClasses = [styles["settings-layout"], className]
@@ -172,7 +197,11 @@ const SettingsLayout = ({
           <div
             id={tabListId}
             role={ARIA_ROLES.TABLIST}
-            aria-orientation={ARIA_ORIENTATION_VALUES.HORIZONTAL}
+            aria-orientation={
+              isDesktop
+                ? ARIA_ORIENTATION_VALUES.VERTICAL
+                : ARIA_ORIENTATION_VALUES.HORIZONTAL
+            }
             className={styles["settings-layout__tablist"]}
           >
             {tabs.map((tab) => {
