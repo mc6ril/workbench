@@ -65,17 +65,47 @@ const SettingsLayout = ({
 
     update();
 
-    if (typeof mediaQueryList.addEventListener === "function") {
-      mediaQueryList.addEventListener("change", update);
-      return () => {
-        mediaQueryList.removeEventListener("change", update);
-      };
+    function legacyChangeListener(
+      this: MediaQueryList,
+      _event: MediaQueryListEvent
+    ): void {
+      update();
     }
 
-    // Fallback for older browsers (not expected, but safe)
-    mediaQueryList.addListener(update);
+    const addChangeListener = (): void => {
+      if (typeof mediaQueryList.addEventListener === "function") {
+        mediaQueryList.addEventListener("change", update);
+        return;
+      }
+
+      // Fallback for older browsers (not expected, but safe)
+      const legacyApi = mediaQueryList as unknown as {
+        addListener?: (
+          listener: (this: MediaQueryList, ev: MediaQueryListEvent) => void
+        ) => void;
+      };
+      legacyApi.addListener?.(legacyChangeListener);
+    };
+
+    const removeChangeListener = (): void => {
+      if (typeof mediaQueryList.removeEventListener === "function") {
+        mediaQueryList.removeEventListener("change", update);
+        return;
+      }
+
+      // Fallback for older browsers (not expected, but safe)
+      const legacyApi = mediaQueryList as unknown as {
+        removeListener?: (
+          listener: (this: MediaQueryList, ev: MediaQueryListEvent) => void
+        ) => void;
+      };
+      legacyApi.removeListener?.(legacyChangeListener);
+    };
+
+    addChangeListener();
+
     return () => {
-      mediaQueryList.removeListener(update);
+      removeChangeListener();
     };
   }, []);
 
