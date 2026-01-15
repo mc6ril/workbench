@@ -33,7 +33,7 @@ const EpicProgress = ({ progress, ariaLabel, className, id }: Props) => {
   const progressId = getAccessibilityId(baseKey);
   const progressLabelId = getAccessibilityId(`${baseKey}-label`);
 
-  const displayAriaLabel = ariaLabel || t("ariaLabel") || "Epic progress";
+  const displayAriaLabel = ariaLabel || t("ariaLabel");
   const progressText = t("progressLabel", { progress: clampedProgress });
 
   const progressClasses = [styles["epic-progress"], className]

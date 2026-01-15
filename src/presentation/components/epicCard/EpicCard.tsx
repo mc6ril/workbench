@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
 import EpicProgress from "@/presentation/components/epicProgress/EpicProgress";
 import { Button, Card, Text, Title } from "@/presentation/components/ui";
@@ -40,23 +40,23 @@ const EpicCard = ({
   const titleId = `${baseId}-title`;
   const descriptionId = `${baseId}-description`;
 
-  const handleViewDetail = (): void => {
+  const handleViewDetail = useCallback((): void => {
     if (onViewDetail) {
       onViewDetail(id);
     }
-  };
+  }, [id, onViewDetail]);
 
-  const handleEdit = (): void => {
+  const handleEdit = useCallback((): void => {
     if (onEdit) {
       onEdit(id);
     }
-  };
+  }, [id, onEdit]);
 
-  const handleDelete = (): void => {
+  const handleDelete = useCallback((): void => {
     if (onDelete) {
       onDelete(id);
     }
-  };
+  }, [id, onDelete]);
 
   const ariaLabelParts: string[] = [name];
 
