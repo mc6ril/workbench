@@ -79,6 +79,13 @@
     background: $color-surface;
   }
 
+  &__item-main {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+    align-items: start;
+  }
+
   &__item-actions {
     display: flex;
     justify-content: flex-end;
