@@ -17,7 +17,7 @@ import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/cli
  * - Only the authenticated user can delete their own account
  * - Uses Supabase admin API with service_role key (server-side only)
  */
-const DELETE = async (_request: NextRequest) => {
+export const DELETE = async (_request: NextRequest): Promise<NextResponse> => {
   try {
     // Get authenticated user (use getUser() for security instead of getSession())
     const supabase = await createSupabaseServerClient();
@@ -78,5 +78,3 @@ const DELETE = async (_request: NextRequest) => {
     );
   }
 };
-
-export default DELETE;

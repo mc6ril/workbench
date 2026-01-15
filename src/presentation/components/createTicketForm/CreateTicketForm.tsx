@@ -142,7 +142,6 @@ const CreateTicketForm = ({
         <Button
           label={t("submitButton")}
           type="submit"
-          onClick={() => undefined}
           disabled={isSubmitting || !title}
           aria-label={tCommon(BUTTON_LABELS.SUBMIT)}
         />

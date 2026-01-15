@@ -1,0 +1,31 @@
+@use "@/styles/variables/spacing" as *;
+
+.subtasks-list {
+  width: 100%;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-md;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__title {
+    margin: 0;
+  }
+
+  &__state {
+    margin-top: $spacing-sm;
+  }
+
+  &__items {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+    list-style: none;
+    padding: 0;
+    margin: $spacing-sm 0 0;
+  }
+}
+

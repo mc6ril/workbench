@@ -1,6 +1,6 @@
-import React, { useCallback,useState } from "react";
+import React, { useCallback, useState } from "react";
 
-import { Button, ErrorMessage,Input } from "@/presentation/components/ui";
+import { Button, ErrorMessage, Input } from "@/presentation/components/ui";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

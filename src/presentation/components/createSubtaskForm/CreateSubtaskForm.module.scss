@@ -1,0 +1,28 @@
+@use "@/styles/variables/spacing" as *;
+
+.create-subtask-form {
+  width: 100%;
+
+  &__title {
+    margin: 0 0 $spacing-md;
+  }
+
+  &__fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+    margin-bottom: $spacing-md;
+  }
+
+  &__field {
+    width: 100%;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    align-items: center;
+  }
+}
+

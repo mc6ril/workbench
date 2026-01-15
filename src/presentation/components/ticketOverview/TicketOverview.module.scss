@@ -1,0 +1,73 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/radius" as *;
+@use "@/styles/variables/spacing" as *;
+
+.ticket-overview {
+  width: 100%;
+
+  &__card {
+    width: 100%;
+  }
+
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $spacing-md;
+    margin-bottom: $spacing-md;
+  }
+
+  &__title {
+    margin: 0;
+  }
+
+  &__badges {
+    flex-shrink: 0;
+  }
+
+  &__meta {
+    margin-bottom: $spacing-md;
+  }
+
+  &__meta-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+    margin: 0;
+  }
+
+  &__meta-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-2xs;
+    padding: $spacing-sm;
+    border-radius: $radius-sm;
+    background: $color-surface;
+  }
+
+  &__meta-label {
+    margin: 0;
+    color: $color-text-secondary;
+  }
+
+  &__meta-value {
+    margin: 0;
+    color: $color-text-primary;
+  }
+
+  &__description {
+    margin: 0;
+    white-space: pre-wrap;
+    color: $color-text-primary;
+  }
+}
+
+@media (min-width: 768px) {
+  .ticket-overview {
+    &__meta-list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+}
+
