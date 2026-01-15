@@ -65,48 +65,40 @@ const SettingsLayout = ({
 
     update();
 
-    function legacyChangeListener(
-      this: MediaQueryList,
-      _event: MediaQueryListEvent
-    ): void {
+    const legacyChangeListener = (_event: MediaQueryListEvent): void => {
       update();
+    };
+
+    // Legacy matchMedia API (deprecated in TS DOM types).
+    // We keep support without referencing deprecated members directly.
+    const legacyApi = mediaQueryList as unknown as {
+      addListener?: (listener: (ev: MediaQueryListEvent) => void) => void;
+      removeListener?: (listener: (ev: MediaQueryListEvent) => void) => void;
+    };
+
+    const canUseModernApi =
+      typeof mediaQueryList.addEventListener === "function" &&
+      typeof mediaQueryList.removeEventListener === "function";
+    const canUseLegacyApi =
+      typeof legacyApi.addListener === "function" &&
+      typeof legacyApi.removeListener === "function";
+
+    if (canUseModernApi) {
+      mediaQueryList.addEventListener("change", update);
+      return () => {
+        mediaQueryList.removeEventListener("change", update);
+      };
     }
 
-    const addChangeListener = (): void => {
-      if (typeof mediaQueryList.addEventListener === "function") {
-        mediaQueryList.addEventListener("change", update);
-        return;
-      }
-
-      // Fallback for older browsers (not expected, but safe)
-      const legacyApi = mediaQueryList as unknown as {
-        addListener?: (
-          listener: (this: MediaQueryList, ev: MediaQueryListEvent) => void
-        ) => void;
-      };
+    if (canUseLegacyApi) {
       legacyApi.addListener?.(legacyChangeListener);
-    };
-
-    const removeChangeListener = (): void => {
-      if (typeof mediaQueryList.removeEventListener === "function") {
-        mediaQueryList.removeEventListener("change", update);
-        return;
-      }
-
-      // Fallback for older browsers (not expected, but safe)
-      const legacyApi = mediaQueryList as unknown as {
-        removeListener?: (
-          listener: (this: MediaQueryList, ev: MediaQueryListEvent) => void
-        ) => void;
+      return () => {
+        legacyApi.removeListener?.(legacyChangeListener);
       };
-      legacyApi.removeListener?.(legacyChangeListener);
-    };
+    }
 
-    addChangeListener();
-
-    return () => {
-      removeChangeListener();
-    };
+    // No supported listener API (rare). We still applied the initial `update()`.
+    return;
   }, []);
 
   const enabledTabs = useMemo(
@@ -172,12 +164,11 @@ const SettingsLayout = ({
       };
 
       handleKeyboardNavigation(event.nativeEvent, {
-        // Horizontal tablist: Left/Right (desktop)
-        onArrowLeft: isDesktop ? selectPrevious : undefined,
-        onArrowRight: isDesktop ? selectNext : undefined,
-        // Vertical tablist: Up/Down (mobile)
-        onArrowUp: isDesktop ? undefined : selectPrevious,
-        onArrowDown: isDesktop ? undefined : selectNext,
+        // Keep keyboard behavior consistent with `aria-orientation`.
+        onArrowLeft: isDesktop ? undefined : selectPrevious,
+        onArrowRight: isDesktop ? undefined : selectNext,
+        onArrowUp: isDesktop ? selectPrevious : undefined,
+        onArrowDown: isDesktop ? selectNext : undefined,
       });
 
       if (event.key === "Home") {
@@ -233,8 +224,8 @@ const SettingsLayout = ({
             role={ARIA_ROLES.TABLIST}
             aria-orientation={
               isDesktop
-                ? ARIA_ORIENTATION_VALUES.HORIZONTAL
-                : ARIA_ORIENTATION_VALUES.VERTICAL
+                ? ARIA_ORIENTATION_VALUES.VERTICAL
+                : ARIA_ORIENTATION_VALUES.HORIZONTAL
             }
             className={styles["settings-layout__tablist"]}
           >
