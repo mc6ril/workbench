@@ -325,6 +325,109 @@
         "progressLabel": "{progress}% complété"
       }
     },
+    "settings": {
+      "page": {
+        "tabs": {
+          "project": "Projet",
+          "statusesColumns": "Statuts et colonnes",
+          "priorities": "Priorités",
+          "exportImport": "Export / import"
+        },
+        "fallback": "Section de paramètres indisponible"
+      },
+      "layout": {
+        "title": "Paramètres",
+        "tabsNavAriaLabel": "Navigation des paramètres"
+      },
+      "project": {
+        "title": "Projet",
+        "subtitle": "Gérez les informations et préférences du projet",
+        "fields": {
+          "projectName": {
+            "label": "Nom du projet",
+            "placeholder": "Entrez le nom du projet"
+          },
+          "projectDescription": {
+            "label": "Description du projet",
+            "placeholder": "Ajoutez une description (optionnel)"
+          }
+        },
+        "actions": {
+          "save": "Enregistrer",
+          "saving": "Enregistrement...",
+          "reset": "Réinitialiser"
+        }
+      },
+      "statusesColumns": {
+        "title": "Statuts et colonnes",
+        "subtitle": "Configurez l'ordre, le nom et l'activation des colonnes",
+        "listAriaLabel": "Liste des colonnes",
+        "fields": {
+          "enabled": {
+            "label": "Activé",
+            "ariaLabel": "Activer la colonne {name}"
+          },
+          "name": {
+            "label": "Nom",
+            "placeholder": "Nom de la colonne",
+            "ariaLabel": "Renommer la colonne {name}"
+          }
+        },
+        "actions": {
+          "add": "Ajouter",
+          "moveUp": "Monter",
+          "moveDown": "Descendre",
+          "moveUpAriaLabel": "Monter la colonne {name}",
+          "moveDownAriaLabel": "Descendre la colonne {name}"
+        },
+        "empty": {
+          "title": "Aucune colonne",
+          "message": "Ajoutez une colonne pour commencer"
+        }
+      },
+      "priorities": {
+        "title": "Priorités",
+        "subtitle": "Configurez les niveaux de priorité",
+        "listAriaLabel": "Liste des priorités",
+        "fields": {
+          "name": {
+            "label": "Nom",
+            "placeholder": "Nom de la priorité",
+            "ariaLabel": "Renommer la priorité {name}"
+          }
+        },
+        "actions": {
+          "add": "Ajouter",
+          "moveUp": "Monter",
+          "moveDown": "Descendre",
+          "moveUpAriaLabel": "Monter la priorité {name}",
+          "moveDownAriaLabel": "Descendre la priorité {name}"
+        },
+        "empty": {
+          "title": "Aucune priorité",
+          "message": "Ajoutez une priorité pour commencer"
+        }
+      },
+      "exportImport": {
+        "title": "Export / import",
+        "subtitle": "Exportez ou importez des données du projet",
+        "export": {
+          "title": "Export",
+          "hint": "Téléchargez une exportation des données du projet",
+          "action": "Exporter",
+          "exporting": "Export en cours..."
+        },
+        "import": {
+          "title": "Import",
+          "hint": "Importez des données depuis un fichier",
+          "fileLabel": "Fichier",
+          "fileHint": "Sélectionnez un fichier compatible pour lancer l'import",
+          "fileAriaLabel": "Sélectionner un fichier à importer",
+          "importing": "Import en cours...",
+          "accept": ".json,application/json"
+        }
+      }
+    },
     "ticketDetail": {
       "ticketOverview": {
         "ariaLabel": "Détails du ticket",
