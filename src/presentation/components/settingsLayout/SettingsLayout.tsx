@@ -1,6 +1,13 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { Title } from "@/presentation/components/ui";
 
@@ -16,6 +23,9 @@ import { useTranslation } from "@/shared/i18n";
 import styles from "./SettingsLayout.module.scss";
 
 const DESKTOP_MEDIA_QUERY = "(min-width: 768px)";
+
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 export type SettingsTab = {
   id: string;
@@ -46,7 +56,7 @@ const SettingsLayout = ({
 
   const [isDesktop, setIsDesktop] = useState<boolean>(false);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const mediaQueryList = window.matchMedia(DESKTOP_MEDIA_QUERY);
 
     const update = (): void => {
@@ -55,18 +65,40 @@ const SettingsLayout = ({
 
     update();
 
-    if (typeof mediaQueryList.addEventListener === "function") {
+    const legacyChangeListener = (_event: MediaQueryListEvent): void => {
+      update();
+    };
+
+    // Legacy matchMedia API (deprecated in TS DOM types).
+    // We keep support without referencing deprecated members directly.
+    const legacyApi = mediaQueryList as unknown as {
+      addListener?: (listener: (ev: MediaQueryListEvent) => void) => void;
+      removeListener?: (listener: (ev: MediaQueryListEvent) => void) => void;
+    };
+
+    const canUseModernApi =
+      typeof mediaQueryList.addEventListener === "function" &&
+      typeof mediaQueryList.removeEventListener === "function";
+    const canUseLegacyApi =
+      typeof legacyApi.addListener === "function" &&
+      typeof legacyApi.removeListener === "function";
+
+    if (canUseModernApi) {
       mediaQueryList.addEventListener("change", update);
       return () => {
         mediaQueryList.removeEventListener("change", update);
       };
     }
 
-    // Fallback for older browsers (not expected, but safe)
-    mediaQueryList.addListener(update);
-    return () => {
-      mediaQueryList.removeListener(update);
-    };
+    if (canUseLegacyApi) {
+      legacyApi.addListener?.(legacyChangeListener);
+      return () => {
+        legacyApi.removeListener?.(legacyChangeListener);
+      };
+    }
+
+    // No supported listener API (rare). We still applied the initial `update()`.
+    return;
   }, []);
 
   const enabledTabs = useMemo(
@@ -132,10 +164,9 @@ const SettingsLayout = ({
       };
 
       handleKeyboardNavigation(event.nativeEvent, {
-        // Horizontal tablist: Left/Right
+        // Keep keyboard behavior consistent with `aria-orientation`.
         onArrowLeft: isDesktop ? undefined : selectPrevious,
         onArrowRight: isDesktop ? undefined : selectNext,
-        // Vertical tablist: Up/Down
         onArrowUp: isDesktop ? selectPrevious : undefined,
         onArrowDown: isDesktop ? selectNext : undefined,
       });
