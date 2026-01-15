@@ -18,7 +18,7 @@ type Props = {
   /** Button label text */
   label: string;
   /** Click handler function */
-  onClick: () => void;
+  onClick?: () => void;
   /** Button variant style */
   variant?: ButtonVariant;
   /** Whether the button is disabled */
@@ -81,7 +81,9 @@ const Button = ({
         }
 
         event.preventDefault();
-        onClick();
+        if (onClick) {
+          onClick();
+        }
       }
     },
     [disabled, onClick, type]

@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { getLocale } from "@/shared/i18n/config";
 import { createPluralKey } from "@/shared/i18n/dynamic";
 import messagesFr from "@/shared/i18n/messages/fr.json";
-import type { TranslationMessages } from "@/shared/i18n/types";
+import type { TranslationMessages, TranslationNode, TranslationValue } from "@/shared/i18n/types";
 import { interpolateTranslation } from "@/shared/i18n/utils";
 
 /**
@@ -39,7 +39,7 @@ export const useTranslation = (namespace: string) => {
   const getNamespaceValue = (
     obj: Record<string, unknown>,
     path: string
-  ): Record<string, string | Record<string, unknown>> | undefined => {
+  ): TranslationNode | undefined => {
     const parts = path.split(".");
     let current: unknown = obj;
 
@@ -57,7 +57,7 @@ export const useTranslation = (namespace: string) => {
     }
 
     if (current && typeof current === "object") {
-      return current as Record<string, string | Record<string, unknown>>;
+      return current as TranslationNode;
     }
 
     return undefined;
@@ -83,7 +83,7 @@ export const useTranslation = (namespace: string) => {
       // Helper function to get value from namespaceMessages
       const getValueFromNamespace = (
         k: string
-      ): string | Record<string, unknown> | undefined => {
+      ): TranslationValue | undefined => {
         const keyParts = k.split(".");
         let current: unknown = namespaceMessages;
 

@@ -325,6 +325,76 @@
         "progressLabel": "{progress}% complété"
       }
     },
+    "ticketDetail": {
+      "ticketOverview": {
+        "ariaLabel": "Détails du ticket",
+        "meta": {
+          "status": "Statut",
+          "epic": "Epic",
+          "assignee": "Assigné à",
+          "priority": "Priorité",
+          "storyPoints": "Story points",
+          "storyPointsValue": "{count} point",
+          "storyPointsValue_other": "{count} points",
+          "notSet": "Non défini"
+        }
+      },
+      "ticketEditForm": {
+        "title": "Modifier le ticket",
+        "ariaLabel": "Formulaire de modification du ticket",
+        "fields": {
+          "title": "Titre",
+          "status": "Statut",
+          "epic": "Epic",
+          "description": "Description"
+        },
+        "epicNoneOption": "Aucun",
+        "saveButton": "Enregistrer",
+        "cancelButton": "Annuler",
+        "errorGeneric": "Une erreur s'est produite lors de l'enregistrement du ticket"
+      },
+      "subtasks": {
+        "list": {
+          "title": "Sous-tâches",
+          "ariaLabel": "Section des sous-tâches du ticket",
+          "itemsAriaLabel": "Liste des sous-tâches",
+          "loadingAriaLabel": "Chargement des sous-tâches",
+          "errorTitle": "Erreur lors du chargement des sous-tâches",
+          "emptyTitle": "Aucune sous-tâche",
+          "emptyMessage": "Ajoutez une sous-tâche pour décomposer ce ticket",
+          "emptyAriaLabel": "Aucune sous-tâche"
+        },
+        "subtaskItem": {
+          "checkboxLabel": "Marquer la sous-tâche {title} comme terminée",
+          "editLabel": "Modifier",
+          "deleteLabel": "Supprimer"
+        }
+      },
+      "createSubtaskForm": {
+        "title": "Créer une sous-tâche",
+        "ariaLabel": "Formulaire de création de sous-tâche",
+        "fields": {
+          "title": "Titre",
+          "description": "Description"
+        },
+        "submitButton": "Ajouter",
+        "cancelButton": "Annuler",
+        "errorGeneric": "Une erreur s'est produite lors de la création de la sous-tâche"
+      },
+      "epicLinkSelector": {
+        "title": "Epic",
+        "loadingAriaLabel": "Chargement des epics",
+        "errorTitle": "Erreur lors du chargement des epics",
+        "emptyTitle": "Aucun epic",
+        "emptyMessage": "Créez un epic pour pouvoir lier ce ticket",
+        "emptyAriaLabel": "Aucun epic disponible",
+        "selectLabel": "Lier à un epic",
+        "noneOption": "Aucun",
+        "currentEpic": "Epic actuel : {name}",
+        "noEpicSelected": "Aucun epic lié",
+        "unlinkButton": "Délier"
+      }
+    },
     "landing": {
       "title": "Workbench",
       "subtitle": "Un outil léger et personnel de gestion de tâches et de projets",

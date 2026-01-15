@@ -1,0 +1,50 @@
+@use "@/styles/variables/spacing" as *;
+
+.ticket-edit-form {
+  width: 100%;
+
+  &__title {
+    margin: 0 0 $spacing-md;
+  }
+
+  &__fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+    margin-bottom: $spacing-md;
+  }
+
+  &__field {
+    width: 100%;
+
+    &--half {
+      width: 100%;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    align-items: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .ticket-edit-form {
+    &__fields {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    &__field {
+      &--half {
+        grid-column: span 1;
+      }
+    }
+
+    &__field:not(&__field--half) {
+      grid-column: 1 / -1;
+    }
+  }
+}
+

@@ -11,25 +11,27 @@ export type TranslationKey =
   | `pages.resetPassword.${string}`
   | `pages.updatePassword.${string}`
   | `pages.home.${string}`
+  | `pages.backlog.${string}`
+  | `pages.board.${string}`
+  | `pages.epics.${string}`
+  | `pages.ticketDetail.${string}`
   | `pages.landing.${string}`
   | `forms.${string}`
   | `errors.${string}`;
 
 export type Locale = "fr";
 
+export type TranslationValue = string | TranslationNode;
+
+export type TranslationNode = {
+  [key: string]: TranslationValue;
+};
+
 export type TranslationMessages = {
-  common: Record<string, string>;
-  pages: {
-    signup: Record<string, string | Record<string, string>>;
-    signin: Record<string, string | Record<string, string>>;
-    verifyEmail: Record<string, string | Record<string, string>>;
-    resetPassword: Record<string, string | Record<string, string>>;
-    updatePassword: Record<string, string | Record<string, string>>;
-    home: Record<string, string | Record<string, string>>;
-    landing: Record<string, string | Record<string, string>>;
-  };
-  forms: Record<string, string | Record<string, unknown>>;
-  errors: Record<string, string | Record<string, unknown>>;
+  common: TranslationNode;
+  pages: TranslationNode;
+  forms: TranslationNode;
+  errors: TranslationNode;
 };
 
 /**
@@ -44,6 +46,10 @@ export type Namespace =
   | "pages.resetPassword"
   | "pages.updatePassword"
   | "pages.home"
+  | "pages.backlog"
+  | "pages.board"
+  | "pages.epics"
+  | "pages.ticketDetail"
   | "pages.landing"
   | "forms"
   | "errors";

@@ -98,7 +98,6 @@ const CreateEpicForm = ({
         <Button
           label={t("submitButton")}
           type="submit"
-          onClick={() => undefined}
           disabled={isSubmitting || !name}
           aria-label={tCommon(BUTTON_LABELS.SUBMIT)}
         />
