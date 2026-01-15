@@ -3,6 +3,7 @@
 import React, {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -22,6 +23,9 @@ import { useTranslation } from "@/shared/i18n";
 import styles from "./SettingsLayout.module.scss";
 
 const DESKTOP_MEDIA_QUERY = "(min-width: 768px)";
+
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 export type SettingsTab = {
   id: string;
@@ -52,7 +56,7 @@ const SettingsLayout = ({
 
   const [isDesktop, setIsDesktop] = useState<boolean>(false);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const mediaQueryList = window.matchMedia(DESKTOP_MEDIA_QUERY);
 
     const update = (): void => {

@@ -2,6 +2,8 @@
 @use "@/styles/variables/spacing" as *;
 @use "@/styles/variables/typography" as *;
 @use "@/styles/variables/borders" as *;
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/shadows" as *;
 
 .error-message {
   width: 100%;
