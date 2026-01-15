@@ -5,6 +5,8 @@ import { getProject } from "@/core/usecases/project/getProject";
 import { createProjectRepository } from "@/infrastructure/supabase/repositories";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
+import DashboardShell from "@/presentation/layouts/dashboardShell/DashboardShell";
+
 /**
  * Server-side layout for project routes.
  * Checks project access using getProject usecase (respects RLS).
@@ -46,7 +48,11 @@ const ProjectLayout = async ({
 
   // User has access, render children
   // Note: We don't pass project data here - client pages fetch via React Query
-  return <>{children}</>;
+  return (
+    <DashboardShell sidebar={null} header={null} breadcrumbs={null}>
+      {children}
+    </DashboardShell>
+  );
 };
 
 export default ProjectLayout;
