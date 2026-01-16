@@ -24,10 +24,7 @@ const ProjectPage = ({
 
   return (
     <div className={styles["project-page"]}>
-      <Container
-        maxWidth="large"
-        className={styles["project-page__container"]}
-      >
+      <Container maxWidth="large" className={styles["project-page__container"]}>
         <Stack spacing="xl">
           <DashboardHeader title={t("title")} subtitle={t("subtitle")} />
           <ShortcutsWidget
