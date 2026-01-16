@@ -48,16 +48,19 @@ export const useThemeStore = create<ThemeStore>((set) => ({
     set({ theme, resolvedTheme });
   },
   toggleTheme: (): void => {
-    set((state) => ({
-      theme:
+    set((state) => {
+      const nextTheme: ResolvedTheme =
         state.theme === "system"
           ? state.resolvedTheme === "dark"
             ? "light"
             : "dark"
           : state.theme === "light"
             ? "dark"
-            : "light",
-    }));
+            : "light";
+
+      // Toggling always results in an explicit user preference (not "system").
+      return { theme: nextTheme, resolvedTheme: nextTheme };
+    });
   },
   resetTheme: (): void => {
     set({ theme: defaultTheme, resolvedTheme: "light" });

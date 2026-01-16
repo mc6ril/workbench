@@ -25,10 +25,11 @@ type FilterActions = {
   clearEpicId: () => void;
 
   /**
-   * parentId is tri-state:
-   * - undefined: do not filter by parentId
+   * parentId supports two explicit modes:
    * - null: only top-level tickets (parentId IS NULL)
    * - string: only subtasks of that parent
+   *
+   * To remove the parentId filter entirely (undefined), use clearParentId().
    */
   setParentId: (parentId: string | null) => void;
   clearParentId: () => void;

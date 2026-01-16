@@ -59,9 +59,15 @@ export const useBoardStore = create<BoardStore>((set) => ({
     });
   },
   showColumn: (columnId: string): void => {
-    set((state) => ({
-      hiddenColumnIds: state.hiddenColumnIds.filter((id) => id !== columnId),
-    }));
+    set((state) => {
+      if (!state.hiddenColumnIds.includes(columnId)) {
+        return state;
+      }
+
+      return {
+        hiddenColumnIds: state.hiddenColumnIds.filter((id) => id !== columnId),
+      };
+    });
   },
   setHiddenColumnIds: (hiddenColumnIds: string[]): void => {
     set({ hiddenColumnIds });
