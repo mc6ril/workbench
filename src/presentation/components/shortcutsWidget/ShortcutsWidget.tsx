@@ -17,6 +17,7 @@ type Shortcut = {
 
 type Props = {
   projectId: string;
+  translationNamespace?: "pages.home.shortcutsWidget" | "pages.projectHome.shortcutsWidget";
   shortcuts?: Shortcut[];
   onShortcutClick?: (route: string) => void;
   className?: string;
@@ -24,11 +25,12 @@ type Props = {
 
 const ShortcutsWidget = ({
   projectId,
+  translationNamespace = "pages.home.shortcutsWidget",
   shortcuts,
   onShortcutClick,
   className,
 }: Props) => {
-  const t = useTranslation("pages.home.shortcutsWidget");
+  const t = useTranslation(translationNamespace);
   const widgetId = getAccessibilityId("shortcuts-widget");
 
   const defaultShortcuts: Shortcut[] = [

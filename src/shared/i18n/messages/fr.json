@@ -216,7 +216,16 @@
     },
     "projectHome": {
       "title": "Accueil",
-      "subtitle": "Vue d'ensemble du projet"
+      "subtitle": "Vue d'ensemble du projet",
+      "shortcutsWidget": {
+        "title": "Raccourcis",
+        "shortcuts": {
+          "board": "Tableau",
+          "backlog": "Backlog",
+          "epics": "Epics",
+          "settings": "Paramètres"
+        }
+      }
     },
     "backlog": {
       "title": "Backlog",

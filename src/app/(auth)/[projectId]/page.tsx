@@ -31,7 +31,10 @@ const ProjectPage = ({
       >
         <Stack spacing="xl">
           <DashboardHeader title={t("title")} subtitle={t("subtitle")} />
-          <ShortcutsWidget projectId={projectId} />
+          <ShortcutsWidget
+            projectId={projectId}
+            translationNamespace="pages.projectHome.shortcutsWidget"
+          />
         </Stack>
       </Container>
     </div>
