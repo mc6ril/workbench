@@ -13,6 +13,12 @@ export * from "./project";
 // Ticket hooks
 export * from "./ticket";
 
+// Epic hooks
+export * from "./epic";
+
+// Board hooks
+export * from "./board";
+
 // Generic hooks
 export { useTranslation } from "./useTranslation";
 

@@ -1,4 +1,4 @@
-import type { Ticket, TicketFilters } from "@/core/domain/schema/ticket.schema";
+import type { Ticket, TicketFilters, TicketSort } from "@/core/domain/schema/ticket.schema";
 
 import { listTickets } from "@/core/usecases/ticket/listTickets";
 
@@ -38,7 +38,7 @@ describe("listTickets", () => {
     // Arrange
     const tickets: Ticket[] = [mockTicket1, mockTicket2];
     const repository = createTicketRepositoryMock({
-      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(
+      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?, TicketSort?]>(
         async () => tickets
       ),
     });
@@ -48,7 +48,7 @@ describe("listTickets", () => {
 
     // Assert
     expect(repository.listByProject).toHaveBeenCalledTimes(1);
-    expect(repository.listByProject).toHaveBeenCalledWith(projectId, undefined);
+    expect(repository.listByProject).toHaveBeenCalledWith(projectId, undefined, undefined);
     expect(result).toEqual(tickets);
     expect(result).toHaveLength(2);
     expect(result[0]).toMatchObject({
@@ -66,7 +66,7 @@ describe("listTickets", () => {
   it("should return empty array when no tickets", async () => {
     // Arrange
     const repository = createTicketRepositoryMock({
-      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(
+      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?, TicketSort?]>(
         async () => []
       ),
     });
@@ -76,7 +76,7 @@ describe("listTickets", () => {
 
     // Assert
     expect(repository.listByProject).toHaveBeenCalledTimes(1);
-    expect(repository.listByProject).toHaveBeenCalledWith(projectId, undefined);
+    expect(repository.listByProject).toHaveBeenCalledWith(projectId, undefined, undefined);
     expect(result).toEqual([]);
     expect(result).toHaveLength(0);
   });
@@ -85,7 +85,7 @@ describe("listTickets", () => {
     // Arrange
     const repositoryError = new Error("Database connection failed");
     const repository = createTicketRepositoryMock({
-      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(
+      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?, TicketSort?]>(
         async () => {
           throw repositoryError;
         }
@@ -97,14 +97,14 @@ describe("listTickets", () => {
       repositoryError
     );
     expect(repository.listByProject).toHaveBeenCalledTimes(1);
-    expect(repository.listByProject).toHaveBeenCalledWith(projectId, undefined);
+    expect(repository.listByProject).toHaveBeenCalledWith(projectId, undefined, undefined);
   });
 
   it("should call repository with correct projectId", async () => {
     // Arrange
     const differentProjectId = "456e7890-e89b-12d3-a456-426614174001";
     const repository = createTicketRepositoryMock({
-      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(
+      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?, TicketSort?]>(
         async () => []
       ),
     });
@@ -116,6 +116,7 @@ describe("listTickets", () => {
     expect(repository.listByProject).toHaveBeenCalledTimes(1);
     expect(repository.listByProject).toHaveBeenCalledWith(
       differentProjectId,
+      undefined,
       undefined
     );
     expect(repository.listByProject).not.toHaveBeenCalledWith(projectId);
@@ -126,7 +127,7 @@ describe("listTickets", () => {
     const tickets: Ticket[] = [mockTicket1];
     const filters = { status: "todo" };
     const repository = createTicketRepositoryMock({
-      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?]>(
+      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?, TicketSort?]>(
         async () => tickets
       ),
     });
@@ -136,7 +137,26 @@ describe("listTickets", () => {
 
     // Assert
     expect(repository.listByProject).toHaveBeenCalledTimes(1);
-    expect(repository.listByProject).toHaveBeenCalledWith(projectId, filters);
+    expect(repository.listByProject).toHaveBeenCalledWith(projectId, filters, undefined);
+    expect(result).toEqual(tickets);
+  });
+
+  it("should pass sort to repository when provided", async () => {
+    // Arrange
+    const tickets: Ticket[] = [mockTicket1];
+    const sort: TicketSort = { field: "position", direction: "asc" };
+    const repository = createTicketRepositoryMock({
+      listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?, TicketSort?]>(
+        async () => tickets
+      ),
+    });
+
+    // Act
+    const result = await listTickets(repository, projectId, undefined, sort);
+
+    // Assert
+    expect(repository.listByProject).toHaveBeenCalledTimes(1);
+    expect(repository.listByProject).toHaveBeenCalledWith(projectId, undefined, sort);
     expect(result).toEqual(tickets);
   });
 });

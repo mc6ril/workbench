@@ -1,4 +1,9 @@
-import type { Ticket, TicketFilters } from "@/core/domain/schema/ticket.schema";
+import type {
+  Ticket,
+  TicketFilters,
+  TicketSort,
+} from "@/core/domain/schema/ticket.schema";
+import { TicketSortSchema } from "@/core/domain/schema/ticket.schema";
 
 import type { TicketRepository } from "@/core/ports/ticketRepository";
 
@@ -14,7 +19,10 @@ import type { TicketRepository } from "@/core/ports/ticketRepository";
 export const listTickets = async (
   repository: TicketRepository,
   projectId: string,
-  filters?: TicketFilters
+  filters?: TicketFilters,
+  sort?: TicketSort
 ): Promise<Ticket[]> => {
-  return repository.listByProject(projectId, filters);
+  const parsedSort = sort ? TicketSortSchema.parse(sort) : undefined;
+
+  return repository.listByProject(projectId, filters, parsedSort);
 };
