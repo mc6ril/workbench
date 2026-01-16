@@ -252,25 +252,25 @@ Simple implementation screens to verify authentication and user privilege system
 
 ### 5.1 React Query Hooks
 
-| Area  | Sub Area | Title                      | Description                                                         | Status  |
-| ----- | -------- | -------------------------- | ------------------------------------------------------------------- | ------- |
-| Hooks | Tickets  | useTickets Hook            | Create useTickets hook for listing tickets with filters and sorting | Pending |
-| Hooks | Tickets  | useTicket Hook             | Create useTicket hook for fetching single ticket detail             | Pending |
-| Hooks | Tickets  | useCreateTicket Hook       | Create useCreateTicket mutation hook                                | Pending |
-| Hooks | Tickets  | useUpdateTicket Hook       | Create useUpdateTicket mutation hook                                | Pending |
-| Hooks | Tickets  | useDeleteTicket Hook       | Create useDeleteTicket mutation hook                                | Pending |
-| Hooks | Tickets  | useMoveTicket Hook         | Create useMoveTicket mutation hook for board drag-and-drop          | Pending |
-| Hooks | Tickets  | useReorderTicket Hook      | Create useReorderTicket mutation hook for column reordering         | Pending |
-| Hooks | Tickets  | useAssignTicketToEpic Hook | Create useAssignTicketToEpic mutation hook                          | Pending |
-| Hooks | Tickets  | useCreateSubtask Hook      | Create useCreateSubtask mutation hook                               | Pending |
-| Hooks | Epics    | useEpics Hook              | Create useEpics hook for listing all epics                          | Pending |
-| Hooks | Epics    | useEpic Hook               | Create useEpic hook for fetching single epic detail                 | Pending |
-| Hooks | Epics    | useCreateEpic Hook         | Create useCreateEpic mutation hook                                  | Pending |
-| Hooks | Epics    | useUpdateEpic Hook         | Create useUpdateEpic mutation hook                                  | Pending |
-| Hooks | Epics    | useDeleteEpic Hook         | Create useDeleteEpic mutation hook                                  | Pending |
-| Hooks | Board    | useBoardConfiguration Hook | Create useBoardConfiguration hook for board and columns             | Pending |
-| Hooks | Board    | useConfigureColumns Hook   | Create useConfigureColumns mutation hook                            | Pending |
-| Hooks | Project  | useProject Hook            | Create useProject hook for fetching project data                    | Pending |
+| Area  | Sub Area | Title                      | Description                                                         | Status |
+| ----- | -------- | -------------------------- | ------------------------------------------------------------------- | ------ |
+| Hooks | Tickets  | useTickets Hook            | Create useTickets hook for listing tickets with filters and sorting | Done   |
+| Hooks | Tickets  | useTicket Hook             | Create useTicket hook for fetching single ticket detail             | Done   |
+| Hooks | Tickets  | useCreateTicket Hook       | Create useCreateTicket mutation hook                                | Done   |
+| Hooks | Tickets  | useUpdateTicket Hook       | Create useUpdateTicket mutation hook                                | Done   |
+| Hooks | Tickets  | useDeleteTicket Hook       | Create useDeleteTicket mutation hook                                | Done   |
+| Hooks | Tickets  | useMoveTicket Hook         | Create useMoveTicket mutation hook for board drag-and-drop          | Done   |
+| Hooks | Tickets  | useReorderTicket Hook      | Create useReorderTicket mutation hook for column reordering         | Done   |
+| Hooks | Tickets  | useAssignTicketToEpic Hook | Create useAssignTicketToEpic mutation hook                          | Done   |
+| Hooks | Tickets  | useCreateSubtask Hook      | Create useCreateSubtask mutation hook                               | Done   |
+| Hooks | Epics    | useEpics Hook              | Create useEpics hook for listing all epics                          | Done   |
+| Hooks | Epics    | useEpic Hook               | Create useEpic hook for fetching single epic detail                 | Done   |
+| Hooks | Epics    | useCreateEpic Hook         | Create useCreateEpic mutation hook                                  | Done   |
+| Hooks | Epics    | useUpdateEpic Hook         | Create useUpdateEpic mutation hook                                  | Done   |
+| Hooks | Epics    | useDeleteEpic Hook         | Create useDeleteEpic mutation hook                                  | Done   |
+| Hooks | Board    | useBoardConfiguration Hook | Create useBoardConfiguration hook for board and columns             | Done   |
+| Hooks | Board    | useConfigureColumns Hook   | Create useConfigureColumns mutation hook                            | Done   |
+| Hooks | Project  | useProject Hook            | Create useProject hook for fetching project data                    | Done   |
 
 ### 5.2 Zustand Stores
 
