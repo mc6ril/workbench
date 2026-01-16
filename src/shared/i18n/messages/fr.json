@@ -40,6 +40,12 @@
       "project": "Projet"
     }
   },
+  "layout": {
+    "appFooter": {
+      "label": "Workbench",
+      "ariaLabel": "Pied de page de l'application"
+    }
+  },
   "pages": {
     "signup": {
       "title": "Créer un compte",

@@ -236,15 +236,15 @@ Simple implementation screens to verify authentication and user privilege system
 
 ### 4.3 Layout Components
 
-| Area   | Sub Area   | Title              | Description                                                                            | Status  |
-| ------ | ---------- | ------------------ | -------------------------------------------------------------------------------------- | ------- |
-| Layout | Main       | Root Layout        | Create root layout with HTML structure and providers                                   | Pending |
-| Layout | Main       | Dashboard Layout   | Create dashboard layout with sidebar navigation                                        | Pending |
-| Layout | Navigation | Sidebar Navigation | Create SidebarNavigation component with routes (Home, Backlog, Board, Epics, Settings) | Pending |
-| Layout | Navigation | Skip Link          | Create SkipLink component for accessibility                                            | Pending |
-| Layout | Navigation | Breadcrumbs        | Create Breadcrumbs component for navigation context                                    | Pending |
-| Layout | Header     | App Header         | Create AppHeader component with title and user menu (if needed)                        | Pending |
-| Layout | Footer     | App Footer         | Create AppFooter component (optional, minimal)                                         | Pending |
+| Area   | Sub Area   | Title              | Description                                                                            | Status |
+| ------ | ---------- | ------------------ | -------------------------------------------------------------------------------------- | ------ |
+| Layout | Main       | Root Layout        | Create root layout with HTML structure and providers                                   | Done   |
+| Layout | Main       | Dashboard Layout   | Create dashboard layout with sidebar navigation                                        | Done   |
+| Layout | Navigation | Sidebar Navigation | Create SidebarNavigation component with routes (Home, Backlog, Board, Epics, Settings) | Done   |
+| Layout | Navigation | Skip Link          | Create SkipLink component for accessibility                                            | Done   |
+| Layout | Navigation | Breadcrumbs        | Create Breadcrumbs component for navigation context                                    | Done   |
+| Layout | Header     | App Header         | Create AppHeader component with title and user menu (if needed)                        | Done   |
+| Layout | Footer     | App Footer         | Create AppFooter component (optional, minimal)                                         | Done   |
 
 ---
 

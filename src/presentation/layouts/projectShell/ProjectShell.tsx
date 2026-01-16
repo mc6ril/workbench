@@ -2,6 +2,7 @@
 
 import React from "react";
 
+import AppFooter from "@/presentation/components/appFooter/AppFooter";
 import AppHeader from "@/presentation/components/appHeader/AppHeader";
 import Breadcrumbs from "@/presentation/components/breadcrumbs/Breadcrumbs";
 import SidebarNavigation from "@/presentation/components/sidebarNavigation/SidebarNavigation";
@@ -37,6 +38,7 @@ const ProjectShell = ({ projectId, children }: Props) => {
         header={<AppHeader title={headerTitle} />}
         breadcrumbs={<Breadcrumbs projectId={projectId} />}
         breadcrumbsAriaLabel={tBreadcrumbs("ariaLabel")}
+        footer={<AppFooter />}
       >
         {children}
       </DashboardShell>
