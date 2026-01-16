@@ -274,21 +274,21 @@ Simple implementation screens to verify authentication and user privilege system
 
 ### 5.2 Zustand Stores
 
-| Area   | Sub Area | Title           | Description                                                             | Status  |
-| ------ | -------- | --------------- | ----------------------------------------------------------------------- | ------- |
-| Stores | UI State | Filter Store    | Create useFilterStore for backlog filters (search, status, epic)        | Pending |
-| Stores | UI State | Sort Store      | Create useSortStore for ticket sorting preferences                      | Pending |
-| Stores | UI State | Modal Store     | Create useModalStore for global modal state management                  | Pending |
-| Stores | UI State | Board Store     | Create useBoardStore for board view state (selected columns, filters)   | Pending |
-| Stores | UI State | Selection Store | Create useSelectionStore for bulk selection state in backlog            | Pending |
-| Stores | UI State | Theme Store     | Create useThemeStore for theme preferences (light/dark, if implemented) | Pending |
+| Area   | Sub Area | Title           | Description                                                             | Status |
+| ------ | -------- | --------------- | ----------------------------------------------------------------------- | ------ |
+| Stores | UI State | Filter Store    | Create useFilterStore for backlog filters (search, status, epic)        | Done   |
+| Stores | UI State | Sort Store      | Create useSortStore for ticket sorting preferences                      | Done   |
+| Stores | UI State | Modal Store     | Create useModalStore for global modal state management                  | Done   |
+| Stores | UI State | Board Store     | Create useBoardStore for board view state (selected columns, filters)   | Done   |
+| Stores | UI State | Selection Store | Create useSelectionStore for bulk selection state in backlog            | Done   |
+| Stores | UI State | Theme Store     | Create useThemeStore for theme preferences (light/dark, if implemented) | Done   |
 
 ### 5.3 Providers
 
-| Area      | Sub Area | Title                | Description                                                           | Status  |
-| --------- | -------- | -------------------- | --------------------------------------------------------------------- | ------- |
-| Providers | Data     | React Query Provider | Setup QueryClientProvider with default options (staleTime, cacheTime) | Pending |
-| Providers | App      | App Provider         | Create AppProvider wrapping all global providers                      | Pending |
+| Area      | Sub Area | Title                | Description                                                           | Status |
+| --------- | -------- | -------------------- | --------------------------------------------------------------------- | ------ |
+| Providers | Data     | React Query Provider | Setup QueryClientProvider with default options (staleTime, cacheTime) | Done   |
+| Providers | App      | App Provider         | Create AppProvider wrapping all global providers                      | Done   |
 
 ---
 
