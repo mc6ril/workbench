@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import ReactQueryProvider from "@/presentation/providers/ReactQueryProvider";
+import AppProvider from "@/presentation/providers/AppProvider";
 
 import type { TranslationMessages } from "@/shared/i18n";
 import { defaultLocale, getTranslationValue } from "@/shared/i18n";
@@ -45,9 +45,9 @@ const RootLayout = ({
   return (
     <html lang={defaultLocale}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ReactQueryProvider>
+        <AppProvider>
           <div className="app-root">{children}</div>
-        </ReactQueryProvider>
+        </AppProvider>
       </body>
     </html>
   );

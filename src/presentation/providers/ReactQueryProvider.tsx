@@ -15,7 +15,7 @@ const ReactQueryProvider = ({ children }: PropsWithChildren) => {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000, // 1 minute
+            staleTime: 5 * 60 * 1000, // 5 minutes
             gcTime: 5 * 60 * 1000, // 5 minutes (formerly cacheTime)
             retry: 1,
             refetchOnWindowFocus: false,
@@ -38,4 +38,3 @@ const ReactQueryProvider = ({ children }: PropsWithChildren) => {
 };
 
 export default ReactQueryProvider;
-
