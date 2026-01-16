@@ -21,7 +21,7 @@ const AppHeader = ({ title, actions, className }: Props) => {
     .join(" ");
 
   return (
-    <header id={headerId} className={headerClasses} aria-labelledby={titleId}>
+    <div id={headerId} className={headerClasses} aria-labelledby={titleId}>
       <div className={styles["app-header__content"]}>
         <div className={styles["app-header__title"]}>
           <Title id={titleId} variant="h2">
@@ -32,7 +32,7 @@ const AppHeader = ({ title, actions, className }: Props) => {
           <div className={styles["app-header__actions"]}>{actions}</div>
         )}
       </div>
-    </header>
+    </div>
   );
 };
 

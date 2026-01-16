@@ -22,6 +22,6 @@
 .app-header__actions {
   display: flex;
   align-items: center;
-  justify-self: end;
+  margin-left: auto;
   gap: $spacing-sm;
 }
