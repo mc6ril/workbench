@@ -2,9 +2,11 @@
 
 import React from "react";
 
+import AppHeader from "@/presentation/components/appHeader/AppHeader";
 import Breadcrumbs from "@/presentation/components/breadcrumbs/Breadcrumbs";
 import SidebarNavigation from "@/presentation/components/sidebarNavigation/SidebarNavigation";
 import SkipLink from "@/presentation/components/skipLink/SkipLink";
+import { useProject } from "@/presentation/hooks/project/useProject";
 import DashboardShell from "@/presentation/layouts/dashboardShell/DashboardShell";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
@@ -20,7 +22,10 @@ const ProjectShell = ({ projectId, children }: Props) => {
   const tSidebar = useTranslation("navigation.sidebar");
   const tBreadcrumbs = useTranslation("navigation.breadcrumbs");
 
+  const { data: project } = useProject(projectId);
+
   const mainContentId = getAccessibilityId("main-content");
+  const headerTitle = project?.name ?? tBreadcrumbs("project");
 
   return (
     <>
@@ -29,6 +34,7 @@ const ProjectShell = ({ projectId, children }: Props) => {
       <DashboardShell
         sidebar={<SidebarNavigation projectId={projectId} />}
         sidebarAriaLabel={tSidebar("ariaLabel")}
+        header={<AppHeader title={headerTitle} />}
         breadcrumbs={<Breadcrumbs projectId={projectId} />}
         breadcrumbsAriaLabel={tBreadcrumbs("ariaLabel")}
       >
