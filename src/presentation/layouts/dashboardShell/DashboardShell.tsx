@@ -50,14 +50,14 @@ const DashboardShell = ({
       </nav>
 
       <div className={styles["dashboard-shell__content"]}>
-        <header
+        <div
           className={styles["dashboard-shell__header"]}
           aria-hidden={
             isHeaderEmpty ? ARIA_HIDDEN_VALUES.TRUE : ARIA_HIDDEN_VALUES.FALSE
           }
         >
           {header}
-        </header>
+        </div>
 
         <nav
           className={styles["dashboard-shell__breadcrumbs"]}
