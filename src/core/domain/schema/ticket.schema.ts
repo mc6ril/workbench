@@ -86,20 +86,3 @@ export type TicketFilters = {
   epicId?: string;
   parentId?: string | null; // null to filter tickets without parent, string to filter by specific parent
 };
-
-/**
- * Sorting options for ticket queries.
- * Sorting is applied at the repository level (database ordering), not in hooks.
- */
-export const TicketSortFieldSchema = z.enum(["createdAt", "position", "title"]);
-export type TicketSortField = z.infer<typeof TicketSortFieldSchema>;
-
-export const SortDirectionSchema = z.enum(["asc", "desc"]);
-export type SortDirection = z.infer<typeof SortDirectionSchema>;
-
-export const TicketSortSchema = z.object({
-  field: TicketSortFieldSchema,
-  direction: SortDirectionSchema,
-});
-
-export type TicketSort = z.infer<typeof TicketSortSchema>;

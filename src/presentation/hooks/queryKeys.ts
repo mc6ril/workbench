@@ -1,4 +1,4 @@
-import type { TicketFilters, TicketSort } from "@/core/domain/schema/ticket.schema";
+import type { TicketFilters } from "@/core/domain/schema/ticket.schema";
 
 /**
  * Centralized query key factory for React Query.
@@ -23,31 +23,14 @@ const queryKeysObject = {
   projects: {
     all: () => ["projects"] as const,
     detail: (id: string) => ["projects", id] as const,
-    ticketsRoot: (projectId: string) =>
-      ["projects", projectId, "tickets"] as const,
-    ticketsList: (
-      projectId: string,
-      filters?: TicketFilters,
-      sort?: TicketSort
-    ) => {
-      // Create stable query keys by extracting filter/sort values
-      // This ensures identical values create the same key regardless of object reference.
+    tickets: (projectId: string, filters?: TicketFilters) => {
+      // Create stable query key by extracting filter values
+      // This ensures identical filter values create the same key regardless of object reference
       const filterKey = filters
-        ? [
-            filters.status ?? null,
-            filters.epicId ?? null,
-            filters.parentId ?? null,
-          ]
+        ? [filters.status ?? null, filters.epicId ?? null]
         : null;
-      const sortKey = sort ? [sort.field, sort.direction] : null;
-
-      return ["projects", projectId, "tickets", "list", filterKey, sortKey] as const;
+      return ["projects", projectId, "tickets", filterKey] as const;
     },
-    epicsRoot: (projectId: string) => ["projects", projectId, "epics"] as const,
-    epicsList: (projectId: string) =>
-      ["projects", projectId, "epics", "list"] as const,
-    boardConfiguration: (projectId: string) =>
-      ["projects", projectId, "board", "configuration"] as const,
   },
   tickets: {
     all: () => ["tickets"] as const,
@@ -57,15 +40,10 @@ const queryKeysObject = {
     byStatus: (projectId: string, status: string) =>
       ["tickets", "project", projectId, "status", status] as const,
   },
-  epics: {
-    all: () => ["epics"] as const,
-    detail: (id: string) => ["epics", id] as const,
-  },
 } as const;
 
 export const queryKeys = Object.freeze({
   auth: Object.freeze(queryKeysObject.auth),
   projects: Object.freeze(queryKeysObject.projects),
   tickets: Object.freeze(queryKeysObject.tickets),
-  epics: Object.freeze(queryKeysObject.epics),
 });
