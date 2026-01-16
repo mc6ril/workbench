@@ -8,6 +8,7 @@ import type {
   CreateTicketInput,
   Ticket,
   TicketFilters,
+  TicketSort,
   UpdateTicketInput,
 } from "@/core/domain/schema/ticket.schema";
 
@@ -55,7 +56,8 @@ export const createTicketRepository = (
 
   async listByProject(
     projectId: string,
-    filters?: TicketFilters
+    filters?: TicketFilters,
+    sort?: TicketSort
   ): Promise<Ticket[]> {
     try {
       let query = client
@@ -72,8 +74,29 @@ export const createTicketRepository = (
         query = query.eq("epic_id", filters.epicId);
       }
 
-      const { data, error } = await query.order("created_at", {
-        ascending: false,
+      // parentId filter is tri-state:
+      // - undefined: don't filter by parent_id
+      // - null: only top-level tickets (parent_id IS NULL)
+      // - string: only subtasks of given parent (parent_id = value)
+      if (filters && "parentId" in filters) {
+        if (filters.parentId === null) {
+          query = query.is("parent_id", null);
+        } else if (typeof filters.parentId === "string") {
+          query = query.eq("parent_id", filters.parentId);
+        }
+      }
+
+      const sortField = sort?.field ?? "createdAt";
+      const sortDirection = sort?.direction ?? "desc";
+      const orderColumn =
+        sortField === "createdAt"
+          ? "created_at"
+          : sortField === "position"
+            ? "position"
+            : "title";
+
+      const { data, error } = await query.order(orderColumn, {
+        ascending: sortDirection === "asc",
       });
 
       if (error) {
