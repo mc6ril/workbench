@@ -13,6 +13,7 @@ type Props = {
   header?: React.ReactNode;
   breadcrumbs?: React.ReactNode;
   breadcrumbsAriaLabel?: string;
+  footer?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
 };
@@ -23,6 +24,7 @@ const DashboardShell = ({
   header,
   breadcrumbs,
   breadcrumbsAriaLabel,
+  footer,
   children,
   className,
 }: Props) => {
@@ -36,6 +38,7 @@ const DashboardShell = ({
   const isSidebarEmpty = !sidebar;
   const isHeaderEmpty = !header;
   const isBreadcrumbsEmpty = !breadcrumbs;
+  const isFooterEmpty = !footer;
 
   return (
     <div id={shellId} className={containerClasses}>
@@ -74,6 +77,15 @@ const DashboardShell = ({
         <main id={mainId} className={styles["dashboard-shell__main"]}>
           {children}
         </main>
+
+        <div
+          className={styles["dashboard-shell__footer"]}
+          aria-hidden={
+            isFooterEmpty ? ARIA_HIDDEN_VALUES.TRUE : ARIA_HIDDEN_VALUES.FALSE
+          }
+        >
+          {footer}
+        </div>
       </div>
     </div>
   );

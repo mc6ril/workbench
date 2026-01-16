@@ -35,7 +35,7 @@
   min-height: $layout-dashboard-content-min-height;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: $layout-dashboard-header-height $layout-dashboard-breadcrumbs-height 1fr;
+  grid-template-rows: $layout-dashboard-header-height $layout-dashboard-breadcrumbs-height 1fr $layout-dashboard-footer-height;
 }
 
 .dashboard-shell__header {
@@ -59,4 +59,10 @@
   width: 100%;
   min-height: $layout-dashboard-main-min-height;
   padding: $layout-dashboard-main-padding;
+}
+
+.dashboard-shell__footer {
+  width: 100%;
+  min-height: $layout-dashboard-footer-height;
+  background-color: $color-background;
 }
