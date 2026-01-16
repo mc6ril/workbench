@@ -25,7 +25,6 @@ const ProjectPage = ({
   return (
     <div className={styles["project-page"]}>
       <Container
-        as="main"
         maxWidth="large"
         className={styles["project-page__container"]}
       >
