@@ -5,7 +5,7 @@ import { getProject } from "@/core/usecases/project/getProject";
 import { createProjectRepository } from "@/infrastructure/supabase/repositories";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
-import DashboardShell from "@/presentation/layouts/dashboardShell/DashboardShell";
+import ProjectShell from "@/presentation/layouts/projectShell/ProjectShell";
 
 /**
  * Server-side layout for project routes.
@@ -48,11 +48,7 @@ const ProjectLayout = async ({
 
   // User has access, render children
   // Note: We don't pass project data here - client pages fetch via React Query
-  return (
-    <DashboardShell sidebar={null} header={null} breadcrumbs={null}>
-      {children}
-    </DashboardShell>
-  );
+  return <ProjectShell projectId={projectId}>{children}</ProjectShell>;
 };
 
 export default ProjectLayout;

@@ -1,0 +1,29 @@
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/spacing" as *;
+
+.project-page {
+  width: 100%;
+  animation: fadeIn $animation-duration-base $easing-ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.project-page__container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY($spacing-sm);
+  }
+  to {
+    opacity: 1;
+    transform: translateY($spacing-none);
+  }
+}

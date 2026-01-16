@@ -21,6 +21,25 @@
       "defaultMessage": "Il n'y a pas encore d'éléments à afficher."
     }
   },
+  "navigation": {
+    "skipLink": {
+      "label": "Aller au contenu principal"
+    },
+    "sidebar": {
+      "ariaLabel": "Navigation du projet",
+      "items": {
+        "home": "Accueil",
+        "backlog": "Backlog",
+        "board": "Tableau",
+        "epics": "Epics",
+        "settings": "Paramètres"
+      }
+    },
+    "breadcrumbs": {
+      "ariaLabel": "Fil d'Ariane",
+      "project": "Projet"
+    }
+  },
   "pages": {
     "signup": {
       "title": "Créer un compte",
@@ -185,6 +204,19 @@
           "ticket_completed": "Ticket terminé"
         }
       },
+      "shortcutsWidget": {
+        "title": "Raccourcis",
+        "shortcuts": {
+          "board": "Tableau",
+          "backlog": "Backlog",
+          "epics": "Epics",
+          "settings": "Paramètres"
+        }
+      }
+    },
+    "projectHome": {
+      "title": "Accueil",
+      "subtitle": "Vue d'ensemble du projet",
       "shortcutsWidget": {
         "title": "Raccourcis",
         "shortcuts": {
