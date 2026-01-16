@@ -40,6 +40,9 @@ const DashboardShell = ({
   const isBreadcrumbsEmpty = !breadcrumbs;
   const isFooterEmpty = !footer;
 
+  const isHeaderSemanticElement =
+    !!header && React.isValidElement(header) && header.type === "header";
+
   return (
     <div id={shellId} className={containerClasses}>
       <nav
@@ -53,14 +56,25 @@ const DashboardShell = ({
       </nav>
 
       <div className={styles["dashboard-shell__content"]}>
-        <header
-          className={styles["dashboard-shell__header"]}
-          aria-hidden={
-            isHeaderEmpty ? ARIA_HIDDEN_VALUES.TRUE : ARIA_HIDDEN_VALUES.FALSE
-          }
-        >
-          {header}
-        </header>
+        {isHeaderSemanticElement ? (
+          <div
+            className={styles["dashboard-shell__header"]}
+            aria-hidden={
+              isHeaderEmpty ? ARIA_HIDDEN_VALUES.TRUE : ARIA_HIDDEN_VALUES.FALSE
+            }
+          >
+            {header}
+          </div>
+        ) : (
+          <header
+            className={styles["dashboard-shell__header"]}
+            aria-hidden={
+              isHeaderEmpty ? ARIA_HIDDEN_VALUES.TRUE : ARIA_HIDDEN_VALUES.FALSE
+            }
+          >
+            {header}
+          </header>
+        )}
 
         <nav
           className={styles["dashboard-shell__breadcrumbs"]}
