@@ -1,18 +1,41 @@
-import { redirect } from "next/navigation";
+"use client";
 
-import { PROJECT_VIEWS } from "@/shared/constants/routes";
-import { buildProjectRoute } from "@/shared/utils/routes";
+import { use } from "react";
+
+import DashboardHeader from "@/presentation/components/dashboardHeader/DashboardHeader";
+import ShortcutsWidget from "@/presentation/components/shortcutsWidget/ShortcutsWidget";
+import { Container, Stack } from "@/presentation/components/ui";
+
+import { useTranslation } from "@/shared/i18n";
+
+import styles from "./ProjectPage.module.scss";
 
 /**
- * Project root page - redirects to board view.
+ * Project root page (Home).
+ * This route is the landing dashboard for a single project.
  */
-const ProjectPage = async ({
+const ProjectPage = ({
   params,
-}: Readonly<{
+}: {
   params: Promise<{ projectId: string }>;
-}>) => {
-  const { projectId } = await params;
-  redirect(buildProjectRoute(projectId, PROJECT_VIEWS.BOARD));
+}) => {
+  const { projectId } = use(params);
+  const t = useTranslation("pages.projectHome");
+
+  return (
+    <div className={styles["project-page"]}>
+      <Container
+        as="main"
+        maxWidth="large"
+        className={styles["project-page__container"]}
+      >
+        <Stack spacing="xl">
+          <DashboardHeader title={t("title")} subtitle={t("subtitle")} />
+          <ShortcutsWidget projectId={projectId} />
+        </Stack>
+      </Container>
+    </div>
+  );
 };
 
 export default ProjectPage;

@@ -4,6 +4,9 @@
 // Base spacing unit (4px)
 $spacing-unit: 0.25rem;
 
+// Zero spacing (use for resets; avoids hardcoded 0 in modules)
+$spacing-none: 0;
+
 // Spacing scale
 $spacing-xs: $spacing-unit; // 0.25rem (4px)
 $spacing-sm: $spacing-unit * 2; // 0.5rem (8px)

@@ -52,11 +52,7 @@ const LinkComponent = ({
 }: Props) => {
   const linkId = useMemo(() => getAccessibilityId(`link-${href}`), [href]);
 
-  const linkClasses = [
-    styles.link,
-    styles[`link--${variant}`],
-    className,
-  ]
+  const linkClasses = [styles.link, styles[`link--${variant}`], className]
     .filter(Boolean)
     .join(" ");
 

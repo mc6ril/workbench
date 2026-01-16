@@ -48,6 +48,9 @@
 .dashboard-shell__breadcrumbs {
   width: 100%;
   min-height: $layout-dashboard-breadcrumbs-height;
+  display: flex;
+  align-items: center;
+  padding: 0 $layout-dashboard-main-padding;
   border-bottom: $border-width solid $color-border;
   background-color: $color-background;
 }
@@ -57,4 +60,3 @@
   min-height: $layout-dashboard-main-min-height;
   padding: $layout-dashboard-main-padding;
 }
-

@@ -1,0 +1,23 @@
+@use "@/styles/variables/breakpoints" as *;
+@use "@/styles/variables/spacing" as *;
+
+.sidebar-navigation {
+  width: 100%;
+  padding: $spacing-md;
+}
+
+.sidebar-navigation__list {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-sm;
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+}
+

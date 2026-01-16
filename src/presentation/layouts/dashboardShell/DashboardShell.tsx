@@ -27,7 +27,7 @@ const DashboardShell = ({
   className,
 }: Props) => {
   const shellId = getAccessibilityId("dashboard-shell");
-  const mainId = getAccessibilityId("dashboard-shell-main");
+  const mainId = getAccessibilityId("main-content");
 
   const containerClasses = [styles["dashboard-shell"], className]
     .filter(Boolean)
