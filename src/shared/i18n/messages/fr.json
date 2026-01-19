@@ -222,7 +222,11 @@
     },
     "projectHome": {
       "title": "Accueil",
-      "subtitle": "Vue d'ensemble du projet",
+      "lastActivityHours": "Dernière activité: {hours} heure",
+      "lastActivityHours_plural": "Dernière activité: {hours} heures",
+      "lastActivityDays": "Dernière activité: {days} jour",
+      "lastActivityDays_plural": "Dernière activité: {days} jours",
+      "lastActivityDate": "Dernière activité: {date}",
       "shortcutsWidget": {
         "title": "Raccourcis",
         "shortcuts": {
