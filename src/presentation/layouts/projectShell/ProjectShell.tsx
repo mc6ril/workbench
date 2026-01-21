@@ -7,7 +7,7 @@ import AppHeader from "@/presentation/components/appHeader/AppHeader";
 import Breadcrumbs from "@/presentation/components/breadcrumbs/Breadcrumbs";
 import SidebarNavigation from "@/presentation/components/sidebarNavigation/SidebarNavigation";
 import SkipLink from "@/presentation/components/skipLink/SkipLink";
-import { useProject } from "@/presentation/hooks/project/useProject";
+import { Button } from "@/presentation/components/ui";
 import DashboardShell from "@/presentation/layouts/dashboardShell/DashboardShell";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
@@ -22,11 +22,12 @@ const ProjectShell = ({ projectId, children }: Props) => {
   const tSkipLink = useTranslation("navigation.skipLink");
   const tSidebar = useTranslation("navigation.sidebar");
   const tBreadcrumbs = useTranslation("navigation.breadcrumbs");
-
-  const { data: project } = useProject(projectId);
-
+  const tSearchBar = useTranslation("navigation.searchBar");
   const mainContentId = getAccessibilityId("main-content");
-  const headerTitle = project?.name ?? tBreadcrumbs("project");
+
+  /** Search bar actions 
+   * Search should be able to search for tickets, epics, and users
+  */
 
   return (
     <>
@@ -35,7 +36,7 @@ const ProjectShell = ({ projectId, children }: Props) => {
       <DashboardShell
         sidebar={<SidebarNavigation projectId={projectId} />}
         sidebarAriaLabel={tSidebar("ariaLabel")}
-        header={<AppHeader title={headerTitle} />}
+        header={<AppHeader title={tSearchBar("placeholder")} actions={<Button label={tSearchBar("placeholder")} />} />}
         breadcrumbs={<Breadcrumbs projectId={projectId} />}
         breadcrumbsAriaLabel={tBreadcrumbs("ariaLabel")}
         footer={<AppFooter />}

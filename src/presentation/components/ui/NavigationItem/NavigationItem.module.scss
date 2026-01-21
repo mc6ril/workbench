@@ -24,11 +24,12 @@
   }
 
   &:hover {
-    background-color: $color-secondary-hover;
+    background-color: $color-primary-hover;
+    color: $color-primary-text;
   }
 
   &:focus {
-    outline: 2px solid $color-focus;
+    outline: 2px solid $color-primary;
     outline-offset: -2px;
   }
 }
@@ -37,10 +38,6 @@
   background-color: $color-primary;
   color: $color-primary-text;
   font-weight: $font-weight-medium;
-
-  &:hover {
-    background-color: $color-primary-hover;
-  }
 }
 
 .navigation-item__icon {

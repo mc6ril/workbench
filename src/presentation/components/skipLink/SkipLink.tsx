@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 
@@ -15,9 +16,9 @@ const SkipLink = ({ targetId, label }: Props) => {
   const skipLinkId = getAccessibilityId("skip-link");
 
   return (
-    <a id={skipLinkId} className={styles["skip-link"]} href={`#${targetId}`}>
+    <Link id={skipLinkId} className={styles["skip-link"]} href={`#${targetId}`}>
       {label}
-    </a>
+    </Link>
   );
 };
 

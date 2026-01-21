@@ -2,19 +2,19 @@
 // All colors used in the application must reference these variables
 
 // Primary Colors
-$color-primary: #171717;
-$color-primary-hover: #383838;
-$color-primary-text: #f9fafb;
+$color-primary: #1e293b;
+$color-primary-hover: #334155;
+$color-primary-text: #ffffff;
 
 // Secondary Colors
 $color-secondary: #ffffff;
 $color-secondary-hover: rgba(0, 0, 0, 0.04);
 
 // Background Colors
-$color-background: #ffffff;
-$color-background-dark: #0a0a0a;
+$color-background: #f7f8fa;
 $color-surface: #ffffff;
-$color-surface-subtle: #f9fafb;
+$color-surface-subtle: #eef0f3;
+$color-background-dark: #0a0a0a;
 
 // Foreground Colors
 $color-foreground: #171717;
@@ -22,16 +22,16 @@ $color-foreground-dark: #ededed;
 
 // Text Colors
 $color-text: #171717;
-$color-text-primary: #171717;
-$color-text-secondary: #4b5563;
+$color-text-primary: #0f172a;
+$color-text-secondary: #475569;
 
 // Border Colors
-$color-border: rgba(0, 0, 0, 0.08);
-$color-border-subtle: rgba(0, 0, 0, 0.04);
+$color-border: #e2e8f0;
+$color-border-subtle: #edf2f7;
 $color-border-dark: rgba(255, 255, 255, 0.145);
 
 // Success Colors
-$color-success: #16a34a;
+$color-success: #22c55e;
 $color-success-background: #dcfce7;
 $color-success-text: #15803d;
 $color-success-ring: rgba(22, 163, 74, 0.3);
@@ -53,6 +53,8 @@ $color-info-background: #dbeafe;
 $color-info-text: #1e40af;
 
 // Accent Colors
+$color-accent: #6366f1;
+$color-accent-hover: #4f46e5;
 $color-accent-subtle: #fef3c7;
 
 // Neutral Colors
