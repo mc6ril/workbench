@@ -38,6 +38,10 @@
     "breadcrumbs": {
       "ariaLabel": "Fil d'Ariane",
       "project": "Projet"
+    },
+    "searchBar": {
+      "ariaLabel": "Barre de recherche",
+      "placeholder": "Rechercher"
     }
   },
   "layout": {

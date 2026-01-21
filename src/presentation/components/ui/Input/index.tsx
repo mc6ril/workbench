@@ -7,7 +7,7 @@ import styles from "./Input.module.scss";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   /** Input label text */
-  label: string;
+  label?: string;
   /** Error message to display below input */
   error?: string;
   /** Helper text to display below input (shown when no error) */
@@ -18,6 +18,10 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
   disabled?: boolean;
   /** Custom ARIA label for accessibility (falls back to label if not provided) */
   "aria-label"?: string;
+  /** Custom placeholder for the input */
+  placeholder?: string;
+  /** Is input inline with the label */
+  inline?: boolean;
 };
 
 /**
@@ -55,9 +59,11 @@ const Input = forwardRef<HTMLInputElement, Props>(
       helperText,
       required = false,
       disabled = false,
+      placeholder,
       id,
       "aria-label": ariaLabel,
       "aria-describedby": ariaDescribedBy,
+      inline = false,
       ...inputProps
     },
     ref
@@ -80,10 +86,12 @@ const Input = forwardRef<HTMLInputElement, Props>(
       .join(" ");
 
     return (
-      <div className={styles["input-wrapper"]}>
-        <label htmlFor={inputId} className={labelClasses}>
-          {label}
-        </label>
+      <div className={styles["input-wrapper"]} style={{ flexDirection: inline ? "row" : "column" }}>
+        {label && (
+          <label htmlFor={inputId} className={labelClasses} >
+            {label}
+          </label>
+        )}
         <input
           ref={ref}
           id={inputId}
@@ -93,6 +101,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
           aria-describedby={describedBy}
           aria-required={required}
           aria-disabled={disabled}
+          placeholder={placeholder}
           disabled={disabled}
           {...inputProps}
         />
