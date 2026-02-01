@@ -75,10 +75,10 @@ svg {
 
 html {
   font-family: $font-family-sans;
-  font-size: $font-size-base;
+  font-size: 16px; // Base for rem; design body text is 14px ($font-size-base)
   line-height: $line-height-normal;
-  color: $color-text;
-  background-color: $color-background;
+  color: $color-text-primary;
+  background: $color-background-gradient;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -87,8 +87,8 @@ body {
   font-family: $font-family-sans;
   font-size: $font-size-base;
   line-height: $line-height-normal;
-  color: $color-text;
-  background-color: $color-background;
+  color: $color-text-primary;
+  background: $color-background-gradient;
   min-height: 100vh;
 }
 
@@ -96,22 +96,23 @@ body {
 // Typography Base Styles
 // ============================================================================
 
-// Headings
+// Headings (FlavieBoard design: serif, warm text color)
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
+  font-family: var(--font-serif), Georgia, serif;
   font-weight: $font-weight-bold;
   line-height: $line-height-tight;
-  color: $color-text;
+  color: $color-text-primary;
   margin: 0;
 }
 
 h1 {
   font-size: $font-size-4xl;
-  font-weight: $font-weight-bold;
+  font-weight: $font-weight-normal;
   line-height: $line-height-tight;
 }
 
@@ -150,7 +151,7 @@ p {
   font-size: $font-size-base;
   line-height: $line-height-relaxed;
   font-weight: $font-weight-normal;
-  color: $color-text;
+  color: $color-text-primary;
   margin: 0;
 }
 

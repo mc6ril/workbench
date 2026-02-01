@@ -12,9 +12,9 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: $spacing-md;
+  gap: $spacing-lg;
   overflow-x: auto;
-  padding-bottom: $spacing-sm;
+  padding-bottom: $spacing-md;
 }
 
 .board-view__column-wrapper {

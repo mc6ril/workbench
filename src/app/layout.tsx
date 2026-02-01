@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, Geist, Geist_Mono } from "next/font/google";
 
 import AppProvider from "@/presentation/providers/AppProvider";
 
@@ -16,6 +16,12 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const cormorantSerif = Cormorant_Garamond({
+  variable: "--font-serif",
+  weight: ["400", "600", "700"],
   subsets: ["latin"],
 });
 
@@ -44,7 +50,9 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang={defaultLocale}>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${cormorantSerif.variable}`}
+      >
         <AppProvider>
           <div className="app-root">{children}</div>
         </AppProvider>

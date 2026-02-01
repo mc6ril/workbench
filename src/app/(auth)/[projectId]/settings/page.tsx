@@ -6,11 +6,9 @@ import ExportImportSettings from "@/presentation/components/exportImportSettings
 import type { PriorityItem } from "@/presentation/components/prioritiesSettings/PrioritiesSettings";
 import PrioritiesSettings from "@/presentation/components/prioritiesSettings/PrioritiesSettings";
 import ProjectSettings from "@/presentation/components/projectSettings/ProjectSettings";
-import SettingsLayout from "@/presentation/components/settingsLayout/SettingsLayout";
-import type {
-  StatusColumnItem,
-} from "@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
+import type { StatusColumnItem } from "@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
 import StatusesColumnsSettings from "@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
+import SettingsLayout from "@/presentation/layouts/settingsLayout/SettingsLayout";
 
 import { useTranslation } from "@/shared/i18n";
 
