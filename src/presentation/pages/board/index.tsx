@@ -18,8 +18,10 @@ import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfig
 import { useMoveTicket } from "@/presentation/hooks/ticket/useMoveTicket";
 import { useReorderTicket } from "@/presentation/hooks/ticket/useReorderTicket";
 import { useTickets } from "@/presentation/hooks/ticket/useTickets";
+import { useFilterStore } from "@/presentation/stores/useFilterStore";
 
 import { getAccessibilityId } from "@/shared/a11y";
+import { filterTicketsBySearch } from "@/shared/utils";
 
 import styles from "./styles.module.scss";
 
@@ -93,6 +95,11 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   } = useBoardConfiguration(projectId);
 
   const { data: tickets = [] } = useTickets(projectId);
+  const search = useFilterStore((state) => state.search);
+  const filteredTickets = useMemo(
+    () => filterTicketsBySearch(tickets, search),
+    [tickets, search]
+  );
   const moveTicketMutation = useMoveTicket();
   const reorderTicketMutation = useReorderTicket();
 
@@ -143,7 +150,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
         return;
       }
 
-      const ticketsInColumn = tickets
+      const ticketsInColumn = filteredTickets
         .filter((t) => t.status === targetColumn.status)
         .sort((a, b) => a.position - b.position);
 
@@ -218,14 +225,20 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
         position,
       });
     },
-    [columnById, tickets, moveTicketMutation, reorderTicketMutation, projectId]
+    [
+      columnById,
+      filteredTickets,
+      moveTicketMutation,
+      reorderTicketMutation,
+      projectId,
+    ]
   );
 
   const renderColumnProps = useMemo(() => {
     return (column: BoardColumnConfig) => {
       const ticketsForColumn =
         column.status != null
-          ? tickets
+          ? filteredTickets
               .filter((t) => t.status === column.status)
               .sort((a, b) => a.position - b.position)
               .map(mapTicketToCardProps)
@@ -235,7 +248,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
         onTicketClick: handleEditTicket,
       };
     };
-  }, [tickets, handleEditTicket]);
+  }, [filteredTickets, handleEditTicket]);
 
   return (
     <section className={styles["board-layout"]} aria-labelledby={layoutId}>

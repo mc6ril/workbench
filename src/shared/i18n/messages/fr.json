@@ -42,6 +42,16 @@
     "searchBar": {
       "ariaLabel": "Barre de recherche",
       "placeholder": "Rechercher"
+    },
+    "navbar": {
+      "filter": "Filtrer",
+      "filterAriaLabel": "Ouvrir les filtres",
+      "sort": "Trier",
+      "sortAriaLabel": "Ouvrir le tri",
+      "addTicket": "Ajouter un ticket",
+      "addTicketAriaLabel": "Créer un nouveau ticket",
+      "addEpic": "Ajouter une epic",
+      "addEpicAriaLabel": "Créer une nouvelle epic"
     }
   },
   "layout": {
