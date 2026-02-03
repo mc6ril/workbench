@@ -21,8 +21,7 @@ export type BoardColumnProps = {
   id: string;
   title: string;
   tickets: TicketCardProps[];
-  onItemOpen?: (id: string) => void;
-  onItemEdit?: (id: string) => void;
+  onTicketClick?: (ticketId: string) => void;
   className?: string;
 };
 
@@ -30,8 +29,7 @@ const BoardColumn = ({
   id,
   title,
   tickets,
-  onItemOpen,
-  onItemEdit,
+  onTicketClick,
   className,
 }: BoardColumnProps) => {
   const t = useTranslation("pages.board.column");
@@ -78,12 +76,15 @@ const BoardColumn = ({
                 id={droppableId}
                 ariaLabel={t("dropZoneAriaLabel", { title })}
               >
-                <DraggableItem id={draggableId}>
-                  <TicketCard
-                    {...ticket}
-                    onOpen={onItemOpen}
-                    onEdit={onItemEdit}
-                  />
+                <DraggableItem
+                  id={draggableId}
+                  onClick={
+                    onTicketClick
+                      ? () => onTicketClick(ticket.id)
+                      : undefined
+                  }
+                >
+                  <TicketCard {...ticket} />
                 </DraggableItem>
               </DroppableZone>
             </li>

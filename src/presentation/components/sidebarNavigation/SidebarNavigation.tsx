@@ -10,14 +10,20 @@ import { useTranslation } from "@/shared/i18n";
 
 import styles from "./SidebarNavigation.module.scss";
 
+import {
+  buildProjectViewHref,
+  getProjectViewConfigsForSidebar,
+} from "@/configs/projectRoutes";
+
 type Props = {
   projectId: string;
 };
 
 type SidebarItem = {
-  key: "home" | "backlog" | "board" | "epics" | "settings";
+  key: string;
   href: string;
   label: string;
+  exactOnly: boolean;
 };
 
 const normalizePath = (path: string): string => {
@@ -52,36 +58,15 @@ const SidebarNavigation = ({ projectId }: Props) => {
 
   const navListId = getAccessibilityId("sidebar-navigation-list");
 
-  const items: SidebarItem[] = useMemo(
-    () => [
-      {
-        key: "home",
-        href: `/${projectId}`,
-        label: t("items.home"),
-      },
-      {
-        key: "backlog",
-        href: `/${projectId}/backlog`,
-        label: t("items.backlog"),
-      },
-      {
-        key: "board",
-        href: `/${projectId}/board`,
-        label: t("items.board"),
-      },
-      {
-        key: "epics",
-        href: `/${projectId}/epics`,
-        label: t("items.epics"),
-      },
-      {
-        key: "settings",
-        href: `/${projectId}/settings`,
-        label: t("items.settings"),
-      },
-    ],
-    [projectId, t]
-  );
+  const items: SidebarItem[] = useMemo(() => {
+    const configs = getProjectViewConfigsForSidebar();
+    return configs.map((config) => ({
+      key: config.key,
+      href: buildProjectViewHref(projectId, config.key),
+      label: t(`items.${config.sidebarLabelKey}`),
+      exactOnly: config.key === "home",
+    }));
+  }, [projectId, t]);
 
   return (
     <div className={styles["sidebar-navigation"]}>
@@ -92,7 +77,7 @@ const SidebarNavigation = ({ projectId }: Props) => {
             href={item.href}
             label={item.label}
             active={isActiveHref(pathname, item.href, {
-              exactOnly: item.key === "home",
+              exactOnly: item.exactOnly,
             })}
           />
         ))}

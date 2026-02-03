@@ -44,11 +44,6 @@
     cursor: pointer;
   }
 
-  &__tab:focus-visible {
-    outline: $border-width-thick solid $color-focus;
-    outline-offset: $spacing-xs;
-  }
-
   &__tab[aria-disabled="true"] {
     cursor: not-allowed;
     color: $color-disabled-text;
@@ -91,4 +86,3 @@
     }
   }
 }
-

@@ -15,6 +15,7 @@ import styles from "./BoardView.module.scss";
 export type BoardColumnConfig = {
   id: string;
   title: string;
+  status?: string;
   isVisible?: boolean;
 };
 

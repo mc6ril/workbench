@@ -118,3 +118,6 @@ $RECYCLE.BIN/
 .directory
 .Trash-*
 .nfs*
+
+# Flavie board folder
+flavieBoard/

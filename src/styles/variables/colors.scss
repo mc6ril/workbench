@@ -1,79 +1,104 @@
-// Color Palette Variables
+// Color Palette Variables (FlavieBoard design system)
 // All colors used in the application must reference these variables
 
-// Primary Colors
-$color-primary: #1e293b;
-$color-primary-hover: #334155;
+// ============================================================================
+// Brand / Primary palette (warm neutrals + rose accent)
+// ============================================================================
+
+// Primary (headings, buttons, main text)
+$color-primary: #5c4a42;
+$color-primary-hover: #4a3c36;
 $color-primary-text: #ffffff;
 
-// Secondary Colors
+// Secondary (surfaces, cards)
 $color-secondary: #ffffff;
-$color-secondary-hover: rgba(0, 0, 0, 0.04);
+$color-secondary-hover: #faf7f4;
 
-// Background Colors
-$color-background: #f7f8fa;
+// Background
+$color-background: #faf7f4;
+$color-background-gradient-start: #faf7f4;
+$color-background-gradient-end: #f0ebe5;
+$color-background-gradient: linear-gradient(180deg, #faf7f4 0%, #f0ebe5 100%);
 $color-surface: #ffffff;
-$color-surface-subtle: #eef0f3;
-$color-background-dark: #0a0a0a;
+$color-surface-hover: #faf7f4;
+$color-surface-subtle: #faf7f4;
+$color-background-dark: #5c4a42;
 
-// Foreground Colors
-$color-foreground: #171717;
-$color-foreground-dark: #ededed;
+// Foreground / Text
+$color-foreground: #5c4a42;
+$color-foreground-dark: #4a3c36;
+$color-text: #5c4a42;
+$color-text-primary: #5c4a42;
+$color-text-secondary: #8a7a72;
+$color-text-muted: #b8a89a;
+$color-text-footer: #c4a898;
 
-// Text Colors
-$color-text: #171717;
-$color-text-primary: #0f172a;
-$color-text-secondary: #475569;
+// Border
+$color-border: #ede8e2;
+$color-border-subtle: #f0ebe5;
+$color-border-tooltip: #e8ddd5;
+$color-border-highlight: #e8d8d0;
+$color-border-button: #ddd5cd;
+$color-border-dark: rgba(92, 74, 66, 0.15);
 
-// Border Colors
-$color-border: #e2e8f0;
-$color-border-subtle: #edf2f7;
-$color-border-dark: rgba(255, 255, 255, 0.145);
+// Accent (brand highlights, CTAs, labels)
+$color-accent: #c4788a;
+$color-accent-hover: #b06a7a;
+$color-accent-peach: #d4a085;
+$color-accent-tan: #b8a89a;
+$color-accent-subtle: rgba(196, 120, 138, 0.06);
 
-// Success Colors
-$color-success: #22c55e;
+// Highlight box gradient
+$color-highlight-gradient-start: #f5e6df;
+$color-highlight-gradient-end: #ede0d8;
+$color-highlight-gradient: linear-gradient(135deg, #f5e6df, #ede0d8);
+
+// Tooltip / overlay
+$color-tooltip-background: rgba(255, 255, 255, 0.95);
+
+// ============================================================================
+// Semantic colors (aligned with warm palette where possible)
+// ============================================================================
+
+// Success
+$color-success: #2d8a5e;
 $color-success-background: #dcfce7;
 $color-success-text: #15803d;
 $color-success-ring: rgba(22, 163, 74, 0.3);
 
-// Error Colors
-$color-error: #dc2626;
+// Error
+$color-error: #c45c5c;
 $color-error-background: #fee2e2;
 $color-error-text: #991b1b;
 $color-error-ring: rgba(220, 38, 38, 0.3);
 
-// Warning Colors
-$color-warning: #f59e0b;
+// Warning
+$color-warning: #c49a3d;
 $color-warning-background: #fef3c7;
 $color-warning-text: #92400e;
 
-// Info Colors
-$color-info: #3b82f6;
+// Info
+$color-info: #5c7cba;
 $color-info-background: #dbeafe;
 $color-info-text: #1e40af;
 
-// Accent Colors
-$color-accent: #6366f1;
-$color-accent-hover: #4f46e5;
-$color-accent-subtle: #fef3c7;
+// Neutral scale (warm grays for compatibility)
+$color-neutral-50: #faf7f4;
+$color-neutral-100: #f0ebe5;
+$color-neutral-200: #ede8e2;
+$color-neutral-300: #e8ddd5;
+$color-neutral-400: #b8a89a;
+$color-neutral-500: #8a7a72;
+$color-neutral-600: #6b5e56;
+$color-neutral-700: #5c4a42;
+$color-neutral-800: #4a3c36;
+$color-neutral-900: #3d322c;
 
-// Neutral Colors
-$color-neutral-50: #f9fafb;
-$color-neutral-100: #f3f4f6;
-$color-neutral-200: #e5e7eb;
-$color-neutral-300: #d1d5db;
-$color-neutral-400: #9ca3af;
-$color-neutral-500: #6b7280;
-$color-neutral-600: #4b5563;
-$color-neutral-700: #374151;
-$color-neutral-800: #1f2937;
-$color-neutral-900: #111827;
+// Focus
+$color-focus: #c4788a;
+$color-focus-ring: rgba(196, 120, 138, 0.3);
 
-// Focus Colors
-$color-focus: #2563eb;
-$color-focus-ring: rgba(37, 99, 235, 0.3);
-
-// Disabled Colors
-$color-disabled: #9ca3af;
-$color-disabled-background: #f3f4f6;
-$color-disabled-text: #6b7280;
+// Disabled
+$color-disabled: #b8a89a;
+$color-disabled-background: #f0ebe5;
+$color-disabled-text: #8a7a72;

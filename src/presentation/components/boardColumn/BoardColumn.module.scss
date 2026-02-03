@@ -7,12 +7,14 @@
 .board-column {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
-  min-width: 260px;
-  max-width: 340px;
-  padding: $spacing-sm;
-  border-radius: $border-radius-md;
-  background-color: $color-surface-subtle;
+  gap: $spacing-md;
+  min-width: 280px;
+  max-width: 360px;
+  padding: $spacing-md;
+  border-radius: $border-radius-lg;
+  background-color: $color-surface;
+  border: $border-width solid $color-border;
+  box-shadow: $shadow-base;
 }
 
 .board-column__header {
@@ -20,6 +22,8 @@
   align-items: center;
   justify-content: space-between;
   gap: $spacing-xs;
+  padding-bottom: $spacing-sm;
+  border-bottom: $border-width solid $color-border;
 }
 
 .board-column__title {
@@ -42,8 +46,9 @@
 }
 
 .board-column__empty {
-  padding: $spacing-sm;
+  padding: $spacing-md;
   border-radius: $border-radius-sm;
-  border: 1px dashed $color-border-subtle;
+  border: $border-width-thick dashed $color-border;
+  background-color: $color-surface-subtle;
   color: $color-text-secondary;
 }

@@ -1,14 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useCallback } from "react";
 
 import AppFooter from "@/presentation/components/appFooter/AppFooter";
-import AppHeader from "@/presentation/components/appHeader/AppHeader";
 import Breadcrumbs from "@/presentation/components/breadcrumbs/Breadcrumbs";
+import ProjectNavbar from "@/presentation/components/projectNavbar/ProjectNavbar";
 import SidebarNavigation from "@/presentation/components/sidebarNavigation/SidebarNavigation";
 import SkipLink from "@/presentation/components/skipLink/SkipLink";
-import { Button } from "@/presentation/components/ui";
 import DashboardShell from "@/presentation/layouts/dashboardShell/DashboardShell";
+import { useFilterStore } from "@/presentation/stores/useFilterStore";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
@@ -22,12 +22,22 @@ const ProjectShell = ({ projectId, children }: Props) => {
   const tSkipLink = useTranslation("navigation.skipLink");
   const tSidebar = useTranslation("navigation.sidebar");
   const tBreadcrumbs = useTranslation("navigation.breadcrumbs");
-  const tSearchBar = useTranslation("navigation.searchBar");
   const mainContentId = getAccessibilityId("main-content");
 
-  /** Search bar actions 
-   * Search should be able to search for tickets, epics, and users
-  */
+  const search = useFilterStore((state) => state.search);
+  const setSearch = useFilterStore((state) => state.setSearch);
+
+  const handleFilterClick = useCallback(() => {
+    // TODO: Open filter panel / modal
+  }, []);
+
+  const handleSortClick = useCallback(() => {
+    // TODO: Open sort panel / modal
+  }, []);
+
+  const handleAddClick = useCallback(() => {
+    // TODO: Open add ticket / add epic modal based on current board
+  }, []);
 
   return (
     <>
@@ -36,7 +46,16 @@ const ProjectShell = ({ projectId, children }: Props) => {
       <DashboardShell
         sidebar={<SidebarNavigation projectId={projectId} />}
         sidebarAriaLabel={tSidebar("ariaLabel")}
-        header={<AppHeader title={tSearchBar("placeholder")} actions={<Button label={tSearchBar("placeholder")} />} />}
+        header={
+          <ProjectNavbar
+            projectId={projectId}
+            searchValue={search}
+            onSearchChange={setSearch}
+            onFilterClick={handleFilterClick}
+            onSortClick={handleSortClick}
+            onAddClick={handleAddClick}
+          />
+        }
         breadcrumbs={<Breadcrumbs projectId={projectId} />}
         breadcrumbsAriaLabel={tBreadcrumbs("ariaLabel")}
         footer={<AppFooter />}

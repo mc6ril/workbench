@@ -10,37 +10,14 @@ import { useTranslation } from "@/shared/i18n";
 
 import styles from "./Breadcrumbs.module.scss";
 
+import {
+  buildProjectViewHref,
+  getProjectViewConfig,
+  getProjectViewKeyFromPath,
+} from "@/configs/projectRoutes";
+
 type Props = {
   projectId: string;
-};
-
-type ViewKey = "home" | "backlog" | "board" | "epics" | "settings";
-
-const getViewKeyFromPathname = (
-  pathname: string,
-  projectId: string
-): ViewKey => {
-  const projectPrefix = `/${projectId}`;
-
-  if (!pathname.startsWith(projectPrefix)) {
-    return "home";
-  }
-
-  const rest = pathname.slice(projectPrefix.length);
-  const segment = rest.split("/").filter(Boolean)[0] ?? "";
-
-  switch (segment) {
-    case "backlog":
-      return "backlog";
-    case "board":
-      return "board";
-    case "epics":
-      return "epics";
-    case "settings":
-      return "settings";
-    default:
-      return "home";
-  }
 };
 
 const Breadcrumbs = ({ projectId }: Props) => {
@@ -52,17 +29,25 @@ const Breadcrumbs = ({ projectId }: Props) => {
   const listId = getAccessibilityId("breadcrumbs-list");
 
   const currentViewKey = useMemo(
-    () => getViewKeyFromPathname(pathname, projectId),
+    () => getProjectViewKeyFromPath(pathname, projectId),
     [pathname, projectId]
   );
 
-  const currentViewLabel = tSidebar(`items.${currentViewKey}`);
+  const currentViewConfig = useMemo(
+    () => getProjectViewConfig(currentViewKey),
+    [currentViewKey]
+  );
+
+  const currentViewLabel = tSidebar(
+    `items.${currentViewConfig.sidebarLabelKey}`
+  );
   const projectLabel = tBreadcrumbs("project");
+  const projectHref = buildProjectViewHref(projectId, "home");
 
   return (
     <ol id={listId} className={styles.breadcrumbs}>
       <li className={styles.breadcrumbs__item}>
-        <Link href={`/${projectId}`}>{projectLabel}</Link>
+        <Link href={projectHref}>{projectLabel}</Link>
       </li>
       <li className={styles.breadcrumbs__item} aria-current="page">
         <span className={styles.breadcrumbs__current}>{currentViewLabel}</span>

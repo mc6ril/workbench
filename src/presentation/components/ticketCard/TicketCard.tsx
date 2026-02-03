@@ -48,7 +48,7 @@ const TicketCard = ({
   const titleId = `${baseId}-title`;
   const descriptionId = `${baseId}-meta`;
 
-  const handleOpen = (): void => {
+  const _handleOpen = (): void => {
     if (onOpen) {
       onOpen(id);
     }
@@ -156,13 +156,14 @@ const TicketCard = ({
           </Stack>
         </div>
         <div className={styles["ticket-card__actions"]}>
-          {onOpen && (
+          {/* {onOpen && (
+          //todo this about the utilty of this button
             <Button
               label={t("openTicketLabel")}
-              onClick={handleOpen}
+              onClick={_handleOpen}
               variant="secondary"
             />
-          )}
+          )} */}
           {onEdit && (
             <Button
               label={t("editTicketLabel")}

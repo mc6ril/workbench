@@ -3,7 +3,7 @@
 @use "@/styles/variables/animations" as *;
 
 .draggable-item {
-  cursor: grab;
+  cursor: pointer;
   transition: $transition-opacity, $transition-transform;
   position: relative;
 

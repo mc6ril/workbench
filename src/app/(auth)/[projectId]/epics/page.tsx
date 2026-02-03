@@ -1,18 +1,14 @@
 "use client";
 
 import { use } from "react";
+import React from "react";
 
-import { Title } from "@/presentation/components/ui";
+import EpicsLayout from "@/presentation/pages/epics";
 
 const EpicsPage = ({ params }: { params: Promise<{ projectId: string }> }) => {
   const { projectId } = use(params);
 
-  return (
-    <div>
-      <Title variant="h1">Epics View</Title>
-      <p>Project ID: {projectId}</p>
-    </div>
-  );
+  return <EpicsLayout projectId={projectId} />;
 };
 
 export default EpicsPage;

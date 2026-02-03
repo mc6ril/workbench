@@ -2,17 +2,12 @@
 
 import { use } from "react";
 
-import { Title } from "@/presentation/components/ui";
+import BoardLayout from "@/presentation/pages/board";
 
 const BoardPage = ({ params }: { params: Promise<{ projectId: string }> }) => {
   const { projectId } = use(params);
 
-  return (
-    <div>
-      <Title variant="h1">Board View</Title>
-      <p>Project ID: {projectId}</p>
-    </div>
-  );
+  return <BoardLayout projectId={projectId} />;
 };
 
 export default BoardPage;

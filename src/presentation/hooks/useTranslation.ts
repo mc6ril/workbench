@@ -5,7 +5,11 @@ import { useMemo } from "react";
 import { getLocale } from "@/shared/i18n/config";
 import { createPluralKey } from "@/shared/i18n/dynamic";
 import messagesFr from "@/shared/i18n/messages/fr.json";
-import type { TranslationMessages, TranslationNode, TranslationValue } from "@/shared/i18n/types";
+import type {
+  TranslationMessages,
+  TranslationNode,
+  TranslationValue,
+} from "@/shared/i18n/types";
 import { interpolateTranslation } from "@/shared/i18n/utils";
 
 /**
@@ -132,12 +136,9 @@ export const useTranslation = (namespace: string) => {
       }
 
       // Interpolate translation using utility function
-      // Filter out 'count' parameter as it's only used for pluralization, not interpolation
+      // Include 'count' in interpolation as it's needed for the {count} placeholder
       if (params) {
-        const { count: _count, ...interpolationParams } = params;
-        if (Object.keys(interpolationParams).length > 0) {
-          return interpolateTranslation(translationValue, interpolationParams);
-        }
+        return interpolateTranslation(translationValue, params);
       }
 
       return translationValue;
