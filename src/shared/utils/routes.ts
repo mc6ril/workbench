@@ -81,3 +81,49 @@ export const extractProjectView = (pathname: string): string | null => {
 export const buildProjectRoute = (projectId: string, view: string): string => {
   return `/${projectId}/${view}`;
 };
+
+/**
+ * Normalize a pathname or href by removing a trailing slash (except for root).
+ *
+ * @param path - The path to normalize
+ * @returns Normalized path without trailing slash (except when path is "/")
+ */
+export const normalizePath = (path: string): string => {
+  if (path.length > 1 && path.endsWith("/")) {
+    return path.slice(0, -1);
+  }
+  return path;
+};
+
+type IsActiveHrefOptions = {
+  exactOnly?: boolean;
+};
+
+/**
+ * Determine whether a navigation href is active for a given pathname.
+ * - Exact match returns true
+ * - When exactOnly is false, any sub-path (href as prefix) is considered active
+ *
+ * @param pathname - Current pathname (from router)
+ * @param href - Target href of the navigation item
+ * @param options - Options to control matching behavior
+ * @returns True if the href should be considered active
+ */
+export const isActiveHref = (
+  pathname: string,
+  href: string,
+  options?: IsActiveHrefOptions
+): boolean => {
+  const normalizedPathname = normalizePath(pathname);
+  const normalizedHref = normalizePath(href);
+
+  if (normalizedPathname === normalizedHref) {
+    return true;
+  }
+
+  if (options?.exactOnly) {
+    return false;
+  }
+
+  return normalizedPathname.startsWith(`${normalizedHref}/`);
+};

@@ -27,12 +27,21 @@
     },
     "sidebar": {
       "ariaLabel": "Navigation du projet",
+      "addTab": "Ajouter un onglet",
+      "addTabAriaLabel": "Ajouter un onglet (à venir)",
       "items": {
         "home": "Accueil",
         "backlog": "Backlog",
         "board": "Tableau",
         "epics": "Epics",
         "settings": "Paramètres"
+      },
+      "profile": {
+        "ariaLabel": "Ouvrir le menu profil",
+        "backToWorkspace": "Revenir à l'espace de travail",
+        "profileSettings": "Paramètres du compte",
+        "logout": "Se déconnecter",
+        "userFallbackName": "Utilisateur"
       }
     },
     "breadcrumbs": {
