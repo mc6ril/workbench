@@ -38,6 +38,28 @@ import type { ProjectRepository } from "@/core/ports/projectRepository";
 export const createProjectRepository = (
   client: SupabaseClient
 ): ProjectRepository => ({
+  async findByShortCode(shortCode: string): Promise<Project | null> {
+    try {
+      const { data, error } = await client
+        .from("projects")
+        .select("*")
+        .eq("short_code", shortCode)
+        .single();
+
+      if (error) {
+        return handleRepositoryError(error, "Project");
+      }
+
+      if (!data) {
+        return null;
+      }
+
+      return mapProjectRowToDomain(data as ProjectRow);
+    } catch (error) {
+      return handleRepositoryError(error, "Project");
+    }
+  },
+
   async findById(id: string): Promise<Project | null> {
     try {
       const { data, error } = await client

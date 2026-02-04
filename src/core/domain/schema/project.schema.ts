@@ -19,6 +19,12 @@ export const ProjectSchema = z.object({
       message: "Invalid UUID format",
     }),
   name: z.string().min(1, "Project name must not be empty"),
+  shortCode: z
+    .string()
+    .transform((val) => String(val).trim().toUpperCase())
+    .refine((val) => val.length === 2, {
+      message: "Project short code must be exactly 2 characters",
+    }),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });

@@ -12,6 +12,24 @@ import type {
  */
 export type TicketRepository = {
   /**
+   * Get the next available code number for a project.
+   * Used when creating a new ticket to allocate a human-readable code.
+   * @param projectId - Project ID
+   * @returns Next positive integer code number for the project
+   * @throws DatabaseError if database operation fails
+   */
+  getNextCodeNumberForProject(projectId: string): Promise<number>;
+
+  /**
+   * Get a ticket by its human-readable code number within a project.
+   * @param projectId - Project ID
+   * @param codeNumber - Ticket code number (positive integer, WB-<codeNumber>)
+   * @returns Ticket or null if not found
+   * @throws DatabaseError if database operation fails
+   */
+  findByCode(projectId: string, codeNumber: number): Promise<Ticket | null>;
+
+  /**
    * Get a ticket by ID.
    * @param id - Ticket ID
    * @returns Ticket or null if not found

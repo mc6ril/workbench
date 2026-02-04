@@ -54,6 +54,32 @@ export const createTicketRepository = (
     }
   },
 
+  async getNextCodeNumberForProject(projectId: string): Promise<number> {
+    try {
+      const { data, error } = await client
+        .from("tickets")
+        .select("code_number")
+        .eq("project_id", projectId)
+        .order("code_number", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        return handleRepositoryError(error, "Ticket");
+      }
+
+      const currentMax =
+        data &&
+        typeof (data as { code_number: number }).code_number === "number"
+          ? (data as { code_number: number }).code_number
+          : 0;
+
+      return currentMax + 1;
+    } catch (error) {
+      return handleRepositoryError(error, "Ticket");
+    }
+  },
+
   async listByProject(
     projectId: string,
     filters?: TicketFilters,
@@ -148,6 +174,7 @@ export const createTicketRepository = (
           position: input.position ?? 0,
           epic_id: input.epicId ?? null,
           parent_id: input.parentId ?? null,
+          code_number: input.codeNumber,
         })
         .select()
         .single();
@@ -345,6 +372,32 @@ export const createTicketRepository = (
       return mapTicketRowToDomain(data as TicketRow);
     } catch (error) {
       return handleRepositoryError(error, "Ticket", ticketId);
+    }
+  },
+
+  async findByCode(
+    projectId: string,
+    codeNumber: number
+  ): Promise<Ticket | null> {
+    try {
+      const { data, error } = await client
+        .from("tickets")
+        .select("*")
+        .eq("project_id", projectId)
+        .eq("code_number", codeNumber)
+        .single();
+
+      if (error) {
+        return handleRepositoryError(error, "Ticket");
+      }
+
+      if (!data) {
+        return null;
+      }
+
+      return mapTicketRowToDomain(data as TicketRow);
+    } catch (error) {
+      return handleRepositoryError(error, "Ticket");
     }
   },
 });

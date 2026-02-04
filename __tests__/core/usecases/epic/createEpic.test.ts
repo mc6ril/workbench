@@ -27,6 +27,9 @@ describe("createEpic", () => {
       description: "Test description",
     };
     const repository = createEpicRepositoryMock({
+      getNextCodeNumberForProject: jest
+        .fn<Promise<number>, [string]>()
+        .mockResolvedValue(1),
       create: jest.fn<Promise<Epic>, [CreateEpicInput]>(async () => mockEpic),
     });
 
@@ -35,7 +38,11 @@ describe("createEpic", () => {
 
     // Assert
     expect(repository.create).toHaveBeenCalledTimes(1);
-    expect(repository.create).toHaveBeenCalledWith(input);
+    const createArg = (repository.create.mock.calls[0] ?? [])[0];
+    expect(createArg).toMatchObject({
+      ...input,
+      codeNumber: expect.any(Number),
+    });
     expect(result).toEqual(mockEpic);
   });
 
@@ -50,6 +57,9 @@ describe("createEpic", () => {
       description: null,
     };
     const repository = createEpicRepositoryMock({
+      getNextCodeNumberForProject: jest
+        .fn<Promise<number>, [string]>()
+        .mockResolvedValue(1),
       create: jest.fn<Promise<Epic>, [CreateEpicInput]>(
         async () => createdEpic
       ),
@@ -60,7 +70,11 @@ describe("createEpic", () => {
 
     // Assert
     expect(repository.create).toHaveBeenCalledTimes(1);
-    expect(repository.create).toHaveBeenCalledWith(input);
+    const createArg = (repository.create.mock.calls[0] ?? [])[0];
+    expect(createArg).toMatchObject({
+      ...input,
+      codeNumber: expect.any(Number),
+    });
     expect(result).toEqual(createdEpic);
     expect(result.description).toBeNull();
   });
@@ -111,6 +125,9 @@ describe("createEpic", () => {
     };
     const repositoryError = new Error("Database error");
     const repository = createEpicRepositoryMock({
+      getNextCodeNumberForProject: jest
+        .fn<Promise<number>, [string]>()
+        .mockResolvedValue(1),
       create: jest.fn<Promise<Epic>, [CreateEpicInput]>(async () => {
         throw repositoryError;
       }),

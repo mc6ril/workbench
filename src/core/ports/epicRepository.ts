@@ -11,6 +11,24 @@ import type { Ticket } from "@/core/domain/schema/ticket.schema";
  */
 export type EpicRepository = {
   /**
+   * Get the next available code number for a project.
+   * Used when creating a new epic to allocate a human-readable code.
+   * @param projectId - Project ID
+   * @returns Next positive integer code number for the project
+   * @throws DatabaseError if database operation fails
+   */
+  getNextCodeNumberForProject(projectId: string): Promise<number>;
+
+  /**
+   * Get an epic by its human-readable code number within a project.
+   * @param projectId - Project ID
+   * @param codeNumber - Epic code number (positive integer, WB-E-<codeNumber>)
+   * @returns Epic or null if not found
+   * @throws DatabaseError if database operation fails
+   */
+  findByCode(projectId: string, codeNumber: number): Promise<Epic | null>;
+
+  /**
    * Get an epic by ID.
    * @param id - Epic ID
    * @returns Epic or null if not found

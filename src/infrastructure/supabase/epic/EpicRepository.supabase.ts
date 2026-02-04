@@ -29,6 +29,31 @@ import type { EpicRepository } from "@/core/ports/epicRepository";
 export const createEpicRepository = (
   client: SupabaseClient
 ): EpicRepository => ({
+  async getNextCodeNumberForProject(projectId: string): Promise<number> {
+    try {
+      const { data, error } = await client
+        .from("epics")
+        .select("code_number")
+        .eq("project_id", projectId)
+        .order("code_number", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        return handleRepositoryError(error, "Epic");
+      }
+
+      const currentMax =
+        data &&
+        typeof (data as { code_number: number }).code_number === "number"
+          ? (data as { code_number: number }).code_number
+          : 0;
+
+      return currentMax + 1;
+    } catch (error) {
+      return handleRepositoryError(error, "Epic");
+    }
+  },
   async findById(id: string): Promise<Epic | null> {
     try {
       const { data, error } = await client
@@ -81,6 +106,7 @@ export const createEpicRepository = (
           project_id: input.projectId,
           name: input.name,
           description: input.description ?? null,
+          code_number: (input as unknown as { codeNumber: number }).codeNumber,
         })
         .select()
         .single();
@@ -168,6 +194,32 @@ export const createEpicRepository = (
       return mapTicketRowsToDomain(data as TicketRow[]);
     } catch (error) {
       return handleRepositoryError(error, "Ticket");
+    }
+  },
+
+  async findByCode(
+    projectId: string,
+    codeNumber: number
+  ): Promise<Epic | null> {
+    try {
+      const { data, error } = await client
+        .from("epics")
+        .select("*")
+        .eq("project_id", projectId)
+        .eq("code_number", codeNumber)
+        .single();
+
+      if (error) {
+        return handleRepositoryError(error, "Epic");
+      }
+
+      if (!data) {
+        return null;
+      }
+
+      return mapEpicRowToDomain(data as EpicRow);
+    } catch (error) {
+      return handleRepositoryError(error, "Epic");
     }
   },
 });

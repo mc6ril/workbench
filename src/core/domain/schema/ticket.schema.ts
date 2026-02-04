@@ -11,6 +11,7 @@ export const TicketSchema = z.object({
   description: z.string().nullable(),
   status: z.string().min(1, "Ticket status must not be empty"),
   position: z.number().int().nonnegative("Position must be non-negative"),
+  codeNumber: z.number().int().positive(),
   epicId: z.string().uuid().nullable(),
   parentId: z.string().uuid().nullable(),
   createdAt: z.coerce.date(),
@@ -33,6 +34,7 @@ export const CreateTicketInputSchema = z.object({
   position: z.number().int().nonnegative().default(0),
   epicId: z.string().uuid().nullable().optional(),
   parentId: z.string().uuid().nullable().optional(),
+  codeNumber: z.number().int().positive().optional(),
 });
 
 export type CreateTicketInput = z.infer<typeof CreateTicketInputSchema>;

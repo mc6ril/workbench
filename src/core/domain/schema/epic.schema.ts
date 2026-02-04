@@ -9,6 +9,7 @@ export const EpicSchema = z.object({
   projectId: z.string().uuid(),
   name: z.string().min(1, "Epic name must not be empty"),
   description: z.string().nullable(),
+  codeNumber: z.number().int().positive(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
@@ -25,6 +26,7 @@ export const CreateEpicInputSchema = z.object({
   projectId: z.string().uuid(),
   name: z.string().min(1, "Epic name must not be empty"),
   description: z.string().nullable().optional(),
+  codeNumber: z.number().int().positive().optional(),
 });
 
 export type CreateEpicInput = z.infer<typeof CreateEpicInputSchema>;

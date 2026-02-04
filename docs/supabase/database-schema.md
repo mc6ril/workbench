@@ -69,23 +69,27 @@ The project_members table links users to projects with specific roles for access
 
 The projects table stores project information. For the MVP, we assume a single project, but the schema supports multiple projects for future extensibility.
 
-| Column     | Type        | Constraints                              | Description           |
-| ---------- | ----------- | ---------------------------------------- | --------------------- |
-| id         | uuid        | PRIMARY KEY, NOT NULL                    | Unique identifier     |
-| name       | text        | NOT NULL, CHECK (length(trim(name)) > 0) | Project name          |
-| created_at | timestamptz | NOT NULL, DEFAULT now                    | Creation timestamp    |
-| updated_at | timestamptz | NOT NULL, DEFAULT now                    | Last update timestamp |
+| Column     | Type        | Constraints                                            | Description                                      |
+| ---------- | ----------- | ------------------------------------------------------ | ------------------------------------------------ |
+| id         | uuid        | PRIMARY KEY, NOT NULL                                  | Unique identifier                                |
+| name       | text        | NOT NULL, CHECK (length(trim(name)) > 0)               | Project name                                     |
+| short_code | text        | NOT NULL, UNIQUE, CHECK (length(trim(short_code)) = 2) | 2-letter human-readable project code (e.g. `WB`) |
+| created_at | timestamptz | NOT NULL, DEFAULT now                                  | Creation timestamp                               |
+| updated_at | timestamptz | NOT NULL, DEFAULT now                                  | Last update timestamp                            |
 
 **Check Constraints:**
 
 - `length(trim(name)) > 0`: Name must be non-empty after trimming whitespace (database-level constraint)
+- `length(trim(short_code)) = 2`: Project short code must be exactly 2 characters after trimming
 
 **Indexes:**
 
 - Primary key index on `id` (automatic)
+- Unique index on `short_code` (automatic from UNIQUE constraint)
 
 **Notes:**
 
+- `short_code` is used as the human-readable prefix for ticket and epic codes (`WB-1`, `WB-E-1`, etc.)
 - For MVP, we'll seed a single default project
 - Multiple projects support can be added later without schema changes
 
@@ -95,18 +99,19 @@ The projects table stores project information. For the MVP, we assume a single p
 
 The tickets table stores all work items (both regular tickets and sub-tasks).
 
-| Column      | Type        | Constraints                                | Description                                      |
-| ----------- | ----------- | ------------------------------------------ | ------------------------------------------------ |
-| id          | uuid        | PRIMARY KEY, NOT NULL                      | Unique identifier                                |
-| project_id  | uuid        | FOREIGN KEY, NOT NULL                      | Reference to projects.id                         |
-| title       | text        | NOT NULL, CHECK (length(trim(title)) > 0)  | Ticket title (required, non-empty)               |
-| description | text        |                                            | Optional ticket description                      |
-| status      | text        | NOT NULL, CHECK (length(trim(status)) > 0) | Ticket status (references columns.status)        |
-| position    | integer     | NOT NULL, CHECK (position >= 0), DEFAULT 0 | Position within status/column                    |
-| epic_id     | uuid        | FOREIGN KEY                                | Optional reference to epics.id                   |
-| parent_id   | uuid        | FOREIGN KEY                                | Optional reference to tickets.id (for sub-tasks) |
-| created_at  | timestamptz | NOT NULL, DEFAULT now                      | Creation timestamp                               |
-| updated_at  | timestamptz | NOT NULL, DEFAULT now                      | Last update timestamp                            |
+| Column      | Type        | Constraints                                | Description                                                         |
+| ----------- | ----------- | ------------------------------------------ | ------------------------------------------------------------------- |
+| id          | uuid        | PRIMARY KEY, NOT NULL                      | Unique identifier                                                   |
+| project_id  | uuid        | FOREIGN KEY, NOT NULL                      | Reference to projects.id                                            |
+| title       | text        | NOT NULL, CHECK (length(trim(title)) > 0)  | Ticket title (required, non-empty)                                  |
+| description | text        |                                            | Optional ticket description                                         |
+| status      | text        | NOT NULL, CHECK (length(trim(status)) > 0) | Ticket status (references columns.status)                           |
+| position    | integer     | NOT NULL, CHECK (position >= 0), DEFAULT 0 | Position within status/column                                       |
+| code_number | integer     | NOT NULL, CHECK (code_number > 0)          | Per-project positive integer used to build human code (`WB-1`, ...) |
+| epic_id     | uuid        | FOREIGN KEY                                | Optional reference to epics.id                                      |
+| parent_id   | uuid        | FOREIGN KEY                                | Optional reference to tickets.id (for sub-tasks)                    |
+| created_at  | timestamptz | NOT NULL, DEFAULT now                      | Creation timestamp                                                  |
+| updated_at  | timestamptz | NOT NULL, DEFAULT now                      | Last update timestamp                                               |
 
 **Foreign Keys:**
 
@@ -123,14 +128,16 @@ The tickets table stores all work items (both regular tickets and sub-tasks).
 - Index on `epic_id` (for epic ticket queries)
 - Index on `parent_id` (for sub-task queries)
 - Composite index on `(project_id, status, position)` (for board queries)
+- Composite index on `(project_id, code_number)` (for lookups by human-readable ticket code)
 
 **Unique Constraints:**
 
-- None (multiple tickets can have the same position in different statuses)
+- `(project_id, code_number)` UNIQUE: Each ticket code number is unique within a project
 
 **Check Constraints:**
 
 - `position >= 0`: Position must be non-negative
+- `code_number > 0`: Ticket code number must be a positive integer
 - `length(trim(title)) > 0`: Title must be non-empty after trimming whitespace (database-level constraint)
 - `length(trim(status)) > 0`: Status must be non-empty after trimming whitespace (database-level constraint)
 
@@ -147,14 +154,15 @@ The tickets table stores all work items (both regular tickets and sub-tasks).
 
 The epics table stores epic (feature group) information.
 
-| Column      | Type        | Constraints                              | Description                     |
-| ----------- | ----------- | ---------------------------------------- | ------------------------------- |
-| id          | uuid        | PRIMARY KEY, NOT NULL                    | Unique identifier               |
-| project_id  | uuid        | FOREIGN KEY, NOT NULL                    | Reference to projects.id        |
-| name        | text        | NOT NULL, CHECK (length(trim(name)) > 0) | Epic name (required, non-empty) |
-| description | text        |                                          | Optional epic description       |
-| created_at  | timestamptz | NOT NULL, DEFAULT now                    | Creation timestamp              |
-| updated_at  | timestamptz | NOT NULL, DEFAULT now                    | Last update timestamp           |
+| Column      | Type        | Constraints                              | Description                                      |
+| ----------- | ----------- | ---------------------------------------- | ------------------------------------------------ |
+| id          | uuid        | PRIMARY KEY, NOT NULL                    | Unique identifier                                |
+| project_id  | uuid        | FOREIGN KEY, NOT NULL                    | Reference to projects.id                         |
+| name        | text        | NOT NULL, CHECK (length(trim(name)) > 0) | Epic name (required, non-empty)                  |
+| description | text        |                                          | Optional epic description                        |
+| code_number | integer     | NOT NULL, CHECK (code_number > 0)        | Per-project positive integer for code (`WB-E-1`) |
+| created_at  | timestamptz | NOT NULL, DEFAULT now                    | Creation timestamp                               |
+| updated_at  | timestamptz | NOT NULL, DEFAULT now                    | Last update timestamp                            |
 
 **Foreign Keys:**
 
@@ -164,10 +172,16 @@ The epics table stores epic (feature group) information.
 
 - Primary key index on `id` (automatic)
 - Index on `project_id` (for filtering by project)
+- Composite index on `(project_id, code_number)` (for lookups by human-readable epic code)
 
 **Check Constraints:**
 
 - `length(trim(name)) > 0`: Name must be non-empty after trimming whitespace (database-level constraint)
+- `code_number > 0`: Epic code number must be a positive integer
+
+**Unique Constraints:**
+
+- `(project_id, code_number)` UNIQUE: Each epic code number is unique within a project
 
 **Notes:**
 
@@ -290,12 +304,16 @@ The columns table stores board column (status) definitions.
 
 ## Design Decisions
 
-### UUIDs as Primary Keys
+### UUIDs as Primary Keys (with human-readable codes)
 
-- **Decision**: Use `uuid` type for all primary keys
+- **Decision**: Use `uuid` type for all primary keys, and introduce **human-readable codes** (`short_code` + `code_number`) for tickets and epics
 - **Rationale**:
-  - Better for distributed systems (if we scale later)
-  - No sequential ID exposure in URLs
+  - UUIDs remain stable, opaque technical identifiers (used in foreign keys and APIs)
+  - Human-readable codes (e.g. `WB-1`, `WB-E-1`) are easier to search, discuss, and type in the UI
+  - Codes are derived from:
+    - `projects.short_code` (2-letter prefix)
+    - `tickets.code_number` (WB-`1`, `2`, ...)
+    - `epics.code_number` (WB-`E-1`, `E-2`, ...)
   - Supabase/PostgreSQL has excellent UUID support
 
 ### Timestamps
