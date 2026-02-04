@@ -10,6 +10,8 @@ import type { Ticket } from "@/core/domain/schema/ticket.schema";
  * Used for type-safe mock creation in tests.
  */
 export type EpicRepositoryMock = {
+  getNextCodeNumberForProject: jest.Mock<Promise<number>, [string]>;
+  findByCode: jest.Mock<Promise<Epic | null>, [string, number]>;
   findById: jest.Mock<Promise<Epic | null>, [string]>;
   listByProject: jest.Mock<Promise<Epic[]>, [string]>;
   create: jest.Mock<Promise<Epic>, [CreateEpicInput]>;
@@ -32,6 +34,8 @@ export const createEpicRepositoryMock = (
   overrides: EpicRepositoryMockOverrides = {}
 ): EpicRepositoryMock => {
   const base: EpicRepositoryMock = {
+    getNextCodeNumberForProject: jest.fn<Promise<number>, [string]>(),
+    findByCode: jest.fn<Promise<Epic | null>, [string, number]>(),
     findById: jest.fn<Promise<Epic | null>, [string]>(),
     listByProject: jest.fn<Promise<Epic[]>, [string]>(),
     create: jest.fn<Promise<Epic>, [CreateEpicInput]>(),

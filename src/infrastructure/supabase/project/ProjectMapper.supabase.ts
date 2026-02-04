@@ -21,6 +21,7 @@ export const mapProjectRowToDomain = (row: ProjectRow): Project => {
   return {
     id: row.id,
     name: row.name,
+    shortCode: row.short_code,
     createdAt: toDate(row.created_at),
     updatedAt: toDate(row.updated_at),
   };

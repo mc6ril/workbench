@@ -11,6 +11,14 @@ import type {
  */
 export type ProjectRepository = {
   /**
+   * Get a project by its short code.
+   * @param shortCode - 2-letter project short code (e.g. 'WB')
+   * @returns Project or null if not found
+   * @throws DatabaseError if database operation fails
+   */
+  findByShortCode(shortCode: string): Promise<Project | null>;
+
+  /**
    * Get a project by ID.
    * @param id - Project ID
    * @returns Project or null if not found

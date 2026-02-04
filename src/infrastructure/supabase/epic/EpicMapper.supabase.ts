@@ -19,6 +19,7 @@ export const mapEpicRowToDomain = (row: EpicRow): Epic => {
     projectId: row.project_id,
     name: row.name,
     description: row.description,
+    codeNumber: row.code_number,
     createdAt: toDate(row.created_at),
     updatedAt: toDate(row.updated_at),
   };

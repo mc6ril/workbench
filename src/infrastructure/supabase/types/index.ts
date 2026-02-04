@@ -26,6 +26,7 @@ export type EpicRow = {
   project_id: string;
   name: string;
   description: string | null;
+  code_number: number;
   created_at: string;
   updated_at: string;
 };
@@ -42,6 +43,7 @@ export type ProjectMemberRow = {
 export type ProjectRow = {
   id: string;
   name: string;
+  short_code: string;
   created_at: string;
   updated_at: string;
 };
@@ -53,6 +55,7 @@ export type TicketRow = {
   description: string | null;
   status: string;
   position: number;
+  code_number: number;
   epic_id: string | null;
   parent_id: string | null;
   created_at: string;

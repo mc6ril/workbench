@@ -44,6 +44,13 @@ export const createTicket = async (
     }
   }
 
-  // Call repository to create ticket
-  return repository.create(validatedInput);
+  const codeNumber = await repository.getNextCodeNumberForProject(
+    validatedInput.projectId
+  );
+
+  // Call repository to create ticket with allocated code number
+  return repository.create({
+    ...validatedInput,
+    codeNumber,
+  });
 };

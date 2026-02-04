@@ -21,6 +21,7 @@ export const mapTicketRowToDomain = (row: TicketRow): Ticket => {
     description: row.description,
     status: row.status,
     position: row.position,
+    codeNumber: row.code_number,
     epicId: row.epic_id,
     parentId: row.parent_id,
     createdAt: toDate(row.created_at),

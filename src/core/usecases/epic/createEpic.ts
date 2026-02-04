@@ -23,6 +23,13 @@ export const createEpic = async (
   // Validate input with Zod schema
   const validatedInput = CreateEpicInputSchema.parse(input);
 
-  // Call repository to create epic
-  return repository.create(validatedInput);
+  const codeNumber = await repository.getNextCodeNumberForProject(
+    validatedInput.projectId
+  );
+
+  // Call repository to create epic with allocated code number
+  return repository.create({
+    ...validatedInput,
+    codeNumber,
+  });
 };

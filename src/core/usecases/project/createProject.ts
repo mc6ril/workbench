@@ -26,5 +26,7 @@ export const createProject = async (
   const validatedInput = CreateProjectInputSchema.parse(input);
 
   // Call repository to create project
-  return repository.create(validatedInput);
+  return repository.create({
+    name: validatedInput.name,
+  });
 };
