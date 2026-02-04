@@ -1,9 +1,27 @@
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/a11y" as *;
 @use "@/styles/variables/breakpoints" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/shadows" as *;
 @use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
 
 .sidebar-navigation {
   width: 100%;
+  height: 100%;
   padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sidebar-navigation__nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
 }
 
 .sidebar-navigation__list {
@@ -21,3 +39,166 @@
   }
 }
 
+.sidebar-navigation__add-tab {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  margin-top: $spacing-xs;
+  border: $border-width dashed $color-border-button;
+  border-radius: $border-radius-md;
+  background: transparent;
+  color: $color-text-secondary;
+  font-size: $font-size-base;
+  font-family: $font-family-sans;
+  cursor: pointer;
+  transition: $transition-background, $transition-color, $transition-border;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  &:hover {
+    background-color: $color-surface-subtle;
+    color: $color-foreground;
+    border-color: $color-border;
+  }
+
+  &:focus {
+    outline: $border-width-thick solid $color-primary;
+    outline-offset: $spacing-sm;
+  }
+
+  @media (min-width: $breakpoint-md) {
+    margin-top: $spacing-sm;
+  }
+}
+
+.sidebar-navigation__add-tab-icon {
+  flex-shrink: 0;
+}
+
+.sidebar-navigation__add-tab-label {
+  line-height: $line-height-normal;
+}
+
+.sidebar-navigation__profile {
+  position: relative;
+  flex-shrink: 0;
+  margin-top: auto;
+  padding-top: $spacing-md;
+  border-top: $border-width solid $color-border;
+}
+
+.sidebar-navigation__profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  border: none;
+  border-radius: $border-radius-md;
+  background: transparent;
+  color: $color-text;
+  font-size: $font-size-base;
+  font-family: $font-family-sans;
+  text-align: left;
+  cursor: pointer;
+  transition: $transition-background;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  &:hover {
+    background-color: $color-surface-hover;
+  }
+
+  &:focus {
+    outline: $border-width-thick solid $color-primary;
+    outline-offset: $spacing-sm;
+  }
+}
+
+.sidebar-navigation__profile-avatar {
+  flex-shrink: 0;
+  width: $spacing-4xl;
+  height: $spacing-4xl;
+  min-width: $spacing-4xl;
+  min-height: $spacing-4xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $border-radius-full;
+  background-color: $color-accent-subtle;
+  color: $color-accent;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+}
+
+.sidebar-navigation__profile-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+}
+
+.sidebar-navigation__profile-icon {
+  flex-shrink: 0;
+  color: $color-text-muted;
+}
+
+.sidebar-navigation__profile-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  margin-bottom: $spacing-xs;
+  padding: $spacing-xs;
+  background-color: $color-secondary;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-md;
+  z-index: $a11y-dropdown-z-index;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+}
+
+.sidebar-navigation__profile-menu-item {
+  display: block;
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  border: none;
+  border-radius: $border-radius-2xs;
+  background: transparent;
+  color: $color-text;
+  font-size: $font-size-base;
+  font-family: $font-family-sans;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: $transition-background;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  &:hover {
+    background-color: $color-surface-subtle;
+  }
+
+  &:focus {
+    outline: $border-width-thick solid $color-primary;
+    outline-offset: -$border-width-thick;
+  }
+
+  &:disabled {
+    color: $color-disabled-text;
+    cursor: not-allowed;
+  }
+}

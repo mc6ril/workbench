@@ -1,12 +1,22 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { PlusIcon, UserProfileIcon } from "@/presentation/components/icons";
 import NavigationItem from "@/presentation/components/ui/NavigationItem";
+import { useSession, useSignOut } from "@/presentation/hooks";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
+import { getInitialsFromEmail, isActiveHref } from "@/shared/utils";
 
 import styles from "./SidebarNavigation.module.scss";
 
@@ -26,37 +36,21 @@ type SidebarItem = {
   exactOnly: boolean;
 };
 
-const normalizePath = (path: string): string => {
-  if (path.length > 1 && path.endsWith("/")) {
-    return path.slice(0, -1);
-  }
-  return path;
-};
-
-const isActiveHref = (
-  pathname: string,
-  href: string,
-  options?: { exactOnly?: boolean }
-): boolean => {
-  const normalizedPathname = normalizePath(pathname);
-  const normalizedHref = normalizePath(href);
-
-  if (normalizedPathname === normalizedHref) {
-    return true;
-  }
-
-  if (options?.exactOnly) {
-    return false;
-  }
-
-  return normalizedPathname.startsWith(`${normalizedHref}/`);
-};
+const WORKSPACE_HREF = "/workspace";
 
 const SidebarNavigation = ({ projectId }: Props) => {
   const pathname = usePathname();
   const t = useTranslation("navigation.sidebar");
+  const signOutMutation = useSignOut();
+  const { data: session } = useSession();
+
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const profileTriggerRef = useRef<HTMLButtonElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   const navListId = getAccessibilityId("sidebar-navigation-list");
+  const profileMenuId = getAccessibilityId("sidebar-profile-menu");
+  const profileTriggerId = getAccessibilityId("sidebar-profile-trigger");
 
   const items: SidebarItem[] = useMemo(() => {
     const configs = getProjectViewConfigsForSidebar();
@@ -68,20 +62,147 @@ const SidebarNavigation = ({ projectId }: Props) => {
     }));
   }, [projectId, t]);
 
+  const displayName = session?.email ?? t("profile.userFallbackName");
+  const initials = session?.email ? getInitialsFromEmail(session.email) : "?";
+
+  const handleAddTabClick = useCallback(() => {
+    // Future: add tab action. No-op for now.
+  }, []);
+
+  const handleProfileTriggerClick = useCallback(() => {
+    setProfileMenuOpen((prev) => !prev);
+  }, []);
+
+  const closeProfileMenu = useCallback(() => {
+    setProfileMenuOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (!profileMenuOpen) {
+      return;
+    }
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        profileTriggerRef.current?.contains(target) === false &&
+        profileMenuRef.current?.contains(target) === false
+      ) {
+        closeProfileMenu();
+      }
+    };
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeProfileMenu();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [profileMenuOpen, closeProfileMenu]);
+
+  const handleLogout = useCallback(() => {
+    closeProfileMenu();
+    signOutMutation.mutate();
+  }, [closeProfileMenu, signOutMutation]);
+
   return (
     <div className={styles["sidebar-navigation"]}>
-      <ul id={navListId} className={styles["sidebar-navigation__list"]}>
-        {items.map((item) => (
-          <NavigationItem
-            key={item.key}
-            href={item.href}
-            label={item.label}
-            active={isActiveHref(pathname, item.href, {
-              exactOnly: item.exactOnly,
-            })}
+      <div className={styles["sidebar-navigation__nav"]}>
+        <ul id={navListId} className={styles["sidebar-navigation__list"]}>
+          {items.map((item) => (
+            <NavigationItem
+              key={item.key}
+              href={item.href}
+              label={item.label}
+              active={isActiveHref(pathname, item.href, {
+                exactOnly: item.exactOnly,
+              })}
+            />
+          ))}
+        </ul>
+
+        <button
+          type="button"
+          className={styles["sidebar-navigation__add-tab"]}
+          onClick={handleAddTabClick}
+          aria-label={t("addTabAriaLabel")}
+        >
+          <PlusIcon
+            className={styles["sidebar-navigation__add-tab-icon"]}
+            size={16}
           />
-        ))}
-      </ul>
+          <span className={styles["sidebar-navigation__add-tab-label"]}>
+            {t("addTab")}
+          </span>
+        </button>
+      </div>
+
+      <div className={styles["sidebar-navigation__profile"]}>
+        <button
+          ref={profileTriggerRef}
+          id={profileTriggerId}
+          type="button"
+          className={styles["sidebar-navigation__profile-trigger"]}
+          onClick={handleProfileTriggerClick}
+          aria-label={t("profile.ariaLabel")}
+          aria-expanded={profileMenuOpen}
+          aria-haspopup="menu"
+          aria-controls={profileMenuId}
+        >
+          <span
+            className={styles["sidebar-navigation__profile-avatar"]}
+            aria-hidden
+          >
+            {initials}
+          </span>
+          <span className={styles["sidebar-navigation__profile-name"]}>
+            {displayName}
+          </span>
+          <UserProfileIcon
+            className={styles["sidebar-navigation__profile-icon"]}
+            size={14}
+          />
+        </button>
+
+        {profileMenuOpen && (
+          <div
+            ref={profileMenuRef}
+            id={profileMenuId}
+            role="menu"
+            className={styles["sidebar-navigation__profile-menu"]}
+            aria-labelledby={profileTriggerId}
+          >
+            <Link
+              href={WORKSPACE_HREF}
+              role="menuitem"
+              className={styles["sidebar-navigation__profile-menu-item"]}
+              onClick={closeProfileMenu}
+            >
+              {t("profile.backToWorkspace")}
+            </Link>
+            <Link
+              href={WORKSPACE_HREF}
+              role="menuitem"
+              className={styles["sidebar-navigation__profile-menu-item"]}
+              onClick={closeProfileMenu}
+            >
+              {t("profile.profileSettings")}
+            </Link>
+            <button
+              type="button"
+              role="menuitem"
+              className={styles["sidebar-navigation__profile-menu-item"]}
+              onClick={handleLogout}
+              disabled={signOutMutation.isPending}
+            >
+              {t("profile.logout")}
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
