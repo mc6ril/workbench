@@ -32,3 +32,7 @@ $shadow-focus-success: 0 0 0 3px rgba(22, 163, 74, 0.3);
 // Component-specific
 $shadow-button-hover: $shadow-md;
 $shadow-modal: $shadow-xl;
+
+// Accent (buttons, cards hover)
+$shadow-accent-sm: 0 4px 12px rgba(196, 120, 138, 0.25);
+$shadow-accent-md: 0 6px 20px rgba(196, 120, 138, 0.35);

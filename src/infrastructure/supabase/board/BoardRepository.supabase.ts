@@ -42,6 +42,12 @@ export const createBoardRepository = (
         .single();
 
       if (error) {
+        // When .single() finds no rows, Supabase returns PGRST116.
+        // For repository contracts that return null when not found,
+        // we treat this specific case as "no board" instead of an error.
+        if ((error as { code?: string }).code === "PGRST116") {
+          return null;
+        }
         return handleRepositoryError(error, "Board");
       }
 
@@ -64,6 +70,12 @@ export const createBoardRepository = (
         .single();
 
       if (error) {
+        // PGRST116 = 0 rows with .single(): no board exists yet for this project.
+        // The board usecase is responsible for creating a default board when null is returned,
+        // so we intentionally return null instead of treating this as an error.
+        if ((error as { code?: string }).code === "PGRST116") {
+          return null;
+        }
         return handleRepositoryError(error, "Board");
       }
 

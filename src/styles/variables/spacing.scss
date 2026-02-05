@@ -43,6 +43,20 @@ $spacing-button-height: $spacing-unit * 12; // 3rem (48px)
 $container-max-width: 45rem; // 720px
 $spacing-container-max-width: $container-max-width;
 $spacing-empty-state-max-width: 30rem; // 480px
+$spacing-container-max-width-wide: 90rem; // full-width layouts
+
+// Viewport-relative spacing (workspace / full-width layouts)
+$spacing-vh-xs: 1vh;
+$spacing-vh-sm: 2vh;
+$spacing-vh-md: 3vh;
+$spacing-vh-lg: 4vh;
+$spacing-vh-xl: 5vh;
+$spacing-vh-2xl: 6vh;
+$spacing-vh-card-min: 14vh;
+$spacing-vh-main-min: 40vh;
+$spacing-vw-sm: 2vw;
+$spacing-vw-md: 4vw;
+$spacing-vw-lg: 5vw;
 
 // Layout sizing (Dashboard shell)
 $layout-dashboard-sidebar-width: $spacing-unit * 72; // 18rem (288px)

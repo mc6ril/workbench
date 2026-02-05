@@ -53,6 +53,12 @@ $color-highlight-gradient-start: #f5e6df;
 $color-highlight-gradient-end: #ede0d8;
 $color-highlight-gradient: linear-gradient(135deg, #f5e6df, #ede0d8);
 
+// Accent borders (for badges, cards)
+$color-accent-border-subtle: rgba(196, 120, 138, 0.15);
+$color-accent-border-soft: rgba(196, 120, 138, 0.2);
+$color-accent-bg-soft: rgba(196, 120, 138, 0.1);
+$color-accent-peach-bg-soft: rgba(212, 160, 133, 0.1);
+
 // Tooltip / overlay
 $color-tooltip-background: rgba(255, 255, 255, 0.95);
 
@@ -93,6 +99,14 @@ $color-neutral-600: #6b5e56;
 $color-neutral-700: #5c4a42;
 $color-neutral-800: #4a3c36;
 $color-neutral-900: #3d322c;
+
+// Workspace page (warm diagonal gradient)
+$color-workspace-page-gradient: linear-gradient(
+  135deg,
+  $color-background 0%,
+  $color-neutral-100 50%,
+  $color-neutral-200 100%
+);
 
 // Focus
 $color-focus: #c4788a;
