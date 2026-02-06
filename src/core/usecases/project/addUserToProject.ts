@@ -1,4 +1,5 @@
 import type { Project } from "@/core/domain/schema/project.schema";
+import { ProjectRole } from "@/core/domain/schema/project.schema";
 
 import type { ProjectRepository } from "@/core/ports/projectRepository";
 
@@ -9,7 +10,7 @@ import type { ProjectRepository } from "@/core/ports/projectRepository";
  *
  * @param projectRepository - Project repository
  * @param projectId - Project ID to add user to
- * @param role - Role to assign (default: 'viewer')
+ * @param role - Role to assign (default: ProjectRole.VIEWER)
  * @returns The project the user was added to
  * @throws NotFoundError if project doesn't exist
  * @throws ConstraintError if user is already a member
@@ -18,7 +19,7 @@ import type { ProjectRepository } from "@/core/ports/projectRepository";
 export const addUserToProject = async (
   projectRepository: ProjectRepository,
   projectId: string,
-  role: "admin" | "member" | "viewer" = "viewer"
+  role: ProjectRole = ProjectRole.VIEWER
 ): Promise<Project> => {
   return projectRepository.addCurrentUserAsMember(projectId, role);
 };

@@ -3,6 +3,7 @@
  */
 
 export { defaultLocale, getLocale, supportedLocales } from "./config";
+export type { RoleLabelKey } from "./dynamic";
 export type {
   Locale,
   Namespace,
@@ -25,4 +26,5 @@ export {
   createInterpolatedTranslation,
   createPluralKey,
   getConditionalTranslation,
+  getRoleLabelKey,
 } from "./dynamic";

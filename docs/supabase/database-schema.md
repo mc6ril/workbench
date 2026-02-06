@@ -455,6 +455,77 @@ The `project_members` table manages user access to projects with role-based perm
 
 See `docs/row-level-security.md` for detailed information about RLS policies and permissions.
 
+## RPC Functions
+
+The database includes several PostgreSQL RPC functions for optimized data access.
+
+### get_projects_with_stats()
+
+Returns all projects accessible to the current user with aggregated statistics.
+
+**Signature**:
+
+```sql
+get_projects_with_stats() RETURNS TABLE (
+  id uuid,
+  name text,
+  short_code text,
+  created_at timestamptz,
+  updated_at timestamptz,
+  role text,
+  member_count bigint,
+  ticket_count bigint,
+  in_progress_count bigint,
+  completed_count bigint
+)
+```
+
+**Security**: `SECURITY INVOKER` - Executes with the caller's permissions, respecting RLS policies.
+
+**Stability**: `STABLE` - Allows PostgreSQL to cache results within a transaction.
+
+**Return Values**:
+
+| Column            | Description                                            |
+| ----------------- | ------------------------------------------------------ |
+| id                | Project unique identifier                              |
+| name              | Project name                                           |
+| short_code        | 2-letter project code (e.g., 'WB')                     |
+| created_at        | Project creation timestamp                             |
+| updated_at        | Project last update timestamp                          |
+| role              | Current user's role: 'admin', 'member', or 'viewer'    |
+| member_count      | Total number of members in the project                 |
+| ticket_count      | Total number of top-level tickets (excludes subtasks)  |
+| in_progress_count | Number of tickets with status 'in-progress'            |
+| completed_count   | Number of tickets with status 'completed'              |
+
+**Implementation Details**:
+
+- Uses `INNER JOIN` on `project_members` to filter projects by current user (`auth.uid()`)
+- Uses `LEFT JOIN LATERAL` for efficient aggregation without N+1 queries
+- Excludes subtasks (`parent_id IS NOT NULL`) from ticket counts
+- Returns `0` for counts when no data exists (using `COALESCE`)
+- Results ordered by `created_at DESC`
+
+**Usage**:
+
+```sql
+-- Get all projects with stats for the current user
+SELECT * FROM get_projects_with_stats();
+
+-- Example result:
+-- id                                   | name         | short_code | role   | member_count | ticket_count | in_progress_count | completed_count
+-- 550e8400-e29b-41d4-a716-446655440000 | My Project   | MP         | admin  | 3            | 15           | 5                 | 8
+```
+
+**Performance**:
+
+- Single database round-trip (all statistics computed in one query)
+- Lateral joins prevent N+1 query patterns
+- Indexed lookups on `project_members.user_id` and `tickets.project_id`
+
+---
+
 ## Future Extensibility
 
 The schema is designed to support future enhancements:

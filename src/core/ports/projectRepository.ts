@@ -3,6 +3,7 @@ import type {
   Project,
   ProjectRole,
   ProjectWithRole,
+  ProjectWithStats,
 } from "@/core/domain/schema/project.schema";
 
 /**
@@ -32,6 +33,14 @@ export type ProjectRepository = {
    * @throws DatabaseError if database operation fails
    */
   list(): Promise<ProjectWithRole[]>;
+
+  /**
+   * Get all projects accessible to the current user with their roles and stats.
+   * Uses optimized SQL function for aggregated counts (member count, ticket counts).
+   * @returns Array of projects with role and statistics
+   * @throws DatabaseError if database operation fails
+   */
+  listWithStats(): Promise<ProjectWithStats[]>;
 
   /**
    * Create a new project.

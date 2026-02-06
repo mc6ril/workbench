@@ -11,6 +11,7 @@ export type TranslationKey =
   | `pages.resetPassword.${string}`
   | `pages.updatePassword.${string}`
   | `pages.home.${string}`
+  | `pages.workspace.${string}`
   | `pages.backlog.${string}`
   | `pages.board.${string}`
   | `pages.epics.${string}`
@@ -46,6 +47,7 @@ export type Namespace =
   | "pages.resetPassword"
   | "pages.updatePassword"
   | "pages.home"
+  | "pages.workspace"
   | "pages.backlog"
   | "pages.board"
   | "pages.epics"

@@ -1,0 +1,447 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/breakpoints" as *;
+
+// ============================================================================
+// Page Layout
+// ============================================================================
+
+.workspace-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 0;
+  background: $color-workspace-page-gradient;
+  display: flex;
+  flex-direction: column;
+}
+
+// ============================================================================
+// Header Section
+// ============================================================================
+
+.workspace-header {
+  background: linear-gradient(
+    135deg,
+    rgba($color-secondary, 0.95) 0%,
+    rgba($color-background, 0.9) 100%
+  );
+  backdrop-filter: blur(10px);
+  padding: $spacing-3xl $spacing-2xl;
+  border-bottom: $border-width solid $color-accent-border-subtle;
+  box-shadow: $shadow-sm;
+}
+
+.workspace-header__content {
+  max-width: $spacing-container-max-width-wide;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-2xl;
+  flex-wrap: wrap;
+}
+
+.workspace-welcome {
+  flex: 1;
+  min-width: 300px;
+}
+
+.workspace-welcome__label {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: $spacing-sm;
+}
+
+.workspace-welcome__title {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  margin-bottom: $spacing-2xs;
+}
+
+.workspace-welcome__subtitle {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  font-weight: $font-weight-normal;
+}
+
+.workspace-header__actions {
+  display: flex;
+  gap: $spacing-lg;
+  align-items: center;
+}
+
+// ============================================================================
+// Main Container
+// ============================================================================
+
+.workspace-container {
+  max-width: $spacing-container-max-width-wide;
+  margin: 0 auto;
+  padding: $spacing-3xl $spacing-2xl;
+  width: 100%;
+}
+
+// ============================================================================
+// Section Header
+// ============================================================================
+
+.section-header {
+  margin-bottom: $spacing-2xl;
+}
+
+.section-title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  margin-bottom: $spacing-sm;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xl;
+
+  &::before {
+    content: "";
+    width: 4px;
+    height: 1.5rem;
+    background: linear-gradient(
+      180deg,
+      $color-accent,
+      $color-accent-peach
+    );
+    border-radius: 2px;
+  }
+}
+
+.section-description {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  margin-left: $spacing-3xl;
+}
+
+// ============================================================================
+// Workspaces Grid
+// ============================================================================
+
+.workspaces-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: $spacing-3xl;
+  margin-bottom: $spacing-3xl;
+}
+
+// ============================================================================
+// Workspace Card
+// ============================================================================
+
+.workspace-card {
+  background: $color-secondary;
+  border-radius: $border-radius-lg;
+  padding: $spacing-3xl;
+  border: $border-width solid $color-border;
+  transition: all $animation-duration-slow $easing-smooth;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  animation: fadeInUp $animation-duration-slower $easing-ease-out backwards;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      $color-accent,
+      $color-accent-peach
+    );
+    opacity: 0;
+    transition: opacity $animation-duration-slow;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+    border-color: $color-accent;
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:focus {
+    outline: $border-width-thick solid $color-focus;
+    outline-offset: $border-width-thick;
+  }
+
+  @for $i from 1 through 12 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 100}ms;
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY($spacing-2xl);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.workspace-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-lg;
+}
+
+.workspace-icon {
+  width: $spacing-5xl;
+  height: $spacing-5xl;
+  border-radius: $border-radius-sm;
+  background: linear-gradient(
+    135deg,
+    $color-accent-bg-soft,
+    $color-accent-peach-bg-soft
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-2xl;
+  margin-bottom: $spacing-lg;
+}
+
+.workspace-name {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  margin-bottom: $spacing-sm;
+}
+
+.workspace-meta {
+  display: flex;
+  gap: $spacing-lg;
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-lg;
+}
+
+.workspace-meta-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2xs;
+}
+
+.workspace-badge {
+  display: inline-block;
+  padding: $spacing-2xs $spacing-xl;
+  background: linear-gradient(
+    135deg,
+    $color-accent-bg-soft,
+    $color-accent-peach-bg-soft
+  );
+  color: $color-accent;
+  border-radius: $radius-xl;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  border: $border-width solid $color-accent-border-soft;
+}
+
+.workspace-stats {
+  display: flex;
+  gap: $spacing-3xl;
+  padding-top: $spacing-lg;
+  border-top: $border-width solid $color-border-subtle;
+}
+
+.stat {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  display: block;
+}
+
+.stat-label {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-top: $spacing-2xs;
+}
+
+// ============================================================================
+// Empty State
+// ============================================================================
+
+.empty-state {
+  text-align: center;
+  padding: $spacing-5xl $spacing-2xl;
+  background: linear-gradient(
+    135deg,
+    rgba($color-secondary, 0.6),
+    rgba($color-background, 0.4)
+  );
+  border-radius: $border-radius-xl;
+  border: $border-width-thick dashed $color-border;
+  backdrop-filter: blur(10px);
+}
+
+.empty-state-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto $spacing-3xl;
+  background: linear-gradient(
+    135deg,
+    $color-accent-bg-soft,
+    $color-accent-peach-bg-soft
+  );
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-4xl;
+}
+
+.empty-state-title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  margin-bottom: $spacing-xl;
+}
+
+.empty-state-description {
+  font-size: $font-size-lg;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-2xl;
+  max-width: $spacing-empty-state-max-width;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: $line-height-relaxed;
+}
+
+// ============================================================================
+// Footer
+// ============================================================================
+
+.workspace-footer {
+  margin-top: auto;
+  width: 100%;
+  padding: $spacing-lg $spacing-2xl;
+  border-top: $border-width solid $color-border;
+  background-color: $color-surface-subtle;
+  border-radius: $border-radius-md;
+}
+
+.workspace-footer__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm $spacing-lg;
+  justify-content: center;
+}
+
+.workspace-footer__link {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  text-decoration: none;
+  transition: color $animation-duration-base $easing-ease-out;
+
+  &:hover {
+    color: $color-primary;
+  }
+
+  &:focus {
+    outline: $border-width-thick solid $color-focus;
+    outline-offset: $border-width-thick;
+    border-radius: $border-radius-sm;
+  }
+}
+
+// ============================================================================
+// Modals
+// ============================================================================
+
+.workspace-modal-description {
+  margin-bottom: $spacing-3xl;
+  display: block;
+}
+
+.workspace-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+// ============================================================================
+// Responsive
+// ============================================================================
+
+@media (max-width: $breakpoint-md) {
+  .workspace-header__content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .workspace-header__actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .workspaces-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-welcome__title {
+    font-size: $font-size-2xl;
+  }
+
+  .section-title {
+    font-size: $font-size-xl;
+  }
+}
+
+// ============================================================================
+// Accessibility & Reduced Motion
+// ============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .workspace-page,
+  .workspace-page * {
+    animation-duration: 0ms !important;
+    animation: none !important;
+    transition-duration: 0ms !important;
+  }
+
+  .workspace-card {
+    animation: none;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}

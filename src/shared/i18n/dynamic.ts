@@ -1,4 +1,37 @@
+import { ProjectRole } from "@/core/domain/schema/project.schema";
+
 import type { TranslationFunction } from "./types";
+
+/**
+ * Translation keys for project roles.
+ */
+export type RoleLabelKey = "roleAdmin" | "roleMember" | "roleViewer";
+
+/**
+ * Maps a ProjectRole to its corresponding i18n translation key.
+ *
+ * @param role - The project role
+ * @returns The translation key for the role label
+ *
+ * @example
+ * ```tsx
+ * const t = useTranslation("pages.workspace");
+ * const roleKey = getRoleLabelKey(ProjectRole.ADMIN);
+ * const label = t(roleKey); // "Administrateur"
+ * ```
+ */
+export const getRoleLabelKey = (role: ProjectRole): RoleLabelKey => {
+  switch (role) {
+    case ProjectRole.ADMIN:
+      return "roleAdmin";
+    case ProjectRole.MEMBER:
+      return "roleMember";
+    case ProjectRole.VIEWER:
+      return "roleViewer";
+    default:
+      return "roleMember";
+  }
+};
 
 /**
  * Creates a pluralized translation key based on count.

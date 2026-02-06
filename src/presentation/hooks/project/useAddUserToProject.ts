@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { ProjectRole } from "@/core/domain/schema/project.schema";
+
 import { addUserToProject } from "@/core/usecases/project/addUserToProject";
 
 import { projectRepository } from "@/infrastructure/supabase/repositories";
@@ -20,7 +22,7 @@ export const useAddUserToProject = () => {
       role,
     }: {
       projectId: string;
-      role?: "admin" | "member" | "viewer";
+      role?: ProjectRole;
     }) => addUserToProject(projectRepository, projectId, role),
     onSuccess: () => {
       // Invalidate and refetch projects list to refresh the UI

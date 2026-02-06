@@ -1,14 +1,5 @@
-import type { ProjectRole } from "@/core/domain/schema/project.schema";
-
-/**
- * Array of all valid project roles.
- * Used for validation and iteration over roles.
- */
-export const PROJECT_ROLES: readonly ProjectRole[] = Object.freeze([
-  "admin",
-  "member",
-  "viewer",
-]);
+// Re-export project role constants from domain for convenience
+export { PROJECT_ROLES, ProjectRole } from "@/core/domain/schema/project.schema";
 
 // Re-export route constants for convenience
 export type { ProjectView } from "./routes";
