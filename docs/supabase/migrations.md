@@ -12,7 +12,15 @@ Workbench uses **Supabase migrations** with SQL files stored in `supabase/migrat
 supabase/
 └── migrations/
     ├── 000001_initial_schema.sql
-    └── ...
+    ├── 000002_seed_default_project.sql
+    ├── 000003_add_project_members_and_rls.sql
+    ├── 000004_auto_add_creator_as_admin.sql
+    ├── 000005_allow_users_to_add_themselves_as_viewer.sql
+    ├── 000006_fix_project_creation_rls.sql
+    ├── 000007_bypass_rls_with_function.sql
+    ├── 000008_add_ticket_epic_codes.sql
+    ├── 000009_project_stats_function.sql
+    └── README.md
 ```
 
 Migration files follow the naming convention:
@@ -43,6 +51,46 @@ This **consolidated** migration creates the complete initial database schema in 
 This migration consolidates elements that were previously in separate migrations (000008, 000009, 000010) into a single, well-organized initial schema migration.
 
 See `docs/database-schema.md` for detailed schema documentation.
+
+### Project Statistics Function Migration
+
+**File**: `supabase/migrations/000009_project_stats_function.sql`
+
+This migration creates an optimized RPC function for fetching projects with aggregated statistics:
+
+- **Function**: `get_projects_with_stats()` - Returns all projects accessible to the current user with member count, ticket count, and status breakdown
+- **Security**: Uses `SECURITY INVOKER` to respect RLS policies
+- **Optimization**: Uses lateral joins to aggregate statistics in a single query (no N+1)
+- **Caching**: Marked as `STABLE` to allow PostgreSQL query caching
+
+**Return Columns**:
+
+| Column            | Type        | Description                                       |
+| ----------------- | ----------- | ------------------------------------------------- |
+| id                | uuid        | Project unique identifier                         |
+| name              | text        | Project name                                      |
+| short_code        | text        | 2-letter project code                             |
+| created_at        | timestamptz | Project creation timestamp                        |
+| updated_at        | timestamptz | Project last update timestamp                     |
+| role              | text        | Current user's role in the project                |
+| member_count      | bigint      | Total number of members in the project            |
+| ticket_count      | bigint      | Total number of top-level tickets (excludes subtasks) |
+| in_progress_count | bigint      | Number of tickets with status 'in-progress'       |
+| completed_count   | bigint      | Number of tickets with status 'completed'         |
+
+**Usage Example**:
+
+```sql
+SELECT * FROM get_projects_with_stats();
+```
+
+**Notes**:
+
+- Subtasks (`parent_id IS NOT NULL`) are excluded from ticket counts
+- Only returns projects where the current user is a member
+- Results are ordered by `created_at DESC`
+
+---
 
 ### Seed Data Migration
 

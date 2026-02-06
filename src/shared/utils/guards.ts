@@ -1,6 +1,7 @@
-import type { ProjectRole } from "@/core/domain/schema/project.schema";
-
-import { PROJECT_ROLES } from "@/shared/constants";
+import {
+  PROJECT_ROLES,
+  ProjectRole,
+} from "@/core/domain/schema/project.schema";
 
 /**
  * Type guards and validation utilities.
@@ -112,7 +113,7 @@ export const isNonEmptyArray = <T>(value: unknown): value is T[] => {
  * @returns true if value is a valid ProjectRole
  */
 export const isProjectRole = (value: string): value is ProjectRole => {
-  return PROJECT_ROLES.includes(value as ProjectRole);
+  return (PROJECT_ROLES as readonly string[]).includes(value);
 };
 
 export const isPlainObject = (

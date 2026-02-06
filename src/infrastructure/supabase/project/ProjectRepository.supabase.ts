@@ -8,12 +8,16 @@ import {
 import type {
   CreateProjectInput,
   Project,
-  ProjectRole,
   ProjectWithRole,
+  ProjectWithStats,
 } from "@/core/domain/schema/project.schema";
+import { ProjectRole } from "@/core/domain/schema/project.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
-import type { ProjectRow } from "@/infrastructure/supabase/types";
+import type {
+  ProjectRow,
+  ProjectWithStatsRow,
+} from "@/infrastructure/supabase/types";
 
 import {
   isNonEmptyString,
@@ -24,6 +28,7 @@ import {
 import {
   mapProjectRowToDomain,
   mapProjectToProjectWithRole,
+  mapProjectWithStatsRowToDomain,
 } from "./ProjectMapper.supabase";
 
 import type { ProjectRepository } from "@/core/ports/projectRepository";
@@ -134,6 +139,26 @@ export const createProjectRepository = (
 
         return mapProjectToProjectWithRole(project, roleValue);
       });
+    } catch (error) {
+      return handleRepositoryError(error, "Project");
+    }
+  },
+
+  async listWithStats(): Promise<ProjectWithStats[]> {
+    try {
+      const { data, error } = await client.rpc("get_projects_with_stats");
+
+      if (error) {
+        handleRepositoryError(error, "Project");
+      }
+
+      if (!data || !Array.isArray(data)) {
+        return [];
+      }
+
+      return data.map((row) =>
+        mapProjectWithStatsRowToDomain(row as ProjectWithStatsRow)
+      );
     } catch (error) {
       return handleRepositoryError(error, "Project");
     }
@@ -285,7 +310,7 @@ export const createProjectRepository = (
 
   async addCurrentUserAsMember(
     projectId: string,
-    role: ProjectRole = "viewer"
+    role: ProjectRole = ProjectRole.VIEWER
   ): Promise<Project> {
     try {
       // Get current user session first

@@ -44,9 +44,24 @@ export const CreateProjectInputSchema = z.object({
 export type CreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
 
 /**
- * Project role type (as stored in project_members table).
+ * Project role values (as stored in project_members table).
+ * Defines the possible roles a user can have in a project.
  */
-export type ProjectRole = "admin" | "member" | "viewer";
+export enum ProjectRole {
+  ADMIN = "admin",
+  MEMBER = "member",
+  VIEWER = "viewer",
+}
+
+/**
+ * Array of all valid project roles.
+ * Used for validation and iteration over roles.
+ */
+export const PROJECT_ROLES: readonly ProjectRole[] = Object.freeze([
+  ProjectRole.ADMIN,
+  ProjectRole.MEMBER,
+  ProjectRole.VIEWER,
+]);
 
 /**
  * Project with role information for the current user.
@@ -63,3 +78,20 @@ export type ProjectWithRole = Project & {
 export const GetProjectInputSchema = z.object({
   id: z.string().uuid("Project ID must be a valid UUID"),
 });
+
+/**
+ * Statistics for a project (member counts, ticket counts).
+ * Used for workspace overview display.
+ */
+export type ProjectStats = {
+  memberCount: number;
+  ticketCount: number;
+  inProgressCount: number;
+  completedCount: number;
+};
+
+/**
+ * Project with role and statistics for workspace overview.
+ * Combines project data with user role and aggregated stats.
+ */
+export type ProjectWithStats = ProjectWithRole & ProjectStats;

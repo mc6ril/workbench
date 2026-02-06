@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { CreateProjectInput } from "@/core/domain/schema/project.schema";
-import type { ProjectWithRole } from "@/core/domain/schema/project.schema";
 import { CreateProjectInputSchema } from "@/core/domain/schema/project.schema";
 
 import {
@@ -24,61 +23,20 @@ import {
 import {
   useAddUserToProject,
   useCreateProject,
-  useProjects,
+  useProjectsWithStats,
   useSession,
 } from "@/presentation/hooks";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
-import { useTranslation } from "@/shared/i18n";
+import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import { shouldShowLoading } from "@/shared/utils";
+import { getWorkspaceEmoji, shouldShowLoading } from "@/shared/utils";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
 import styles from "./styles.module.scss";
 
 type CreateProjectFormData = CreateProjectInput;
-
-const getRoleLabelKey = (
-  role: ProjectWithRole["role"]
-): "roleAdmin" | "roleMember" | "roleViewer" => {
-  switch (role) {
-    case "admin":
-      return "roleAdmin";
-    case "member":
-      return "roleMember";
-    case "viewer":
-      return "roleViewer";
-    default:
-      return "roleMember";
-  }
-};
-
-/** Emoji per workspace card (simple mapping by index). */
-const getWorkspaceEmoji = (index: number): string => {
-  const emojis = ["🎨", "🛍️", "📸", "✨", "🌸", "💡", "📝", "🎯"];
-  return emojis[index % emojis.length];
-};
-
-// TODO: Replace with real member count from API when available
-const getProjectMemberCount = (_project: ProjectWithRole): number => {
-  return 1;
-};
-
-// TODO: Replace with real task count from API when available
-const getProjectTaskCount = (_project: ProjectWithRole): number => {
-  return 0;
-};
-
-// TODO: Replace with real "in progress" count from API when available
-const getProjectStatInProgress = (_project: ProjectWithRole): number => {
-  return 0;
-};
-
-// TODO: Replace with real "completed" count from API when available
-const getProjectStatCompleted = (_project: ProjectWithRole): number => {
-  return 0;
-};
 
 const WorkspacePage = () => {
   const router = useRouter();
@@ -89,7 +47,7 @@ const WorkspacePage = () => {
     isFetching: isFetchingProjects,
     error: projectsError,
     refetch: refetchProjects,
-  } = useProjects();
+  } = useProjectsWithStats();
   const addUserToProjectMutation = useAddUserToProject();
   const createProjectMutation = useCreateProject();
   const [joinProjectId, setJoinProjectId] = useState("");
@@ -286,10 +244,6 @@ const WorkspacePage = () => {
                   name: project.name,
                   role: roleLabel,
                 });
-                const memberCount = getProjectMemberCount(project);
-                const taskCount = getProjectTaskCount(project);
-                const statInProgress = getProjectStatInProgress(project);
-                const statCompleted = getProjectStatCompleted(project);
 
                 return (
                   <div
@@ -321,11 +275,15 @@ const WorkspacePage = () => {
                     <div className={styles["workspace-meta"]}>
                       <span className={styles["workspace-meta-item"]}>
                         <span aria-hidden="true">👥</span>
-                        <span>{t("membersCount", { count: memberCount })}</span>
+                        <span>
+                          {t("membersCount", { count: project.memberCount })}
+                        </span>
                       </span>
                       <span className={styles["workspace-meta-item"]}>
                         <span aria-hidden="true">📋</span>
-                        <span>{t("tasksCount", { count: taskCount })}</span>
+                        <span>
+                          {t("tasksCount", { count: project.ticketCount })}
+                        </span>
                       </span>
                     </div>
                     <Badge
@@ -337,7 +295,7 @@ const WorkspacePage = () => {
                     <div className={styles["workspace-stats"]}>
                       <div className={styles["stat"]}>
                         <span className={styles["stat-value"]}>
-                          {statInProgress}
+                          {project.inProgressCount}
                         </span>
                         <span className={styles["stat-label"]}>
                           {t("statInProgress")}
@@ -345,7 +303,7 @@ const WorkspacePage = () => {
                       </div>
                       <div className={styles["stat"]}>
                         <span className={styles["stat-value"]}>
-                          {statCompleted}
+                          {project.completedCount}
                         </span>
                         <span className={styles["stat-label"]}>
                           {t("statCompleted")}
