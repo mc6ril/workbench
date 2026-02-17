@@ -17,6 +17,8 @@ import type {
 import { mapSupabaseSessionToDomain } from "@/infrastructure/supabase/auth/AuthMapper.supabase";
 import { handleAuthError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 
+import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
+
 import type { AuthRepository } from "@/core/ports/authRepository";
 
 /**
@@ -24,10 +26,13 @@ import type { AuthRepository } from "@/core/ports/authRepository";
  * This allows using different clients (browser/server) based on context.
  *
  * @param client - Supabase client instance to use
+ * @param adminClient - Optional Supabase admin client (service_role) for privileged operations like user deletion.
+ *                      Must be provided for server-side contexts that need admin operations.
  * @returns AuthRepository implementation
  */
 export const createAuthRepository = (
-  client: SupabaseClient
+  client: SupabaseClient,
+  adminClient?: SupabaseClient
 ): AuthRepository => ({
   async signUp(input: SignUpInput): Promise<AuthResult> {
     try {
@@ -225,7 +230,7 @@ export const createAuthRepository = (
       // Determine redirect URL based on context
       const redirectTo =
         typeof window !== "undefined"
-          ? `${window.location.origin}/auth/update-password`
+          ? `${window.location.origin}${AUTH_PAGE_ROUTES.UPDATE_PASSWORD}`
           : undefined;
 
       const { error } = await client.auth.resetPasswordForEmail(input.email, {
@@ -242,19 +247,15 @@ export const createAuthRepository = (
 
   async updatePassword(input: UpdatePasswordInput): Promise<AuthResult> {
     try {
-      // If email is not provided, Supabase redirects with only a code
+      // If email is not provided, Supabase redirects with only a code.
       // The Supabase client automatically exchanges the code for a session
-      // when getSession() is called after the code is in the URL
+      // during initialization — no artificial delay needed.
       if (!input.email || input.email.trim() === "") {
-        // Wait a bit for Supabase to process the code from URL
-        // Then get the session (Supabase client handles code exchange automatically)
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
         const { data: sessionData, error: sessionError } =
           await client.auth.getSession();
 
         if (sessionError) {
-          handleAuthError(sessionError);
+          return handleAuthError(sessionError);
         }
 
         // If we have a session, update the password
@@ -264,17 +265,17 @@ export const createAuthRepository = (
           });
 
           if (updateError) {
-            handleAuthError(updateError);
+            return handleAuthError(updateError);
           }
 
-          // Get the user to get the email
+          // Get the user to retrieve email
           const {
             data: { user },
             error: userError,
           } = await client.auth.getUser();
 
           if (userError) {
-            handleAuthError(userError);
+            return handleAuthError(userError);
           }
 
           if (user) {
@@ -287,13 +288,13 @@ export const createAuthRepository = (
           }
         }
 
-        // If no session, the code might be invalid or expired
+        // If no session, the code is invalid or expired
         const error: InvalidTokenError = {
           code: "INVALID_TOKEN",
           debugMessage:
             "Unable to reset password. The reset code may be invalid or expired. Please request a new password reset email.",
         };
-        handleAuthError(error);
+        return handleAuthError(error);
       }
 
       // Standard password reset with email and token
@@ -351,22 +352,18 @@ export const createAuthRepository = (
 
   async verifyEmail(input: VerifyEmailInput): Promise<AuthResult> {
     try {
-      // If email is not provided, Supabase redirects with only a code
+      // If email is not provided, Supabase redirects with only a code.
       // The Supabase client automatically exchanges the code for a session
-      // when getSession() is called after the code is in the URL
+      // during initialization — no artificial delay needed.
       if (!input.email || input.email.trim() === "") {
-        // Wait a bit for Supabase to process the code from URL
-        // Then get the session (Supabase client handles code exchange automatically)
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
         const { data: sessionData, error: sessionError } =
           await client.auth.getSession();
 
         if (sessionError) {
-          handleAuthError(sessionError);
+          return handleAuthError(sessionError);
         }
 
-        // If we have a session, get the user to verify email confirmation
+        // If we have a session, verify the user's email confirmation
         if (sessionData.session) {
           const {
             data: { user },
@@ -374,7 +371,7 @@ export const createAuthRepository = (
           } = await client.auth.getUser();
 
           if (userError) {
-            handleAuthError(userError);
+            return handleAuthError(userError);
           }
 
           if (user) {
@@ -387,13 +384,13 @@ export const createAuthRepository = (
           }
         }
 
-        // If no session, the code might be invalid or expired
+        // If no session, the code is invalid or expired
         const error: EmailVerificationError = {
           code: "EMAIL_VERIFICATION_ERROR",
           debugMessage:
             "Unable to verify email. The verification code may be invalid or expired. Please request a new verification email.",
         };
-        handleAuthError(error);
+        return handleAuthError(error);
       }
 
       // Standard verification with email and token
@@ -490,27 +487,41 @@ export const createAuthRepository = (
 
   async deleteUser(): Promise<void> {
     try {
-      // User deletion requires admin API (service_role key)
-      // Call Next.js API route which handles server-side deletion
-      const response = await fetch("/api/auth/delete-user", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+      // Admin client is required for user deletion (service_role key)
+      if (!adminClient) {
         const error: AuthenticationError = {
           code: "AUTHENTICATION_ERROR",
           debugMessage:
-            errorData.error || `Failed to delete user: ${response.statusText}`,
+            "Admin client required for user deletion. This operation must be performed server-side.",
         };
-        handleAuthError(error);
+        return handleAuthError(error);
       }
 
-      // User deletion successful
-      return;
+      // Get the current user to retrieve their ID
+      const {
+        data: { user },
+        error: userError,
+      } = await client.auth.getUser();
+
+      if (userError || !user) {
+        const error: AuthenticationError = {
+          code: "AUTHENTICATION_ERROR",
+          debugMessage: "User must be authenticated to delete account",
+        };
+        return handleAuthError(error);
+      }
+
+      // Delete user via admin API (cascade deletes associated data)
+      const { error: deleteError } = await adminClient.auth.admin.deleteUser(
+        user.id
+      );
+
+      if (deleteError) {
+        return handleAuthError(deleteError);
+      }
+
+      // Sign out the current session after successful deletion
+      await client.auth.signOut();
     } catch (error) {
       handleAuthError(error);
     }

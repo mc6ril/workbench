@@ -38,3 +38,21 @@ export const PROJECT_VIEWS = Object.freeze({
 });
 
 export type ProjectView = (typeof PROJECT_VIEWS)[keyof typeof PROJECT_VIEWS];
+
+/**
+ * Auth page route paths.
+ * Used for redirects after auth operations (e.g., password reset redirect).
+ */
+export const AUTH_PAGE_ROUTES = Object.freeze({
+  UPDATE_PASSWORD: "/auth/update-password",
+});
+
+/**
+ * API route paths for server-side operations.
+ * Used by client-side hooks to call API routes for admin-privileged operations.
+ */
+export const API_ROUTES = Object.freeze({
+  AUTH: Object.freeze({
+    DELETE_USER: "/api/auth/delete-user",
+  }),
+});

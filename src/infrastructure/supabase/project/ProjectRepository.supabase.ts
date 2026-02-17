@@ -34,6 +34,63 @@ import {
 import type { ProjectRepository } from "@/core/ports/projectRepository";
 
 /**
+ * Extract a full project row from an RPC response.
+ * The RPC may return a single object or an array of objects.
+ */
+const extractProjectRow = (data: unknown): ProjectRow | null => {
+  if (Array.isArray(data) && data.length > 0) {
+    const first = data[0];
+    if (typeof first === "object" && first !== null) {
+      return first as ProjectRow;
+    }
+  } else if (data && typeof data === "object" && !Array.isArray(data)) {
+    return data as ProjectRow;
+  }
+  return null;
+};
+
+/**
+ * Extract a project ID (UUID string) from an RPC response.
+ * The RPC may return a single string or an array with a string.
+ */
+const extractProjectId = (data: unknown): string | null => {
+  if (typeof data === "string") {
+    return data;
+  }
+  if (Array.isArray(data) && data.length > 0 && typeof data[0] === "string") {
+    return data[0];
+  }
+  return null;
+};
+
+/**
+ * Fetch a project by ID using the get_project_by_id RPC function.
+ * Used as a fallback when create_project only returns the UUID.
+ */
+const fetchProjectById = async (
+  client: SupabaseClient,
+  projectId: string
+): Promise<Project> => {
+  const { data, error } = await client.rpc("get_project_by_id", {
+    p_project_id: projectId,
+  });
+
+  if (error) {
+    return handleRepositoryError(error, "Project");
+  }
+
+  const projectRow = Array.isArray(data) ? data[0] : data;
+  if (!projectRow) {
+    return handleRepositoryError(
+      createDatabaseError("No project data returned after creation"),
+      "Project"
+    );
+  }
+
+  return mapProjectRowToDomain(projectRow as ProjectRow);
+};
+
+/**
  * Create a ProjectRepository implementation using the provided Supabase client.
  * This allows using different clients (browser/server) based on context.
  *
@@ -74,7 +131,7 @@ export const createProjectRepository = (
         .single();
 
       if (error) {
-        handleRepositoryError(error, "Project");
+        return handleRepositoryError(error, "Project");
       }
 
       if (!data) {
@@ -100,7 +157,7 @@ export const createProjectRepository = (
         .order("created_at", { ascending: false });
 
       if (error) {
-        handleRepositoryError(error, "Project");
+        return handleRepositoryError(error, "Project");
       }
 
       if (!data || !Array.isArray(data)) {
@@ -110,7 +167,7 @@ export const createProjectRepository = (
       // Transform the data to match ProjectWithRole structure
       return data.map((row: unknown) => {
         if (!isObject(row)) {
-          handleRepositoryError(
+          return handleRepositoryError(
             createDatabaseError("Invalid project data structure"),
             "Project"
           );
@@ -149,7 +206,7 @@ export const createProjectRepository = (
       const { data, error } = await client.rpc("get_projects_with_stats");
 
       if (error) {
-        handleRepositoryError(error, "Project");
+        return handleRepositoryError(error, "Project");
       }
 
       if (!data || !Array.isArray(data)) {
@@ -168,70 +225,27 @@ export const createProjectRepository = (
     try {
       // Use RPC function to bypass RLS issues
       // The function create_project() is SECURITY DEFINER and bypasses RLS
-      const { data: projectData, error: rpcError } = await client.rpc(
+      const { data: rpcData, error: rpcError } = await client.rpc(
         "create_project",
         { project_name: input.name }
       );
 
       if (rpcError) {
-        handleRepositoryError(rpcError, "Project");
+        return handleRepositoryError(rpcError, "Project");
       }
 
-      // Handle different return types from RPC
-      let projectId: string | null = null;
-
-      if (Array.isArray(projectData) && projectData.length > 0) {
-        // If it's an array, get the project from it
-        const project = projectData[0];
-        if (typeof project === "object" && project !== null) {
-          // It's already the full project object
-          return mapProjectRowToDomain(project as ProjectRow);
-        } else if (typeof project === "string") {
-          // It's just the ID
-          projectId = project;
-        }
-      } else if (typeof projectData === "string") {
-        // RPC returned just the UUID
-        projectId = projectData;
-      } else if (projectData && typeof projectData === "object") {
-        // RPC returned the project object directly (not in array)
-        return mapProjectRowToDomain(projectData as ProjectRow);
+      // Normalize RPC response: the function may return a full project row or just the UUID
+      const projectRow = extractProjectRow(rpcData);
+      if (projectRow) {
+        return mapProjectRowToDomain(projectRow);
       }
 
-      // If we only have the ID, fetch the full project using RPC (bypasses RLS)
+      const projectId = extractProjectId(rpcData);
       if (projectId) {
-        const { data: projectDataFromRpc, error: rpcFetchError } =
-          await client.rpc("get_project_by_id", { p_project_id: projectId });
-
-        if (rpcFetchError) {
-          handleRepositoryError(rpcFetchError, "Project");
-        }
-
-        if (!projectDataFromRpc) {
-          handleRepositoryError(
-            createDatabaseError(
-              "No project data returned from get_project_by_id function"
-            ),
-            "Project"
-          );
-        }
-
-        // RPC returns array, get first element
-        const projectRow = Array.isArray(projectDataFromRpc)
-          ? projectDataFromRpc[0]
-          : projectDataFromRpc;
-
-        if (!projectRow) {
-          handleRepositoryError(
-            createDatabaseError("No project data returned after creation"),
-            "Project"
-          );
-        }
-
-        return mapProjectRowToDomain(projectRow as ProjectRow);
+        return await fetchProjectById(client, projectId);
       }
 
-      // If we get here, something went wrong
+      // Unexpected response shape
       return handleRepositoryError(
         createDatabaseError(
           "No project data returned from create_project function"
@@ -252,7 +266,7 @@ export const createProjectRepository = (
 
       if (input.name !== undefined) {
         if (!isNonEmptyString(input.name)) {
-          handleRepositoryError(
+          return handleRepositoryError(
             createConstraintError(
               "PROJECT_NAME_REQUIRED",
               "Project name cannot be empty"
@@ -283,11 +297,14 @@ export const createProjectRepository = (
         .single();
 
       if (error) {
-        handleRepositoryError(error, "Project");
+        return handleRepositoryError(error, "Project");
       }
 
       if (!data) {
-        handleRepositoryError(createNotFoundError("Project", id), "Project");
+        return handleRepositoryError(
+          createNotFoundError("Project", id),
+          "Project"
+        );
       }
 
       return mapProjectRowToDomain(data as ProjectRow);
@@ -301,10 +318,10 @@ export const createProjectRepository = (
       const { error } = await client.from("projects").delete().eq("id", id);
 
       if (error) {
-        handleRepositoryError(error, "Project");
+        return handleRepositoryError(error, "Project");
       }
     } catch (error) {
-      handleRepositoryError(error, "Project");
+      return handleRepositoryError(error, "Project");
     }
   },
 
@@ -375,7 +392,7 @@ export const createProjectRepository = (
       const { data, error } = await client.rpc("has_any_project_access");
 
       if (error) {
-        handleRepositoryError(error, "Project");
+        return handleRepositoryError(error, "Project");
       }
 
       // SQL function returns boolean, but Supabase RPC might return null
