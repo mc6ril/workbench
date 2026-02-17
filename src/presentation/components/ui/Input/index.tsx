@@ -71,12 +71,20 @@ const Input = forwardRef<HTMLInputElement, Props>(
     const baseKey = `input-${label}`;
     const inputId = id || getAccessibilityId(baseKey);
     const errorId = error ? getAccessibilityId(`${baseKey}-error`) : undefined;
-    const helperTextId = helperText && !error
-      ? getAccessibilityId(`${baseKey}-helper`)
-      : undefined;
+    const helperTextId =
+      helperText && !error
+        ? getAccessibilityId(`${baseKey}-helper`)
+        : undefined;
     const describedBy =
       [ariaDescribedBy, errorId, helperTextId].filter(Boolean).join(" ") ||
       undefined;
+
+    const wrapperClasses = [
+      styles["input-wrapper"],
+      inline && styles["input-wrapper--inline"],
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     const labelClasses = [
       styles["input-label"],
@@ -86,9 +94,9 @@ const Input = forwardRef<HTMLInputElement, Props>(
       .join(" ");
 
     return (
-      <div className={styles["input-wrapper"]} style={{ flexDirection: inline ? "row" : "column" }}>
+      <div className={wrapperClasses}>
         {label && (
-          <label htmlFor={inputId} className={labelClasses} >
+          <label htmlFor={inputId} className={labelClasses}>
             {label}
           </label>
         )}
@@ -127,4 +135,4 @@ const Input = forwardRef<HTMLInputElement, Props>(
 
 Input.displayName = "Input";
 
-export default Input;
+export default React.memo(Input);

@@ -152,4 +152,4 @@ const Select = forwardRef<HTMLSelectElement, Props>(
 
 Select.displayName = "Select";
 
-export default Select;
+export default React.memo(Select);

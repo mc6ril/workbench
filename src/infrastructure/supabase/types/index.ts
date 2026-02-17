@@ -3,6 +3,8 @@
  * These types match the snake_case column names from Supabase tables.
  */
 
+import type { ProjectRole } from "@/core/domain/schema/project.schema";
+
 export type BoardRow = {
   id: string;
   project_id: string;
@@ -30,8 +32,6 @@ export type EpicRow = {
   created_at: string;
   updated_at: string;
 };
-
-import type { ProjectRole } from "@/core/domain/schema/project.schema";
 
 export type ProjectMemberRow = {
   id: string;
