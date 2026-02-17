@@ -248,3 +248,11 @@ export type AuthenticationFailure =
   | EmailVerificationError
   | PasswordResetError
   | InvalidTokenError;
+
+/**
+ * Zod schema for resend verification email input.
+ * Validates email format.
+ */
+export const ResendVerificationEmailSchema = z.object({
+  email: z.string().min(1, "Email is required").email("Invalid email format"),
+});

@@ -105,3 +105,62 @@ export const TicketSortSchema = z.object({
 });
 
 export type TicketSort = z.infer<typeof TicketSortSchema>;
+
+/**
+ * Input for getting a ticket by project short code and code number.
+ * Used in getTicketByCode usecase.
+ */
+export const GetTicketByCodeInputSchema = z.object({
+  projectShortCode: z.string().min(1, "Project short code must not be empty"),
+  codeNumber: z
+    .number()
+    .int()
+    .positive("Code number must be a positive integer"),
+});
+
+export type GetTicketByCodeInput = z.infer<typeof GetTicketByCodeInputSchema>;
+
+/**
+ * Input schema for single ticket ID validation.
+ * Used in getTicketDetail, deleteTicket, and similar usecases.
+ */
+export const TicketIdInputSchema = z.object({
+  id: z.string().uuid("Ticket ID must be a valid UUID"),
+});
+
+export type TicketIdInput = z.infer<typeof TicketIdInputSchema>;
+
+/**
+ * Input for assigning a ticket to an epic.
+ * Validates both ticketId and epicId as UUIDs.
+ */
+export const AssignTicketToEpicInputSchema = z.object({
+  ticketId: z.string().uuid("Ticket ID must be a valid UUID"),
+  epicId: z.string().uuid("Epic ID must be a valid UUID"),
+});
+
+export type AssignTicketToEpicInput = z.infer<
+  typeof AssignTicketToEpicInputSchema
+>;
+
+/**
+ * Input for unassigning a ticket from its epic.
+ * Validates ticketId as UUID.
+ */
+export const UnassignTicketFromEpicInputSchema = z.object({
+  ticketId: z.string().uuid("Ticket ID must be a valid UUID"),
+});
+
+export type UnassignTicketFromEpicInput = z.infer<
+  typeof UnassignTicketFromEpicInputSchema
+>;
+
+/**
+ * Input for moving a ticket to a new status and position.
+ * Used for drag-and-drop operations on the board.
+ */
+export const MoveTicketInputSchema = z.object({
+  id: z.string().uuid("Ticket ID must be a valid UUID"),
+  status: z.string().min(1, "Status must not be empty"),
+  position: z.number().int().nonnegative("Position must be non-negative"),
+});

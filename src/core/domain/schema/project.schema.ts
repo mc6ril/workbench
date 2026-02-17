@@ -95,3 +95,11 @@ export type ProjectStats = {
  * Combines project data with user role and aggregated stats.
  */
 export type ProjectWithStats = ProjectWithRole & ProjectStats;
+
+/**
+ * Input schema for adding a user to a project.
+ * Used in addUserToProject usecase.
+ */
+export const AddUserToProjectInputSchema = z.object({
+  projectId: z.string().uuid("Project ID must be a valid UUID"),
+});

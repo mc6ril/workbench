@@ -1,7 +1,8 @@
-import { z } from "zod";
-
 import { createNotFoundError } from "@/core/domain/repositoryError";
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
+import {
+  MoveTicketInputSchema,
+  type Ticket,
+} from "@/core/domain/schema/ticket.schema";
 
 import type { TicketRepository } from "@/core/ports/ticketRepository";
 
@@ -11,10 +12,11 @@ import type { TicketRepository } from "@/core/ports/ticketRepository";
  * Used for drag-and-drop operations on the board.
  *
  * @param repository - Ticket repository
- * @param id - Ticket ID
+ * @param id - Ticket ID (UUID)
  * @param status - New status/column
  * @param position - New position within the column
  * @returns Updated ticket
+ * @throws ZodError if input validation fails
  * @throws NotFoundError if ticket not found
  * @throws ConstraintError if constraint violation occurs
  * @throws DatabaseError if database operation fails
@@ -25,20 +27,18 @@ export const moveTicket = async (
   status: string,
   position: number
 ): Promise<Ticket> => {
-  // Validate input
-  const MoveTicketInputSchema = z.object({
-    status: z.string().min(1, "Status must not be empty"),
-    position: z.number().int().nonnegative("Position must be non-negative"),
-  });
-
-  MoveTicketInputSchema.parse({ status, position });
+  const validatedInput = MoveTicketInputSchema.parse({ id, status, position });
 
   // Check if ticket exists
-  const ticket = await repository.findById(id);
+  const ticket = await repository.findById(validatedInput.id);
   if (!ticket) {
-    throw createNotFoundError("Ticket", id);
+    throw createNotFoundError("Ticket", validatedInput.id);
   }
 
   // Move ticket
-  return repository.moveTicket(id, status, position);
+  return repository.moveTicket(
+    validatedInput.id,
+    validatedInput.status,
+    validatedInput.position
+  );
 };

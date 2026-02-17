@@ -12,6 +12,8 @@ import type {
   WeakPasswordError,
 } from "@/core/domain/schema/auth.schema";
 
+import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
+
 /**
  * Maps Supabase Session to domain AuthSession.
  *
@@ -36,7 +38,7 @@ export const mapSupabaseSessionToDomain = (
 const createInvalidCredentialsError = (
   debugMessage?: string
 ): InvalidCredentialsError => ({
-  code: "INVALID_CREDENTIALS",
+  code: AUTH_ERROR_CODE.INVALID_CREDENTIALS,
   debugMessage,
 });
 
@@ -46,7 +48,7 @@ const createInvalidCredentialsError = (
 const createEmailAlreadyExistsError = (
   debugMessage?: string
 ): EmailAlreadyExistsError => ({
-  code: "EMAIL_ALREADY_EXISTS",
+  code: AUTH_ERROR_CODE.EMAIL_ALREADY_EXISTS,
   debugMessage,
 });
 
@@ -54,7 +56,7 @@ const createEmailAlreadyExistsError = (
  * Creates a weak password error.
  */
 const createWeakPasswordError = (debugMessage?: string): WeakPasswordError => ({
-  code: "WEAK_PASSWORD",
+  code: AUTH_ERROR_CODE.WEAK_PASSWORD,
   debugMessage,
 });
 
@@ -62,7 +64,7 @@ const createWeakPasswordError = (debugMessage?: string): WeakPasswordError => ({
  * Creates an invalid email error.
  */
 const createInvalidEmailError = (debugMessage?: string): InvalidEmailError => ({
-  code: "INVALID_EMAIL",
+  code: AUTH_ERROR_CODE.INVALID_EMAIL,
   debugMessage,
 });
 
@@ -72,7 +74,7 @@ const createInvalidEmailError = (debugMessage?: string): InvalidEmailError => ({
 const createEmailVerificationError = (
   debugMessage?: string
 ): EmailVerificationError => ({
-  code: "EMAIL_VERIFICATION_ERROR",
+  code: AUTH_ERROR_CODE.EMAIL_VERIFICATION_ERROR,
   debugMessage,
 });
 
@@ -82,7 +84,7 @@ const createEmailVerificationError = (
 const createPasswordResetError = (
   debugMessage?: string
 ): PasswordResetError => ({
-  code: "PASSWORD_RESET_ERROR",
+  code: AUTH_ERROR_CODE.PASSWORD_RESET_ERROR,
   debugMessage,
 });
 
@@ -90,7 +92,7 @@ const createPasswordResetError = (
  * Creates an invalid token error.
  */
 const createInvalidTokenError = (debugMessage?: string): InvalidTokenError => ({
-  code: "INVALID_TOKEN",
+  code: AUTH_ERROR_CODE.INVALID_TOKEN,
   debugMessage,
 });
 
@@ -232,7 +234,7 @@ export const mapSupabaseAuthError = (error: unknown): AuthenticationFailure => {
 
     // Generic authentication error - keep original message for debugging only.
     return {
-      code: "AUTHENTICATION_ERROR",
+      code: AUTH_ERROR_CODE.AUTHENTICATION_ERROR,
       debugMessage: error.message,
       originalError: error,
     };
@@ -250,7 +252,7 @@ export const mapSupabaseAuthError = (error: unknown): AuthenticationFailure => {
         : "An unknown authentication error occurred";
 
   return {
-    code: "AUTHENTICATION_ERROR",
+    code: AUTH_ERROR_CODE.AUTHENTICATION_ERROR,
     debugMessage,
     originalError: error,
   };

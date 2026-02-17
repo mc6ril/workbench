@@ -1,5 +1,5 @@
 import type {
-  CreateEpicInput,
+  CreateEpicRepositoryInput,
   Epic,
   UpdateEpicInput,
 } from "@/core/domain/schema/epic.schema";
@@ -46,12 +46,13 @@ export type EpicRepository = {
 
   /**
    * Create a new epic.
-   * @param input - Epic creation data
+   * Expects codeNumber to be already allocated by the usecase.
+   * @param input - Epic creation data with required codeNumber
    * @returns Created epic
    * @throws ConstraintError if constraint violation occurs
    * @throws DatabaseError if database operation fails
    */
-  create(input: CreateEpicInput): Promise<Epic>;
+  create(input: CreateEpicRepositoryInput): Promise<Epic>;
 
   /**
    * Update an existing epic.

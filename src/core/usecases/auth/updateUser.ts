@@ -1,3 +1,4 @@
+import { createDomainRuleError } from "@/core/domain/domainRuleError";
 import {
   type UpdateUserInput,
   UpdateUserSchema,
@@ -27,7 +28,8 @@ export const updateUser = async (
     !validatedInput.password &&
     !validatedInput.data
   ) {
-    throw new Error(
+    throw createDomainRuleError(
+      "UPDATE_USER_NO_FIELDS",
       "At least one field (email, password, or data) must be provided"
     );
   }
