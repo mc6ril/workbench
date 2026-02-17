@@ -24,7 +24,6 @@ export type TicketCardProps = {
   assigneeName?: string | null;
   priority?: string | null;
   storyPoints?: number | null;
-  onOpen?: (id: string) => void;
   onEdit?: (id: string) => void;
 };
 
@@ -38,7 +37,6 @@ const TicketCard = ({
   assigneeName,
   priority,
   storyPoints,
-  onOpen,
   onEdit,
 }: Props) => {
   const t = useTranslation("pages.board.ticketCard");
@@ -47,12 +45,6 @@ const TicketCard = ({
 
   const titleId = `${baseId}-title`;
   const descriptionId = `${baseId}-meta`;
-
-  const _handleOpen = (): void => {
-    if (onOpen) {
-      onOpen(id);
-    }
-  };
 
   const handleEdit = (): void => {
     if (onEdit) {
@@ -156,14 +148,6 @@ const TicketCard = ({
           </Stack>
         </div>
         <div className={styles["ticket-card__actions"]}>
-          {/* {onOpen && (
-          //todo this about the utilty of this button
-            <Button
-              label={t("openTicketLabel")}
-              onClick={_handleOpen}
-              variant="secondary"
-            />
-          )} */}
           {onEdit && (
             <Button
               label={t("editTicketLabel")}

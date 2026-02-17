@@ -1,9 +1,9 @@
 import React from "react";
 
-import { Badge, Card, EmptyState,Text } from "@/presentation/components/ui";
+import { Badge, Card, EmptyState, Text } from "@/presentation/components/ui";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { useTranslation } from "@/shared/i18n";
+import { getIntlLocale, useTranslation } from "@/shared/i18n";
 
 import styles from "./RecentActivityWidget.module.scss";
 
@@ -38,8 +38,9 @@ const RecentActivityWidget = ({
   const displayEmptyMessage = emptyMessage || t("emptyMessage");
 
   const formatTimestamp = (timestamp: Date | string): string => {
-    const date = typeof timestamp === "string" ? new Date(timestamp) : timestamp;
-    return new Intl.DateTimeFormat("fr-FR", {
+    const date =
+      typeof timestamp === "string" ? new Date(timestamp) : timestamp;
+    return new Intl.DateTimeFormat(getIntlLocale(), {
       day: "numeric",
       month: "short",
       hour: "2-digit",
@@ -66,11 +67,7 @@ const RecentActivityWidget = ({
     .join(" ");
 
   return (
-    <Card
-      title={t("title")}
-      className={widgetClasses}
-      ariaLabel={t("title")}
-    >
+    <Card title={t("title")} className={widgetClasses} ariaLabel={t("title")}>
       {activities.length === 0 ? (
         <EmptyState
           title={displayEmptyMessage}

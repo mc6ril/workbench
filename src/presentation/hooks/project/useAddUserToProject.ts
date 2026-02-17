@@ -25,12 +25,7 @@ export const useAddUserToProject = () => {
       role?: ProjectRole;
     }) => addUserToProject(projectRepository, projectId, role),
     onSuccess: () => {
-      // Invalidate and refetch projects list to refresh the UI
       queryClient.invalidateQueries({ queryKey: queryKeys.projects.all() });
-    },
-    onSettled: () => {
-      // Force refetch after mutation settles (success or error) to ensure UI is up to date
-      queryClient.refetchQueries({ queryKey: queryKeys.projects.all() });
     },
   });
 };

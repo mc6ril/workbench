@@ -159,4 +159,4 @@ const Textarea = forwardRef<HTMLTextAreaElement, Props>(
 
 Textarea.displayName = "Textarea";
 
-export default Textarea;
+export default React.memo(Textarea);

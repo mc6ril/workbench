@@ -20,6 +20,7 @@
 
 .epic-progress__fill {
   height: 100%;
+  width: var(--epic-progress-width, 0%);
   background-color: $color-success;
   border-radius: $border-radius-sm;
   transition: width 0.3s ease;

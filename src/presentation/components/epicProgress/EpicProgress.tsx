@@ -54,7 +54,7 @@ const EpicProgress = ({ progress, ariaLabel, className, id }: Props) => {
       >
         <div
           className={styles["epic-progress__fill"]}
-          style={{ width: `${clampedProgress}%` }}
+          style={{ "--epic-progress-width": `${clampedProgress}%` } as React.CSSProperties}
           aria-hidden="true"
         />
       </div>

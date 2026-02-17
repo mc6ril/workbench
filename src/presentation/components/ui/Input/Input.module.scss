@@ -11,6 +11,10 @@
   gap: $spacing-xs;
 }
 
+.input-wrapper--inline {
+  flex-direction: row;
+}
+
 .input-label {
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
