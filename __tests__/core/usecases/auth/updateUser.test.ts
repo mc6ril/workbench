@@ -132,15 +132,22 @@ describe("updateUser", () => {
     });
   });
 
-  it("should throw error when all fields are missing", async () => {
+  it("should throw DomainRuleError when all fields are missing", async () => {
     // Arrange
     const input = {};
     const repository = createAuthRepositoryMock();
 
-    // Act & Assert
-    await expect(updateUser(repository, input)).rejects.toThrow(
-      "At least one field (email, password, or data) must be provided"
-    );
+    // Act & Assert — now throws DomainRuleError (plain object), not Error
+    try {
+      await updateUser(repository, input);
+      expect(true).toBe(false); // Should not reach here
+    } catch (error) {
+      expect(error).toMatchObject({
+        code: "UPDATE_USER_NO_FIELDS",
+        debugMessage:
+          "At least one field (email, password, or data) must be provided",
+      });
+    }
     expect(repository.updateUser).not.toHaveBeenCalled();
   });
 

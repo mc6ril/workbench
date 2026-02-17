@@ -1,14 +1,6 @@
-import { z } from "zod";
+import { ResendVerificationEmailSchema } from "@/core/domain/schema/auth.schema";
 
 import type { AuthRepository } from "@/core/ports/authRepository";
-
-/**
- * Zod schema for resend verification email input.
- * Validates email format.
- */
-const ResendVerificationEmailSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Invalid email format"),
-});
 
 /**
  * Resend verification email to a user.
@@ -16,6 +8,7 @@ const ResendVerificationEmailSchema = z.object({
  *
  * @param repository - Auth repository
  * @param email - Email address to resend verification to
+ * @throws ZodError if email validation fails
  * @throws EmailVerificationError if resend fails
  * @throws AuthenticationFailure for other authentication errors
  */

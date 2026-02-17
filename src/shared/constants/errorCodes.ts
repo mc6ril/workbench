@@ -4,19 +4,25 @@
  */
 
 /**
- * Authentication error codes.
- * Used for authentication-related domain errors.
+ * Authentication error code constants.
+ * Use these constants instead of hardcoded strings in error factories and mappers.
  */
-export const AUTH_ERROR_CODES = Object.freeze([
-  "INVALID_CREDENTIALS",
-  "EMAIL_ALREADY_EXISTS",
-  "WEAK_PASSWORD",
-  "INVALID_EMAIL",
-  "AUTHENTICATION_ERROR",
-  "EMAIL_VERIFICATION_ERROR",
-  "PASSWORD_RESET_ERROR",
-  "INVALID_TOKEN",
-]);
+export const AUTH_ERROR_CODE = Object.freeze({
+  INVALID_CREDENTIALS: "INVALID_CREDENTIALS",
+  EMAIL_ALREADY_EXISTS: "EMAIL_ALREADY_EXISTS",
+  WEAK_PASSWORD: "WEAK_PASSWORD",
+  INVALID_EMAIL: "INVALID_EMAIL",
+  AUTHENTICATION_ERROR: "AUTHENTICATION_ERROR",
+  EMAIL_VERIFICATION_ERROR: "EMAIL_VERIFICATION_ERROR",
+  PASSWORD_RESET_ERROR: "PASSWORD_RESET_ERROR",
+  INVALID_TOKEN: "INVALID_TOKEN",
+} as const);
+
+/**
+ * Authentication error codes as array.
+ * Used for validation and iteration over error codes.
+ */
+export const AUTH_ERROR_CODES = Object.freeze(Object.values(AUTH_ERROR_CODE));
 
 export type AuthErrorCode = (typeof AUTH_ERROR_CODES)[number];
 

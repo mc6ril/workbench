@@ -61,3 +61,29 @@ export type EpicDetail = Epic & {
     status: string;
   }>; // Tickets assigned to epic (minimal ticket info)
 };
+
+/**
+ * Input for getting an epic by project short code and code number.
+ * Used in getEpicByCode usecase.
+ */
+export const GetEpicByCodeInputSchema = z.object({
+  projectShortCode: z.string().min(1, "Project short code must not be empty"),
+  codeNumber: z
+    .number()
+    .int()
+    .positive("Code number must be a positive integer"),
+});
+
+export type GetEpicByCodeInput = z.infer<typeof GetEpicByCodeInputSchema>;
+
+/**
+ * Input for repository create method where codeNumber is required.
+ * The usecase allocates the code number before calling the repository.
+ */
+export const CreateEpicRepositoryInputSchema = CreateEpicInputSchema.extend({
+  codeNumber: z.number().int().positive(),
+});
+
+export type CreateEpicRepositoryInput = z.infer<
+  typeof CreateEpicRepositoryInputSchema
+>;

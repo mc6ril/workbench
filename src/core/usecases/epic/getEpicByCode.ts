@@ -1,19 +1,31 @@
-import type { Epic } from "@/core/domain/schema/epic.schema";
+import {
+  type Epic,
+  type GetEpicByCodeInput,
+  GetEpicByCodeInputSchema,
+} from "@/core/domain/schema/epic.schema";
 
 import type { EpicRepository } from "@/core/ports/epicRepository";
 import type { ProjectRepository } from "@/core/ports/projectRepository";
 
-type GetEpicByCodeInput = {
-  projectShortCode: string;
-  codeNumber: number;
-};
-
+/**
+ * Get an epic by its project short code and code number.
+ * Validates input, resolves the project, then fetches the epic.
+ *
+ * @param projectRepository - Project repository
+ * @param epicRepository - Epic repository
+ * @param input - Project short code and epic code number
+ * @returns Epic or null if not found
+ * @throws ZodError if input validation fails
+ * @throws DatabaseError if database operation fails
+ */
 export const getEpicByCode = async (
   projectRepository: ProjectRepository,
   epicRepository: EpicRepository,
   input: GetEpicByCodeInput
 ): Promise<Epic | null> => {
-  const shortCode = input.projectShortCode.trim().toUpperCase();
+  const validatedInput = GetEpicByCodeInputSchema.parse(input);
+
+  const shortCode = validatedInput.projectShortCode.trim().toUpperCase();
 
   const project = await projectRepository.findByShortCode(shortCode);
 
@@ -21,5 +33,5 @@ export const getEpicByCode = async (
     return null;
   }
 
-  return epicRepository.findByCode(project.id, input.codeNumber);
+  return epicRepository.findByCode(project.id, validatedInput.codeNumber);
 };

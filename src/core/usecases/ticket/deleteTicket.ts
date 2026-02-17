@@ -1,5 +1,6 @@
 import { createDomainRuleError } from "@/core/domain/domainRuleError";
 import { createNotFoundError } from "@/core/domain/repositoryError";
+import { TicketIdInputSchema } from "@/core/domain/schema/ticket.schema";
 
 import type { TicketRepository } from "@/core/ports/ticketRepository";
 
@@ -9,7 +10,8 @@ import type { TicketRepository } from "@/core/ports/ticketRepository";
  * Enforces manual deletion of subtasks first.
  *
  * @param repository - Ticket repository
- * @param id - Ticket ID
+ * @param id - Ticket ID (UUID)
+ * @throws ZodError if id is not a valid UUID
  * @throws NotFoundError if ticket not found
  * @throws DomainRuleError if ticket has subtasks (TICKET_HAS_SUBTASKS)
  * @throws DatabaseError if database operation fails
@@ -18,25 +20,27 @@ export const deleteTicket = async (
   repository: TicketRepository,
   id: string
 ): Promise<void> => {
+  const { id: validatedId } = TicketIdInputSchema.parse({ id });
+
   // Fetch existing ticket
-  const ticket = await repository.findById(id);
+  const ticket = await repository.findById(validatedId);
   if (!ticket) {
-    throw createNotFoundError("Ticket", id);
+    throw createNotFoundError("Ticket", validatedId);
   }
 
   // Check if ticket has subtasks
   const subtasks = await repository.listByProject(ticket.projectId, {
-    parentId: id,
+    parentId: validatedId,
   });
 
   if (subtasks.length > 0) {
     throw createDomainRuleError(
       "TICKET_HAS_SUBTASKS",
-      `Ticket ${id} cannot be deleted because it has ${subtasks.length} subtask(s). Delete subtasks first.`,
+      `Ticket ${validatedId} cannot be deleted because it has ${subtasks.length} subtask(s). Delete subtasks first.`,
       "id"
     );
   }
 
   // Call repository to delete ticket
-  await repository.delete(id);
+  await repository.delete(validatedId);
 };

@@ -5,7 +5,7 @@ import {
   createNotFoundError,
 } from "@/core/domain/repositoryError";
 import type {
-  CreateEpicInput,
+  CreateEpicRepositoryInput,
   Epic,
   UpdateEpicInput,
 } from "@/core/domain/schema/epic.schema";
@@ -98,7 +98,7 @@ export const createEpicRepository = (
     }
   },
 
-  async create(input: CreateEpicInput): Promise<Epic> {
+  async create(input: CreateEpicRepositoryInput): Promise<Epic> {
     try {
       const { data, error } = await client
         .from("epics")
@@ -106,7 +106,7 @@ export const createEpicRepository = (
           project_id: input.projectId,
           name: input.name,
           description: input.description ?? null,
-          code_number: (input as unknown as { codeNumber: number }).codeNumber,
+          code_number: input.codeNumber,
         })
         .select()
         .single();

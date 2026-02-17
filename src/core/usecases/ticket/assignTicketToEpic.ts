@@ -1,7 +1,10 @@
 import { createDomainRuleError } from "@/core/domain/domainRuleError";
 import { createNotFoundError } from "@/core/domain/repositoryError";
 import { validateEpicTicketAssignment } from "@/core/domain/rules/epic.rules";
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
+import {
+  AssignTicketToEpicInputSchema,
+  type Ticket,
+} from "@/core/domain/schema/ticket.schema";
 
 import type { EpicRepository } from "@/core/ports/epicRepository";
 import type { TicketRepository } from "@/core/ports/ticketRepository";
@@ -13,9 +16,10 @@ import type { TicketRepository } from "@/core/ports/ticketRepository";
  *
  * @param ticketRepository - Ticket repository
  * @param epicRepository - Epic repository
- * @param ticketId - Ticket ID to assign
- * @param epicId - Epic ID to assign ticket to
+ * @param ticketId - Ticket ID to assign (UUID)
+ * @param epicId - Epic ID to assign ticket to (UUID)
  * @returns Updated ticket with epicId set
+ * @throws ZodError if ticketId or epicId is not a valid UUID
  * @throws NotFoundError if ticket or epic not found
  * @throws DomainRuleError if domain rules are violated (project mismatch, duplicate assignment)
  * @throws ConstraintError if constraint violation occurs
@@ -27,16 +31,21 @@ export const assignTicketToEpic = async (
   ticketId: string,
   epicId: string
 ): Promise<Ticket> => {
+  const validatedInput = AssignTicketToEpicInputSchema.parse({
+    ticketId,
+    epicId,
+  });
+
   // Fetch ticket
-  const ticket = await ticketRepository.findById(ticketId);
+  const ticket = await ticketRepository.findById(validatedInput.ticketId);
   if (!ticket) {
-    throw createNotFoundError("Ticket", ticketId);
+    throw createNotFoundError("Ticket", validatedInput.ticketId);
   }
 
   // Fetch epic
-  const epic = await epicRepository.findById(epicId);
+  const epic = await epicRepository.findById(validatedInput.epicId);
   if (!epic) {
-    throw createNotFoundError("Epic", epicId);
+    throw createNotFoundError("Epic", validatedInput.epicId);
   }
 
   // Validate assignment using domain rules
@@ -51,5 +60,8 @@ export const assignTicketToEpic = async (
   }
 
   // Write via ticket repository
-  return ticketRepository.assignToEpic(ticketId, epicId);
+  return ticketRepository.assignToEpic(
+    validatedInput.ticketId,
+    validatedInput.epicId
+  );
 };
