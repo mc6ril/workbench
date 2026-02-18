@@ -1,122 +1,150 @@
 // Color Palette Variables (FlavieBoard design system)
-// All colors used in the application must reference these variables
+// SCSS aliases that reference CSS custom properties defined in themes.scss.
+// This allows existing $color-xxx usage in all .module.scss files to keep
+// working unchanged while supporting runtime light/dark theme switching.
 
 // ============================================================================
-// Brand / Primary palette (warm neutrals + rose accent)
+// Brand / Primary
 // ============================================================================
 
-// Primary (headings, buttons, main text)
-$color-primary: #5c4a42;
-$color-primary-hover: #4a3c36;
-$color-primary-text: #ffffff;
+$color-primary: var(--color-primary);
+$color-primary-hover: var(--color-primary-hover);
+$color-primary-text: var(--color-primary-text);
 
-// Secondary (surfaces, cards)
-$color-secondary: #ffffff;
-$color-secondary-hover: #faf7f4;
+// ============================================================================
+// Secondary
+// ============================================================================
 
+$color-secondary: var(--color-secondary);
+$color-secondary-hover: var(--color-secondary-hover);
+
+// ============================================================================
 // Background
-$color-background: #faf7f4;
-$color-background-gradient-start: #faf7f4;
-$color-background-gradient-end: #f0ebe5;
-$color-background-gradient: linear-gradient(180deg, #faf7f4 0%, #f0ebe5 100%);
-$color-surface: #ffffff;
-$color-surface-hover: #faf7f4;
-$color-surface-subtle: #faf7f4;
-$color-background-dark: #5c4a42;
+// ============================================================================
 
+$color-background: var(--color-background);
+$color-background-gradient-start: var(--color-background-gradient-start);
+$color-background-gradient-end: var(--color-background-gradient-end);
+$color-surface: var(--color-surface);
+$color-surface-hover: var(--color-surface-hover);
+$color-surface-subtle: var(--color-surface-subtle);
+$color-background-dark: var(--color-background-dark);
+
+// ============================================================================
 // Foreground / Text
-$color-foreground: #5c4a42;
-$color-foreground-dark: #4a3c36;
-$color-text: #5c4a42;
-$color-text-primary: #5c4a42;
-$color-text-secondary: #8a7a72;
-$color-text-muted: #b8a89a;
-$color-text-footer: #c4a898;
+// ============================================================================
 
+$color-foreground: var(--color-foreground);
+$color-foreground-dark: var(--color-foreground-dark);
+$color-text: var(--color-text);
+$color-text-primary: var(--color-text-primary);
+$color-text-secondary: var(--color-text-secondary);
+$color-text-muted: var(--color-text-muted);
+$color-text-footer: var(--color-text-footer);
+
+// ============================================================================
 // Border
-$color-border: #ede8e2;
-$color-border-subtle: #f0ebe5;
-$color-border-tooltip: #e8ddd5;
-$color-border-highlight: #e8d8d0;
-$color-border-button: #ddd5cd;
-$color-border-dark: rgba(92, 74, 66, 0.15);
+// ============================================================================
 
-// Accent (brand highlights, CTAs, labels)
-$color-accent: #c4788a;
-$color-accent-hover: #b06a7a;
-$color-accent-peach: #d4a085;
-$color-accent-tan: #b8a89a;
-$color-accent-subtle: rgba(196, 120, 138, 0.06);
+$color-border: var(--color-border);
+$color-border-subtle: var(--color-border-subtle);
+$color-border-tooltip: var(--color-border-tooltip);
+$color-border-highlight: var(--color-border-highlight);
+$color-border-button: var(--color-border-button);
+$color-border-dark: var(--color-border-dark);
 
-// Highlight box gradient
-$color-highlight-gradient-start: #f5e6df;
-$color-highlight-gradient-end: #ede0d8;
-$color-highlight-gradient: linear-gradient(135deg, #f5e6df, #ede0d8);
+// ============================================================================
+// Accent
+// ============================================================================
 
+$color-accent: var(--color-accent);
+$color-accent-hover: var(--color-accent-hover);
+$color-accent-peach: var(--color-accent-peach);
+$color-accent-tan: var(--color-accent-tan);
+$color-accent-subtle: var(--color-accent-subtle);
+
+// ============================================================================
+// Highlight gradient
+// ============================================================================
+
+$color-highlight-gradient-start: var(--color-highlight-gradient-start);
+$color-highlight-gradient-end: var(--color-highlight-gradient-end);
+
+// ============================================================================
 // Accent borders (for badges, cards)
-$color-accent-border-subtle: rgba(196, 120, 138, 0.15);
-$color-accent-border-soft: rgba(196, 120, 138, 0.2);
-$color-accent-bg-soft: rgba(196, 120, 138, 0.1);
-$color-accent-peach-bg-soft: rgba(212, 160, 133, 0.1);
+// ============================================================================
 
+$color-accent-border-subtle: var(--color-accent-border-subtle);
+$color-accent-border-soft: var(--color-accent-border-soft);
+$color-accent-bg-soft: var(--color-accent-bg-soft);
+$color-accent-peach-bg-soft: var(--color-accent-peach-bg-soft);
+
+// ============================================================================
 // Tooltip / overlay
-$color-tooltip-background: rgba(255, 255, 255, 0.95);
-
-// ============================================================================
-// Semantic colors (aligned with warm palette where possible)
 // ============================================================================
 
-// Success
-$color-success: #2d8a5e;
-$color-success-background: #dcfce7;
-$color-success-text: #15803d;
-$color-success-ring: rgba(22, 163, 74, 0.3);
+$color-tooltip-background: var(--color-tooltip-background);
 
-// Error
-$color-error: #c45c5c;
-$color-error-background: #fee2e2;
-$color-error-text: #991b1b;
-$color-error-ring: rgba(220, 38, 38, 0.3);
+// ============================================================================
+// Semantic — Success
+// ============================================================================
 
-// Warning
-$color-warning: #c49a3d;
-$color-warning-background: #fef3c7;
-$color-warning-text: #92400e;
+$color-success: var(--color-success);
+$color-success-background: var(--color-success-background);
+$color-success-text: var(--color-success-text);
+$color-success-ring: var(--color-success-ring);
 
-// Info
-$color-info: #5c7cba;
-$color-info-background: #dbeafe;
-$color-info-text: #1e40af;
+// ============================================================================
+// Semantic — Error
+// ============================================================================
 
-// Neutral scale (warm grays for compatibility)
-$color-neutral-50: #faf7f4;
-$color-neutral-100: #f0ebe5;
-$color-neutral-200: #ede8e2;
-$color-neutral-300: #e8ddd5;
-$color-neutral-400: #b8a89a;
-$color-neutral-500: #8a7a72;
-$color-neutral-600: #6b5e56;
-$color-neutral-700: #5c4a42;
-$color-neutral-800: #4a3c36;
-$color-neutral-900: #3d322c;
+$color-error: var(--color-error);
+$color-error-background: var(--color-error-background);
+$color-error-text: var(--color-error-text);
+$color-error-ring: var(--color-error-ring);
 
-// Workspace page (warm diagonal gradient)
-$color-workspace-page-gradient: linear-gradient(
-  135deg,
-  $color-background 0%,
-  $color-neutral-100 50%,
-  $color-neutral-200 100%
-);
+// ============================================================================
+// Semantic — Warning
+// ============================================================================
 
-// Gradient angles (used in header, card, and section gradients)
-$gradient-angle-diagonal: 135deg;
-$gradient-angle-vertical: 180deg;
+$color-warning: var(--color-warning);
+$color-warning-background: var(--color-warning-background);
+$color-warning-text: var(--color-warning-text);
 
+// ============================================================================
+// Semantic — Info
+// ============================================================================
+
+$color-info: var(--color-info);
+$color-info-background: var(--color-info-background);
+$color-info-text: var(--color-info-text);
+
+// ============================================================================
+// Neutral scale
+// ============================================================================
+
+$color-neutral-50: var(--color-neutral-50);
+$color-neutral-100: var(--color-neutral-100);
+$color-neutral-200: var(--color-neutral-200);
+$color-neutral-300: var(--color-neutral-300);
+$color-neutral-400: var(--color-neutral-400);
+$color-neutral-500: var(--color-neutral-500);
+$color-neutral-600: var(--color-neutral-600);
+$color-neutral-700: var(--color-neutral-700);
+$color-neutral-800: var(--color-neutral-800);
+$color-neutral-900: var(--color-neutral-900);
+
+// ============================================================================
 // Focus
-$color-focus: #c4788a;
-$color-focus-ring: rgba(196, 120, 138, 0.3);
+// ============================================================================
 
+$color-focus: var(--color-focus);
+$color-focus-ring: var(--color-focus-ring);
+
+// ============================================================================
 // Disabled
-$color-disabled: #b8a89a;
-$color-disabled-background: #f0ebe5;
-$color-disabled-text: #8a7a72;
+// ============================================================================
+
+$color-disabled: var(--color-disabled);
+$color-disabled-background: var(--color-disabled-background);
+$color-disabled-text: var(--color-disabled-text);

@@ -132,7 +132,7 @@ describe("AuthMapper.supabase", () => {
         user: {
           user_metadata: {
             preferences: {
-              darkMode: true,
+              theme: "dark",
               emailNotifications: false,
               language: "en",
             },
@@ -148,7 +148,7 @@ describe("AuthMapper.supabase", () => {
 
       // Assert
       expect(result.preferences).toEqual({
-        darkMode: true,
+        theme: "dark",
         emailNotifications: false,
         language: "en",
       });
@@ -189,7 +189,7 @@ describe("AuthMapper.supabase", () => {
 
     it("should extract valid complete preferences", () => {
       const prefs = {
-        darkMode: true,
+        theme: "dark" as const,
         emailNotifications: false,
         language: "es",
       };
@@ -200,13 +200,13 @@ describe("AuthMapper.supabase", () => {
     it("should partially recover when some fields are invalid", () => {
       const result = extractPreferences({
         preferences: {
-          darkMode: true,
+          theme: "light",
           emailNotifications: "bad",
           language: "en",
         },
       });
       expect(result).toEqual({
-        darkMode: true,
+        theme: "light",
         emailNotifications: DEFAULT_USER_PREFERENCES.emailNotifications,
         language: "en",
       });
@@ -214,10 +214,10 @@ describe("AuthMapper.supabase", () => {
 
     it("should use default for missing fields in partial preferences", () => {
       const result = extractPreferences({
-        preferences: { darkMode: true },
+        preferences: { theme: "dark" },
       });
       expect(result).toEqual({
-        darkMode: true,
+        theme: "dark",
         emailNotifications: DEFAULT_USER_PREFERENCES.emailNotifications,
         language: DEFAULT_USER_PREFERENCES.language,
       });
@@ -226,12 +226,46 @@ describe("AuthMapper.supabase", () => {
     it("should use default language for empty string language", () => {
       const result = extractPreferences({
         preferences: {
-          darkMode: false,
+          theme: "light",
           emailNotifications: true,
           language: "",
         },
       });
       expect(result.language).toBe(DEFAULT_USER_PREFERENCES.language);
+    });
+
+    it("should migrate legacy darkMode: true to theme: dark", () => {
+      const result = extractPreferences({
+        preferences: {
+          darkMode: true,
+          emailNotifications: true,
+          language: "fr",
+        },
+      });
+      expect(result.theme).toBe("dark");
+    });
+
+    it("should migrate legacy darkMode: false to theme: light", () => {
+      const result = extractPreferences({
+        preferences: {
+          darkMode: false,
+          emailNotifications: true,
+          language: "fr",
+        },
+      });
+      expect(result.theme).toBe("light");
+    });
+
+    it("should prefer theme field over legacy darkMode when both present", () => {
+      const result = extractPreferences({
+        preferences: {
+          theme: "system",
+          darkMode: true,
+          emailNotifications: true,
+          language: "fr",
+        },
+      });
+      expect(result.theme).toBe("system");
     });
   });
 

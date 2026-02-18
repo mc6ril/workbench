@@ -675,9 +675,14 @@
           "label": "Notificaciones por email",
           "description": "Recibir emails sobre la actividad de tus workspaces"
         },
-        "darkMode": {
-          "label": "Modo oscuro",
-          "description": "Activar el tema oscuro de la interfaz"
+        "theme": {
+          "label": "Tema",
+          "description": "Elige la apariencia de la interfaz",
+          "options": {
+            "light": "Claro",
+            "dark": "Oscuro",
+            "system": "Sistema"
+          }
         },
         "language": {
           "label": "Idioma",

@@ -36,8 +36,40 @@ const extractDisplayName = (
 };
 
 /**
+ * Migrates legacy darkMode boolean to the new theme enum.
+ * Returns undefined when no legacy value is found.
+ */
+const migrateDarkModeToTheme = (
+  partial: Record<string, unknown>
+): "light" | "dark" | undefined => {
+  if (typeof partial["darkMode"] === "boolean") {
+    return partial["darkMode"] ? "dark" : "light";
+  }
+  return undefined;
+};
+
+/**
+ * Resolves the theme value from raw preferences, supporting both the new
+ * "theme" field and the legacy "darkMode" boolean for backward compatibility.
+ */
+const resolveTheme = (
+  partial: Record<string, unknown>
+): UserPreferences["theme"] => {
+  if (
+    typeof partial["theme"] === "string" &&
+    ["light", "dark", "system"].includes(partial["theme"])
+  ) {
+    return partial["theme"] as UserPreferences["theme"];
+  }
+
+  return migrateDarkModeToTheme(partial) ?? DEFAULT_USER_PREFERENCES.theme;
+};
+
+/**
  * Extracts and validates user preferences from Supabase user_metadata.
  * Falls back to DEFAULT_USER_PREFERENCES for missing or invalid fields.
+ * Handles backward compatibility: legacy "darkMode" boolean is migrated
+ * to the new "theme" enum ("light" | "dark" | "system").
  */
 export const extractPreferences = (
   userMetadata: Record<string, unknown> | undefined
@@ -53,13 +85,9 @@ export const extractPreferences = (
     return result.data;
   }
 
-  // Partial recovery: merge valid fields with defaults
   const partial = raw as Record<string, unknown>;
   return {
-    darkMode:
-      typeof partial["darkMode"] === "boolean"
-        ? partial["darkMode"]
-        : DEFAULT_USER_PREFERENCES.darkMode,
+    theme: resolveTheme(partial),
     emailNotifications:
       typeof partial["emailNotifications"] === "boolean"
         ? partial["emailNotifications"]
