@@ -142,10 +142,16 @@ const PricingPage = () => {
           className={styles["comparison-section"]}
           aria-labelledby={getAccessibilityId("pricing-comparison-title")}
         >
+          <h2
+            id={getAccessibilityId("pricing-comparison-title")}
+            className="visually-hidden"
+          >
+            {t("comparison.title")}
+          </h2>
           <div className={styles["comparison-table-wrapper"]}>
             <table
               className={styles["comparison-table"]}
-              aria-label={t("header.title")}
+              aria-label={t("comparison.title")}
             >
               <thead>
                 <tr>
@@ -220,6 +226,7 @@ const PricingPage = () => {
                 >
                   <button
                     type="button"
+                    id={`faq-question-${faqKey}`}
                     className={styles["faq-item__question"]}
                     onClick={() => toggleFaq(index)}
                     onKeyDown={(e) => handleFaqKeyDown(e, index)}

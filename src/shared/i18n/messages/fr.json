@@ -839,6 +839,9 @@
           "ctaAriaLabel": "Souscrire à l'offre Équipe"
         }
       },
+      "comparison": {
+        "title": "Comparaison détaillée des offres"
+      },
       "features": {
         "workspaces": "Espaces de travail",
         "membersPerWorkspace": "Membres par espace",
