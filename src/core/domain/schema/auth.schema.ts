@@ -103,17 +103,23 @@ export type AuthenticationError = AuthError & {
 };
 
 /**
+ * Allowed theme values: light, dark, or system (follows OS preference).
+ */
+export const ThemeValues = ["light", "dark", "system"] as const;
+export type Theme = (typeof ThemeValues)[number];
+
+/**
  * Zod schema for user preferences stored in Supabase user_metadata.
  * Preferences are synced across devices via the auth session.
  */
 export const UserPreferencesSchema = z.object({
-  darkMode: z.boolean(),
+  theme: z.enum(["light", "dark", "system"]),
   emailNotifications: z.boolean(),
   language: z.string().min(1),
 });
 
 /**
- * User preferences (dark mode, notifications, language).
+ * User preferences (theme, notifications, language).
  */
 export type UserPreferences = z.infer<typeof UserPreferencesSchema>;
 
@@ -121,7 +127,7 @@ export type UserPreferences = z.infer<typeof UserPreferencesSchema>;
  * Default preferences applied to new users or when stored preferences are missing/invalid.
  */
 export const DEFAULT_USER_PREFERENCES: UserPreferences = {
-  darkMode: false,
+  theme: "system",
   emailNotifications: true,
   language: defaultLocale,
 };

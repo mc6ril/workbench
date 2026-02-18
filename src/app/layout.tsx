@@ -49,7 +49,7 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <html lang={defaultLocale}>
+    <html lang={defaultLocale} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${cormorantSerif.variable}`}
       >

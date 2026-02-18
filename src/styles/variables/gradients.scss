@@ -1,0 +1,41 @@
+// Gradient Variables (FlavieBoard design system)
+// Composite gradient values and angle constants.
+// Color stops reference CSS custom properties from themes.scss.
+
+// ============================================================================
+// Gradient angles
+// ============================================================================
+
+$gradient-angle-diagonal: 135deg;
+$gradient-angle-vertical: 180deg;
+
+// ============================================================================
+// Background gradient
+// ============================================================================
+
+$color-background-gradient: linear-gradient(
+  $gradient-angle-vertical,
+  var(--color-background-gradient-start) 0%,
+  var(--color-background-gradient-end) 100%
+);
+
+// ============================================================================
+// Highlight gradient
+// ============================================================================
+
+$color-highlight-gradient: linear-gradient(
+  $gradient-angle-diagonal,
+  var(--color-highlight-gradient-start),
+  var(--color-highlight-gradient-end)
+);
+
+// ============================================================================
+// Workspace page gradient
+// ============================================================================
+
+$color-workspace-page-gradient: linear-gradient(
+  $gradient-angle-diagonal,
+  var(--color-background) 0%,
+  var(--color-neutral-100) 50%,
+  var(--color-neutral-200) 100%
+);

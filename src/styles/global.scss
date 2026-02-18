@@ -2,8 +2,12 @@
 // This file contains CSS reset, base styles, and typography defaults
 // All values use SCSS variables from the design system
 
+// Import theme definitions (CSS custom properties for light/dark)
+@use "@/styles/themes";
+
 // Import Variables
 @use "@/styles/variables/colors" as *;
+@use "@/styles/variables/gradients" as *;
 @use "@/styles/variables/typography" as *;
 @use "@/styles/variables/spacing" as *;
 @use "@/styles/variables/borders" as *;

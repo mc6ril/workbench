@@ -3,11 +3,18 @@
 import { useCallback, useMemo, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
+import { useTheme } from "next-themes";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { ChangePasswordFormInput } from "@/core/domain/schema/auth.schema";
-import { ChangePasswordFormSchema } from "@/core/domain/schema/auth.schema";
-import { DEFAULT_USER_PREFERENCES } from "@/core/domain/schema/auth.schema";
+import type {
+  ChangePasswordFormInput,
+  Theme,
+} from "@/core/domain/schema/auth.schema";
+import {
+  ChangePasswordFormSchema,
+  DEFAULT_USER_PREFERENCES,
+  ThemeValues,
+} from "@/core/domain/schema/auth.schema";
 
 import {
   Button,
@@ -46,6 +53,8 @@ const LANGUAGE_SELECT_OPTIONS = supportedLocaleOptions.map((locale) => ({
   label: locale.label,
 }));
 
+const THEME_OPTIONS_KEYS: Theme[] = ["light", "dark", "system"];
+
 const AccountPage = () => {
   const { data: session, isLoading: isSessionLoading } = useSession();
   const updateProfileMutation = useUpdateProfile();
@@ -61,11 +70,13 @@ const AccountPage = () => {
 
   const email = emailDraft ?? session?.email ?? "";
   const name = nameDraft ?? session?.displayName ?? "";
+  const { setTheme } = useTheme();
+
   const emailNotifications =
     session?.preferences.emailNotifications ??
     DEFAULT_USER_PREFERENCES.emailNotifications;
-  const darkMode =
-    session?.preferences.darkMode ?? DEFAULT_USER_PREFERENCES.darkMode;
+  const theme =
+    session?.preferences.theme ?? DEFAULT_USER_PREFERENCES.theme;
   const language =
     session?.preferences.language ?? DEFAULT_USER_PREFERENCES.language;
 
@@ -144,11 +155,14 @@ const AccountPage = () => {
     [updatePreferencesMutation]
   );
 
-  const handleDarkModeChange = useCallback(
-    (checked: boolean) => {
-      updatePreferencesMutation.mutate({ darkMode: checked });
+  const handleThemeChange = useCallback(
+    (value: string) => {
+      if ((ThemeValues as readonly string[]).includes(value)) {
+        setTheme(value);
+        updatePreferencesMutation.mutate({ theme: value as Theme });
+      }
     },
-    [updatePreferencesMutation]
+    [updatePreferencesMutation, setTheme]
   );
 
   const setLocale = useLocaleStore((s) => s.setLocale);
@@ -410,18 +424,21 @@ const AccountPage = () => {
             <div className={styles["preference-item"]}>
               <div className={styles["preference-info"]}>
                 <div className={styles["preference-label"]}>
-                  {t("preferences.darkMode.label")}
+                  {t("preferences.theme.label")}
                 </div>
                 <div className={styles["preference-description"]}>
-                  {t("preferences.darkMode.description")}
+                  {t("preferences.theme.description")}
                 </div>
               </div>
-              <Toggle
+              <Select
                 label=""
-                checked={darkMode}
-                onChange={handleDarkModeChange}
-                disabled={updatePreferencesMutation.isPending}
-                aria-label={t("preferences.darkMode.label")}
+                options={THEME_OPTIONS_KEYS.map((key) => ({
+                  value: key,
+                  label: t(`preferences.theme.options.${key}`),
+                }))}
+                value={theme}
+                onChange={(e) => handleThemeChange(e.target.value)}
+                aria-label={t("preferences.theme.label")}
               />
             </div>
 
