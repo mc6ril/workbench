@@ -45,16 +45,8 @@ export const getErrorMessage = (
     }
   }
 
-  // Handle DomainRuleError using type guard
-  if (isDomainRuleError(error)) {
-    // Map domain rule error codes to i18n keys
-    // Domain rule errors use their code directly as the translation key
-    // Format: errors.domain.{CODE}
-    const domainKey = `domain.${error.code}`;
-    return tErrors(domainKey);
-  }
-
-  // Handle auth errors (legacy support - these should eventually use DomainRuleError)
+  // Handle auth errors before domain rule errors, because the domain rule
+  // guard is a catch-all that would incorrectly match auth error codes
   const authKeyMap: Record<string, string> = {
     INVALID_CREDENTIALS: "auth.INVALID_CREDENTIALS",
     EMAIL_ALREADY_EXISTS: "auth.EMAIL_ALREADY_EXISTS",
@@ -69,6 +61,12 @@ export const getErrorMessage = (
   const authTranslationKey = authKeyMap[error.code];
   if (authTranslationKey) {
     return tErrors(authTranslationKey);
+  }
+
+  // Handle DomainRuleError using type guard
+  if (isDomainRuleError(error)) {
+    const domainKey = `domain.${error.code}`;
+    return tErrors(domainKey);
   }
 
   // Fallback for unknown error codes

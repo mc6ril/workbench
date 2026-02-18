@@ -17,6 +17,7 @@ export const useResendVerification = () => {
   return useMutation({
     mutationFn: (email: string) =>
       resendVerificationEmail(authRepository, email),
+    retry: false,
     onSuccess: () => {
       // Invalidate auth-related queries after successful resend
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.session() });

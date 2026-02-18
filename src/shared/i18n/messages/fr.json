@@ -19,6 +19,10 @@
     "emptyState": {
       "defaultTitle": "Aucun élément",
       "defaultMessage": "Il n'y a pas encore d'éléments à afficher."
+    },
+    "passwordToggle": {
+      "show": "Afficher le mot de passe",
+      "hide": "Masquer le mot de passe"
     }
   },
   "navigation": {

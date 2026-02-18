@@ -27,6 +27,12 @@
   color: $color-error;
 }
 
+.input-field-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .input {
   width: 100%;
   padding: $spacing-input-padding-y $spacing-input-padding-x;
@@ -62,6 +68,34 @@
   &[aria-invalid="true"]:focus {
     border-color: $color-error;
     box-shadow: $shadow-focus-error;
+  }
+}
+
+.input--has-toggle {
+  padding-right: $spacing-5xl;
+}
+
+.input-password-toggle {
+  position: absolute;
+  right: $spacing-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-2xs;
+  border: none;
+  border-radius: $border-radius-2xs;
+  background: none;
+  color: $color-text-muted;
+  cursor: pointer;
+  transition: color $transition-base;
+
+  &:hover {
+    color: $color-text;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $shadow-focus;
   }
 }
 
