@@ -15,6 +15,22 @@ import type {
 import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
 
 /**
+ * Extracts display_name from Supabase user_metadata.
+ * Supabase stores user metadata in raw_user_meta_data / user_metadata.
+ */
+const extractDisplayName = (
+  userMetadata: Record<string, unknown> | undefined
+): string | null => {
+  if (!userMetadata) {
+    return null;
+  }
+  const displayName = userMetadata["display_name"];
+  return typeof displayName === "string" && displayName.trim()
+    ? displayName.trim()
+    : null;
+};
+
+/**
  * Maps Supabase Session to domain AuthSession.
  *
  * @param session - Supabase session
@@ -28,6 +44,7 @@ export const mapSupabaseSessionToDomain = (
   return {
     userId: session.user.id,
     email: userEmail,
+    displayName: extractDisplayName(session.user.user_metadata),
     accessToken: session.access_token,
   };
 };

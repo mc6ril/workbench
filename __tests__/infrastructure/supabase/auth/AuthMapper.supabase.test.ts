@@ -25,6 +25,7 @@ describe("AuthMapper.supabase", () => {
       expect(result).toEqual({
         userId: "user-123",
         email: "test@example.com",
+        displayName: null,
         accessToken: "test-access-token",
       });
     });
@@ -44,7 +45,68 @@ describe("AuthMapper.supabase", () => {
       // Assert
       expect(result.email).toBe("different@example.com");
       expect(result.userId).toBe("user-123");
+      expect(result.displayName).toBeNull();
       expect(result.accessToken).toBe("test-access-token");
+    });
+
+    it("should extract displayName from user_metadata", () => {
+      // Arrange
+      const supabaseSession = createSupabaseSessionMock({
+        user: {
+          user_metadata: { display_name: "John Doe" },
+        },
+      });
+
+      // Act
+      const result = mapSupabaseSessionToDomain(supabaseSession, "test@example.com");
+
+      // Assert
+      expect(result.displayName).toBe("John Doe");
+    });
+
+    it("should trim displayName from user_metadata", () => {
+      // Arrange
+      const supabaseSession = createSupabaseSessionMock({
+        user: {
+          user_metadata: { display_name: "  Jane Doe  " },
+        },
+      });
+
+      // Act
+      const result = mapSupabaseSessionToDomain(supabaseSession, "test@example.com");
+
+      // Assert
+      expect(result.displayName).toBe("Jane Doe");
+    });
+
+    it("should return null displayName when display_name is empty string", () => {
+      // Arrange
+      const supabaseSession = createSupabaseSessionMock({
+        user: {
+          user_metadata: { display_name: "" },
+        },
+      });
+
+      // Act
+      const result = mapSupabaseSessionToDomain(supabaseSession, "test@example.com");
+
+      // Assert
+      expect(result.displayName).toBeNull();
+    });
+
+    it("should return null displayName when display_name is whitespace only", () => {
+      // Arrange
+      const supabaseSession = createSupabaseSessionMock({
+        user: {
+          user_metadata: { display_name: "   " },
+        },
+      });
+
+      // Act
+      const result = mapSupabaseSessionToDomain(supabaseSession, "test@example.com");
+
+      // Assert
+      expect(result.displayName).toBeNull();
     });
   });
 

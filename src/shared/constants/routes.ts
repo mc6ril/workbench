@@ -17,12 +17,22 @@ export const PUBLIC_ROUTES: readonly string[] = Object.freeze([
 ]);
 
 /**
+ * Named page route paths for authenticated pages.
+ * Use these constants instead of hardcoded path strings.
+ */
+export const PAGE_ROUTES = Object.freeze({
+  WORKSPACE: "/workspace",
+  ACCOUNT: "/account",
+});
+
+/**
  * Protected routes that require authentication.
  * These routes are protected by middleware and require a valid session.
- * Includes /workspace and all project-specific routes (/{projectId}/...)
+ * Includes /workspace, /account, and all project-specific routes (/{projectId}/...)
  */
 export const PROTECTED_ROUTES: readonly string[] = Object.freeze([
-  "/workspace",
+  PAGE_ROUTES.WORKSPACE,
+  PAGE_ROUTES.ACCOUNT,
 ]);
 
 /**

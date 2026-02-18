@@ -28,7 +28,7 @@ import {
 } from "@/presentation/hooks";
 
 import { getAccessibilityId } from "@/shared/a11y";
-import { PROJECT_VIEWS } from "@/shared/constants/routes";
+import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
 import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { getWorkspaceEmoji, shouldShowLoading } from "@/shared/utils";
@@ -58,7 +58,7 @@ const WorkspacePage = () => {
   const t = useTranslation("pages.workspace");
   const tErrors = useTranslation("errors");
 
-  const displayName = session?.email ?? t("userFallbackName");
+  const displayName = session?.displayName ?? t("userFallbackName");
 
   const {
     register,
@@ -341,7 +341,7 @@ const WorkspacePage = () => {
       >
         <nav className={styles["workspace-footer__nav"]}>
           <Link
-            href="#"
+            href={PAGE_ROUTES.ACCOUNT}
             className={styles["workspace-footer__link"]}
             ariaLabel={t("footer.account")}
           >

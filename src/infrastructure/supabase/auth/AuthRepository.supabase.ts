@@ -188,9 +188,14 @@ export const createAuthRepository = (
         // Map authenticated user directly to AuthSession
         // Note: accessToken is empty string for server-side checks as getUser()
         // doesn't return tokens, but we only need user info for authentication verification
+        const displayName = user.user_metadata?.display_name;
         return {
           userId: user.id,
           email: userEmail!,
+          displayName:
+            typeof displayName === "string" && displayName.trim()
+              ? displayName.trim()
+              : null,
           accessToken: "", // Not available from getUser(), but not needed for server-side auth checks
         };
       } else {

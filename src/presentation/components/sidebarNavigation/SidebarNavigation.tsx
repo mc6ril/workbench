@@ -15,6 +15,7 @@ import NavigationItem from "@/presentation/components/ui/NavigationItem";
 import { useSession, useSignOut } from "@/presentation/hooks";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getInitialsFromEmail, isActiveHref } from "@/shared/utils";
 
@@ -36,7 +37,6 @@ type SidebarItem = {
   exactOnly: boolean;
 };
 
-const WORKSPACE_HREF = "/workspace";
 
 const SidebarNavigation = ({ projectId }: Props) => {
   const pathname = usePathname();
@@ -62,7 +62,8 @@ const SidebarNavigation = ({ projectId }: Props) => {
     }));
   }, [projectId, t]);
 
-  const displayName = session?.email ?? t("profile.userFallbackName");
+  const displayName =
+    session?.displayName ?? session?.email ?? t("profile.userFallbackName");
   const initials = session?.email ? getInitialsFromEmail(session.email) : "?";
 
   const handleAddTabClick = useCallback(() => {
@@ -176,7 +177,7 @@ const SidebarNavigation = ({ projectId }: Props) => {
             aria-labelledby={profileTriggerId}
           >
             <Link
-              href={WORKSPACE_HREF}
+              href={PAGE_ROUTES.WORKSPACE}
               role="menuitem"
               className={styles["sidebar-navigation__profile-menu-item"]}
               onClick={closeProfileMenu}
@@ -184,7 +185,7 @@ const SidebarNavigation = ({ projectId }: Props) => {
               {t("profile.backToWorkspace")}
             </Link>
             <Link
-              href={WORKSPACE_HREF}
+              href={PAGE_ROUTES.ACCOUNT}
               role="menuitem"
               className={styles["sidebar-navigation__profile-menu-item"]}
               onClick={closeProfileMenu}

@@ -1,3 +1,4 @@
+export { useChangePassword } from "./useChangePassword";
 export { useDeleteUser } from "./useDeleteUser";
 export { useResendVerification } from "./useResendVerification";
 export { useResetPassword } from "./useResetPassword";
@@ -6,5 +7,6 @@ export { useSignIn } from "./useSignIn";
 export { useSignOut } from "./useSignOut";
 export { useSignUp } from "./useSignUp";
 export { useUpdatePassword } from "./useUpdatePassword";
+export { useUpdateProfile } from "./useUpdateProfile";
 export { useUpdateUser } from "./useUpdateUser";
 export { useVerifyEmail } from "./useVerifyEmail";

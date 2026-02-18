@@ -18,6 +18,7 @@ import type {
 export const mockAuthSession: AuthSession = {
   userId: "123e4567-e89b-12d3-a456-426614174000",
   email: "test@example.com",
+  displayName: "Test User",
   accessToken: "mock-access-token",
 };
 
