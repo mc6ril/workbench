@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -20,7 +21,6 @@ import {
   Button,
   Form,
   Input,
-  Link,
   Loader,
   Modal,
   Select,
@@ -37,7 +37,6 @@ import {
 import { useLocaleStore } from "@/presentation/stores/useLocaleStore";
 
 import { getAccessibilityId } from "@/shared/a11y";
-import { PAGE_ROUTES } from "@/shared/constants/routes";
 import {
   supportedLocaleOptions,
   supportedLocales,
@@ -56,6 +55,7 @@ const LANGUAGE_SELECT_OPTIONS = supportedLocaleOptions.map((locale) => ({
 const THEME_OPTIONS_KEYS: Theme[] = ["light", "dark", "system"];
 
 const AccountPage = () => {
+  const router = useRouter();
   const { data: session, isLoading: isSessionLoading } = useSession();
   const updateProfileMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
@@ -135,6 +135,10 @@ const AccountPage = () => {
     [changePasswordMutation, resetPasswordForm]
   );
 
+  const handleGoBack = useCallback(() => {
+    router.back();
+  }, [router]);
+
   const openDeleteModal = useCallback(() => {
     setDeleteModalOpen(true);
   }, []);
@@ -189,13 +193,14 @@ const AccountPage = () => {
     <main className={styles["account-page"]}>
       <header className={styles["account-header"]}>
         <div className={styles["account-header__content"]}>
-          <Link
-            href={PAGE_ROUTES.WORKSPACE}
+          <button
+            type="button"
             className={styles["back-link"]}
-            ariaLabel={t("header.label")}
+            aria-label={t("header.label")}
+            onClick={handleGoBack}
           >
             ← {t("header.label")}
-          </Link>
+          </button>
           <div className={styles["account-welcome"]}>
             <h1 className={styles["account-welcome__title"]}>
               {t("header.title")}

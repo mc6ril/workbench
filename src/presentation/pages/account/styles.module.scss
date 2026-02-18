@@ -288,6 +288,11 @@
   text-decoration: none;
   transition: color $animation-duration-base $easing-ease-out;
   margin-bottom: $spacing-lg;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
 
   &:hover {
     color: $color-primary;
