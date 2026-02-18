@@ -621,6 +621,104 @@
         "unlinkButton": "Délier"
       }
     },
+    "account": {
+      "header": {
+        "label": "Paramètres 🔧",
+        "title": "Mon compte",
+        "subtitle": "Gérez vos informations personnelles et préférences"
+      },
+      "personalInfo": {
+        "title": "Informations personnelles",
+        "description": "Mettez à jour votre nom et adresse email",
+        "icon": "👤",
+        "fields": {
+          "name": {
+            "label": "Nom complet",
+            "placeholder": "Votre nom"
+          },
+          "email": {
+            "label": "Adresse email",
+            "placeholder": "votre.email@exemple.com"
+          }
+        },
+        "saveButton": "Enregistrer les modifications",
+        "saveButtonAriaLabel": "Enregistrer les modifications du profil",
+        "savingButton": "Enregistrement..."
+      },
+      "security": {
+        "title": "Sécurité",
+        "description": "Changez votre mot de passe",
+        "icon": "🔒",
+        "fields": {
+          "currentPassword": {
+            "label": "Mot de passe actuel",
+            "placeholder": "••••••••"
+          },
+          "newPassword": {
+            "label": "Nouveau mot de passe",
+            "placeholder": "••••••••"
+          },
+          "confirmPassword": {
+            "label": "Confirmer le mot de passe",
+            "placeholder": "••••••••"
+          }
+        },
+        "changeButton": "Changer le mot de passe",
+        "changeButtonAriaLabel": "Changer le mot de passe",
+        "changingButton": "Modification..."
+      },
+      "preferences": {
+        "title": "Préférences",
+        "description": "Personnalisez votre expérience",
+        "icon": "🎨",
+        "emailNotifications": {
+          "label": "Notifications par email",
+          "description": "Recevoir des emails sur l'activité de vos workspaces"
+        },
+        "darkMode": {
+          "label": "Mode sombre",
+          "description": "Activer le thème sombre de l'interface"
+        },
+        "language": {
+          "label": "Langue",
+          "description": "Choisissez votre langue préférée"
+        },
+        "languageOptions": {
+          "fr": "Français",
+          "en": "English",
+          "es": "Español"
+        }
+      },
+      "dangerZone": {
+        "title": "Zone de danger",
+        "description": "Actions irréversibles",
+        "icon": "⚠️",
+        "deleteAccount": {
+          "label": "Supprimer mon compte",
+          "description": "Cette action est définitive et supprimera toutes vos données"
+        },
+        "deleteButton": "Supprimer le compte",
+        "deleteButtonAriaLabel": "Supprimer définitivement le compte",
+        "deletingButton": "Suppression...",
+        "confirmTitle": "Confirmer la suppression",
+        "confirmMessage": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible et supprimera définitivement toutes vos données.",
+        "confirmButton": "Oui, supprimer mon compte",
+        "confirmButtonAriaLabel": "Confirmer la suppression du compte",
+        "cancelButton": "Annuler"
+      },
+      "success": {
+        "profileUpdated": "Profil mis à jour avec succès",
+        "passwordChanged": "Mot de passe modifié avec succès",
+        "preferencesUpdated": "Préférences enregistrées"
+      },
+      "validation": {
+        "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères",
+        "passwordMaxLength": "Le mot de passe doit contenir moins de 100 caractères",
+        "confirmPasswordRequired": "Veuillez confirmer votre mot de passe",
+        "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+        "currentPasswordRequired": "Le mot de passe actuel est requis"
+      }
+    },
     "landing": {
       "title": "Workbench",
       "subtitle": "Un outil léger et personnel de gestion de tâches et de projets",

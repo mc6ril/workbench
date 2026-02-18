@@ -68,6 +68,10 @@ $layout-dashboard-content-min-height: 100vh;
 $layout-dashboard-main-min-height: 0;
 $layout-dashboard-main-padding: $spacing-lg;
 
+// Accent bar (decorative bar used in section titles)
+$accent-bar-width: 4px;
+$accent-bar-height: 1.5rem;
+
 // Border radius (FlavieBoard: 3, 10, 12, 14, 16, 20)
 $radius-2xs: $spacing-unit * 0.75; // 3px
 $radius-xs: $spacing-unit * 2.5; // 10px

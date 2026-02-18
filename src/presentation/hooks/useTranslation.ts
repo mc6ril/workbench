@@ -2,15 +2,25 @@
 
 import { useMemo } from "react";
 
-import { getLocale } from "@/shared/i18n/config";
+import { useLocaleStore } from "@/presentation/stores/useLocaleStore";
+
 import { createPluralKey } from "@/shared/i18n/dynamic";
+import messagesEn from "@/shared/i18n/messages/en.json";
+import messagesEs from "@/shared/i18n/messages/es.json";
 import messagesFr from "@/shared/i18n/messages/fr.json";
 import type {
+  Locale,
   TranslationMessages,
   TranslationNode,
   TranslationValue,
 } from "@/shared/i18n/types";
 import { interpolateTranslation } from "@/shared/i18n/utils";
+
+const messagesByLocale: Record<Locale, TranslationMessages> = {
+  fr: messagesFr as TranslationMessages,
+  en: messagesEn as TranslationMessages,
+  es: messagesEs as TranslationMessages,
+};
 
 /**
  * Simple translation function that returns a function to get translations from a namespace.
@@ -27,17 +37,12 @@ import { interpolateTranslation } from "@/shared/i18n/utils";
  * ```
  */
 export const useTranslation = (namespace: string) => {
-  const locale = getLocale();
+  const locale = useLocaleStore((s) => s.locale);
 
-  // Get messages for current locale
-  const messages = useMemo(() => {
-    switch (locale) {
-      case "fr":
-        return messagesFr as TranslationMessages;
-      default:
-        return messagesFr as TranslationMessages;
-    }
-  }, [locale]);
+  const messages = useMemo(
+    () => messagesByLocale[locale] ?? messagesByLocale.fr,
+    [locale]
+  );
 
   // Navigate through the namespace path
   const getNamespaceValue = (

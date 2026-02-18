@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { APP_LIMITS } from "@/shared/constants/app";
+import { defaultLocale } from "@/shared/i18n/config";
 
 /**
  * Reusable Zod schema for password validation.
@@ -102,12 +103,46 @@ export type AuthenticationError = AuthError & {
 };
 
 /**
+ * Zod schema for user preferences stored in Supabase user_metadata.
+ * Preferences are synced across devices via the auth session.
+ */
+export const UserPreferencesSchema = z.object({
+  darkMode: z.boolean(),
+  emailNotifications: z.boolean(),
+  language: z.string().min(1),
+});
+
+/**
+ * User preferences (dark mode, notifications, language).
+ */
+export type UserPreferences = z.infer<typeof UserPreferencesSchema>;
+
+/**
+ * Default preferences applied to new users or when stored preferences are missing/invalid.
+ */
+export const DEFAULT_USER_PREFERENCES: UserPreferences = {
+  darkMode: false,
+  emailNotifications: true,
+  language: defaultLocale,
+};
+
+/**
+ * Input for partial preference updates.
+ * Only the fields provided will be merged with existing preferences.
+ */
+export type UpdatePreferencesInput = Partial<UserPreferences>;
+
+/**
  * Authentication session data.
  * Represents an authenticated user session.
+ * displayName comes from Supabase user_metadata.display_name.
+ * preferences comes from Supabase user_metadata.preferences.
  */
 export type AuthSession = {
   userId: string;
   email: string;
+  displayName: string | null;
+  preferences: UserPreferences;
   accessToken: string;
 };
 
@@ -216,6 +251,15 @@ export const UpdateUserSchema = z.object({
 export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
 
 /**
+ * Input type for updating user profile (display name and email).
+ * Used by the account page to update personal information.
+ */
+export type UpdateProfileInput = {
+  displayName?: string;
+  email?: string;
+};
+
+/**
  * Error when email verification fails (expired or invalid token).
  */
 export type EmailVerificationError = AuthError & {
@@ -248,6 +292,26 @@ export type AuthenticationFailure =
   | EmailVerificationError
   | PasswordResetError
   | InvalidTokenError;
+
+/**
+ * Zod schema for changing password from account settings.
+ * Validates current password presence, new password requirements, and confirmation match.
+ */
+export const ChangePasswordFormSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: PasswordSchema,
+    confirmPassword: z.string().min(1, "Password confirmation is required"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+/**
+ * Change password form input type.
+ */
+export type ChangePasswordFormInput = z.infer<typeof ChangePasswordFormSchema>;
 
 /**
  * Zod schema for resend verification email input.

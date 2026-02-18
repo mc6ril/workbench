@@ -40,6 +40,9 @@ $animation-delay-short: 50ms;
 $animation-delay-medium: 100ms;
 $animation-delay-long: 200ms;
 
+// Backdrop Blur
+$backdrop-blur-base: 10px;
+
 // Reduced Motion Support
 // When prefers-reduced-motion is enabled, animations should be instant or minimal
 $animation-duration-reduced: $animation-duration-instant;

@@ -20,7 +20,7 @@ export type TranslationKey =
   | `forms.${string}`
   | `errors.${string}`;
 
-export type Locale = "fr";
+export type Locale = "fr" | "en" | "es";
 
 export type TranslationValue = string | TranslationNode;
 

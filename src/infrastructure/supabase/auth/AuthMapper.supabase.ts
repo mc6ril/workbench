@@ -9,10 +9,67 @@ import type {
   InvalidEmailError,
   InvalidTokenError,
   PasswordResetError,
+  UserPreferences,
   WeakPasswordError,
+} from "@/core/domain/schema/auth.schema";
+import {
+  DEFAULT_USER_PREFERENCES,
+  UserPreferencesSchema,
 } from "@/core/domain/schema/auth.schema";
 
 import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
+
+/**
+ * Extracts display_name from Supabase user_metadata.
+ * Supabase stores user metadata in raw_user_meta_data / user_metadata.
+ */
+const extractDisplayName = (
+  userMetadata: Record<string, unknown> | undefined
+): string | null => {
+  if (!userMetadata) {
+    return null;
+  }
+  const displayName = userMetadata["display_name"];
+  return typeof displayName === "string" && displayName.trim()
+    ? displayName.trim()
+    : null;
+};
+
+/**
+ * Extracts and validates user preferences from Supabase user_metadata.
+ * Falls back to DEFAULT_USER_PREFERENCES for missing or invalid fields.
+ */
+export const extractPreferences = (
+  userMetadata: Record<string, unknown> | undefined
+): UserPreferences => {
+  if (!userMetadata || typeof userMetadata["preferences"] !== "object") {
+    return { ...DEFAULT_USER_PREFERENCES };
+  }
+
+  const raw = userMetadata["preferences"];
+  const result = UserPreferencesSchema.safeParse(raw);
+
+  if (result.success) {
+    return result.data;
+  }
+
+  // Partial recovery: merge valid fields with defaults
+  const partial = raw as Record<string, unknown>;
+  return {
+    darkMode:
+      typeof partial["darkMode"] === "boolean"
+        ? partial["darkMode"]
+        : DEFAULT_USER_PREFERENCES.darkMode,
+    emailNotifications:
+      typeof partial["emailNotifications"] === "boolean"
+        ? partial["emailNotifications"]
+        : DEFAULT_USER_PREFERENCES.emailNotifications,
+    language:
+      typeof partial["language"] === "string" && partial["language"].length > 0
+        ? partial["language"]
+        : DEFAULT_USER_PREFERENCES.language,
+  };
+};
 
 /**
  * Maps Supabase Session to domain AuthSession.
@@ -28,6 +85,8 @@ export const mapSupabaseSessionToDomain = (
   return {
     userId: session.user.id,
     email: userEmail,
+    displayName: extractDisplayName(session.user.user_metadata),
+    preferences: extractPreferences(session.user.user_metadata),
     accessToken: session.access_token,
   };
 };

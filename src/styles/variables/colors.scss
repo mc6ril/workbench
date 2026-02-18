@@ -108,6 +108,10 @@ $color-workspace-page-gradient: linear-gradient(
   $color-neutral-200 100%
 );
 
+// Gradient angles (used in header, card, and section gradients)
+$gradient-angle-diagonal: 135deg;
+$gradient-angle-vertical: 180deg;
+
 // Focus
 $color-focus: #c4788a;
 $color-focus-ring: rgba(196, 120, 138, 0.3);

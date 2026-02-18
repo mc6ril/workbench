@@ -2,7 +2,13 @@
  * i18n translation system exports.
  */
 
-export { defaultLocale, getIntlLocale, getLocale, supportedLocales } from "./config";
+export {
+  defaultLocale,
+  getIntlLocale,
+  getLocale,
+  supportedLocaleOptions,
+  supportedLocales,
+} from "./config";
 export type { RoleLabelKey } from "./dynamic";
 export type {
   Locale,

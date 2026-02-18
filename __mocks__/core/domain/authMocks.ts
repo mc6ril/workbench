@@ -11,6 +11,7 @@ import type {
   SignUpInput,
   WeakPasswordError,
 } from "@/core/domain/schema/auth.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/core/domain/schema/auth.schema";
 
 /**
  * Mock authentication session for testing.
@@ -18,6 +19,8 @@ import type {
 export const mockAuthSession: AuthSession = {
   userId: "123e4567-e89b-12d3-a456-426614174000",
   email: "test@example.com",
+  displayName: "Test User",
+  preferences: { ...DEFAULT_USER_PREFERENCES },
   accessToken: "mock-access-token",
 };
 
