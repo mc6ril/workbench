@@ -76,11 +76,11 @@ export const handleRepositoryError = (
  * @throws Domain auth error (if code matches) or mapped auth error
  */
 export const handleAuthError = (error: unknown): never => {
+  const authLogger = loggerFactory.forScope("infrastructure.auth-errors");
+
   // Re-throw domain auth errors (errors with codes in AUTH_ERROR_CODES)
   if (hasErrorCode(error, [...AUTH_ERROR_CODES])) {
-    // Log domain auth error
-    const authLogger = loggerFactory.forScope("infrastructure.auth-errors");
-    authLogger.error("Authentication error", {
+    authLogger.warn("Authentication error", {
       error,
       errorCode: (error as { code?: string }).code,
     });
@@ -90,9 +90,7 @@ export const handleAuthError = (error: unknown): never => {
   // Map and throw unknown errors
   const mappedError = mapSupabaseAuthError(error);
 
-  // Log mapped auth error
-  const authLogger = loggerFactory.forScope("infrastructure.auth-errors");
-  authLogger.error("Authentication error (mapped from infrastructure error)", {
+  authLogger.warn("Authentication error (mapped from infrastructure error)", {
     error,
     mappedError,
     errorCode: (mappedError as { code?: string }).code,

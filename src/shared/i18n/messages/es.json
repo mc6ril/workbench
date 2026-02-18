@@ -19,6 +19,10 @@
     "emptyState": {
       "defaultTitle": "Ningún elemento",
       "defaultMessage": "Aún no hay elementos que mostrar."
+    },
+    "passwordToggle": {
+      "show": "Mostrar contraseña",
+      "hide": "Ocultar contraseña"
     }
   },
   "navigation": {

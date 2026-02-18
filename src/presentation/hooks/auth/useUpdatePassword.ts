@@ -19,6 +19,7 @@ export const useUpdatePassword = () => {
   return useMutation({
     mutationFn: (input: UpdatePasswordInput) =>
       updatePassword(authRepository, input),
+    retry: false,
     onSuccess: () => {
       // Invalidate auth-related queries after successful password update
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.session() });

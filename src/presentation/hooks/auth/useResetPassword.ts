@@ -19,6 +19,7 @@ export const useResetPassword = () => {
   return useMutation({
     mutationFn: (input: ResetPasswordInput) =>
       resetPasswordForEmail(authRepository, input),
+    retry: false,
     onSuccess: () => {
       // Invalidate auth-related queries after successful password reset request
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.session() });

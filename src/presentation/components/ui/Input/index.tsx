@@ -1,7 +1,10 @@
 import type { InputHTMLAttributes } from "react";
-import React, { forwardRef } from "react";
+import React, { forwardRef, useCallback, useState } from "react";
+
+import { EyeIcon, EyeOffIcon } from "@/presentation/components/icons";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
+import { useTranslation } from "@/shared/i18n";
 
 import styles from "./Input.module.scss";
 
@@ -25,31 +28,9 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 /**
- * Reusable Input component with label, error state, and helper text support.
+ * Reusable Input component with label, error state, helper text, and password toggle support.
+ * For password inputs, a visibility toggle button is automatically rendered.
  * Includes full accessibility support with proper form labeling, error association, and ARIA attributes.
- *
- * @example
- * ```tsx
- * <Input
- *   label="Email"
- *   name="email"
- *   type="email"
- *   required
- *   error={errors.email?.message}
- *   helperText="Enter your email address"
- * />
- * ```
- *
- * @example
- * ```tsx
- * <Input
- *   label="Password"
- *   name="password"
- *   type="password"
- *   required
- *   aria-label="Enter your password"
- * />
- * ```
  */
 const Input = forwardRef<HTMLInputElement, Props>(
   (
@@ -61,6 +42,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
       disabled = false,
       placeholder,
       id,
+      type,
       "aria-label": ariaLabel,
       "aria-describedby": ariaDescribedBy,
       inline = false,
@@ -68,6 +50,16 @@ const Input = forwardRef<HTMLInputElement, Props>(
     },
     ref
   ) => {
+    const isPasswordType = type === "password";
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const t = useTranslation("common.passwordToggle");
+
+    const togglePasswordVisibility = useCallback(() => {
+      setPasswordVisible((prev) => !prev);
+    }, []);
+
+    const resolvedType = isPasswordType && passwordVisible ? "text" : type;
+
     const baseKey = `input-${label}`;
     const inputId = id || getAccessibilityId(baseKey);
     const errorId = error ? getAccessibilityId(`${baseKey}-error`) : undefined;
@@ -100,19 +92,33 @@ const Input = forwardRef<HTMLInputElement, Props>(
             {label}
           </label>
         )}
-        <input
-          ref={ref}
-          id={inputId}
-          className={styles.input}
-          aria-label={ariaLabel || label}
-          aria-invalid={error ? "true" : "false"}
-          aria-describedby={describedBy}
-          aria-required={required}
-          aria-disabled={disabled}
-          placeholder={placeholder}
-          disabled={disabled}
-          {...inputProps}
-        />
+        <div className={styles["input-field-wrapper"]}>
+          <input
+            ref={ref}
+            id={inputId}
+            type={resolvedType}
+            className={`${styles.input} ${isPasswordType ? styles["input--has-toggle"] : ""}`}
+            aria-label={ariaLabel || label}
+            aria-invalid={error ? "true" : "false"}
+            aria-describedby={describedBy}
+            aria-required={required}
+            aria-disabled={disabled}
+            placeholder={placeholder}
+            disabled={disabled}
+            {...inputProps}
+          />
+          {isPasswordType && (
+            <button
+              type="button"
+              className={styles["input-password-toggle"]}
+              onClick={togglePasswordVisibility}
+              aria-label={passwordVisible ? t("hide") : t("show")}
+              tabIndex={-1}
+            >
+              {passwordVisible ? <EyeOffIcon /> : <EyeIcon />}
+            </button>
+          )}
+        </div>
         {error && (
           <div
             id={errorId}

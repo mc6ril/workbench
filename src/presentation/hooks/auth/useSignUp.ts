@@ -18,6 +18,7 @@ export const useSignUp = () => {
 
   return useMutation({
     mutationFn: (input: SignUpInput) => signUpUser(authRepository, input),
+    retry: false,
     onSuccess: () => {
       // Invalidate auth-related queries after successful signup
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.session() });

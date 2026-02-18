@@ -19,6 +19,10 @@
     "emptyState": {
       "defaultTitle": "No items",
       "defaultMessage": "There are no items to display yet."
+    },
+    "passwordToggle": {
+      "show": "Show password",
+      "hide": "Hide password"
     }
   },
   "navigation": {
