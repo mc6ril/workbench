@@ -708,7 +708,8 @@
       },
       "success": {
         "profileUpdated": "Profil mis à jour avec succès",
-        "passwordChanged": "Mot de passe modifié avec succès"
+        "passwordChanged": "Mot de passe modifié avec succès",
+        "preferencesUpdated": "Préférences enregistrées"
       },
       "validation": {
         "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères",

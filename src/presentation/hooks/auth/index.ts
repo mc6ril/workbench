@@ -7,6 +7,7 @@ export { useSignIn } from "./useSignIn";
 export { useSignOut } from "./useSignOut";
 export { useSignUp } from "./useSignUp";
 export { useUpdatePassword } from "./useUpdatePassword";
+export { useUpdatePreferences } from "./useUpdatePreferences";
 export { useUpdateProfile } from "./useUpdateProfile";
 export { useUpdateUser } from "./useUpdateUser";
 export { useVerifyEmail } from "./useVerifyEmail";

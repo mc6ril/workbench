@@ -1,0 +1,772 @@
+{
+  "app": {
+    "metadata": {
+      "title": "Workbench",
+      "description": "A lightweight, personal task and project management tool"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "loadingAriaLabel": "Loading content",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "dismiss": "Dismiss",
+    "dismissAriaLabel": "Dismiss error message",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "emptyState": {
+      "defaultTitle": "No items",
+      "defaultMessage": "There are no items to display yet."
+    }
+  },
+  "navigation": {
+    "skipLink": {
+      "label": "Skip to main content"
+    },
+    "sidebar": {
+      "ariaLabel": "Project navigation",
+      "addTab": "Add tab",
+      "addTabAriaLabel": "Add tab (coming soon)",
+      "items": {
+        "home": "Home",
+        "backlog": "Backlog",
+        "board": "Board",
+        "epics": "Epics",
+        "settings": "Settings"
+      },
+      "profile": {
+        "ariaLabel": "Open profile menu",
+        "backToWorkspace": "Back to workspace",
+        "profileSettings": "Account settings",
+        "logout": "Sign out",
+        "userFallbackName": "User"
+      }
+    },
+    "breadcrumbs": {
+      "ariaLabel": "Breadcrumb",
+      "project": "Project"
+    },
+    "searchBar": {
+      "ariaLabel": "Search bar",
+      "placeholder": "Search"
+    },
+    "navbar": {
+      "filter": "Filter",
+      "filterAriaLabel": "Open filters",
+      "sort": "Sort",
+      "sortAriaLabel": "Open sort",
+      "addTicket": "Add ticket",
+      "addTicketAriaLabel": "Create a new ticket",
+      "addEpic": "Add epic",
+      "addEpicAriaLabel": "Create a new epic"
+    }
+  },
+  "layout": {
+    "appFooter": {
+      "label": "Workbench",
+      "ariaLabel": "Application footer"
+    }
+  },
+  "pages": {
+    "signup": {
+      "title": "Create an account",
+      "subtitle": "Sign up to get started with Workbench",
+      "button": "Sign up",
+      "buttonAriaLabel": "Sign up",
+      "footer": "Already have an account?",
+      "footerLink": "Sign in",
+      "verification": {
+        "title": "Email verification required",
+        "message": "A verification email has been sent to your address.",
+        "instructions": "Please check your inbox and click the link to verify your account.",
+        "backToSignin": "Back to sign in"
+      },
+      "errors": {
+        "invalidEmail": "Invalid email address",
+        "weakPassword": "Password does not meet requirements",
+        "generic": "An error occurred during sign up"
+      }
+    },
+    "verifyEmail": {
+      "title": "Email verification",
+      "success": "Your email has been verified successfully.",
+      "redirecting": "Redirecting...",
+      "backToSignin": "Back to sign in",
+      "errors": {
+        "missingToken": "Invalid verification link. Token or email is missing.",
+        "invalidToken": "The verification link is invalid or has expired. Please request a new link.",
+        "verificationError": "An error occurred during email verification.",
+        "generic": "An error occurred during verification"
+      }
+    },
+    "resetPassword": {
+      "title": "Reset password",
+      "subtitle": "Enter your email address to receive a reset link",
+      "button": "Send link",
+      "buttonAriaLabel": "Send reset link",
+      "backToSignin": "Back to sign in",
+      "success": {
+        "message": "A reset email has been sent to your address.",
+        "instructions": "Please check your inbox and click the link to reset your password."
+      },
+      "errors": {
+        "invalidEmail": "Invalid email address",
+        "generic": "An error occurred while sending the email"
+      }
+    },
+    "updatePassword": {
+      "title": "Update password",
+      "subtitle": "Enter your new password",
+      "button": "Update password",
+      "buttonAriaLabel": "Update password",
+      "backToSignin": "Back to sign in",
+      "success": "Your password has been updated successfully.",
+      "redirecting": "Redirecting...",
+      "fields": {
+        "password": "New password",
+        "confirmPassword": "Confirm password"
+      },
+      "validation": {
+        "passwordMinLength": "Password must be at least 6 characters",
+        "passwordMaxLength": "Password must be less than 100 characters",
+        "confirmPasswordRequired": "Please confirm your password",
+        "passwordsDoNotMatch": "Passwords do not match"
+      },
+      "errors": {
+        "missingToken": "Invalid reset link. Token or email is missing.",
+        "invalidToken": "The reset link is invalid or has expired. Please request a new link.",
+        "passwordResetError": "An error occurred while updating the password.",
+        "validationFailed": "Validation failed. Please try again.",
+        "invalidEmail": "Invalid email address",
+        "generic": "An error occurred during update"
+      }
+    },
+    "signin": {
+      "title": "Sign in",
+      "subtitle": "Sign in to access your Workbench",
+      "button": "Sign in",
+      "buttonAriaLabel": "Sign in",
+      "forgotPassword": "Forgot password?",
+      "footer": "Don't have an account?",
+      "footerLink": "Sign up",
+      "resendVerification": {
+        "button": "Resend verification email",
+        "buttonAriaLabel": "Resend verification email",
+        "success": "Verification email sent. Please check your inbox."
+      },
+      "errors": {
+        "invalidCredentials": "Invalid email or password",
+        "invalidEmail": "Invalid email address",
+        "emailNotVerified": "Your email has not been verified. Please check your inbox and click the verification link.",
+        "generic": "An error occurred during sign in"
+      }
+    },
+    "home": {
+      "welcome": "Welcome to Workbench",
+      "welcomeSubtitle": "Get started by signing in or creating an account",
+      "welcomeTitle": "Welcome",
+      "signedInAs": "Signed in as:",
+      "accessProjectTitle": "Access a project",
+      "accessProjectDescription": "Enter a project ID to access a project you are not yet a member of",
+      "projectIdLabel": "Project ID",
+      "projectIdPlaceholder": "Enter the project UUID",
+      "accessProjectButton": "Access project",
+      "yourProjectsTitle": "Your projects",
+      "loading": "Loading...",
+      "loadingProjects": "Loading projects...",
+      "noProjects": "You don't have access to any projects yet.",
+      "errorLoadingProjects": "Error loading projects:",
+      "unknownError": "Unknown error",
+      "pleaseEnterProjectId": "Please enter a project ID",
+      "failedToAddToProject": "Unable to add you to the project",
+      "roleAdmin": "Administrator",
+      "roleMember": "Member",
+      "roleViewer": "Viewer",
+      "roleAriaLabel": "Role",
+      "createProjectTitle": "Create a project",
+      "createProjectDescription": "Create your first project to get started",
+      "projectNameLabel": "Project name",
+      "projectNamePlaceholder": "Enter your project name",
+      "createProjectButton": "Create project",
+      "createProjectButtonAriaLabel": "Create project",
+      "logoutButton": "Sign out",
+      "logoutButtonAriaLabel": "Sign out",
+      "updateUserButton": "Update account",
+      "updateUserButtonAriaLabel": "Update account information",
+      "deleteUserButton": "Delete account",
+      "deleteUserButtonAriaLabel": "Permanently delete account",
+      "deleteUserConfirmation": "Are you sure you want to delete your account? This action cannot be undone.",
+      "newEmailLabel": "New email",
+      "newEmailPlaceholder": "Enter your new email",
+      "newPasswordLabel": "New password",
+      "newPasswordPlaceholder": "Enter your new password (optional)",
+      "saveButton": "Save",
+      "saveButtonAriaLabel": "Save changes",
+      "cancelButton": "Cancel",
+      "cancelButtonAriaLabel": "Cancel changes",
+      "errors": {
+        "projectNameRequired": "Project name is required",
+        "projectNameTooShort": "Project name must be at least 1 character",
+        "generic": "An error occurred while creating the project"
+      },
+      "quickAddTicket": {
+        "title": "Ticket title",
+        "placeholder": "Enter the ticket title",
+        "submitButton": "Add",
+        "submitButtonAriaLabel": "Add ticket"
+      },
+      "myWorkWidget": {
+        "title": "My work",
+        "emptyMessage": "No active tickets",
+        "ticketAriaLabel": "Ticket",
+        "statusLabel": "Status"
+      },
+      "recentActivityWidget": {
+        "title": "Recent activity",
+        "emptyMessage": "No recent activity",
+        "activityAriaLabel": "Activity",
+        "types": {
+          "ticket_created": "Ticket created",
+          "ticket_updated": "Ticket updated",
+          "ticket_completed": "Ticket completed"
+        }
+      },
+      "shortcutsWidget": {
+        "title": "Shortcuts",
+        "shortcuts": {
+          "board": "Board",
+          "backlog": "Backlog",
+          "epics": "Epics",
+          "settings": "Settings"
+        }
+      }
+    },
+    "projectHome": {
+      "title": "Home",
+      "lastActivityHours": "Last activity: {hours} hour",
+      "lastActivityHours_plural": "Last activity: {hours} hours",
+      "lastActivityDays": "Last activity: {days} day",
+      "lastActivityDays_plural": "Last activity: {days} days",
+      "lastActivityDate": "Last activity: {date}",
+      "shortcutsWidget": {
+        "title": "Shortcuts",
+        "shortcuts": {
+          "board": "Board",
+          "backlog": "Backlog",
+          "epics": "Epics",
+          "settings": "Settings"
+        }
+      }
+    },
+    "workspace": {
+      "title": "Workspaces",
+      "subtitle": "Create a workspace or join those you have access to.",
+      "welcomeBanner": "Welcome {name}",
+      "welcomeLabel": "Hello 👋",
+      "welcomeSubtitle": "Ready to create something wonderful today?",
+      "sectionDescription": "Find all your collaborative workspaces",
+      "membersCount": "{count} member",
+      "membersCount_other": "{count} members",
+      "tasksCount": "{count} task",
+      "tasksCount_other": "{count} tasks",
+      "statInProgress": "In progress",
+      "statCompleted": "Completed",
+      "emptyStateCardTitle": "Your workspace awaits",
+      "emptyStateCardDescription": "Create your first workspace to start organizing your projects, collaborating with your team, and turning ideas into reality.",
+      "userFallbackName": "User",
+      "addWorkspaceButton": "Add workspace",
+      "addWorkspaceButtonAriaLabel": "Open form to create a new workspace",
+      "joinWorkspaceButton": "Join a workspace",
+      "joinWorkspaceButtonAriaLabel": "Open form to join an existing workspace",
+      "yourWorkspacesTitle": "Your workspaces",
+      "noWorkspaces": "No workspace",
+      "noWorkspacesMessage": "Create your first workspace or join an existing one with an ID.",
+      "emptyStateTitle": "Welcome to Workbench",
+      "emptyStateMessage": "Create a workspace to organize your projects, tickets, and epics. You can invite others and manage everything from one place.",
+      "addFirstProjectButton": "Create my first workspace",
+      "addFirstProjectButtonAriaLabel": "Create my first workspace",
+      "createWorkspaceTitle": "Create a workspace",
+      "createWorkspaceDescription": "Give your new workspace a name to get started.",
+      "projectNameLabel": "Workspace name",
+      "projectNamePlaceholder": "e.g. My project",
+      "createButton": "Create workspace",
+      "createButtonAriaLabel": "Create workspace",
+      "joinWorkspaceTitle": "Join an existing workspace",
+      "joinWorkspaceDescription": "Enter the project ID to join a workspace you've been invited to.",
+      "projectIdLabel": "Project ID",
+      "projectIdPlaceholder": "Enter the project UUID",
+      "joinButton": "Join workspace",
+      "joinButtonAriaLabel": "Join workspace",
+      "roleAdmin": "Administrator",
+      "roleMember": "Member",
+      "roleViewer": "Viewer",
+      "roleAriaLabel": "Role",
+      "openWorkspaceAriaLabel": "Open workspace {name}, role: {role}",
+      "pleaseEnterProjectId": "Please enter a project ID",
+      "footer": {
+        "ariaLabel": "Useful links and information",
+        "account": "Account settings",
+        "legal": "Legal notice",
+        "subscriptions": "Subscriptions"
+      }
+    },
+    "backlog": {
+      "title": "Backlog",
+      "subtitle": "Manage and organize your tickets",
+      "ticketList": {
+        "ariaLabel": "Backlog ticket list",
+        "emptyTitle": "No tickets in the backlog",
+        "emptyMessage": "Create a ticket to start working",
+        "errorTitle": "Error loading tickets",
+        "count": "{count} ticket",
+        "count_other": "{count} tickets"
+      },
+      "filters": {
+        "searchLabel": "Search",
+        "searchPlaceholder": "Search by title or description",
+        "statusLabel": "Status",
+        "epicLabel": "Epic",
+        "resetLabel": "Reset filters"
+      },
+      "sort": {
+        "label": "Sort by",
+        "fieldCreatedAt": "Creation date",
+        "fieldTitle": "Title",
+        "fieldStatus": "Status",
+        "directionAsc": "Ascending",
+        "directionDesc": "Descending"
+      },
+      "bulkActions": {
+        "title": "Bulk actions",
+        "selectedCount": "{count} ticket selected",
+        "selectedCount_other": "{count} tickets selected",
+        "deleteLabel": "Delete",
+        "moveLabel": "Move",
+        "changeStatusLabel": "Change status"
+      },
+      "createTicketForm": {
+        "title": "Create ticket",
+        "fields": {
+          "title": "Title",
+          "description": "Description",
+          "status": "Status",
+          "epic": "Epic"
+        },
+        "submitButton": "Create ticket",
+        "cancelButton": "Cancel",
+        "errorGeneric": "An error occurred while creating the ticket"
+      },
+      "ticketListItem": {
+        "ticketAriaLabel": "Ticket",
+        "statusLabel": "Status",
+        "epicLabel": "Epic",
+        "openTicketLabel": "Open ticket",
+        "editTicketLabel": "Edit ticket",
+        "selectTicketLabel": "Select ticket"
+      }
+    },
+    "board": {
+      "view": {
+        "title": "Board",
+        "ariaLabel": "Board view",
+        "loading": "Loading board...",
+        "emptyMessage": "No tickets to display on the board"
+      },
+      "column": {
+        "ariaLabel": "Column {title}",
+        "dropZoneAriaLabel": "Drop zone for column {title}",
+        "emptyDropZoneAriaLabel": "Empty drop zone for column {title}",
+        "emptyColumnPlaceholder": "No tickets"
+      },
+      "filters": {
+        "searchLabel": "Search",
+        "searchPlaceholder": "Search by title or description",
+        "statusLabel": "Status",
+        "epicLabel": "Epic",
+        "assigneeLabel": "Assignee",
+        "resetLabel": "Reset filters"
+      },
+      "ticketCard": {
+        "ticketAriaLabel": "Ticket",
+        "statusLabel": "Status",
+        "epicLabel": "Epic",
+        "assigneeLabel": "Assignee",
+        "priorityLabel": "Priority",
+        "storyPointsLabel": "{count} point",
+        "storyPointsLabel_other": "{count} points",
+        "openTicketLabel": "Open ticket",
+        "editTicketLabel": "Edit ticket"
+      },
+      "columnsConfiguration": {
+        "title": "Column configuration",
+        "ariaLabel": "Board column configuration",
+        "closeLabel": "Close",
+        "moveUpLabel": "Move up",
+        "moveDownLabel": "Move down",
+        "moveUpAriaLabel": "Move column {title} up",
+        "moveDownAriaLabel": "Move column {title} down"
+      }
+    },
+    "epics": {
+      "epicsList": {
+        "ariaLabel": "Epics list",
+        "title": "Epics",
+        "count": "{count} epic",
+        "count_other": "{count} epics",
+        "emptyTitle": "No epics",
+        "emptyMessage": "Create your first epic to get started",
+        "errorTitle": "Error loading epics"
+      },
+      "epicCard": {
+        "epicAriaLabel": "Epic",
+        "progressLabel": "{progress}% complete",
+        "viewDetailLabel": "View details",
+        "editLabel": "Edit",
+        "deleteLabel": "Delete"
+      },
+      "createEpicForm": {
+        "title": "Create epic",
+        "fields": {
+          "name": "Name",
+          "description": "Description"
+        },
+        "submitButton": "Create",
+        "cancelButton": "Cancel",
+        "errorGeneric": "An error occurred while creating the epic"
+      },
+      "epicDetail": {
+        "title": "Epic details",
+        "ticketsTitle": "Related tickets",
+        "noTickets": "No related tickets",
+        "editLabel": "Edit",
+        "deleteLabel": "Delete"
+      },
+      "epicProgress": {
+        "ariaLabel": "Epic progress",
+        "progressLabel": "{progress}% complete"
+      }
+    },
+    "settings": {
+      "page": {
+        "tabs": {
+          "project": "Project",
+          "statusesColumns": "Statuses and columns",
+          "priorities": "Priorities",
+          "exportImport": "Export / import"
+        },
+        "fallback": "Settings section unavailable"
+      },
+      "layout": {
+        "title": "Settings",
+        "tabsNavAriaLabel": "Settings navigation"
+      },
+      "project": {
+        "title": "Project",
+        "subtitle": "Manage project information and preferences",
+        "fields": {
+          "projectName": {
+            "label": "Project name",
+            "placeholder": "Enter the project name"
+          },
+          "projectDescription": {
+            "label": "Project description",
+            "placeholder": "Add a description (optional)"
+          }
+        },
+        "actions": {
+          "save": "Save",
+          "saving": "Saving...",
+          "reset": "Reset"
+        }
+      },
+      "statusesColumns": {
+        "title": "Statuses and columns",
+        "subtitle": "Configure column order, name, and activation",
+        "listAriaLabel": "Column list",
+        "fields": {
+          "enabled": {
+            "label": "Enabled",
+            "ariaLabel": "Enable column {name}"
+          },
+          "name": {
+            "label": "Name",
+            "placeholder": "Column name",
+            "ariaLabel": "Rename column {name}"
+          }
+        },
+        "actions": {
+          "add": "Add",
+          "moveUp": "Move up",
+          "moveDown": "Move down",
+          "moveUpAriaLabel": "Move column {name} up",
+          "moveDownAriaLabel": "Move column {name} down"
+        },
+        "empty": {
+          "title": "No columns",
+          "message": "Add a column to get started"
+        }
+      },
+      "priorities": {
+        "title": "Priorities",
+        "subtitle": "Configure priority levels",
+        "listAriaLabel": "Priority list",
+        "fields": {
+          "name": {
+            "label": "Name",
+            "placeholder": "Priority name",
+            "ariaLabel": "Rename priority {name}"
+          }
+        },
+        "actions": {
+          "add": "Add",
+          "moveUp": "Move up",
+          "moveDown": "Move down",
+          "moveUpAriaLabel": "Move priority {name} up",
+          "moveDownAriaLabel": "Move priority {name} down"
+        },
+        "empty": {
+          "title": "No priorities",
+          "message": "Add a priority to get started"
+        }
+      },
+      "exportImport": {
+        "title": "Export / import",
+        "subtitle": "Export or import project data",
+        "export": {
+          "title": "Export",
+          "hint": "Download a copy of the project data",
+          "action": "Export",
+          "exporting": "Exporting..."
+        },
+        "import": {
+          "title": "Import",
+          "hint": "Import data from a file",
+          "fileLabel": "File",
+          "fileHint": "Select a compatible file to start the import",
+          "fileAriaLabel": "Select a file to import",
+          "importing": "Importing...",
+          "accept": ".json,application/json"
+        }
+      }
+    },
+    "ticketDetail": {
+      "ticketOverview": {
+        "ariaLabel": "Ticket details",
+        "meta": {
+          "status": "Status",
+          "epic": "Epic",
+          "assignee": "Assignee",
+          "priority": "Priority",
+          "storyPoints": "Story points",
+          "storyPointsValue": "{count} point",
+          "storyPointsValue_other": "{count} points",
+          "notSet": "Not set"
+        }
+      },
+      "ticketEditForm": {
+        "title": "Edit ticket",
+        "ariaLabel": "Ticket edit form",
+        "fields": {
+          "title": "Title",
+          "status": "Status",
+          "epic": "Epic",
+          "description": "Description"
+        },
+        "epicNoneOption": "None",
+        "saveButton": "Save",
+        "cancelButton": "Cancel",
+        "errorGeneric": "An error occurred while saving the ticket"
+      },
+      "subtasks": {
+        "list": {
+          "title": "Subtasks",
+          "ariaLabel": "Ticket subtasks section",
+          "itemsAriaLabel": "Subtask list",
+          "loadingAriaLabel": "Loading subtasks",
+          "errorTitle": "Error loading subtasks",
+          "emptyTitle": "No subtasks",
+          "emptyMessage": "Add a subtask to break down this ticket",
+          "emptyAriaLabel": "No subtasks"
+        },
+        "subtaskItem": {
+          "checkboxLabel": "Mark subtask {title} as complete",
+          "editLabel": "Edit",
+          "deleteLabel": "Delete"
+        }
+      },
+      "createSubtaskForm": {
+        "title": "Create subtask",
+        "ariaLabel": "Subtask creation form",
+        "fields": {
+          "title": "Title",
+          "description": "Description"
+        },
+        "submitButton": "Add",
+        "cancelButton": "Cancel",
+        "errorGeneric": "An error occurred while creating the subtask"
+      },
+      "epicLinkSelector": {
+        "title": "Epic",
+        "loadingAriaLabel": "Loading epics",
+        "errorTitle": "Error loading epics",
+        "emptyTitle": "No epics",
+        "emptyMessage": "Create an epic to link this ticket to",
+        "emptyAriaLabel": "No epics available",
+        "selectLabel": "Link to an epic",
+        "noneOption": "None",
+        "currentEpic": "Current epic: {name}",
+        "noEpicSelected": "No epic linked",
+        "unlinkButton": "Unlink"
+      }
+    },
+    "account": {
+      "header": {
+        "label": "Settings 🔧",
+        "title": "My account",
+        "subtitle": "Manage your personal information and preferences"
+      },
+      "personalInfo": {
+        "title": "Personal information",
+        "description": "Update your name and email address",
+        "icon": "👤",
+        "fields": {
+          "name": {
+            "label": "Full name",
+            "placeholder": "Your name"
+          },
+          "email": {
+            "label": "Email address",
+            "placeholder": "your.email@example.com"
+          }
+        },
+        "saveButton": "Save changes",
+        "saveButtonAriaLabel": "Save profile changes",
+        "savingButton": "Saving..."
+      },
+      "security": {
+        "title": "Security",
+        "description": "Change your password",
+        "icon": "🔒",
+        "fields": {
+          "currentPassword": {
+            "label": "Current password",
+            "placeholder": "••••••••"
+          },
+          "newPassword": {
+            "label": "New password",
+            "placeholder": "••••••••"
+          },
+          "confirmPassword": {
+            "label": "Confirm password",
+            "placeholder": "••••••••"
+          }
+        },
+        "changeButton": "Change password",
+        "changeButtonAriaLabel": "Change password",
+        "changingButton": "Changing..."
+      },
+      "preferences": {
+        "title": "Preferences",
+        "description": "Customize your experience",
+        "icon": "🎨",
+        "emailNotifications": {
+          "label": "Email notifications",
+          "description": "Receive emails about your workspace activity"
+        },
+        "darkMode": {
+          "label": "Dark mode",
+          "description": "Enable dark theme for the interface"
+        },
+        "language": {
+          "label": "Language",
+          "description": "Choose your preferred language"
+        },
+        "languageOptions": {
+          "fr": "Français",
+          "en": "English",
+          "es": "Español"
+        }
+      },
+      "dangerZone": {
+        "title": "Danger zone",
+        "description": "Irreversible actions",
+        "icon": "⚠️",
+        "deleteAccount": {
+          "label": "Delete my account",
+          "description": "This action is permanent and will delete all your data"
+        },
+        "deleteButton": "Delete account",
+        "deleteButtonAriaLabel": "Permanently delete account",
+        "deletingButton": "Deleting...",
+        "confirmTitle": "Confirm deletion",
+        "confirmMessage": "Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.",
+        "confirmButton": "Yes, delete my account",
+        "confirmButtonAriaLabel": "Confirm account deletion",
+        "cancelButton": "Cancel"
+      },
+      "success": {
+        "profileUpdated": "Profile updated successfully",
+        "passwordChanged": "Password changed successfully",
+        "preferencesUpdated": "Preferences saved"
+      },
+      "validation": {
+        "passwordMinLength": "Password must be at least 6 characters",
+        "passwordMaxLength": "Password must be less than 100 characters",
+        "confirmPasswordRequired": "Please confirm your password",
+        "passwordsDoNotMatch": "Passwords do not match",
+        "currentPasswordRequired": "Current password is required"
+      }
+    },
+    "landing": {
+      "title": "Workbench",
+      "subtitle": "A lightweight, personal task and project management tool",
+      "purposeTitle": "Purpose",
+      "purposeText": "Workbench is designed to help you manage your work clearly, progressively, and without cognitive overload. It offers a clean backlog, a visual board, and structured planning via Epics.",
+      "featuresTitle": "Key features",
+      "backlogLabel": "Backlog",
+      "backlogDescription": "Create, edit, delete, view, filter, and sort tickets",
+      "boardLabel": "Board",
+      "boardDescription": "Visual board with custom columns, drag-and-drop, and workflow management",
+      "epicsLabel": "Epics",
+      "epicsDescription": "Create epics, assign tickets, and track progress",
+      "subtasksLabel": "Subtasks",
+      "subtasksDescription": "Break down tickets into manageable subtasks"
+    }
+  },
+  "forms": {},
+  "errors": {
+    "generic": "An error occurred",
+    "retry": "Retry",
+    "retryAriaLabel": "Retry operation",
+    "auth": {
+      "INVALID_CREDENTIALS": "Invalid email or password",
+      "EMAIL_ALREADY_EXISTS": "This email address is already in use",
+      "WEAK_PASSWORD": "Password does not meet security requirements",
+      "INVALID_EMAIL": "Invalid email address",
+      "AUTHENTICATION_ERROR": "An authentication error occurred",
+      "EMAIL_VERIFICATION_ERROR": "An error occurred during email verification",
+      "PASSWORD_RESET_ERROR": "An error occurred during password reset",
+      "INVALID_TOKEN": "The link is invalid or has expired. Please request a new one"
+    },
+    "repository": {
+      "NOT_FOUND": "Resource not found",
+      "NOT_FOUND_WITH_ENTITY": "{entityType} with ID {entityId} not found",
+      "CONSTRAINT_VIOLATION": "A database constraint was violated",
+      "DATABASE_ERROR": "A database error occurred"
+    },
+    "domain": {
+      "INVALID_TICKET_PARENT": "A ticket cannot be its own parent",
+      "INVALID_TICKET_PARENT_MULTI_LEVEL": "Multi-level nesting is not allowed",
+      "TICKET_PROJECT_MISMATCH": "The ticket does not belong to the same project",
+      "TICKET_HAS_SUBTASKS": "The ticket cannot be deleted because it contains subtasks",
+      "DUPLICATE_EPIC_ASSIGNMENT": "The ticket is already assigned to another epic",
+      "INVALID_EPIC_TICKET_CONSISTENCY": "Inconsistency in ticket-to-epic assignment",
+      "INVALID_COLUMN_ORDER": "Invalid column order",
+      "DUPLICATE_COLUMN_STATUS": "Duplicate column status",
+      "INVALID_BOARD_COLUMN_RELATIONSHIP": "The column does not belong to the specified board",
+      "MIXED_BOARD_COLUMNS": "Columns from multiple boards mixed together"
+    }
+  }
+}

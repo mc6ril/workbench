@@ -1,4 +1,7 @@
+import { DEFAULT_USER_PREFERENCES } from "@/core/domain/schema/auth.schema";
+
 import {
+  extractPreferences,
   mapSupabaseAuthError,
   mapSupabaseSessionToDomain,
 } from "@/infrastructure/supabase/auth/AuthMapper.supabase";
@@ -26,6 +29,7 @@ describe("AuthMapper.supabase", () => {
         userId: "user-123",
         email: "test@example.com",
         displayName: null,
+        preferences: DEFAULT_USER_PREFERENCES,
         accessToken: "test-access-token",
       });
     });
@@ -46,6 +50,7 @@ describe("AuthMapper.supabase", () => {
       expect(result.email).toBe("different@example.com");
       expect(result.userId).toBe("user-123");
       expect(result.displayName).toBeNull();
+      expect(result.preferences).toEqual(DEFAULT_USER_PREFERENCES);
       expect(result.accessToken).toBe("test-access-token");
     });
 
@@ -58,7 +63,10 @@ describe("AuthMapper.supabase", () => {
       });
 
       // Act
-      const result = mapSupabaseSessionToDomain(supabaseSession, "test@example.com");
+      const result = mapSupabaseSessionToDomain(
+        supabaseSession,
+        "test@example.com"
+      );
 
       // Assert
       expect(result.displayName).toBe("John Doe");
@@ -73,7 +81,10 @@ describe("AuthMapper.supabase", () => {
       });
 
       // Act
-      const result = mapSupabaseSessionToDomain(supabaseSession, "test@example.com");
+      const result = mapSupabaseSessionToDomain(
+        supabaseSession,
+        "test@example.com"
+      );
 
       // Assert
       expect(result.displayName).toBe("Jane Doe");
@@ -88,7 +99,10 @@ describe("AuthMapper.supabase", () => {
       });
 
       // Act
-      const result = mapSupabaseSessionToDomain(supabaseSession, "test@example.com");
+      const result = mapSupabaseSessionToDomain(
+        supabaseSession,
+        "test@example.com"
+      );
 
       // Assert
       expect(result.displayName).toBeNull();
@@ -103,10 +117,121 @@ describe("AuthMapper.supabase", () => {
       });
 
       // Act
-      const result = mapSupabaseSessionToDomain(supabaseSession, "test@example.com");
+      const result = mapSupabaseSessionToDomain(
+        supabaseSession,
+        "test@example.com"
+      );
 
       // Assert
       expect(result.displayName).toBeNull();
+    });
+
+    it("should extract preferences from user_metadata", () => {
+      // Arrange
+      const supabaseSession = createSupabaseSessionMock({
+        user: {
+          user_metadata: {
+            preferences: {
+              darkMode: true,
+              emailNotifications: false,
+              language: "en",
+            },
+          },
+        },
+      });
+
+      // Act
+      const result = mapSupabaseSessionToDomain(
+        supabaseSession,
+        "test@example.com"
+      );
+
+      // Assert
+      expect(result.preferences).toEqual({
+        darkMode: true,
+        emailNotifications: false,
+        language: "en",
+      });
+    });
+
+    it("should return default preferences when user_metadata has no preferences", () => {
+      // Arrange
+      const supabaseSession = createSupabaseSessionMock({
+        user: { user_metadata: {} },
+      });
+
+      // Act
+      const result = mapSupabaseSessionToDomain(
+        supabaseSession,
+        "test@example.com"
+      );
+
+      // Assert
+      expect(result.preferences).toEqual(DEFAULT_USER_PREFERENCES);
+    });
+  });
+
+  describe("extractPreferences", () => {
+    it("should return defaults when userMetadata is undefined", () => {
+      const result = extractPreferences(undefined);
+      expect(result).toEqual(DEFAULT_USER_PREFERENCES);
+    });
+
+    it("should return defaults when preferences key is missing", () => {
+      const result = extractPreferences({});
+      expect(result).toEqual(DEFAULT_USER_PREFERENCES);
+    });
+
+    it("should return defaults when preferences is not an object", () => {
+      const result = extractPreferences({ preferences: "invalid" });
+      expect(result).toEqual(DEFAULT_USER_PREFERENCES);
+    });
+
+    it("should extract valid complete preferences", () => {
+      const prefs = {
+        darkMode: true,
+        emailNotifications: false,
+        language: "es",
+      };
+      const result = extractPreferences({ preferences: prefs });
+      expect(result).toEqual(prefs);
+    });
+
+    it("should partially recover when some fields are invalid", () => {
+      const result = extractPreferences({
+        preferences: {
+          darkMode: true,
+          emailNotifications: "bad",
+          language: "en",
+        },
+      });
+      expect(result).toEqual({
+        darkMode: true,
+        emailNotifications: DEFAULT_USER_PREFERENCES.emailNotifications,
+        language: "en",
+      });
+    });
+
+    it("should use default for missing fields in partial preferences", () => {
+      const result = extractPreferences({
+        preferences: { darkMode: true },
+      });
+      expect(result).toEqual({
+        darkMode: true,
+        emailNotifications: DEFAULT_USER_PREFERENCES.emailNotifications,
+        language: DEFAULT_USER_PREFERENCES.language,
+      });
+    });
+
+    it("should use default language for empty string language", () => {
+      const result = extractPreferences({
+        preferences: {
+          darkMode: false,
+          emailNotifications: true,
+          language: "",
+        },
+      });
+      expect(result.language).toBe(DEFAULT_USER_PREFERENCES.language);
     });
   });
 

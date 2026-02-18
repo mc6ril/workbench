@@ -14,7 +14,10 @@ import type {
   VerifyEmailInput,
 } from "@/core/domain/schema/auth.schema";
 
-import { mapSupabaseSessionToDomain } from "@/infrastructure/supabase/auth/AuthMapper.supabase";
+import {
+  extractPreferences,
+  mapSupabaseSessionToDomain,
+} from "@/infrastructure/supabase/auth/AuthMapper.supabase";
 import { handleAuthError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
@@ -196,6 +199,7 @@ export const createAuthRepository = (
             typeof displayName === "string" && displayName.trim()
               ? displayName.trim()
               : null,
+          preferences: extractPreferences(user.user_metadata),
           accessToken: "", // Not available from getUser(), but not needed for server-side auth checks
         };
       } else {

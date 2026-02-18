@@ -6,6 +6,20 @@ import type { Locale } from "./types";
 export const defaultLocale: Locale = "fr";
 
 /**
+ * External getter set at runtime by the locale store.
+ * Allows getLocale() to read the current locale without importing Zustand in shared/.
+ */
+let localeGetter: (() => Locale) | null = null;
+
+/**
+ * Registers a locale getter function from the presentation layer.
+ * Called once during app initialization by the locale store.
+ */
+export const registerLocaleGetter = (getter: () => Locale): void => {
+  localeGetter = getter;
+};
+
+/**
  * Supported locales.
  */
 export const supportedLocales: Locale[] = ["fr", "en", "es"];
@@ -33,12 +47,12 @@ const localeToIntlMap: Record<Locale, string> = {
 };
 
 /**
- * Get the current locale.
- * For now, we always use the default locale.
- * In the future, this can be extended to support locale detection.
+ * Get the current active locale.
+ * Reads from the registered locale getter (Zustand store) if available,
+ * otherwise falls back to the default locale.
  */
 export const getLocale = (): Locale => {
-  return defaultLocale;
+  return localeGetter ? localeGetter() : defaultLocale;
 };
 
 /**

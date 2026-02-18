@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { APP_LIMITS } from "@/shared/constants/app";
+import { defaultLocale } from "@/shared/i18n/config";
 
 /**
  * Reusable Zod schema for password validation.
@@ -102,14 +103,46 @@ export type AuthenticationError = AuthError & {
 };
 
 /**
+ * Zod schema for user preferences stored in Supabase user_metadata.
+ * Preferences are synced across devices via the auth session.
+ */
+export const UserPreferencesSchema = z.object({
+  darkMode: z.boolean(),
+  emailNotifications: z.boolean(),
+  language: z.string().min(1),
+});
+
+/**
+ * User preferences (dark mode, notifications, language).
+ */
+export type UserPreferences = z.infer<typeof UserPreferencesSchema>;
+
+/**
+ * Default preferences applied to new users or when stored preferences are missing/invalid.
+ */
+export const DEFAULT_USER_PREFERENCES: UserPreferences = {
+  darkMode: false,
+  emailNotifications: true,
+  language: defaultLocale,
+};
+
+/**
+ * Input for partial preference updates.
+ * Only the fields provided will be merged with existing preferences.
+ */
+export type UpdatePreferencesInput = Partial<UserPreferences>;
+
+/**
  * Authentication session data.
  * Represents an authenticated user session.
  * displayName comes from Supabase user_metadata.display_name.
+ * preferences comes from Supabase user_metadata.preferences.
  */
 export type AuthSession = {
   userId: string;
   email: string;
   displayName: string | null;
+  preferences: UserPreferences;
   accessToken: string;
 };
 

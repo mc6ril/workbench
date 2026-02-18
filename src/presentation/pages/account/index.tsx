@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { ChangePasswordFormInput } from "@/core/domain/schema/auth.schema";
 import { ChangePasswordFormSchema } from "@/core/domain/schema/auth.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/core/domain/schema/auth.schema";
 
 import {
   Button,
@@ -23,17 +24,20 @@ import {
   useChangePassword,
   useDeleteUser,
   useSession,
+  useUpdatePreferences,
   useUpdateProfile,
 } from "@/presentation/hooks";
+import { useLocaleStore } from "@/presentation/stores/useLocaleStore";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import {
-  defaultLocale,
   supportedLocaleOptions,
+  supportedLocales,
   useTranslation,
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import type { Locale } from "@/shared/i18n/types";
 
 import styles from "./styles.module.scss";
 
@@ -46,6 +50,7 @@ const AccountPage = () => {
   const { data: session, isLoading: isSessionLoading } = useSession();
   const updateProfileMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
+  const updatePreferencesMutation = useUpdatePreferences();
   const deleteUserMutation = useDeleteUser();
   const t = useTranslation("pages.account");
   const tErrors = useTranslation("errors");
@@ -53,12 +58,16 @@ const AccountPage = () => {
   const [emailDraft, setEmailDraft] = useState<string | undefined>(undefined);
   const [nameDraft, setNameDraft] = useState<string | undefined>(undefined);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
-  const [language, setLanguage] = useState<string>(defaultLocale);
 
   const email = emailDraft ?? session?.email ?? "";
   const name = nameDraft ?? session?.displayName ?? "";
+  const emailNotifications =
+    session?.preferences.emailNotifications ??
+    DEFAULT_USER_PREFERENCES.emailNotifications;
+  const darkMode =
+    session?.preferences.darkMode ?? DEFAULT_USER_PREFERENCES.darkMode;
+  const language =
+    session?.preferences.language ?? DEFAULT_USER_PREFERENCES.language;
 
   const profileErrorMessage = useMemo(
     () =>
@@ -80,6 +89,17 @@ const AccountPage = () => {
           )
         : null,
     [changePasswordMutation.error, tErrors]
+  );
+
+  const preferencesErrorMessage = useMemo(
+    () =>
+      updatePreferencesMutation.error
+        ? getErrorMessage(
+            updatePreferencesMutation.error as { code?: string },
+            tErrors
+          )
+        : null,
+    [updatePreferencesMutation.error, tErrors]
   );
 
   const {
@@ -116,6 +136,32 @@ const AccountPage = () => {
     await deleteUserMutation.mutateAsync();
     closeDeleteModal();
   }, [deleteUserMutation, closeDeleteModal]);
+
+  const handleEmailNotificationsChange = useCallback(
+    (checked: boolean) => {
+      updatePreferencesMutation.mutate({ emailNotifications: checked });
+    },
+    [updatePreferencesMutation]
+  );
+
+  const handleDarkModeChange = useCallback(
+    (checked: boolean) => {
+      updatePreferencesMutation.mutate({ darkMode: checked });
+    },
+    [updatePreferencesMutation]
+  );
+
+  const setLocale = useLocaleStore((s) => s.setLocale);
+
+  const handleLanguageChange = useCallback(
+    (value: string) => {
+      if (supportedLocales.includes(value as Locale)) {
+        setLocale(value as Locale);
+      }
+      updatePreferencesMutation.mutate({ language: value });
+    },
+    [updatePreferencesMutation, setLocale]
+  );
 
   if (isSessionLoading) {
     return (
@@ -267,9 +313,7 @@ const AccountPage = () => {
               <Input
                 label={t("security.fields.currentPassword.label")}
                 type="password"
-                placeholder={t(
-                  "security.fields.currentPassword.placeholder"
-                )}
+                placeholder={t("security.fields.currentPassword.placeholder")}
                 error={passwordErrors.currentPassword?.message}
                 {...register("currentPassword")}
               />
@@ -285,9 +329,7 @@ const AccountPage = () => {
               <Input
                 label={t("security.fields.confirmPassword.label")}
                 type="password"
-                placeholder={t(
-                  "security.fields.confirmPassword.placeholder"
-                )}
+                placeholder={t("security.fields.confirmPassword.placeholder")}
                 error={passwordErrors.confirmPassword?.message}
                 {...register("confirmPassword")}
               />
@@ -331,6 +373,22 @@ const AccountPage = () => {
           </div>
 
           <div className={styles["section-content"]}>
+            {updatePreferencesMutation.isSuccess && (
+              <div
+                className={styles["success-message"]}
+                role="status"
+                aria-live="polite"
+              >
+                {t("success.preferencesUpdated")}
+              </div>
+            )}
+
+            {preferencesErrorMessage && (
+              <div role="alert" aria-live="assertive">
+                <Text variant="small">{preferencesErrorMessage}</Text>
+              </div>
+            )}
+
             <div className={styles["preference-item"]}>
               <div className={styles["preference-info"]}>
                 <div className={styles["preference-label"]}>
@@ -343,7 +401,8 @@ const AccountPage = () => {
               <Toggle
                 label=""
                 checked={emailNotifications}
-                onChange={setEmailNotifications}
+                onChange={handleEmailNotificationsChange}
+                disabled={updatePreferencesMutation.isPending}
                 aria-label={t("preferences.emailNotifications.label")}
               />
             </div>
@@ -360,7 +419,8 @@ const AccountPage = () => {
               <Toggle
                 label=""
                 checked={darkMode}
-                onChange={setDarkMode}
+                onChange={handleDarkModeChange}
+                disabled={updatePreferencesMutation.isPending}
                 aria-label={t("preferences.darkMode.label")}
               />
             </div>
@@ -378,7 +438,7 @@ const AccountPage = () => {
                 label=""
                 options={LANGUAGE_SELECT_OPTIONS}
                 value={language}
-                onChange={(e) => setLanguage(e.target.value)}
+                onChange={(e) => handleLanguageChange(e.target.value)}
                 aria-label={t("preferences.language.label")}
               />
             </div>
