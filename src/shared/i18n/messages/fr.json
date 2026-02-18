@@ -742,6 +742,157 @@
       "epicsDescription": "Créer des epics, assigner des tickets et suivre la progression",
       "subtasksLabel": "Sous-tâches",
       "subtasksDescription": "Décomposer les tickets en sous-tâches gérables"
+    },
+    "legal": {
+      "header": {
+        "label": "Retour",
+        "title": "Mentions légales",
+        "subtitle": "Informations légales relatives à l'utilisation de Workbench"
+      },
+      "sections": {
+        "editor": {
+          "icon": "🏢",
+          "title": "Éditeur du site",
+          "description": "Informations sur l'éditeur de la plateforme",
+          "appName": "Workbench",
+          "appDescription": "Workbench est une application de gestion de projets éditée à titre personnel.",
+          "contact": "Contact : contact@workbench.app",
+          "hosting": "Hébergement : Vercel Inc. — 340 S Lemon Ave #4133, Walnut, CA 91789, États-Unis"
+        },
+        "intellectualProperty": {
+          "icon": "©️",
+          "title": "Propriété intellectuelle",
+          "description": "Droits d'auteur et propriété du contenu",
+          "content": "L'ensemble des contenus présents sur Workbench (textes, interfaces, code source, logos, éléments graphiques) sont protégés par le droit d'auteur. Toute reproduction, représentation ou diffusion, en tout ou partie, sans autorisation préalable est interdite."
+        },
+        "dataProtection": {
+          "icon": "🔒",
+          "title": "Protection des données personnelles",
+          "description": "Conformité RGPD et gestion de vos données",
+          "intro": "Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants :",
+          "rights": {
+            "access": "Droit d'accès à vos données personnelles",
+            "rectification": "Droit de rectification des données inexactes",
+            "deletion": "Droit à l'effacement de vos données",
+            "portability": "Droit à la portabilité de vos données"
+          },
+          "collectedData": "Données collectées : adresse email, nom d'affichage, préférences utilisateur.",
+          "purpose": "Finalité : authentification, personnalisation de l'expérience et fonctionnement du service.",
+          "retention": "Durée de conservation : vos données sont conservées tant que votre compte est actif. Elles sont supprimées sur demande.",
+          "exerciseRights": "Pour exercer vos droits, contactez-nous à : contact@workbench.app"
+        },
+        "cookies": {
+          "icon": "🍪",
+          "title": "Cookies",
+          "description": "Utilisation des cookies sur la plateforme",
+          "content": "Workbench utilise uniquement des cookies strictement nécessaires au fonctionnement du service (authentification, session utilisateur). Aucun cookie publicitaire ou de suivi n'est utilisé. Ces cookies sont indispensables et ne requièrent pas de consentement préalable."
+        },
+        "liability": {
+          "icon": "⚖️",
+          "title": "Responsabilité",
+          "description": "Limites de responsabilité de l'éditeur",
+          "content": "L'éditeur s'efforce de fournir un service fiable et disponible. Toutefois, il ne saurait être tenu responsable des interruptions de service, pertes de données ou dommages indirects liés à l'utilisation de la plateforme. Le service est fourni « en l'état », sans garantie d'aucune sorte."
+        },
+        "applicableLaw": {
+          "icon": "📜",
+          "title": "Droit applicable",
+          "description": "Juridiction et loi applicable",
+          "content": "Les présentes mentions légales sont régies par le droit français. En cas de litige, les tribunaux français seront seuls compétents."
+        }
+      },
+      "lastUpdated": "Dernière mise à jour : février 2026"
+    },
+    "pricing": {
+      "header": {
+        "label": "Retour",
+        "title": "Nos tarifs",
+        "subtitle": "Des prix pensés pour les petits commerçants, indépendants et particuliers"
+      },
+      "billing": {
+        "monthly": "Facturation mensuelle",
+        "yearly": "Facturation annuelle",
+        "yearlyDiscount": "Économisez 20%",
+        "perMonth": "/mois",
+        "free": "Gratuit"
+      },
+      "plans": {
+        "free": {
+          "name": "Gratuit",
+          "description": "Pour découvrir Workbench et gérer un projet simple",
+          "price": "0€",
+          "cta": "Commencer gratuitement",
+          "ctaAriaLabel": "Créer un compte gratuit"
+        },
+        "pro": {
+          "name": "Pro",
+          "description": "Pour les indépendants et petits commerçants qui veulent aller plus loin",
+          "price": "3,99€",
+          "cta": "Passer au Pro",
+          "ctaAriaLabel": "Souscrire à l'offre Pro",
+          "badge": "Populaire"
+        },
+        "team": {
+          "name": "Équipe",
+          "description": "Pour collaborer en équipe avec des fonctionnalités avancées",
+          "price": "6,99€",
+          "cta": "Choisir Équipe",
+          "ctaAriaLabel": "Souscrire à l'offre Équipe"
+        }
+      },
+      "comparison": {
+        "title": "Comparaison détaillée des offres"
+      },
+      "features": {
+        "workspaces": "Espaces de travail",
+        "membersPerWorkspace": "Membres par espace",
+        "tickets": "Tickets",
+        "boardView": "Vue Tableau",
+        "backlogView": "Vue Backlog",
+        "epics": "Epics",
+        "subtasks": "Sous-tâches",
+        "customColumns": "Colonnes personnalisées",
+        "priorities": "Priorités",
+        "exportImport": "Export / Import",
+        "advancedRoles": "Rôles avancés (observateur)",
+        "prioritySupport": "Support prioritaire"
+      },
+      "values": {
+        "one": "1",
+        "three": "3",
+        "five": "5",
+        "ten": "10",
+        "twentyFive": "25",
+        "fifty": "50",
+        "threeColumns": "3 colonnes",
+        "unlimited": "Illimité",
+        "included": "Inclus",
+        "notIncluded": "Non inclus"
+      },
+      "faq": {
+        "title": "Questions fréquentes",
+        "items": {
+          "cancel": {
+            "question": "Puis-je annuler à tout moment ?",
+            "answer": "Oui, vous pouvez annuler votre abonnement à tout moment. Vous conserverez l'accès jusqu'à la fin de la période en cours."
+          },
+          "upgrade": {
+            "question": "Puis-je changer de forfait ?",
+            "answer": "Vous pouvez passer à un forfait supérieur à tout moment. Le changement est effectif immédiatement et la différence est calculée au prorata."
+          },
+          "data": {
+            "question": "Que deviennent mes données si je repasse au gratuit ?",
+            "answer": "Vos données sont conservées. Si vous dépassez les limites du plan gratuit, vous pourrez consulter vos projets existants mais ne pourrez pas en créer de nouveaux."
+          },
+          "payment": {
+            "question": "Quels moyens de paiement acceptez-vous ?",
+            "answer": "Nous acceptons les cartes bancaires (Visa, Mastercard) et les prélèvements SEPA."
+          }
+        }
+      },
+      "guarantee": {
+        "title": "Satisfait ou remboursé",
+        "description": "Essayez Workbench Pro ou Équipe pendant 14 jours. Si vous n'êtes pas satisfait, nous vous remboursons intégralement."
+      }
     }
   },
   "forms": {},

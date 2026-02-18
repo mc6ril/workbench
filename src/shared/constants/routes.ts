@@ -14,6 +14,8 @@ export const PUBLIC_ROUTES: readonly string[] = Object.freeze([
   "/auth/verify-email",
   "/auth/reset-password",
   "/auth/update-password",
+  "/legal",
+  "/pricing",
 ]);
 
 /**
@@ -23,6 +25,8 @@ export const PUBLIC_ROUTES: readonly string[] = Object.freeze([
 export const PAGE_ROUTES = Object.freeze({
   WORKSPACE: "/workspace",
   ACCOUNT: "/account",
+  LEGAL: "/legal",
+  PRICING: "/pricing",
 });
 
 /**

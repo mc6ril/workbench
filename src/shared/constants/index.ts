@@ -22,3 +22,11 @@ export { APP_LIMITS, STORAGE_KEYS } from "./app";
 
 // Re-export types derived from app-level constants
 export type { PaginationLimits, PasswordLimits, StorageKey } from "./app.types";
+
+// Re-export legal page constants
+export type { LegalSection } from "./legal";
+export { GDPR_RIGHTS_KEYS, LEGAL_SECTIONS } from "./legal";
+
+// Re-export pricing page constants
+export type { FeatureRow, PlanKey } from "./pricing";
+export { FAQ_KEYS, FEATURE_ROWS, PLAN_KEYS } from "./pricing";
