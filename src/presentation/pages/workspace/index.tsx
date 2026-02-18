@@ -348,14 +348,14 @@ const WorkspacePage = () => {
             {t("footer.account")}
           </Link>
           <Link
-            href="#"
+            href={PAGE_ROUTES.LEGAL}
             className={styles["workspace-footer__link"]}
             ariaLabel={t("footer.legal")}
           >
             {t("footer.legal")}
           </Link>
           <Link
-            href="#"
+            href={PAGE_ROUTES.PRICING}
             className={styles["workspace-footer__link"]}
             ariaLabel={t("footer.subscriptions")}
           >

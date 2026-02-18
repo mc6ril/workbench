@@ -1,0 +1,520 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/gradients" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/breakpoints" as *;
+
+// ============================================================================
+// Page Layout
+// ============================================================================
+
+.pricing-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 0;
+  background: $color-workspace-page-gradient;
+  display: flex;
+  flex-direction: column;
+}
+
+// ============================================================================
+// Header
+// ============================================================================
+
+.pricing-header {
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    rgba($color-secondary, 0.95) 0%,
+    rgba($color-background, 0.9) 100%
+  );
+  backdrop-filter: blur($backdrop-blur-base);
+  padding: $spacing-3xl $spacing-2xl;
+  border-bottom: $border-width solid $color-accent-border-subtle;
+  box-shadow: $shadow-sm;
+  text-align: center;
+}
+
+.pricing-header__content {
+  max-width: $spacing-container-max-width-wide;
+  margin: 0 auto;
+}
+
+.pricing-welcome__title {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  margin-bottom: $spacing-2xs;
+}
+
+.pricing-welcome__subtitle {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  font-weight: $font-weight-normal;
+}
+
+// ============================================================================
+// Main Container
+// ============================================================================
+
+.pricing-container {
+  max-width: $spacing-container-max-width-wide;
+  margin: 0 auto;
+  padding: $spacing-3xl $spacing-2xl;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-5xl;
+}
+
+// ============================================================================
+// Pricing Grid
+// ============================================================================
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-2xl;
+  align-items: start;
+}
+
+// ============================================================================
+// Pricing Card
+// ============================================================================
+
+.pricing-card {
+  background: $color-secondary;
+  border-radius: $border-radius-lg;
+  border: $border-width solid $color-border;
+  box-shadow: $shadow-card;
+  padding: $spacing-3xl;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xl;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp $animation-duration-slower $easing-ease-out backwards;
+  transition: transform $animation-duration-slow $easing-smooth,
+    box-shadow $animation-duration-slow $easing-smooth;
+
+  &:nth-child(1) {
+    animation-delay: $animation-delay-short;
+  }
+
+  &:nth-child(2) {
+    animation-delay: $animation-delay-medium;
+  }
+
+  &:nth-child(3) {
+    animation-delay: $animation-delay-long;
+  }
+
+  &:hover {
+    transform: translateY(-$spacing-2xs);
+    box-shadow: $shadow-lg;
+  }
+}
+
+.pricing-card--popular {
+  border-color: $color-accent;
+  box-shadow: $shadow-lg;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: $accent-bar-width;
+    background: linear-gradient(
+      90deg,
+      $color-accent,
+      $color-accent-peach
+    );
+  }
+}
+
+.pricing-card__badge {
+  position: absolute;
+  top: $spacing-lg;
+  right: $spacing-lg;
+  padding: $spacing-2xs $spacing-lg;
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    $color-accent-bg-soft,
+    $color-accent-peach-bg-soft
+  );
+  color: $color-accent;
+  border-radius: $border-radius-full;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wide;
+  border: $border-width solid $color-accent-border-soft;
+}
+
+.pricing-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.pricing-card__name {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+}
+
+.pricing-card__description {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-relaxed;
+}
+
+.pricing-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-xs;
+}
+
+.pricing-card__amount {
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-bold;
+  color: $color-text;
+  line-height: 1;
+}
+
+.pricing-card__period {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+}
+
+// ============================================================================
+// Comparison Table
+// ============================================================================
+
+.comparison-section {
+  background: $color-secondary;
+  border-radius: $border-radius-lg;
+  border: $border-width solid $color-border;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+  animation: fadeInUp $animation-duration-slower $easing-ease-out backwards;
+  animation-delay: $animation-delay-long;
+}
+
+.comparison-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: $font-size-sm;
+}
+
+.comparison-table__feature-header {
+  text-align: left;
+  padding: $spacing-xl $spacing-2xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    rgba($color-surface-subtle, 0.5) 0%,
+    $color-secondary 100%
+  );
+  border-bottom: $border-width solid $color-border-subtle;
+}
+
+.comparison-table__plan-header {
+  text-align: center;
+  padding: $spacing-xl $spacing-2xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    rgba($color-surface-subtle, 0.5) 0%,
+    $color-secondary 100%
+  );
+  border-bottom: $border-width solid $color-border-subtle;
+}
+
+.comparison-table__plan-header--popular {
+  color: $color-accent;
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    rgba($color-accent-bg-soft, 0.3) 0%,
+    $color-secondary 100%
+  );
+}
+
+.comparison-table__feature-name {
+  padding: $spacing-lg $spacing-2xl;
+  color: $color-text;
+  font-weight: $font-weight-medium;
+  border-bottom: $border-width solid $color-border-subtle;
+}
+
+.comparison-table__value {
+  text-align: center;
+  padding: $spacing-lg $spacing-2xl;
+  color: $color-text-secondary;
+  border-bottom: $border-width solid $color-border-subtle;
+}
+
+.comparison-table__value--popular {
+  background: rgba($color-accent-bg-soft, 0.1);
+}
+
+.feature-check {
+  color: $color-success-text;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-lg;
+}
+
+.feature-dash {
+  color: $color-text-muted;
+  font-size: $font-size-lg;
+}
+
+// ============================================================================
+// Guarantee
+// ============================================================================
+
+.guarantee {
+  text-align: center;
+  padding: $spacing-3xl $spacing-2xl;
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    rgba($color-secondary, 0.6),
+    rgba($color-background, 0.4)
+  );
+  border-radius: $border-radius-xl;
+  border: $border-width-thick dashed $color-border;
+  backdrop-filter: blur($backdrop-blur-base);
+}
+
+.guarantee__icon {
+  font-size: $font-size-4xl;
+  margin-bottom: $spacing-lg;
+}
+
+.guarantee__title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  margin-bottom: $spacing-sm;
+}
+
+// ============================================================================
+// FAQ
+// ============================================================================
+
+.faq-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xl;
+}
+
+.faq-title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  justify-content: center;
+
+  &::before {
+    content: "";
+    width: $accent-bar-width;
+    height: $accent-bar-height;
+    background: linear-gradient(
+      $gradient-angle-vertical,
+      $color-accent,
+      $color-accent-peach
+    );
+    border-radius: $border-radius-2xs;
+  }
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.faq-item {
+  background: $color-secondary;
+  border-radius: $border-radius-lg;
+  border: $border-width solid $color-border;
+  overflow: hidden;
+  transition: box-shadow $animation-duration-base $easing-ease-out;
+
+  &:hover {
+    box-shadow: $shadow-card;
+  }
+}
+
+.faq-item--open {
+  box-shadow: $shadow-card;
+  border-color: $color-accent-border-subtle;
+}
+
+.faq-item__question {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-xl $spacing-2xl;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $color-text;
+  text-align: left;
+  transition: color $animation-duration-base $easing-ease-out;
+
+  &:hover {
+    color: $color-accent;
+  }
+
+  &:focus-visible {
+    outline: $border-width-thick solid $color-focus;
+    outline-offset: -$border-width-thick;
+    border-radius: $border-radius-lg;
+  }
+}
+
+.faq-item__chevron {
+  font-size: $font-size-xl;
+  color: $color-text-secondary;
+  flex-shrink: 0;
+  margin-left: $spacing-lg;
+}
+
+.faq-item__answer {
+  padding: 0 $spacing-2xl $spacing-xl;
+  color: $color-text-secondary;
+  animation: fadeIn $animation-duration-base $easing-ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY($spacing-xl);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// ============================================================================
+// Back Link
+// ============================================================================
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  text-decoration: none;
+  transition: color $animation-duration-base $easing-ease-out;
+  margin-bottom: $spacing-lg;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+
+  &:hover {
+    color: $color-primary;
+  }
+
+  &:focus-visible {
+    outline: $border-width-thick solid $color-focus;
+    outline-offset: $border-width-thick;
+    border-radius: $border-radius-sm;
+  }
+}
+
+// ============================================================================
+// Responsive
+// ============================================================================
+
+@media (max-width: $breakpoint-md) {
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pricing-header {
+    padding: $spacing-2xl $spacing-lg;
+    text-align: left;
+  }
+
+  .pricing-container {
+    padding: $spacing-2xl $spacing-lg;
+  }
+
+  .pricing-welcome__title {
+    font-size: $font-size-2xl;
+  }
+
+  .comparison-table__feature-header,
+  .comparison-table__plan-header,
+  .comparison-table__feature-name,
+  .comparison-table__value {
+    padding: $spacing-md $spacing-lg;
+    font-size: $font-size-xs;
+  }
+
+  .faq-item__question {
+    padding: $spacing-lg;
+  }
+
+  .faq-item__answer {
+    padding: 0 $spacing-lg $spacing-lg;
+  }
+}
+
+// ============================================================================
+// Accessibility & Reduced Motion
+// ============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .pricing-page,
+  .pricing-page * {
+    animation-duration: 0ms !important;
+    animation: none !important;
+    transition-duration: 0ms !important;
+  }
+
+  .pricing-card {
+    animation: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+  .comparison-section {
+    animation: none;
+  }
+}
