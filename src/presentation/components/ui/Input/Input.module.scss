@@ -89,13 +89,18 @@
   cursor: pointer;
   transition: color $transition-base;
 
-  &:hover {
+  &:hover:not(:disabled) {
     color: $color-text;
   }
 
   &:focus-visible {
     outline: none;
     box-shadow: $shadow-focus;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    color: $color-disabled-text;
   }
 }
 

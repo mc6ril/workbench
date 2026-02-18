@@ -112,8 +112,8 @@ const Input = forwardRef<HTMLInputElement, Props>(
               type="button"
               className={styles["input-password-toggle"]}
               onClick={togglePasswordVisibility}
+              disabled={disabled}
               aria-label={passwordVisible ? t("hide") : t("show")}
-              tabIndex={-1}
             >
               {passwordVisible ? <EyeOffIcon /> : <EyeIcon />}
             </button>
