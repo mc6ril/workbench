@@ -89,7 +89,7 @@
   overflow: hidden;
   animation: fadeInUp $animation-duration-slower $easing-ease-out backwards;
 
-  @for $i from 1 through 4 {
+  @for $i from 1 through 5 {
     &:nth-child(#{$i}) {
       animation-delay: calc(#{$i} * #{$animation-delay-medium});
     }
@@ -162,7 +162,11 @@
     content: "";
     width: $accent-bar-width;
     height: $accent-bar-height;
-    background: linear-gradient($gradient-angle-vertical, $color-accent, $color-accent-peach);
+    background: linear-gradient(
+      $gradient-angle-vertical,
+      $color-accent,
+      $color-accent-peach
+    );
     border-radius: $border-radius-2xs;
   }
 }
@@ -276,6 +280,158 @@
 }
 
 // ============================================================================
+// Subscription Section
+// ============================================================================
+
+.subscription-info {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.subscription-details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.subscription-plan {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.subscription-plan__label {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.plan-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-2xs $spacing-md;
+  border-radius: $border-radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-wide;
+}
+
+.plan-badge--free {
+  background-color: $color-surface-subtle;
+  color: $color-text-secondary;
+  border: $border-width solid $color-border;
+}
+
+.plan-badge--pro {
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    $color-accent,
+    $color-accent-peach
+  );
+  color: $color-background;
+}
+
+.plan-badge--team {
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    $color-primary,
+    $color-accent
+  );
+  color: $color-background;
+}
+
+.plan-badge--superuser {
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    $color-success,
+    $color-accent
+  );
+  color: $color-background;
+  font-size: $font-size-base;
+  padding: $spacing-xs $spacing-lg;
+}
+
+.subscription-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+
+  &::before {
+    content: "";
+    width: $spacing-xs;
+    height: $spacing-xs;
+    border-radius: $border-radius-full;
+  }
+}
+
+.status-indicator--active {
+  color: $color-success-text;
+
+  &::before {
+    background-color: $color-success;
+  }
+}
+
+.status-indicator--canceled {
+  color: $color-text-secondary;
+
+  &::before {
+    background-color: $color-text-secondary;
+  }
+}
+
+.status-indicator--past_due {
+  color: $color-error-text;
+
+  &::before {
+    background-color: $color-error;
+  }
+}
+
+.status-indicator--trialing {
+  color: $color-accent;
+
+  &::before {
+    background-color: $color-accent;
+  }
+}
+
+.subscription-period {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.subscription-warning {
+  font-size: $font-size-sm;
+  color: $color-warning-text;
+  padding: $spacing-sm $spacing-md;
+  background-color: $color-warning-background;
+  border-radius: $border-radius-md;
+  border: $border-width solid $color-warning;
+}
+
+.subscription-description {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  margin-top: $spacing-sm;
+}
+
+.subscription-actions {
+  display: flex;
+  gap: $spacing-md;
+  padding-top: $spacing-lg;
+  border-top: $border-width solid $color-border-subtle;
+}
+
+// ============================================================================
 // Back Link
 // ============================================================================
 
@@ -346,6 +502,10 @@
     flex-direction: column;
     align-items: flex-start;
     gap: $spacing-lg;
+  }
+
+  .subscription-actions {
+    flex-direction: column;
   }
 }
 

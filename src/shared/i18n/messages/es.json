@@ -698,6 +698,33 @@
           "es": "Español"
         }
       },
+      "subscription": {
+        "title": "Mi suscripción",
+        "description": "Gestiona tu plan y facturación",
+        "icon": "💳",
+        "currentPlan": "Plan actual",
+        "planLabels": {
+          "free": "Gratuito",
+          "pro": "Pro",
+          "team": "Equipo"
+        },
+        "statusLabels": {
+          "active": "Activo",
+          "canceled": "Cancelado",
+          "past_due": "Pago pendiente",
+          "trialing": "Periodo de prueba"
+        },
+        "periodEnd": "Renovación el {date}",
+        "cancelAtPeriodEnd": "Tu suscripción se cancelará al final del periodo actual",
+        "manageButton": "Gestionar mi suscripción",
+        "manageButtonAriaLabel": "Abrir el portal de gestión de suscripción de Stripe",
+        "changePlanButton": "Cambiar de plan",
+        "changePlanButtonAriaLabel": "Ver otros planes disponibles",
+        "superuser": {
+          "badge": "Super Usuario",
+          "description": "Acceso completo a todas las funcionalidades"
+        }
+      },
       "dangerZone": {
         "title": "Zona de peligro",
         "description": "Acciones irreversibles",
@@ -742,6 +769,166 @@
       "epicsDescription": "Crear epics, asignar tickets y seguir el progreso",
       "subtasksLabel": "Subtareas",
       "subtasksDescription": "Desglosar tickets en subtareas manejables"
+    },
+    "legal": {
+      "header": {
+        "label": "Volver",
+        "title": "Aviso legal",
+        "subtitle": "Información requerida por la legislación vigente"
+      },
+      "sections": {
+        "editor": {
+          "icon": "🏢",
+          "title": "Editor del sitio",
+          "description": "Información sobre el editor de la plataforma",
+          "appName": "Workbench",
+          "appDescription": "Workbench es una aplicación de gestión de proyectos editada a título personal.",
+          "contact": "Contacto: contact@workbench.app",
+          "hosting": "Alojamiento: Vercel Inc. — 340 S Lemon Ave #4133, Walnut, CA 91789, Estados Unidos"
+        },
+        "intellectualProperty": {
+          "icon": "©️",
+          "title": "Propiedad intelectual",
+          "description": "Derechos de autor y propiedad del contenido",
+          "content": "Todo el contenido de Workbench (textos, interfaces, código fuente, logotipos, elementos gráficos) está protegido por derechos de autor. Queda prohibida cualquier reproducción, representación o difusión, total o parcial, sin autorización previa."
+        },
+        "dataProtection": {
+          "icon": "🔒",
+          "title": "Protección de datos personales",
+          "description": "Cumplimiento del RGPD y gestión de tus datos",
+          "intro": "De conformidad con el Reglamento General de Protección de Datos (RGPD), dispones de los siguientes derechos:",
+          "rights": {
+            "access": "Derecho de acceso a tus datos personales",
+            "rectification": "Derecho de rectificación de datos inexactos",
+            "deletion": "Derecho de supresión de tus datos",
+            "portability": "Derecho a la portabilidad de tus datos"
+          },
+          "collectedData": "Datos recogidos: dirección de email, nombre para mostrar, preferencias de usuario.",
+          "purpose": "Finalidad: autenticación, personalización de la experiencia y funcionamiento del servicio.",
+          "retention": "Plazo de conservación: tus datos se conservan mientras tu cuenta esté activa. Se eliminan a petición.",
+          "exerciseRights": "Para ejercer tus derechos, contáctanos en: contact@workbench.app"
+        },
+        "cookies": {
+          "icon": "🍪",
+          "title": "Cookies",
+          "description": "Uso de cookies en la plataforma",
+          "content": "Workbench utiliza únicamente cookies estrictamente necesarias para el funcionamiento del servicio (autenticación, sesión de usuario). No se utilizan cookies publicitarias ni de seguimiento. Estas cookies son esenciales y no requieren consentimiento previo."
+        },
+        "liability": {
+          "icon": "⚖️",
+          "title": "Responsabilidad",
+          "description": "Limitaciones de responsabilidad del editor",
+          "content": "El editor se esfuerza por ofrecer un servicio fiable y disponible. Sin embargo, no puede ser considerado responsable de interrupciones del servicio, pérdidas de datos o daños indirectos derivados del uso de la plataforma. El servicio se ofrece «tal cual», sin garantía de ningún tipo."
+        },
+        "applicableLaw": {
+          "icon": "📜",
+          "title": "Legislación aplicable",
+          "description": "Jurisdicción y ley aplicable",
+          "content": "El presente aviso legal se rige por la legislación francesa. En caso de litigio, los tribunales franceses serán los únicos competentes."
+        }
+      },
+      "lastUpdated": "Última actualización: febrero de 2026"
+    },
+    "pricing": {
+      "header": {
+        "label": "Volver",
+        "title": "Nuestros precios",
+        "subtitle": "Precios pensados para pequeños comerciantes, autónomos y particulares"
+      },
+      "billing": {
+        "monthly": "Facturación mensual",
+        "yearly": "Facturación anual",
+        "yearlyDiscount": "Ahorra un 20%",
+        "perMonth": "/mes",
+        "free": "Gratuito"
+      },
+      "plans": {
+        "free": {
+          "name": "Gratuito",
+          "description": "Para descubrir Workbench y gestionar un proyecto sencillo",
+          "price": "0€",
+          "cta": "Empezar gratis",
+          "ctaAriaLabel": "Crear una cuenta gratuita"
+        },
+        "pro": {
+          "name": "Pro",
+          "description": "Para autónomos y pequeños comerciantes que quieren ir más lejos",
+          "price": "3,99€",
+          "cta": "Pasar a Pro",
+          "ctaAriaLabel": "Suscribirse al plan Pro",
+          "badge": "Popular"
+        },
+        "team": {
+          "name": "Equipo",
+          "description": "Para colaborar en equipo con funcionalidades avanzadas",
+          "price": "6,99€",
+          "cta": "Elegir Equipo",
+          "ctaAriaLabel": "Suscribirse al plan Equipo"
+        }
+      },
+      "comparison": {
+        "title": "Comparación detallada de los planes"
+      },
+      "features": {
+        "workspaces": "Espacios de trabajo",
+        "membersPerWorkspace": "Miembros por espacio",
+        "tickets": "Tickets",
+        "boardView": "Vista Tablero",
+        "backlogView": "Vista Backlog",
+        "epics": "Epics",
+        "subtasks": "Subtareas",
+        "customColumns": "Columnas personalizadas",
+        "priorities": "Prioridades",
+        "exportImport": "Exportar / Importar",
+        "advancedRoles": "Roles avanzados (observador)",
+        "prioritySupport": "Soporte prioritario"
+      },
+      "values": {
+        "one": "1",
+        "three": "3",
+        "five": "5",
+        "ten": "10",
+        "twentyFive": "25",
+        "fifty": "50",
+        "threeColumns": "3 columnas",
+        "unlimited": "Ilimitado",
+        "included": "Incluido",
+        "notIncluded": "No incluido"
+      },
+      "faq": {
+        "title": "Preguntas frecuentes",
+        "items": {
+          "cancel": {
+            "question": "¿Puedo cancelar en cualquier momento?",
+            "answer": "Sí, puedes cancelar tu suscripción en cualquier momento. Mantendrás el acceso hasta el final del periodo actual."
+          },
+          "upgrade": {
+            "question": "¿Puedo cambiar de plan?",
+            "answer": "Puedes pasar a un plan superior en cualquier momento. El cambio se aplica de inmediato y la diferencia se calcula de forma proporcional."
+          },
+          "data": {
+            "question": "¿Qué pasa con mis datos si vuelvo al plan gratuito?",
+            "answer": "Tus datos se conservan. Si superas los límites del plan gratuito, podrás consultar tus proyectos existentes pero no podrás crear nuevos."
+          },
+          "payment": {
+            "question": "¿Qué métodos de pago aceptan?",
+            "answer": "Aceptamos tarjetas bancarias (Visa, Mastercard) y adeudos directos SEPA."
+          }
+        }
+      },
+      "guarantee": {
+        "title": "Garantía de satisfacción",
+        "description": "Prueba Workbench Pro o Equipo durante 14 días. Si no estás satisfecho, te devolvemos el importe íntegro."
+      },
+      "cta": {
+        "currentPlan": "Plan actual",
+        "upgrade": "Pasar a {plan}",
+        "downgrade": "Cambiar a {plan}",
+        "downgradeFree": "Cambiar a Gratuito",
+        "signUpFirst": "Crear una cuenta",
+        "superuserFullAccess": "Acceso completo",
+        "manageBilling": "Gestionar facturación"
+      }
     }
   },
   "forms": {},
@@ -776,6 +963,12 @@
       "DUPLICATE_COLUMN_STATUS": "Estado de columna duplicado",
       "INVALID_BOARD_COLUMN_RELATIONSHIP": "La columna no pertenece al tablero especificado",
       "MIXED_BOARD_COLUMNS": "Columnas de varios tableros mezcladas"
+    },
+    "stripe": {
+      "checkoutFailed": "No se pudo iniciar el proceso de pago. Inténtalo de nuevo.",
+      "portalFailed": "No se pudo acceder a la gestión de la suscripción. Inténtalo de nuevo.",
+      "checkoutSuccess": "¡Pago exitoso! Tu suscripción está activa.",
+      "notAuthenticated": "Debes iniciar sesión para realizar esta acción."
     }
   }
 }

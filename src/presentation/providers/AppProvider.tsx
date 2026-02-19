@@ -3,6 +3,7 @@
 import type { PropsWithChildren } from "react";
 import { ThemeProvider } from "next-themes";
 
+import { Toast } from "@/presentation/components/ui";
 import { useLocaleSync } from "@/presentation/hooks/useLocaleSync";
 import { useThemeSync } from "@/presentation/hooks/useThemeSync";
 import ReactQueryProvider from "@/presentation/providers/ReactQueryProvider";
@@ -36,7 +37,10 @@ const AppProvider = ({ children }: Props) => {
     <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
       <ReactQueryProvider>
         <LocaleSyncProvider>
-          <ThemeSyncProvider>{children}</ThemeSyncProvider>
+          <ThemeSyncProvider>
+            {children}
+            <Toast />
+          </ThemeSyncProvider>
         </LocaleSyncProvider>
       </ReactQueryProvider>
     </ThemeProvider>

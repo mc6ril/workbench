@@ -22,6 +22,7 @@ export const mockAuthSession: AuthSession = {
   displayName: "Test User",
   preferences: { ...DEFAULT_USER_PREFERENCES },
   accessToken: "mock-access-token",
+  isSuperuser: false,
 };
 
 /**

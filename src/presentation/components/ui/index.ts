@@ -18,5 +18,6 @@ export { default as Stack } from "./Stack";
 export { default as Text } from "./Text";
 export { default as Textarea } from "./Textarea";
 export { default as Title } from "./Title";
+export { default as Toast } from "./Toast";
 export { default as Toggle } from "./Toggle";
 export { default as Tooltip } from "./Tooltip";

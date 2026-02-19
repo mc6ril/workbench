@@ -100,6 +100,16 @@ export const extractPreferences = (
 };
 
 /**
+ * Extracts the super user flag from Supabase app_metadata.
+ * app_metadata is server-controlled and cannot be modified by the user.
+ */
+const extractSuperuserFlag = (
+  appMetadata: Record<string, unknown> | undefined
+): boolean => {
+  return appMetadata?.is_superuser === true;
+};
+
+/**
  * Maps Supabase Session to domain AuthSession.
  *
  * @param session - Supabase session
@@ -116,6 +126,7 @@ export const mapSupabaseSessionToDomain = (
     displayName: extractDisplayName(session.user.user_metadata),
     preferences: extractPreferences(session.user.user_metadata),
     accessToken: session.access_token,
+    isSuperuser: extractSuperuserFlag(session.user.app_metadata),
   };
 };
 

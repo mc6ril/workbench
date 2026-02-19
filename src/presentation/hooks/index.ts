@@ -19,6 +19,9 @@ export * from "./epic";
 // Board hooks
 export * from "./board";
 
+// Subscription hooks
+export * from "./subscription";
+
 // Generic hooks
 export { useTranslation } from "./useTranslation";
 

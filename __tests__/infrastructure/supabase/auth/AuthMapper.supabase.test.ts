@@ -31,6 +31,7 @@ describe("AuthMapper.supabase", () => {
         displayName: null,
         preferences: DEFAULT_USER_PREFERENCES,
         accessToken: "test-access-token",
+        isSuperuser: false,
       });
     });
 

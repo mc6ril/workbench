@@ -143,6 +143,7 @@ export type UpdatePreferencesInput = Partial<UserPreferences>;
  * Represents an authenticated user session.
  * displayName comes from Supabase user_metadata.display_name.
  * preferences comes from Supabase user_metadata.preferences.
+ * isSuperuser comes from Supabase app_metadata.is_superuser (server-controlled, not user-editable).
  */
 export type AuthSession = {
   userId: string;
@@ -150,6 +151,7 @@ export type AuthSession = {
   displayName: string | null;
   preferences: UserPreferences;
   accessToken: string;
+  isSuperuser: boolean;
 };
 
 /**

@@ -6,11 +6,7 @@ import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthReposit
 import { createSupabaseAdminClient } from "@/infrastructure/supabase/shared/client-admin";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
-const API_MESSAGES = {
-  USER_DELETED: "User deleted successfully",
-  DELETE_FAILED: "Failed to delete user",
-  UNKNOWN_ERROR: "Unknown error",
-} as const;
+import { API_MESSAGES_AUTH, API_MESSAGES_COMMON } from "@/shared/constants";
 
 /**
  * DELETE /api/auth/delete-user
@@ -35,15 +31,17 @@ export const DELETE = async (_request: NextRequest): Promise<NextResponse> => {
     await deleteUser(authRepository);
 
     return NextResponse.json(
-      { success: true, message: API_MESSAGES.USER_DELETED },
+      { success: true, message: API_MESSAGES_AUTH.USER_DELETED },
       { status: 200 }
     );
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : API_MESSAGES.UNKNOWN_ERROR;
+      error instanceof Error
+        ? error.message
+        : API_MESSAGES_COMMON.UNKNOWN_ERROR;
 
     return NextResponse.json(
-      { error: API_MESSAGES.DELETE_FAILED, details: errorMessage },
+      { error: API_MESSAGES_AUTH.DELETE_FAILED, details: errorMessage },
       { status: 500 }
     );
   }
