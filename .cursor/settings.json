@@ -10,5 +10,10 @@
     ".cursor/rules/ui/component-structure.mdc",
     ".cursor/rules/workflow/generated-files.mdc",
     ".cursor/rules/workflow/docs-workflow.mdc"
-  ]
+  ],
+  "plugins": {
+    "supabase": {
+      "enabled": true
+    }
+  }
 }
