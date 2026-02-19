@@ -864,7 +864,8 @@
           "price": "€6.99",
           "cta": "Choose Team",
           "ctaAriaLabel": "Subscribe to the Team plan"
-        }
+        },
+        "currentBadge": "Active"
       },
       "comparison": {
         "title": "Detailed plan comparison"

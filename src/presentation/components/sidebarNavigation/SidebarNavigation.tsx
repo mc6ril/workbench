@@ -37,7 +37,6 @@ type SidebarItem = {
   exactOnly: boolean;
 };
 
-
 const SidebarNavigation = ({ projectId }: Props) => {
   const pathname = usePathname();
   const t = useTranslation("navigation.sidebar");
@@ -185,7 +184,7 @@ const SidebarNavigation = ({ projectId }: Props) => {
               {t("profile.backToWorkspace")}
             </Link>
             <Link
-              href={PAGE_ROUTES.ACCOUNT}
+              href={`${PAGE_ROUTES.ACCOUNT}?from=${encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE)}`}
               role="menuitem"
               className={styles["sidebar-navigation__profile-menu-item"]}
               onClick={closeProfileMenu}

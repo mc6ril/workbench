@@ -864,7 +864,8 @@
           "price": "6,99€",
           "cta": "Elegir Equipo",
           "ctaAriaLabel": "Suscribirse al plan Equipo"
-        }
+        },
+        "currentBadge": "Activo"
       },
       "comparison": {
         "title": "Comparación detallada de los planes"

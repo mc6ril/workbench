@@ -136,6 +136,21 @@
   }
 }
 
+.pricing-card--current {
+  border-color: $color-sage-border;
+  box-shadow: 0 0 0 1px $color-sage-border, $shadow-card;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: $accent-bar-width;
+    background: linear-gradient(90deg, $color-sage, $color-sage-border);
+  }
+}
+
 .pricing-card__badge {
   position: absolute;
   top: $spacing-lg;
@@ -153,6 +168,16 @@
   text-transform: uppercase;
   letter-spacing: $letter-spacing-wide;
   border: $border-width solid $color-accent-border-soft;
+}
+
+.pricing-card__badge--current {
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    $color-sage-bg-soft,
+    $color-sage-bg-soft-end
+  );
+  color: $color-sage-text;
+  border-color: $color-sage-border;
 }
 
 .pricing-card__header {

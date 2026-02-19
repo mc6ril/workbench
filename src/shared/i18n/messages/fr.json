@@ -864,7 +864,8 @@
           "price": "6,99€",
           "cta": "Choisir Équipe",
           "ctaAriaLabel": "Souscrire à l'offre Équipe"
-        }
+        },
+        "currentBadge": "Actif"
       },
       "comparison": {
         "title": "Comparaison détaillée des offres"

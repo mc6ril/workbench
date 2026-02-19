@@ -258,16 +258,25 @@ const PricingPage = () => {
         >
           {PLAN_KEYS.map((plan) => {
             const isPopular = plan === "pro";
+            const currentPlan = subscription?.plan ?? SubscriptionPlan.FREE;
+            const isCurrent = !!session && plan === currentPlan;
 
             return (
               <div
                 key={plan}
-                className={`${styles["pricing-card"]} ${isPopular ? styles["pricing-card--popular"] : ""}`}
+                className={`${styles["pricing-card"]} ${isPopular ? styles["pricing-card--popular"] : ""} ${isCurrent ? styles["pricing-card--current"] : ""}`}
                 role="listitem"
               >
-                {isPopular && (
+                {isPopular && !isCurrent && (
                   <div className={styles["pricing-card__badge"]}>
                     {t(`plans.${plan}.badge`)}
+                  </div>
+                )}
+                {isCurrent && (
+                  <div
+                    className={`${styles["pricing-card__badge"]} ${styles["pricing-card__badge--current"]}`}
+                  >
+                    {t("plans.currentBadge")}
                   </div>
                 )}
 

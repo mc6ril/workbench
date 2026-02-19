@@ -161,9 +161,17 @@ const AccountPage = () => {
     [changePasswordMutation, resetPasswordForm]
   );
 
+  const goBackHref = useMemo(() => {
+    const from = searchParams.get("from");
+    if (from && from.startsWith("/")) {
+      return from;
+    }
+    return PAGE_ROUTES.WORKSPACE;
+  }, [searchParams]);
+
   const handleGoBack = useCallback(() => {
-    router.back();
-  }, [router]);
+    router.push(goBackHref);
+  }, [router, goBackHref]);
 
   const openDeleteModal = useCallback(() => {
     setDeleteModalOpen(true);

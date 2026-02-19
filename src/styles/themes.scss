@@ -62,6 +62,13 @@
   // Tooltip / overlay
   --color-tooltip-background: rgba(255, 255, 255, 0.95);
 
+  // Sage (soft green for "active" indicators)
+  --color-sage: #7fb89a;
+  --color-sage-text: #5a9376;
+  --color-sage-bg-soft: rgba(127, 184, 154, 0.15);
+  --color-sage-bg-soft-end: rgba(163, 212, 187, 0.12);
+  --color-sage-border: rgba(127, 184, 154, 0.25);
+
   // Semantic — Success
   --color-success: #2d8a5e;
   --color-success-background: #dcfce7;
@@ -171,6 +178,13 @@
 
   // Tooltip / overlay — Translucent linen veil
   --color-tooltip-background: rgba(61, 46, 50, 0.95);
+
+  // Sage (soft green for "active" indicators)
+  --color-sage: #a3d4bb;
+  --color-sage-text: #a3d4bb;
+  --color-sage-bg-soft: rgba(127, 184, 154, 0.18);
+  --color-sage-bg-soft-end: rgba(163, 212, 187, 0.14);
+  --color-sage-border: rgba(163, 212, 187, 0.3);
 
   // Semantic — Success — Soft sage green
   --color-success: #7fb89a;
