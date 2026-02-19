@@ -45,6 +45,7 @@ import { useToastStore } from "@/presentation/stores/useToastStore";
 import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import {
+  getIntlLocale,
   supportedLocaleOptions,
   supportedLocales,
   useTranslation,
@@ -590,7 +591,7 @@ const AccountPage = () => {
                           "{date}",
                           new Date(
                             subscription.currentPeriodEnd
-                          ).toLocaleDateString("fr-FR")
+                          ).toLocaleDateString(getIntlLocale())
                         )}
                       </p>
                     )}
