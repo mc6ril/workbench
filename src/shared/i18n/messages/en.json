@@ -763,19 +763,69 @@
       }
     },
     "landing": {
-      "title": "Workbench",
-      "subtitle": "A lightweight, personal task and project management tool",
-      "purposeTitle": "Purpose",
-      "purposeText": "Workbench is designed to help you manage your work clearly, progressively, and without cognitive overload. It offers a clean backlog, a visual board, and structured planning via Epics.",
-      "featuresTitle": "Key features",
-      "backlogLabel": "Backlog",
-      "backlogDescription": "Create, edit, delete, view, filter, and sort tickets",
-      "boardLabel": "Board",
-      "boardDescription": "Visual board with custom columns, drag-and-drop, and workflow management",
-      "epicsLabel": "Epics",
-      "epicsDescription": "Create epics, assign tickets, and track progress",
-      "subtasksLabel": "Subtasks",
-      "subtasksDescription": "Break down tickets into manageable subtasks"
+      "hero": {
+        "title": "Workbench",
+        "subtitle": "Manage your projects with clarity. A simple, visual, and structured tool to stay focused on what matters.",
+        "ctaSignUp": "Create your free account",
+        "ctaSignIn": "Sign in"
+      },
+      "values": {
+        "title": "Why Workbench?",
+        "simplicity": {
+          "icon": "✨",
+          "title": "Simple by nature",
+          "description": "No complex setup, no overload. Create a project and start working in seconds."
+        },
+        "clarity": {
+          "icon": "🎯",
+          "title": "Clarity at every step",
+          "description": "A clean backlog, a visual board, and structured epics. Each view gives you exactly what you need."
+        },
+        "control": {
+          "icon": "🛠️",
+          "title": "Total control",
+          "description": "Customize your columns, filter, sort, and organize your work however you like. Your space, your rules."
+        }
+      },
+      "features": {
+        "title": "Everything you need, nothing you don't",
+        "backlog": {
+          "icon": "📋",
+          "title": "Backlog",
+          "description": "Create, filter, and prioritize your tickets. A clear view of everything left to do."
+        },
+        "board": {
+          "icon": "📊",
+          "title": "Visual board",
+          "description": "Drag and drop tickets between custom columns. Visualize your workflow at a glance."
+        },
+        "epics": {
+          "icon": "🗂️",
+          "title": "Epics",
+          "description": "Group your tickets by theme. Track the progress of each initiative with precision."
+        },
+        "subtasks": {
+          "icon": "✅",
+          "title": "Subtasks",
+          "description": "Break complex tickets into simple steps. Move forward step by step, without losing track."
+        }
+      },
+      "trust": {
+        "title": "Built for creators and teams",
+        "description": "Workbench is designed for those who want to move forward without friction. A tool that stays out of your way and lets you focus.",
+        "freeForever": "Free plan, forever",
+        "noCreditCard": "No credit card required",
+        "noComplexity": "Zero complex setup"
+      },
+      "cta": {
+        "title": "Ready to get organized?",
+        "description": "Join Workbench and start managing your projects with peace of mind.",
+        "button": "Get started for free"
+      },
+      "footer": {
+        "legal": "Legal notice",
+        "pricing": "Pricing"
+      }
     },
     "legal": {
       "header": {
