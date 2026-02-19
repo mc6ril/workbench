@@ -69,7 +69,7 @@ const SidebarNavigation = ({ projectId }: Props) => {
   const items: SidebarItem[] = useMemo(() => {
     const configs = getProjectViewConfigsForSidebar();
     return configs.map((config) => {
-      const { locked, planBadge } = computeViewLockedState(
+      const { locked, minimumPlan } = computeViewLockedState(
         config,
         effectivePlan
       );
@@ -79,7 +79,9 @@ const SidebarNavigation = ({ projectId }: Props) => {
         label: t(`items.${config.sidebarLabelKey}`),
         exactOnly: config.key === "home",
         locked,
-        planBadge,
+        planBadge: minimumPlan
+          ? t(`locked.badge.${minimumPlan}`)
+          : undefined,
       };
     });
   }, [projectId, t, effectivePlan]);

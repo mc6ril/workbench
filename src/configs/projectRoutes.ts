@@ -133,12 +133,13 @@ export function getProjectViewConfigsForSidebar(): ProjectViewConfig[] {
 
 export type ViewLockedState = {
   locked: boolean;
-  planBadge?: string;
+  /** Raw SubscriptionPlan enum value (e.g. "pro"). Must be translated by the caller. */
+  minimumPlan?: SubscriptionPlan;
 };
 
 /**
  * Computes whether a view is locked for the given effective plan.
- * Returns the locked flag and the human-readable badge of the minimum plan required.
+ * Returns the locked flag and the raw minimum plan key for the caller to translate.
  */
 export function computeViewLockedState(
   config: ProjectViewConfig,
@@ -150,9 +151,8 @@ export function computeViewLockedState(
   if (canAccessFeature(effectivePlan, config.requiredFeature)) {
     return { locked: false };
   }
-  const minPlan = getMinimumPlanForFeature(config.requiredFeature);
   return {
     locked: true,
-    planBadge: minPlan.charAt(0).toUpperCase() + minPlan.slice(1),
+    minimumPlan: getMinimumPlanForFeature(config.requiredFeature),
   };
 }
