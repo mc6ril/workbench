@@ -23,6 +23,10 @@ type Props = {
   ariaLabel?: string;
   /** Additional CSS class name */
   className?: string;
+  /** When true the item is rendered as non-navigable with a dimmed style */
+  locked?: boolean;
+  /** Short label shown next to the item when locked (e.g. "Pro") */
+  planBadge?: string;
 };
 
 /**
@@ -53,6 +57,8 @@ const NavigationItem = ({
   onClick,
   ariaLabel,
   className,
+  locked = false,
+  planBadge,
 }: Props) => {
   const navItemId = getAccessibilityId(`nav-item-${href}`);
   const t = useTranslation("common");
@@ -64,10 +70,52 @@ const NavigationItem = ({
   const navItemClasses = [
     styles["navigation-item"],
     active && styles["navigation-item--active"],
+    locked && styles["navigation-item--locked"],
     className,
   ]
     .filter(Boolean)
     .join(" ");
+
+  if (locked) {
+    return (
+      <li id={navItemId} className={navItemClasses} role="none">
+        <span
+          className={styles["navigation-item__link"]}
+          aria-disabled="true"
+          aria-label={displayAriaLabel}
+          role="link"
+          onClick={onClick}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onClick?.();
+            }
+          }}
+          tabIndex={0}
+        >
+          {icon && (
+            <span
+              className={styles["navigation-item__icon"]}
+              aria-hidden="true"
+            >
+              {icon}
+            </span>
+          )}
+          <span className={styles["navigation-item__label"]}>
+            {displayLabel}
+          </span>
+          {planBadge && (
+            <span
+              className={styles["navigation-item__plan-badge"]}
+              aria-hidden="true"
+            >
+              {planBadge}
+            </span>
+          )}
+        </span>
+      </li>
+    );
+  }
 
   const linkProps = active
     ? {

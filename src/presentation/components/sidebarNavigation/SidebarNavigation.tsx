@@ -8,11 +8,14 @@ import React, {
   useState,
 } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+
+import { getEffectivePlan } from "@/core/domain/schema/planFeatures.schema";
+import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
 import { PlusIcon, UserProfileIcon } from "@/presentation/components/icons";
 import NavigationItem from "@/presentation/components/ui/NavigationItem";
-import { useSession, useSignOut } from "@/presentation/hooks";
+import { useSession, useSignOut, useSubscription } from "@/presentation/hooks";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
@@ -23,6 +26,7 @@ import styles from "./SidebarNavigation.module.scss";
 
 import {
   buildProjectViewHref,
+  computeViewLockedState,
   getProjectViewConfigsForSidebar,
 } from "@/configs/projectRoutes";
 
@@ -35,13 +39,17 @@ type SidebarItem = {
   href: string;
   label: string;
   exactOnly: boolean;
+  locked: boolean;
+  planBadge?: string;
 };
 
 const SidebarNavigation = ({ projectId }: Props) => {
   const pathname = usePathname();
+  const router = useRouter();
   const t = useTranslation("navigation.sidebar");
   const signOutMutation = useSignOut();
   const { data: session } = useSession();
+  const { data: subscription } = useSubscription();
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileTriggerRef = useRef<HTMLButtonElement>(null);
@@ -51,15 +59,37 @@ const SidebarNavigation = ({ projectId }: Props) => {
   const profileMenuId = getAccessibilityId("sidebar-profile-menu");
   const profileTriggerId = getAccessibilityId("sidebar-profile-trigger");
 
+  const effectivePlan = useMemo((): SubscriptionPlan => {
+    if (!subscription) {
+      return SubscriptionPlan.FREE;
+    }
+    return getEffectivePlan(subscription);
+  }, [subscription]);
+
   const items: SidebarItem[] = useMemo(() => {
     const configs = getProjectViewConfigsForSidebar();
-    return configs.map((config) => ({
-      key: config.key,
-      href: buildProjectViewHref(projectId, config.key),
-      label: t(`items.${config.sidebarLabelKey}`),
-      exactOnly: config.key === "home",
-    }));
-  }, [projectId, t]);
+    return configs.map((config) => {
+      const { locked, minimumPlan } = computeViewLockedState(
+        config,
+        effectivePlan
+      );
+      return {
+        key: config.key,
+        href: buildProjectViewHref(projectId, config.key),
+        label: t(`items.${config.sidebarLabelKey}`),
+        exactOnly: config.key === "home",
+        locked,
+        planBadge: minimumPlan
+          ? t(`locked.badge.${minimumPlan}`)
+          : undefined,
+      };
+    });
+  }, [projectId, t, effectivePlan]);
+
+  const handleLockedClick = useCallback(() => {
+    const from = encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE);
+    router.push(`${PAGE_ROUTES.PRICING}?from=${from}`);
+  }, [router, pathname]);
 
   const displayName =
     session?.displayName ?? session?.email ?? t("profile.userFallbackName");
@@ -117,9 +147,22 @@ const SidebarNavigation = ({ projectId }: Props) => {
               key={item.key}
               href={item.href}
               label={item.label}
-              active={isActiveHref(pathname, item.href, {
-                exactOnly: item.exactOnly,
-              })}
+              active={
+                !item.locked &&
+                isActiveHref(pathname, item.href, {
+                  exactOnly: item.exactOnly,
+                })
+              }
+              locked={item.locked}
+              planBadge={item.planBadge}
+              onClick={item.locked ? handleLockedClick : undefined}
+              ariaLabel={
+                item.locked
+                  ? t("locked.ariaLabel")
+                      .replace("{feature}", item.label)
+                      .replace("{plan}", item.planBadge ?? "")
+                  : undefined
+              }
             />
           ))}
         </ul>

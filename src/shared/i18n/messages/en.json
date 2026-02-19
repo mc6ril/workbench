@@ -40,6 +40,13 @@
         "epics": "Epics",
         "settings": "Settings"
       },
+      "locked": {
+        "ariaLabel": "{feature} — requires {plan} plan",
+        "badge": {
+          "pro": "Pro",
+          "team": "Team"
+        }
+      },
       "profile": {
         "ariaLabel": "Open profile menu",
         "backToWorkspace": "Back to workspace",
@@ -929,6 +936,28 @@
         "signUpFirst": "Create an account",
         "superuserFullAccess": "Full access",
         "manageBilling": "Manage billing"
+      }
+    },
+    "upgrade": {
+      "title": "Feature requires {plan} plan",
+      "description": "This feature is not available on your current plan. Upgrade to {plan} to unlock it.",
+      "ctaLabel": "View plans",
+      "ctaAriaLabel": "View plans and upgrade your subscription",
+      "featureNames": {
+        "epics": "Epics",
+        "subtasks": "Subtasks",
+        "priorities": "Priorities",
+        "exportImport": "Export / Import",
+        "advancedRoles": "Advanced roles",
+        "workspaces": "Workspaces",
+        "membersPerWorkspace": "Members per workspace",
+        "tickets": "Tickets",
+        "customColumns": "Custom columns"
+      },
+      "planBadges": {
+        "free": "Free",
+        "pro": "Pro",
+        "team": "Team"
       }
     }
   },

@@ -53,3 +53,31 @@
   font-size: $font-size-base;
   line-height: $line-height-normal;
 }
+
+.navigation-item--locked .navigation-item__link {
+  opacity: 0.65;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $color-primary-hover;
+    color: $color-primary-text;
+  }
+
+  &:focus {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.navigation-item__plan-badge {
+  margin-left: auto;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $color-accent;
+  background: $color-accent-bg-soft;
+  padding: $spacing-2xs $spacing-sm;
+  border-radius: $border-radius-full;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
