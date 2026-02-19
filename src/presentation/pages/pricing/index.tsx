@@ -3,9 +3,17 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import {
+  PLAN_RANK,
+  SubscriptionPlan,
+} from "@/core/domain/schema/subscription.schema";
+
 import { Button, Text } from "@/presentation/components/ui";
+import { useSession, useSubscription } from "@/presentation/hooks";
+import { useToastStore } from "@/presentation/stores/useToastStore";
 
 import { getAccessibilityId } from "@/shared/a11y";
+import type { PlanKey } from "@/shared/constants";
 import { FAQ_KEYS, FEATURE_ROWS, PLAN_KEYS } from "@/shared/constants";
 import { useTranslation } from "@/shared/i18n";
 
@@ -13,8 +21,14 @@ import styles from "./styles.module.scss";
 
 const PricingPage = () => {
   const router = useRouter();
+  const { data: session } = useSession();
+  const { data: subscription } = useSubscription();
   const t = useTranslation("pages.pricing");
+  const tCta = useTranslation("pages.pricing.cta");
+  const tErrors = useTranslation("errors.stripe");
+  const addToast = useToastStore((s) => s.addToast);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   const handleGoBack = useCallback(() => {
     router.back();
@@ -35,6 +49,157 @@ const PricingPage = () => {
       }
     },
     [toggleFaq]
+  );
+
+  const handleCheckout = useCallback(
+    async (plan: SubscriptionPlan) => {
+      setCheckoutLoading(plan);
+      try {
+        const response = await fetch("/api/stripe/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plan }),
+        });
+        const data = (await response.json()) as {
+          url?: string;
+          error?: string;
+        };
+
+        if (!response.ok || !data.url) {
+          addToast({
+            message: tErrors("checkoutFailed"),
+            variant: "error",
+            duration: 6000,
+          });
+          return;
+        }
+
+        window.location.href = data.url;
+      } catch {
+        addToast({
+          message: tErrors("checkoutFailed"),
+          variant: "error",
+          duration: 6000,
+        });
+      } finally {
+        setCheckoutLoading(null);
+      }
+    },
+    [addToast, tErrors]
+  );
+
+  const handleManageBilling = useCallback(async () => {
+    setCheckoutLoading("portal");
+    try {
+      const response = await fetch("/api/stripe/portal", { method: "POST" });
+      const data = (await response.json()) as {
+        url?: string;
+        error?: string;
+      };
+
+      if (!response.ok || !data.url) {
+        addToast({
+          message: tErrors("portalFailed"),
+          variant: "error",
+          duration: 6000,
+        });
+        return;
+      }
+
+      window.location.href = data.url;
+    } catch {
+      addToast({
+        message: tErrors("portalFailed"),
+        variant: "error",
+        duration: 6000,
+      });
+    } finally {
+      setCheckoutLoading(null);
+    }
+  }, [addToast, tErrors]);
+
+  const getCtaProps = useCallback(
+    (
+      planKey: PlanKey
+    ): {
+      label: string;
+      variant: "primary" | "secondary";
+      disabled: boolean;
+      onClick: () => void;
+    } => {
+      const isSuperuser = session?.isSuperuser ?? false;
+      const currentPlan = subscription?.plan ?? SubscriptionPlan.FREE;
+      const planName = t(`plans.${planKey}.name`);
+
+      if (isSuperuser) {
+        return {
+          label: tCta("superuserFullAccess"),
+          variant: "secondary",
+          disabled: true,
+          onClick: () => {},
+        };
+      }
+
+      if (!session) {
+        return {
+          label: tCta("signUpFirst"),
+          variant: planKey === "pro" ? "primary" : "secondary",
+          disabled: false,
+          onClick: () => router.push("/auth/signup"),
+        };
+      }
+
+      if (planKey === currentPlan) {
+        return {
+          label: tCta("currentPlan"),
+          variant: "secondary",
+          disabled: true,
+          onClick: () => {},
+        };
+      }
+
+      const cardRank = PLAN_RANK[planKey] ?? 0;
+      const currentRank = PLAN_RANK[currentPlan] ?? 0;
+
+      if (cardRank > currentRank) {
+        const hasExistingSubscription = currentRank > 0;
+
+        return {
+          label: tCta("upgrade").replace("{plan}", planName),
+          variant: "primary",
+          disabled: checkoutLoading !== null,
+          onClick: hasExistingSubscription
+            ? handleManageBilling
+            : () => handleCheckout(planKey as SubscriptionPlan),
+        };
+      }
+
+      if (planKey === "free") {
+        return {
+          label: tCta("downgradeFree"),
+          variant: "secondary",
+          disabled: checkoutLoading !== null,
+          onClick: handleManageBilling,
+        };
+      }
+
+      return {
+        label: tCta("downgrade").replace("{plan}", planName),
+        variant: "secondary",
+        disabled: checkoutLoading !== null,
+        onClick: handleManageBilling,
+      };
+    },
+    [
+      session,
+      subscription,
+      t,
+      tCta,
+      router,
+      checkoutLoading,
+      handleCheckout,
+      handleManageBilling,
+    ]
   );
 
   const renderFeatureValue = (valueKey: string): React.ReactNode => {
@@ -126,12 +291,19 @@ const PricingPage = () => {
                   )}
                 </div>
 
-                <Button
-                  label={t(`plans.${plan}.cta`)}
-                  variant={isPopular ? "primary" : "secondary"}
-                  fullWidth
-                  aria-label={t(`plans.${plan}.ctaAriaLabel`)}
-                />
+                {(() => {
+                  const cta = getCtaProps(plan);
+                  return (
+                    <Button
+                      label={cta.label}
+                      variant={cta.variant}
+                      fullWidth
+                      disabled={cta.disabled}
+                      onClick={cta.onClick}
+                      aria-label={cta.label}
+                    />
+                  );
+                })()}
               </div>
             );
           })}
@@ -197,9 +369,7 @@ const PricingPage = () => {
           <div className={styles["guarantee__icon"]} aria-hidden="true">
             🛡️
           </div>
-          <h3 className={styles["guarantee__title"]}>
-            {t("guarantee.title")}
-          </h3>
+          <h3 className={styles["guarantee__title"]}>{t("guarantee.title")}</h3>
           <Text variant="small">{t("guarantee.description")}</Text>
         </div>
 

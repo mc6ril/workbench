@@ -334,6 +334,8 @@ jest.mock("@/shared/i18n", () => ({
 
 - [ ] Identify all hardcoded user-facing strings
 - [ ] Add translation keys to `messages/fr.json` following naming conventions
+- [ ] Add translation keys to `messages/es.json` following naming conventions
+- [ ] Add translation keys to `messages/en.json` following naming conventions
 - [ ] Replace hardcoded strings with `useTranslation()` calls
 - [ ] Use dynamic translation utilities for conditional strings
 - [ ] Update ARIA labels to use i18n

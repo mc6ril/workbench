@@ -30,3 +30,10 @@ export { GDPR_RIGHTS_KEYS, LEGAL_SECTIONS } from "./legal";
 // Re-export pricing page constants
 export type { FeatureRow, PlanKey } from "./pricing";
 export { FAQ_KEYS, FEATURE_ROWS, PLAN_KEYS } from "./pricing";
+
+// Re-export API message constants
+export {
+  API_MESSAGES_AUTH,
+  API_MESSAGES_COMMON,
+  API_MESSAGES_STRIPE,
+} from "./apiMessages";

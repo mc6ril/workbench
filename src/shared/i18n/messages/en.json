@@ -698,6 +698,33 @@
           "es": "Español"
         }
       },
+      "subscription": {
+        "title": "My subscription",
+        "description": "Manage your plan and billing",
+        "icon": "💳",
+        "currentPlan": "Current plan",
+        "planLabels": {
+          "free": "Free",
+          "pro": "Pro",
+          "team": "Team"
+        },
+        "statusLabels": {
+          "active": "Active",
+          "canceled": "Canceled",
+          "past_due": "Payment overdue",
+          "trialing": "Trial period"
+        },
+        "periodEnd": "Renews on {date}",
+        "cancelAtPeriodEnd": "Your subscription will be canceled at the end of the current period",
+        "manageButton": "Manage my subscription",
+        "manageButtonAriaLabel": "Open Stripe subscription management portal",
+        "changePlanButton": "Change plan",
+        "changePlanButtonAriaLabel": "View other available plans",
+        "superuser": {
+          "badge": "Super User",
+          "description": "Full access to all features"
+        }
+      },
       "dangerZone": {
         "title": "Danger zone",
         "description": "Irreversible actions",
@@ -742,6 +769,166 @@
       "epicsDescription": "Create epics, assign tickets, and track progress",
       "subtasksLabel": "Subtasks",
       "subtasksDescription": "Break down tickets into manageable subtasks"
+    },
+    "legal": {
+      "header": {
+        "label": "Back",
+        "title": "Legal notice",
+        "subtitle": "Information required by applicable law"
+      },
+      "sections": {
+        "editor": {
+          "icon": "🏢",
+          "title": "Website publisher",
+          "description": "Information about the platform publisher",
+          "appName": "Workbench",
+          "appDescription": "Workbench is a personal project management application.",
+          "contact": "Contact: contact@workbench.app",
+          "hosting": "Hosting: Vercel Inc. — 340 S Lemon Ave #4133, Walnut, CA 91789, United States"
+        },
+        "intellectualProperty": {
+          "icon": "©️",
+          "title": "Intellectual property",
+          "description": "Copyright and content ownership",
+          "content": "All content on Workbench (text, interfaces, source code, logos, graphics) is protected by copyright law. Any reproduction, representation, or distribution, in whole or in part, without prior authorization is prohibited."
+        },
+        "dataProtection": {
+          "icon": "🔒",
+          "title": "Personal data protection",
+          "description": "GDPR compliance and data management",
+          "intro": "In accordance with the General Data Protection Regulation (GDPR), you have the following rights:",
+          "rights": {
+            "access": "Right to access your personal data",
+            "rectification": "Right to rectify inaccurate data",
+            "deletion": "Right to erasure of your data",
+            "portability": "Right to data portability"
+          },
+          "collectedData": "Data collected: email address, display name, user preferences.",
+          "purpose": "Purpose: authentication, experience personalization, and service operation.",
+          "retention": "Retention period: your data is kept as long as your account is active. It is deleted upon request.",
+          "exerciseRights": "To exercise your rights, contact us at: contact@workbench.app"
+        },
+        "cookies": {
+          "icon": "🍪",
+          "title": "Cookies",
+          "description": "Cookie usage on the platform",
+          "content": "Workbench uses only strictly necessary cookies for service operation (authentication, user session). No advertising or tracking cookies are used. These cookies are essential and do not require prior consent."
+        },
+        "liability": {
+          "icon": "⚖️",
+          "title": "Liability",
+          "description": "Publisher liability limitations",
+          "content": "The publisher strives to provide a reliable and available service. However, they cannot be held liable for service interruptions, data loss, or indirect damages related to the use of the platform. The service is provided \"as is\", without warranty of any kind."
+        },
+        "applicableLaw": {
+          "icon": "📜",
+          "title": "Applicable law",
+          "description": "Jurisdiction and applicable law",
+          "content": "These legal notices are governed by French law. In the event of a dispute, French courts shall have exclusive jurisdiction."
+        }
+      },
+      "lastUpdated": "Last updated: February 2026"
+    },
+    "pricing": {
+      "header": {
+        "label": "Back",
+        "title": "Our pricing",
+        "subtitle": "Prices designed for small businesses, freelancers, and individuals"
+      },
+      "billing": {
+        "monthly": "Monthly billing",
+        "yearly": "Annual billing",
+        "yearlyDiscount": "Save 20%",
+        "perMonth": "/month",
+        "free": "Free"
+      },
+      "plans": {
+        "free": {
+          "name": "Free",
+          "description": "Discover Workbench and manage a simple project",
+          "price": "€0",
+          "cta": "Get started for free",
+          "ctaAriaLabel": "Create a free account"
+        },
+        "pro": {
+          "name": "Pro",
+          "description": "For freelancers and small businesses who want to go further",
+          "price": "€3.99",
+          "cta": "Upgrade to Pro",
+          "ctaAriaLabel": "Subscribe to the Pro plan",
+          "badge": "Popular"
+        },
+        "team": {
+          "name": "Team",
+          "description": "Collaborate as a team with advanced features",
+          "price": "€6.99",
+          "cta": "Choose Team",
+          "ctaAriaLabel": "Subscribe to the Team plan"
+        }
+      },
+      "comparison": {
+        "title": "Detailed plan comparison"
+      },
+      "features": {
+        "workspaces": "Workspaces",
+        "membersPerWorkspace": "Members per workspace",
+        "tickets": "Tickets",
+        "boardView": "Board view",
+        "backlogView": "Backlog view",
+        "epics": "Epics",
+        "subtasks": "Subtasks",
+        "customColumns": "Custom columns",
+        "priorities": "Priorities",
+        "exportImport": "Export / Import",
+        "advancedRoles": "Advanced roles (viewer)",
+        "prioritySupport": "Priority support"
+      },
+      "values": {
+        "one": "1",
+        "three": "3",
+        "five": "5",
+        "ten": "10",
+        "twentyFive": "25",
+        "fifty": "50",
+        "threeColumns": "3 columns",
+        "unlimited": "Unlimited",
+        "included": "Included",
+        "notIncluded": "Not included"
+      },
+      "faq": {
+        "title": "Frequently asked questions",
+        "items": {
+          "cancel": {
+            "question": "Can I cancel at any time?",
+            "answer": "Yes, you can cancel your subscription at any time. You will keep access until the end of the current billing period."
+          },
+          "upgrade": {
+            "question": "Can I change my plan?",
+            "answer": "You can upgrade to a higher plan at any time. The change takes effect immediately and the difference is prorated."
+          },
+          "data": {
+            "question": "What happens to my data if I switch back to free?",
+            "answer": "Your data is preserved. If you exceed the free plan limits, you can view your existing projects but cannot create new ones."
+          },
+          "payment": {
+            "question": "What payment methods do you accept?",
+            "answer": "We accept credit cards (Visa, Mastercard) and SEPA direct debits."
+          }
+        }
+      },
+      "guarantee": {
+        "title": "Money-back guarantee",
+        "description": "Try Workbench Pro or Team for 14 days. If you're not satisfied, we'll give you a full refund."
+      },
+      "cta": {
+        "currentPlan": "Current plan",
+        "upgrade": "Upgrade to {plan}",
+        "downgrade": "Switch to {plan}",
+        "downgradeFree": "Switch to Free",
+        "signUpFirst": "Create an account",
+        "superuserFullAccess": "Full access",
+        "manageBilling": "Manage billing"
+      }
     }
   },
   "forms": {},
@@ -776,6 +963,12 @@
       "DUPLICATE_COLUMN_STATUS": "Duplicate column status",
       "INVALID_BOARD_COLUMN_RELATIONSHIP": "The column does not belong to the specified board",
       "MIXED_BOARD_COLUMNS": "Columns from multiple boards mixed together"
+    },
+    "stripe": {
+      "checkoutFailed": "Unable to start the payment process. Please try again.",
+      "portalFailed": "Unable to access subscription management. Please try again.",
+      "checkoutSuccess": "Payment successful! Your subscription is now active.",
+      "notAuthenticated": "You must be logged in to perform this action."
     }
   }
 }

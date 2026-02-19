@@ -698,6 +698,33 @@
           "es": "Español"
         }
       },
+      "subscription": {
+        "title": "Mon abonnement",
+        "description": "Gérez votre plan et votre facturation",
+        "icon": "💳",
+        "currentPlan": "Plan actuel",
+        "planLabels": {
+          "free": "Gratuit",
+          "pro": "Pro",
+          "team": "Équipe"
+        },
+        "statusLabels": {
+          "active": "Actif",
+          "canceled": "Annulé",
+          "past_due": "Paiement en retard",
+          "trialing": "Période d'essai"
+        },
+        "periodEnd": "Renouvellement le {date}",
+        "cancelAtPeriodEnd": "Votre abonnement sera annulé à la fin de la période en cours",
+        "manageButton": "Gérer mon abonnement",
+        "manageButtonAriaLabel": "Ouvrir le portail de gestion d'abonnement Stripe",
+        "changePlanButton": "Changer de plan",
+        "changePlanButtonAriaLabel": "Voir les autres plans disponibles",
+        "superuser": {
+          "badge": "Super Utilisateur",
+          "description": "Accès complet à toutes les fonctionnalités"
+        }
+      },
       "dangerZone": {
         "title": "Zone de danger",
         "description": "Actions irréversibles",
@@ -892,6 +919,15 @@
       "guarantee": {
         "title": "Satisfait ou remboursé",
         "description": "Essayez Workbench Pro ou Équipe pendant 14 jours. Si vous n'êtes pas satisfait, nous vous remboursons intégralement."
+      },
+      "cta": {
+        "currentPlan": "Plan actuel",
+        "upgrade": "Passer au {plan}",
+        "downgrade": "Passer au {plan}",
+        "downgradeFree": "Passer au Gratuit",
+        "signUpFirst": "Créer un compte",
+        "superuserFullAccess": "Accès complet",
+        "manageBilling": "Gérer la facturation"
       }
     }
   },
@@ -927,6 +963,12 @@
       "DUPLICATE_COLUMN_STATUS": "Statut de colonne en double",
       "INVALID_BOARD_COLUMN_RELATIONSHIP": "La colonne n'appartient pas au tableau spécifié",
       "MIXED_BOARD_COLUMNS": "Colonnes de plusieurs tableaux mélangées"
+    },
+    "stripe": {
+      "checkoutFailed": "Impossible de lancer le paiement. Veuillez réessayer.",
+      "portalFailed": "Impossible d'accéder à la gestion de l'abonnement. Veuillez réessayer.",
+      "checkoutSuccess": "Paiement effectué avec succès ! Votre abonnement est actif.",
+      "notAuthenticated": "Vous devez être connecté pour effectuer cette action."
     }
   }
 }

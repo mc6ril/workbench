@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -16,6 +16,10 @@ import {
   DEFAULT_USER_PREFERENCES,
   ThemeValues,
 } from "@/core/domain/schema/auth.schema";
+import {
+  SubscriptionPlan,
+  SubscriptionStatus,
+} from "@/core/domain/schema/subscription.schema";
 
 import {
   Button,
@@ -31,12 +35,15 @@ import {
   useChangePassword,
   useDeleteUser,
   useSession,
+  useSubscription,
   useUpdatePreferences,
   useUpdateProfile,
 } from "@/presentation/hooks";
 import { useLocaleStore } from "@/presentation/stores/useLocaleStore";
+import { useToastStore } from "@/presentation/stores/useToastStore";
 
 import { getAccessibilityId } from "@/shared/a11y";
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import {
   supportedLocaleOptions,
   supportedLocales,
@@ -56,13 +63,31 @@ const THEME_OPTIONS_KEYS: Theme[] = ["light", "dark", "system"];
 
 const AccountPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: session, isLoading: isSessionLoading } = useSession();
   const updateProfileMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
   const updatePreferencesMutation = useUpdatePreferences();
   const deleteUserMutation = useDeleteUser();
+  const { data: subscription, isLoading: isSubscriptionLoading } =
+    useSubscription();
   const t = useTranslation("pages.account");
   const tErrors = useTranslation("errors");
+  const tStripe = useTranslation("errors.stripe");
+  const addToast = useToastStore((s) => s.addToast);
+  const checkoutHandled = useRef(false);
+
+  useEffect(() => {
+    if (searchParams.get("checkout") === "success" && !checkoutHandled.current) {
+      checkoutHandled.current = true;
+      addToast({
+        message: tStripe("checkoutSuccess"),
+        variant: "success",
+        duration: 6000,
+      });
+      router.replace("/account", { scroll: false });
+    }
+  }, [searchParams, addToast, tStripe, router]);
 
   const [emailDraft, setEmailDraft] = useState<string | undefined>(undefined);
   const [nameDraft, setNameDraft] = useState<string | undefined>(undefined);
@@ -151,6 +176,35 @@ const AccountPage = () => {
     await deleteUserMutation.mutateAsync();
     closeDeleteModal();
   }, [deleteUserMutation, closeDeleteModal]);
+
+  const [isManagingSubscription, setIsManagingSubscription] = useState(false);
+
+  const handleManageSubscription = useCallback(async () => {
+    setIsManagingSubscription(true);
+    try {
+      const response = await fetch("/api/stripe/portal", { method: "POST" });
+      const data = (await response.json()) as { url?: string; error?: string };
+
+      if (!response.ok || !data.url) {
+        addToast({
+          message: tStripe("portalFailed"),
+          variant: "error",
+          duration: 6000,
+        });
+        return;
+      }
+
+      window.location.href = data.url;
+    } catch {
+      addToast({
+        message: tStripe("portalFailed"),
+        variant: "error",
+        duration: 6000,
+      });
+    } finally {
+      setIsManagingSubscription(false);
+    }
+  }, [addToast, tStripe]);
 
   const handleEmailNotificationsChange = useCallback(
     (checked: boolean) => {
@@ -464,6 +518,112 @@ const AccountPage = () => {
                 aria-label={t("preferences.language.label")}
               />
             </div>
+          </div>
+        </section>
+
+        {/* Subscription */}
+        <section
+          className={styles["account-section"]}
+          aria-labelledby={getAccessibilityId("account-subscription-title")}
+        >
+          <div className={styles["section-header"]}>
+            <div className={styles["section-header__icon"]} aria-hidden="true">
+              {t("subscription.icon")}
+            </div>
+            <div>
+              <h2
+                id={getAccessibilityId("account-subscription-title")}
+                className={styles["section-title"]}
+              >
+                {t("subscription.title")}
+              </h2>
+              <p className={styles["section-description"]}>
+                {t("subscription.description")}
+              </p>
+            </div>
+          </div>
+
+          <div className={styles["section-content"]}>
+            {isSubscriptionLoading ? (
+              <Loader variant="inline" />
+            ) : subscription?.isSuperuser ? (
+              <div className={styles["subscription-info"]}>
+                <span
+                  className={`${styles["plan-badge"]} ${styles["plan-badge--superuser"]}`}
+                >
+                  {t("subscription.superuser.badge")}
+                </span>
+                <p className={styles["subscription-description"]}>
+                  {t("subscription.superuser.description")}
+                </p>
+              </div>
+            ) : (
+              <div className={styles["subscription-info"]}>
+                <div className={styles["subscription-details"]}>
+                  <div className={styles["subscription-plan"]}>
+                    <span className={styles["subscription-plan__label"]}>
+                      {t("subscription.currentPlan")}
+                    </span>
+                    <span
+                      className={`${styles["plan-badge"]} ${styles[`plan-badge--${subscription?.plan ?? SubscriptionPlan.FREE}`]}`}
+                    >
+                      {t(
+                        `subscription.planLabels.${subscription?.plan ?? SubscriptionPlan.FREE}`
+                      )}
+                    </span>
+                  </div>
+
+                  <div className={styles["subscription-status"]}>
+                    <span
+                      className={`${styles["status-indicator"]} ${styles[`status-indicator--${subscription?.status ?? SubscriptionStatus.ACTIVE}`]}`}
+                    >
+                      {t(
+                        `subscription.statusLabels.${subscription?.status ?? SubscriptionStatus.ACTIVE}`
+                      )}
+                    </span>
+                  </div>
+
+                  {subscription?.currentPeriodEnd &&
+                    subscription.plan !== SubscriptionPlan.FREE && (
+                      <p className={styles["subscription-period"]}>
+                        {t("subscription.periodEnd").replace(
+                          "{date}",
+                          new Date(
+                            subscription.currentPeriodEnd
+                          ).toLocaleDateString("fr-FR")
+                        )}
+                      </p>
+                    )}
+
+                  {subscription?.cancelAtPeriodEnd && (
+                    <p
+                      className={styles["subscription-warning"]}
+                      role="alert"
+                      aria-live="polite"
+                    >
+                      {t("subscription.cancelAtPeriodEnd")}
+                    </p>
+                  )}
+                </div>
+
+                <div className={styles["subscription-actions"]}>
+                  {subscription?.plan !== SubscriptionPlan.FREE && (
+                    <Button
+                      label={t("subscription.manageButton")}
+                      variant="secondary"
+                      onClick={handleManageSubscription}
+                      disabled={isManagingSubscription}
+                      aria-label={t("subscription.manageButtonAriaLabel")}
+                    />
+                  )}
+                  <Button
+                    label={t("subscription.changePlanButton")}
+                    onClick={() => router.push(PAGE_ROUTES.PRICING)}
+                    aria-label={t("subscription.changePlanButtonAriaLabel")}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </section>
 

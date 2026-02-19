@@ -200,7 +200,8 @@ export const createAuthRepository = (
               ? displayName.trim()
               : null,
           preferences: extractPreferences(user.user_metadata),
-          accessToken: "", // Not available from getUser(), but not needed for server-side auth checks
+          accessToken: "",
+          isSuperuser: user.app_metadata?.is_superuser === true,
         };
       } else {
         // Browser-side: use getSession() to read from cookies (faster)

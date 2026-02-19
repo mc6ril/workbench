@@ -1,4 +1,7 @@
-import type { TicketFilters, TicketSort } from "@/core/domain/schema/ticket.schema";
+import type {
+  TicketFilters,
+  TicketSort,
+} from "@/core/domain/schema/ticket.schema";
 
 /**
  * Centralized query key factory for React Query.
@@ -42,7 +45,14 @@ const queryKeysObject = {
         : null;
       const sortKey = sort ? [sort.field, sort.direction] : null;
 
-      return ["projects", projectId, "tickets", "list", filterKey, sortKey] as const;
+      return [
+        "projects",
+        projectId,
+        "tickets",
+        "list",
+        filterKey,
+        sortKey,
+      ] as const;
     },
     epicsRoot: (projectId: string) => ["projects", projectId, "epics"] as const,
     epicsList: (projectId: string) =>
@@ -62,6 +72,9 @@ const queryKeysObject = {
     all: () => ["epics"] as const,
     detail: (id: string) => ["epics", id] as const,
   },
+  subscription: {
+    current: () => ["subscription", "current"] as const,
+  },
 } as const;
 
 export const queryKeys = Object.freeze({
@@ -69,4 +82,5 @@ export const queryKeys = Object.freeze({
   projects: Object.freeze(queryKeysObject.projects),
   tickets: Object.freeze(queryKeysObject.tickets),
   epics: Object.freeze(queryKeysObject.epics),
+  subscription: Object.freeze(queryKeysObject.subscription),
 });
