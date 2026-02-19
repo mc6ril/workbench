@@ -32,7 +32,7 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       );
     }
 
-    const body = (await request.json()) as { plan?: string };
+    const body = (await request.json()) as { plan?: string; from?: string };
     const plan = body.plan;
 
     if (plan !== SubscriptionPlan.PRO && plan !== SubscriptionPlan.TEAM) {
@@ -49,6 +49,12 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     );
 
     const origin = request.nextUrl.origin;
+    const cancelUrl = new URL("/pricing", origin);
+    cancelUrl.searchParams.set("checkout", "canceled");
+    if (body.from) {
+      cancelUrl.searchParams.set("from", body.from);
+    }
+
     const result = await createCheckoutSession(
       stripePaymentGateway,
       subscriptionRepo,
@@ -57,7 +63,7 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
         email: user.email ?? "",
         plan,
         successUrl: `${origin}/account?checkout=success`,
-        cancelUrl: `${origin}/pricing?checkout=canceled`,
+        cancelUrl: cancelUrl.toString(),
       }
     );
 

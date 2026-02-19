@@ -1,3 +1,10 @@
+import {
+  canAccessFeature,
+  getMinimumPlanForFeature,
+  PlanFeature,
+} from "@/core/domain/schema/planFeatures.schema";
+import type { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
+
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 
 /**
@@ -31,6 +38,8 @@ export type ProjectViewConfig = {
   /** i18n key suffix for sidebar label: navigation.sidebar.items.{sidebarLabelKey} */
   sidebarLabelKey: string;
   navbar: ProjectViewNavbarConfig;
+  /** When set, the view requires the user's plan to include this feature. */
+  requiredFeature?: PlanFeature;
 };
 
 const HOME_KEY: ProjectViewKey = "home";
@@ -60,6 +69,7 @@ const PROJECT_VIEW_CONFIGS: Record<ProjectViewKey, ProjectViewConfig> =
       path: PROJECT_VIEWS.EPICS,
       sidebarLabelKey: "epics",
       navbar: { showFilterSort: true, addActionType: "epic" },
+      requiredFeature: PlanFeature.EPICS,
     },
     [PROJECT_VIEWS.SETTINGS]: {
       key: PROJECT_VIEWS.SETTINGS,
@@ -119,4 +129,30 @@ export function buildProjectViewHref(
  */
 export function getProjectViewConfigsForSidebar(): ProjectViewConfig[] {
   return PROJECT_VIEW_KEYS.map((key) => PROJECT_VIEW_CONFIGS[key]);
+}
+
+export type ViewLockedState = {
+  locked: boolean;
+  planBadge?: string;
+};
+
+/**
+ * Computes whether a view is locked for the given effective plan.
+ * Returns the locked flag and the human-readable badge of the minimum plan required.
+ */
+export function computeViewLockedState(
+  config: ProjectViewConfig,
+  effectivePlan: SubscriptionPlan
+): ViewLockedState {
+  if (!config.requiredFeature) {
+    return { locked: false };
+  }
+  if (canAccessFeature(effectivePlan, config.requiredFeature)) {
+    return { locked: false };
+  }
+  const minPlan = getMinimumPlanForFeature(config.requiredFeature);
+  return {
+    locked: true,
+    planBadge: minPlan.charAt(0).toUpperCase() + minPlan.slice(1),
+  };
 }

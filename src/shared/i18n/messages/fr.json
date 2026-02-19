@@ -40,6 +40,13 @@
         "epics": "Epics",
         "settings": "Paramètres"
       },
+      "locked": {
+        "ariaLabel": "{feature} — nécessite le plan {plan}",
+        "badge": {
+          "pro": "Pro",
+          "team": "Équipe"
+        }
+      },
       "profile": {
         "ariaLabel": "Ouvrir le menu profil",
         "backToWorkspace": "Revenir à l'espace de travail",
@@ -929,6 +936,28 @@
         "signUpFirst": "Créer un compte",
         "superuserFullAccess": "Accès complet",
         "manageBilling": "Gérer la facturation"
+      }
+    },
+    "upgrade": {
+      "title": "Fonctionnalité réservée au plan {plan}",
+      "description": "Cette fonctionnalité n'est pas disponible avec votre plan actuel. Passez au plan {plan} pour y accéder.",
+      "ctaLabel": "Voir les tarifs",
+      "ctaAriaLabel": "Voir les tarifs et passer à un plan supérieur",
+      "featureNames": {
+        "epics": "Epics",
+        "subtasks": "Sous-tâches",
+        "priorities": "Priorités",
+        "exportImport": "Export / Import",
+        "advancedRoles": "Rôles avancés",
+        "workspaces": "Espaces de travail",
+        "membersPerWorkspace": "Membres par espace",
+        "tickets": "Tickets",
+        "customColumns": "Colonnes personnalisées"
+      },
+      "planBadges": {
+        "free": "Gratuit",
+        "pro": "Pro",
+        "team": "Équipe"
       }
     }
   },

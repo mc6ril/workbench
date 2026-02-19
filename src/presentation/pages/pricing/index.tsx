@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import {
   PLAN_RANK,
@@ -21,6 +21,7 @@ import styles from "./styles.module.scss";
 
 const PricingPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: session } = useSession();
   const { data: subscription } = useSubscription();
   const t = useTranslation("pages.pricing");
@@ -31,8 +32,13 @@ const PricingPage = () => {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   const handleGoBack = useCallback(() => {
-    router.back();
-  }, [router]);
+    const from = searchParams.get("from");
+    if (from) {
+      router.push(from);
+    } else {
+      router.back();
+    }
+  }, [router, searchParams]);
 
   const toggleFaq = useCallback(
     (index: number) => {
@@ -55,10 +61,11 @@ const PricingPage = () => {
     async (plan: SubscriptionPlan) => {
       setCheckoutLoading(plan);
       try {
+        const from = searchParams.get("from");
         const response = await fetch("/api/stripe/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ plan }),
+          body: JSON.stringify({ plan, from: from ?? undefined }),
         });
         const data = (await response.json()) as {
           url?: string;
@@ -85,7 +92,7 @@ const PricingPage = () => {
         setCheckoutLoading(null);
       }
     },
-    [addToast, tErrors]
+    [addToast, searchParams, tErrors]
   );
 
   const handleManageBilling = useCallback(async () => {
