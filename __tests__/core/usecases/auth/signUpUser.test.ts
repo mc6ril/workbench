@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { AuthResult } from "@/core/domain/schema/auth.schema";
+import type { AuthResult, SignUpInput } from "@/core/domain/schema/auth.schema";
 
 import { signUpUser } from "@/core/usecases/auth/signUpUser";
 
@@ -91,6 +91,70 @@ describe("signUpUser", () => {
       z.ZodError
     );
     expect(repository.signUp).not.toHaveBeenCalled();
+  });
+
+  it("should sign up user with displayName", async () => {
+    // Arrange
+    const inputWithDisplayName = {
+      ...validInput,
+      displayName: "Test User",
+    };
+    const repository = createAuthRepositoryMock({
+      signUp: jest.fn<Promise<AuthResult>, [SignUpInput]>(
+        async () => mockAuthResult
+      ),
+    });
+
+    // Act
+    const result = await signUpUser(repository, inputWithDisplayName);
+
+    // Assert
+    expect(repository.signUp).toHaveBeenCalledTimes(1);
+    expect(repository.signUp).toHaveBeenCalledWith(inputWithDisplayName);
+    expect(result).toEqual(mockAuthResult);
+  });
+
+  it("should sign up user without displayName (optional)", async () => {
+    // Arrange
+    const inputWithoutDisplayName = {
+      email: "test@example.com",
+      password: "password123",
+    };
+    const repository = createAuthRepositoryMock({
+      signUp: jest.fn<Promise<AuthResult>, [typeof inputWithoutDisplayName]>(
+        async () => mockAuthResult
+      ),
+    });
+
+    // Act
+    const result = await signUpUser(repository, inputWithoutDisplayName);
+
+    // Assert
+    expect(repository.signUp).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(mockAuthResult);
+  });
+
+  it("should pass termsAcceptedAt to repository when provided", async () => {
+    // Arrange
+    const termsTimestamp = "2026-02-20T10:00:00.000Z";
+    const inputWithTerms = {
+      ...validInput,
+      termsAcceptedAt: termsTimestamp,
+    };
+    const repository = createAuthRepositoryMock({
+      signUp: jest.fn<Promise<AuthResult>, [SignUpInput]>(
+        async () => mockAuthResult
+      ),
+    });
+
+    // Act
+    const result = await signUpUser(repository, inputWithTerms);
+
+    // Assert
+    expect(repository.signUp).toHaveBeenCalledWith(
+      expect.objectContaining({ termsAcceptedAt: termsTimestamp })
+    );
+    expect(result).toEqual(mockAuthResult);
   });
 
   it("should propagate repository errors", async () => {

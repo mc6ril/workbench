@@ -85,9 +85,45 @@
       "title": "Crear cuenta",
       "subtitle": "Regístrate para empezar con Workbench",
       "button": "Registrarse",
+      "buttonLoading": "Registrando...",
       "buttonAriaLabel": "Registrarse",
       "footer": "¿Ya tienes una cuenta?",
       "footerLink": "Iniciar sesión",
+      "fields": {
+        "displayName": {
+          "label": "Nombre para mostrar",
+          "placeholder": "Juan García"
+        },
+        "email": {
+          "required": "La dirección de email es obligatoria",
+          "invalid": "La dirección de email no es válida"
+        },
+        "confirmPassword": {
+          "label": "Confirmar contraseña"
+        },
+        "password": {
+          "helperText": "Mínimo 6 caracteres",
+          "tooShort": "La contraseña debe tener al menos 6 caracteres",
+          "tooLong": "La contraseña no debe superar los 100 caracteres",
+          "hint": {
+            "hasMinLength": "Mínimo 6 caracteres",
+            "hasUppercase": "Añade una mayúscula",
+            "hasLowercase": "Añade una minúscula",
+            "hasNumber": "Añade un número",
+            "hasSpecialChar": "Añade un carácter especial (!@#...)"
+          }
+        },
+        "acceptedTerms": {
+          "label": "Acepto las",
+          "linkLabel": "condiciones legales",
+          "ariaLabel": "Aceptar las condiciones legales"
+        }
+      },
+      "passwordStrength": {
+        "weak": "Débil",
+        "medium": "Media",
+        "strong": "Fuerte"
+      },
       "verification": {
         "title": "Verificación de email requerida",
         "message": "Se ha enviado un email de verificación a tu dirección.",
@@ -97,6 +133,8 @@
       "errors": {
         "invalidEmail": "Dirección de email no válida",
         "weakPassword": "La contraseña no cumple los requisitos",
+        "passwordMismatch": "Las contraseñas no coinciden",
+        "termsRequired": "Debes aceptar las condiciones legales",
         "generic": "Se ha producido un error al registrarse"
       }
     },

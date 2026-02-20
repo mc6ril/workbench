@@ -20,7 +20,10 @@ const PasswordSchema = z
 
 /**
  * Zod schema for user signup input.
- * Validates email format and password requirements.
+ * Validates email format, password requirements, optional display name,
+ * and optional terms acceptance timestamp.
+ * displayName is stored in Supabase user_metadata.display_name.
+ * termsAcceptedAt is stored in Supabase user_metadata.terms_accepted_at.
  */
 export const SignUpSchema = z.object({
   email: z
@@ -28,12 +31,51 @@ export const SignUpSchema = z.object({
     .min(1, "Email is required")
     .email({ message: "Invalid email format" }),
   password: PasswordSchema,
+  displayName: z
+    .string()
+    .trim()
+    .max(100, "Display name must be less than 100 characters")
+    .optional(),
+  termsAcceptedAt: z.string().optional(),
 });
 
 /**
  * Signup input type.
  */
 export type SignUpInput = z.infer<typeof SignUpSchema>;
+
+/**
+ * Zod schema for signup form (UI validation).
+ * Includes password confirmation and mandatory terms acceptance.
+ * This schema is used in the presentation layer for form validation.
+ * The domain schema (SignUpSchema) is used for API validation.
+ */
+export const SignUpFormSchema = z
+  .object({
+    email: z
+      .string()
+      .min(1, "Email is required")
+      .email({ message: "Invalid email format" }),
+    password: PasswordSchema,
+    confirmPassword: z.string().min(1, "Password confirmation is required"),
+    displayName: z
+      .string()
+      .trim()
+      .max(100, "Display name must be less than 100 characters")
+      .optional(),
+    acceptedTerms: z.literal(true, {
+      message: "You must accept the terms",
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+/**
+ * Signup form input type (includes confirmPassword and acceptedTerms for UI validation).
+ */
+export type SignUpFormInput = z.infer<typeof SignUpFormSchema>;
 
 /**
  * Zod schema for user signin input.

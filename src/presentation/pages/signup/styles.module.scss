@@ -67,6 +67,50 @@
   width: 100%;
 }
 
+.signup-password-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.signup-terms {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.signup-terms__label {
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  color: $color-text-secondary;
+  margin: 0;
+}
+
+.signup-terms__link {
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+  text-decoration: underline;
+  text-underline-offset: $spacing-2xs;
+  transition: $transition-color;
+
+  &:hover {
+    color: $color-primary-hover;
+  }
+
+  &:focus {
+    outline: $border-width-thick solid $color-focus;
+    outline-offset: $border-width-thick;
+    border-radius: $border-radius-2xs;
+  }
+}
+
+.signup-terms__error {
+  font-size: $font-size-xs;
+  line-height: $line-height-normal;
+  color: $color-error-text;
+  margin-top: -$spacing-xs;
+}
+
 .signup-footer {
   font-size: $font-size-sm;
   line-height: $line-height-normal;
@@ -111,4 +155,3 @@
     border-radius: $border-radius-sm;
   }
 }
-
