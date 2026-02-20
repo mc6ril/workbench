@@ -210,6 +210,15 @@
         "invalidEmail": "Adresse email invalide",
         "emailNotVerified": "Votre email n'a pas été vérifié. Veuillez vérifier votre boîte de réception et cliquer sur le lien de vérification.",
         "generic": "Une erreur s'est produite lors de la connexion"
+      },
+      "fields": {
+        "email": {
+          "required": "L'adresse email est requise",
+          "invalid": "L'adresse email n'est pas valide"
+        },
+        "password": {
+          "required": "Le mot de passe est requis"
+        }
       }
     },
     "home": {
@@ -786,6 +795,16 @@
         "confirmButton": "Oui, supprimer mon compte",
         "confirmButtonAriaLabel": "Confirmer la suppression du compte",
         "cancelButton": "Annuler"
+      },
+      "signOut": {
+        "title": "Session",
+        "description": "Gérez votre session active",
+        "icon": "🚪",
+        "label": "Déconnexion",
+        "descriptionText": "Vous serez redirigé vers la page d'accueil",
+        "button": "Se déconnecter",
+        "buttonAriaLabel": "Se déconnecter de votre compte",
+        "pendingButton": "Déconnexion..."
       },
       "success": {
         "profileUpdated": "Profil mis à jour avec succès",

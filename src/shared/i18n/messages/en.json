@@ -210,6 +210,15 @@
         "invalidEmail": "Invalid email address",
         "emailNotVerified": "Your email has not been verified. Please check your inbox and click the verification link.",
         "generic": "An error occurred during sign in"
+      },
+      "fields": {
+        "email": {
+          "required": "Email address is required",
+          "invalid": "Email address is not valid"
+        },
+        "password": {
+          "required": "Password is required"
+        }
       }
     },
     "home": {
@@ -786,6 +795,16 @@
         "confirmButton": "Yes, delete my account",
         "confirmButtonAriaLabel": "Confirm account deletion",
         "cancelButton": "Cancel"
+      },
+      "signOut": {
+        "title": "Session",
+        "description": "Manage your active session",
+        "icon": "🚪",
+        "label": "Sign out",
+        "descriptionText": "You will be redirected to the home page",
+        "button": "Sign out",
+        "buttonAriaLabel": "Sign out of your account",
+        "pendingButton": "Signing out..."
       },
       "success": {
         "profileUpdated": "Profile updated successfully",

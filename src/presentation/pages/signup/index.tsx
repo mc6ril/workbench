@@ -27,21 +27,9 @@ import { useSignUp } from "@/presentation/hooks";
 
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
 import styles from "./styles.module.scss";
-
-/**
- * Maps raw Zod english validation messages to i18n field keys.
- * Server errors (type "server") are already translated and passed through as-is.
- */
-const ZOD_MESSAGE_TO_I18N: Record<string, string> = {
-  "Email is required": "email.required",
-  "Invalid email format": "email.invalid",
-  "Password must be at least 6 characters": "password.tooShort",
-  "Password must be less than 100 characters": "password.tooLong",
-  "Password confirmation is required": "confirmPassword.label",
-  "Passwords do not match": "confirmPassword.label",
-};
 
 const SignupPage = () => {
   const router = useRouter();
@@ -70,22 +58,6 @@ const SignupPage = () => {
     name: "password",
     defaultValue: "",
   });
-
-  const translateFieldError = useCallback(
-    (
-      error: { type?: string; message?: string } | undefined
-    ): string | undefined => {
-      if (!error?.message) {
-        return undefined;
-      }
-      if (error.type === "server") {
-        return error.message;
-      }
-      const i18nKey = ZOD_MESSAGE_TO_I18N[error.message];
-      return i18nKey ? tFields(i18nKey) : error.message;
-    },
-    [tFields]
-  );
 
   const nextCriterion = getNextUnmetCriterion(passwordValue);
   const passwordHint = nextCriterion
@@ -200,7 +172,7 @@ const SignupPage = () => {
             type="email"
             autoComplete="email"
             required
-            error={translateFieldError(errors.email)}
+            error={translateFieldError(errors.email, tFields)}
             {...register("email")}
           />
 
@@ -211,7 +183,7 @@ const SignupPage = () => {
               autoComplete="new-password"
               required
               helperText={passwordHint}
-              error={translateFieldError(errors.password)}
+              error={translateFieldError(errors.password, tFields)}
               {...register("password")}
             />
             <PasswordStrengthIndicator password={passwordValue} />
@@ -222,7 +194,7 @@ const SignupPage = () => {
             type="password"
             autoComplete="new-password"
             required
-            error={translateFieldError(errors.confirmPassword)}
+            error={translateFieldError(errors.confirmPassword, tFields)}
             {...register("confirmPassword")}
           />
 

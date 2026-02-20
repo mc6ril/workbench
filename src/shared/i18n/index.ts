@@ -34,3 +34,6 @@ export {
   getConditionalTranslation,
   getRoleLabelKey,
 } from "./dynamic";
+
+// Zod field error translation utilities
+export { AUTH_ZOD_FIELD_MESSAGES, translateFieldError } from "./zodFieldErrors";

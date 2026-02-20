@@ -210,6 +210,15 @@
         "invalidEmail": "Dirección de email no válida",
         "emailNotVerified": "Tu email no ha sido verificado. Revisa tu bandeja de entrada y haz clic en el enlace de verificación.",
         "generic": "Se ha producido un error al iniciar sesión"
+      },
+      "fields": {
+        "email": {
+          "required": "La dirección de correo electrónico es obligatoria",
+          "invalid": "La dirección de correo electrónico no es válida"
+        },
+        "password": {
+          "required": "La contraseña es obligatoria"
+        }
       }
     },
     "home": {
@@ -786,6 +795,16 @@
         "confirmButton": "Sí, eliminar mi cuenta",
         "confirmButtonAriaLabel": "Confirmar eliminación de la cuenta",
         "cancelButton": "Cancelar"
+      },
+      "signOut": {
+        "title": "Sesión",
+        "description": "Gestiona tu sesión activa",
+        "icon": "🚪",
+        "label": "Cerrar sesión",
+        "descriptionText": "Serás redirigido a la página de inicio",
+        "button": "Cerrar sesión",
+        "buttonAriaLabel": "Cerrar sesión de tu cuenta",
+        "pendingButton": "Cerrando sesión..."
       },
       "success": {
         "profileUpdated": "Perfil actualizado correctamente",
