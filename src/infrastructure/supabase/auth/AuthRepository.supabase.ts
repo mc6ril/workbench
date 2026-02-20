@@ -39,9 +39,19 @@ export const createAuthRepository = (
 ): AuthRepository => ({
   async signUp(input: SignUpInput): Promise<AuthResult> {
     try {
+      const metadata: Record<string, unknown> = {};
+      if (input.displayName) {
+        metadata.display_name = input.displayName;
+      }
+      if (input.termsAcceptedAt) {
+        metadata.terms_accepted_at = input.termsAcceptedAt;
+      }
+
       const { data, error } = await client.auth.signUp({
         email: input.email,
         password: input.password,
+        options:
+          Object.keys(metadata).length > 0 ? { data: metadata } : undefined,
       });
 
       if (error) {

@@ -176,6 +176,7 @@ describe("Checkbox Component", () => {
         label="I agree"
         name="agree"
         aria-label="Custom checkbox label"
+        onChange={() => {}}
       />
     );
 

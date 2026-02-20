@@ -85,9 +85,45 @@
       "title": "Create an account",
       "subtitle": "Sign up to get started with Workbench",
       "button": "Sign up",
+      "buttonLoading": "Signing up...",
       "buttonAriaLabel": "Sign up",
       "footer": "Already have an account?",
       "footerLink": "Sign in",
+      "fields": {
+        "displayName": {
+          "label": "Display name",
+          "placeholder": "John Doe"
+        },
+        "email": {
+          "required": "Email address is required",
+          "invalid": "Email address is not valid"
+        },
+        "confirmPassword": {
+          "label": "Confirm password"
+        },
+        "password": {
+          "helperText": "Minimum 6 characters",
+          "tooShort": "Password must be at least 6 characters",
+          "tooLong": "Password must not exceed 100 characters",
+          "hint": {
+            "hasMinLength": "Minimum 6 characters",
+            "hasUppercase": "Add an uppercase letter",
+            "hasLowercase": "Add a lowercase letter",
+            "hasNumber": "Add a number",
+            "hasSpecialChar": "Add a special character (!@#...)"
+          }
+        },
+        "acceptedTerms": {
+          "label": "I accept the",
+          "linkLabel": "terms and conditions",
+          "ariaLabel": "Accept the terms and conditions"
+        }
+      },
+      "passwordStrength": {
+        "weak": "Weak",
+        "medium": "Medium",
+        "strong": "Strong"
+      },
       "verification": {
         "title": "Email verification required",
         "message": "A verification email has been sent to your address.",
@@ -97,6 +133,8 @@
       "errors": {
         "invalidEmail": "Invalid email address",
         "weakPassword": "Password does not meet requirements",
+        "passwordMismatch": "Passwords do not match",
+        "termsRequired": "You must accept the terms and conditions",
         "generic": "An error occurred during sign up"
       }
     },

@@ -85,9 +85,45 @@
       "title": "Créer un compte",
       "subtitle": "Inscrivez-vous pour commencer avec Workbench",
       "button": "S'inscrire",
+      "buttonLoading": "Inscription en cours...",
       "buttonAriaLabel": "S'inscrire",
       "footer": "Vous avez déjà un compte ?",
       "footerLink": "Se connecter",
+      "fields": {
+        "displayName": {
+          "label": "Nom d'affichage",
+          "placeholder": "Jean Dupont"
+        },
+        "email": {
+          "required": "L'adresse email est requise",
+          "invalid": "L'adresse email n'est pas valide"
+        },
+        "confirmPassword": {
+          "label": "Confirmer le mot de passe"
+        },
+        "password": {
+          "helperText": "Minimum 6 caractères",
+          "tooShort": "Le mot de passe doit contenir au moins 6 caractères",
+          "tooLong": "Le mot de passe ne doit pas dépasser 100 caractères",
+          "hint": {
+            "hasMinLength": "Minimum 6 caractères",
+            "hasUppercase": "Ajoutez une majuscule",
+            "hasLowercase": "Ajoutez une minuscule",
+            "hasNumber": "Ajoutez un chiffre",
+            "hasSpecialChar": "Ajoutez un caractère spécial (!@#...)"
+          }
+        },
+        "acceptedTerms": {
+          "label": "J'accepte les",
+          "linkLabel": "mentions légales",
+          "ariaLabel": "Accepter les mentions légales"
+        }
+      },
+      "passwordStrength": {
+        "weak": "Faible",
+        "medium": "Moyen",
+        "strong": "Fort"
+      },
       "verification": {
         "title": "Vérification de l'email requise",
         "message": "Un email de vérification a été envoyé à votre adresse.",
@@ -97,6 +133,8 @@
       "errors": {
         "invalidEmail": "Adresse email invalide",
         "weakPassword": "Le mot de passe ne respecte pas les exigences",
+        "passwordMismatch": "Les mots de passe ne correspondent pas",
+        "termsRequired": "Vous devez accepter les mentions légales",
         "generic": "Une erreur s'est produite lors de l'inscription"
       }
     },
