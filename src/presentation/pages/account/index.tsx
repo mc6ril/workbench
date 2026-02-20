@@ -35,6 +35,7 @@ import {
   useChangePassword,
   useDeleteUser,
   useSession,
+  useSignOut,
   useSubscription,
   useUpdatePreferences,
   useUpdateProfile,
@@ -70,6 +71,7 @@ const AccountPage = () => {
   const changePasswordMutation = useChangePassword();
   const updatePreferencesMutation = useUpdatePreferences();
   const deleteUserMutation = useDeleteUser();
+  const signOutMutation = useSignOut();
   const { data: subscription, isLoading: isSubscriptionLoading } =
     useSubscription();
   const t = useTranslation("pages.account");
@@ -185,6 +187,10 @@ const AccountPage = () => {
     await deleteUserMutation.mutateAsync();
     closeDeleteModal();
   }, [deleteUserMutation, closeDeleteModal]);
+
+  const handleSignOut = useCallback(() => {
+    signOutMutation.mutate();
+  }, [signOutMutation]);
 
   const [isManagingSubscription, setIsManagingSubscription] = useState(false);
 
@@ -633,6 +639,53 @@ const AccountPage = () => {
                 </div>
               </div>
             )}
+          </div>
+        </section>
+
+        {/* Sign Out */}
+        <section
+          className={styles["account-section"]}
+          aria-labelledby={getAccessibilityId("account-signout-title")}
+        >
+          <div className={styles["section-header"]}>
+            <div className={styles["section-header__icon"]} aria-hidden="true">
+              {t("signOut.icon")}
+            </div>
+            <div>
+              <h2
+                id={getAccessibilityId("account-signout-title")}
+                className={styles["section-title"]}
+              >
+                {t("signOut.title")}
+              </h2>
+              <p className={styles["section-description"]}>
+                {t("signOut.description")}
+              </p>
+            </div>
+          </div>
+
+          <div className={styles["section-content"]}>
+            <div className={styles["signout-item"]}>
+              <div className={styles["signout-info"]}>
+                <div className={styles["signout-label"]}>
+                  {t("signOut.label")}
+                </div>
+                <div className={styles["signout-description"]}>
+                  {t("signOut.descriptionText")}
+                </div>
+              </div>
+              <Button
+                label={
+                  signOutMutation.isPending
+                    ? t("signOut.pendingButton")
+                    : t("signOut.button")
+                }
+                variant="secondary"
+                onClick={handleSignOut}
+                disabled={signOutMutation.isPending}
+                aria-label={t("signOut.buttonAriaLabel")}
+              />
+            </div>
           </div>
         </section>
 

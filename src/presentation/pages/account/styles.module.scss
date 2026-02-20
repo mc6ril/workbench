@@ -280,6 +280,33 @@
 }
 
 // ============================================================================
+// Sign Out Section
+// ============================================================================
+
+.signout-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-2xl;
+}
+
+.signout-info {
+  flex: 1;
+}
+
+.signout-label {
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $color-text;
+  margin-bottom: $spacing-2xs;
+}
+
+.signout-description {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+// ============================================================================
 // Subscription Section
 // ============================================================================
 
@@ -498,7 +525,8 @@
   }
 
   .preference-item,
-  .danger-item {
+  .danger-item,
+  .signout-item {
     flex-direction: column;
     align-items: flex-start;
     gap: $spacing-lg;
