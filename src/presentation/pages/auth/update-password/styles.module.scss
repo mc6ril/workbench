@@ -67,14 +67,10 @@
   width: 100%;
 }
 
-.update-password-error {
-  padding: $spacing-md;
-  border-radius: $border-radius-md;
-  background-color: $color-error-background;
-  color: $color-error-text;
-  font-size: $font-size-sm;
-  line-height: $line-height-normal;
-  text-align: center;
+.update-password-password-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
 }
 
 .update-password-success {

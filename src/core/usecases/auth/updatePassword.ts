@@ -7,13 +7,15 @@ import {
 import type { AuthRepository } from "@/core/ports/authRepository";
 
 /**
- * Update password using a reset token.
- * Validates input, verifies token, and updates user password.
+ * Update password after a password reset.
+ * Supports two flows:
+ * - PKCE flow: session already established by auth callback, only password needed.
+ * - Legacy token flow: email + token provided for OTP verification.
  *
  * @param repository - Auth repository
- * @param input - Password update input (email, token, password)
+ * @param input - Password update input (password required; token and email optional)
  * @returns Authentication result with session (user is auto-logged in after password update)
- * @throws InvalidTokenError if token is invalid or expired
+ * @throws InvalidTokenError if token/session is invalid or expired
  * @throws PasswordResetError for other password reset errors
  * @throws AuthenticationFailure for other authentication errors
  */

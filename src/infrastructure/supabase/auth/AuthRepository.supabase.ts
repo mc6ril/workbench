@@ -247,10 +247,9 @@ export const createAuthRepository = (
 
   async resetPasswordForEmail(input: ResetPasswordInput): Promise<void> {
     try {
-      // Determine redirect URL based on context
       const redirectTo =
         typeof window !== "undefined"
-          ? `${window.location.origin}${AUTH_PAGE_ROUTES.UPDATE_PASSWORD}`
+          ? `${window.location.origin}${AUTH_PAGE_ROUTES.CALLBACK}?next=${AUTH_PAGE_ROUTES.UPDATE_PASSWORD}`
           : undefined;
 
       const { error } = await client.auth.resetPasswordForEmail(input.email, {
@@ -267,103 +266,94 @@ export const createAuthRepository = (
 
   async updatePassword(input: UpdatePasswordInput): Promise<AuthResult> {
     try {
-      // If email is not provided, Supabase redirects with only a code.
-      // The Supabase client automatically exchanges the code for a session
-      // during initialization — no artificial delay needed.
-      if (!input.email || input.email.trim() === "") {
-        const { data: sessionData, error: sessionError } =
-          await client.auth.getSession();
+      // PKCE flow: session was established by the auth callback route.
+      // Legacy token flow: verify OTP first then update.
+      const hasToken = input.token && input.token.trim() !== "";
+      const hasEmail = input.email && input.email.trim() !== "";
 
-        if (sessionError) {
-          return handleAuthError(sessionError);
-        }
-
-        // If we have a session, update the password
-        if (sessionData.session) {
-          const { error: updateError } = await client.auth.updateUser({
-            password: input.password,
+      if (hasToken && hasEmail) {
+        // Legacy flow: verify OTP with email + token, then update password
+        const { data: verifyData, error: verifyError } =
+          await client.auth.verifyOtp({
+            email: input.email!,
+            token: input.token!,
+            type: "recovery",
           });
 
-          if (updateError) {
-            return handleAuthError(updateError);
-          }
-
-          // Get the user to retrieve email
-          const {
-            data: { user },
-            error: userError,
-          } = await client.auth.getUser();
-
-          if (userError) {
-            return handleAuthError(userError);
-          }
-
-          if (user) {
-            const userEmail = user.email || "";
-            const session = mapSupabaseSessionToDomain(
-              sessionData.session,
-              userEmail
-            );
-            return { session, requiresEmailVerification: false };
-          }
+        if (verifyError) {
+          handleAuthError(verifyError);
         }
 
-        // If no session, the code is invalid or expired
+        if (!verifyData.session || !verifyData.user) {
+          const error: InvalidTokenError = {
+            code: "INVALID_TOKEN",
+            debugMessage: "No session or user returned from token verification",
+          };
+          handleAuthError(error);
+        }
+
+        const { error: updateError } = await client.auth.updateUser({
+          password: input.password,
+        });
+
+        if (updateError) {
+          handleAuthError(updateError);
+        }
+
+        const userEmail = verifyData.user!.email || input.email!;
+        const session = mapSupabaseSessionToDomain(
+          verifyData.session!,
+          userEmail
+        );
+        return { session, requiresEmailVerification: false };
+      }
+
+      // PKCE flow: session already exists from auth callback code exchange
+      const { data: sessionData, error: sessionError } =
+        await client.auth.getSession();
+
+      if (sessionError) {
+        return handleAuthError(sessionError);
+      }
+
+      if (!sessionData.session) {
         const error: InvalidTokenError = {
           code: "INVALID_TOKEN",
           debugMessage:
-            "Unable to reset password. The reset code may be invalid or expired. Please request a new password reset email.",
+            "No active session. The reset link may be invalid or expired. Please request a new password reset email.",
         };
         return handleAuthError(error);
       }
 
-      // Standard password reset with email and token
-      // TypeScript: input.email is guaranteed to be non-empty after the check above
-      if (!input.email) {
-        const error: InvalidTokenError = {
-          code: "INVALID_TOKEN",
-          debugMessage: "Email is required for password reset",
-        };
-        handleAuthError(error);
-      }
-
-      // TypeScript: input.email is guaranteed to be non-empty after the check above
-      const { data: verifyData, error: verifyError } =
-        await client.auth.verifyOtp({
-          email: input.email!,
-          token: input.token,
-          type: "recovery",
-        });
-
-      if (verifyError) {
-        handleAuthError(verifyError);
-      }
-
-      if (!verifyData.session || !verifyData.user) {
-        const error: InvalidTokenError = {
-          code: "INVALID_TOKEN",
-          debugMessage: "No session or user returned from token verification",
-        };
-        handleAuthError(error);
-      }
-
-      // TypeScript: verifyData.session and verifyData.user are guaranteed to be non-null after the check above
-      // Update the password
       const { error: updateError } = await client.auth.updateUser({
         password: input.password,
       });
 
       if (updateError) {
-        handleAuthError(updateError);
+        return handleAuthError(updateError);
       }
 
-      // Map session to domain
-      const userEmail = verifyData.user!.email || input.email!;
-      const session = mapSupabaseSessionToDomain(
-        verifyData.session!,
-        userEmail
-      );
+      const {
+        data: { user },
+        error: userError,
+      } = await client.auth.getUser();
 
+      if (userError) {
+        return handleAuthError(userError);
+      }
+
+      if (!user) {
+        const error: InvalidTokenError = {
+          code: "INVALID_TOKEN",
+          debugMessage: "User not found after password update",
+        };
+        return handleAuthError(error);
+      }
+
+      const session = mapSupabaseSessionToDomain(
+        sessionData.session,
+        user.email || ""
+      );
       return { session, requiresEmailVerification: false };
     } catch (error) {
       return handleAuthError(error);

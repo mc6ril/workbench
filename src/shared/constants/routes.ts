@@ -14,6 +14,7 @@ export const PUBLIC_ROUTES: readonly string[] = Object.freeze([
   "/auth/verify-email",
   "/auth/reset-password",
   "/auth/update-password",
+  "/auth/callback",
   "/legal",
   "/pricing",
 ]);
@@ -58,6 +59,7 @@ export type ProjectView = (typeof PROJECT_VIEWS)[keyof typeof PROJECT_VIEWS];
  * Used for redirects after auth operations (e.g., password reset redirect).
  */
 export const AUTH_PAGE_ROUTES = Object.freeze({
+  CALLBACK: "/auth/callback",
   UPDATE_PASSWORD: "/auth/update-password",
 });
 

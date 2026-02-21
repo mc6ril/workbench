@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-import type { AuthResult } from "@/core/domain/schema/auth.schema";
+import type {
+  AuthResult,
+  UpdatePasswordInput,
+} from "@/core/domain/schema/auth.schema";
 
 import { updatePassword } from "@/core/usecases/auth/updatePassword";
 
@@ -9,6 +12,7 @@ import {
   createAuthError,
   mockAuthResult,
   validUpdatePasswordInput,
+  validUpdatePasswordInputPkce,
 } from "../../../../__mocks__/core/domain/authMocks";
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
@@ -16,13 +20,12 @@ import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authR
 describe("updatePassword", () => {
   const validInput = validUpdatePasswordInput;
 
-  it("should update password with valid token", async () => {
+  it("should update password with valid token (legacy flow)", async () => {
     // Arrange
     const repository = createAuthRepositoryMock({
-      updatePassword: jest.fn<
-        Promise<AuthResult>,
-        [{ password: string; token: string; email?: string }]
-      >(async () => mockAuthResult),
+      updatePassword: jest.fn<Promise<AuthResult>, [UpdatePasswordInput]>(
+        async () => mockAuthResult
+      ),
     });
 
     // Act
@@ -34,6 +37,28 @@ describe("updatePassword", () => {
     expect(result).toEqual(mockAuthResult);
   });
 
+  it("should update password without token (PKCE session-based flow)", async () => {
+    // Arrange
+    const repository = createAuthRepositoryMock({
+      updatePassword: jest.fn<Promise<AuthResult>, [UpdatePasswordInput]>(
+        async () => mockAuthResult
+      ),
+    });
+
+    // Act
+    const result = await updatePassword(
+      repository,
+      validUpdatePasswordInputPkce
+    );
+
+    // Assert
+    expect(repository.updatePassword).toHaveBeenCalledTimes(1);
+    expect(repository.updatePassword).toHaveBeenCalledWith(
+      validUpdatePasswordInputPkce
+    );
+    expect(result).toEqual(mockAuthResult);
+  });
+
   it("should update password with valid token and empty email", async () => {
     // Arrange
     const inputWithEmptyEmail = {
@@ -42,10 +67,9 @@ describe("updatePassword", () => {
       password: "newpassword123",
     };
     const repository = createAuthRepositoryMock({
-      updatePassword: jest.fn<
-        Promise<AuthResult>,
-        [{ password: string; token: string; email?: string }]
-      >(async () => mockAuthResult),
+      updatePassword: jest.fn<Promise<AuthResult>, [UpdatePasswordInput]>(
+        async () => mockAuthResult
+      ),
     });
 
     // Act
@@ -125,12 +149,11 @@ describe("updatePassword", () => {
     // Arrange
     const repositoryError = createAuthError.invalidToken();
     const repository = createAuthRepositoryMock({
-      updatePassword: jest.fn<
-        Promise<AuthResult>,
-        [{ password: string; token: string; email?: string }]
-      >(async () => {
-        throw repositoryError;
-      }),
+      updatePassword: jest.fn<Promise<AuthResult>, [UpdatePasswordInput]>(
+        async () => {
+          throw repositoryError;
+        }
+      ),
     });
 
     // Act & Assert
@@ -150,12 +173,11 @@ describe("updatePassword", () => {
     // Arrange
     const repositoryError = createAuthError.passwordReset();
     const repository = createAuthRepositoryMock({
-      updatePassword: jest.fn<
-        Promise<AuthResult>,
-        [{ password: string; token: string; email?: string }]
-      >(async () => {
-        throw repositoryError;
-      }),
+      updatePassword: jest.fn<Promise<AuthResult>, [UpdatePasswordInput]>(
+        async () => {
+          throw repositoryError;
+        }
+      ),
     });
 
     // Act & Assert
@@ -177,12 +199,11 @@ describe("updatePassword", () => {
       "Update password failed"
     );
     const repository = createAuthRepositoryMock({
-      updatePassword: jest.fn<
-        Promise<AuthResult>,
-        [{ password: string; token: string; email?: string }]
-      >(async () => {
-        throw repositoryError;
-      }),
+      updatePassword: jest.fn<Promise<AuthResult>, [UpdatePasswordInput]>(
+        async () => {
+          throw repositoryError;
+        }
+      ),
     });
 
     // Act & Assert

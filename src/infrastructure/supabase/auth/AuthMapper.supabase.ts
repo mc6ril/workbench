@@ -9,6 +9,7 @@ import type {
   InvalidEmailError,
   InvalidTokenError,
   PasswordResetError,
+  SamePasswordError,
   UserPreferences,
   WeakPasswordError,
 } from "@/core/domain/schema/auth.schema";
@@ -195,6 +196,14 @@ const createInvalidTokenError = (debugMessage?: string): InvalidTokenError => ({
 });
 
 /**
+ * Creates a same password error (new password matches the old one).
+ */
+const createSamePasswordError = (debugMessage?: string): SamePasswordError => ({
+  code: AUTH_ERROR_CODE.SAME_PASSWORD,
+  debugMessage,
+});
+
+/**
  * Maps Supabase Auth errors to domain authentication errors.
  *
  * @param error - Supabase Auth error
@@ -244,6 +253,15 @@ export const mapSupabaseAuthError = (error: unknown): AuthenticationFailure => {
       authError.code === "signup_disabled"
     ) {
       return createEmailAlreadyExistsError(authError.message);
+    }
+
+    // Same password as current
+    if (
+      authError.code === "same_password" ||
+      errorMessage.includes("should be different") ||
+      errorMessage.includes("same password")
+    ) {
+      return createSamePasswordError(authError.message);
     }
 
     // Weak password

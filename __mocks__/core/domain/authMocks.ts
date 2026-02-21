@@ -65,11 +65,18 @@ export const validResetPasswordInput = {
 };
 
 /**
- * Valid update password input for testing.
+ * Valid update password input for testing (legacy token flow).
  */
 export const validUpdatePasswordInput = {
   email: "test@example.com",
   token: "valid-reset-token",
+  password: "newpassword123",
+};
+
+/**
+ * Valid update password input for testing (PKCE session-based flow, no token needed).
+ */
+export const validUpdatePasswordInputPkce = {
   password: "newpassword123",
 };
 

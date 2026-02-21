@@ -99,7 +99,9 @@
           "invalid": "La dirección de email no es válida"
         },
         "confirmPassword": {
-          "label": "Confirmar contraseña"
+          "label": "Confirmar contraseña",
+          "required": "Confirma tu contraseña",
+          "mismatch": "Las contraseñas no coinciden"
         },
         "password": {
           "helperText": "Mínimo 6 caracteres",
@@ -157,12 +159,14 @@
       "buttonAriaLabel": "Enviar enlace de restablecimiento",
       "backToSignin": "Volver a iniciar sesión",
       "success": {
-        "message": "Se ha enviado un email de restablecimiento a tu dirección.",
+        "message": "Si existe una cuenta con este email, se ha enviado un enlace de restablecimiento.",
         "instructions": "Revisa tu bandeja de entrada y haz clic en el enlace para restablecer tu contraseña."
       },
-      "errors": {
-        "invalidEmail": "Dirección de email no válida",
-        "generic": "Se ha producido un error al enviar el email"
+      "fields": {
+        "email": {
+          "required": "La dirección de email es obligatoria",
+          "invalid": "La dirección de email no es válida"
+        }
       }
     },
     "updatePassword": {
@@ -174,22 +178,23 @@
       "success": "Tu contraseña se ha actualizado correctamente.",
       "redirecting": "Redirigiendo...",
       "fields": {
-        "password": "Nueva contraseña",
-        "confirmPassword": "Confirmar contraseña"
-      },
-      "validation": {
-        "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
-        "passwordMaxLength": "La contraseña debe tener menos de 100 caracteres",
-        "confirmPasswordRequired": "Confirma tu contraseña",
-        "passwordsDoNotMatch": "Las contraseñas no coinciden"
-      },
-      "errors": {
-        "missingToken": "Enlace de restablecimiento no válido. Falta el token o el email.",
-        "invalidToken": "El enlace de restablecimiento no es válido o ha caducado. Solicita un nuevo enlace.",
-        "passwordResetError": "Se ha producido un error al actualizar la contraseña.",
-        "validationFailed": "Error de validación. Inténtalo de nuevo.",
-        "invalidEmail": "Dirección de email no válida",
-        "generic": "Se ha producido un error al actualizar"
+        "password": {
+          "label": "Nueva contraseña",
+          "tooShort": "La contraseña debe tener al menos 6 caracteres",
+          "tooLong": "La contraseña debe tener menos de 100 caracteres",
+          "hint": {
+            "hasMinLength": "Mínimo 6 caracteres",
+            "hasUppercase": "Añade una mayúscula",
+            "hasLowercase": "Añade una minúscula",
+            "hasNumber": "Añade un número",
+            "hasSpecialChar": "Añade un carácter especial (!@#...)"
+          }
+        },
+        "confirmPassword": {
+          "label": "Confirmar contraseña",
+          "required": "Confirma tu contraseña",
+          "mismatch": "Las contraseñas no coinciden"
+        }
       }
     },
     "signin": {
@@ -1081,7 +1086,8 @@
       "AUTHENTICATION_ERROR": "Se ha producido un error de autenticación",
       "EMAIL_VERIFICATION_ERROR": "Se ha producido un error al verificar el email",
       "PASSWORD_RESET_ERROR": "Se ha producido un error al restablecer la contraseña",
-      "INVALID_TOKEN": "El enlace no es válido o ha caducado. Solicita uno nuevo"
+      "INVALID_TOKEN": "El enlace no es válido o ha caducado. Solicita uno nuevo",
+      "SAME_PASSWORD": "La nueva contraseña debe ser diferente de la actual"
     },
     "repository": {
       "NOT_FOUND": "Recurso no encontrado",
