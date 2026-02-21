@@ -9,8 +9,8 @@ export const AUTH_ZOD_FIELD_MESSAGES: Record<string, string> = {
   "Password is required": "password.required",
   "Password must be at least 6 characters": "password.tooShort",
   "Password must be less than 100 characters": "password.tooLong",
-  "Password confirmation is required": "confirmPassword.label",
-  "Passwords do not match": "confirmPassword.label",
+  "Password confirmation is required": "confirmPassword.required",
+  "Passwords do not match": "confirmPassword.mismatch",
 };
 
 /**

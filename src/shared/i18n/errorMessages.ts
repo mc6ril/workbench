@@ -56,6 +56,7 @@ export const getErrorMessage = (
     EMAIL_VERIFICATION_ERROR: "auth.EMAIL_VERIFICATION_ERROR",
     PASSWORD_RESET_ERROR: "auth.PASSWORD_RESET_ERROR",
     INVALID_TOKEN: "auth.INVALID_TOKEN",
+    SAME_PASSWORD: "auth.SAME_PASSWORD",
   };
 
   const authTranslationKey = authKeyMap[error.code];

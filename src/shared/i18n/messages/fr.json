@@ -99,7 +99,9 @@
           "invalid": "L'adresse email n'est pas valide"
         },
         "confirmPassword": {
-          "label": "Confirmer le mot de passe"
+          "label": "Confirmer le mot de passe",
+          "required": "Veuillez confirmer votre mot de passe",
+          "mismatch": "Les mots de passe ne correspondent pas"
         },
         "password": {
           "helperText": "Minimum 6 caractères",
@@ -157,12 +159,14 @@
       "buttonAriaLabel": "Envoyer le lien de réinitialisation",
       "backToSignin": "Retour à la connexion",
       "success": {
-        "message": "Un email de réinitialisation a été envoyé à votre adresse.",
+        "message": "Si un compte existe avec cette adresse email, un lien de réinitialisation a été envoyé.",
         "instructions": "Veuillez vérifier votre boîte de réception et cliquer sur le lien pour réinitialiser votre mot de passe."
       },
-      "errors": {
-        "invalidEmail": "Adresse email invalide",
-        "generic": "Une erreur s'est produite lors de l'envoi de l'email"
+      "fields": {
+        "email": {
+          "required": "L'adresse email est requise",
+          "invalid": "L'adresse email n'est pas valide"
+        }
       }
     },
     "updatePassword": {
@@ -174,22 +178,23 @@
       "success": "Votre mot de passe a été mis à jour avec succès.",
       "redirecting": "Redirection en cours...",
       "fields": {
-        "password": "Nouveau mot de passe",
-        "confirmPassword": "Confirmer le mot de passe"
-      },
-      "validation": {
-        "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères",
-        "passwordMaxLength": "Le mot de passe doit contenir moins de 100 caractères",
-        "confirmPasswordRequired": "Veuillez confirmer votre mot de passe",
-        "passwordsDoNotMatch": "Les mots de passe ne correspondent pas"
-      },
-      "errors": {
-        "missingToken": "Lien de réinitialisation invalide. Le token ou l'email est manquant.",
-        "invalidToken": "Le lien de réinitialisation est invalide ou a expiré. Veuillez demander un nouveau lien.",
-        "passwordResetError": "Une erreur s'est produite lors de la mise à jour du mot de passe.",
-        "validationFailed": "Les données de validation ont échoué. Veuillez réessayer.",
-        "invalidEmail": "Adresse email invalide",
-        "generic": "Une erreur s'est produite lors de la mise à jour"
+        "password": {
+          "label": "Nouveau mot de passe",
+          "tooShort": "Le mot de passe doit contenir au moins 6 caractères",
+          "tooLong": "Le mot de passe doit contenir moins de 100 caractères",
+          "hint": {
+            "hasMinLength": "Minimum 6 caractères",
+            "hasUppercase": "Ajoutez une majuscule",
+            "hasLowercase": "Ajoutez une minuscule",
+            "hasNumber": "Ajoutez un chiffre",
+            "hasSpecialChar": "Ajoutez un caractère spécial (!@#...)"
+          }
+        },
+        "confirmPassword": {
+          "label": "Confirmer le mot de passe",
+          "required": "Veuillez confirmer votre mot de passe",
+          "mismatch": "Les mots de passe ne correspondent pas"
+        }
       }
     },
     "signin": {
@@ -1081,7 +1086,8 @@
       "AUTHENTICATION_ERROR": "Une erreur d'authentification s'est produite",
       "EMAIL_VERIFICATION_ERROR": "Une erreur s'est produite lors de la vérification de l'email",
       "PASSWORD_RESET_ERROR": "Une erreur s'est produite lors de la réinitialisation du mot de passe",
-      "INVALID_TOKEN": "Le lien est invalide ou a expiré. Veuillez en demander un nouveau"
+      "INVALID_TOKEN": "Le lien est invalide ou a expiré. Veuillez en demander un nouveau",
+      "SAME_PASSWORD": "Le nouveau mot de passe doit être différent de l'ancien"
     },
     "repository": {
       "NOT_FOUND": "Ressource introuvable",

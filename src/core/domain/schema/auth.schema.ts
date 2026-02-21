@@ -223,19 +223,19 @@ export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;
 
 /**
  * Zod schema for password update input.
- * Validates password requirements and token presence.
- * Email is optional when using code format (external systems may redirect with code only).
- * Accepts valid email string, empty string, or undefined.
+ * Validates password requirements.
+ * Token and email are optional: when using the PKCE callback flow,
+ * the session is already established and no token/email is needed.
  */
 export const UpdatePasswordSchema = z.object({
   password: PasswordSchema,
-  token: z.string().min(1, "Token is required"),
+  token: z.string().min(1, "Token is required").optional(),
   email: z
     .union([
       z.string().email({ message: "Invalid email format" }),
       z.literal(""),
     ])
-    .optional(), // Allow empty string or undefined for code-only format
+    .optional(),
 });
 
 /**
@@ -331,6 +331,13 @@ export type InvalidTokenError = AuthError & {
 };
 
 /**
+ * Error when the new password is the same as the current one.
+ */
+export type SamePasswordError = AuthError & {
+  code: "SAME_PASSWORD";
+};
+
+/**
  * Union type of all possible authentication errors.
  */
 export type AuthenticationFailure =
@@ -341,7 +348,8 @@ export type AuthenticationFailure =
   | AuthenticationError
   | EmailVerificationError
   | PasswordResetError
-  | InvalidTokenError;
+  | InvalidTokenError
+  | SamePasswordError;
 
 /**
  * Zod schema for changing password from account settings.

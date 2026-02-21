@@ -99,7 +99,9 @@
           "invalid": "Email address is not valid"
         },
         "confirmPassword": {
-          "label": "Confirm password"
+          "label": "Confirm password",
+          "required": "Please confirm your password",
+          "mismatch": "Passwords do not match"
         },
         "password": {
           "helperText": "Minimum 6 characters",
@@ -157,12 +159,14 @@
       "buttonAriaLabel": "Send reset link",
       "backToSignin": "Back to sign in",
       "success": {
-        "message": "A reset email has been sent to your address.",
+        "message": "If an account exists with this email address, a reset link has been sent.",
         "instructions": "Please check your inbox and click the link to reset your password."
       },
-      "errors": {
-        "invalidEmail": "Invalid email address",
-        "generic": "An error occurred while sending the email"
+      "fields": {
+        "email": {
+          "required": "Email address is required",
+          "invalid": "Email address is not valid"
+        }
       }
     },
     "updatePassword": {
@@ -174,22 +178,23 @@
       "success": "Your password has been updated successfully.",
       "redirecting": "Redirecting...",
       "fields": {
-        "password": "New password",
-        "confirmPassword": "Confirm password"
-      },
-      "validation": {
-        "passwordMinLength": "Password must be at least 6 characters",
-        "passwordMaxLength": "Password must be less than 100 characters",
-        "confirmPasswordRequired": "Please confirm your password",
-        "passwordsDoNotMatch": "Passwords do not match"
-      },
-      "errors": {
-        "missingToken": "Invalid reset link. Token or email is missing.",
-        "invalidToken": "The reset link is invalid or has expired. Please request a new link.",
-        "passwordResetError": "An error occurred while updating the password.",
-        "validationFailed": "Validation failed. Please try again.",
-        "invalidEmail": "Invalid email address",
-        "generic": "An error occurred during update"
+        "password": {
+          "label": "New password",
+          "tooShort": "Password must be at least 6 characters",
+          "tooLong": "Password must be less than 100 characters",
+          "hint": {
+            "hasMinLength": "Minimum 6 characters",
+            "hasUppercase": "Add an uppercase letter",
+            "hasLowercase": "Add a lowercase letter",
+            "hasNumber": "Add a number",
+            "hasSpecialChar": "Add a special character (!@#...)"
+          }
+        },
+        "confirmPassword": {
+          "label": "Confirm password",
+          "required": "Please confirm your password",
+          "mismatch": "Passwords do not match"
+        }
       }
     },
     "signin": {
@@ -1081,7 +1086,8 @@
       "AUTHENTICATION_ERROR": "An authentication error occurred",
       "EMAIL_VERIFICATION_ERROR": "An error occurred during email verification",
       "PASSWORD_RESET_ERROR": "An error occurred during password reset",
-      "INVALID_TOKEN": "The link is invalid or has expired. Please request a new one"
+      "INVALID_TOKEN": "The link is invalid or has expired. Please request a new one",
+      "SAME_PASSWORD": "New password must be different from the current one"
     },
     "repository": {
       "NOT_FOUND": "Resource not found",
