@@ -73,6 +73,7 @@ RETURNS TABLE(
   updated_at timestamptz
 )
 LANGUAGE sql STABLE SECURITY INVOKER
+SET search_path = ''
 AS $$
   SELECT
     c.id,
@@ -83,8 +84,8 @@ AS $$
     up.avatar_url AS author_avatar_url,
     c.created_at,
     c.updated_at
-  FROM comments c
-  JOIN user_profiles up ON up.id = c.author_id
+  FROM public.comments c
+  JOIN public.user_profiles up ON up.id = c.author_id
   WHERE c.ticket_id = p_ticket_id
   ORDER BY c.created_at ASC;
 $$;
