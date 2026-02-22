@@ -2,7 +2,10 @@
 
 import React, { useCallback, useMemo } from "react";
 
-import { Button, Checkbox, Stack, Text } from "@/presentation/components/ui";
+import Button from "@/presentation/components/ui/Button";
+import Checkbox from "@/presentation/components/ui/Checkbox";
+import Stack from "@/presentation/components/ui/Stack";
+import Text from "@/presentation/components/ui/Text";
 
 import { BUTTON_LABELS, getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

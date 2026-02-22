@@ -4,13 +4,11 @@ import React, { useState } from "react";
 
 import type { CreateEpicInput } from "@/core/domain/schema/epic.schema";
 
-import {
-  Button,
-  ErrorMessage,
-  Form,
-  Input,
-  Textarea,
-} from "@/presentation/components/ui";
+import Button from "@/presentation/components/ui/Button";
+import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
+import Form from "@/presentation/components/ui/Form";
+import Input from "@/presentation/components/ui/Input";
+import Textarea from "@/presentation/components/ui/Textarea";
 
 import { BUTTON_LABELS } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

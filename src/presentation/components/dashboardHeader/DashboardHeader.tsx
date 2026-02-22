@@ -1,6 +1,7 @@
 import React from "react";
 
-import { Text,Title } from "@/presentation/components/ui";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 

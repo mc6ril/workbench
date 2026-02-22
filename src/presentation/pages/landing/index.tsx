@@ -4,7 +4,8 @@ import { Suspense, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { Button, Text } from "@/presentation/components/ui";
+import Button from "@/presentation/components/ui/Button";
+import Text from "@/presentation/components/ui/Text";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { useTranslation } from "@/shared/i18n";

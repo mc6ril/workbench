@@ -2,14 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
+import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
 import { createCheckoutSession } from "@/core/usecases/subscription/createCheckoutSession";
 
 import { stripePaymentGateway } from "@/infrastructure/stripe/stripePaymentGateway";
+import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
 import { createSupabaseAdminClient } from "@/infrastructure/supabase/shared/client-admin";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
 
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
+import { withRateLimit } from "@/shared/rateLimit";
 
 /**
  * POST /api/stripe/checkout
@@ -18,14 +21,22 @@ import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
  * Body: { plan: "pro" | "team" }
  */
 export const POST = async (request: NextRequest): Promise<NextResponse> => {
+  const rateLimitResponse = withRateLimit(request, {
+    maxRequests: 5,
+    windowMs: 60_000,
+  });
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const supabaseClient = await createSupabaseServerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabaseClient.auth.getUser();
+    const authRepo = createAuthRepository(supabaseClient);
 
-    if (authError || !user) {
+    let session;
+    try {
+      session = await getCurrentSession(authRepo);
+    } catch {
       return NextResponse.json(
         { error: API_MESSAGES_COMMON.NOT_AUTHENTICATED },
         { status: 401 }
@@ -59,8 +70,8 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       stripePaymentGateway,
       subscriptionRepo,
       {
-        userId: user.id,
-        email: user.email ?? "",
+        userId: session.userId,
+        email: session.email,
         plan,
         successUrl: `${origin}/account?checkout=success`,
         cancelUrl: cancelUrl.toString(),
@@ -69,13 +80,10 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error
-        ? error.message
-        : API_MESSAGES_COMMON.UNKNOWN_ERROR;
+    console.error("[API] Checkout error:", error);
 
     return NextResponse.json(
-      { error: API_MESSAGES_STRIPE.CHECKOUT_FAILED, details: errorMessage },
+      { error: API_MESSAGES_STRIPE.CHECKOUT_FAILED },
       { status: 500 }
     );
   }

@@ -3,7 +3,7 @@
 import type { PropsWithChildren } from "react";
 import { ThemeProvider } from "next-themes";
 
-import { Toast } from "@/presentation/components/ui";
+import Toast from "@/presentation/components/ui/Toast";
 import { useLocaleSync } from "@/presentation/hooks/useLocaleSync";
 import { useThemeSync } from "@/presentation/hooks/useThemeSync";
 import ReactQueryProvider from "@/presentation/providers/ReactQueryProvider";

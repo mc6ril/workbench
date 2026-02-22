@@ -1,6 +1,9 @@
 import React from "react";
 
-import { Badge, Card, EmptyState, Text } from "@/presentation/components/ui";
+import Badge from "@/presentation/components/ui/Badge";
+import Card from "@/presentation/components/ui/Card";
+import EmptyState from "@/presentation/components/ui/EmptyState";
+import Text from "@/presentation/components/ui/Text";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { getIntlLocale, useTranslation } from "@/shared/i18n";
@@ -182,4 +185,4 @@ const RecentActivityWidget = ({
   );
 };
 
-export default RecentActivityWidget;
+export default React.memo(RecentActivityWidget);

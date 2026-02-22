@@ -2,7 +2,10 @@
 
 import React from "react";
 
-import { Button, Checkbox, Stack, Title } from "@/presentation/components/ui";
+import Button from "@/presentation/components/ui/Button";
+import Checkbox from "@/presentation/components/ui/Checkbox";
+import Stack from "@/presentation/components/ui/Stack";
+import Title from "@/presentation/components/ui/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

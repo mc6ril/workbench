@@ -14,16 +14,14 @@ import type {
 } from "@/core/domain/schema/auth.schema";
 import { SignUpFormSchema } from "@/core/domain/schema/auth.schema";
 
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  PasswordStrengthIndicator,
-  Text,
-  Title,
-} from "@/presentation/components/ui";
-import { useSignUp } from "@/presentation/hooks";
+import Button from "@/presentation/components/ui/Button";
+import Checkbox from "@/presentation/components/ui/Checkbox";
+import Form from "@/presentation/components/ui/Form";
+import Input from "@/presentation/components/ui/Input";
+import PasswordStrengthIndicator from "@/presentation/components/ui/PasswordStrengthIndicator";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
+import { useSignUp } from "@/presentation/hooks/auth/useSignUp";
 
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";

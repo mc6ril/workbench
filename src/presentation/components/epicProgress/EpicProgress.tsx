@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { Text } from "@/presentation/components/ui";
+import Text from "@/presentation/components/ui/Text";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { ARIA_ROLES } from "@/shared/a11y/constants";

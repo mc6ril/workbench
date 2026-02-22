@@ -90,6 +90,22 @@ export type WebhookParams = {
   signature: string;
 };
 
+/** Map a payment gateway status string to domain SubscriptionStatus. */
+export const mapPaymentStatus = (status: string): SubscriptionStatus => {
+  switch (status) {
+    case "active":
+      return SubscriptionStatus.ACTIVE;
+    case "canceled":
+      return SubscriptionStatus.CANCELED;
+    case "past_due":
+      return SubscriptionStatus.PAST_DUE;
+    case "trialing":
+      return SubscriptionStatus.TRIALING;
+    default:
+      return SubscriptionStatus.ACTIVE;
+  }
+};
+
 /** Default free subscription returned when no row exists in the database. */
 export const DEFAULT_FREE_SUBSCRIPTION: Omit<
   Subscription,

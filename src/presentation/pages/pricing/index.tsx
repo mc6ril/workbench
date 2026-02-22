@@ -8,8 +8,10 @@ import {
   SubscriptionPlan,
 } from "@/core/domain/schema/subscription.schema";
 
-import { Button, Text } from "@/presentation/components/ui";
-import { useSession, useSubscription } from "@/presentation/hooks";
+import Button from "@/presentation/components/ui/Button";
+import Text from "@/presentation/components/ui/Text";
+import { useSession } from "@/presentation/hooks/auth/useSession";
+import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
 import { useToastStore } from "@/presentation/stores/useToastStore";
 
 import { getAccessibilityId } from "@/shared/a11y";

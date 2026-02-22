@@ -2,7 +2,9 @@
 
 import React from "react";
 
-import { Button, Select, Text } from "@/presentation/components/ui";
+import Button from "@/presentation/components/ui/Button";
+import Select from "@/presentation/components/ui/Select";
+import Text from "@/presentation/components/ui/Text";
 
 import { useTranslation } from "@/shared/i18n";
 

@@ -3,9 +3,10 @@
 import { use, useMemo } from "react";
 
 import DashboardHeader from "@/presentation/components/dashboardHeader/DashboardHeader";
-import { Container, Stack } from "@/presentation/components/ui";
-import { useProject } from "@/presentation/hooks";
+import Container from "@/presentation/components/ui/Container";
+import Stack from "@/presentation/components/ui/Stack";
 import { useLastActivitySubtitle } from "@/presentation/hooks/project/useLastActivitySubtitle";
+import { useProject } from "@/presentation/hooks/project/useProject";
 
 import styles from "./ProjectPage.module.scss";
 

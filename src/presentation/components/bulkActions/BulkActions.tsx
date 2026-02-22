@@ -2,7 +2,8 @@
 
 import React from "react";
 
-import { Button, Text } from "@/presentation/components/ui";
+import Button from "@/presentation/components/ui/Button";
+import Text from "@/presentation/components/ui/Text";
 
 import { useTranslation } from "@/shared/i18n";
 

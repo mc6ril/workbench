@@ -5,12 +5,10 @@ import React, { useMemo } from "react";
 import TicketCard, {
   TicketCardProps,
 } from "@/presentation/components/ticketCard/TicketCard";
-import {
-  DraggableItem,
-  DroppableZone,
-  Text,
-  Title,
-} from "@/presentation/components/ui";
+import DraggableItem from "@/presentation/components/ui/DraggableItem";
+import DroppableZone from "@/presentation/components/ui/DroppableZone";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
@@ -79,9 +77,7 @@ const BoardColumn = ({
                 <DraggableItem
                   id={draggableId}
                   onClick={
-                    onTicketClick
-                      ? () => onTicketClick(ticket.id)
-                      : undefined
+                    onTicketClick ? () => onTicketClick(ticket.id) : undefined
                   }
                 >
                   <TicketCard {...ticket} />
@@ -109,4 +105,4 @@ const BoardColumn = ({
   );
 };
 
-export default BoardColumn;
+export default React.memo(BoardColumn);

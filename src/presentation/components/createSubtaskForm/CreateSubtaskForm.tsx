@@ -2,7 +2,11 @@
 
 import React, { useCallback, useMemo, useState } from "react";
 
-import { Button, ErrorMessage, Form, Input, Textarea } from "@/presentation/components/ui";
+import Button from "@/presentation/components/ui/Button";
+import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
+import Form from "@/presentation/components/ui/Form";
+import Input from "@/presentation/components/ui/Input";
+import Textarea from "@/presentation/components/ui/Textarea";
 
 import { BUTTON_LABELS, getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

@@ -15,7 +15,9 @@ import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
 import { PlusIcon, UserProfileIcon } from "@/presentation/components/icons";
 import NavigationItem from "@/presentation/components/ui/NavigationItem";
-import { useSession, useSignOut, useSubscription } from "@/presentation/hooks";
+import { useSession } from "@/presentation/hooks/auth/useSession";
+import { useSignOut } from "@/presentation/hooks/auth/useSignOut";
+import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PAGE_ROUTES } from "@/shared/constants/routes";

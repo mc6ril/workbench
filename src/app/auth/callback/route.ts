@@ -1,5 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 
+import { exchangeCodeForSession } from "@/core/usecases/auth/exchangeCodeForSession";
+
+import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
 /**
@@ -19,12 +22,11 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
 
   if (code) {
     try {
-      const supabase = await createSupabaseServerClient();
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      const supabaseClient = await createSupabaseServerClient();
+      const authRepo = createAuthRepository(supabaseClient);
+      await exchangeCodeForSession(authRepo, code);
 
-      if (!error) {
-        return NextResponse.redirect(`${origin}${next}`);
-      }
+      return NextResponse.redirect(`${origin}${next}`);
     } catch {
       // Fall through to error redirect
     }

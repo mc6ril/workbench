@@ -1,6 +1,7 @@
 import React from "react";
 
-import { Card, Link } from "@/presentation/components/ui";
+import Card from "@/presentation/components/ui/Card";
+import Link from "@/presentation/components/ui/Link";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
@@ -98,4 +99,4 @@ const ShortcutsWidget = ({
   );
 };
 
-export default ShortcutsWidget;
+export default React.memo(ShortcutsWidget);

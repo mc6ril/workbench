@@ -9,24 +9,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { CreateProjectInput } from "@/core/domain/schema/project.schema";
 import { CreateProjectInputSchema } from "@/core/domain/schema/project.schema";
 
-import {
-  Badge,
-  Button,
-  ErrorMessage,
-  Form,
-  Input,
-  Link,
-  Loader,
-  Modal,
-  Text,
-} from "@/presentation/components/ui";
-import {
-  useAddUserToProject,
-  useCreateProject,
-  useProjectsWithStats,
-  useReclaimableProjects,
-  useSession,
-} from "@/presentation/hooks";
+import Badge from "@/presentation/components/ui/Badge";
+import Button from "@/presentation/components/ui/Button";
+import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
+import Form from "@/presentation/components/ui/Form";
+import Input from "@/presentation/components/ui/Input";
+import Link from "@/presentation/components/ui/Link";
+import Loader from "@/presentation/components/ui/Loader";
+import Modal from "@/presentation/components/ui/Modal";
+import Text from "@/presentation/components/ui/Text";
+import { useSession } from "@/presentation/hooks/auth/useSession";
+import { useAddUserToProject } from "@/presentation/hooks/project/useAddUserToProject";
+import { useCreateProject } from "@/presentation/hooks/project/useCreateProject";
+import { useProjectsWithStats } from "@/presentation/hooks/project/useProjectsWithStats";
+import { useReclaimableProjects } from "@/presentation/hooks/project/useReclaimableProjects";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";

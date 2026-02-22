@@ -5,7 +5,9 @@ import React, { useCallback, useMemo } from "react";
 import type { EpicDetail as EpicDetailType } from "@/core/domain/schema/epic.schema";
 
 import EpicProgress from "@/presentation/components/epicProgress/EpicProgress";
-import { Button, Text, Title } from "@/presentation/components/ui";
+import Button from "@/presentation/components/ui/Button";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

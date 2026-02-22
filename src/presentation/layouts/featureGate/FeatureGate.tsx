@@ -5,7 +5,7 @@ import React from "react";
 import type { PlanFeature } from "@/core/domain/schema/planFeatures.schema";
 
 import UpgradePrompt from "@/presentation/components/upgradePrompt/UpgradePrompt";
-import { useFeatureAccess } from "@/presentation/hooks";
+import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
 
 type Props = {
   feature: PlanFeature;

@@ -2,7 +2,7 @@
 
 import { use } from "react";
 
-import { Title } from "@/presentation/components/ui";
+import Title from "@/presentation/components/ui/Title";
 
 const BacklogPage = ({
   params,

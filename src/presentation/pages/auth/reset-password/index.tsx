@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 
-import { Button, Form, Input, Text, Title } from "@/presentation/components/ui";
+import Button from "@/presentation/components/ui/Button";
+import Form from "@/presentation/components/ui/Form";
+import Input from "@/presentation/components/ui/Input";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 import { useResetPasswordForm } from "@/presentation/hooks/auth/useResetPasswordForm";
 
 import { useTranslation } from "@/shared/i18n";

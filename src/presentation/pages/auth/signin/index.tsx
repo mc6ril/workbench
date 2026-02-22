@@ -10,8 +10,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { SignInInput } from "@/core/domain/schema/auth.schema";
 import { SignInSchema } from "@/core/domain/schema/auth.schema";
 
-import { Button, Form, Input, Text, Title } from "@/presentation/components/ui";
-import { useResendVerification, useSignIn } from "@/presentation/hooks";
+import Button from "@/presentation/components/ui/Button";
+import Form from "@/presentation/components/ui/Form";
+import Input from "@/presentation/components/ui/Input";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
+import { useResendVerification } from "@/presentation/hooks/auth/useResendVerification";
+import { useSignIn } from "@/presentation/hooks/auth/useSignIn";
 
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";

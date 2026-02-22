@@ -2,7 +2,10 @@
 
 import React, { useMemo } from "react";
 
-import { Badge, Button, Checkbox, Text } from "@/presentation/components/ui";
+import Badge from "@/presentation/components/ui/Badge";
+import Button from "@/presentation/components/ui/Button";
+import Checkbox from "@/presentation/components/ui/Checkbox";
+import Text from "@/presentation/components/ui/Text";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
@@ -155,4 +158,4 @@ const TicketListItem = ({
   );
 };
 
-export default TicketListItem;
+export default React.memo(TicketListItem);

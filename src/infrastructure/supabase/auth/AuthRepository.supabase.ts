@@ -541,4 +541,11 @@ export const createAuthRepository = (
       handleAuthError(error);
     }
   },
+
+  exchangeCodeForSession: async (code: string): Promise<void> => {
+    const { error } = await client.auth.exchangeCodeForSession(code);
+    if (error) {
+      handleAuthError(error);
+    }
+  },
 });

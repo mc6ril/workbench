@@ -2,7 +2,11 @@
 
 import React, { useMemo } from "react";
 
-import { Badge, Card, Stack, Text, Title } from "@/presentation/components/ui";
+import Badge from "@/presentation/components/ui/Badge";
+import Card from "@/presentation/components/ui/Card";
+import Stack from "@/presentation/components/ui/Stack";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
