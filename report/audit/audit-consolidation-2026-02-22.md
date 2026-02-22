@@ -16,10 +16,10 @@ Command: audit-consolidation
 
 | Audit        | 🔴 HIGH | ⚠️ MEDIUM | ℹ️ LOW |
 |--------------|---------|-----------|--------|
-| Sécurité     | 1       | 5         | 5      |
-| Architecture | 0       | 6         | 4      |
-| Performance  | 0       | 8         | 10     |
-| **Total**    | **1**   | **19**    | **19** |
+| Sécurité     | 1       | 2         | 5      |
+| Architecture | 0       | 5         | 4      |
+| Performance  | 0       | 5         | 10     |
+| **Total**    | **1**   | **12**    | **19** |
 
 ---
 
@@ -39,11 +39,8 @@ Command: audit-consolidation
 
 | #  | Problème | Fichier | Recommandation |
 |----|----------|---------|----------------|
-| S7 | Middleware utilise `getSession()` au lieu de `getUser()` pour le check auth initial | `middleware.ts:86` | Remplacer par `getUser()` ou documenter le trade-off |
 | S8 | Client-side `getSession()` sans validation serveur | `src/infrastructure/supabase/auth/AuthRepository.supabase.ts:229-252` | Acceptable pour UX côté client, vérifier côté serveur pour les opérations critiques |
-| S9 | Aucune protection CSRF sur les API routes | `src/app/api/` | Implémenter des tokens CSRF ou vérifier le header `Origin` |
 | S10 | Middleware fail-open en cas d'erreur | `middleware.ts:118-127` | Acceptable avec defense-in-depth (layouts + RLS), surveiller les erreurs |
-| S11 | Politique de mot de passe faible (min 6 caractères) | `src/shared/constants/app.ts:35` | Augmenter `MIN_LENGTH` à 8 minimum |
 
 ### Architecture
 
@@ -53,7 +50,6 @@ Command: audit-consolidation
 | A4 | Server layouts importent directement depuis `infrastructure/` | `src/app/(auth)/layout.tsx`, `(public)/layout.tsx` | Acceptable pour SSR, même pattern que A3 |
 | A5 | `useDeleteUser` utilise `fetch()` brut au lieu d'un usecase + repository | `src/presentation/hooks/auth/useDeleteUser.ts:19-30` | Documenter comme exception (nécessite `service_role` côté serveur) |
 | A6 | Styles inline dans Container, Tooltip, DraggableItem | `src/presentation/components/ui/Container/index.tsx:59`, `Tooltip/index.tsx:236`, `DraggableItem/index.tsx:131` | Exception acceptable pour le positionnement dynamique |
-| A7 | String hardcodée dans l'attribut accessibility de DraggableItem | `src/presentation/components/ui/DraggableItem/index.tsx:144` | Ajouter une clé i18n |
 | A8 | `!important` dans les SCSS (pour `prefers-reduced-motion`) | 5 fichiers de pages SCSS | Exception acceptable pour l'accessibilité |
 
 ### Performance
@@ -62,11 +58,8 @@ Command: audit-consolidation
 |----|----------|---------|----------------|
 | P6 | Fonctions inline dans les `.map()` de 6+ fichiers | `BoardColumn.tsx:81`, `RecentActivityWidget.tsx:96`, `MyWorkWidget.tsx:73`, `ShortcutsWidget.tsx:76` | Extraire avec `useCallback` ou pattern `data-id` |
 | P7 | Handlers non mémorisés dans `TicketListItem` | `src/presentation/components/ticketListItem/TicketListItem.tsx:46-62` | Wrapper avec `useCallback` |
-| P8 | `Intl.DateTimeFormat` recréé à chaque appel dans la boucle | `src/presentation/components/recentActivityWidget/RecentActivityWidget.tsx:40-49` | Mémoriser l'instance hors du composant |
 | P9 | `THEME_OPTIONS_KEYS.map()` crée un nouveau tableau à chaque render | `src/presentation/pages/account/index.tsx:509` | Mémoriser avec `useMemo` |
 | P10 | Aucun `select` utilisé dans les 30+ hooks React Query | Tous les hooks dans `src/presentation/hooks/` | Ajouter `select` pour ne sélectionner que les données nécessaires |
-| P11 | Pas de bundle analyzer configuré | `next.config.ts` | Ajouter `@next/bundle-analyzer` |
-| P12 | `@dnd-kit` importé statiquement sur la page board | `src/presentation/pages/board/index.tsx:3-10` | Utiliser `next/dynamic` |
 | P13 | Pages statiques rendues comme Client Components | `legal/page.tsx`, `pricing/page.tsx` | Considérer les Server Components pour le contenu statique |
 
 ---
@@ -123,6 +116,20 @@ Command: audit-consolidation
 
 ---
 
+## Corrections appliquées (branche `fix/audit-consolidation`)
+
+- **S2–S6** : Upgrade Next.js, security headers, sanitisation erreurs API, rate limiting, allowedDevOrigins
+- **S7** : Middleware — `getSession()` remplacé par `getUser()`
+- **S9** : CSRF — Vérification du header `Origin` sur checkout, portal et delete-user
+- **S11** : Password `MIN_LENGTH` passé de 6 à 8
+- **A1–A2** : `mapStripeStatus` déplacé dans le domain, API routes utilisent les usecases
+- **A7** : DraggableItem aria-label — clé i18n ajoutée
+- **P1–P5** : Code splitting settings, barrel imports supprimés, `React.memo` sur 8 composants, Avatar width/height
+- **P8** : `Intl.DateTimeFormat` mémorisé hors composant
+- **P11** : `@next/bundle-analyzer` installé et configuré (`ANALYZE=true`)
+- **P12** : Board page chargée dynamiquement via `next/dynamic`
+
 ## Actions restantes
 
 1. **Rotation des secrets** — Rotation immédiate de toutes les clés exposées (action manuelle Supabase + Stripe)
+2. **Points MEDIUM restants** — Acceptés par design (S8, S10, A3–A6, A8) ou à traiter incrémentalement (P6, P7, P9, P10, P13)

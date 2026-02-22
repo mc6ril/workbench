@@ -11,6 +11,7 @@ import { createSubscriptionRepository } from "@/infrastructure/supabase/subscrip
 
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
 import { withRateLimit } from "@/shared/rateLimit";
+import { verifyCsrfOrigin } from "@/shared/security/csrf";
 
 /**
  * POST /api/stripe/portal
@@ -19,6 +20,11 @@ import { withRateLimit } from "@/shared/rateLimit";
  * Allows managing existing subscription (cancel, change plan, update payment method).
  */
 export const POST = async (request: NextRequest): Promise<NextResponse> => {
+  const csrfResponse = verifyCsrfOrigin(request);
+  if (csrfResponse) {
+    return csrfResponse;
+  }
+
   const rateLimitResponse = withRateLimit(request, {
     maxRequests: 5,
     windowMs: 60_000,

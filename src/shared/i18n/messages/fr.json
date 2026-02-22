@@ -104,11 +104,11 @@
           "mismatch": "Les mots de passe ne correspondent pas"
         },
         "password": {
-          "helperText": "Minimum 6 caractères",
-          "tooShort": "Le mot de passe doit contenir au moins 6 caractères",
+          "helperText": "Minimum 8 caractères",
+          "tooShort": "Le mot de passe doit contenir au moins 8 caractères",
           "tooLong": "Le mot de passe ne doit pas dépasser 100 caractères",
           "hint": {
-            "hasMinLength": "Minimum 6 caractères",
+            "hasMinLength": "Minimum 8 caractères",
             "hasUppercase": "Ajoutez une majuscule",
             "hasLowercase": "Ajoutez une minuscule",
             "hasNumber": "Ajoutez un chiffre",
@@ -180,10 +180,10 @@
       "fields": {
         "password": {
           "label": "Nouveau mot de passe",
-          "tooShort": "Le mot de passe doit contenir au moins 6 caractères",
+          "tooShort": "Le mot de passe doit contenir au moins 8 caractères",
           "tooLong": "Le mot de passe doit contenir moins de 100 caractères",
           "hint": {
-            "hasMinLength": "Minimum 6 caractères",
+            "hasMinLength": "Minimum 8 caractères",
             "hasUppercase": "Ajoutez une majuscule",
             "hasLowercase": "Ajoutez une minuscule",
             "hasNumber": "Ajoutez un chiffre",
@@ -827,7 +827,7 @@
         "preferencesUpdated": "Préférences enregistrées"
       },
       "validation": {
-        "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères",
+        "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères",
         "passwordMaxLength": "Le mot de passe doit contenir moins de 100 caractères",
         "confirmPasswordRequired": "Veuillez confirmer votre mot de passe",
         "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
@@ -1187,6 +1187,9 @@
       "assign": "Assigner",
       "assignAriaLabel": "Ouvrir le sélecteur d'assignés",
       "memberListAriaLabel": "Liste des membres disponibles"
+    },
+    "draggableItem": {
+      "ariaLabel": "Élément déplaçable {id}"
     },
     "avatarUpload": {
       "ariaLabel": "Gestion de l'avatar",

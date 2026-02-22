@@ -1,8 +1,11 @@
 "use client";
 
 import { use } from "react";
+import dynamic from "next/dynamic";
 
-import BoardLayout from "@/presentation/pages/board";
+const BoardLayout = dynamic(() => import("@/presentation/pages/board"), {
+  ssr: false,
+});
 
 const BoardPage = ({ params }: { params: Promise<{ projectId: string }> }) => {
   const { projectId } = use(params);
