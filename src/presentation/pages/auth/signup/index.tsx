@@ -225,7 +225,7 @@ const SignupPage = () => {
               role="alert"
               aria-live="assertive"
             >
-              {tErrors("auth.termsRequired") || errors.acceptedTerms.message}
+              {t("errors.termsRequired") || errors.acceptedTerms.message}
             </div>
           )}
 
