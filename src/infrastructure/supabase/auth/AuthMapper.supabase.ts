@@ -10,95 +10,11 @@ import type {
   InvalidTokenError,
   PasswordResetError,
   SamePasswordError,
-  UserPreferences,
   WeakPasswordError,
 } from "@/core/domain/schema/auth.schema";
-import {
-  DEFAULT_USER_PREFERENCES,
-  UserPreferencesSchema,
-} from "@/core/domain/schema/auth.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/core/domain/schema/auth.schema";
 
 import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
-
-/**
- * Extracts display_name from Supabase user_metadata.
- * Supabase stores user metadata in raw_user_meta_data / user_metadata.
- */
-const extractDisplayName = (
-  userMetadata: Record<string, unknown> | undefined
-): string | null => {
-  if (!userMetadata) {
-    return null;
-  }
-  const displayName = userMetadata["display_name"];
-  return typeof displayName === "string" && displayName.trim()
-    ? displayName.trim()
-    : null;
-};
-
-/**
- * Migrates legacy darkMode boolean to the new theme enum.
- * Returns undefined when no legacy value is found.
- */
-const migrateDarkModeToTheme = (
-  partial: Record<string, unknown>
-): "light" | "dark" | undefined => {
-  if (typeof partial["darkMode"] === "boolean") {
-    return partial["darkMode"] ? "dark" : "light";
-  }
-  return undefined;
-};
-
-/**
- * Resolves the theme value from raw preferences, supporting both the new
- * "theme" field and the legacy "darkMode" boolean for backward compatibility.
- */
-const resolveTheme = (
-  partial: Record<string, unknown>
-): UserPreferences["theme"] => {
-  if (
-    typeof partial["theme"] === "string" &&
-    ["light", "dark", "system"].includes(partial["theme"])
-  ) {
-    return partial["theme"] as UserPreferences["theme"];
-  }
-
-  return migrateDarkModeToTheme(partial) ?? DEFAULT_USER_PREFERENCES.theme;
-};
-
-/**
- * Extracts and validates user preferences from Supabase user_metadata.
- * Falls back to DEFAULT_USER_PREFERENCES for missing or invalid fields.
- * Handles backward compatibility: legacy "darkMode" boolean is migrated
- * to the new "theme" enum ("light" | "dark" | "system").
- */
-export const extractPreferences = (
-  userMetadata: Record<string, unknown> | undefined
-): UserPreferences => {
-  if (!userMetadata || typeof userMetadata["preferences"] !== "object") {
-    return { ...DEFAULT_USER_PREFERENCES };
-  }
-
-  const raw = userMetadata["preferences"];
-  const result = UserPreferencesSchema.safeParse(raw);
-
-  if (result.success) {
-    return result.data;
-  }
-
-  const partial = raw as Record<string, unknown>;
-  return {
-    theme: resolveTheme(partial),
-    emailNotifications:
-      typeof partial["emailNotifications"] === "boolean"
-        ? partial["emailNotifications"]
-        : DEFAULT_USER_PREFERENCES.emailNotifications,
-    language:
-      typeof partial["language"] === "string" && partial["language"].length > 0
-        ? partial["language"]
-        : DEFAULT_USER_PREFERENCES.language,
-  };
-};
 
 /**
  * Extracts the super user flag from Supabase app_metadata.
@@ -111,11 +27,13 @@ const extractSuperuserFlag = (
 };
 
 /**
- * Maps Supabase Session to domain AuthSession.
+ * Maps Supabase Session to a base AuthSession.
+ * displayName and preferences are set to defaults here;
+ * they are enriched from user_profiles by the repository.
  *
  * @param session - Supabase session
  * @param userEmail - User email from Supabase user object
- * @returns Domain auth session
+ * @returns Base auth session (needs profile enrichment)
  */
 export const mapSupabaseSessionToDomain = (
   session: Session,
@@ -124,8 +42,8 @@ export const mapSupabaseSessionToDomain = (
   return {
     userId: session.user.id,
     email: userEmail,
-    displayName: extractDisplayName(session.user.user_metadata),
-    preferences: extractPreferences(session.user.user_metadata),
+    displayName: null,
+    preferences: { ...DEFAULT_USER_PREFERENCES },
     accessToken: session.access_token,
     isSuperuser: extractSuperuserFlag(session.user.app_metadata),
   };

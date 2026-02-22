@@ -1,6 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { UserProfile } from "@/core/domain/schema/userProfile.schema";
+import type { UserPreferences } from "@/core/domain/schema/auth.schema";
+import type {
+  UpdateProfileInput,
+  UserProfile,
+} from "@/core/domain/schema/userProfile.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type { UserProfileRow } from "@/infrastructure/supabase/types";
@@ -86,6 +90,32 @@ export const createUserProfileRepository = (
     }
 
     return mapUserProfileRowToDomain(data as UserProfileRow);
+  },
+
+  async updateProfile(
+    userId: string,
+    input: UpdateProfileInput
+  ): Promise<void> {
+    const { error } = await client.rpc("update_user_profile", {
+      new_display_name: input.displayName ?? null,
+    });
+
+    if (error) {
+      return handleRepositoryError(error, "UserProfile", userId);
+    }
+  },
+
+  async updatePreferences(
+    userId: string,
+    preferences: UserPreferences
+  ): Promise<void> {
+    const { error } = await client.rpc("update_user_profile", {
+      new_preferences: preferences,
+    });
+
+    if (error) {
+      return handleRepositoryError(error, "UserProfile", userId);
+    }
   },
 
   async uploadAvatar(userId: string, file: File): Promise<string> {

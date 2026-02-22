@@ -1,7 +1,6 @@
 import { DEFAULT_USER_PREFERENCES } from "@/core/domain/schema/auth.schema";
 
 import {
-  extractPreferences,
   mapSupabaseAuthError,
   mapSupabaseSessionToDomain,
 } from "@/infrastructure/supabase/auth/AuthMapper.supabase";
@@ -55,8 +54,9 @@ describe("AuthMapper.supabase", () => {
       expect(result.accessToken).toBe("test-access-token");
     });
 
-    it("should extract displayName from user_metadata", () => {
-      // Arrange
+    it("should return null displayName (profile enrichment happens separately)", () => {
+      // Arrange: even with display_name in user_metadata, mapper returns null
+      // because displayName is now sourced from user_profiles table
       const supabaseSession = createSupabaseSessionMock({
         user: {
           user_metadata: { display_name: "John Doe" },
@@ -70,65 +70,12 @@ describe("AuthMapper.supabase", () => {
       );
 
       // Assert
-      expect(result.displayName).toBe("John Doe");
-    });
-
-    it("should trim displayName from user_metadata", () => {
-      // Arrange
-      const supabaseSession = createSupabaseSessionMock({
-        user: {
-          user_metadata: { display_name: "  Jane Doe  " },
-        },
-      });
-
-      // Act
-      const result = mapSupabaseSessionToDomain(
-        supabaseSession,
-        "test@example.com"
-      );
-
-      // Assert
-      expect(result.displayName).toBe("Jane Doe");
-    });
-
-    it("should return null displayName when display_name is empty string", () => {
-      // Arrange
-      const supabaseSession = createSupabaseSessionMock({
-        user: {
-          user_metadata: { display_name: "" },
-        },
-      });
-
-      // Act
-      const result = mapSupabaseSessionToDomain(
-        supabaseSession,
-        "test@example.com"
-      );
-
-      // Assert
       expect(result.displayName).toBeNull();
     });
 
-    it("should return null displayName when display_name is whitespace only", () => {
-      // Arrange
-      const supabaseSession = createSupabaseSessionMock({
-        user: {
-          user_metadata: { display_name: "   " },
-        },
-      });
-
-      // Act
-      const result = mapSupabaseSessionToDomain(
-        supabaseSession,
-        "test@example.com"
-      );
-
-      // Assert
-      expect(result.displayName).toBeNull();
-    });
-
-    it("should extract preferences from user_metadata", () => {
-      // Arrange
+    it("should return default preferences (profile enrichment happens separately)", () => {
+      // Arrange: even with preferences in user_metadata, mapper returns defaults
+      // because preferences are now sourced from user_profiles table
       const supabaseSession = createSupabaseSessionMock({
         user: {
           user_metadata: {
@@ -148,125 +95,7 @@ describe("AuthMapper.supabase", () => {
       );
 
       // Assert
-      expect(result.preferences).toEqual({
-        theme: "dark",
-        emailNotifications: false,
-        language: "en",
-      });
-    });
-
-    it("should return default preferences when user_metadata has no preferences", () => {
-      // Arrange
-      const supabaseSession = createSupabaseSessionMock({
-        user: { user_metadata: {} },
-      });
-
-      // Act
-      const result = mapSupabaseSessionToDomain(
-        supabaseSession,
-        "test@example.com"
-      );
-
-      // Assert
       expect(result.preferences).toEqual(DEFAULT_USER_PREFERENCES);
-    });
-  });
-
-  describe("extractPreferences", () => {
-    it("should return defaults when userMetadata is undefined", () => {
-      const result = extractPreferences(undefined);
-      expect(result).toEqual(DEFAULT_USER_PREFERENCES);
-    });
-
-    it("should return defaults when preferences key is missing", () => {
-      const result = extractPreferences({});
-      expect(result).toEqual(DEFAULT_USER_PREFERENCES);
-    });
-
-    it("should return defaults when preferences is not an object", () => {
-      const result = extractPreferences({ preferences: "invalid" });
-      expect(result).toEqual(DEFAULT_USER_PREFERENCES);
-    });
-
-    it("should extract valid complete preferences", () => {
-      const prefs = {
-        theme: "dark" as const,
-        emailNotifications: false,
-        language: "es",
-      };
-      const result = extractPreferences({ preferences: prefs });
-      expect(result).toEqual(prefs);
-    });
-
-    it("should partially recover when some fields are invalid", () => {
-      const result = extractPreferences({
-        preferences: {
-          theme: "light",
-          emailNotifications: "bad",
-          language: "en",
-        },
-      });
-      expect(result).toEqual({
-        theme: "light",
-        emailNotifications: DEFAULT_USER_PREFERENCES.emailNotifications,
-        language: "en",
-      });
-    });
-
-    it("should use default for missing fields in partial preferences", () => {
-      const result = extractPreferences({
-        preferences: { theme: "dark" },
-      });
-      expect(result).toEqual({
-        theme: "dark",
-        emailNotifications: DEFAULT_USER_PREFERENCES.emailNotifications,
-        language: DEFAULT_USER_PREFERENCES.language,
-      });
-    });
-
-    it("should use default language for empty string language", () => {
-      const result = extractPreferences({
-        preferences: {
-          theme: "light",
-          emailNotifications: true,
-          language: "",
-        },
-      });
-      expect(result.language).toBe(DEFAULT_USER_PREFERENCES.language);
-    });
-
-    it("should migrate legacy darkMode: true to theme: dark", () => {
-      const result = extractPreferences({
-        preferences: {
-          darkMode: true,
-          emailNotifications: true,
-          language: "fr",
-        },
-      });
-      expect(result.theme).toBe("dark");
-    });
-
-    it("should migrate legacy darkMode: false to theme: light", () => {
-      const result = extractPreferences({
-        preferences: {
-          darkMode: false,
-          emailNotifications: true,
-          language: "fr",
-        },
-      });
-      expect(result.theme).toBe("light");
-    });
-
-    it("should prefer theme field over legacy darkMode when both present", () => {
-      const result = extractPreferences({
-        preferences: {
-          theme: "system",
-          darkMode: true,
-          emailNotifications: true,
-          language: "fr",
-        },
-      });
-      expect(result.theme).toBe("system");
     });
   });
 

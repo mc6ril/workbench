@@ -10,22 +10,12 @@ import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authR
 describe("updateUser", () => {
   it("should update user with email only", async () => {
     // Arrange
-    const input = {
-      email: "newemail@example.com",
-    };
+    const input = { email: "newemail@example.com" };
     const repository = createAuthRepositoryMock({
       updateUser: jest.fn<
         Promise<void>,
-        [
-          {
-            email?: string;
-            password?: string;
-            data?: Record<string, unknown>;
-          },
-        ]
-      >(async () => {
-        // Success - no return value
-      }),
+        [{ email?: string; password?: string }]
+      >(async () => {}),
     });
 
     // Act
@@ -40,22 +30,12 @@ describe("updateUser", () => {
 
   it("should update user with password only", async () => {
     // Arrange
-    const input = {
-      password: "newpassword123",
-    };
+    const input = { password: "newpassword123" };
     const repository = createAuthRepositoryMock({
       updateUser: jest.fn<
         Promise<void>,
-        [
-          {
-            email?: string;
-            password?: string;
-            data?: Record<string, unknown>;
-          },
-        ]
-      >(async () => {
-        // Success - no return value
-      }),
+        [{ email?: string; password?: string }]
+      >(async () => {}),
     });
 
     // Act
@@ -68,56 +48,17 @@ describe("updateUser", () => {
     });
   });
 
-  it("should update user with data only", async () => {
-    // Arrange
-    const input = {
-      data: { displayName: "John Doe" },
-    };
-    const repository = createAuthRepositoryMock({
-      updateUser: jest.fn<
-        Promise<void>,
-        [
-          {
-            email?: string;
-            password?: string;
-            data?: Record<string, unknown>;
-          },
-        ]
-      >(async () => {
-        // Success - no return value
-      }),
-    });
-
-    // Act
-    await updateUser(repository, input);
-
-    // Assert
-    expect(repository.updateUser).toHaveBeenCalledTimes(1);
-    expect(repository.updateUser).toHaveBeenCalledWith({
-      data: { displayName: "John Doe" },
-    });
-  });
-
-  it("should update user with multiple fields", async () => {
+  it("should update user with email and password", async () => {
     // Arrange
     const input = {
       email: "newemail@example.com",
       password: "newpassword123",
-      data: { displayName: "John Doe" },
     };
     const repository = createAuthRepositoryMock({
       updateUser: jest.fn<
         Promise<void>,
-        [
-          {
-            email?: string;
-            password?: string;
-            data?: Record<string, unknown>;
-          },
-        ]
-      >(async () => {
-        // Success - no return value
-      }),
+        [{ email?: string; password?: string }]
+      >(async () => {}),
     });
 
     // Act
@@ -128,7 +69,6 @@ describe("updateUser", () => {
     expect(repository.updateUser).toHaveBeenCalledWith({
       email: "newemail@example.com",
       password: "newpassword123",
-      data: { displayName: "John Doe" },
     });
   });
 
@@ -137,15 +77,15 @@ describe("updateUser", () => {
     const input = {};
     const repository = createAuthRepositoryMock();
 
-    // Act & Assert — now throws DomainRuleError (plain object), not Error
+    // Act & Assert
     try {
       await updateUser(repository, input);
-      expect(true).toBe(false); // Should not reach here
+      expect(true).toBe(false);
     } catch (error) {
       expect(error).toMatchObject({
         code: "UPDATE_USER_NO_FIELDS",
         debugMessage:
-          "At least one field (email, password, or data) must be provided",
+          "At least one field (email or password) must be provided",
       });
     }
     expect(repository.updateUser).not.toHaveBeenCalled();
@@ -153,9 +93,7 @@ describe("updateUser", () => {
 
   it("should throw ZodError on invalid email format", async () => {
     // Arrange
-    const invalidInput = {
-      email: "invalid-email",
-    };
+    const invalidInput = { email: "invalid-email" };
     const repository = createAuthRepositoryMock();
 
     // Act & Assert
@@ -167,9 +105,7 @@ describe("updateUser", () => {
 
   it("should throw ZodError on password too short", async () => {
     // Arrange
-    const invalidInput = {
-      password: "12345", // Less than 6 characters
-    };
+    const invalidInput = { password: "12345" };
     const repository = createAuthRepositoryMock();
 
     // Act & Assert
@@ -181,9 +117,7 @@ describe("updateUser", () => {
 
   it("should throw ZodError on password too long", async () => {
     // Arrange
-    const invalidInput = {
-      password: "a".repeat(101), // More than 100 characters
-    };
+    const invalidInput = { password: "a".repeat(101) };
     const repository = createAuthRepositoryMock();
 
     // Act & Assert
@@ -195,21 +129,13 @@ describe("updateUser", () => {
 
   it("should propagate authentication error from repository", async () => {
     // Arrange
-    const input = {
-      email: "newemail@example.com",
-    };
+    const input = { email: "newemail@example.com" };
     const repositoryError =
       createAuthError.authentication("Update user failed");
     const repository = createAuthRepositoryMock({
       updateUser: jest.fn<
         Promise<void>,
-        [
-          {
-            email?: string;
-            password?: string;
-            data?: Record<string, unknown>;
-          },
-        ]
+        [{ email?: string; password?: string }]
       >(async () => {
         throw repositoryError;
       }),
@@ -218,7 +144,7 @@ describe("updateUser", () => {
     // Act & Assert
     try {
       await updateUser(repository, input);
-      expect(true).toBe(false); // Should not reach here
+      expect(true).toBe(false);
     } catch (error) {
       expect(error).toMatchObject({
         code: "AUTHENTICATION_ERROR",

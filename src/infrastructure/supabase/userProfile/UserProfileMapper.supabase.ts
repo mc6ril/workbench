@@ -1,8 +1,40 @@
+import {
+  DEFAULT_USER_PREFERENCES,
+  type UserPreferences,
+  UserPreferencesSchema,
+} from "@/core/domain/schema/auth.schema";
 import type { UserProfile } from "@/core/domain/schema/userProfile.schema";
 
 import type { UserProfileRow } from "@/infrastructure/supabase/types";
 
 import { toDate } from "@/shared/utils/guards";
+
+/**
+ * Parses the jsonb preferences column into a validated UserPreferences object.
+ * Falls back to defaults for missing or invalid fields.
+ */
+const parsePreferences = (raw: Record<string, unknown>): UserPreferences => {
+  const result = UserPreferencesSchema.safeParse(raw);
+  if (result.success) {
+    return result.data;
+  }
+
+  return {
+    theme:
+      typeof raw["theme"] === "string" &&
+      ["light", "dark", "system"].includes(raw["theme"])
+        ? (raw["theme"] as UserPreferences["theme"])
+        : DEFAULT_USER_PREFERENCES.theme,
+    emailNotifications:
+      typeof raw["emailNotifications"] === "boolean"
+        ? raw["emailNotifications"]
+        : DEFAULT_USER_PREFERENCES.emailNotifications,
+    language:
+      typeof raw["language"] === "string" && raw["language"].length > 0
+        ? raw["language"]
+        : DEFAULT_USER_PREFERENCES.language,
+  };
+};
 
 /**
  * Maps a Supabase row to a domain UserProfile entity.
@@ -14,6 +46,10 @@ export const mapUserProfileRowToDomain = (row: UserProfileRow): UserProfile => {
     email: row.email,
     displayName: row.display_name,
     avatarUrl: row.avatar_url,
+    preferences: parsePreferences(row.preferences ?? {}),
+    termsAcceptedAt: row.terms_accepted_at
+      ? toDate(row.terms_accepted_at)
+      : null,
     createdAt: toDate(row.created_at),
     updatedAt: toDate(row.updated_at),
   };

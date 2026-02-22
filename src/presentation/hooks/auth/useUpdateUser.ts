@@ -9,7 +9,8 @@ import { authRepository } from "@/infrastructure/supabase/repositories";
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 
 /**
- * Hook for updating user information.
+ * Hook for updating auth credentials (email and/or password).
+ * Profile data updates use useUpdateProfile/useUpdatePreferences instead.
  *
  * @returns Mutation object with mutate, mutateAsync, data, isPending, error, etc.
  */
