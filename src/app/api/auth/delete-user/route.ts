@@ -7,8 +7,11 @@ import { createSupabaseAdminClient } from "@/infrastructure/supabase/shared/clie
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
 import { API_MESSAGES_AUTH } from "@/shared/constants";
+import { createLoggerFactory } from "@/shared/observability";
 import { withRateLimit } from "@/shared/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/security/csrf";
+
+const logger = createLoggerFactory().forScope("API.DeleteUser");
 
 /**
  * DELETE /api/auth/delete-user
@@ -50,7 +53,7 @@ export const DELETE = async (request: NextRequest): Promise<NextResponse> => {
       { status: 200 }
     );
   } catch (error) {
-    console.error("[API] Delete user error:", error);
+    logger.error("Delete user error", { error });
 
     return NextResponse.json(
       { error: API_MESSAGES_AUTH.DELETE_FAILED },

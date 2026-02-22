@@ -16,10 +16,10 @@ Command: audit-consolidation
 
 | Audit        | 🔴 HIGH | ⚠️ MEDIUM | ℹ️ LOW |
 |--------------|---------|-----------|--------|
-| Sécurité     | 1       | 2         | 5      |
-| Architecture | 0       | 5         | 4      |
-| Performance  | 0       | 5         | 10     |
-| **Total**    | **1**   | **12**    | **19** |
+| Sécurité     | 1       | 2         | 3      |
+| Architecture | 0       | 5         | 1      |
+| Performance  | 0       | 5         | 2      |
+| **Total**    | **1**   | **12**    | **6**  |
 
 ---
 
@@ -70,8 +70,6 @@ Command: audit-consolidation
 
 | #  | Problème | Fichier | Recommandation |
 |----|----------|---------|----------------|
-| S13 | `console.error` utilisé au lieu de `JsonConsoleLogger` dans le code de production | Layouts, infrastructure | Remplacer par le logger centralisé |
-| S14 | Double lock files (yarn.lock + package-lock.json) | Racine du projet | Choisir un seul gestionnaire de paquets |
 | S15 | Configuration cookies non explicite | `@supabase/ssr` | Vérifier les defaults (`HttpOnly`, `Secure`, `SameSite`) |
 | S16 | Protection open redirect correcte ✅ | `src/app/auth/callback/route.ts:15-18` | Aucune action requise |
 | S17 | `.cursor/rules/` couvert par `.gitignore` | `.gitignore:61-63` | Surveiller si le whitelist s'étend |
@@ -80,25 +78,14 @@ Command: audit-consolidation
 
 | #  | Problème | Fichier | Recommandation |
 |----|----------|---------|----------------|
-| A9 | `useToastStore` contient un `setTimeout` (side effect) | `src/presentation/stores/useToastStore.ts:37-41` | Déplacer l'auto-dismiss dans un hook dédié |
-| A10 | `useLocaleStore` appelle une fonction d'enregistrement au niveau module | `src/presentation/stores/useLocaleStore.ts:24` | Déplacer dans un provider |
-| A11 | Font-size de base hardcodée dans global SCSS | `src/styles/global.scss:82` | Extraire en variable |
 | A12 | Couleurs hex hardcodées dans les CSS custom properties des thèmes | `src/styles/themes.scss:20` | Acceptable — source de vérité pour les tokens de design |
 
 ### Performance
 
 | #  | Problème | Fichier | Recommandation |
 |----|----------|---------|----------------|
-| P14 | `handleEdit` non mémorisé dans `TicketCard` | `src/presentation/components/ticketCard/TicketCard.tsx:49-53` | Wrapper avec `useCallback` |
-| P15 | `defaultShortcuts` recréé à chaque render | `src/presentation/components/shortcutsWidget/ShortcutsWidget.tsx:36-41` | Wrapper avec `useMemo` |
 | P16 | Concaténation de classes CSS à chaque render | Multiples composants | `useMemo` si le composant est coûteux |
-| P17 | `ariaLabelParts` recréé à chaque render | `TicketCard.tsx`, `TicketListItem.tsx` | Calculer dans `useMemo` |
-| P18 | Deux queries sans option `enabled` | `useProjectsWithStats.ts`, `useReclaimableProjects.ts` | Ajouter `enabled: !!session` |
-| P19 | Query keys `ticket-assignees` non centralisées | `useTicketAssignees.ts:20,46,75` | Ajouter dans le factory `queryKeys` |
-| P20 | `setTimeout` dans toast store jamais annulé | `useToastStore.ts:37-41` | Stocker l'ID et annuler dans `removeToast` |
-| P21 | `setTimeout` dans WorkspacePage non nettoyé | `src/presentation/pages/workspace/index.tsx:175-178` | Nettoyer dans `useEffect` cleanup |
 | P22 | `react-hook-form` dans 4+ pages (acceptable) | Auth + account pages | Acceptable, code splitting si les pages deviennent lourdes |
-| P23 | Page backlog avec strings hardcodées | `src/app/(auth)/[projectId]/backlog/page.tsx:16` | Utiliser le système i18n |
 
 ---
 
@@ -118,7 +105,12 @@ Command: audit-consolidation
 
 ## Corrections appliquées (branche `fix/audit-consolidation`)
 
+### HIGH
+
 - **S2–S6** : Upgrade Next.js, security headers, sanitisation erreurs API, rate limiting, allowedDevOrigins
+
+### MEDIUM
+
 - **S7** : Middleware — `getSession()` remplacé par `getUser()`
 - **S9** : CSRF — Vérification du header `Origin` sur checkout, portal et delete-user
 - **S11** : Password `MIN_LENGTH` passé de 6 à 8
@@ -129,7 +121,24 @@ Command: audit-consolidation
 - **P11** : `@next/bundle-analyzer` installé et configuré (`ANALYZE=true`)
 - **P12** : Board page chargée dynamiquement via `next/dynamic`
 
+### LOW
+
+- **S13** : `console.error` remplacé par `createLoggerFactory().forScope()` dans layouts, API routes et infrastructure
+- **S14** : `package-lock.json` supprimé (yarn est le gestionnaire principal)
+- **A9** : `useToastStore` — timers trackés dans un `Map`, annulés dans `removeToast`
+- **A10** : `registerLocaleGetter` déplacé de module-level vers `LocaleSyncProvider` (useEffect)
+- **A11** : `font-size: 16px` extrait en variable `$font-size-root` dans `typography.scss`
+- **P14** : `TicketCard.handleEdit` wrappé avec `useCallback`
+- **P15** : `ShortcutsWidget.defaultShortcuts` wrappé avec `useMemo`
+- **P17** : `ariaLabelParts` dans `TicketCard` et `TicketListItem` wrappés avec `useMemo`
+- **P18** : `enabled: !!session` ajouté sur `useProjectsWithStats` et `useReclaimableProjects`
+- **P19** : Query key `ticket-assignees` centralisée dans `queryKeys.tickets.assignees()`
+- **P20** : `setTimeout` dans `useToastStore` — ID stocké et annulé dans `removeToast`
+- **P21** : `setTimeout` dans `WorkspacePage` nettoyé via `useEffect` cleanup
+- **P23** : Page backlog — strings hardcodées remplacées par i18n
+
 ## Actions restantes
 
 1. **Rotation des secrets** — Rotation immédiate de toutes les clés exposées (action manuelle Supabase + Stripe)
 2. **Points MEDIUM restants** — Acceptés par design (S8, S10, A3–A6, A8) ou à traiter incrémentalement (P6, P7, P9, P10, P13)
+3. **Points LOW restants** — S15 (vérif cookies), A12 (acceptable), P16 (micro-optimisation), P22 (acceptable)

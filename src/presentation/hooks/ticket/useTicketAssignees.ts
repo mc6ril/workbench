@@ -17,7 +17,7 @@ import { queryKeys } from "@/presentation/hooks/queryKeys";
  */
 export const useTicketAssignees = (ticketId: string | undefined) => {
   return useQuery<TicketAssignee[]>({
-    queryKey: ["ticket-assignees", ticketId] as const,
+    queryKey: queryKeys.tickets.assignees(ticketId!),
     queryFn: () => ticketRepository.getAssignees(ticketId!),
     enabled: !!ticketId,
   });
@@ -43,7 +43,7 @@ export const useAssignTicket = () => {
     }) => assignTicket(ticketRepository, ticketId, userIds),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["ticket-assignees", variables.ticketId],
+        queryKey: queryKeys.tickets.assignees(variables.ticketId),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.ticketsRoot(variables.projectId),
@@ -72,7 +72,7 @@ export const useUnassignTicket = () => {
     }) => unassignTicket(ticketRepository, ticketId, userIds),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["ticket-assignees", variables.ticketId],
+        queryKey: queryKeys.tickets.assignees(variables.ticketId),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.ticketsRoot(variables.projectId),

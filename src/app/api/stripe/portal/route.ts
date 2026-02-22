@@ -10,8 +10,11 @@ import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/cli
 import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
 
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
+import { createLoggerFactory } from "@/shared/observability";
 import { withRateLimit } from "@/shared/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/security/csrf";
+
+const logger = createLoggerFactory().forScope("API.Portal");
 
 /**
  * POST /api/stripe/portal
@@ -65,7 +68,7 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    console.error("[API] Portal error:", error);
+    logger.error("Portal error", { error });
 
     return NextResponse.json(
       { error: API_MESSAGES_STRIPE.PORTAL_FAILED },

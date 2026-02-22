@@ -1,6 +1,10 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
+import { createLoggerFactory } from "@/shared/observability";
+
+const logger = createLoggerFactory().forScope("Supabase.ServerClient");
+
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
@@ -72,20 +76,16 @@ export const createSupabaseServerClient = async () => {
               // );
             } else {
               // Log unexpected errors
-              console.warn(
-                "[Supabase Server Client] Failed to set cookies in Server Component:",
-                error
-              );
+              logger.warn("Failed to set cookies in Server Component", {
+                error,
+              });
             }
           }
         },
       },
     });
   } catch (error) {
-    console.error(
-      "[Supabase Server Client] Failed to create server client:",
-      error
-    );
+    logger.error("Failed to create server client", { error });
     throw error;
   }
 };

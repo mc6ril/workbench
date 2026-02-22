@@ -7,6 +7,10 @@ import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/cli
 
 import ProjectShell from "@/presentation/layouts/projectShell/ProjectShell";
 
+import { createLoggerFactory } from "@/shared/observability";
+
+const logger = createLoggerFactory().forScope("ProjectLayout");
+
 /**
  * Server-side layout for project routes.
  * Checks project access using getProject usecase (respects RLS).
@@ -42,7 +46,7 @@ const ProjectLayout = async ({
     }
 
     // On any other error, redirect to workspace (fail-closed for security)
-    console.error("[ProjectLayout] Project access check error:", error);
+    logger.error("Project access check error", { error });
     redirect("/workspace");
   }
 

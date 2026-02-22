@@ -7,6 +7,10 @@ import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
 import { createAuthRepository } from "@/infrastructure/supabase/repositories";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
+import { createLoggerFactory } from "@/shared/observability";
+
+const logger = createLoggerFactory().forScope("LandingLayout");
+
 /**
  * Server-side layout for landing page.
  * Checks if user is authenticated and redirects to /workspace if session exists.
@@ -42,7 +46,7 @@ const LandingLayout = async ({
     // NotFoundError is normal on public pages - don't log it
     // On other errors, also show landing page (fail-open) but log them
     if (!isNotFoundError(error)) {
-      console.error("[LandingLayout] Auth check error:", error);
+      logger.error("Auth check error", { error });
     }
   }
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import Card from "@/presentation/components/ui/Card";
 import Link from "@/presentation/components/ui/Link";
@@ -34,12 +34,15 @@ const ShortcutsWidget = ({
   const t = useTranslation(translationNamespace);
   const widgetId = getAccessibilityId("shortcuts-widget");
 
-  const defaultShortcuts: Shortcut[] = [
-    { label: t("shortcuts.board"), route: PROJECT_VIEWS.BOARD },
-    { label: t("shortcuts.backlog"), route: PROJECT_VIEWS.BACKLOG },
-    { label: t("shortcuts.epics"), route: PROJECT_VIEWS.EPICS },
-    { label: t("shortcuts.settings"), route: PROJECT_VIEWS.SETTINGS },
-  ];
+  const defaultShortcuts = useMemo<Shortcut[]>(
+    () => [
+      { label: t("shortcuts.board"), route: PROJECT_VIEWS.BOARD },
+      { label: t("shortcuts.backlog"), route: PROJECT_VIEWS.BACKLOG },
+      { label: t("shortcuts.epics"), route: PROJECT_VIEWS.EPICS },
+      { label: t("shortcuts.settings"), route: PROJECT_VIEWS.SETTINGS },
+    ],
+    [t]
+  );
 
   const displayShortcuts = shortcuts || defaultShortcuts;
 

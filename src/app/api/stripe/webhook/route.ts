@@ -7,6 +7,9 @@ import { createSupabaseAdminClient } from "@/infrastructure/supabase/shared/clie
 import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
 
 import { API_MESSAGES_STRIPE } from "@/shared/constants";
+import { createLoggerFactory } from "@/shared/observability";
+
+const logger = createLoggerFactory().forScope("API.Webhook");
 
 /**
  * POST /api/stripe/webhook
@@ -42,7 +45,7 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (error) {
-    console.error("[API] Webhook error:", error);
+    logger.error("Webhook error", { error });
 
     return NextResponse.json(
       { error: API_MESSAGES_STRIPE.WEBHOOK_FAILED },

@@ -11,11 +11,13 @@ import { queryKeys } from "@/presentation/hooks/queryKeys";
  * Returns projects with member count, ticket count, and status breakdown.
  * Uses optimized SQL function for aggregated counts.
  *
+ * @param enabled - Whether the query should execute (default: true). Pass false to defer until session is ready.
  * @returns React Query hook result with projects array including stats
  */
-export const useProjectsWithStats = () => {
+export const useProjectsWithStats = (enabled = true) => {
   return useQuery({
     queryKey: queryKeys.projects.withStats(),
     queryFn: () => listProjectsWithStats(projectRepository),
+    enabled,
   });
 };

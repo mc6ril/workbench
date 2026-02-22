@@ -44,10 +44,10 @@ const WorkspacePage = () => {
     isFetching: isFetchingProjects,
     error: projectsError,
     refetch: refetchProjects,
-  } = useProjectsWithStats();
+  } = useProjectsWithStats(!!session);
   const addUserToProjectMutation = useAddUserToProject();
   const createProjectMutation = useCreateProject();
-  const { data: reclaimableProjects } = useReclaimableProjects();
+  const { data: reclaimableProjects } = useReclaimableProjects(!!session);
   const [joinProjectId, setJoinProjectId] = useState("");
   const [joinError, setJoinError] = useState<string | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -56,6 +56,15 @@ const WorkspacePage = () => {
     null
   );
   const isSubmittingRef = useRef(false);
+  const submitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (submitTimerRef.current) {
+        clearTimeout(submitTimerRef.current);
+      }
+    };
+  }, []);
   const t = useTranslation("pages.workspace");
   const tReclaim = useTranslation("pages.workspace.reclaimable");
   const tErrors = useTranslation("errors");
@@ -168,8 +177,9 @@ const WorkspacePage = () => {
     try {
       await createProjectMutation.mutateAsync(data);
     } finally {
-      setTimeout(() => {
+      submitTimerRef.current = setTimeout(() => {
         isSubmittingRef.current = false;
+        submitTimerRef.current = null;
       }, 100);
     }
   };
