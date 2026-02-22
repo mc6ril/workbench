@@ -42,6 +42,9 @@ const queryKeysObject = {
             filters.status ?? null,
             filters.epicId ?? null,
             filters.parentId ?? null,
+            filters.assigneeIds?.length
+              ? [...filters.assigneeIds].sort()
+              : null,
           ]
         : null;
       const sortKey = sort ? [sort.field, sort.direction] : null;
