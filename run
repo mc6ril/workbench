@@ -56,6 +56,7 @@ show_usage() {
     echo "Available commands:"
     echo "  dev              Start development server (Next.js + Stripe webhooks)"
     echo "  build            Build the application for production"
+    echo "  build:analyze    Build with bundle analyzer report"
     echo "  start            Start production server"
     echo "  clean            Remove build artifacts (.next/ directory)"
     echo "  clean --all      Remove build artifacts and node_modules/ (with confirmation)"
@@ -64,6 +65,7 @@ show_usage() {
     echo "Examples:"
     echo "  sh run dev"
     echo "  sh run build"
+    echo "  sh run build:analyze"
     echo "  sh run start"
     echo "  sh run clean"
     echo "  sh run clean --all"
@@ -230,7 +232,7 @@ main() {
 
     # Route command to yarn or handle special commands
     case "$command" in
-        dev|build|start)
+        dev|build|build:analyze|start)
             # Check if yarn is available for yarn-based commands
             check_yarn
             
@@ -244,6 +246,10 @@ main() {
                 build)
                     echo "Building application..."
                     yarn build || exit_code=$?
+                    ;;
+                build:analyze)
+                    echo "Building application with bundle analyzer..."
+                    ANALYZE=true yarn build || exit_code=$?
                     ;;
                 start)
                     echo "Starting production server..."
