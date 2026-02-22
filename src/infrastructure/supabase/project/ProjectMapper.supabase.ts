@@ -3,11 +3,13 @@ import type {
   ProjectRole,
   ProjectWithRole,
   ProjectWithStats,
+  ReclaimableProject,
 } from "@/core/domain/schema/project.schema";
 
 import type {
   ProjectRow,
   ProjectWithStatsRow,
+  ReclaimableProjectRow,
 } from "@/infrastructure/supabase/types";
 
 import { toDate } from "@/shared/utils/guards";
@@ -79,4 +81,19 @@ export const mapProjectWithStatsRowToDomain = (
   ticketCount: row.ticket_count,
   inProgressCount: row.in_progress_count,
   completedCount: row.completed_count,
+});
+
+/**
+ * Maps a ReclaimableProjectRow from RPC to ReclaimableProject domain entity.
+ *
+ * @param row - Row data from get_reclaimable_projects RPC function
+ * @returns ReclaimableProject domain entity
+ */
+export const mapReclaimableProjectRowToDomain = (
+  row: ReclaimableProjectRow
+): ReclaimableProject => ({
+  id: row.id,
+  name: row.name,
+  shortCode: row.short_code,
+  orphanedAt: new Date(row.orphaned_at),
 });

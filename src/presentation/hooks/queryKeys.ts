@@ -26,6 +26,7 @@ const queryKeysObject = {
   projects: {
     all: () => ["projects"] as const,
     withStats: () => ["projects", "with-stats"] as const,
+    reclaimable: () => ["projects", "reclaimable"] as const,
     detail: (id: string) => ["projects", id] as const,
     ticketsRoot: (projectId: string) =>
       ["projects", projectId, "tickets"] as const,

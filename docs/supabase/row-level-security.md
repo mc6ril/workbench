@@ -89,6 +89,33 @@ Returns `true` if the current user has access to any project (is a member of at 
 SELECT has_any_project_access();
 ```
 
+### `reclaim_or_join_project(project_uuid uuid)`
+
+Allows the current user to join a project or reclaim an orphaned project. Assigns `admin` role for orphaned projects, `viewer` for active ones.
+
+```sql
+SELECT * FROM reclaim_or_join_project('00000000-0000-0000-0000-000000000001');
+-- Returns the project row after joining
+```
+
+### `get_reclaimable_projects()`
+
+Returns orphaned projects where `creator_email` matches the current user's email.
+
+```sql
+SELECT * FROM get_reclaimable_projects();
+-- Returns: id, name, short_code, orphaned_at
+```
+
+### `cleanup_expired_orphaned_projects()`
+
+Deletes orphaned projects older than 30 days. Returns the count of deleted projects.
+
+```sql
+SELECT cleanup_expired_orphaned_projects();
+-- Returns: integer (number of deleted projects)
+```
+
 ## RLS Policies
 
 ### Projects
@@ -186,6 +213,19 @@ To test RLS policies:
 2. Create project memberships with different roles
 3. Authenticate as different users and verify access restrictions
 4. Test that unauthorized access attempts are blocked
+
+## Orphaned Project Lifecycle
+
+When a user deletes their account, `ON DELETE CASCADE` removes their `project_members` rows. If a project has no remaining members, it becomes **orphaned**:
+
+1. The `handle_project_member_removed` trigger sets `orphaned_at = NOW()` on the project
+2. The project becomes invisible to all users (no members = no RLS access)
+3. The `get_reclaimable_projects()` function (SECURITY DEFINER) bypasses RLS to find orphaned projects where `creator_email` matches the current user's email
+4. The user can reclaim the project via `reclaim_or_join_project()`, which adds them as admin
+5. The `handle_project_member_added` trigger automatically clears `orphaned_at`
+6. Projects orphaned for more than 30 days can be permanently deleted via `cleanup_expired_orphaned_projects()`
+
+**Security note**: `get_reclaimable_projects()` and `reclaim_or_join_project()` use `SECURITY DEFINER` to bypass RLS, as orphaned projects have no members and are therefore inaccessible via normal RLS policies. Access is scoped by email matching (`creator_email`) and authentication (`auth.uid()`).
 
 ## Future Enhancements
 

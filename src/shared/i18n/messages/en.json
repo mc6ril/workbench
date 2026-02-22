@@ -368,6 +368,16 @@
       "roleAriaLabel": "Role",
       "openWorkspaceAriaLabel": "Open workspace {name}, role: {role}",
       "pleaseEnterProjectId": "Please enter a project ID",
+      "reclaimable": {
+        "sectionTitle": "Projects to recover",
+        "sectionDescription": "These projects were associated with your email and can be recovered before they are permanently deleted.",
+        "orphanedSince": "Orphaned since {date}",
+        "expiresIn": "Expires in {days} days",
+        "reclaimButton": "Recover",
+        "reclaimButtonAriaLabel": "Recover project {name}",
+        "reclaimSuccess": "Project recovered successfully! You are now admin.",
+        "reclaimError": "An error occurred while recovering the project."
+      },
       "footer": {
         "ariaLabel": "Useful links and information",
         "account": "Account settings",

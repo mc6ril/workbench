@@ -20,6 +20,9 @@ supabase/
     ├── 000007_bypass_rls_with_function.sql
     ├── 000008_add_ticket_epic_codes.sql
     ├── 000009_project_stats_function.sql
+    ├── 000010_subscriptions.sql
+    ├── 000011_fix_security_linter_warnings.sql
+    ├── 000012_orphaned_project_soft_delete.sql
     └── README.md
 ```
 
@@ -51,6 +54,50 @@ This **consolidated** migration creates the complete initial database schema in 
 This migration consolidates elements that were previously in separate migrations (000008, 000009, 000010) into a single, well-organized initial schema migration.
 
 See `docs/database-schema.md` for detailed schema documentation.
+
+### Subscriptions Migration
+
+**File**: `supabase/migrations/000010_subscriptions.sql`
+
+This migration creates the subscription system for tracking user plans:
+
+- **Table**: `subscriptions` - Tracks user subscription plans managed via Stripe
+- **Columns**: `user_id`, `plan` (free/pro/team), `status` (active/canceled/past_due/trialing), Stripe IDs, billing period
+- **RLS**: Enabled with policies for users to view/manage their own subscriptions
+- **Constraint**: One subscription per user (`user_id` UNIQUE)
+
+### Security Linter Fixes Migration
+
+**File**: `supabase/migrations/000011_fix_security_linter_warnings.sql`
+
+This migration addresses Supabase database linter security warnings:
+
+- **function_search_path_mutable**: Sets `search_path = 'public'` on all tracked functions to prevent search path injection
+- **rls_policy_always_true**: Replaces overly permissive projects INSERT RLS policy with a proper membership check
+- **Cleanup**: Drops orphaned debug functions not tracked in migrations
+
+### Orphaned Project Soft-Delete Migration
+
+**File**: `supabase/migrations/000012_orphaned_project_soft_delete.sql`
+
+This migration implements the orphaned project lifecycle with a 30-day soft-delete grace period and reclaim flow:
+
+- **Schema Changes**:
+  - Adds `orphaned_at` (timestamptz) and `creator_email` (text) columns to `projects`
+  - Partial index on `orphaned_at` for orphaned project queries
+  - Backfills `creator_email` for existing projects from admin member's email
+
+- **Functions Updated**:
+  - `create_project()` - Now stores the creator's email in `creator_email`
+
+- **Triggers Created**:
+  - `handle_project_member_removed` (AFTER DELETE on `project_members`) - Sets `orphaned_at` when last member leaves
+  - `handle_project_member_added` (AFTER INSERT on `project_members`) - Clears `orphaned_at` when a member joins
+
+- **RPC Functions Created**:
+  - `reclaim_or_join_project(uuid)` - Joins a project as viewer, or reclaims an orphaned project as admin
+  - `get_reclaimable_projects()` - Returns orphaned projects matching the current user's email via `creator_email`
+  - `cleanup_expired_orphaned_projects()` - Deletes projects orphaned for more than 30 days
 
 ### Project Statistics Function Migration
 
