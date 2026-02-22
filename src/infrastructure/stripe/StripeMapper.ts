@@ -1,9 +1,6 @@
 import type Stripe from "stripe";
 
-import {
-  mapPaymentStatus,
-  SubscriptionPlan,
-} from "@/core/domain/schema/subscription.schema";
+import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
 import type { WebhookEvent } from "@/core/ports/paymentGateway";
 
@@ -117,9 +114,3 @@ export const mapStripeEventToDomain = (event: Stripe.Event): WebhookEvent => {
       return { type: "unknown" };
   }
 };
-
-/**
- * Re-export domain mapPaymentStatus as mapStripeStatus for backward compatibility.
- * @deprecated Use mapPaymentStatus from core/domain/schema/subscription.schema instead.
- */
-export const mapStripeStatus = mapPaymentStatus;
