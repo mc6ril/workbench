@@ -23,13 +23,7 @@ export type AuthRepositoryMock = {
   resendVerificationEmail: jest.Mock<Promise<void>, [string]>;
   updateUser: jest.Mock<
     Promise<void>,
-    [
-      {
-        email?: string;
-        password?: string;
-        data?: Record<string, unknown>;
-      },
-    ]
+    [{ email?: string; password?: string }]
   >;
   deleteUser: jest.Mock<Promise<void>, []>;
 };
@@ -58,13 +52,7 @@ export const createAuthRepositoryMock = (
     resendVerificationEmail: jest.fn<Promise<void>, [string]>(),
     updateUser: jest.fn<
       Promise<void>,
-      [
-        {
-          email?: string;
-          password?: string;
-          data?: Record<string, unknown>;
-        },
-      ]
+      [{ email?: string; password?: string }]
     >(),
     deleteUser: jest.fn<Promise<void>, []>(),
   };

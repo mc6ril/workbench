@@ -82,15 +82,12 @@ export type AuthRepository = {
   resendVerificationEmail(email: string): Promise<void>;
 
   /**
-   * Update user information.
-   * @param input - User update input (email, password, or data - all optional)
+   * Update auth credentials (email and/or password).
+   * Profile data (display_name, preferences) is managed via UserProfileRepository.
+   * @param input - Auth credential update (email and/or password)
    * @throws AuthenticationFailure if update fails
    */
-  updateUser(input: {
-    email?: string;
-    password?: string;
-    data?: Record<string, unknown>;
-  }): Promise<void>;
+  updateUser(input: { email?: string; password?: string }): Promise<void>;
 
   /**
    * Delete the current user account.

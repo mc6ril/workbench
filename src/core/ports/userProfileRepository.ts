@@ -1,14 +1,18 @@
-import type { UserProfile } from "@/core/domain/schema/userProfile.schema";
+import type { UserPreferences } from "@/core/domain/schema/auth.schema";
+import type {
+  UpdateProfileInput,
+  UserProfile,
+} from "@/core/domain/schema/userProfile.schema";
 
 /**
  * Repository contract for UserProfile operations.
  *
- * User profiles are synced from auth.users via database trigger.
- * Direct creation is not supported — profiles are read-only except for avatar management.
+ * user_profiles is the single source of truth for applicative user data.
+ * Profile rows are created on signup via a database trigger.
  *
  * Invariants:
- * - A profile exists for every auth.users row (guaranteed by sync trigger)
- * - Only the owning user can update their avatar
+ * - A profile exists for every auth.users row (guaranteed by signup trigger)
+ * - Only the owning user can update their own profile
  * - All authenticated users can read any profile (needed for teammate display)
  */
 export type UserProfileRepository = {
@@ -33,6 +37,26 @@ export type UserProfileRepository = {
    * @throws DatabaseError if database operation fails
    */
   getByEmail(email: string): Promise<UserProfile | null>;
+
+  /**
+   * Update the user's profile (display name).
+   * @param userId - User ID (must match authenticated user)
+   * @param input - Fields to update
+   * @throws DatabaseError if update fails
+   */
+  updateProfile(userId: string, input: UpdateProfileInput): Promise<void>;
+
+  /**
+   * Update the user's preferences (theme, language, notifications).
+   * Replaces the entire preferences object.
+   * @param userId - User ID (must match authenticated user)
+   * @param preferences - Full preferences object to persist
+   * @throws DatabaseError if update fails
+   */
+  updatePreferences(
+    userId: string,
+    preferences: UserPreferences
+  ): Promise<void>;
 
   /**
    * Upload an avatar file to storage and update the profile's avatar_url.

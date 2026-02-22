@@ -22,8 +22,8 @@ const PasswordSchema = z
  * Zod schema for user signup input.
  * Validates email format, password requirements, optional display name,
  * and optional terms acceptance timestamp.
- * displayName is stored in Supabase user_metadata.display_name.
- * termsAcceptedAt is stored in Supabase user_metadata.terms_accepted_at.
+ * displayName and termsAcceptedAt are stored in the user_profiles table
+ * via the signup trigger.
  */
 export const SignUpSchema = z.object({
   email: z
@@ -151,8 +151,7 @@ export const ThemeValues = ["light", "dark", "system"] as const;
 export type Theme = (typeof ThemeValues)[number];
 
 /**
- * Zod schema for user preferences stored in Supabase user_metadata.
- * Preferences are synced across devices via the auth session.
+ * Zod schema for user preferences stored in user_profiles.preferences.
  */
 export const UserPreferencesSchema = z.object({
   theme: z.enum(["light", "dark", "system"]),
@@ -183,8 +182,7 @@ export type UpdatePreferencesInput = Partial<UserPreferences>;
 /**
  * Authentication session data.
  * Represents an authenticated user session.
- * displayName comes from Supabase user_metadata.display_name.
- * preferences comes from Supabase user_metadata.preferences.
+ * displayName and preferences come from the user_profiles table (single source of truth).
  * isSuperuser comes from Supabase app_metadata.is_superuser (server-controlled, not user-editable).
  */
 export type AuthSession = {
@@ -286,28 +284,18 @@ export const VerifyEmailSchema = z.object({
 export type VerifyEmailInput = z.infer<typeof VerifyEmailSchema>;
 
 /**
- * Zod schema for updating user information.
- * All fields are optional - user can update email, password, or metadata.
+ * Zod schema for updating auth credentials (email and/or password).
+ * Profile data is managed via UserProfileRepository, not through auth.
  */
 export const UpdateUserSchema = z.object({
   email: z.string().email("Invalid email format").optional(),
   password: PasswordSchema.optional(),
-  data: z.record(z.string(), z.unknown()).optional(),
 });
 
 /**
- * Update user input type.
+ * Auth credential update input type.
  */
 export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
-
-/**
- * Input type for updating user profile (display name and email).
- * Used by the account page to update personal information.
- */
-export type UpdateProfileInput = {
-  displayName?: string;
-  email?: string;
-};
 
 /**
  * Error when email verification fails (expired or invalid token).

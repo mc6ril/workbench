@@ -35,6 +35,8 @@ export const createMemberRepository = (
           email,
           display_name,
           avatar_url,
+          preferences,
+          terms_accepted_at,
           created_at,
           updated_at
         )

@@ -13,12 +13,12 @@ import type {
   UpdatePasswordInput,
   VerifyEmailInput,
 } from "@/core/domain/schema/auth.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/core/domain/schema/auth.schema";
 
-import {
-  extractPreferences,
-  mapSupabaseSessionToDomain,
-} from "@/infrastructure/supabase/auth/AuthMapper.supabase";
+import { mapSupabaseSessionToDomain } from "@/infrastructure/supabase/auth/AuthMapper.supabase";
 import { handleAuthError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
+import type { UserProfileRow } from "@/infrastructure/supabase/types";
+import { mapUserProfileRowToDomain } from "@/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
 
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 
@@ -33,6 +33,32 @@ import type { AuthRepository } from "@/core/ports/authRepository";
  *                      Must be provided for server-side contexts that need admin operations.
  * @returns AuthRepository implementation
  */
+/**
+ * Fetches profile data from user_profiles and enriches an AuthSession.
+ * Falls back to defaults if the profile is not yet available (e.g. during signup race).
+ */
+const enrichSessionWithProfile = async (
+  client: SupabaseClient,
+  session: AuthSession
+): Promise<AuthSession> => {
+  const { data } = await client
+    .from("user_profiles")
+    .select("*")
+    .eq("id", session.userId)
+    .maybeSingle();
+
+  if (!data) {
+    return session;
+  }
+
+  const profile = mapUserProfileRowToDomain(data as UserProfileRow);
+  return {
+    ...session,
+    displayName: profile.displayName,
+    preferences: profile.preferences,
+  };
+};
+
 export const createAuthRepository = (
   client: SupabaseClient,
   adminClient?: SupabaseClient
@@ -95,11 +121,11 @@ export const createAuthRepository = (
         handleAuthError(error);
       }
 
-      // TypeScript: data.session and data.user are guaranteed to be non-null after the check above
-      const session = mapSupabaseSessionToDomain(
+      const baseSession = mapSupabaseSessionToDomain(
         data.session!,
         data.user!.email || input.email
       );
+      const session = await enrichSessionWithProfile(client, baseSession);
 
       return { session, requiresEmailVerification: false };
     } catch (error) {
@@ -126,13 +152,12 @@ export const createAuthRepository = (
         handleAuthError(error);
       }
 
-      // TypeScript: data.session and data.user are guaranteed to be non-null after the check above
-      const session = mapSupabaseSessionToDomain(
+      const baseSession = mapSupabaseSessionToDomain(
         data.session!,
         data.user!.email || input.email
       );
+      const session = await enrichSessionWithProfile(client, baseSession);
 
-      // SignIn always returns a session (no email verification needed for existing users)
       return { session, requiresEmailVerification: false };
     } catch (error) {
       return handleAuthError(error);
@@ -153,21 +178,15 @@ export const createAuthRepository = (
 
   async getSession(): Promise<AuthSession | null> {
     try {
-      // Check if this is a server client by trying to detect server-side context
-      // For browser clients, use getSession() (reads from cookies, faster)
-      // For server clients, use getUser() (validates with Auth server, more secure)
       const isServerContext = typeof window === "undefined";
 
       if (isServerContext) {
-        // Server-side: use getUser() to validate with Auth server
         const {
           data: { user },
           error,
         } = await client.auth.getUser();
 
         if (error) {
-          // "Auth session missing!" is a normal case (no session), not an error
-          // Return null silently instead of logging as error
           const isAuthSessionMissingError =
             error &&
             typeof error === "object" &&
@@ -180,7 +199,6 @@ export const createAuthRepository = (
             return null;
           }
 
-          // For other errors, handle normally
           handleAuthError(error);
         }
 
@@ -197,24 +215,17 @@ export const createAuthRepository = (
           handleAuthError(error);
         }
 
-        // TypeScript: userEmail is guaranteed to be non-null after the check above
-        // Map authenticated user directly to AuthSession
-        // Note: accessToken is empty string for server-side checks as getUser()
-        // doesn't return tokens, but we only need user info for authentication verification
-        const displayName = user.user_metadata?.display_name;
-        return {
+        const baseSession: AuthSession = {
           userId: user.id,
           email: userEmail!,
-          displayName:
-            typeof displayName === "string" && displayName.trim()
-              ? displayName.trim()
-              : null,
-          preferences: extractPreferences(user.user_metadata),
+          displayName: null,
+          preferences: { ...DEFAULT_USER_PREFERENCES },
           accessToken: "",
           isSuperuser: user.app_metadata?.is_superuser === true,
         };
+
+        return enrichSessionWithProfile(client, baseSession);
       } else {
-        // Browser-side: use getSession() to read from cookies (faster)
         const {
           data: { session },
           error,
@@ -237,8 +248,8 @@ export const createAuthRepository = (
           handleAuthError(error);
         }
 
-        // TypeScript: userEmail is guaranteed to be non-null after the check above
-        return mapSupabaseSessionToDomain(session, userEmail!);
+        const baseSession = mapSupabaseSessionToDomain(session, userEmail!);
+        return enrichSessionWithProfile(client, baseSession);
       }
     } catch (error) {
       return handleAuthError(error);
@@ -301,10 +312,11 @@ export const createAuthRepository = (
         }
 
         const userEmail = verifyData.user!.email || input.email!;
-        const session = mapSupabaseSessionToDomain(
+        const baseSession = mapSupabaseSessionToDomain(
           verifyData.session!,
           userEmail
         );
+        const session = await enrichSessionWithProfile(client, baseSession);
         return { session, requiresEmailVerification: false };
       }
 
@@ -350,10 +362,11 @@ export const createAuthRepository = (
         return handleAuthError(error);
       }
 
-      const session = mapSupabaseSessionToDomain(
+      const baseSession = mapSupabaseSessionToDomain(
         sessionData.session,
         user.email || ""
       );
+      const session = await enrichSessionWithProfile(client, baseSession);
       return { session, requiresEmailVerification: false };
     } catch (error) {
       return handleAuthError(error);
@@ -386,10 +399,11 @@ export const createAuthRepository = (
 
           if (user) {
             const userEmail = user.email || "";
-            const session = mapSupabaseSessionToDomain(
+            const baseSession = mapSupabaseSessionToDomain(
               sessionData.session,
               userEmail
             );
+            const session = await enrichSessionWithProfile(client, baseSession);
             return { session, requiresEmailVerification: false };
           }
         }
@@ -432,9 +446,9 @@ export const createAuthRepository = (
         handleAuthError(error);
       }
 
-      // TypeScript: data.session and data.user are guaranteed to be non-null after the check above
       const userEmail = data.user!.email || input.email! || "";
-      const session = mapSupabaseSessionToDomain(data.session!, userEmail);
+      const baseSession = mapSupabaseSessionToDomain(data.session!, userEmail);
+      const session = await enrichSessionWithProfile(client, baseSession);
 
       return { session, requiresEmailVerification: false };
     } catch (error) {
@@ -464,14 +478,9 @@ export const createAuthRepository = (
   async updateUser(input: {
     email?: string;
     password?: string;
-    data?: Record<string, unknown>;
   }): Promise<void> {
     try {
-      const updateData: {
-        email?: string;
-        password?: string;
-        data?: Record<string, unknown>;
-      } = {};
+      const updateData: { email?: string; password?: string } = {};
 
       if (input.email) {
         updateData.email = input.email;
@@ -479,10 +488,6 @@ export const createAuthRepository = (
 
       if (input.password) {
         updateData.password = input.password;
-      }
-
-      if (input.data) {
-        updateData.data = input.data;
       }
 
       const { error } = await client.auth.updateUser(updateData);

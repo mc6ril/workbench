@@ -1,20 +1,38 @@
 import { z } from "zod";
 
+import { UserPreferencesSchema } from "@/core/domain/schema/auth.schema";
+
 /**
  * Zod schema for UserProfile entity.
- * Represents a user's public profile data, synced from auth.users.
+ * Single source of truth for all applicative user data.
+ * auth.users only manages email, password, session, and app_metadata.
  */
 export const UserProfileSchema = z.object({
   id: z.string().uuid(),
   email: z.string(),
   displayName: z.string().nullable(),
   avatarUrl: z.string().nullable(),
+  preferences: UserPreferencesSchema,
+  termsAcceptedAt: z.coerce.date().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
 
-/** Public profile data for a user, visible to project teammates. */
+/** Profile data for a user, including preferences and avatar. */
 export type UserProfile = z.infer<typeof UserProfileSchema>;
+
+/**
+ * Input for updating a user's profile (display name).
+ */
+export const UpdateProfileInputSchema = z.object({
+  displayName: z
+    .string()
+    .trim()
+    .max(100, "Display name must be less than 100 characters")
+    .optional(),
+});
+
+export type UpdateProfileInput = z.infer<typeof UpdateProfileInputSchema>;
 
 /**
  * Input for uploading an avatar.
