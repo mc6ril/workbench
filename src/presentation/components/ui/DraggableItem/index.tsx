@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { useDraggable } from "@dnd-kit/core";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
+import { useTranslation } from "@/shared/i18n";
 
 import styles from "./DraggableItem.module.scss";
 
@@ -52,6 +53,7 @@ const DraggableItem = ({
   disabled = false,
   ariaLabel,
 }: Props) => {
+  const t = useTranslation("ui.draggableItem");
   const pointerDownAtRef = useRef<number | null>(null);
 
   const { attributes, listeners, setNodeRef, transform, isDragging } =
@@ -141,7 +143,7 @@ const DraggableItem = ({
             ? -1
             : 0
       }
-      aria-label={ariaLabel || `Draggable item ${id}`}
+      aria-label={ariaLabel || t("ariaLabel", { id })}
       aria-grabbed={isGrabbed}
       aria-disabled={
         attributes["aria-disabled"] !== undefined

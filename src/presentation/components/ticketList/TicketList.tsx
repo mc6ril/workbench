@@ -5,13 +5,11 @@ import React, { useMemo } from "react";
 import TicketListItem, {
   TicketListItemProps,
 } from "@/presentation/components/ticketListItem/TicketListItem";
-import {
-  EmptyState,
-  ErrorMessage,
-  Loader,
-  Text,
-  Title,
-} from "@/presentation/components/ui";
+import EmptyState from "@/presentation/components/ui/EmptyState";
+import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
+import Loader from "@/presentation/components/ui/Loader";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
@@ -108,4 +106,4 @@ const TicketList = ({
   );
 };
 
-export default TicketList;
+export default React.memo(TicketList);

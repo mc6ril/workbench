@@ -79,34 +79,26 @@ export const middleware = async (
     // Create Supabase client for Edge Runtime with cookie handling
     const { supabase, response } = createSupabaseClientForMiddleware(request);
 
-    // Check session using Supabase Auth (reads from cookies)
+    // Validate JWT server-side via getUser() (not getSession() which only reads cookies)
     const {
-      data: { session },
+      data: { user },
       error,
-    } = await supabase.auth.getSession();
+    } = await supabase.auth.getUser();
 
     // If user is authenticated and trying to access auth pages, redirect to workspace
-    if (session && isAuthPage) {
+    if (user && isAuthPage) {
       return NextResponse.redirect(new URL("/workspace", request.url));
     }
 
     // If this is a protected route and user is not authenticated, redirect to signin
     if (isProtectedRoute(pathname)) {
-      if (error || !session) {
+      if (error || !user) {
         const signInUrl = new URL("/auth/signin", request.url);
-        // Preserve the original URL as a redirect parameter
         signInUrl.searchParams.set("redirect", pathname);
         return NextResponse.redirect(signInUrl);
       }
 
-      // Check if user email is verified (email_confirmed_at must be set)
-      // Use getUser() to get user details including email_confirmed_at
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user && !user.email_confirmed_at) {
-        // User is authenticated but email not verified, redirect to signin with message
+      if (!user.email_confirmed_at) {
         const signInUrl = new URL("/auth/signin", request.url);
         signInUrl.searchParams.set("unverified", "true");
         return NextResponse.redirect(signInUrl);

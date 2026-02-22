@@ -6,7 +6,12 @@ import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthReposit
 import { createSupabaseAdminClient } from "@/infrastructure/supabase/shared/client-admin";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
-import { API_MESSAGES_AUTH, API_MESSAGES_COMMON } from "@/shared/constants";
+import { API_MESSAGES_AUTH } from "@/shared/constants";
+import { createLoggerFactory } from "@/shared/observability";
+import { withRateLimit } from "@/shared/rateLimit";
+import { verifyCsrfOrigin } from "@/shared/security/csrf";
+
+const logger = createLoggerFactory().forScope("API.DeleteUser");
 
 /**
  * DELETE /api/auth/delete-user
@@ -22,7 +27,20 @@ import { API_MESSAGES_AUTH, API_MESSAGES_COMMON } from "@/shared/constants";
  * - Only the authenticated user can delete their own account
  * - Uses Supabase admin API with service_role key (server-side only)
  */
-export const DELETE = async (_request: NextRequest): Promise<NextResponse> => {
+export const DELETE = async (request: NextRequest): Promise<NextResponse> => {
+  const csrfResponse = verifyCsrfOrigin(request);
+  if (csrfResponse) {
+    return csrfResponse;
+  }
+
+  const rateLimitResponse = withRateLimit(request, {
+    maxRequests: 3,
+    windowMs: 60_000,
+  });
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const supabaseClient = await createSupabaseServerClient();
     const supabaseAdmin = createSupabaseAdminClient();
@@ -35,13 +53,10 @@ export const DELETE = async (_request: NextRequest): Promise<NextResponse> => {
       { status: 200 }
     );
   } catch (error) {
-    const errorMessage =
-      error instanceof Error
-        ? error.message
-        : API_MESSAGES_COMMON.UNKNOWN_ERROR;
+    logger.error("Delete user error", { error });
 
     return NextResponse.json(
-      { error: API_MESSAGES_AUTH.DELETE_FAILED, details: errorMessage },
+      { error: API_MESSAGES_AUTH.DELETE_FAILED },
       { status: 500 }
     );
   }

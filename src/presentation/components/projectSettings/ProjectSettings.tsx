@@ -2,7 +2,13 @@
 
 import React, { useMemo } from "react";
 
-import { Button, Card, Input, Stack, Text, Textarea, Title } from "@/presentation/components/ui";
+import Button from "@/presentation/components/ui/Button";
+import Card from "@/presentation/components/ui/Card";
+import Input from "@/presentation/components/ui/Input";
+import Stack from "@/presentation/components/ui/Stack";
+import Text from "@/presentation/components/ui/Text";
+import Textarea from "@/presentation/components/ui/Textarea";
+import Title from "@/presentation/components/ui/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

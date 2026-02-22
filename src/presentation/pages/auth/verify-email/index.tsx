@@ -3,12 +3,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
 
-import {
-  ErrorMessage,
-  Loader,
-  Text,
-  Title,
-} from "@/presentation/components/ui";
+import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
+import Loader from "@/presentation/components/ui/Loader";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 import { useVerifyEmailFlow } from "@/presentation/hooks/auth/useVerifyEmailFlow";
 
 import { useTranslation } from "@/shared/i18n";

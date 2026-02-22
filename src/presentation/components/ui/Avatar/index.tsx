@@ -8,6 +8,14 @@ import styles from "./Avatar.module.scss";
 
 type AvatarSize = "sm" | "md" | "lg" | "xl";
 
+/** Pixel dimensions for each avatar size variant (must match SCSS variables). */
+const AVATAR_SIZE_PX: Record<AvatarSize, number> = {
+  sm: 28,
+  md: 32,
+  lg: 48,
+  xl: 64,
+};
+
 type Props = {
   /** URL of the avatar image */
   src?: string | null;
@@ -28,6 +36,7 @@ const Avatar = ({ src, name, size = "md", "aria-label": ariaLabel }: Props) => {
   const initials = useMemo(() => getInitials(name), [name]);
   const avatarId = getAccessibilityId(`avatar-${name ?? "unknown"}`);
   const displayLabel = ariaLabel ?? name ?? "User avatar";
+  const sizePx = AVATAR_SIZE_PX[size];
 
   const containerClasses = [styles.avatar, styles[`avatar--${size}`]]
     .filter(Boolean)
@@ -41,7 +50,13 @@ const Avatar = ({ src, name, size = "md", "aria-label": ariaLabel }: Props) => {
         role="img"
         aria-label={displayLabel}
       >
-        <Image src={src} alt={displayLabel} className={styles.avatar__image} />
+        <Image
+          src={src}
+          alt={displayLabel}
+          width={sizePx}
+          height={sizePx}
+          className={styles.avatar__image}
+        />
       </div>
     );
   }

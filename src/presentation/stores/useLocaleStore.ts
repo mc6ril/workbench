@@ -1,6 +1,5 @@
 import { create } from "zustand";
 
-import { registerLocaleGetter } from "@/shared/i18n/config";
 import type { Locale } from "@/shared/i18n/types";
 
 type LocaleState = {
@@ -20,5 +19,3 @@ export const useLocaleStore = create<LocaleStore>((set) => ({
     set({ locale });
   },
 }));
-
-registerLocaleGetter(() => useLocaleStore.getState().locale);

@@ -5,7 +5,8 @@ import React, { useMemo } from "react";
 import BoardColumn, {
   BoardColumnProps,
 } from "@/presentation/components/boardColumn/BoardColumn";
-import { Text, Title } from "@/presentation/components/ui";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
@@ -134,4 +135,4 @@ const BoardView = ({
   );
 };
 
-export default BoardView;
+export default React.memo(BoardView);

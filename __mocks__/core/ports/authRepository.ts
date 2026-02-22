@@ -26,6 +26,7 @@ export type AuthRepositoryMock = {
     [{ email?: string; password?: string }]
   >;
   deleteUser: jest.Mock<Promise<void>, []>;
+  exchangeCodeForSession: jest.Mock<Promise<void>, [string]>;
 };
 
 type AuthRepositoryMockOverrides = Partial<AuthRepositoryMock>;
@@ -55,6 +56,7 @@ export const createAuthRepositoryMock = (
       [{ email?: string; password?: string }]
     >(),
     deleteUser: jest.fn<Promise<void>, []>(),
+    exchangeCodeForSession: jest.fn<Promise<void>, [string]>(),
   };
 
   return {

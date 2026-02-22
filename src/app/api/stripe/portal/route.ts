@@ -1,13 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
 import { createBillingPortalSession } from "@/core/usecases/subscription/createBillingPortalSession";
 
 import { stripePaymentGateway } from "@/infrastructure/stripe/stripePaymentGateway";
+import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
 import { createSupabaseAdminClient } from "@/infrastructure/supabase/shared/client-admin";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
 
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
+import { createLoggerFactory } from "@/shared/observability";
+import { withRateLimit } from "@/shared/rateLimit";
+import { verifyCsrfOrigin } from "@/shared/security/csrf";
+
+const logger = createLoggerFactory().forScope("API.Portal");
 
 /**
  * POST /api/stripe/portal
@@ -16,14 +23,27 @@ import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
  * Allows managing existing subscription (cancel, change plan, update payment method).
  */
 export const POST = async (request: NextRequest): Promise<NextResponse> => {
+  const csrfResponse = verifyCsrfOrigin(request);
+  if (csrfResponse) {
+    return csrfResponse;
+  }
+
+  const rateLimitResponse = withRateLimit(request, {
+    maxRequests: 5,
+    windowMs: 60_000,
+  });
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const supabaseClient = await createSupabaseServerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabaseClient.auth.getUser();
+    const authRepo = createAuthRepository(supabaseClient);
 
-    if (authError || !user) {
+    let session;
+    try {
+      session = await getCurrentSession(authRepo);
+    } catch {
       return NextResponse.json(
         { error: API_MESSAGES_COMMON.NOT_AUTHENTICATED },
         { status: 401 }
@@ -41,20 +61,17 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       stripePaymentGateway,
       subscriptionRepo,
       {
-        userId: user.id,
+        userId: session.userId,
         returnUrl: `${origin}/account`,
       }
     );
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error
-        ? error.message
-        : API_MESSAGES_COMMON.UNKNOWN_ERROR;
+    logger.error("Portal error", { error });
 
     return NextResponse.json(
-      { error: API_MESSAGES_STRIPE.PORTAL_FAILED, details: errorMessage },
+      { error: API_MESSAGES_STRIPE.PORTAL_FAILED },
       { status: 500 }
     );
   }

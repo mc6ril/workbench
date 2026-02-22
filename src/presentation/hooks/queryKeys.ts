@@ -71,6 +71,8 @@ const queryKeysObject = {
     detail: (id: string) => ["tickets", id] as const,
     byStatus: (projectId: string, status: string) =>
       ["tickets", "project", projectId, "status", status] as const,
+    assignees: (ticketId: string) =>
+      ["ticket-assignees", ticketId] as const,
   },
   epics: {
     all: () => ["epics"] as const,

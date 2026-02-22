@@ -5,6 +5,10 @@ import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
 import { createAuthRepository } from "@/infrastructure/supabase/repositories";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
+import { createLoggerFactory } from "@/shared/observability";
+
+const logger = createLoggerFactory().forScope("AuthLayout");
+
 /**
  * Server-side layout for all protected routes under (auth) route group.
  * Checks authentication and redirects to landing page if no session or on error (fail-closed).
@@ -37,7 +41,7 @@ const AuthLayout = async ({
 
     // On any other error, fail-closed: redirect to landing
     // This prevents lockout but ensures security
-    console.error("[AuthLayout] Authentication error:", error);
+    logger.error("Authentication error", { error });
     redirect("/");
   }
 

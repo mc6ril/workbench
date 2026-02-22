@@ -79,7 +79,7 @@ svg {
 
 html {
   font-family: $font-family-sans;
-  font-size: 16px; // Base for rem; design body text is 14px ($font-size-base)
+  font-size: $font-size-root;
   line-height: $line-height-normal;
   color: $color-text-primary;
   background: $color-background-gradient;

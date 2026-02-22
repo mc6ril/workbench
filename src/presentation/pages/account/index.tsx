@@ -21,25 +21,21 @@ import {
   SubscriptionStatus,
 } from "@/core/domain/schema/subscription.schema";
 
-import {
-  Button,
-  Form,
-  Input,
-  Loader,
-  Modal,
-  Select,
-  Text,
-  Toggle,
-} from "@/presentation/components/ui";
-import {
-  useChangePassword,
-  useDeleteUser,
-  useSession,
-  useSignOut,
-  useSubscription,
-  useUpdatePreferences,
-  useUpdateProfile,
-} from "@/presentation/hooks";
+import Button from "@/presentation/components/ui/Button";
+import Form from "@/presentation/components/ui/Form";
+import Input from "@/presentation/components/ui/Input";
+import Loader from "@/presentation/components/ui/Loader";
+import Modal from "@/presentation/components/ui/Modal";
+import Select from "@/presentation/components/ui/Select";
+import Text from "@/presentation/components/ui/Text";
+import Toggle from "@/presentation/components/ui/Toggle";
+import { useChangePassword } from "@/presentation/hooks/auth/useChangePassword";
+import { useDeleteUser } from "@/presentation/hooks/auth/useDeleteUser";
+import { useSession } from "@/presentation/hooks/auth/useSession";
+import { useSignOut } from "@/presentation/hooks/auth/useSignOut";
+import { useUpdatePreferences } from "@/presentation/hooks/auth/useUpdatePreferences";
+import { useUpdateProfile } from "@/presentation/hooks/auth/useUpdateProfile";
+import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
 import { useLocaleStore } from "@/presentation/stores/useLocaleStore";
 import { useToastStore } from "@/presentation/stores/useToastStore";
 

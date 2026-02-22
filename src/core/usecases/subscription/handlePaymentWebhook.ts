@@ -1,7 +1,8 @@
 import type { WebhookParams } from "@/core/domain/schema/subscription.schema";
-import { SubscriptionStatus } from "@/core/domain/schema/subscription.schema";
-
-import { mapStripeStatus } from "@/infrastructure/stripe/StripeMapper";
+import {
+  mapPaymentStatus,
+  SubscriptionStatus,
+} from "@/core/domain/schema/subscription.schema";
 
 import type { PaymentGateway } from "@/core/ports/paymentGateway";
 import type { SubscriptionRepository } from "@/core/ports/subscriptionRepository";
@@ -55,7 +56,7 @@ export const handlePaymentWebhook = async (
         await subscriptionRepo.upsert({
           userId: existing.userId,
           plan: event.plan,
-          status: mapStripeStatus(event.status),
+          status: mapPaymentStatus(event.status),
           stripeCustomerId: event.stripeCustomerId,
           stripeSubscriptionId: event.stripeSubscriptionId,
           currentPeriodStart: event.currentPeriodStart,

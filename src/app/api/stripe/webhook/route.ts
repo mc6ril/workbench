@@ -6,7 +6,10 @@ import { stripePaymentGateway } from "@/infrastructure/stripe/stripePaymentGatew
 import { createSupabaseAdminClient } from "@/infrastructure/supabase/shared/client-admin";
 import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
 
-import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
+import { API_MESSAGES_STRIPE } from "@/shared/constants";
+import { createLoggerFactory } from "@/shared/observability";
+
+const logger = createLoggerFactory().forScope("API.Webhook");
 
 /**
  * POST /api/stripe/webhook
@@ -42,11 +45,10 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : API_MESSAGES_COMMON.UNKNOWN_ERROR;
+    logger.error("Webhook error", { error });
 
     return NextResponse.json(
-      { error: API_MESSAGES_STRIPE.WEBHOOK_FAILED, details: errorMessage },
+      { error: API_MESSAGES_STRIPE.WEBHOOK_FAILED },
       { status: 500 }
     );
   }

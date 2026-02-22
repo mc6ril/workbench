@@ -1,11 +1,21 @@
 import React from "react";
 
-import { Badge, Card, EmptyState, Text } from "@/presentation/components/ui";
+import Badge from "@/presentation/components/ui/Badge";
+import Card from "@/presentation/components/ui/Card";
+import EmptyState from "@/presentation/components/ui/EmptyState";
+import Text from "@/presentation/components/ui/Text";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { getIntlLocale, useTranslation } from "@/shared/i18n";
 
 import styles from "./RecentActivityWidget.module.scss";
+
+const timestampFormatter = new Intl.DateTimeFormat(getIntlLocale(), {
+  day: "numeric",
+  month: "short",
+  hour: "2-digit",
+  minute: "2-digit",
+});
 
 type Activity = {
   id: string;
@@ -40,12 +50,7 @@ const RecentActivityWidget = ({
   const formatTimestamp = (timestamp: Date | string): string => {
     const date =
       typeof timestamp === "string" ? new Date(timestamp) : timestamp;
-    return new Intl.DateTimeFormat(getIntlLocale(), {
-      day: "numeric",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date);
+    return timestampFormatter.format(date);
   };
 
   const getActivityTypeLabel = (type: string): string => {
@@ -182,4 +187,4 @@ const RecentActivityWidget = ({
   );
 };
 
-export default RecentActivityWidget;
+export default React.memo(RecentActivityWidget);

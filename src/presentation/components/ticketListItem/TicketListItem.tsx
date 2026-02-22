@@ -1,8 +1,11 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
-import { Badge, Button, Checkbox, Text } from "@/presentation/components/ui";
+import Badge from "@/presentation/components/ui/Badge";
+import Button from "@/presentation/components/ui/Button";
+import Checkbox from "@/presentation/components/ui/Checkbox";
+import Text from "@/presentation/components/ui/Text";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
@@ -43,23 +46,23 @@ const TicketListItem = ({
   const titleId = `${baseId}-title`;
   const descriptionId = description ? `${baseId}-description` : undefined;
 
-  const handleToggleSelect = (): void => {
+  const handleToggleSelect = useCallback((): void => {
     if (onToggleSelect) {
       onToggleSelect(id);
     }
-  };
+  }, [onToggleSelect, id]);
 
-  const handleOpen = (): void => {
+  const handleOpen = useCallback((): void => {
     if (onOpen) {
       onOpen(id);
     }
-  };
+  }, [onOpen, id]);
 
-  const handleEdit = (): void => {
+  const handleEdit = useCallback((): void => {
     if (onEdit) {
       onEdit(id);
     }
-  };
+  }, [onEdit, id]);
 
   const itemClasses = [
     styles["ticket-list-item"],
@@ -68,17 +71,19 @@ const TicketListItem = ({
     .filter(Boolean)
     .join(" ");
 
-  const ariaLabelParts: string[] = [title];
+  const itemAriaLabel = useMemo(() => {
+    const parts: string[] = [title];
 
-  if (status) {
-    ariaLabelParts.push(`${t("statusLabel")}: ${status}`);
-  }
+    if (status) {
+      parts.push(`${t("statusLabel")}: ${status}`);
+    }
 
-  if (epicName) {
-    ariaLabelParts.push(`${t("epicLabel")}: ${epicName}`);
-  }
+    if (epicName) {
+      parts.push(`${t("epicLabel")}: ${epicName}`);
+    }
 
-  const itemAriaLabel = `${t("ticketAriaLabel")}: ${ariaLabelParts.join(", ")}`;
+    return `${t("ticketAriaLabel")}: ${parts.join(", ")}`;
+  }, [t, title, status, epicName]);
 
   return (
     <li
@@ -155,4 +160,4 @@ const TicketListItem = ({
   );
 };
 
-export default TicketListItem;
+export default React.memo(TicketListItem);

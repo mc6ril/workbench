@@ -95,4 +95,12 @@ export type AuthRepository = {
    * @throws AuthenticationFailure if deletion fails
    */
   deleteUser(): Promise<void>;
+
+  /**
+   * Exchange an authorization code for a session (PKCE flow).
+   * Used during OAuth/magic-link callback to complete the auth handshake.
+   * @param code - Authorization code from the callback URL
+   * @throws AuthenticationFailure if code exchange fails
+   */
+  exchangeCodeForSession(code: string): Promise<void>;
 };

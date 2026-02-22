@@ -1,9 +1,6 @@
 import type Stripe from "stripe";
 
-import {
-  SubscriptionPlan,
-  SubscriptionStatus,
-} from "@/core/domain/schema/subscription.schema";
+import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
 import type { WebhookEvent } from "@/core/ports/paymentGateway";
 
@@ -82,9 +79,7 @@ export const mapStripeEventToDomain = (event: Stripe.Event): WebhookEvent => {
         stripeCustomerId: extractCustomerId(subscription.customer),
         plan: getPlanFromPriceId(extractPriceId(subscription)),
         status: subscription.status,
-        currentPeriodStart: new Date(
-          firstItem.current_period_start * 1000
-        ),
+        currentPeriodStart: new Date(firstItem.current_period_start * 1000),
         currentPeriodEnd: new Date(firstItem.current_period_end * 1000),
         cancelAtPeriodEnd: subscription.cancel_at_period_end,
       };
@@ -102,15 +97,12 @@ export const mapStripeEventToDomain = (event: Stripe.Event): WebhookEvent => {
 
     case "invoice.payment_failed": {
       const invoice = event.data.object as Stripe.Invoice;
-      const parentSub =
-        invoice.parent?.subscription_details?.subscription;
+      const parentSub = invoice.parent?.subscription_details?.subscription;
 
       return {
         type: "invoice.payment_failed",
         stripeSubscriptionId:
-          typeof parentSub === "string"
-            ? parentSub
-            : (parentSub?.id ?? ""),
+          typeof parentSub === "string" ? parentSub : (parentSub?.id ?? ""),
         stripeCustomerId:
           typeof invoice.customer === "string"
             ? invoice.customer
@@ -120,21 +112,5 @@ export const mapStripeEventToDomain = (event: Stripe.Event): WebhookEvent => {
 
     default:
       return { type: "unknown" };
-  }
-};
-
-/** Map Stripe subscription status string to domain SubscriptionStatus. */
-export const mapStripeStatus = (stripeStatus: string): SubscriptionStatus => {
-  switch (stripeStatus) {
-    case "active":
-      return SubscriptionStatus.ACTIVE;
-    case "canceled":
-      return SubscriptionStatus.CANCELED;
-    case "past_due":
-      return SubscriptionStatus.PAST_DUE;
-    case "trialing":
-      return SubscriptionStatus.TRIALING;
-    default:
-      return SubscriptionStatus.ACTIVE;
   }
 };

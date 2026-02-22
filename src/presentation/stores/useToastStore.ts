@@ -19,9 +19,11 @@ const DEFAULT_DURATION_MS = 5000;
 
 let toastCounter = 0;
 
+const timerMap = new Map<string, ReturnType<typeof setTimeout>>();
+
 /**
  * UI-only store for managing transient toast notifications.
- * Toasts auto-dismiss after their configured duration.
+ * Auto-dismiss timers are tracked and cancelled on manual removal.
  */
 export const useToastStore = create<ToastState>((set) => ({
   toasts: [],
@@ -34,15 +36,25 @@ export const useToastStore = create<ToastState>((set) => ({
       toasts: [...state.toasts, { ...toast, id, duration }],
     }));
 
-    setTimeout(() => {
+    const timerId = setTimeout(() => {
+      timerMap.delete(id);
       set((state) => ({
         toasts: state.toasts.filter((t) => t.id !== id),
       }));
     }, duration);
+
+    timerMap.set(id, timerId);
   },
 
-  removeToast: (id) =>
+  removeToast: (id) => {
+    const timerId = timerMap.get(id);
+    if (timerId) {
+      clearTimeout(timerId);
+      timerMap.delete(id);
+    }
+
     set((state) => ({
       toasts: state.toasts.filter((t) => t.id !== id),
-    })),
+    }));
+  },
 }));

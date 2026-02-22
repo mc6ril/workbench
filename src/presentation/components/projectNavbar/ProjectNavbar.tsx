@@ -4,7 +4,8 @@ import React, { useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
 
 import { FilterIcon, SortIcon } from "@/presentation/components/icons";
-import { Button, Input } from "@/presentation/components/ui";
+import Button from "@/presentation/components/ui/Button";
+import Input from "@/presentation/components/ui/Input";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

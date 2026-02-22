@@ -1,14 +1,34 @@
 "use client";
 
 import { use, useCallback, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 
-import ExportImportSettings from "@/presentation/components/exportImportSettings/ExportImportSettings";
 import type { PriorityItem } from "@/presentation/components/prioritiesSettings/PrioritiesSettings";
-import PrioritiesSettings from "@/presentation/components/prioritiesSettings/PrioritiesSettings";
-import ProjectSettings from "@/presentation/components/projectSettings/ProjectSettings";
 import type { StatusColumnItem } from "@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
-import StatusesColumnsSettings from "@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
 import SettingsLayout from "@/presentation/layouts/settingsLayout/SettingsLayout";
+
+const ProjectSettings = dynamic(
+  () => import("@/presentation/components/projectSettings/ProjectSettings"),
+  { ssr: false }
+);
+
+const StatusesColumnsSettings = dynamic(
+  () =>
+    import("@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings"),
+  { ssr: false }
+);
+
+const PrioritiesSettings = dynamic(
+  () =>
+    import("@/presentation/components/prioritiesSettings/PrioritiesSettings"),
+  { ssr: false }
+);
+
+const ExportImportSettings = dynamic(
+  () =>
+    import("@/presentation/components/exportImportSettings/ExportImportSettings"),
+  { ssr: false }
+);
 
 import { useTranslation } from "@/shared/i18n";
 

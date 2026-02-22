@@ -1,6 +1,7 @@
 import React from "react";
 
-import { Card, EmptyState } from "@/presentation/components/ui";
+import Card from "@/presentation/components/ui/Card";
+import EmptyState from "@/presentation/components/ui/EmptyState";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
@@ -105,4 +106,4 @@ const MyWorkWidget = ({
   );
 };
 
-export default MyWorkWidget;
+export default React.memo(MyWorkWidget);

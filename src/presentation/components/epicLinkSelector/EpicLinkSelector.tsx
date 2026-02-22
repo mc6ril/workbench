@@ -2,7 +2,14 @@
 
 import React, { useCallback, useMemo } from "react";
 
-import { Button, EmptyState, ErrorMessage, Loader, Select, Stack, Text, Title } from "@/presentation/components/ui";
+import Button from "@/presentation/components/ui/Button";
+import EmptyState from "@/presentation/components/ui/EmptyState";
+import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
+import Loader from "@/presentation/components/ui/Loader";
+import Select from "@/presentation/components/ui/Select";
+import Stack from "@/presentation/components/ui/Stack";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 
 import { BUTTON_LABELS, getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

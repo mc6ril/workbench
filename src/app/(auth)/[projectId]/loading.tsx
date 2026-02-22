@@ -1,5 +1,5 @@
 "use client";
-import { Loader } from "@/presentation/components/ui";
+import Loader from "@/presentation/components/ui/Loader";
 
 /**
  * Loading state for project routes.

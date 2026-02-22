@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 
 import EpicsList from "@/presentation/components/epicsList/EpicsList";
-import { ErrorMessage, Loader } from "@/presentation/components/ui";
+import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
+import Loader from "@/presentation/components/ui/Loader";
 import { useEpics } from "@/presentation/hooks/epic";
 
 import { getAccessibilityId } from "@/shared/a11y";

@@ -9,24 +9,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { CreateProjectInput } from "@/core/domain/schema/project.schema";
 import { CreateProjectInputSchema } from "@/core/domain/schema/project.schema";
 
-import {
-  Badge,
-  Button,
-  ErrorMessage,
-  Form,
-  Input,
-  Link,
-  Loader,
-  Modal,
-  Text,
-} from "@/presentation/components/ui";
-import {
-  useAddUserToProject,
-  useCreateProject,
-  useProjectsWithStats,
-  useReclaimableProjects,
-  useSession,
-} from "@/presentation/hooks";
+import Badge from "@/presentation/components/ui/Badge";
+import Button from "@/presentation/components/ui/Button";
+import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
+import Form from "@/presentation/components/ui/Form";
+import Input from "@/presentation/components/ui/Input";
+import Link from "@/presentation/components/ui/Link";
+import Loader from "@/presentation/components/ui/Loader";
+import Modal from "@/presentation/components/ui/Modal";
+import Text from "@/presentation/components/ui/Text";
+import { useSession } from "@/presentation/hooks/auth/useSession";
+import { useAddUserToProject } from "@/presentation/hooks/project/useAddUserToProject";
+import { useCreateProject } from "@/presentation/hooks/project/useCreateProject";
+import { useProjectsWithStats } from "@/presentation/hooks/project/useProjectsWithStats";
+import { useReclaimableProjects } from "@/presentation/hooks/project/useReclaimableProjects";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
@@ -48,10 +44,10 @@ const WorkspacePage = () => {
     isFetching: isFetchingProjects,
     error: projectsError,
     refetch: refetchProjects,
-  } = useProjectsWithStats();
+  } = useProjectsWithStats(!!session);
   const addUserToProjectMutation = useAddUserToProject();
   const createProjectMutation = useCreateProject();
-  const { data: reclaimableProjects } = useReclaimableProjects();
+  const { data: reclaimableProjects } = useReclaimableProjects(!!session);
   const [joinProjectId, setJoinProjectId] = useState("");
   const [joinError, setJoinError] = useState<string | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -60,6 +56,15 @@ const WorkspacePage = () => {
     null
   );
   const isSubmittingRef = useRef(false);
+  const submitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (submitTimerRef.current) {
+        clearTimeout(submitTimerRef.current);
+      }
+    };
+  }, []);
   const t = useTranslation("pages.workspace");
   const tReclaim = useTranslation("pages.workspace.reclaimable");
   const tErrors = useTranslation("errors");
@@ -172,8 +177,9 @@ const WorkspacePage = () => {
     try {
       await createProjectMutation.mutateAsync(data);
     } finally {
-      setTimeout(() => {
+      submitTimerRef.current = setTimeout(() => {
         isSubmittingRef.current = false;
+        submitTimerRef.current = null;
       }, 100);
     }
   };

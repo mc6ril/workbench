@@ -2,15 +2,13 @@
 
 import Link from "next/link";
 
-import {
-  Button,
-  Form,
-  Input,
-  Loader,
-  PasswordStrengthIndicator,
-  Text,
-  Title,
-} from "@/presentation/components/ui";
+import Button from "@/presentation/components/ui/Button";
+import Form from "@/presentation/components/ui/Form";
+import Input from "@/presentation/components/ui/Input";
+import Loader from "@/presentation/components/ui/Loader";
+import PasswordStrengthIndicator from "@/presentation/components/ui/PasswordStrengthIndicator";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 import { useUpdatePasswordForm } from "@/presentation/hooks/auth/useUpdatePasswordForm";
 
 import { useTranslation } from "@/shared/i18n";

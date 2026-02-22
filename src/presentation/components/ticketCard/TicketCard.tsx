@@ -1,15 +1,13 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
-import {
-  Badge,
-  Button,
-  Card,
-  Stack,
-  Text,
-  Title,
-} from "@/presentation/components/ui";
+import Badge from "@/presentation/components/ui/Badge";
+import Button from "@/presentation/components/ui/Button";
+import Card from "@/presentation/components/ui/Card";
+import Stack from "@/presentation/components/ui/Stack";
+import Text from "@/presentation/components/ui/Text";
+import Title from "@/presentation/components/ui/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
@@ -46,39 +44,37 @@ const TicketCard = ({
   const titleId = `${baseId}-title`;
   const descriptionId = `${baseId}-meta`;
 
-  const handleEdit = (): void => {
+  const handleEdit = useCallback((): void => {
     if (onEdit) {
       onEdit(id);
     }
-  };
+  }, [onEdit, id]);
 
-  const ariaLabelParts: string[] = [title];
+  const cardAriaLabel = useMemo(() => {
+    const parts: string[] = [title];
 
-  if (status) {
-    ariaLabelParts.push(`${t("statusLabel")}: ${status}`);
-  }
+    if (status) {
+      parts.push(`${t("statusLabel")}: ${status}`);
+    }
 
-  if (epicName) {
-    ariaLabelParts.push(`${t("epicLabel")}: ${epicName}`);
-  }
+    if (epicName) {
+      parts.push(`${t("epicLabel")}: ${epicName}`);
+    }
 
-  if (assigneeName) {
-    ariaLabelParts.push(`${t("assigneeLabel")}: ${assigneeName}`);
-  }
+    if (assigneeName) {
+      parts.push(`${t("assigneeLabel")}: ${assigneeName}`);
+    }
 
-  if (priority) {
-    ariaLabelParts.push(`${t("priorityLabel")}: ${priority}`);
-  }
+    if (priority) {
+      parts.push(`${t("priorityLabel")}: ${priority}`);
+    }
 
-  if (typeof storyPoints === "number") {
-    ariaLabelParts.push(
-      t("storyPointsLabel", {
-        count: storyPoints,
-      })
-    );
-  }
+    if (typeof storyPoints === "number") {
+      parts.push(t("storyPointsLabel", { count: storyPoints }));
+    }
 
-  const cardAriaLabel = `${t("ticketAriaLabel")}: ${ariaLabelParts.join(", ")}`;
+    return `${t("ticketAriaLabel")}: ${parts.join(", ")}`;
+  }, [t, title, status, epicName, assigneeName, priority, storyPoints]);
 
   return (
     <div
