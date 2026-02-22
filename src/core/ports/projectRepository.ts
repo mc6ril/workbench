@@ -4,6 +4,7 @@ import type {
   ProjectRole,
   ProjectWithRole,
   ProjectWithStats,
+  ReclaimableProject,
 } from "@/core/domain/schema/project.schema";
 
 /**
@@ -91,4 +92,12 @@ export type ProjectRepository = {
    * @throws DatabaseError if database operation fails
    */
   hasProjectAccess(): Promise<boolean>;
+
+  /**
+   * List orphaned projects reclaimable by the current user.
+   * Matches creator_email against the current user's email.
+   * @returns Array of reclaimable projects (may be empty)
+   * @throws DatabaseError if database operation fails
+   */
+  listReclaimableProjects(): Promise<ReclaimableProject[]>;
 };

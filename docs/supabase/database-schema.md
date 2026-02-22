@@ -69,13 +69,15 @@ The project_members table links users to projects with specific roles for access
 
 The projects table stores project information. For the MVP, we assume a single project, but the schema supports multiple projects for future extensibility.
 
-| Column     | Type        | Constraints                                            | Description                                      |
-| ---------- | ----------- | ------------------------------------------------------ | ------------------------------------------------ |
-| id         | uuid        | PRIMARY KEY, NOT NULL                                  | Unique identifier                                |
-| name       | text        | NOT NULL, CHECK (length(trim(name)) > 0)               | Project name                                     |
-| short_code | text        | NOT NULL, UNIQUE, CHECK (length(trim(short_code)) = 2) | 2-letter human-readable project code (e.g. `WB`) |
-| created_at | timestamptz | NOT NULL, DEFAULT now                                  | Creation timestamp                               |
-| updated_at | timestamptz | NOT NULL, DEFAULT now                                  | Last update timestamp                            |
+| Column        | Type        | Constraints                                            | Description                                                       |
+| ------------- | ----------- | ------------------------------------------------------ | ----------------------------------------------------------------- |
+| id            | uuid        | PRIMARY KEY, NOT NULL                                  | Unique identifier                                                 |
+| name          | text        | NOT NULL, CHECK (length(trim(name)) > 0)               | Project name                                                      |
+| short_code    | text        | NOT NULL, UNIQUE, CHECK (length(trim(short_code)) = 2) | 2-letter human-readable project code (e.g. `WB`)                  |
+| creator_email | text        | DEFAULT NULL                                           | Email of the user who created the project (set at creation time)  |
+| orphaned_at   | timestamptz | DEFAULT NULL                                           | Timestamp when project became orphaned (all members left)         |
+| created_at    | timestamptz | NOT NULL, DEFAULT now                                  | Creation timestamp                                                |
+| updated_at    | timestamptz | NOT NULL, DEFAULT now                                  | Last update timestamp                                             |
 
 **Check Constraints:**
 
@@ -86,12 +88,16 @@ The projects table stores project information. For the MVP, we assume a single p
 
 - Primary key index on `id` (automatic)
 - Unique index on `short_code` (automatic from UNIQUE constraint)
+- Partial index on `orphaned_at` WHERE `orphaned_at IS NOT NULL` (for orphaned project queries)
 
 **Notes:**
 
 - `short_code` is used as the human-readable prefix for ticket and epic codes (`WB-1`, `WB-E-1`, etc.)
-- For MVP, we'll seed a single default project
-- Multiple projects support can be added later without schema changes
+- `creator_email` is populated by the `create_project()` function at creation time and is immutable
+- `orphaned_at` is set automatically by the `handle_project_member_removed` trigger when the last member leaves
+- When a new member joins an orphaned project, the `handle_project_member_added` trigger clears `orphaned_at`
+- Orphaned projects are eligible for reclaim via `get_reclaimable_projects()` (matches `creator_email`)
+- Orphaned projects older than 30 days can be cleaned up via `cleanup_expired_orphaned_projects()`
 
 ---
 
@@ -523,6 +529,151 @@ SELECT * FROM get_projects_with_stats();
 - Single database round-trip (all statistics computed in one query)
 - Lateral joins prevent N+1 query patterns
 - Indexed lookups on `project_members.user_id` and `tickets.project_id`
+
+---
+
+### create_project(project_name text)
+
+Creates a new project with a derived short code and adds the creator as admin.
+
+**Signature**:
+
+```sql
+create_project(project_name text) RETURNS TABLE (
+  id uuid,
+  name text,
+  short_code text,
+  created_at timestamptz,
+  updated_at timestamptz
+)
+```
+
+**Security**: `SECURITY DEFINER` - Bypasses RLS to create the project and add the creator as admin.
+
+**Behavior**:
+
+- Derives a 2-letter `short_code` from the project name (first letters of first two words, or first two characters)
+- Stores the creator's email in `creator_email` for future orphaned project reclaim
+- Adds the creator as admin via `add_project_member_admin()`
+
+---
+
+### reclaim_or_join_project(project_uuid uuid)
+
+Allows a user to join or reclaim a project. If the project is orphaned, the user becomes admin; otherwise, they become a viewer.
+
+**Signature**:
+
+```sql
+reclaim_or_join_project(project_uuid uuid) RETURNS TABLE (
+  id uuid,
+  name text,
+  short_code text,
+  created_at timestamptz,
+  updated_at timestamptz
+)
+```
+
+**Security**: `SECURITY DEFINER` - Bypasses RLS to insert into `project_members`.
+
+**Error Codes**:
+
+| Code    | Condition                              |
+| ------- | -------------------------------------- |
+| `P0002` | Project not found                      |
+| `23505` | User is already a member of the project |
+
+**Behavior**:
+
+- Checks project existence and existing membership
+- Assigns `admin` role if project is orphaned (`orphaned_at IS NOT NULL`), `viewer` otherwise
+- The `handle_project_member_added` trigger automatically clears `orphaned_at`
+
+---
+
+### get_reclaimable_projects()
+
+Returns orphaned projects that the current user can reclaim (matched by `creator_email`).
+
+**Signature**:
+
+```sql
+get_reclaimable_projects() RETURNS TABLE (
+  id uuid,
+  name text,
+  short_code text,
+  orphaned_at timestamptz
+)
+```
+
+**Security**: `SECURITY DEFINER` - Bypasses RLS to find orphaned projects not visible to any member.
+
+**Behavior**:
+
+- Looks up the current user's email from `auth.users`
+- Returns projects where `creator_email` matches and `orphaned_at IS NOT NULL`
+- Returns empty result set if the user has no email
+
+---
+
+### cleanup_expired_orphaned_projects()
+
+Deletes projects that have been orphaned for more than 30 days.
+
+**Signature**:
+
+```sql
+cleanup_expired_orphaned_projects() RETURNS integer
+```
+
+**Security**: `SECURITY DEFINER`
+
+**Behavior**:
+
+- Deletes all projects where `orphaned_at < NOW() - INTERVAL '30 days'`
+- Returns the number of deleted projects
+- Intended to be called via pg_cron, Edge Function, or manually
+
+---
+
+### has_any_project_access()
+
+Returns `true` if the current user is a member of at least one project.
+
+**Signature**:
+
+```sql
+has_any_project_access() RETURNS boolean
+```
+
+**Security**: `SECURITY DEFINER`
+
+---
+
+## Triggers
+
+### Orphaned Project Lifecycle
+
+Two triggers on `project_members` manage the orphaned project lifecycle:
+
+| Trigger                      | Event         | Table             | Function                         | Description                                       |
+| ---------------------------- | ------------- | ----------------- | -------------------------------- | ------------------------------------------------- |
+| `trg_project_member_removed` | AFTER DELETE  | `project_members` | `handle_project_member_removed`  | Sets `orphaned_at` when the last member leaves    |
+| `trg_project_member_added`   | AFTER INSERT  | `project_members` | `handle_project_member_added`    | Clears `orphaned_at` when a new member joins      |
+
+**Flow**:
+
+```
+User deletes account
+  → CASCADE DELETE on project_members
+    → trg_project_member_removed fires
+      → If no members remain → SET orphaned_at = NOW()
+
+User reclaims project (via reclaim_or_join_project)
+  → INSERT into project_members
+    → trg_project_member_added fires
+      → Clears orphaned_at
+```
 
 ---
 

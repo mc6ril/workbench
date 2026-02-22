@@ -368,6 +368,16 @@
       "roleAriaLabel": "Rol",
       "openWorkspaceAriaLabel": "Abrir espacio {name}, rol: {role}",
       "pleaseEnterProjectId": "Introduce un identificador de proyecto",
+      "reclaimable": {
+        "sectionTitle": "Proyectos para recuperar",
+        "sectionDescription": "Estos proyectos estaban asociados a tu dirección de correo electrónico y pueden ser recuperados antes de su eliminación definitiva.",
+        "orphanedSince": "Huérfano desde el {date}",
+        "expiresIn": "Expira en {days} días",
+        "reclaimButton": "Recuperar",
+        "reclaimButtonAriaLabel": "Recuperar el proyecto {name}",
+        "reclaimSuccess": "¡Proyecto recuperado con éxito! Ahora eres administrador.",
+        "reclaimError": "Ha ocurrido un error al recuperar el proyecto."
+      },
       "footer": {
         "ariaLabel": "Enlaces útiles e información",
         "account": "Configuración de la cuenta",

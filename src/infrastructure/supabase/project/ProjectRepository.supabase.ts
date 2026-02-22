@@ -10,6 +10,7 @@ import type {
   Project,
   ProjectWithRole,
   ProjectWithStats,
+  ReclaimableProject,
 } from "@/core/domain/schema/project.schema";
 import { ProjectRole } from "@/core/domain/schema/project.schema";
 
@@ -17,6 +18,7 @@ import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/e
 import type {
   ProjectRow,
   ProjectWithStatsRow,
+  ReclaimableProjectRow,
 } from "@/infrastructure/supabase/types";
 
 import {
@@ -29,6 +31,7 @@ import {
   mapProjectRowToDomain,
   mapProjectToProjectWithRole,
   mapProjectWithStatsRowToDomain,
+  mapReclaimableProjectRowToDomain,
 } from "./ProjectMapper.supabase";
 
 import type { ProjectRepository } from "@/core/ports/projectRepository";
@@ -327,59 +330,41 @@ export const createProjectRepository = (
 
   async addCurrentUserAsMember(
     projectId: string,
-    role: ProjectRole = ProjectRole.VIEWER
+    _role: ProjectRole = ProjectRole.VIEWER
   ): Promise<Project> {
     try {
-      // Get current user session first
-      const {
-        data: { session },
-      } = await client.auth.getSession();
-      if (!session?.user?.id) {
-        return handleRepositoryError(
-          createDatabaseError("User must be authenticated"),
-          "Project"
-        );
-      }
+      const { data, error } = await client.rpc("reclaim_or_join_project", {
+        project_uuid: projectId,
+      });
 
-      // Optimized: Eliminate rpc('project_exists') by relying on foreign key constraint
-      // If project doesn't exist, insert will fail with foreign key constraint error (code 23503)
-      // This reduces DB calls from 3 to 2 (insert + findById instead of rpc + insert + findById)
-      const { error: insertError } = await client
-        .from("project_members")
-        .insert({
-          project_id: projectId,
-          user_id: session.user.id,
-          role,
-        });
-
-      if (insertError) {
-        // Check if error is due to foreign key constraint (project doesn't exist)
-        if (
-          insertError.code === "23503" ||
-          (insertError.message &&
-            insertError.message.includes("foreign key constraint"))
-        ) {
+      if (error) {
+        if (error.code === "P0002") {
           return handleRepositoryError(
             createNotFoundError("Project", projectId),
             "Project"
           );
         }
-        // Other errors (constraint violation, permission denied, etc.) are re-thrown as-is
-        return handleRepositoryError(insertError, "Project");
+        if (error.code === "23505") {
+          return handleRepositoryError(
+            createConstraintError(
+              "ALREADY_MEMBER",
+              "User is already a member of this project"
+            ),
+            "Project"
+          );
+        }
+        return handleRepositoryError(error, "Project");
       }
 
-      // Fetch the project after successful insertion (user is now a member, so RLS allows access)
-      // This is the second call (after insert), which is acceptable per AC requirement (max 2 calls)
-      const project = await this.findById(projectId);
-      if (!project) {
-        // This shouldn't happen since insert succeeded, but handle it just in case
+      const projectRow = extractProjectRow(data);
+      if (!projectRow) {
         return handleRepositoryError(
           createNotFoundError("Project", projectId),
           "Project"
         );
       }
 
-      return project;
+      return mapProjectRowToDomain(projectRow);
     } catch (error) {
       return handleRepositoryError(error, "Project");
     }
@@ -387,17 +372,33 @@ export const createProjectRepository = (
 
   async hasProjectAccess(): Promise<boolean> {
     try {
-      // Use SQL function for optimized boolean check
-      // This function checks if the current user has any project membership
       const { data, error } = await client.rpc("has_any_project_access");
 
       if (error) {
         return handleRepositoryError(error, "Project");
       }
 
-      // SQL function returns boolean, but Supabase RPC might return null
-      // Default to false if data is null/undefined
       return Boolean(data);
+    } catch (error) {
+      return handleRepositoryError(error, "Project");
+    }
+  },
+
+  async listReclaimableProjects(): Promise<ReclaimableProject[]> {
+    try {
+      const { data, error } = await client.rpc("get_reclaimable_projects");
+
+      if (error) {
+        return handleRepositoryError(error, "Project");
+      }
+
+      if (!data || !Array.isArray(data)) {
+        return [];
+      }
+
+      return data.map((row: unknown) =>
+        mapReclaimableProjectRowToDomain(row as ReclaimableProjectRow)
+      );
     } catch (error) {
       return handleRepositoryError(error, "Project");
     }

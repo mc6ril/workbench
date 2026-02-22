@@ -103,3 +103,14 @@ export type ProjectWithStats = ProjectWithRole & ProjectStats;
 export const AddUserToProjectInputSchema = z.object({
   projectId: z.string().uuid("Project ID must be a valid UUID"),
 });
+
+/**
+ * A project that was orphaned (all members left) and can be reclaimed
+ * by the original creator via email matching.
+ */
+export type ReclaimableProject = {
+  id: string;
+  name: string;
+  shortCode: string;
+  orphanedAt: Date;
+};

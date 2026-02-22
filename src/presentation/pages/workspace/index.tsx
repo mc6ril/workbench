@@ -24,6 +24,7 @@ import {
   useAddUserToProject,
   useCreateProject,
   useProjectsWithStats,
+  useReclaimableProjects,
   useSession,
 } from "@/presentation/hooks";
 
@@ -50,12 +51,17 @@ const WorkspacePage = () => {
   } = useProjectsWithStats();
   const addUserToProjectMutation = useAddUserToProject();
   const createProjectMutation = useCreateProject();
+  const { data: reclaimableProjects } = useReclaimableProjects();
   const [joinProjectId, setJoinProjectId] = useState("");
   const [joinError, setJoinError] = useState<string | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [joinModalOpen, setJoinModalOpen] = useState(false);
+  const [reclaimingProjectId, setReclaimingProjectId] = useState<string | null>(
+    null
+  );
   const isSubmittingRef = useRef(false);
   const t = useTranslation("pages.workspace");
+  const tReclaim = useTranslation("pages.workspace.reclaimable");
   const tErrors = useTranslation("errors");
 
   const displayName = session?.displayName ?? t("userFallbackName");
@@ -89,6 +95,21 @@ const WorkspacePage = () => {
   const closeJoinModal = useCallback(() => {
     setJoinModalOpen(false);
   }, []);
+
+  const handleReclaimProject = useCallback(
+    async (projectId: string): Promise<void> => {
+      setReclaimingProjectId(projectId);
+      try {
+        await addUserToProjectMutation.mutateAsync({ projectId });
+        await refetchProjects();
+      } catch {
+        // Error is handled by the mutation state
+      } finally {
+        setReclaimingProjectId(null);
+      }
+    },
+    [addUserToProjectMutation, refetchProjects]
+  );
 
   const handleJoinWorkspace = async (): Promise<void> => {
     const trimmed = joinProjectId.trim();
@@ -213,6 +234,74 @@ const WorkspacePage = () => {
             )}
           />
         )}
+
+        {Array.isArray(reclaimableProjects) &&
+          reclaimableProjects.length > 0 && (
+            <section
+              className={styles["reclaimable-section"]}
+              aria-label={tReclaim("sectionTitle")}
+            >
+              <div className={styles["reclaimable-banner"]}>
+                <div className={styles["reclaimable-header"]}>
+                  <h2 className={styles["reclaimable-title"]}>
+                    <span aria-hidden="true">📦</span>
+                    {tReclaim("sectionTitle")}
+                  </h2>
+                  <p className={styles["reclaimable-description"]}>
+                    {tReclaim("sectionDescription")}
+                  </p>
+                </div>
+                <div className={styles["reclaimable-list"]}>
+                  {reclaimableProjects.map((project) => {
+                    const daysRemaining = Math.max(
+                      0,
+                      30 -
+                        Math.floor(
+                          (Date.now() - project.orphanedAt.getTime()) /
+                            (1000 * 60 * 60 * 24)
+                        )
+                    );
+                    const orphanedDate =
+                      project.orphanedAt.toLocaleDateString();
+
+                    return (
+                      <div
+                        key={project.id}
+                        className={styles["reclaimable-card"]}
+                      >
+                        <div className={styles["reclaimable-card__info"]}>
+                          <div className={styles["reclaimable-card__name"]}>
+                            {project.name}
+                          </div>
+                          <div className={styles["reclaimable-card__meta"]}>
+                            <span>
+                              {tReclaim("orphanedSince", {
+                                date: orphanedDate,
+                              })}
+                            </span>
+                            <span>
+                              {tReclaim("expiresIn", {
+                                days: daysRemaining,
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                        <Button
+                          label={tReclaim("reclaimButton")}
+                          onClick={() => handleReclaimProject(project.id)}
+                          disabled={reclaimingProjectId === project.id}
+                          variant="secondary"
+                          aria-label={tReclaim("reclaimButtonAriaLabel", {
+                            name: project.name,
+                          })}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </section>
+          )}
 
         {shouldShowLoading({
           isLoading: isLoadingProjects,

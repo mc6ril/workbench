@@ -4,3 +4,4 @@ export { useLastActivitySubtitle } from "./useLastActivitySubtitle";
 export { useProject } from "./useProject";
 export { useProjects } from "./useProjects";
 export { useProjectsWithStats } from "./useProjectsWithStats";
+export { useReclaimableProjects } from "./useReclaimableProjects";

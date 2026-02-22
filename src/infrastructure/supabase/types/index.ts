@@ -79,6 +79,17 @@ export type SubscriptionRow = {
 };
 
 /**
+ * Row type returned by get_reclaimable_projects RPC function.
+ * Represents an orphaned project that can be reclaimed by the current user.
+ */
+export type ReclaimableProjectRow = {
+  id: string;
+  name: string;
+  short_code: string;
+  orphaned_at: string;
+};
+
+/**
  * Row type returned by get_projects_with_stats RPC function.
  * Includes project data, user role, and aggregated statistics.
  */
