@@ -76,6 +76,20 @@ const queryKeysObject = {
   subscription: {
     current: () => ["subscription", "current"] as const,
   },
+  invitations: {
+    byProject: (projectId: string) =>
+      ["invitations", "project", projectId] as const,
+    pending: () => ["invitations", "pending"] as const,
+  },
+  members: {
+    byProject: (projectId: string) =>
+      ["members", "project", projectId] as const,
+  },
+  userProfiles: {
+    detail: (userId: string) => ["user-profiles", userId] as const,
+    byIds: (userIds: string[]) =>
+      ["user-profiles", "batch", ...userIds.sort()] as const,
+  },
 } as const;
 
 export const queryKeys = Object.freeze({
@@ -83,5 +97,8 @@ export const queryKeys = Object.freeze({
   projects: Object.freeze(queryKeysObject.projects),
   tickets: Object.freeze(queryKeysObject.tickets),
   epics: Object.freeze(queryKeysObject.epics),
+  invitations: Object.freeze(queryKeysObject.invitations),
+  members: Object.freeze(queryKeysObject.members),
   subscription: Object.freeze(queryKeysObject.subscription),
+  userProfiles: Object.freeze(queryKeysObject.userProfiles),
 });

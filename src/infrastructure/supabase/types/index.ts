@@ -90,6 +90,62 @@ export type ReclaimableProjectRow = {
 };
 
 /**
+ * Row type for the user_profiles table.
+ * Synced from auth.users via database trigger.
+ */
+export type UserProfileRow = {
+  id: string;
+  email: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
+ * Row type for the project_invitations table.
+ */
+export type InvitationRow = {
+  id: string;
+  project_id: string;
+  invited_by: string;
+  email: string;
+  role: string;
+  token: string;
+  status: string;
+  expires_at: string;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
+ * Row type returned by get_pending_invitations RPC.
+ */
+export type PendingInvitationRow = {
+  id: string;
+  project_id: string;
+  project_name: string;
+  role: string;
+  invited_by_name: string;
+  expires_at: string;
+  created_at: string;
+  token: string;
+};
+
+/**
+ * Row type returned by the project_members + user_profiles join query.
+ */
+export type ProjectMemberJoinRow = {
+  id: string;
+  project_id: string;
+  user_id: string;
+  role: string;
+  created_at: string;
+  updated_at: string;
+  user_profiles: UserProfileRow;
+};
+
+/**
  * Row type returned by get_projects_with_stats RPC function.
  * Includes project data, user role, and aggregated statistics.
  */

@@ -1060,6 +1060,24 @@
         "manageBilling": "Manage billing"
       }
     },
+    "members": {
+      "title": "Project members",
+      "listAriaLabel": "Project members list",
+      "you": "you",
+      "remove": "Remove",
+      "removeAriaLabel": "Remove {name} from project",
+      "changeRoleAriaLabel": "Change {name}'s role",
+      "role": {
+        "admin": "Administrator",
+        "member": "Member",
+        "viewer": "Viewer"
+      },
+      "removeConfirm": "Are you sure you want to remove this member?",
+      "removeSuccess": "Member removed from project",
+      "roleUpdateSuccess": "Role updated",
+      "lastAdminError": "Cannot remove the last administrator",
+      "emptyState": "No members in this project"
+    },
     "upgrade": {
       "title": "Feature requires {plan} plan",
       "description": "This feature is not available on your current plan. Upgrade to {plan} to unlock it.",
@@ -1083,7 +1101,45 @@
       }
     }
   },
-  "forms": {},
+  "forms": {
+    "invitation": {
+      "title": "Invite a member",
+      "ariaLabel": "Invitation form",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "name@example.com",
+      "emailAriaLabel": "Email address of the member to invite",
+      "roleLabel": "Role",
+      "roleAriaLabel": "Role to assign to the invited member",
+      "role": {
+        "admin": "Administrator",
+        "member": "Member",
+        "viewer": "Viewer"
+      },
+      "send": "Send invitation",
+      "sending": "Sending...",
+      "sendAriaLabel": "Send invitation",
+      "cancel": "Cancel",
+      "inviteSuccess": "Invitation sent",
+      "inviteError": "Unable to send invitation",
+      "limitReached": "Member limit reached for your plan",
+      "pending": {
+        "title": "Pending invitations",
+        "ariaLabel": "Pending invitations list",
+        "invitedBy": "Invited by {name}",
+        "accept": "Accept",
+        "acceptAriaLabel": "Accept invitation for {project}",
+        "decline": "Decline",
+        "declineAriaLabel": "Decline invitation for {project}",
+        "acceptSuccess": "Invitation accepted",
+        "declineSuccess": "Invitation declined",
+        "role": {
+          "admin": "Administrator",
+          "member": "Member",
+          "viewer": "Viewer"
+        }
+      }
+    }
+  },
   "errors": {
     "generic": "An error occurred",
     "retry": "Retry",
@@ -1122,6 +1178,30 @@
       "portalFailed": "Unable to access subscription management. Please try again.",
       "checkoutSuccess": "Payment successful! Your subscription is now active.",
       "notAuthenticated": "You must be logged in to perform this action."
+    }
+  },
+  "ui": {
+    "assigneePicker": {
+      "ariaLabel": "Assignee selection",
+      "noAssignee": "Unassigned",
+      "assign": "Assign",
+      "assignAriaLabel": "Open assignee picker",
+      "memberListAriaLabel": "Available members list"
+    },
+    "avatarUpload": {
+      "ariaLabel": "Avatar management",
+      "upload": "Add avatar",
+      "uploadAriaLabel": "Add a profile picture",
+      "change": "Change",
+      "changeAriaLabel": "Change profile picture",
+      "remove": "Remove",
+      "removeAriaLabel": "Remove profile picture",
+      "selectFile": "Select an image file",
+      "hint": "JPEG, PNG, or WebP. 2 MB max.",
+      "uploadSuccess": "Profile picture updated",
+      "removeSuccess": "Profile picture removed",
+      "errorTooLarge": "File is too large (2 MB max)",
+      "errorInvalidType": "Unsupported format. Use JPEG, PNG, or WebP"
     }
   }
 }

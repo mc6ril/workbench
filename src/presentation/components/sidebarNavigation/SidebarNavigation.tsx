@@ -20,7 +20,7 @@ import { useSession, useSignOut, useSubscription } from "@/presentation/hooks";
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
-import { getInitialsFromEmail, isActiveHref } from "@/shared/utils";
+import { getInitials, isActiveHref } from "@/shared/utils";
 
 import styles from "./SidebarNavigation.module.scss";
 
@@ -79,9 +79,7 @@ const SidebarNavigation = ({ projectId }: Props) => {
         label: t(`items.${config.sidebarLabelKey}`),
         exactOnly: config.key === "home",
         locked,
-        planBadge: minimumPlan
-          ? t(`locked.badge.${minimumPlan}`)
-          : undefined,
+        planBadge: minimumPlan ? t(`locked.badge.${minimumPlan}`) : undefined,
       };
     });
   }, [projectId, t, effectivePlan]);
@@ -93,7 +91,7 @@ const SidebarNavigation = ({ projectId }: Props) => {
 
   const displayName =
     session?.displayName ?? session?.email ?? t("profile.userFallbackName");
-  const initials = session?.email ? getInitialsFromEmail(session.email) : "?";
+  const initials = getInitials(session?.displayName ?? session?.email);
 
   const handleAddTabClick = useCallback(() => {
     // Future: add tab action. No-op for now.

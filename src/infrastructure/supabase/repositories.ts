@@ -8,9 +8,12 @@ import { createSupabaseBrowserClient } from "@/infrastructure/supabase/shared/cl
 import { createAuthRepository } from "./auth/AuthRepository.supabase";
 import { createBoardRepository } from "./board/BoardRepository.supabase";
 import { createEpicRepository } from "./epic/EpicRepository.supabase";
+import { createInvitationRepository } from "./invitation/InvitationRepository.supabase";
+import { createMemberRepository } from "./member/MemberRepository.supabase";
 import { createProjectRepository } from "./project/ProjectRepository.supabase";
 import { createSubscriptionRepository } from "./subscription/SubscriptionRepository.supabase";
 import { createTicketRepository } from "./ticket/TicketRepository.supabase";
+import { createUserProfileRepository } from "./userProfile/UserProfileRepository.supabase";
 
 // Browser instances for React Query hooks (Client Components)
 export const authRepository = createAuthRepository(
@@ -29,6 +32,16 @@ export const boardRepository = createBoardRepository(
   createSupabaseBrowserClient()
 );
 
+export const invitationRepository = createInvitationRepository(
+  createSupabaseBrowserClient()
+);
+export const memberRepository = createMemberRepository(
+  createSupabaseBrowserClient()
+);
+export const userProfileRepository = createUserProfileRepository(
+  createSupabaseBrowserClient()
+);
+
 /**
  * Browser-side subscription repository (read-only via RLS).
  * Uses the browser client for reads. Admin client is not available in browser context,
@@ -43,6 +56,9 @@ export const subscriptionRepository = createSubscriptionRepository(
 export { createAuthRepository } from "./auth/AuthRepository.supabase";
 export { createBoardRepository } from "./board/BoardRepository.supabase";
 export { createEpicRepository } from "./epic/EpicRepository.supabase";
+export { createInvitationRepository } from "./invitation/InvitationRepository.supabase";
+export { createMemberRepository } from "./member/MemberRepository.supabase";
 export { createProjectRepository } from "./project/ProjectRepository.supabase";
 export { createSubscriptionRepository } from "./subscription/SubscriptionRepository.supabase";
 export { createTicketRepository } from "./ticket/TicketRepository.supabase";
+export { createUserProfileRepository } from "./userProfile/UserProfileRepository.supabase";

@@ -39,7 +39,9 @@ export const APP_LIMITS = Object.freeze({
     DEFAULT_PAGE_SIZE: 20,
     MAX_PAGE_SIZE: 100,
   },
-  // Additional limits can be added here as needed, for example:
-  // MAX_FILE_SIZE_BYTES: 5 * 1024 * 1024, // 5MB
-  // MAX_ITEMS_PER_PAGE: 50,
+  AVATAR: {
+    MAX_SIZE_BYTES: 2 * 1024 * 1024, // 2MB
+    ALLOWED_MIME_TYPES: ["image/jpeg", "image/png", "image/webp"] as const,
+    STORAGE_BUCKET: "avatars",
+  },
 });

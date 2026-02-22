@@ -1,28 +1,35 @@
 /**
- * Derives display initials from an email address.
- * Examples:
- * - "j.doe@example.com" -> "JD"
- * - "john@example.com" -> "JO"
+ * Derives up to 2 uppercase initials from a display name or email.
  *
- * @param email - Email address to derive initials from
- * @returns Uppercase initials or "?" when nothing can be derived
+ * - Display name: first letter of each word (max 2).
+ *   "John Doe" -> "JD", "Alice" -> "A"
+ * - Email: splits local part on `.` / `_`, then same logic.
+ *   "j.doe@example.com" -> "JD", "john@example.com" -> "JO"
+ *
+ * @returns Uppercase initials or "?" when nothing can be derived.
  */
-export const getInitialsFromEmail = (email: string): string => {
-  const local = email.split("@")[0] ?? "";
-  const parts = local.replace(/[._]/g, " ").trim().split(/\s+/);
-
-  if (parts.length >= 2) {
-    const firstInitial = (parts[0]?.[0] ?? "").toUpperCase();
-    const secondInitial = (parts[1]?.[0] ?? "").toUpperCase();
-    return `${firstInitial}${secondInitial}`;
+export const getInitials = (input: string | null | undefined): string => {
+  if (!input || input.trim().length === 0) {
+    return "?";
   }
 
-  if (local.length >= 2) {
-    return local.slice(0, 2).toUpperCase();
+  const normalized = input.includes("@")
+    ? (input.split("@")[0] ?? "").replace(/[._]/g, " ")
+    : input;
+
+  const words = normalized.trim().split(/\s+/);
+
+  if (words.length >= 2) {
+    return ((words[0]?.[0] ?? "") + (words[1]?.[0] ?? "")).toUpperCase();
   }
 
-  if (local.length === 1) {
-    return local.toUpperCase();
+  const word = words[0] ?? "";
+  if (word.length >= 2) {
+    return word.slice(0, 2).toUpperCase();
+  }
+
+  if (word.length === 1) {
+    return word.toUpperCase();
   }
 
   return "?";

@@ -1081,9 +1081,65 @@
         "pro": "Pro",
         "team": "Équipe"
       }
+    },
+    "members": {
+      "title": "Membres du projet",
+      "listAriaLabel": "Liste des membres du projet",
+      "you": "vous",
+      "remove": "Retirer",
+      "removeAriaLabel": "Retirer {name} du projet",
+      "changeRoleAriaLabel": "Changer le rôle de {name}",
+      "role": {
+        "admin": "Administrateur",
+        "member": "Membre",
+        "viewer": "Lecteur"
+      },
+      "removeConfirm": "Êtes-vous sûr de vouloir retirer ce membre ?",
+      "removeSuccess": "Membre retiré du projet",
+      "roleUpdateSuccess": "Rôle mis à jour",
+      "lastAdminError": "Impossible de retirer le dernier administrateur",
+      "emptyState": "Aucun membre dans ce projet"
     }
   },
-  "forms": {},
+  "forms": {
+    "invitation": {
+      "title": "Inviter un membre",
+      "ariaLabel": "Formulaire d'invitation",
+      "emailLabel": "Adresse email",
+      "emailPlaceholder": "nom@exemple.com",
+      "emailAriaLabel": "Adresse email du membre à inviter",
+      "roleLabel": "Rôle",
+      "roleAriaLabel": "Rôle à attribuer au membre invité",
+      "role": {
+        "admin": "Administrateur",
+        "member": "Membre",
+        "viewer": "Lecteur"
+      },
+      "send": "Envoyer l'invitation",
+      "sending": "Envoi en cours...",
+      "sendAriaLabel": "Envoyer l'invitation",
+      "cancel": "Annuler",
+      "inviteSuccess": "Invitation envoyée",
+      "inviteError": "Impossible d'envoyer l'invitation",
+      "limitReached": "Limite de membres atteinte pour votre plan",
+      "pending": {
+        "title": "Invitations en attente",
+        "ariaLabel": "Liste des invitations en attente",
+        "invitedBy": "Invité par {name}",
+        "accept": "Accepter",
+        "acceptAriaLabel": "Accepter l'invitation pour {project}",
+        "decline": "Refuser",
+        "declineAriaLabel": "Refuser l'invitation pour {project}",
+        "acceptSuccess": "Invitation acceptée",
+        "declineSuccess": "Invitation refusée",
+        "role": {
+          "admin": "Administrateur",
+          "member": "Membre",
+          "viewer": "Lecteur"
+        }
+      }
+    }
+  },
   "errors": {
     "generic": "Une erreur s'est produite",
     "retry": "Réessayer",
@@ -1122,6 +1178,30 @@
       "portalFailed": "Impossible d'accéder à la gestion de l'abonnement. Veuillez réessayer.",
       "checkoutSuccess": "Paiement effectué avec succès ! Votre abonnement est actif.",
       "notAuthenticated": "Vous devez être connecté pour effectuer cette action."
+    }
+  },
+  "ui": {
+    "assigneePicker": {
+      "ariaLabel": "Sélection des assignés",
+      "noAssignee": "Non assigné",
+      "assign": "Assigner",
+      "assignAriaLabel": "Ouvrir le sélecteur d'assignés",
+      "memberListAriaLabel": "Liste des membres disponibles"
+    },
+    "avatarUpload": {
+      "ariaLabel": "Gestion de l'avatar",
+      "upload": "Ajouter un avatar",
+      "uploadAriaLabel": "Ajouter une photo de profil",
+      "change": "Changer",
+      "changeAriaLabel": "Changer la photo de profil",
+      "remove": "Supprimer",
+      "removeAriaLabel": "Supprimer la photo de profil",
+      "selectFile": "Sélectionner un fichier image",
+      "hint": "JPEG, PNG ou WebP. 2 Mo maximum.",
+      "uploadSuccess": "Photo de profil mise à jour",
+      "removeSuccess": "Photo de profil supprimée",
+      "errorTooLarge": "Le fichier est trop volumineux (2 Mo maximum)",
+      "errorInvalidType": "Format non supporté. Utilisez JPEG, PNG ou WebP"
     }
   }
 }
