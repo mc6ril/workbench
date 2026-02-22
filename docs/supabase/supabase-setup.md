@@ -67,6 +67,12 @@ This guide explains how to set up a Supabase project for Workbench and configure
    - For MVP, authentication is optional (single-user app)
    - If enabling auth later, configure providers as needed
 
+2. **Leaked Password Protection** (Pro plan only)
+   - Go to **Authentication → Settings → Password Protection**
+   - Enable **"Prevent use of leaked passwords"**
+   - This checks passwords against [HaveIBeenPwned.org](https://haveibeenpwned.com/) during signup and password changes, preventing users from using compromised passwords
+   - Requires Supabase **Pro plan** or above -- not available on the Free tier
+
 ### Row Level Security (RLS)
 
 1. **Navigate to Authentication → Policies**
