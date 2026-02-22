@@ -5,5 +5,10 @@ export { useDeleteTicket } from "./useDeleteTicket";
 export { useMoveTicket } from "./useMoveTicket";
 export { useReorderTicket } from "./useReorderTicket";
 export { useTicket } from "./useTicket";
+export {
+  useAssignTicket,
+  useTicketAssignees,
+  useUnassignTicket,
+} from "./useTicketAssignees";
 export { useTickets } from "./useTickets";
 export { useUpdateTicket } from "./useUpdateTicket";

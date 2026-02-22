@@ -1,3 +1,4 @@
+export { assignTicket } from "./assignTicket";
 export { assignTicketToEpic } from "./assignTicketToEpic";
 export { createSubtask } from "./createSubtask";
 export { createTicket } from "./createTicket";
@@ -7,5 +8,6 @@ export { getTicketDetail } from "./getTicketDetail";
 export { listTickets } from "./listTickets";
 export { moveTicket } from "./moveTicket";
 export { reorderTicket } from "./reorderTicket";
+export { unassignTicket } from "./unassignTicket";
 export { unassignTicketFromEpic } from "./unassignTicketFromEpic";
 export { updateTicket } from "./updateTicket";

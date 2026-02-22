@@ -10,6 +10,9 @@ export const EpicSchema = z.object({
   name: z.string().min(1, "Epic name must not be empty"),
   description: z.string().nullable(),
   codeNumber: z.number().int().positive(),
+  startDate: z.coerce.date().nullable(),
+  targetDate: z.coerce.date().nullable(),
+  color: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Color must be a valid hex"),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
@@ -26,6 +29,12 @@ export const CreateEpicInputSchema = z.object({
   projectId: z.string().uuid(),
   name: z.string().min(1, "Epic name must not be empty"),
   description: z.string().nullable().optional(),
+  startDate: z.coerce.date().nullable().optional(),
+  targetDate: z.coerce.date().nullable().optional(),
+  color: z
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/)
+    .optional(),
   codeNumber: z.number().int().positive().optional(),
 });
 
@@ -37,6 +46,12 @@ export type CreateEpicInput = z.infer<typeof CreateEpicInputSchema>;
 export const UpdateEpicInputSchema = z.object({
   name: z.string().min(1, "Epic name must not be empty").optional(),
   description: z.string().nullable().optional(),
+  startDate: z.coerce.date().nullable().optional(),
+  targetDate: z.coerce.date().nullable().optional(),
+  color: z
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/)
+    .optional(),
 });
 
 export type UpdateEpicInput = z.infer<typeof UpdateEpicInputSchema>;

@@ -1,0 +1,201 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+import {
+  createDatabaseError,
+  createNotFoundError,
+} from "@/core/domain/repositoryError";
+import type {
+  CreateSprintInput,
+  Sprint,
+  UpdateSprintInput,
+} from "@/core/domain/schema/sprint.schema";
+
+import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
+import type { SprintRow } from "@/infrastructure/supabase/types";
+
+import {
+  mapSprintRowsToDomain,
+  mapSprintRowToDomain,
+} from "./SprintMapper.supabase";
+
+import type { SprintRepository } from "@/core/ports/sprintRepository";
+
+/**
+ * Create a SprintRepository implementation using the provided Supabase client.
+ */
+export const createSprintRepository = (
+  client: SupabaseClient
+): SprintRepository => ({
+  async findById(id: string): Promise<Sprint | null> {
+    try {
+      const { data, error } = await client
+        .from("sprints")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        return handleRepositoryError(error, "Sprint");
+      }
+
+      if (!data) {
+        return null;
+      }
+
+      return mapSprintRowToDomain(data as SprintRow);
+    } catch (error) {
+      return handleRepositoryError(error, "Sprint");
+    }
+  },
+
+  async listByProject(projectId: string): Promise<Sprint[]> {
+    try {
+      const { data, error } = await client
+        .from("sprints")
+        .select("*")
+        .eq("project_id", projectId)
+        .order("position", { ascending: true });
+
+      if (error) {
+        return handleRepositoryError(error, "Sprint");
+      }
+
+      if (!data) {
+        return [];
+      }
+
+      return mapSprintRowsToDomain(data as SprintRow[]);
+    } catch (error) {
+      return handleRepositoryError(error, "Sprint");
+    }
+  },
+
+  async create(input: CreateSprintInput): Promise<Sprint> {
+    try {
+      // Auto-assign position as next available
+      const { data: maxPos } = await client
+        .from("sprints")
+        .select("position")
+        .eq("project_id", input.projectId)
+        .order("position", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      const nextPosition =
+        maxPos && typeof (maxPos as { position: number }).position === "number"
+          ? (maxPos as { position: number }).position + 1
+          : 0;
+
+      const { data, error } = await client
+        .from("sprints")
+        .insert({
+          project_id: input.projectId,
+          name: input.name,
+          goal: input.goal ?? null,
+          start_date: input.startDate?.toISOString() ?? null,
+          end_date: input.endDate?.toISOString() ?? null,
+          status: "planned",
+          position: nextPosition,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        return handleRepositoryError(error, "Sprint");
+      }
+
+      if (!data) {
+        return handleRepositoryError(
+          createDatabaseError("No data returned from insert"),
+          "Sprint"
+        );
+      }
+
+      return mapSprintRowToDomain(data as SprintRow);
+    } catch (error) {
+      return handleRepositoryError(error, "Sprint");
+    }
+  },
+
+  async update(id: string, input: UpdateSprintInput): Promise<Sprint> {
+    try {
+      const updateData: Partial<SprintRow> = {};
+
+      if (input.name !== undefined) {
+        updateData.name = input.name;
+      }
+      if (input.goal !== undefined) {
+        updateData.goal = input.goal;
+      }
+      if (input.startDate !== undefined) {
+        updateData.start_date = input.startDate?.toISOString() ?? null;
+      }
+      if (input.endDate !== undefined) {
+        updateData.end_date = input.endDate?.toISOString() ?? null;
+      }
+      if (input.status !== undefined) {
+        updateData.status = input.status;
+      }
+
+      const { data, error } = await client
+        .from("sprints")
+        .update(updateData)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        return handleRepositoryError(error, "Sprint", id);
+      }
+
+      if (!data) {
+        return handleRepositoryError(
+          createNotFoundError("Sprint", id),
+          "Sprint",
+          id
+        );
+      }
+
+      return mapSprintRowToDomain(data as SprintRow);
+    } catch (error) {
+      return handleRepositoryError(error, "Sprint", id);
+    }
+  },
+
+  async delete(id: string): Promise<void> {
+    try {
+      const { error } = await client.from("sprints").delete().eq("id", id);
+
+      if (error) {
+        return handleRepositoryError(error, "Sprint", id);
+      }
+    } catch (error) {
+      return handleRepositoryError(error, "Sprint", id);
+    }
+  },
+
+  async getSprintStats(
+    sprintId: string
+  ): Promise<{ ticketCount: number; completedCount: number }> {
+    try {
+      const { data, error } = await client
+        .from("tickets")
+        .select("status")
+        .eq("sprint_id", sprintId);
+
+      if (error) {
+        return handleRepositoryError(error, "Sprint", sprintId);
+      }
+
+      const tickets = (data ?? []) as Array<{ status: string }>;
+      const completedCount = tickets.filter((t) => t.status === "done").length;
+
+      return {
+        ticketCount: tickets.length,
+        completedCount,
+      };
+    } catch (error) {
+      return handleRepositoryError(error, "Sprint", sprintId);
+    }
+  },
+});

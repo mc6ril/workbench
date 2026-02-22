@@ -42,9 +42,12 @@ const queryKeysObject = {
             filters.status ?? null,
             filters.epicId ?? null,
             filters.parentId ?? null,
+            filters.sprintId ?? null,
+            filters.priority ?? null,
             filters.assigneeIds?.length
               ? [...filters.assigneeIds].sort()
               : null,
+            filters.labelIds?.length ? [...filters.labelIds].sort() : null,
           ]
         : null;
       const sortKey = sort ? [sort.field, sort.direction] : null;
@@ -71,12 +74,23 @@ const queryKeysObject = {
     detail: (id: string) => ["tickets", id] as const,
     byStatus: (projectId: string, status: string) =>
       ["tickets", "project", projectId, "status", status] as const,
-    assignees: (ticketId: string) =>
-      ["ticket-assignees", ticketId] as const,
+    assignees: (ticketId: string) => ["ticket-assignees", ticketId] as const,
   },
   epics: {
     all: () => ["epics"] as const,
     detail: (id: string) => ["epics", id] as const,
+  },
+  sprints: {
+    all: () => ["sprints"] as const,
+    byProject: (projectId: string) =>
+      ["sprints", "project", projectId] as const,
+  },
+  comments: {
+    byTicket: (ticketId: string) => ["comments", "ticket", ticketId] as const,
+  },
+  labels: {
+    byProject: (projectId: string) => ["labels", "project", projectId] as const,
+    byTicket: (ticketId: string) => ["labels", "ticket", ticketId] as const,
   },
   subscription: {
     current: () => ["subscription", "current"] as const,
@@ -102,6 +116,9 @@ export const queryKeys = Object.freeze({
   projects: Object.freeze(queryKeysObject.projects),
   tickets: Object.freeze(queryKeysObject.tickets),
   epics: Object.freeze(queryKeysObject.epics),
+  sprints: Object.freeze(queryKeysObject.sprints),
+  comments: Object.freeze(queryKeysObject.comments),
+  labels: Object.freeze(queryKeysObject.labels),
   invitations: Object.freeze(queryKeysObject.invitations),
   members: Object.freeze(queryKeysObject.members),
   subscription: Object.freeze(queryKeysObject.subscription),

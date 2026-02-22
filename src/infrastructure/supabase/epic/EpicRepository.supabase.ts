@@ -107,6 +107,9 @@ export const createEpicRepository = (
           name: input.name,
           description: input.description ?? null,
           code_number: input.codeNumber,
+          start_date: input.startDate?.toISOString() ?? null,
+          target_date: input.targetDate?.toISOString() ?? null,
+          color: input.color ?? "#6B7280",
         })
         .select()
         .single();
@@ -137,6 +140,15 @@ export const createEpicRepository = (
       }
       if (input.description !== undefined) {
         updateData.description = input.description;
+      }
+      if (input.startDate !== undefined) {
+        updateData.start_date = input.startDate?.toISOString() ?? null;
+      }
+      if (input.targetDate !== undefined) {
+        updateData.target_date = input.targetDate?.toISOString() ?? null;
+      }
+      if (input.color !== undefined) {
+        updateData.color = input.color;
       }
 
       const { data, error } = await client
