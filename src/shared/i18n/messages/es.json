@@ -1060,6 +1060,24 @@
         "manageBilling": "Gestionar facturación"
       }
     },
+    "members": {
+      "title": "Miembros del proyecto",
+      "listAriaLabel": "Lista de miembros del proyecto",
+      "you": "tú",
+      "remove": "Eliminar",
+      "removeAriaLabel": "Eliminar a {name} del proyecto",
+      "changeRoleAriaLabel": "Cambiar el rol de {name}",
+      "role": {
+        "admin": "Administrador",
+        "member": "Miembro",
+        "viewer": "Lector"
+      },
+      "removeConfirm": "¿Seguro que quieres eliminar a este miembro?",
+      "removeSuccess": "Miembro eliminado del proyecto",
+      "roleUpdateSuccess": "Rol actualizado",
+      "lastAdminError": "No se puede eliminar al último administrador",
+      "emptyState": "No hay miembros en este proyecto"
+    },
     "upgrade": {
       "title": "Función reservada al plan {plan}",
       "description": "Esta función no está disponible en tu plan actual. Cambia al plan {plan} para desbloquearla.",
@@ -1083,7 +1101,45 @@
       }
     }
   },
-  "forms": {},
+  "forms": {
+    "invitation": {
+      "title": "Invitar a un miembro",
+      "ariaLabel": "Formulario de invitación",
+      "emailLabel": "Dirección de email",
+      "emailPlaceholder": "nombre@ejemplo.com",
+      "emailAriaLabel": "Dirección de email del miembro a invitar",
+      "roleLabel": "Rol",
+      "roleAriaLabel": "Rol a asignar al miembro invitado",
+      "role": {
+        "admin": "Administrador",
+        "member": "Miembro",
+        "viewer": "Lector"
+      },
+      "send": "Enviar invitación",
+      "sending": "Enviando...",
+      "sendAriaLabel": "Enviar invitación",
+      "cancel": "Cancelar",
+      "inviteSuccess": "Invitación enviada",
+      "inviteError": "No se pudo enviar la invitación",
+      "limitReached": "Límite de miembros alcanzado para tu plan",
+      "pending": {
+        "title": "Invitaciones pendientes",
+        "ariaLabel": "Lista de invitaciones pendientes",
+        "invitedBy": "Invitado por {name}",
+        "accept": "Aceptar",
+        "acceptAriaLabel": "Aceptar la invitación para {project}",
+        "decline": "Rechazar",
+        "declineAriaLabel": "Rechazar la invitación para {project}",
+        "acceptSuccess": "Invitación aceptada",
+        "declineSuccess": "Invitación rechazada",
+        "role": {
+          "admin": "Administrador",
+          "member": "Miembro",
+          "viewer": "Lector"
+        }
+      }
+    }
+  },
   "errors": {
     "generic": "Se ha producido un error",
     "retry": "Reintentar",
@@ -1122,6 +1178,30 @@
       "portalFailed": "No se pudo acceder a la gestión de la suscripción. Inténtalo de nuevo.",
       "checkoutSuccess": "¡Pago exitoso! Tu suscripción está activa.",
       "notAuthenticated": "Debes iniciar sesión para realizar esta acción."
+    }
+  },
+  "ui": {
+    "assigneePicker": {
+      "ariaLabel": "Selección de asignados",
+      "noAssignee": "Sin asignar",
+      "assign": "Asignar",
+      "assignAriaLabel": "Abrir el selector de asignados",
+      "memberListAriaLabel": "Lista de miembros disponibles"
+    },
+    "avatarUpload": {
+      "ariaLabel": "Gestión del avatar",
+      "upload": "Añadir avatar",
+      "uploadAriaLabel": "Añadir foto de perfil",
+      "change": "Cambiar",
+      "changeAriaLabel": "Cambiar la foto de perfil",
+      "remove": "Eliminar",
+      "removeAriaLabel": "Eliminar la foto de perfil",
+      "selectFile": "Seleccionar un archivo de imagen",
+      "hint": "JPEG, PNG o WebP. 2 MB máximo.",
+      "uploadSuccess": "Foto de perfil actualizada",
+      "removeSuccess": "Foto de perfil eliminada",
+      "errorTooLarge": "El archivo es demasiado grande (2 MB máximo)",
+      "errorInvalidType": "Formato no soportado. Usa JPEG, PNG o WebP"
     }
   }
 }

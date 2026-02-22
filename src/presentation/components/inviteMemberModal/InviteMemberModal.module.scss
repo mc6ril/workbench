@@ -1,0 +1,22 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+
+.invite-modal {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.invite-modal__error {
+  color: $color-error;
+  font-size: $font-size-sm;
+  margin: $spacing-none;
+}
+
+.invite-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+}

@@ -86,7 +86,8 @@ export type ReorderTicketInput = z.infer<typeof ReorderTicketInputSchema>;
 export type TicketFilters = {
   status?: string;
   epicId?: string;
-  parentId?: string | null; // null to filter tickets without parent, string to filter by specific parent
+  parentId?: string | null;
+  assigneeIds?: string[];
 };
 
 /**
@@ -164,3 +165,45 @@ export const MoveTicketInputSchema = z.object({
   status: z.string().min(1, "Status must not be empty"),
   position: z.number().int().nonnegative("Position must be non-negative"),
 });
+
+/** A user assigned to a ticket, with their profile summary. */
+export type TicketAssignee = {
+  userId: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  assignedAt: Date;
+};
+
+/** A ticket enriched with its assignees list. */
+export type TicketWithAssignees = Ticket & {
+  assignees: TicketAssignee[];
+};
+
+/**
+ * Input for assigning users to a ticket.
+ * Supports multi-assignment (multiple user IDs).
+ */
+export const AssignUsersToTicketInputSchema = z.object({
+  ticketId: z.string().uuid("Ticket ID must be a valid UUID"),
+  userIds: z
+    .array(z.string().uuid("User ID must be a valid UUID"))
+    .min(1, "At least one user ID is required"),
+});
+
+export type AssignUsersToTicketInput = z.infer<
+  typeof AssignUsersToTicketInputSchema
+>;
+
+/**
+ * Input for unassigning users from a ticket.
+ */
+export const UnassignUsersFromTicketInputSchema = z.object({
+  ticketId: z.string().uuid("Ticket ID must be a valid UUID"),
+  userIds: z
+    .array(z.string().uuid("User ID must be a valid UUID"))
+    .min(1, "At least one user ID is required"),
+});
+
+export type UnassignUsersFromTicketInput = z.infer<
+  typeof UnassignUsersFromTicketInputSchema
+>;

@@ -1,6 +1,7 @@
 import type {
   CreateTicketInput,
   Ticket,
+  TicketAssignee,
   TicketFilters,
   TicketSort,
   UpdateTicketInput,
@@ -136,4 +137,41 @@ export type TicketRepository = {
    * @throws DatabaseError if database operation fails
    */
   unassignFromEpic(ticketId: string): Promise<Ticket>;
+
+  /**
+   * Assign multiple users to a ticket.
+   * Existing assignments are preserved; duplicates are silently ignored.
+   * @param ticketId - Ticket to assign users to
+   * @param userIds - User IDs to assign
+   * @throws DatabaseError if database operation fails or permission denied
+   */
+  assignUsers(ticketId: string, userIds: string[]): Promise<void>;
+
+  /**
+   * Unassign multiple users from a ticket.
+   * Non-existing assignments are silently ignored.
+   * @param ticketId - Ticket to unassign users from
+   * @param userIds - User IDs to unassign
+   * @throws DatabaseError if database operation fails or permission denied
+   */
+  unassignUsers(ticketId: string, userIds: string[]): Promise<void>;
+
+  /**
+   * Get all assignees for a ticket with their profile summary.
+   * @param ticketId - Ticket to get assignees for
+   * @returns Array of assignees ordered by assignment date
+   * @throws DatabaseError if database operation fails
+   */
+  getAssignees(ticketId: string): Promise<TicketAssignee[]>;
+
+  /**
+   * Batch-load assignees for multiple tickets.
+   * Used for efficient board/backlog rendering (avoids N+1).
+   * @param ticketIds - Array of ticket IDs
+   * @returns Map of ticketId -> assignees array
+   * @throws DatabaseError if database operation fails
+   */
+  getAssigneesByTicketIds(
+    ticketIds: string[]
+  ): Promise<Record<string, TicketAssignee[]>>;
 };

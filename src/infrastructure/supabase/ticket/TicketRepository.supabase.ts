@@ -400,4 +400,124 @@ export const createTicketRepository = (
       return handleRepositoryError(error, "Ticket");
     }
   },
+
+  async assignUsers(ticketId: string, userIds: string[]): Promise<void> {
+    if (userIds.length === 0) {
+      return;
+    }
+
+    const rows = userIds.map((userId) => ({
+      ticket_id: ticketId,
+      user_id: userId,
+      assigned_by: null as string | null,
+    }));
+
+    try {
+      const currentUser = await client.auth.getUser();
+      const assignedBy = currentUser.data.user?.id ?? null;
+      rows.forEach((row) => {
+        row.assigned_by = assignedBy;
+      });
+    } catch {
+      // assigned_by is optional
+    }
+
+    const { error } = await client.from("ticket_assignees").upsert(rows, {
+      onConflict: "ticket_id,user_id",
+      ignoreDuplicates: true,
+    });
+
+    if (error) {
+      return handleRepositoryError(error, "TicketAssignee", ticketId);
+    }
+  },
+
+  async unassignUsers(ticketId: string, userIds: string[]): Promise<void> {
+    if (userIds.length === 0) {
+      return;
+    }
+
+    const { error } = await client
+      .from("ticket_assignees")
+      .delete()
+      .eq("ticket_id", ticketId)
+      .in("user_id", userIds);
+
+    if (error) {
+      return handleRepositoryError(error, "TicketAssignee", ticketId);
+    }
+  },
+
+  async getAssignees(
+    ticketId: string
+  ): Promise<import("@/core/domain/schema/ticket.schema").TicketAssignee[]> {
+    const { data, error } = await client.rpc("get_ticket_assignees", {
+      ticket_ids: [ticketId],
+    });
+
+    if (error) {
+      return handleRepositoryError(error, "TicketAssignee", ticketId);
+    }
+
+    return (
+      (data ?? []) as Array<{
+        ticket_id: string;
+        user_id: string;
+        display_name: string | null;
+        avatar_url: string | null;
+        assigned_at: string;
+      }>
+    ).map((row) => ({
+      userId: row.user_id,
+      displayName: row.display_name,
+      avatarUrl: row.avatar_url,
+      assignedAt: new Date(row.assigned_at),
+    }));
+  },
+
+  async getAssigneesByTicketIds(
+    ticketIds: string[]
+  ): Promise<
+    Record<
+      string,
+      import("@/core/domain/schema/ticket.schema").TicketAssignee[]
+    >
+  > {
+    if (ticketIds.length === 0) {
+      return {};
+    }
+
+    const { data, error } = await client.rpc("get_ticket_assignees", {
+      ticket_ids: ticketIds,
+    });
+
+    if (error) {
+      return handleRepositoryError(error, "TicketAssignee");
+    }
+
+    const result: Record<
+      string,
+      import("@/core/domain/schema/ticket.schema").TicketAssignee[]
+    > = {};
+
+    for (const row of (data ?? []) as Array<{
+      ticket_id: string;
+      user_id: string;
+      display_name: string | null;
+      avatar_url: string | null;
+      assigned_at: string;
+    }>) {
+      if (!result[row.ticket_id]) {
+        result[row.ticket_id] = [];
+      }
+      result[row.ticket_id].push({
+        userId: row.user_id,
+        displayName: row.display_name,
+        avatarUrl: row.avatar_url,
+        assignedAt: new Date(row.assigned_at),
+      });
+    }
+
+    return result;
+  },
 });

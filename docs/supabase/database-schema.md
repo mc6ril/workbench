@@ -69,15 +69,15 @@ The project_members table links users to projects with specific roles for access
 
 The projects table stores project information. For the MVP, we assume a single project, but the schema supports multiple projects for future extensibility.
 
-| Column        | Type        | Constraints                                            | Description                                                       |
-| ------------- | ----------- | ------------------------------------------------------ | ----------------------------------------------------------------- |
-| id            | uuid        | PRIMARY KEY, NOT NULL                                  | Unique identifier                                                 |
-| name          | text        | NOT NULL, CHECK (length(trim(name)) > 0)               | Project name                                                      |
-| short_code    | text        | NOT NULL, UNIQUE, CHECK (length(trim(short_code)) = 2) | 2-letter human-readable project code (e.g. `WB`)                  |
-| creator_email | text        | DEFAULT NULL                                           | Email of the user who created the project (set at creation time)  |
-| orphaned_at   | timestamptz | DEFAULT NULL                                           | Timestamp when project became orphaned (all members left)         |
-| created_at    | timestamptz | NOT NULL, DEFAULT now                                  | Creation timestamp                                                |
-| updated_at    | timestamptz | NOT NULL, DEFAULT now                                  | Last update timestamp                                             |
+| Column        | Type        | Constraints                                            | Description                                                      |
+| ------------- | ----------- | ------------------------------------------------------ | ---------------------------------------------------------------- |
+| id            | uuid        | PRIMARY KEY, NOT NULL                                  | Unique identifier                                                |
+| name          | text        | NOT NULL, CHECK (length(trim(name)) > 0)               | Project name                                                     |
+| short_code    | text        | NOT NULL, UNIQUE, CHECK (length(trim(short_code)) = 2) | 2-letter human-readable project code (e.g. `WB`)                 |
+| creator_email | text        | DEFAULT NULL                                           | Email of the user who created the project (set at creation time) |
+| orphaned_at   | timestamptz | DEFAULT NULL                                           | Timestamp when project became orphaned (all members left)        |
+| created_at    | timestamptz | NOT NULL, DEFAULT now                                  | Creation timestamp                                               |
+| updated_at    | timestamptz | NOT NULL, DEFAULT now                                  | Last update timestamp                                            |
 
 **Check Constraints:**
 
@@ -492,18 +492,18 @@ get_projects_with_stats() RETURNS TABLE (
 
 **Return Values**:
 
-| Column            | Description                                            |
-| ----------------- | ------------------------------------------------------ |
-| id                | Project unique identifier                              |
-| name              | Project name                                           |
-| short_code        | 2-letter project code (e.g., 'WB')                     |
-| created_at        | Project creation timestamp                             |
-| updated_at        | Project last update timestamp                          |
-| role              | Current user's role: 'admin', 'member', or 'viewer'    |
-| member_count      | Total number of members in the project                 |
-| ticket_count      | Total number of top-level tickets (excludes subtasks)  |
-| in_progress_count | Number of tickets with status 'in-progress'            |
-| completed_count   | Number of tickets with status 'completed'              |
+| Column            | Description                                           |
+| ----------------- | ----------------------------------------------------- |
+| id                | Project unique identifier                             |
+| name              | Project name                                          |
+| short_code        | 2-letter project code (e.g., 'WB')                    |
+| created_at        | Project creation timestamp                            |
+| updated_at        | Project last update timestamp                         |
+| role              | Current user's role: 'admin', 'member', or 'viewer'   |
+| member_count      | Total number of members in the project                |
+| ticket_count      | Total number of top-level tickets (excludes subtasks) |
+| in_progress_count | Number of tickets with status 'in-progress'           |
+| completed_count   | Number of tickets with status 'completed'             |
 
 **Implementation Details**:
 
@@ -578,9 +578,9 @@ reclaim_or_join_project(project_uuid uuid) RETURNS TABLE (
 
 **Error Codes**:
 
-| Code    | Condition                              |
-| ------- | -------------------------------------- |
-| `P0002` | Project not found                      |
+| Code    | Condition                               |
+| ------- | --------------------------------------- |
+| `P0002` | Project not found                       |
 | `23505` | User is already a member of the project |
 
 **Behavior**:
@@ -656,10 +656,10 @@ has_any_project_access() RETURNS boolean
 
 Two triggers on `project_members` manage the orphaned project lifecycle:
 
-| Trigger                      | Event         | Table             | Function                         | Description                                       |
-| ---------------------------- | ------------- | ----------------- | -------------------------------- | ------------------------------------------------- |
-| `trg_project_member_removed` | AFTER DELETE  | `project_members` | `handle_project_member_removed`  | Sets `orphaned_at` when the last member leaves    |
-| `trg_project_member_added`   | AFTER INSERT  | `project_members` | `handle_project_member_added`    | Clears `orphaned_at` when a new member joins      |
+| Trigger                      | Event        | Table             | Function                        | Description                                    |
+| ---------------------------- | ------------ | ----------------- | ------------------------------- | ---------------------------------------------- |
+| `trg_project_member_removed` | AFTER DELETE | `project_members` | `handle_project_member_removed` | Sets `orphaned_at` when the last member leaves |
+| `trg_project_member_added`   | AFTER INSERT | `project_members` | `handle_project_member_added`   | Clears `orphaned_at` when a new member joins   |
 
 **Flow**:
 
@@ -677,17 +677,77 @@ User reclaims project (via reclaim_or_join_project)
 
 ---
 
+## Team Collaboration Tables
+
+### user_profiles
+
+Public profile data synced from auth.users via database trigger. Readable by all authenticated users.
+
+| Column       | Type        | Constraints                            | Description                         |
+| ------------ | ----------- | -------------------------------------- | ----------------------------------- |
+| id           | uuid        | PRIMARY KEY, REFERENCES auth.users(id) | User ID (same as auth.users.id)     |
+| email        | text        | NOT NULL                               | User email (synced from auth.users) |
+| display_name | text        |                                        | Display name (from user_metadata)   |
+| avatar_url   | text        |                                        | URL of uploaded avatar image        |
+| created_at   | timestamptz | NOT NULL, DEFAULT now                  | Creation timestamp                  |
+| updated_at   | timestamptz | NOT NULL, DEFAULT now                  | Last update timestamp               |
+
+**Sync**: Populated automatically by `sync_user_profile()` trigger on `auth.users` INSERT/UPDATE.
+
+---
+
+### project_invitations
+
+Token-based invitation system for adding users to projects.
+
+| Column     | Type        | Constraints                                 | Description                       |
+| ---------- | ----------- | ------------------------------------------- | --------------------------------- |
+| id         | uuid        | PRIMARY KEY, DEFAULT uuid_generate_v4()     | Unique identifier                 |
+| project_id | uuid        | FOREIGN KEY, NOT NULL                       | Reference to projects.id          |
+| invited_by | uuid        | FOREIGN KEY, NOT NULL                       | Reference to auth.users.id        |
+| email      | text        | NOT NULL                                    | Invited user's email              |
+| role       | text        | NOT NULL, DEFAULT 'member', CHECK IN (...)  | Role to assign on acceptance      |
+| token      | text        | NOT NULL, UNIQUE                            | Secure token for acceptance link  |
+| status     | text        | NOT NULL, DEFAULT 'pending', CHECK IN (...) | pending/accepted/declined/expired |
+| expires_at | timestamptz | NOT NULL, DEFAULT now + 7 days              | Invitation expiration             |
+| created_at | timestamptz | NOT NULL, DEFAULT now                       | Creation timestamp                |
+| updated_at | timestamptz | NOT NULL, DEFAULT now                       | Last update timestamp             |
+
+**Unique Constraints**: `(project_id, email)` - one pending invitation per email per project.
+
+**RPC Functions**: `accept_invitation(token)`, `decline_invitation(token)`, `get_pending_invitations()`.
+
+---
+
+### ticket_assignees
+
+Many-to-many relationship between tickets and users for multi-assignee support.
+
+| Column      | Type        | Constraints                             | Description                  |
+| ----------- | ----------- | --------------------------------------- | ---------------------------- |
+| id          | uuid        | PRIMARY KEY, DEFAULT uuid_generate_v4() | Unique identifier            |
+| ticket_id   | uuid        | FOREIGN KEY, NOT NULL                   | Reference to tickets.id      |
+| user_id     | uuid        | FOREIGN KEY, NOT NULL                   | Reference to auth.users.id   |
+| assigned_at | timestamptz | NOT NULL, DEFAULT now                   | Assignment timestamp         |
+| assigned_by | uuid        | FOREIGN KEY                             | User who made the assignment |
+
+**Unique Constraints**: `(ticket_id, user_id)` - each user assigned once per ticket.
+
+**RPC Functions**: `get_ticket_assignees(ticket_ids uuid[])` for batch-loading assignees.
+
+---
+
 ## Future Extensibility
 
 The schema is designed to support future enhancements:
 
 1. **Multiple Projects**: Schema already supports multiple projects with user access control
 2. **User/Authentication**: Implemented via `project_members` table with role-based permissions
-3. **Comments**: Can add `comments` table with foreign key to tickets
-4. **History/Audit Log**: Can add `audit_logs` table
-5. **Custom Fields**: Can extend tickets table with additional columns or use JSONB for flexible fields
-6. **Multi-Level Nesting**: Can add depth tracking if needed later (currently single-level only)
-7. **Team/Organization Management**: Can add organizations table and link projects to organizations
+3. **Team Collaboration**: Implemented via `user_profiles`, `project_invitations`, and `ticket_assignees`
+4. **Comments**: Can add `comments` table with foreign key to tickets
+5. **History/Audit Log**: Can add `audit_logs` table
+6. **Custom Fields**: Can extend tickets table with additional columns or use JSONB for flexible fields
+7. **Multi-Level Nesting**: Can add depth tracking if needed later (currently single-level only)
 
 ---
 
