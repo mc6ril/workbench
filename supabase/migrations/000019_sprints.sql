@@ -4,7 +4,7 @@
 -- - Tickets with a sprint_id belong to that sprint
 -- - Only one sprint can be active per project at a time
 
-CREATE TABLE sprints (
+CREATE TABLE IF NOT EXISTS sprints (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   project_id uuid NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
   name text NOT NULL CHECK (length(trim(name)) > 0),
@@ -19,40 +19,64 @@ CREATE TABLE sprints (
 );
 
 -- Only one active sprint per project
-CREATE UNIQUE INDEX idx_sprints_one_active_per_project
+CREATE UNIQUE INDEX IF NOT EXISTS idx_sprints_one_active_per_project
   ON sprints(project_id) WHERE status = 'active';
 
 -- Ordering sprints within a project
-CREATE INDEX idx_sprints_project_position ON sprints(project_id, position);
+CREATE INDEX IF NOT EXISTS idx_sprints_project_position ON sprints(project_id, position);
 
--- Auto-update updated_at
-CREATE TRIGGER update_sprints_updated_at
-  BEFORE UPDATE ON sprints
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- Auto-update updated_at (use DO block for idempotency)
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_trigger WHERE tgname = 'update_sprints_updated_at'
+  ) THEN
+    CREATE TRIGGER update_sprints_updated_at
+      BEFORE UPDATE ON sprints
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+END $$;
 
 -- Add sprint_id to tickets (NULL = backlog, non-null = in sprint)
 ALTER TABLE tickets
-  ADD COLUMN sprint_id uuid DEFAULT NULL
+  ADD COLUMN IF NOT EXISTS sprint_id uuid DEFAULT NULL
     REFERENCES sprints(id) ON DELETE SET NULL;
 
-CREATE INDEX idx_tickets_sprint ON tickets(sprint_id)
+CREATE INDEX IF NOT EXISTS idx_tickets_sprint ON tickets(sprint_id)
   WHERE sprint_id IS NOT NULL;
 
 -- RLS for sprints
 ALTER TABLE sprints ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can view sprints for their projects"
-  ON sprints FOR SELECT
-  USING (is_project_member(project_id));
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'sprints' AND policyname = 'Users can view sprints for their projects'
+  ) THEN
+    CREATE POLICY "Users can view sprints for their projects"
+      ON sprints FOR SELECT
+      USING (is_project_member(project_id));
+  END IF;
 
-CREATE POLICY "Users can create sprints if they have edit permission"
-  ON sprints FOR INSERT
-  WITH CHECK (can_edit_project(project_id));
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'sprints' AND policyname = 'Users can create sprints if they have edit permission'
+  ) THEN
+    CREATE POLICY "Users can create sprints if they have edit permission"
+      ON sprints FOR INSERT
+      WITH CHECK (can_edit_project(project_id));
+  END IF;
 
-CREATE POLICY "Users can update sprints if they have edit permission"
-  ON sprints FOR UPDATE
-  USING (can_edit_project(project_id));
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'sprints' AND policyname = 'Users can update sprints if they have edit permission'
+  ) THEN
+    CREATE POLICY "Users can update sprints if they have edit permission"
+      ON sprints FOR UPDATE
+      USING (can_edit_project(project_id));
+  END IF;
 
-CREATE POLICY "Users can delete sprints if they have edit permission"
-  ON sprints FOR DELETE
-  USING (can_edit_project(project_id));
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'sprints' AND policyname = 'Users can delete sprints if they have edit permission'
+  ) THEN
+    CREATE POLICY "Users can delete sprints if they have edit permission"
+      ON sprints FOR DELETE
+      USING (can_edit_project(project_id));
+  END IF;
+END $$;

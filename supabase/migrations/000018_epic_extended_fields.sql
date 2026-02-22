@@ -2,12 +2,12 @@
 -- Enables timeline planning for epics
 
 ALTER TABLE epics
-  ADD COLUMN start_date timestamptz DEFAULT NULL;
+  ADD COLUMN IF NOT EXISTS start_date timestamptz DEFAULT NULL;
 
 ALTER TABLE epics
-  ADD COLUMN target_date timestamptz DEFAULT NULL;
+  ADD COLUMN IF NOT EXISTS target_date timestamptz DEFAULT NULL;
 
 -- Color for visual identification on boards and backlog
 ALTER TABLE epics
-  ADD COLUMN color text NOT NULL DEFAULT '#6B7280'
+  ADD COLUMN IF NOT EXISTS color text NOT NULL DEFAULT '#6B7280'
     CHECK (color ~ '^#[0-9a-fA-F]{6}$');
