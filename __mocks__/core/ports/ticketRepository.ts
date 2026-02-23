@@ -1,6 +1,7 @@
 import type {
   CreateTicketInput,
   Ticket,
+  TicketAssignee,
   TicketFilters,
   TicketSort,
   UpdateTicketInput,
@@ -11,6 +12,8 @@ import type {
  * Used for type-safe mock creation in tests.
  */
 export type TicketRepositoryMock = {
+  getNextCodeNumberForProject: jest.Mock<Promise<number>, [string]>;
+  findByCode: jest.Mock<Promise<Ticket | null>, [string, number]>;
   findById: jest.Mock<Promise<Ticket | null>, [string]>;
   listByProject: jest.Mock<Promise<Ticket[]>, [string, TicketFilters?, TicketSort?]>;
   listByStatus: jest.Mock<Promise<Ticket[]>, [string, string]>;
@@ -24,6 +27,13 @@ export type TicketRepositoryMock = {
   moveTicket: jest.Mock<Promise<Ticket>, [string, string, number]>;
   assignToEpic: jest.Mock<Promise<Ticket>, [string, string]>;
   unassignFromEpic: jest.Mock<Promise<Ticket>, [string]>;
+  assignUsers: jest.Mock<Promise<void>, [string, string[]]>;
+  unassignUsers: jest.Mock<Promise<void>, [string, string[]]>;
+  getAssignees: jest.Mock<Promise<TicketAssignee[]>, [string]>;
+  getAssigneesByTicketIds: jest.Mock<
+    Promise<Record<string, TicketAssignee[]>>,
+    [string[]]
+  >;
 };
 
 type TicketRepositoryMockOverrides = Partial<TicketRepositoryMock>;
@@ -40,6 +50,8 @@ export const createTicketRepositoryMock = (
   overrides: TicketRepositoryMockOverrides = {}
 ): TicketRepositoryMock => {
   const base: TicketRepositoryMock = {
+    getNextCodeNumberForProject: jest.fn<Promise<number>, [string]>(),
+    findByCode: jest.fn<Promise<Ticket | null>, [string, number]>(),
     findById: jest.fn<Promise<Ticket | null>, [string]>(),
     listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?, TicketSort?]>(),
     listByStatus: jest.fn<Promise<Ticket[]>, [string, string]>(),
@@ -53,6 +65,13 @@ export const createTicketRepositoryMock = (
     moveTicket: jest.fn<Promise<Ticket>, [string, string, number]>(),
     assignToEpic: jest.fn<Promise<Ticket>, [string, string]>(),
     unassignFromEpic: jest.fn<Promise<Ticket>, [string]>(),
+    assignUsers: jest.fn<Promise<void>, [string, string[]]>(),
+    unassignUsers: jest.fn<Promise<void>, [string, string[]]>(),
+    getAssignees: jest.fn<Promise<TicketAssignee[]>, [string]>(),
+    getAssigneesByTicketIds: jest.fn<
+      Promise<Record<string, TicketAssignee[]>>,
+      [string[]]
+    >(),
   };
 
   return {

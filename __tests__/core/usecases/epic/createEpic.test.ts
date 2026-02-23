@@ -15,6 +15,10 @@ describe("createEpic", () => {
     projectId,
     name: "Test Epic",
     description: "Test description",
+    codeNumber: 1,
+    startDate: null,
+    targetDate: null,
+    color: "#6B7280",
     createdAt: new Date("2024-01-01T00:00:00Z"),
     updatedAt: new Date("2024-01-01T00:00:00Z"),
   };

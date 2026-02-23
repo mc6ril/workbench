@@ -4,6 +4,19 @@ import { z } from "zod";
  * Zod schema for Ticket entity.
  * Validates data coming from external sources.
  */
+/**
+ * Priority levels matching standard project management conventions.
+ */
+export const TicketPrioritySchema = z.enum([
+  "highest",
+  "high",
+  "medium",
+  "low",
+  "lowest",
+]);
+
+export type TicketPriority = z.infer<typeof TicketPrioritySchema>;
+
 export const TicketSchema = z.object({
   id: z.string().uuid(),
   projectId: z.string().uuid(),
@@ -14,6 +27,11 @@ export const TicketSchema = z.object({
   codeNumber: z.number().int().positive(),
   epicId: z.string().uuid().nullable(),
   parentId: z.string().uuid().nullable(),
+  sprintId: z.string().uuid().nullable(),
+  priority: TicketPrioritySchema.nullable(),
+  dueDate: z.coerce.date().nullable(),
+  storyPoints: z.number().int().positive().nullable(),
+  createdBy: z.string().uuid().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
@@ -34,6 +52,11 @@ export const CreateTicketInputSchema = z.object({
   position: z.number().int().nonnegative().default(0),
   epicId: z.string().uuid().nullable().optional(),
   parentId: z.string().uuid().nullable().optional(),
+  sprintId: z.string().uuid().nullable().optional(),
+  priority: TicketPrioritySchema.nullable().optional(),
+  dueDate: z.coerce.date().nullable().optional(),
+  storyPoints: z.number().int().positive().nullable().optional(),
+  createdBy: z.string().uuid().nullable().optional(),
   codeNumber: z.number().int().positive().optional(),
 });
 
@@ -49,6 +72,10 @@ export const UpdateTicketInputSchema = z.object({
   position: z.number().int().nonnegative().optional(),
   epicId: z.string().uuid().nullable().optional(),
   parentId: z.string().uuid().nullable().optional(),
+  sprintId: z.string().uuid().nullable().optional(),
+  priority: TicketPrioritySchema.nullable().optional(),
+  dueDate: z.coerce.date().nullable().optional(),
+  storyPoints: z.number().int().positive().nullable().optional(),
 });
 
 export type UpdateTicketInput = z.infer<typeof UpdateTicketInputSchema>;
@@ -87,14 +114,23 @@ export type TicketFilters = {
   status?: string;
   epicId?: string;
   parentId?: string | null;
+  sprintId?: string | null;
   assigneeIds?: string[];
+  priority?: TicketPriority;
+  labelIds?: string[];
 };
 
 /**
  * Sorting options for ticket queries.
  * Sorting is applied at the repository level (database ordering), not in hooks.
  */
-export const TicketSortFieldSchema = z.enum(["createdAt", "position", "title"]);
+export const TicketSortFieldSchema = z.enum([
+  "createdAt",
+  "position",
+  "title",
+  "priority",
+  "dueDate",
+]);
 export type TicketSortField = z.infer<typeof TicketSortFieldSchema>;
 
 export const SortDirectionSchema = z.enum(["asc", "desc"]);

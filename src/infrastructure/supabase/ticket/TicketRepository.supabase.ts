@@ -112,14 +112,61 @@ export const createTicketRepository = (
         }
       }
 
+      // sprintId filter: null = backlog (no sprint), string = specific sprint
+      if (filters && "sprintId" in filters) {
+        if (filters.sprintId === null) {
+          query = query.is("sprint_id", null);
+        } else if (typeof filters.sprintId === "string") {
+          query = query.eq("sprint_id", filters.sprintId);
+        }
+      }
+
+      if (filters?.priority) {
+        query = query.eq("priority", filters.priority);
+      }
+
+      if (filters?.assigneeIds && filters.assigneeIds.length > 0) {
+        const { data: assigneeTicketIds } = await client
+          .from("ticket_assignees")
+          .select("ticket_id")
+          .in("user_id", filters.assigneeIds);
+
+        const ticketIds = (assigneeTicketIds ?? []).map(
+          (r: { ticket_id: string }) => r.ticket_id
+        );
+
+        if (ticketIds.length === 0) {
+          return [];
+        }
+        query = query.in("id", ticketIds);
+      }
+
+      if (filters?.labelIds && filters.labelIds.length > 0) {
+        const { data: labelTicketIds } = await client
+          .from("ticket_labels")
+          .select("ticket_id")
+          .in("label_id", filters.labelIds);
+
+        const ticketIds = (labelTicketIds ?? []).map(
+          (r: { ticket_id: string }) => r.ticket_id
+        );
+
+        if (ticketIds.length === 0) {
+          return [];
+        }
+        query = query.in("id", ticketIds);
+      }
+
       const sortField = sort?.field ?? "createdAt";
       const sortDirection = sort?.direction ?? "desc";
-      const orderColumn =
-        sortField === "createdAt"
-          ? "created_at"
-          : sortField === "position"
-            ? "position"
-            : "title";
+      const sortFieldMap: Record<string, string> = {
+        createdAt: "created_at",
+        position: "position",
+        title: "title",
+        priority: "priority",
+        dueDate: "due_date",
+      };
+      const orderColumn = sortFieldMap[sortField] ?? "created_at";
 
       const { data, error } = await query.order(orderColumn, {
         ascending: sortDirection === "asc",
@@ -174,6 +221,11 @@ export const createTicketRepository = (
           position: input.position ?? 0,
           epic_id: input.epicId ?? null,
           parent_id: input.parentId ?? null,
+          sprint_id: input.sprintId ?? null,
+          priority: input.priority ?? null,
+          due_date: input.dueDate?.toISOString() ?? null,
+          story_points: input.storyPoints ?? null,
+          created_by: input.createdBy ?? null,
           code_number: input.codeNumber,
         })
         .select()
@@ -217,6 +269,18 @@ export const createTicketRepository = (
       }
       if (input.parentId !== undefined) {
         updateData.parent_id = input.parentId;
+      }
+      if (input.sprintId !== undefined) {
+        updateData.sprint_id = input.sprintId;
+      }
+      if (input.priority !== undefined) {
+        updateData.priority = input.priority;
+      }
+      if (input.dueDate !== undefined) {
+        updateData.due_date = input.dueDate?.toISOString() ?? null;
+      }
+      if (input.storyPoints !== undefined) {
+        updateData.story_points = input.storyPoints;
       }
 
       const { data, error } = await client

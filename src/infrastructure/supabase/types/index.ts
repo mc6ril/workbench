@@ -29,6 +29,9 @@ export type EpicRow = {
   name: string;
   description: string | null;
   code_number: number;
+  start_date: string | null;
+  target_date: string | null;
+  color: string;
   created_at: string;
   updated_at: string;
 };
@@ -60,6 +63,11 @@ export type TicketRow = {
   code_number: number;
   epic_id: string | null;
   parent_id: string | null;
+  sprint_id: string | null;
+  priority: string | null;
+  due_date: string | null;
+  story_points: number | null;
+  created_by: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -162,4 +170,69 @@ export type ProjectWithStatsRow = {
   ticket_count: number;
   in_progress_count: number;
   completed_count: number;
+};
+
+/**
+ * Row type for the sprints table.
+ * Represents a sprint/iteration within a project.
+ */
+export type SprintRow = {
+  id: string;
+  project_id: string;
+  name: string;
+  goal: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  status: string;
+  position: number;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
+ * Row type for the comments table.
+ */
+export type CommentRow = {
+  id: string;
+  ticket_id: string;
+  author_id: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
+ * Row type returned by get_ticket_comments RPC.
+ * Includes author profile data.
+ */
+export type CommentWithAuthorRow = {
+  id: string;
+  ticket_id: string;
+  author_id: string;
+  content: string;
+  author_display_name: string | null;
+  author_avatar_url: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
+ * Row type for the labels table.
+ */
+export type LabelRow = {
+  id: string;
+  project_id: string;
+  name: string;
+  color: string;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
+ * Row type for the ticket_labels join table.
+ */
+export type TicketLabelRow = {
+  ticket_id: string;
+  label_id: string;
+  created_at: string;
 };
