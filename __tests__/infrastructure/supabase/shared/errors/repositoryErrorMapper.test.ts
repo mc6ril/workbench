@@ -74,6 +74,48 @@ describe("mapSupabaseError", () => {
     expect(result).toHaveProperty("debugMessage");
   });
 
+  it("should use details when message is missing for PGRST116 errors", () => {
+    const supabaseError = {
+      code: "PGRST116",
+      message: "",
+      details: "Row not found details",
+      hint: null,
+    };
+
+    const result = mapSupabaseError(supabaseError, "Ticket");
+
+    expect(result).toHaveProperty("code", "NOT_FOUND");
+    expect(result).toHaveProperty("debugMessage", "Row not found details");
+  });
+
+  it("should use fallback template when both message and details are missing for PGRST116 errors", () => {
+    const supabaseError = {
+      code: "PGRST116",
+      message: "",
+      details: "",
+      hint: null,
+    };
+
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    expect(result).toHaveProperty("code", "NOT_FOUND");
+    expect(result).toHaveProperty("debugMessage", "Supabase error: PGRST116");
+  });
+
+  it("should use undefined debugMessage when both message and details are missing for constraint errors", () => {
+    const supabaseError = {
+      code: "23505",
+      message: "",
+      details: "",
+      hint: null,
+    };
+
+    const result = mapSupabaseError(supabaseError, "Project");
+
+    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
+    expect(result).toHaveProperty("constraint", "23505");
+  });
+
   it("should use details when message is missing for constraint errors", () => {
     // Arrange
     const supabaseError = {
@@ -162,8 +204,20 @@ describe("mapSupabaseError", () => {
     // even if it has properties that look like Supabase errors
     const networkError = new TypeError("fetch failed");
     // Add properties that might confuse error detection
-    (networkError as unknown as { code?: string; message?: string; details?: string }).code = "NETWORK_ERROR";
-    (networkError as unknown as { code?: string; message?: string; details?: string }).details = "Connection timeout";
+    (
+      networkError as unknown as {
+        code?: string;
+        message?: string;
+        details?: string;
+      }
+    ).code = "NETWORK_ERROR";
+    (
+      networkError as unknown as {
+        code?: string;
+        message?: string;
+        details?: string;
+      }
+    ).details = "Connection timeout";
 
     // Act
     const result = mapSupabaseError(networkError, "Project");
@@ -234,7 +288,11 @@ describe("mapSupabaseError", () => {
     };
 
     // Act
-    const result = mapSupabaseError(supabaseError, "CustomEntity", "custom-id-123");
+    const result = mapSupabaseError(
+      supabaseError,
+      "CustomEntity",
+      "custom-id-123"
+    );
 
     // Assert
     expect(result).toHaveProperty("code", "NOT_FOUND");

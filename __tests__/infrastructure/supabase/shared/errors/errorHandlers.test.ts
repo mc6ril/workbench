@@ -80,6 +80,21 @@ describe("handleRepositoryError", () => {
     }
   });
 
+  it("should use default entityType when not provided", () => {
+    const error = new Error("Some error");
+
+    expect(() => {
+      handleRepositoryError(error);
+    }).toThrow();
+
+    try {
+      handleRepositoryError(error);
+    } catch (thrownError) {
+      expect(thrownError).toHaveProperty("code", "DATABASE_ERROR");
+      expect(thrownError).toHaveProperty("debugMessage");
+    }
+  });
+
   it("should handle errors with entity context", () => {
     // Arrange
     const error = new Error("Test error");

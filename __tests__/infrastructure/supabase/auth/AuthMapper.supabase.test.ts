@@ -244,6 +244,43 @@ describe("AuthMapper.supabase", () => {
       });
     });
 
+    describe("Same password errors", () => {
+      it("should map same_password code to SamePasswordError", () => {
+        const authError = createSupabaseAuthError.samePassword();
+
+        const result = mapSupabaseAuthError(authError);
+
+        expect(result).toHaveProperty("code", "SAME_PASSWORD");
+        expect(result).toHaveProperty("debugMessage");
+      });
+
+      it("should map 'should be different' message to SamePasswordError", () => {
+        const authError = createSupabaseAuthError.generic(
+          "Password should be different from old one",
+          422
+        );
+        (authError as { status: number }).status = 422;
+        const errorWithStatus = { ...authError, status: 422 };
+
+        const result = mapSupabaseAuthError(errorWithStatus);
+
+        expect(result).toHaveProperty("code", "SAME_PASSWORD");
+        expect(result).toHaveProperty("debugMessage");
+      });
+
+      it("should map 'same password' message to SamePasswordError", () => {
+        const authError = {
+          message: "You cannot use the same password",
+          status: 422,
+        };
+
+        const result = mapSupabaseAuthError(authError);
+
+        expect(result).toHaveProperty("code", "SAME_PASSWORD");
+        expect(result).toHaveProperty("debugMessage");
+      });
+    });
+
     describe("Weak password errors", () => {
       it("should map password weak message to WeakPasswordError", () => {
         // Arrange

@@ -229,6 +229,21 @@ export const createSupabaseAuthError = {
   }),
 
   /**
+   * Create a Supabase auth error with same_password code.
+   */
+  samePassword: (
+    message: string = "New password should be different from the old password"
+  ): {
+    code: string;
+    message: string;
+    status: number;
+  } => ({
+    code: "same_password",
+    message,
+    status: 422,
+  }),
+
+  /**
    * Create a generic Supabase auth error.
    */
   generic: (

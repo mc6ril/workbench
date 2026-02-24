@@ -7,6 +7,7 @@ import type {
   InvalidCredentialsError,
   InvalidTokenError,
   PasswordResetError,
+  SamePasswordError,
   SignInInput,
   SignUpInput,
   WeakPasswordError,
@@ -166,6 +167,16 @@ export const createAuthError = {
     debugMessage: string = "Password is too weak"
   ): WeakPasswordError => ({
     code: "WEAK_PASSWORD",
+    debugMessage,
+  }),
+
+  /**
+   * Create a SamePasswordError.
+   */
+  samePassword: (
+    debugMessage: string = "New password should be different"
+  ): SamePasswordError => ({
+    code: "SAME_PASSWORD",
     debugMessage,
   }),
 };
