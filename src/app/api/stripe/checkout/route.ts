@@ -10,11 +10,11 @@ import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthReposit
 import { createSupabaseAdminClient } from "@/infrastructure/supabase/shared/client-admin";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
+import { withRateLimit } from "@/infrastructure/web/rateLimit";
+import { verifyCsrfOrigin } from "@/infrastructure/web/security/csrf";
 
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
 import { createLoggerFactory } from "@/shared/observability";
-import { withRateLimit } from "@/shared/rateLimit";
-import { verifyCsrfOrigin } from "@/shared/security/csrf";
 
 const logger = createLoggerFactory().forScope("API.Checkout");
 

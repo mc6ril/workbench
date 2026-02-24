@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import type {
   FeatureAccessResult,
   PlanFeature,
-} from "@/core/domain/schema/planFeatures.schema";
-import { getMinimumPlanForFeature } from "@/core/domain/schema/planFeatures.schema";
+} from "@/core/domain/rules/planFeatures.rules";
+import { getMinimumPlanForFeature } from "@/core/domain/rules/planFeatures.rules";
 import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
 import { checkFeatureAccess } from "@/core/usecases/subscription/checkFeatureAccess";

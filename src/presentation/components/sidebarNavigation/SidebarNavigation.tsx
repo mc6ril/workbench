@@ -10,14 +10,20 @@ import React, {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
-import { getEffectivePlan } from "@/core/domain/schema/planFeatures.schema";
+import { getEffectivePlan } from "@/core/domain/rules/planFeatures.rules";
 import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
+
+import { computeFeatureLockState } from "@/core/usecases/subscription/computeFeatureLockState";
 
 import { PlusIcon, UserProfileIcon } from "@/presentation/components/icons";
 import NavigationItem from "@/presentation/components/ui/NavigationItem";
 import { useSession } from "@/presentation/hooks/auth/useSession";
 import { useSignOut } from "@/presentation/hooks/auth/useSignOut";
 import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
+import {
+  buildProjectViewHref,
+  getProjectViewConfigsForSidebar,
+} from "@/presentation/navigation/projectViews.config";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
@@ -25,12 +31,6 @@ import { useTranslation } from "@/shared/i18n";
 import { getInitials, isActiveHref } from "@/shared/utils";
 
 import styles from "./SidebarNavigation.module.scss";
-
-import {
-  buildProjectViewHref,
-  computeViewLockedState,
-  getProjectViewConfigsForSidebar,
-} from "@/configs/projectRoutes";
 
 type Props = {
   projectId: string;
@@ -71,8 +71,8 @@ const SidebarNavigation = ({ projectId }: Props) => {
   const items: SidebarItem[] = useMemo(() => {
     const configs = getProjectViewConfigsForSidebar();
     return configs.map((config) => {
-      const { locked, minimumPlan } = computeViewLockedState(
-        config,
+      const { locked, minimumPlan } = computeFeatureLockState(
+        config.requiredFeature,
         effectivePlan
       );
       return {

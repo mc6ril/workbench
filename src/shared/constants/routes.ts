@@ -46,6 +46,7 @@ export const PROTECTED_ROUTES: readonly string[] = Object.freeze([
  * where projectId is a UUID and view can be: board, backlog, epics, settings, etc.
  */
 export const PROJECT_VIEWS = Object.freeze({
+  HOME: "home",
   BOARD: "board",
   BACKLOG: "backlog",
   EPICS: "epics",

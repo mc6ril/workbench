@@ -23,12 +23,13 @@ import { useAddUserToProject } from "@/presentation/hooks/project/useAddUserToPr
 import { useCreateProject } from "@/presentation/hooks/project/useCreateProject";
 import { useProjectsWithStats } from "@/presentation/hooks/project/useProjectsWithStats";
 import { useReclaimableProjects } from "@/presentation/hooks/project/useReclaimableProjects";
+import { shouldShowLoading } from "@/presentation/utils/queryStatus";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
 import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import { getWorkspaceEmoji, shouldShowLoading } from "@/shared/utils";
+import { getWorkspaceEmoji } from "@/shared/utils";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
 import styles from "./styles.module.scss";

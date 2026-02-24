@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import type { PlanFeature } from "@/core/domain/schema/planFeatures.schema";
+import type { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
 
 import UpgradePrompt from "@/presentation/components/upgradePrompt/UpgradePrompt";
 import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";

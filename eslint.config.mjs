@@ -51,6 +51,73 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  // Layer boundary guardrails for strict Clean Architecture
+  {
+    files: ["src/shared/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["../*", "../../*", "../../../*", "../../../../*"],
+              message:
+                "Use absolute imports with @/ prefix instead of relative imports from src/",
+            },
+            {
+              group: ["@/presentation/**"],
+              message:
+                "Shared layer must not import presentation layer modules.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/core/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["../*", "../../*", "../../../*", "../../../../*"],
+              message:
+                "Use absolute imports with @/ prefix instead of relative imports from src/",
+            },
+            {
+              group: ["@/presentation/**", "@/shared/i18n/**"],
+              message:
+                "Core layer must remain framework-agnostic and cannot import presentation or shared i18n modules.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/infrastructure/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["../*", "../../*", "../../../*", "../../../../*"],
+              message:
+                "Use absolute imports with @/ prefix instead of relative imports from src/",
+            },
+            {
+              group: ["@/configs/**"],
+              message:
+                "Infrastructure layer must not pull dependencies from global configs singletons.",
+            },
+          ],
+        },
+      ],
+    },
+  },
   // Import ordering plugin configuration
   {
     plugins: {

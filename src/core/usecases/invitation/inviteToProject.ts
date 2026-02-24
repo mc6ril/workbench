@@ -1,10 +1,12 @@
 import {
+  getFeatureLimit,
+  PlanFeature,
+} from "@/core/domain/rules/planFeatures.rules";
+import {
   type CreateInvitationInput,
   CreateInvitationInputSchema,
   type ProjectInvitation,
 } from "@/core/domain/schema/invitation.schema";
-import { getFeatureLimit } from "@/core/domain/schema/planFeatures.schema";
-import { PlanFeature } from "@/core/domain/schema/planFeatures.schema";
 import type { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
 import type { InvitationRepository } from "@/core/ports/invitationRepository";

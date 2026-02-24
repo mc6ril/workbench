@@ -5,11 +5,11 @@ import { deleteUser } from "@/core/usecases/auth/deleteUser";
 import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
 import { createSupabaseAdminClient } from "@/infrastructure/supabase/shared/client-admin";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
+import { withRateLimit } from "@/infrastructure/web/rateLimit";
+import { verifyCsrfOrigin } from "@/infrastructure/web/security/csrf";
 
 import { API_MESSAGES_AUTH } from "@/shared/constants";
 import { createLoggerFactory } from "@/shared/observability";
-import { withRateLimit } from "@/shared/rateLimit";
-import { verifyCsrfOrigin } from "@/shared/security/csrf";
 
 const logger = createLoggerFactory().forScope("API.DeleteUser");
 

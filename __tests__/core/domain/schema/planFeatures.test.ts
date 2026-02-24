@@ -3,7 +3,7 @@ import {
   getFeatureLimit,
   getMinimumPlanForFeature,
   PlanFeature,
-} from "@/core/domain/schema/planFeatures.schema";
+} from "@/core/domain/rules/planFeatures.rules";
 import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
 describe("Plan Features Domain Rules", () => {

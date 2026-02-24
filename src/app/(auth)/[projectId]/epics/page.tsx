@@ -3,7 +3,7 @@
 import { use } from "react";
 import React from "react";
 
-import { PlanFeature } from "@/core/domain/schema/planFeatures.schema";
+import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
 
 import FeatureGate from "@/presentation/layouts/featureGate/FeatureGate";
 import EpicsLayout from "@/presentation/pages/epics";
