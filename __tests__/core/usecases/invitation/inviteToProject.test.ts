@@ -1,13 +1,27 @@
-import type { ProjectInvitation } from "@/core/domain/schema/invitation.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/core/domain/schema/auth.schema";
 import {
   type CreateInvitationInput,
   InvitationStatus,
+  type ProjectInvitation,
 } from "@/core/domain/schema/invitation.schema";
+import { getFeatureLimit } from "@/core/domain/schema/planFeatures.schema";
 import { ProjectRole } from "@/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/core/domain/schema/projectMember.schema";
 import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
 import { inviteToProject } from "@/core/usecases/invitation/inviteToProject";
+
+jest.mock("@/core/domain/schema/planFeatures.schema", () => ({
+  ...jest.requireActual("@/core/domain/schema/planFeatures.schema"),
+  getFeatureLimit: jest.fn(
+    jest.requireActual("@/core/domain/schema/planFeatures.schema")
+      .getFeatureLimit
+  ),
+}));
+
+const mockedGetFeatureLimit = getFeatureLimit as jest.MockedFunction<
+  typeof getFeatureLimit
+>;
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createInvitationRepositoryMock } from "../../../../__mocks__/core/ports/invitationRepository";
@@ -40,6 +54,8 @@ describe("inviteToProject", () => {
       email: `${id}@example.com`,
       displayName: `User ${id}`,
       avatarUrl: null,
+      preferences: DEFAULT_USER_PREFERENCES,
+      termsAcceptedAt: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -118,6 +134,29 @@ describe("inviteToProject", () => {
 
     expect(result).toEqual(mockInvitation);
     expect(invitationRepo.create).toHaveBeenCalled();
+  });
+
+  it("should skip limit check when plan has unlimited members", async () => {
+    mockedGetFeatureLimit.mockReturnValueOnce(-1);
+
+    const invitationRepo = createInvitationRepositoryMock({
+      create: jest.fn<Promise<ProjectInvitation>, [CreateInvitationInput]>(
+        async () => mockInvitation
+      ),
+    });
+    const memberRepo = createMemberRepositoryMock();
+
+    const result = await inviteToProject(
+      invitationRepo,
+      memberRepo,
+      { projectId, email: "new@example.com", role: ProjectRole.MEMBER },
+      SubscriptionPlan.TEAM
+    );
+
+    expect(result).toEqual(mockInvitation);
+    expect(invitationRepo.create).toHaveBeenCalled();
+    expect(memberRepo.listByProject).not.toHaveBeenCalled();
+    expect(invitationRepo.countPending).not.toHaveBeenCalled();
   });
 
   it("should throw ZodError for invalid email", async () => {
