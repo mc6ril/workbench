@@ -3,7 +3,7 @@
 import React, { useCallback, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-import type { PlanFeature } from "@/core/domain/schema/planFeatures.schema";
+import type { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
 import type { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
 import Button from "@/presentation/components/ui/Button";
@@ -62,8 +62,7 @@ const UpgradePrompt = ({ feature, minimumPlan }: Props) => {
         </Title>
 
         <Text variant="small" className={styles["upgrade-prompt__description"]}>
-          {t("description")
-            .replace("{plan}", planBadge)}
+          {t("description").replace("{plan}", planBadge)}
         </Text>
 
         <div className={styles["upgrade-prompt__feature-badge"]}>

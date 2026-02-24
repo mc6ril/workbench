@@ -18,7 +18,8 @@ export type {
   TranslationMessages,
   TranslationParams,
 } from "./types";
-export { useTranslation } from "@/presentation/hooks/useTranslation";
+export { useLocaleStore } from "./useLocaleStore";
+export { useTranslation } from "./useTranslation";
 
 // Translation utilities
 export {

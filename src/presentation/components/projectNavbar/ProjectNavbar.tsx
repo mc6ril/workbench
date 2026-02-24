@@ -6,16 +6,15 @@ import { usePathname } from "next/navigation";
 import { FilterIcon, SortIcon } from "@/presentation/components/icons";
 import Button from "@/presentation/components/ui/Button";
 import Input from "@/presentation/components/ui/Input";
+import {
+  getProjectViewConfig,
+  getProjectViewKeyFromPath,
+} from "@/presentation/navigation/projectViews.config";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./ProjectNavbar.module.scss";
-
-import {
-  getProjectViewConfig,
-  getProjectViewKeyFromPath,
-} from "@/configs/projectRoutes";
 
 type Props = {
   projectId: string;

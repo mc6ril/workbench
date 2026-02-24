@@ -1,7 +1,9 @@
 import { z } from "zod";
 
-import { APP_LIMITS } from "@/shared/constants/app";
-import { defaultLocale } from "@/shared/i18n/config";
+import {
+  DEFAULT_LANGUAGE,
+  PASSWORD_LIMITS,
+} from "@/core/domain/constants/auth.constants";
 
 /**
  * Reusable Zod schema for password validation.
@@ -10,12 +12,12 @@ import { defaultLocale } from "@/shared/i18n/config";
 const PasswordSchema = z
   .string()
   .min(
-    APP_LIMITS.PASSWORD.MIN_LENGTH,
-    `Password must be at least ${APP_LIMITS.PASSWORD.MIN_LENGTH} characters`
+    PASSWORD_LIMITS.MIN_LENGTH,
+    `Password must be at least ${PASSWORD_LIMITS.MIN_LENGTH} characters`
   )
   .max(
-    APP_LIMITS.PASSWORD.MAX_LENGTH,
-    `Password must be less than ${APP_LIMITS.PASSWORD.MAX_LENGTH} characters`
+    PASSWORD_LIMITS.MAX_LENGTH,
+    `Password must be less than ${PASSWORD_LIMITS.MAX_LENGTH} characters`
   );
 
 /**
@@ -170,7 +172,7 @@ export type UserPreferences = z.infer<typeof UserPreferencesSchema>;
 export const DEFAULT_USER_PREFERENCES: UserPreferences = {
   theme: "system",
   emailNotifications: true,
-  language: defaultLocale,
+  language: DEFAULT_LANGUAGE,
 };
 
 /**

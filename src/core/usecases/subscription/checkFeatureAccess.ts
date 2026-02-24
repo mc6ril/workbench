@@ -1,11 +1,13 @@
-import type { PlanFeature } from "@/core/domain/schema/planFeatures.schema";
-import type { FeatureAccessResult } from "@/core/domain/schema/planFeatures.schema";
+import type {
+  FeatureAccessResult,
+  PlanFeature,
+} from "@/core/domain/rules/planFeatures.rules";
 import {
   canAccessFeature,
   getEffectivePlan,
   getFeatureLimit,
   getMinimumPlanForFeature,
-} from "@/core/domain/schema/planFeatures.schema";
+} from "@/core/domain/rules/planFeatures.rules";
 import type { Subscription } from "@/core/domain/schema/subscription.schema";
 
 /**

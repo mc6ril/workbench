@@ -1,4 +1,4 @@
-import { PlanFeature } from "@/core/domain/schema/planFeatures.schema";
+import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
 import type { Subscription } from "@/core/domain/schema/subscription.schema";
 import {
   SubscriptionPlan,

@@ -4,17 +4,16 @@ import React, { useMemo } from "react";
 import { usePathname } from "next/navigation";
 
 import Link from "@/presentation/components/ui/Link";
+import {
+  buildProjectViewHref,
+  getProjectViewConfig,
+  getProjectViewKeyFromPath,
+} from "@/presentation/navigation/projectViews.config";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./Breadcrumbs.module.scss";
-
-import {
-  buildProjectViewHref,
-  getProjectViewConfig,
-  getProjectViewKeyFromPath,
-} from "@/configs/projectRoutes";
 
 type Props = {
   projectId: string;

@@ -4,13 +4,12 @@ import { isRepositoryError } from "@/core/domain/repositoryError.guards";
 import { mapSupabaseAuthError } from "@/infrastructure/supabase/auth/AuthMapper.supabase";
 
 import { AUTH_ERROR_CODES } from "@/shared/constants/errorCodes";
+import { createLoggerFactory } from "@/shared/observability";
 import { hasErrorCode } from "@/shared/utils/guards";
 
 import { mapSupabaseError } from "./repositoryErrorMapper";
 
-import { loggerFactory } from "@/configs/logger";
-
-// Create scoped logger for repository error handling
+const loggerFactory = createLoggerFactory();
 const logger = loggerFactory.forScope("infrastructure.repository-errors");
 
 /**
