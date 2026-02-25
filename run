@@ -261,7 +261,7 @@ main() {
                     ;;
                 dev:turbo:all)
                     echo "Starting development server (Next.js Turbopack mode + Stripe webhooks)..."
-                    yarn dev:all || exit_code=$?
+                    yarn concurrently --names next,stripe --prefix-colors blue,magenta "NODE_OPTIONS=--max-old-space-size=6144 yarn dev" "yarn dev:stripe" || exit_code=$?
                     ;;
                 build)
                     echo "Building application..."

@@ -6,14 +6,9 @@ import { createAuthRepository } from "@/infrastructure/supabase/repositories";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
 import { createLoggerFactory } from "@/shared/observability";
+import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
 const logger = createLoggerFactory().forScope("AuthLayout");
-
-const isDynamicServerUsageError = (error: unknown): boolean => {
-  return (
-    error instanceof Error && error.message.includes("Dynamic server usage")
-  );
-};
 
 /**
  * Server-side layout for all protected routes under (auth) route group.

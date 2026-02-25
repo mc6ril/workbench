@@ -154,22 +154,17 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
 
   const ticketsByStatus = useMemo(() => {
     const grouped = new Map<string, TicketCardProps[]>();
+    const sortedTickets = [...filteredTickets].sort(
+      (a, b) => a.position - b.position
+    );
 
-    for (const ticket of filteredTickets) {
+    for (const ticket of sortedTickets) {
       const existing = grouped.get(ticket.status);
       if (existing) {
         existing.push(mapTicketToCardProps(ticket));
       } else {
         grouped.set(ticket.status, [mapTicketToCardProps(ticket)]);
       }
-    }
-
-    for (const list of grouped.values()) {
-      list.sort((a, b) => {
-        const ticketA = filteredTickets.find((ticket) => ticket.id === a.id);
-        const ticketB = filteredTickets.find((ticket) => ticket.id === b.id);
-        return (ticketA?.position ?? 0) - (ticketB?.position ?? 0);
-      });
     }
 
     return grouped;

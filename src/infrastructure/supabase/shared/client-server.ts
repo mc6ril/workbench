@@ -2,19 +2,13 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
 import { createLoggerFactory } from "@/shared/observability";
+import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
 const logger = createLoggerFactory().forScope("Supabase.ServerClient");
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
-
-const isDynamicServerUsageError = (error: unknown): boolean => {
-  return (
-    error instanceof Error &&
-    error.message.includes("Dynamic server usage")
-  );
-};
 
 /** Validate required env vars; throw with helpful message on missing. */
 const validateEnvironmentVariables = (): void => {
