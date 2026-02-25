@@ -89,7 +89,8 @@ const TicketDetailView = ({
   const { data: subtasks = [] } = useTickets(projectId, { parentId: ticketId });
   const { hasAccess: hasEpicsAccess } = useFeatureAccess(PlanFeature.EPICS);
 
-  const updateTicketMutation = useUpdateTicket();
+  const updateMainTicketMutation = useUpdateTicket();
+  const updateSubtaskMutation = useUpdateTicket();
   const createSubtaskMutation = useCreateSubtask();
   const deleteTicketMutation = useDeleteTicket();
   const assignTicketMutation = useAssignTicket();
@@ -161,7 +162,7 @@ const TicketDetailView = ({
       return;
     }
 
-    await updateTicketMutation.mutateAsync({
+    await updateMainTicketMutation.mutateAsync({
       id: ticket.id,
       input: {
         title: effectiveTitle,
@@ -184,7 +185,7 @@ const TicketDetailView = ({
     effectiveStatus,
     effectiveTitle,
     ticket,
-    updateTicketMutation,
+    updateMainTicketMutation,
   ]);
 
   const handleToggleLabel = useCallback(
@@ -275,12 +276,12 @@ const TicketDetailView = ({
           ? defaultStatus
           : (doneStatus ?? defaultStatus);
 
-      updateTicketMutation.mutate({
+      updateSubtaskMutation.mutate({
         id: subtask.id,
         input: { status: nextStatus },
       });
     },
-    [statusOptions, subtasks, updateTicketMutation]
+    [statusOptions, subtasks, updateSubtaskMutation]
   );
 
   const createSubtaskErrorMessage =
@@ -563,7 +564,7 @@ const TicketDetailView = ({
               void handleSaveMainFields();
             }}
             disabled={
-              updateTicketMutation.isPending ||
+              updateMainTicketMutation.isPending ||
               effectiveTitle.trim().length === 0
             }
           />

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import ProjectShell from "@/presentation/layouts/projectShell/ProjectShell";
 
 import { createLoggerFactory } from "@/shared/observability";
+import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
 import { getProjectForRoute } from "./getProjectForRoute";
 
@@ -36,6 +37,10 @@ const ProjectLayout = async ({
       typeof error.digest === "string" &&
       error.digest.startsWith("NEXT_REDIRECT")
     ) {
+      throw error;
+    }
+
+    if (isDynamicServerUsageError(error)) {
       throw error;
     }
 
