@@ -37,6 +37,7 @@ describe("isProtectedRoute", () => {
 
   it("should return true for project routes", () => {
     const uuid = "123e4567-e89b-12d3-a456-426614174000";
+    expect(isProtectedRoute(`/${uuid}`)).toBe(true);
     expect(isProtectedRoute(`/${uuid}/board`)).toBe(true);
     expect(isProtectedRoute(`/${uuid}/backlog`)).toBe(true);
     expect(isProtectedRoute(`/${uuid}/settings`)).toBe(true);
@@ -66,10 +67,13 @@ describe("isProjectRoute", () => {
     expect(isProjectRoute(`/${uuid}/board/detail`)).toBe(true);
   });
 
+  it("should return true for project root route", () => {
+    expect(isProjectRoute(`/${uuid}`)).toBe(true);
+  });
+
   it("should return false for non-project routes", () => {
     expect(isProjectRoute("/workspace")).toBe(false);
     expect(isProjectRoute("/not-uuid/board")).toBe(false);
-    expect(isProjectRoute(`/${uuid}`)).toBe(false);
   });
 });
 
