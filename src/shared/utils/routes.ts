@@ -1,5 +1,12 @@
 import { PROTECTED_ROUTES, PUBLIC_ROUTES } from "@/shared/constants/routes";
 
+const UUID_PATH_SEGMENT =
+  "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+const PROJECT_ROUTE_PATTERN = new RegExp(
+  `^/${UUID_PATH_SEGMENT}(?:/([^/]+)(/.*)?)?$`,
+  "i"
+);
+
 /**
  * Check if a pathname is a public route.
  *
@@ -14,7 +21,7 @@ export const isPublicRoute = (pathname: string): boolean => {
  * Check if a pathname is a protected route.
  * Protected routes include:
  * - Exact matches in PROTECTED_ROUTES (e.g., /workspace)
- * - Project routes following the pattern /{projectId}/{view}
+ * - Project routes following the pattern /{projectId}[/view[/...]]
  *
  * @param pathname - The pathname to check
  * @returns True if the pathname is a protected route
@@ -25,24 +32,19 @@ export const isProtectedRoute = (pathname: string): boolean => {
     return true;
   }
 
-  // Check if pathname matches project route pattern: /{projectId}/{view}
-  // UUID format: 8-4-4-4-12 hex characters
-  const projectRoutePattern =
-    /^\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/([^/]+)(\/.*)?$/i;
-  return projectRoutePattern.test(pathname);
+  // Project root (/{projectId}) and nested views are protected.
+  return PROJECT_ROUTE_PATTERN.test(pathname);
 };
 
 /**
  * Check if a pathname is a project route.
- * Project routes follow the pattern: /{projectId}/{view}
+ * Project routes follow the pattern: /{projectId}[/view[/...]]
  *
  * @param pathname - The pathname to check
  * @returns True if the pathname is a project route
  */
 export const isProjectRoute = (pathname: string): boolean => {
-  const projectRoutePattern =
-    /^\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/([^/]+)(\/.*)?$/i;
-  return projectRoutePattern.test(pathname);
+  return PROJECT_ROUTE_PATTERN.test(pathname);
 };
 
 /**
@@ -80,6 +82,20 @@ export const extractProjectView = (pathname: string): string | null => {
  */
 export const buildProjectRoute = (projectId: string, view: string): string => {
   return `/${projectId}/${view}`;
+};
+
+/**
+ * Build a ticket detail route pathname.
+ *
+ * @param projectId - The project UUID
+ * @param ticketId - The ticket UUID
+ * @returns The ticket detail route pathname
+ */
+export const buildTicketDetailRoute = (
+  projectId: string,
+  ticketId: string
+): string => {
+  return `/${projectId}/tickets/${ticketId}`;
 };
 
 /**

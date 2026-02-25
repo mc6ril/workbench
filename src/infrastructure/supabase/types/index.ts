@@ -143,19 +143,6 @@ export type PendingInvitationRow = {
 };
 
 /**
- * Row type returned by the project_members + user_profiles join query.
- */
-export type ProjectMemberJoinRow = {
-  id: string;
-  project_id: string;
-  user_id: string;
-  role: string;
-  created_at: string;
-  updated_at: string;
-  user_profiles: UserProfileRow;
-};
-
-/**
  * Row type returned by get_projects_with_stats RPC function.
  * Includes project data, user role, and aggregated statistics.
  */

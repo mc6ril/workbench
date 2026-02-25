@@ -1,0 +1,22 @@
+import { cache } from "react";
+
+import type { Project } from "@/core/domain/schema/project.schema";
+
+import { getProject } from "@/core/usecases/project/getProject";
+
+import { createProjectRepository } from "@/infrastructure/supabase/repositories";
+import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
+
+/**
+ * Shared server-side project loader for this route segment.
+ * Uses React cache to deduplicate the same project lookup
+ * between layout and page during a single request render.
+ */
+export const getProjectForRoute = cache(
+  async (projectId: string): Promise<Project> => {
+    const supabaseClient = await createSupabaseServerClient();
+    const projectRepository = createProjectRepository(supabaseClient);
+
+    return getProject(projectRepository, projectId);
+  }
+);

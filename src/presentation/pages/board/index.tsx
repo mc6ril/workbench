@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { DragEndEvent } from "@dnd-kit/core";
 import {
   DndContext,
@@ -14,6 +15,8 @@ import type { Ticket } from "@/core/domain/schema/ticket.schema";
 import type { BoardColumnConfig } from "@/presentation/components/boardView/BoardView";
 import BoardView from "@/presentation/components/boardView/BoardView";
 import type { TicketCardProps } from "@/presentation/components/ticketCard/TicketCard";
+import Loader from "@/presentation/components/ui/Loader";
+import Modal from "@/presentation/components/ui/Modal";
 import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfiguration";
 import { useMoveTicket } from "@/presentation/hooks/ticket/useMoveTicket";
 import { useReorderTicket } from "@/presentation/hooks/ticket/useReorderTicket";
@@ -21,12 +24,21 @@ import { useTickets } from "@/presentation/hooks/ticket/useTickets";
 import { useFilterStore } from "@/presentation/stores/useFilterStore";
 
 import { getAccessibilityId } from "@/shared/a11y";
-import { filterTicketsBySearch } from "@/shared/utils";
+import { useTranslation } from "@/shared/i18n";
+import { filterTicketsBySearch } from "@/shared/utils/ticketUtils";
 
 import styles from "./styles.module.scss";
 
 const DRAG_ID_PREFIX = "drag:";
 const DROP_ID_PREFIX = "drop:";
+
+const TicketDetailView = dynamic(
+  () => import("@/presentation/components/ticketDetailView/TicketDetailView"),
+  {
+    ssr: false,
+    loading: () => <Loader variant="inline" />,
+  }
+);
 
 /** Minimum vertical drag distance (px) to accept reorder. Below this, leave in place. */
 const DROP_THRESHOLD_PX = 40;
@@ -79,14 +91,33 @@ const parseDropId = (
 
 const BoardLayout = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const layoutId = useMemo(() => getAccessibilityId("board-layout"), []);
+  const tTicket = useTranslation("pages.ticketDetail.page");
+  const selectedTicketId = searchParams.get("ticket");
+
+  const updateSearchParam = useCallback(
+    (ticketId: string | null) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (ticketId) {
+        params.set("ticket", ticketId);
+      } else {
+        params.delete("ticket");
+      }
+      const query = params.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, {
+        scroll: false,
+      });
+    },
+    [pathname, router, searchParams]
+  );
 
   const handleEditTicket = useCallback(
     (ticketId: string) => {
-      // TODO: use the correct path once the edit ticket page is created
-      router.push(`/${projectId}?edit=${ticketId}`);
+      updateSearchParam(ticketId);
     },
-    [projectId, router]
+    [updateSearchParam]
   );
   const {
     data: boardConfiguration,
@@ -120,6 +151,24 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
       })) ?? []
     );
   }, [boardConfiguration]);
+
+  const ticketsByStatus = useMemo(() => {
+    const grouped = new Map<string, TicketCardProps[]>();
+    const sortedTickets = [...filteredTickets].sort(
+      (a, b) => a.position - b.position
+    );
+
+    for (const ticket of sortedTickets) {
+      const existing = grouped.get(ticket.status);
+      if (existing) {
+        existing.push(mapTicketToCardProps(ticket));
+      } else {
+        grouped.set(ticket.status, [mapTicketToCardProps(ticket)]);
+      }
+    }
+
+    return grouped;
+  }, [filteredTickets]);
 
   const columnById = useMemo(() => {
     const map = new Map<string, BoardColumnConfig>();
@@ -237,18 +286,13 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   const renderColumnProps = useMemo(() => {
     return (column: BoardColumnConfig) => {
       const ticketsForColumn =
-        column.status != null
-          ? filteredTickets
-              .filter((t) => t.status === column.status)
-              .sort((a, b) => a.position - b.position)
-              .map(mapTicketToCardProps)
-          : [];
+        column.status != null ? (ticketsByStatus.get(column.status) ?? []) : [];
       return {
         tickets: ticketsForColumn,
         onTicketClick: handleEditTicket,
       };
     };
-  }, [filteredTickets, handleEditTicket]);
+  }, [handleEditTicket, ticketsByStatus]);
 
   return (
     <section className={styles["board-layout"]} aria-labelledby={layoutId}>
@@ -261,6 +305,26 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
           errorMessage={error?.message}
         />
       </DndContext>
+      <Modal
+        isOpen={Boolean(selectedTicketId)}
+        onClose={() => {
+          updateSearchParam(null);
+        }}
+        title={tTicket("modalTitle")}
+        size="full"
+      >
+        {selectedTicketId && (
+          <TicketDetailView
+            key={selectedTicketId}
+            projectId={projectId}
+            ticketId={selectedTicketId}
+            mode="modal"
+            onClose={() => {
+              updateSearchParam(null);
+            }}
+          />
+        )}
+      </Modal>
     </section>
   );
 };

@@ -4,6 +4,7 @@
 @use "@/styles/variables/borders" as *;
 @use "@/styles/variables/shadows" as *;
 @use "@/styles/variables/breakpoints" as *;
+@use "@/styles/variables/transitions" as *;
 
 .ticket-list-item {
   display: flex;
@@ -14,8 +15,8 @@
   background-color: $color-surface;
   box-shadow: $shadow-sm;
   transition:
-    background-color $transition-fast ease-in-out,
-    box-shadow $transition-fast ease-in-out;
+    background-color $transition-duration-fast $transition-ease-in-out,
+    box-shadow $transition-duration-fast $transition-ease-in-out;
 
   &:hover {
     background-color: $color-surface-hover;

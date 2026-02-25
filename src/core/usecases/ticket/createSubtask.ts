@@ -68,6 +68,13 @@ export const createSubtask = async (
     );
   }
 
-  // Call repository to create subtask
-  return repository.create(validatedInput);
+  const codeNumber = await repository.getNextCodeNumberForProject(
+    validatedInput.projectId
+  );
+
+  // Call repository to create subtask with allocated code number
+  return repository.create({
+    ...validatedInput,
+    codeNumber,
+  });
 };

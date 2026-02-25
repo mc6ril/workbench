@@ -15,6 +15,7 @@
     "dismiss": "Cerrar",
     "dismissAriaLabel": "Cerrar mensaje de error",
     "submit": "Enviar",
+    "delete": "Eliminar",
     "cancel": "Cancelar",
     "emptyState": {
       "defaultTitle": "Ningún elemento",
@@ -37,6 +38,7 @@
         "home": "Inicio",
         "backlog": "Backlog",
         "board": "Tablero",
+        "ticketDetail": "Ticket",
         "epics": "Epics",
         "settings": "Configuración"
       },
@@ -692,6 +694,51 @@
         "currentEpic": "Epic actual: {name}",
         "noEpicSelected": "Ningún epic vinculado",
         "unlinkButton": "Desvincular"
+      },
+      "page": {
+        "title": "Detalle del ticket",
+        "modalTitle": "Ticket",
+        "ticketCode": "WB-{code}",
+        "actions": {
+          "save": "Guardar",
+          "openFullPage": "Abrir a pantalla completa"
+        },
+        "states": {
+          "errorTitle": "Ticket no encontrado",
+          "errorMessage": "Este ticket no existe o no tienes acceso a su contenido."
+        },
+        "fields": {
+          "title": "Título",
+          "description": "Descripción",
+          "status": "Estado",
+          "priority": "Prioridad",
+          "epic": "Epic",
+          "sprint": "Sprint",
+          "position": "Posición",
+          "labels": "Etiquetas",
+          "none": "Ninguno"
+        },
+        "priority": {
+          "highest": "Muy alta",
+          "high": "Alta",
+          "medium": "Media",
+          "low": "Baja",
+          "lowest": "Muy baja"
+        },
+        "comments": {
+          "title": "Comentarios",
+          "newLabel": "Añadir comentario",
+          "addButton": "Publicar",
+          "author": "Autor: {author}",
+          "unknownAuthor": "Usuario",
+          "editLabel": "Editar comentario",
+          "saveEdit": "Guardar",
+          "editButton": "Editar",
+          "deleteButton": "Eliminar"
+        },
+        "subtasks": {
+          "addButton": "Añadir subtarea"
+        }
       }
     },
     "account": {

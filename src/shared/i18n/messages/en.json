@@ -15,6 +15,7 @@
     "dismiss": "Dismiss",
     "dismissAriaLabel": "Dismiss error message",
     "submit": "Submit",
+    "delete": "Delete",
     "cancel": "Cancel",
     "emptyState": {
       "defaultTitle": "No items",
@@ -37,6 +38,7 @@
         "home": "Home",
         "backlog": "Backlog",
         "board": "Board",
+        "ticketDetail": "Ticket",
         "epics": "Epics",
         "settings": "Settings"
       },
@@ -692,6 +694,51 @@
         "currentEpic": "Current epic: {name}",
         "noEpicSelected": "No epic linked",
         "unlinkButton": "Unlink"
+      },
+      "page": {
+        "title": "Ticket detail",
+        "modalTitle": "Ticket",
+        "ticketCode": "WB-{code}",
+        "actions": {
+          "save": "Save",
+          "openFullPage": "Open full page"
+        },
+        "states": {
+          "errorTitle": "Ticket not found",
+          "errorMessage": "This ticket does not exist or you do not have access to it."
+        },
+        "fields": {
+          "title": "Title",
+          "description": "Description",
+          "status": "Status",
+          "priority": "Priority",
+          "epic": "Epic",
+          "sprint": "Sprint",
+          "position": "Position",
+          "labels": "Labels",
+          "none": "None"
+        },
+        "priority": {
+          "highest": "Highest",
+          "high": "High",
+          "medium": "Medium",
+          "low": "Low",
+          "lowest": "Lowest"
+        },
+        "comments": {
+          "title": "Comments",
+          "newLabel": "Add comment",
+          "addButton": "Post",
+          "author": "Author: {author}",
+          "unknownAuthor": "User",
+          "editLabel": "Edit comment",
+          "saveEdit": "Save",
+          "editButton": "Edit",
+          "deleteButton": "Delete"
+        },
+        "subtasks": {
+          "addButton": "Add subtask"
+        }
       }
     },
     "account": {

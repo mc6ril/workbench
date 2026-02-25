@@ -8,6 +8,7 @@ import { createAuthRepository } from "@/infrastructure/supabase/repositories";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
 import { createLoggerFactory } from "@/shared/observability";
+import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
 const logger = createLoggerFactory().forScope("LandingLayout");
 
@@ -39,6 +40,10 @@ const LandingLayout = async ({
       typeof error.digest === "string" &&
       error.digest.startsWith("NEXT_REDIRECT")
     ) {
+      throw error;
+    }
+
+    if (isDynamicServerUsageError(error)) {
       throw error;
     }
 

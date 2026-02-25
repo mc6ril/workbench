@@ -1,13 +1,11 @@
 import { redirect } from "next/navigation";
 
-import { getProject } from "@/core/usecases/project/getProject";
-
-import { createProjectRepository } from "@/infrastructure/supabase/repositories";
-import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
-
 import ProjectShell from "@/presentation/layouts/projectShell/ProjectShell";
 
 import { createLoggerFactory } from "@/shared/observability";
+import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
+
+import { getProjectForRoute } from "./getProjectForRoute";
 
 const logger = createLoggerFactory().forScope("ProjectLayout");
 
@@ -27,12 +25,9 @@ const ProjectLayout = async ({
   const { projectId } = await params;
 
   try {
-    // Create server client with cookie handling
-    const supabaseClient = await createSupabaseServerClient();
-    const projectRepository = createProjectRepository(supabaseClient);
-
-    // If project not found or user has no access (per RLS), NotFoundError is thrown
-    await getProject(projectRepository, projectId);
+    // If project not found or user has no access (per RLS), NotFoundError is thrown.
+    // This loader is shared with the segment page and deduplicated per request.
+    await getProjectForRoute(projectId);
   } catch (error) {
     // Next.js redirect() throws a special error that must be re-thrown
     if (
@@ -42,6 +37,10 @@ const ProjectLayout = async ({
       typeof error.digest === "string" &&
       error.digest.startsWith("NEXT_REDIRECT")
     ) {
+      throw error;
+    }
+
+    if (isDynamicServerUsageError(error)) {
       throw error;
     }
 

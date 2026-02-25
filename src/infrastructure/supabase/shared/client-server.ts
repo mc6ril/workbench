@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
 import { createLoggerFactory } from "@/shared/observability";
+import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
 const logger = createLoggerFactory().forScope("Supabase.ServerClient");
 
@@ -85,6 +86,10 @@ export const createSupabaseServerClient = async () => {
       },
     });
   } catch (error) {
+    if (isDynamicServerUsageError(error)) {
+      throw error;
+    }
+
     logger.error("Failed to create server client", { error });
     throw error;
   }
