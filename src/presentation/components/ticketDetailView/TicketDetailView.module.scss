@@ -1,0 +1,183 @@
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/breakpoints" as *;
+
+.ticket-detail {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xl;
+}
+
+.ticket-detail__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-lg;
+}
+
+.ticket-detail__header-main {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+}
+
+.ticket-detail__header-actions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.ticket-detail__code {
+  color: $color-text-secondary;
+}
+
+.ticket-detail__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: $spacing-2xl;
+}
+
+.ticket-detail__main,
+.ticket-detail__aside {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.ticket-detail__field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-secondary;
+  }
+}
+
+.ticket-detail__input {
+  width: 100%;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-sm;
+  background: $color-surface;
+  color: $color-text;
+  font-size: $font-size-base;
+  padding: $spacing-md $spacing-lg;
+}
+
+.ticket-detail__comments {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.ticket-detail__comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.ticket-detail__comment {
+  border: $border-width solid $color-border-subtle;
+}
+
+.ticket-detail__comment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+}
+
+.ticket-detail__comment-action-button {
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-full;
+  background: transparent;
+  color: $color-text-muted;
+  padding: $spacing-2xs $spacing-md;
+  font-size: $font-size-sm;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease-in-out,
+    color 160ms ease-in-out,
+    background-color 160ms ease-in-out;
+
+  &:hover:not(:disabled) {
+    border-color: $color-accent;
+    color: $color-accent;
+    background-color: $color-surface-subtle;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.ticket-detail__comment-action-button--danger {
+  border-color: $color-error-ring;
+  color: $color-error-text;
+
+  &:hover:not(:disabled) {
+    border-color: $color-error;
+    color: $color-error;
+    background-color: $color-error-background;
+  }
+}
+
+.ticket-detail__labels {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.ticket-detail__label-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.ticket-detail__label-chip {
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-full;
+  background: $color-surface-subtle;
+  color: $color-text;
+  padding: $spacing-xs $spacing-md;
+  font-size: $font-size-sm;
+  cursor: pointer;
+}
+
+.ticket-detail__label-chip--active {
+  border-color: $color-accent;
+  background: $color-accent-bg-soft;
+}
+
+.ticket-detail__subtasks {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.ticket-detail__error {
+  border: $border-width solid $color-error;
+  box-shadow: $shadow-sm;
+}
+
+@media (max-width: $breakpoint-lg) {
+  .ticket-detail__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .ticket-detail__header {
+    flex-direction: column;
+  }
+
+  .ticket-detail__header-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+}

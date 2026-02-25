@@ -2,24 +2,16 @@
 
 import { use } from "react";
 
-import Title from "@/presentation/components/ui/Title";
+import BacklogPageContent from "@/presentation/pages/backlog";
 
-import { useTranslation } from "@/shared/i18n";
-
-const BacklogPage = ({
+const ProjectBacklogPage = ({
   params,
 }: {
   params: Promise<{ projectId: string }>;
 }) => {
   const { projectId } = use(params);
-  const t = useTranslation("pages.backlog");
 
-  return (
-    <div>
-      <Title variant="h1">{t("title")}</Title>
-      <p>{projectId}</p>
-    </div>
-  );
+  return <BacklogPageContent projectId={projectId} />;
 };
 
-export default BacklogPage;
+export default ProjectBacklogPage;

@@ -83,6 +83,20 @@ export const buildProjectRoute = (projectId: string, view: string): string => {
 };
 
 /**
+ * Build a ticket detail route pathname.
+ *
+ * @param projectId - The project UUID
+ * @param ticketId - The ticket UUID
+ * @returns The ticket detail route pathname
+ */
+export const buildTicketDetailRoute = (
+  projectId: string,
+  ticketId: string
+): string => {
+  return `/${projectId}/tickets/${ticketId}`;
+};
+
+/**
  * Normalize a pathname or href by removing a trailing slash (except for root).
  *
  * @param path - The path to normalize

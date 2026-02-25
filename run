@@ -54,7 +54,10 @@ show_usage() {
     echo "Usage: sh run <command> [options]"
     echo ""
     echo "Available commands:"
-    echo "  dev              Start development server (Next.js + Stripe webhooks)"
+    echo "  dev              Start development server (Next.js webpack mode)"
+    echo "  dev:all          Start development server (Next.js webpack mode + Stripe webhooks)"
+    echo "  dev:turbo        Start development server (Next.js Turbopack mode)"
+    echo "  dev:turbo:all    Start development server (Next.js Turbopack mode + Stripe webhooks)"
     echo "  build            Build the application for production"
     echo "  build:analyze    Build with bundle analyzer report"
     echo "  start            Start production server"
@@ -224,6 +227,11 @@ main() {
     # Get command from first argument
     local command="${1:-}"
 
+    # Backward compatibility: allow `sh run dev all` as alias for `sh run dev:all`
+    if [ "$command" = "dev" ] && [ "${2:-}" = "all" ]; then
+        command="dev:all"
+    fi
+
     # Handle help commands
     if [ -z "$command" ] || [ "$command" = "help" ] || [ "$command" = "--help" ] || [ "$command" = "-h" ]; then
         show_usage
@@ -232,7 +240,7 @@ main() {
 
     # Route command to yarn or handle special commands
     case "$command" in
-        dev|build|build:analyze|start)
+        dev|dev:all|dev:turbo|dev:turbo:all|build|build:analyze|start)
             # Check if yarn is available for yarn-based commands
             check_yarn
             
@@ -240,7 +248,19 @@ main() {
             local exit_code=0
             case "$command" in
                 dev)
-                    echo "Starting development server (Next.js + Stripe webhooks)..."
+                    echo "Starting development server (Next.js webpack mode)..."
+                    NODE_OPTIONS="--max-old-space-size=6144" yarn dev --webpack || exit_code=$?
+                    ;;
+                dev:all)
+                    echo "Starting development server (Next.js webpack mode + Stripe webhooks)..."
+                    yarn concurrently --names next,stripe --prefix-colors blue,magenta "NODE_OPTIONS=--max-old-space-size=6144 yarn dev --webpack" "yarn dev:stripe" || exit_code=$?
+                    ;;
+                dev:turbo)
+                    echo "Starting development server (Next.js Turbopack mode)..."
+                    NODE_OPTIONS="--max-old-space-size=6144" yarn dev || exit_code=$?
+                    ;;
+                dev:turbo:all)
+                    echo "Starting development server (Next.js Turbopack mode + Stripe webhooks)..."
                     yarn dev:all || exit_code=$?
                     ;;
                 build)

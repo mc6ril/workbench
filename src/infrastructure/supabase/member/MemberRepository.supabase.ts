@@ -4,9 +4,12 @@ import type { ProjectRole } from "@/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/core/domain/schema/projectMember.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
-import type { ProjectMemberJoinRow } from "@/infrastructure/supabase/types";
+import type {
+  ProjectMemberRow,
+  UserProfileRow,
+} from "@/infrastructure/supabase/types";
 
-import { mapMemberJoinRowToDomain } from "./MemberMapper.supabase";
+import { mapMemberRowsToDomain } from "./MemberMapper.supabase";
 
 import type { MemberRepository } from "@/core/ports/memberRepository";
 
@@ -20,7 +23,7 @@ export const createMemberRepository = (
   client: SupabaseClient
 ): MemberRepository => ({
   async listByProject(projectId: string): Promise<ProjectMember[]> {
-    const { data, error } = await client
+    const { data: membersData, error: membersError } = await client
       .from("project_members")
       .select(
         `
@@ -29,30 +32,61 @@ export const createMemberRepository = (
         user_id,
         role,
         created_at,
-        updated_at,
-        user_profiles!inner (
-          id,
-          email,
-          display_name,
-          avatar_url,
-          preferences,
-          terms_accepted_at,
-          created_at,
-          updated_at
-        )
+        updated_at
       `
       )
       .eq("project_id", projectId)
       .order("role", { ascending: true })
       .order("created_at", { ascending: true });
 
-    if (error) {
-      return handleRepositoryError(error, "ProjectMember");
+    if (membersError) {
+      return handleRepositoryError(membersError, "ProjectMember");
     }
 
-    return (data as unknown as ProjectMemberJoinRow[]).map(
-      mapMemberJoinRowToDomain
+    const memberRows = (membersData ?? []) as ProjectMemberRow[];
+    const userIds = [...new Set(memberRows.map((member) => member.user_id))];
+
+    if (userIds.length === 0) {
+      return [];
+    }
+
+    // We load profiles in a second query because project_members.user_id is not
+    // guaranteed to have a direct FK relation to user_profiles in all environments.
+    const { data: profilesData, error: profilesError } = await client
+      .from("user_profiles")
+      .select(
+        `
+        id,
+        email,
+        display_name,
+        avatar_url,
+        preferences,
+        terms_accepted_at,
+        created_at,
+        updated_at
+      `
+      )
+      .in("id", userIds);
+
+    if (profilesError) {
+      return handleRepositoryError(profilesError, "ProjectMember");
+    }
+
+    const profilesById = new Map(
+      ((profilesData ?? []) as UserProfileRow[]).map((profile) => [
+        profile.id,
+        profile,
+      ])
     );
+
+    return memberRows.flatMap((memberRow) => {
+      const profileRow = profilesById.get(memberRow.user_id);
+      if (!profileRow) {
+        return [];
+      }
+
+      return [mapMemberRowsToDomain(memberRow, profileRow)];
+    });
   },
 
   async updateRole(memberId: string, role: ProjectRole): Promise<void> {

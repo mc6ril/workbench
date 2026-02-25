@@ -49,6 +49,7 @@ export const PROJECT_VIEWS = Object.freeze({
   HOME: "home",
   BOARD: "board",
   BACKLOG: "backlog",
+  TICKET: "tickets",
   EPICS: "epics",
   SETTINGS: "settings",
 });

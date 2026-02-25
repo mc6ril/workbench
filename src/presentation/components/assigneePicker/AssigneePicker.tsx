@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import type { ProjectMember } from "@/core/domain/schema/projectMember.schema";
 import type { TicketAssignee } from "@/core/domain/schema/ticket.schema";
@@ -17,9 +23,9 @@ type Props = {
   /** Currently assigned users */
   assignees: TicketAssignee[];
   /** Called when a user is assigned */
-  onAssign: (userId: string) => void;
+  onAssign: (userId: string) => Promise<void> | void;
   /** Called when a user is unassigned */
-  onUnassign: (userId: string) => void;
+  onUnassign: (userId: string) => Promise<void> | void;
   /** Whether mutations are in progress */
   isLoading?: boolean;
 };
@@ -37,6 +43,7 @@ const AssigneePicker = ({
 }: Props) => {
   const t = useTranslation("ui.assigneePicker");
   const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const pickerId = getAccessibilityId("assignee-picker");
 
   const assignedUserIds = useMemo(
@@ -45,12 +52,14 @@ const AssigneePicker = ({
   );
 
   const handleToggle = useCallback(
-    (userId: string) => {
+    async (userId: string) => {
       if (assignedUserIds.has(userId)) {
-        onUnassign(userId);
+        await onUnassign(userId);
       } else {
-        onAssign(userId);
+        await onAssign(userId);
       }
+      // Close after selection to avoid requiring an extra click.
+      setIsOpen(false);
     },
     [assignedUserIds, onAssign, onUnassign]
   );
@@ -59,9 +68,31 @@ const AssigneePicker = ({
     setIsOpen((prev) => !prev);
   }, []);
 
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const handlePointerDown = (event: MouseEvent): void => {
+      const target = event.target;
+      if (!(target instanceof Node)) {
+        return;
+      }
+      if (!containerRef.current?.contains(target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+    };
+  }, [isOpen]);
+
   return (
     <div
       id={pickerId}
+      ref={containerRef}
       className={styles["assignee-picker"]}
       role="group"
       aria-label={t("ariaLabel")}

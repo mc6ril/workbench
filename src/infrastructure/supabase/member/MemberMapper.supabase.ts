@@ -1,24 +1,28 @@
 import { ProjectRole } from "@/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/core/domain/schema/projectMember.schema";
 
-import type { ProjectMemberJoinRow } from "@/infrastructure/supabase/types";
+import type {
+  ProjectMemberRow,
+  UserProfileRow,
+} from "@/infrastructure/supabase/types";
 import { mapUserProfileRowToDomain } from "@/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
 
 import { toDate } from "@/shared/utils/guards";
 
 /**
- * Maps a joined project_members + user_profiles row to a domain ProjectMember.
+ * Maps project member and user profile rows to a domain ProjectMember.
  */
-export const mapMemberJoinRowToDomain = (
-  row: ProjectMemberJoinRow
+export const mapMemberRowsToDomain = (
+  memberRow: ProjectMemberRow,
+  profileRow: UserProfileRow
 ): ProjectMember => {
   return {
-    id: row.id,
-    projectId: row.project_id,
-    userId: row.user_id,
-    role: row.role as ProjectRole,
-    profile: mapUserProfileRowToDomain(row.user_profiles),
-    createdAt: toDate(row.created_at),
-    updatedAt: toDate(row.updated_at),
+    id: memberRow.id,
+    projectId: memberRow.project_id,
+    userId: memberRow.user_id,
+    role: memberRow.role as ProjectRole,
+    profile: mapUserProfileRowToDomain(profileRow),
+    createdAt: toDate(memberRow.created_at),
+    updatedAt: toDate(memberRow.updated_at),
   };
 };

@@ -30,6 +30,7 @@ type Props = {
   initialValues?: Partial<CreateTicketFormValues>;
   statusOptions: Option[];
   epicOptions: Option[];
+  showEpicField?: boolean;
   onSubmit: (values: CreateTicketFormValues) => void;
   onCancel?: () => void;
   isSubmitting?: boolean;
@@ -41,6 +42,7 @@ const CreateTicketForm = ({
   initialValues,
   statusOptions,
   epicOptions,
+  showEpicField = true,
   onSubmit,
   onCancel,
   isSubmitting = false,
@@ -66,7 +68,7 @@ const CreateTicketForm = ({
       title,
       description: description || undefined,
       status,
-      epicId: epicId || undefined,
+      epicId: showEpicField ? epicId || undefined : undefined,
     });
   };
 
@@ -103,24 +105,26 @@ const CreateTicketForm = ({
             options={statusOptions}
           />
         </div>
-        <div
-          className={`${styles["create-ticket-form__field"]} ${styles["create-ticket-form__field--half"]}`}
-        >
-          <Select
-            label={t("fields.epic")}
-            value={epicId}
-            onChange={(event) => {
-              setEpicId(event.target.value);
-            }}
-            options={[
-              { value: "", label: "" },
-              ...epicOptions.map((option) => ({
-                value: option.value,
-                label: option.label,
-              })),
-            ]}
-          />
-        </div>
+        {showEpicField && (
+          <div
+            className={`${styles["create-ticket-form__field"]} ${styles["create-ticket-form__field--half"]}`}
+          >
+            <Select
+              label={t("fields.epic")}
+              value={epicId}
+              onChange={(event) => {
+                setEpicId(event.target.value);
+              }}
+              options={[
+                { value: "", label: "" },
+                ...epicOptions.map((option) => ({
+                  value: option.value,
+                  label: option.label,
+                })),
+              ]}
+            />
+          </div>
+        )}
         <div className={styles["create-ticket-form__field"]}>
           <Textarea
             label={t("fields.description")}

@@ -74,12 +74,18 @@ export const middleware = async (
 
   // Check if this is an auth page (signin/signup)
   const isAuthPage = pathname === "/auth/signin" || pathname === "/auth/signup";
+  const isProtected = isProtectedRoute(pathname);
+
+  // Skip auth checks for routes that don't need middleware auth decisions.
+  if (!isAuthPage && !isProtected) {
+    return NextResponse.next();
+  }
 
   try {
     // Create Supabase client for Edge Runtime with cookie handling
     const { supabase, response } = createSupabaseClientForMiddleware(request);
 
-    // Validate JWT server-side via getUser() (not getSession() which only reads cookies)
+    // Security-first middleware path: validate auth with Supabase.
     const {
       data: { user },
       error,
@@ -91,7 +97,7 @@ export const middleware = async (
     }
 
     // If this is a protected route and user is not authenticated, redirect to signin
-    if (isProtectedRoute(pathname)) {
+    if (isProtected) {
       if (error || !user) {
         const signInUrl = new URL("/auth/signin", request.url);
         signInUrl.searchParams.set("redirect", pathname);

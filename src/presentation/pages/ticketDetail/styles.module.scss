@@ -1,0 +1,15 @@
+@use "@/styles/variables/gradients" as *;
+@use "@/styles/variables/spacing" as *;
+
+.ticket-detail-page {
+  width: 100%;
+  min-height: 100vh;
+  background: $color-workspace-page-gradient;
+  padding: $spacing-2xl 0;
+}
+
+.ticket-detail-page__container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xl;
+}

@@ -15,6 +15,7 @@
     "dismiss": "Fermer",
     "dismissAriaLabel": "Fermer le message d'erreur",
     "submit": "Soumettre",
+    "delete": "Supprimer",
     "cancel": "Annuler",
     "emptyState": {
       "defaultTitle": "Aucun élément",
@@ -37,6 +38,7 @@
         "home": "Accueil",
         "backlog": "Backlog",
         "board": "Tableau",
+        "ticketDetail": "Ticket",
         "epics": "Epics",
         "settings": "Paramètres"
       },
@@ -692,6 +694,51 @@
         "currentEpic": "Epic actuel : {name}",
         "noEpicSelected": "Aucun epic lié",
         "unlinkButton": "Délier"
+      },
+      "page": {
+        "title": "Détail du ticket",
+        "modalTitle": "Ticket",
+        "ticketCode": "WB-{code}",
+        "actions": {
+          "save": "Enregistrer",
+          "openFullPage": "Ouvrir en pleine page"
+        },
+        "states": {
+          "errorTitle": "Ticket introuvable",
+          "errorMessage": "Ce ticket n'existe pas ou vous n'avez pas accès à son contenu."
+        },
+        "fields": {
+          "title": "Titre",
+          "description": "Description",
+          "status": "Statut",
+          "priority": "Priorité",
+          "epic": "Epic",
+          "sprint": "Sprint",
+          "position": "Position",
+          "labels": "Labels",
+          "none": "Aucun"
+        },
+        "priority": {
+          "highest": "Très haute",
+          "high": "Haute",
+          "medium": "Moyenne",
+          "low": "Basse",
+          "lowest": "Très basse"
+        },
+        "comments": {
+          "title": "Commentaires",
+          "newLabel": "Ajouter un commentaire",
+          "addButton": "Publier",
+          "author": "Auteur : {author}",
+          "unknownAuthor": "Utilisateur",
+          "editLabel": "Modifier le commentaire",
+          "saveEdit": "Enregistrer",
+          "editButton": "Modifier",
+          "deleteButton": "Supprimer"
+        },
+        "subtasks": {
+          "addButton": "Ajouter une sous-tâche"
+        }
       }
     },
     "account": {

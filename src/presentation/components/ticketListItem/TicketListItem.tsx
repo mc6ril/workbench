@@ -20,7 +20,6 @@ export type TicketListItemProps = {
   description?: string | null;
   isSelected?: boolean;
   onOpen?: (id: string) => void;
-  onEdit?: (id: string) => void;
   onToggleSelect?: (id: string) => void;
 };
 
@@ -34,7 +33,6 @@ const TicketListItem = ({
   description,
   isSelected = false,
   onOpen,
-  onEdit,
   onToggleSelect,
 }: Props) => {
   const t = useTranslation("pages.backlog.ticketListItem");
@@ -57,12 +55,6 @@ const TicketListItem = ({
       onOpen(id);
     }
   }, [onOpen, id]);
-
-  const handleEdit = useCallback((): void => {
-    if (onEdit) {
-      onEdit(id);
-    }
-  }, [onEdit, id]);
 
   const itemClasses = [
     styles["ticket-list-item"],
@@ -145,13 +137,6 @@ const TicketListItem = ({
           <Button
             label={t("openTicketLabel")}
             onClick={handleOpen}
-            variant="secondary"
-          />
-        )}
-        {onEdit && (
-          <Button
-            label={t("editTicketLabel")}
-            onClick={handleEdit}
             variant="secondary"
           />
         )}

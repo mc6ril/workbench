@@ -9,6 +9,13 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 
+const isDynamicServerUsageError = (error: unknown): boolean => {
+  return (
+    error instanceof Error &&
+    error.message.includes("Dynamic server usage")
+  );
+};
+
 /** Validate required env vars; throw with helpful message on missing. */
 const validateEnvironmentVariables = (): void => {
   const missingVariables: string[] = [];
@@ -85,6 +92,10 @@ export const createSupabaseServerClient = async () => {
       },
     });
   } catch (error) {
+    if (isDynamicServerUsageError(error)) {
+      throw error;
+    }
+
     logger.error("Failed to create server client", { error });
     throw error;
   }

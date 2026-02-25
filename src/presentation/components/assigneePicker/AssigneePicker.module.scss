@@ -30,17 +30,17 @@
 
 .assignee-picker__dropdown {
   position: absolute;
-  top: 100%;
+  bottom: calc(100% + $spacing-2xs);
   left: 0;
   z-index: 10;
   min-width: 15rem;
+  width: min(22rem, 100vw - 2rem);
   max-height: 18rem;
   overflow-y: auto;
   background-color: $color-surface;
   border: $border-width solid $color-border;
-  border-radius: $radius-sm;
+  border-radius: $border-radius-sm;
   box-shadow: $shadow-lg;
-  margin-top: $spacing-2xs;
 }
 
 .assignee-picker__option {

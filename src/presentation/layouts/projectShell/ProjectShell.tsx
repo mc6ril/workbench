@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 import AppFooter from "@/presentation/components/appFooter/AppFooter";
 import Breadcrumbs from "@/presentation/components/breadcrumbs/Breadcrumbs";
@@ -11,7 +12,9 @@ import DashboardShell from "@/presentation/layouts/dashboardShell/DashboardShell
 import { useFilterStore } from "@/presentation/stores/useFilterStore";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
+import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
+import { buildProjectRoute } from "@/shared/utils/routes";
 
 type Props = {
   projectId: string;
@@ -19,6 +22,7 @@ type Props = {
 };
 
 const ProjectShell = ({ projectId, children }: Props) => {
+  const router = useRouter();
   const tSkipLink = useTranslation("navigation.skipLink");
   const tSidebar = useTranslation("navigation.sidebar");
   const tBreadcrumbs = useTranslation("navigation.breadcrumbs");
@@ -36,8 +40,10 @@ const ProjectShell = ({ projectId, children }: Props) => {
   }, []);
 
   const handleAddClick = useCallback(() => {
-    // TODO: Open add ticket / add epic modal based on current board
-  }, []);
+    router.push(
+      `${buildProjectRoute(projectId, PROJECT_VIEWS.BACKLOG)}?createTicket=1`
+    );
+  }, [projectId, router]);
 
   return (
     <>

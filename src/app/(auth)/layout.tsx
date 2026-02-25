@@ -9,6 +9,12 @@ import { createLoggerFactory } from "@/shared/observability";
 
 const logger = createLoggerFactory().forScope("AuthLayout");
 
+const isDynamicServerUsageError = (error: unknown): boolean => {
+  return (
+    error instanceof Error && error.message.includes("Dynamic server usage")
+  );
+};
+
 /**
  * Server-side layout for all protected routes under (auth) route group.
  * Checks authentication and redirects to landing page if no session or on error (fail-closed).
@@ -36,6 +42,10 @@ const AuthLayout = async ({
       typeof error.digest === "string" &&
       error.digest.startsWith("NEXT_REDIRECT")
     ) {
+      throw error;
+    }
+
+    if (isDynamicServerUsageError(error)) {
       throw error;
     }
 

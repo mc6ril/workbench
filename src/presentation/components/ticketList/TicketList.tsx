@@ -24,7 +24,6 @@ type Props = {
   isEmpty?: boolean;
   errorMessage?: string;
   onItemOpen?: (id: string) => void;
-  onItemEdit?: (id: string) => void;
   onItemToggleSelect?: (id: string) => void;
   className?: string;
 };
@@ -35,7 +34,6 @@ const TicketList = ({
   isEmpty,
   errorMessage,
   onItemOpen,
-  onItemEdit,
   onItemToggleSelect,
   className,
 }: Props) => {
@@ -97,7 +95,6 @@ const TicketList = ({
             key={ticket.id}
             {...ticket}
             onOpen={onItemOpen}
-            onEdit={onItemEdit}
             onToggleSelect={onItemToggleSelect}
           />
         ))}

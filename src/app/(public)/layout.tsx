@@ -11,6 +11,13 @@ import { createLoggerFactory } from "@/shared/observability";
 
 const logger = createLoggerFactory().forScope("LandingLayout");
 
+const isDynamicServerUsageError = (error: unknown): boolean => {
+  return (
+    error instanceof Error &&
+    error.message.includes("Dynamic server usage")
+  );
+};
+
 /**
  * Server-side layout for landing page.
  * Checks if user is authenticated and redirects to /workspace if session exists.
@@ -39,6 +46,10 @@ const LandingLayout = async ({
       typeof error.digest === "string" &&
       error.digest.startsWith("NEXT_REDIRECT")
     ) {
+      throw error;
+    }
+
+    if (isDynamicServerUsageError(error)) {
       throw error;
     }
 

@@ -181,6 +181,7 @@ export const createAuthRepository = (
       const isServerContext = typeof window === "undefined";
 
       if (isServerContext) {
+        // Security-first server path: always validate auth with Supabase.
         const {
           data: { user },
           error,
@@ -215,6 +216,7 @@ export const createAuthRepository = (
           handleAuthError(error);
         }
 
+        // Server-side flow has no direct session token available from getUser().
         const baseSession: AuthSession = {
           userId: user.id,
           email: userEmail!,
