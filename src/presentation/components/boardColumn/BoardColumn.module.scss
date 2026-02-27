@@ -3,13 +3,17 @@
 @use "@/styles/variables/shadows" as *;
 @use "@/styles/variables/borders" as *;
 @use "@/styles/variables/typography" as *;
+@use "@/styles/variables/animations" as *;
 
 .board-column {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
   min-width: 280px;
   max-width: 360px;
+  height: 100%;
+  min-height: 0;
   padding: $spacing-md;
   border-radius: $border-radius-lg;
   background-color: $color-surface;
@@ -18,12 +22,16 @@
 }
 
 .board-column__header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: $spacing-xs;
   padding-bottom: $spacing-sm;
   border-bottom: $border-width solid $color-border;
+  background-color: $color-surface;
 }
 
 .board-column__title {
@@ -35,17 +43,48 @@
 .board-column__list {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 $spacing-xs 0 0;
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  transition: background-color $transition-base;
+
+  &[data-over="true"] {
+    background-color: $color-surface-subtle;
+  }
 }
 
 .board-column__list-item {
   list-style: none;
+  will-change: transform;
+
+  &[data-dragging="true"] {
+    opacity: 0.4;
+  }
+}
+
+.board-column__sortable-card {
+  cursor: grab;
+  transition: transform $transition-base, opacity $transition-base;
+  transform: translateZ(0);
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 
 .board-column__empty {
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: $spacing-md;
   border-radius: $border-radius-sm;
   border: $border-width-thick dashed $color-border;

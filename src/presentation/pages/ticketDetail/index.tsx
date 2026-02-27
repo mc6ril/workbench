@@ -21,7 +21,6 @@ const TicketDetailPage = ({ projectId, ticketId }: Props) => {
           key={ticketId}
           projectId={projectId}
           ticketId={ticketId}
-          mode="page"
         />
       </Container>
     </main>

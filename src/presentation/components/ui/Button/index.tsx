@@ -11,8 +11,20 @@ import styles from "./Button.module.scss";
  * - secondary: For secondary actions
  * - danger: For destructive actions
  * - ghost: Minimal style with no background or border
+ * - publish: Ticket detail "publish" action style
+ * - save: Ticket detail "save" action style
+ * - edit: Ticket comment "edit" action style
+ * - delete: Ticket comment "delete" action style
  */
-type ButtonVariant = "primary" | "secondary" | "danger" | "ghost";
+type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "danger"
+  | "ghost"
+  | "publish"
+  | "save"
+  | "edit"
+  | "delete";
 
 type Props = {
   /** Button label text */

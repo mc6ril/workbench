@@ -2,9 +2,25 @@
 @use "@/styles/variables/breakpoints" as *;
 @use "@/styles/variables/colors" as *;
 @use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/shadows" as *;
 
 .epics-layout {
   display: flex;
   flex-direction: column;
   gap: $spacing-lg;
+}
+
+.board-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: $spacing-lg;
+  min-height: 0;
+}
+
+.board-overlay {
+  width: 320px;
+  max-width: 100%;
+  pointer-events: none;
+  box-shadow: $shadow-lg;
 }

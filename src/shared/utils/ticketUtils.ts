@@ -22,3 +22,20 @@ export function filterTicketsBySearch(
     return titleMatch || descriptionMatch;
   });
 }
+
+/**
+ * Builds a human-readable ticket code from project short code and ticket number.
+ * Returns null when project short code is unavailable.
+ */
+export const buildTicketCode = (
+  projectShortCode: string | null | undefined,
+  codeNumber: number
+): string | null => {
+  const normalizedShortCode = projectShortCode?.trim().toUpperCase();
+
+  if (!normalizedShortCode) {
+    return null;
+  }
+
+  return `${normalizedShortCode}-${codeNumber}`;
+};
