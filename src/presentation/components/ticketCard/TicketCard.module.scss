@@ -3,61 +3,96 @@
 @use "@/styles/variables/shadows" as *;
 @use "@/styles/variables/borders" as *;
 @use "@/styles/variables/typography" as *;
+@use "@/styles/variables/animations" as *;
 
 .ticket-card {
   list-style: none;
 }
 
-.ticket-card__card {
+.ticket-card__row {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-  padding: $spacing-sm;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-lg;
+  padding: $spacing-lg $spacing-xl;
   box-shadow: $shadow-sm;
   border-radius: $border-radius-md;
+  border: $border-width solid $color-border;
   background-color: $color-surface;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: $transition-transform, $transition-shadow, $transition-border;
+  animation: ticket-card-fade-up $animation-duration-slow $easing-smooth both;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: $spacing-xxs;
+    border-radius: $border-radius-md 0 0 $border-radius-md;
+    background: linear-gradient(180deg, $color-accent, $color-accent-hover);
+    opacity: 0;
+    transition: $transition-opacity;
+  }
+
+  &:hover {
+    border-color: $color-accent-border-soft;
+    box-shadow: $shadow-md;
+    transform: translateY(-2px);
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
 }
 
-.ticket-card__header {
+.ticket-card__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.ticket-card__meta {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
   gap: $spacing-xs;
+  margin-bottom: $spacing-xxs;
+}
+
+.ticket-card__id {
+  margin: 0;
+  @include typography-caption;
+  text-transform: uppercase;
+  font-weight: $font-weight-normal;
+  color: $color-accent;
 }
 
 .ticket-card__title {
   margin: 0;
   @include typography-body;
-}
-
-.ticket-card__badges {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.ticket-card__status {
-  background-color: $color-surface-subtle;
-}
-
-.ticket-card__priority {
-  background-color: $color-accent-subtle;
-}
-
-.ticket-card__meta {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xs;
-}
-
-.ticket-card__epic,
-.ticket-card__assignee,
-.ticket-card__story-points {
-  color: $color-text-secondary;
+  font-family: $font-family-serif;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-normal;
+  color: $color-foreground;
+  line-height: $line-height-tight;
 }
 
 .ticket-card__actions {
+  flex: 0 0 auto;
   display: flex;
-  justify-content: flex-end;
-  gap: $spacing-xs;
+  align-items: center;
+}
+
+@keyframes ticket-card-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

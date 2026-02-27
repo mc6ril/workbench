@@ -50,8 +50,12 @@ const SidebarNavigation = ({ projectId }: Props) => {
   const router = useRouter();
   const t = useTranslation("navigation.sidebar");
   const signOutMutation = useSignOut();
-  const { data: session } = useSession();
-  const { data: subscription } = useSubscription();
+  const { data: session, isLoading: isSessionLoading } = useSession();
+  const {
+    data: subscription,
+    isLoading: isSubscriptionLoading,
+    isFetched: isSubscriptionFetched,
+  } = useSubscription();
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileTriggerRef = useRef<HTMLButtonElement>(null);
@@ -61,20 +65,47 @@ const SidebarNavigation = ({ projectId }: Props) => {
   const profileMenuId = getAccessibilityId("sidebar-profile-menu");
   const profileTriggerId = getAccessibilityId("sidebar-profile-trigger");
 
-  const effectivePlan = useMemo((): SubscriptionPlan => {
+  const isEntitlementsReady = useMemo((): boolean => {
+    if (isSessionLoading) {
+      return false;
+    }
+
+    if (!session) {
+      return true;
+    }
+
+    if (isSubscriptionLoading) {
+      return false;
+    }
+
+    return isSubscriptionFetched;
+  }, [
+    isSessionLoading,
+    isSubscriptionFetched,
+    isSubscriptionLoading,
+    session,
+  ]);
+
+  const effectivePlan = useMemo((): SubscriptionPlan | null => {
+    if (!isEntitlementsReady) {
+      return null;
+    }
+
     if (!subscription) {
       return SubscriptionPlan.FREE;
     }
+
     return getEffectivePlan(subscription);
-  }, [subscription]);
+  }, [isEntitlementsReady, subscription]);
 
   const items: SidebarItem[] = useMemo(() => {
     const configs = getProjectViewConfigsForSidebar();
     return configs.map((config) => {
-      const { locked, minimumPlan } = computeFeatureLockState(
-        config.requiredFeature,
-        effectivePlan
-      );
+      const { locked, minimumPlan } =
+        effectivePlan === null
+          ? { locked: false, minimumPlan: undefined }
+          : computeFeatureLockState(config.requiredFeature, effectivePlan);
+
       return {
         key: config.key,
         href: buildProjectViewHref(projectId, config.key),

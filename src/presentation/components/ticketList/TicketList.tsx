@@ -24,7 +24,6 @@ type Props = {
   isEmpty?: boolean;
   errorMessage?: string;
   onItemOpen?: (id: string) => void;
-  onItemToggleSelect?: (id: string) => void;
   className?: string;
 };
 
@@ -34,7 +33,6 @@ const TicketList = ({
   isEmpty,
   errorMessage,
   onItemOpen,
-  onItemToggleSelect,
   className,
 }: Props) => {
   const t = useTranslation("pages.backlog.ticketList");
@@ -91,12 +89,7 @@ const TicketList = ({
       </div>
       <ul className={styles["ticket-list__items"]} aria-label={t("ariaLabel")}>
         {tickets.map((ticket) => (
-          <TicketListItem
-            key={ticket.id}
-            {...ticket}
-            onOpen={onItemOpen}
-            onToggleSelect={onItemToggleSelect}
-          />
+          <TicketListItem key={ticket.id} {...ticket} onOpen={onItemOpen} />
         ))}
       </ul>
     </section>

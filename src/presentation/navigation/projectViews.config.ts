@@ -9,7 +9,6 @@ export const PROJECT_VIEW_KEYS = Object.freeze([
   PROJECT_VIEWS.HOME,
   PROJECT_VIEWS.BACKLOG,
   PROJECT_VIEWS.BOARD,
-  PROJECT_VIEWS.TICKET,
   PROJECT_VIEWS.EPICS,
   PROJECT_VIEWS.SETTINGS,
 ]);
@@ -54,12 +53,6 @@ const PROJECT_VIEW_CONFIG_INPUTS: Record<
   [PROJECT_VIEWS.BOARD]: {
     navbar: { showFilterSort: true, addActionType: "ticket" },
   },
-  [PROJECT_VIEWS.TICKET]: {
-    pathOverride: PROJECT_VIEWS.TICKET,
-    sidebarLabelKey: "ticketDetail",
-    showInSidebar: false,
-    navbar: { showFilterSort: false, addActionType: null },
-  },
   [PROJECT_VIEWS.EPICS]: {
     navbar: { showFilterSort: true, addActionType: "epic" },
     requiredFeature: PlanFeature.EPICS,
@@ -96,10 +89,6 @@ const PROJECT_VIEW_CONFIGS: Record<ProjectViewKey, ProjectViewConfig> =
     [PROJECT_VIEWS.BOARD]: createProjectViewConfig(
       PROJECT_VIEWS.BOARD,
       PROJECT_VIEW_CONFIG_INPUTS[PROJECT_VIEWS.BOARD]
-    ),
-    [PROJECT_VIEWS.TICKET]: createProjectViewConfig(
-      PROJECT_VIEWS.TICKET,
-      PROJECT_VIEW_CONFIG_INPUTS[PROJECT_VIEWS.TICKET]
     ),
     [PROJECT_VIEWS.EPICS]: createProjectViewConfig(
       PROJECT_VIEWS.EPICS,

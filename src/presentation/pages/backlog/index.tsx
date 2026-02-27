@@ -12,12 +12,14 @@ import Modal from "@/presentation/components/ui/Modal";
 import Text from "@/presentation/components/ui/Text";
 import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfiguration";
 import { useEpics } from "@/presentation/hooks/epic/useEpics";
+import { useProject } from "@/presentation/hooks/project/useProject";
 import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
 import { useCreateTicket } from "@/presentation/hooks/ticket/useCreateTicket";
 import { useTickets } from "@/presentation/hooks/ticket/useTickets";
 
 import { useTranslation } from "@/shared/i18n";
 import { buildTicketDetailRoute } from "@/shared/utils/routes";
+import { buildTicketCode } from "@/shared/utils/ticketUtils";
 
 type Props = {
   projectId: string;
@@ -37,6 +39,7 @@ const BacklogPage = ({ projectId }: Props) => {
     parentId: null,
   });
   const { data: epics = [] } = useEpics(projectId);
+  const { data: project } = useProject(projectId);
   const { data: boardConfiguration, isLoading: isBoardConfigurationLoading } =
     useBoardConfiguration(projectId);
   const { hasAccess: hasEpicsAccess } = useFeatureAccess(PlanFeature.EPICS);
@@ -47,11 +50,13 @@ const BacklogPage = ({ projectId }: Props) => {
     return tickets.map((ticket) => ({
       id: ticket.id,
       title: ticket.title,
+      ticketCode: buildTicketCode(project?.shortCode, ticket.codeNumber),
       description: ticket.description ?? null,
       status: ticket.status,
       epicName: ticket.epicId ? (epicMap.get(ticket.epicId) ?? null) : null,
     }));
-  }, [epics, tickets]);
+  }, [epics, tickets, project?.shortCode]);
+
   const isCreateTicketModalOpen = searchParams.get("createTicket") === "1";
 
   const statusOptions = useMemo(() => {
