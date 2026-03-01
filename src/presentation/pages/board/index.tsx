@@ -1,38 +1,23 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import type {
-  CollisionDetection,
-  DragEndEvent,
-  DragOverEvent,
-  DragStartEvent,
-} from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/core";
 import {
-  closestCenter,
-  closestCorners,
   DndContext,
-  DragOverlay,
   KeyboardSensor,
   PointerSensor,
-  pointerWithin,
-  rectIntersection,
-  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
 import type { Ticket } from "@/core/domain/schema/ticket.schema";
 
 import type { BoardColumnConfig } from "@/presentation/components/boardView/BoardView";
 import BoardView from "@/presentation/components/boardView/BoardView";
-import TicketCard, {
-  type TicketCardProps,
-} from "@/presentation/components/ticketCard/TicketCard";
+import type { TicketCardProps } from "@/presentation/components/ticketCard/TicketCard";
 import Loader from "@/presentation/components/ui/Loader";
 import Modal from "@/presentation/components/ui/Modal";
 import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfiguration";
-import { useProject } from "@/presentation/hooks/project";
 import { useMoveTicket } from "@/presentation/hooks/ticket/useMoveTicket";
 import { useReorderTicket } from "@/presentation/hooks/ticket/useReorderTicket";
 import { useTickets } from "@/presentation/hooks/ticket/useTickets";
@@ -40,14 +25,12 @@ import { useFilterStore } from "@/presentation/stores/useFilterStore";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { useTranslation } from "@/shared/i18n";
-import {
-  buildTicketCode,
-  filterTicketsBySearch,
-} from "@/shared/utils/ticketUtils";
+import { filterTicketsBySearch } from "@/shared/utils/ticketUtils";
 
 import styles from "./styles.module.scss";
 
-const COLUMN_DROP_PREFIX = "column:";
+const DRAG_ID_PREFIX = "drag:";
+const DROP_ID_PREFIX = "drop:";
 
 const TicketDetailView = dynamic(
   () => import("@/presentation/components/ticketDetailView/TicketDetailView"),
@@ -57,164 +40,53 @@ const TicketDetailView = dynamic(
   }
 );
 
-type BoardTicketIds = Record<string, string[]>;
-type TicketLocation = {
-  columnId: string;
-  index: number;
-};
-type TicketLocationIndex = Record<string, TicketLocation>;
+/** Minimum vertical drag distance (px) to accept reorder. Below this, leave in place. */
+const DROP_THRESHOLD_PX = 40;
 
-const mapTicketToCardProps = (
-  ticket: Ticket,
-  projectShortCode: string | null | undefined
-): TicketCardProps => {
+const mapTicketToCardProps = (ticket: Ticket): TicketCardProps => {
   return {
     id: ticket.id,
     title: ticket.title,
-    ticketCode: buildTicketCode(projectShortCode, ticket.codeNumber),
     status: ticket.status,
   };
 };
 
-const isColumnDropId = (id: string): boolean => {
-  return id.startsWith(COLUMN_DROP_PREFIX);
-};
-
-const getColumnIdFromDropId = (id: string): string => {
-  return id.slice(COLUMN_DROP_PREFIX.length);
-};
-
-const buildBoardTicketIds = (
-  columns: BoardColumnConfig[],
-  tickets: Ticket[]
-): BoardTicketIds => {
-  const boardTicketIds: BoardTicketIds = {};
-
-  for (const column of columns) {
-    boardTicketIds[column.id] = [];
-  }
-
-  const orderedTickets = [...tickets].sort((a, b) => a.position - b.position);
-  for (const ticket of orderedTickets) {
-    const targetColumn = columns.find(
-      (column) => column.status === ticket.status
-    );
-    if (targetColumn) {
-      boardTicketIds[targetColumn.id].push(ticket.id);
-    }
-  }
-
-  return boardTicketIds;
-};
-
-const buildTicketLocationIndex = (
-  boardTicketIds: BoardTicketIds
-): TicketLocationIndex => {
-  const index: TicketLocationIndex = {};
-
-  for (const [columnId, ids] of Object.entries(boardTicketIds)) {
-    for (let position = 0; position < ids.length; position += 1) {
-      index[ids[position]] = {
-        columnId,
-        index: position,
-      };
-    }
-  }
-
-  return index;
-};
-
-const resolveTargetColumnId = (
-  overId: string,
-  ticketLocationIndex: TicketLocationIndex
-): string | null => {
-  if (isColumnDropId(overId)) {
-    return getColumnIdFromDropId(overId);
-  }
-
-  return ticketLocationIndex[overId]?.columnId ?? null;
-};
-
-const getTicketLocation = (
-  ticketId: string,
-  ticketLocationIndex: TicketLocationIndex
-): TicketLocation | null => {
-  const location = ticketLocationIndex[ticketId];
-  if (location == null) {
+const parseDragId = (
+  id: string
+): { columnId: string; ticketId: string } | null => {
+  if (!id.startsWith(DRAG_ID_PREFIX)) {
     return null;
   }
-
+  const rest = id.slice(DRAG_ID_PREFIX.length);
+  const colonIndex = rest.indexOf(":");
+  if (colonIndex === -1) {
+    return null;
+  }
   return {
-    columnId: location.columnId,
-    index: location.index,
+    columnId: rest.slice(0, colonIndex),
+    ticketId: rest.slice(colonIndex + 1),
   };
 };
 
-const buildNextBoardFromDragOver = (
-  previous: BoardTicketIds,
-  previousLocationIndex: TicketLocationIndex,
-  activeId: string,
-  overId: string
-): BoardTicketIds => {
-  const sourceLocation = getTicketLocation(activeId, previousLocationIndex);
-  const targetColumnId = resolveTargetColumnId(overId, previousLocationIndex);
-
-  if (sourceLocation == null || targetColumnId == null) {
-    return previous;
+const parseDropId = (
+  id: string
+): { columnId: string; isEmpty: boolean; targetTicketId?: string } | null => {
+  if (!id.startsWith(DROP_ID_PREFIX)) {
+    return null;
   }
-
-  const { columnId: sourceColumnId, index: sourceIndex } = sourceLocation;
-
-  if (sourceColumnId === targetColumnId) {
-    if (overId === activeId || isColumnDropId(overId)) {
-      return previous;
-    }
-
-    const sourceIds = previous[sourceColumnId] ?? [];
-    const overLocation = getTicketLocation(overId, previousLocationIndex);
-    const overIndex = overLocation?.index ?? -1;
-
-    if (overIndex === -1 || sourceIndex === overIndex) {
-      return previous;
-    }
-
-    return {
-      ...previous,
-      [sourceColumnId]: arrayMove(sourceIds, sourceIndex, overIndex),
-    };
+  const rest = id.slice(DROP_ID_PREFIX.length);
+  const colonIndex = rest.indexOf(":");
+  if (colonIndex === -1) {
+    return null;
   }
-
-  const sourceIds = previous[sourceColumnId] ?? [];
-  const targetIds = previous[targetColumnId] ?? [];
-  const nextSourceIds = sourceIds.filter((id) => id !== activeId);
-  const overLocation = getTicketLocation(overId, previousLocationIndex);
-  const targetIndex = isColumnDropId(overId)
-    ? targetIds.length
-    : (overLocation?.index ?? -1);
-  const normalizedTargetIndex =
-    targetIndex === -1 ? targetIds.length : targetIndex;
-  const nextTargetIds = [...targetIds];
-  nextTargetIds.splice(normalizedTargetIndex, 0, activeId);
-
+  const columnId = rest.slice(0, colonIndex);
+  const target = rest.slice(colonIndex + 1);
+  const isEmpty = target === "_empty";
   return {
-    ...previous,
-    [sourceColumnId]: nextSourceIds,
-    [targetColumnId]: nextTargetIds,
+    columnId,
+    isEmpty,
+    targetTicketId: isEmpty ? undefined : target,
   };
-};
-
-const areIdArraysEqual = (first: string[], second: string[]): boolean => {
-  if (first.length !== second.length) {
-    return false;
-  }
-
-  for (let index = 0; index < first.length; index += 1) {
-    if (first[index] !== second[index]) {
-      return false;
-    }
-  }
-
-  return true;
 };
 
 const BoardLayout = ({ projectId }: { projectId: string }) => {
@@ -253,7 +125,6 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     error,
   } = useBoardConfiguration(projectId);
 
-  const { data: project } = useProject(projectId);
   const { data: tickets = [] } = useTickets(projectId);
   const search = useFilterStore((state) => state.search);
   const filteredTickets = useMemo(
@@ -262,29 +133,12 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   );
   const moveTicketMutation = useMoveTicket();
   const reorderTicketMutation = useReorderTicket();
-  const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
-  const [draftBoardTicketIds, setDraftBoardTicketIds] =
-    useState<BoardTicketIds | null>(null);
-  const dragSnapshotRef = useRef<BoardTicketIds | null>(null);
-  const pendingDragOverRef = useRef<{
-    activeId: string;
-    overId: string;
-  } | null>(null);
-  const dragOverRafRef = useRef<number | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: { distance: 4 },
+      activationConstraint: { delay: 100, tolerance: 5 },
     }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 150,
-        tolerance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
+    useSensor(KeyboardSensor)
   );
 
   const columns = useMemo(() => {
@@ -298,14 +152,23 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     );
   }, [boardConfiguration]);
 
-  const baseBoardTicketIds = useMemo(() => {
-    return buildBoardTicketIds(columns, filteredTickets);
-  }, [columns, filteredTickets]);
+  const ticketsByStatus = useMemo(() => {
+    const grouped = new Map<string, TicketCardProps[]>();
+    const sortedTickets = [...filteredTickets].sort(
+      (a, b) => a.position - b.position
+    );
 
-  const boardTicketIds = draftBoardTicketIds ?? baseBoardTicketIds;
-  const boardTicketLocationIndex = useMemo(() => {
-    return buildTicketLocationIndex(boardTicketIds);
-  }, [boardTicketIds]);
+    for (const ticket of sortedTickets) {
+      const existing = grouped.get(ticket.status);
+      if (existing) {
+        existing.push(mapTicketToCardProps(ticket));
+      } else {
+        grouped.set(ticket.status, [mapTicketToCardProps(ticket)]);
+      }
+    }
+
+    return grouped;
+  }, [filteredTickets]);
 
   const columnById = useMemo(() => {
     const map = new Map<string, BoardColumnConfig>();
@@ -315,213 +178,105 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     return map;
   }, [columns]);
 
-  const ticketCardById = useMemo(() => {
-    const map = new Map<string, TicketCardProps>();
-    for (const ticket of filteredTickets) {
-      map.set(ticket.id, mapTicketToCardProps(ticket, project?.shortCode));
-    }
-    return map;
-  }, [filteredTickets, project?.shortCode]);
-
-  const boardColumnTickets = useMemo(() => {
-    const map = new Map<string, TicketCardProps[]>();
-
-    for (const column of columns) {
-      const ticketIds = boardTicketIds[column.id] ?? [];
-      const ticketCards = ticketIds
-        .map((ticketId) => ticketCardById.get(ticketId))
-        .filter((ticket): ticket is TicketCardProps => ticket != null);
-      map.set(column.id, ticketCards);
-    }
-
-    return map;
-  }, [boardTicketIds, columns, ticketCardById]);
-
-  const handleDragStart = useCallback(
-    (event: DragStartEvent) => {
-      const activeId = String(event.active.id);
-      dragSnapshotRef.current = baseBoardTicketIds;
-      setDraftBoardTicketIds(baseBoardTicketIds);
-      setActiveTicketId(activeId);
-    },
-    [baseBoardTicketIds]
-  );
-
-  const flushPendingDragOver = useCallback(() => {
-    const pending = pendingDragOverRef.current;
-    pendingDragOverRef.current = null;
-    dragOverRafRef.current = null;
-
-    if (pending == null) {
-      return;
-    }
-
-    setDraftBoardTicketIds((previous) => {
-      const currentBoard = previous ?? baseBoardTicketIds;
-      const currentLocationIndex = buildTicketLocationIndex(currentBoard);
-      return buildNextBoardFromDragOver(
-        currentBoard,
-        currentLocationIndex,
-        pending.activeId,
-        pending.overId
-      );
-    });
-  }, [baseBoardTicketIds]);
-
-  const handleDragOver = useCallback(
-    (event: DragOverEvent) => {
-      const activeId = String(event.active.id);
-      const overId = event.over?.id ? String(event.over.id) : null;
-
-      if (overId == null) {
-        return;
-      }
-
-      pendingDragOverRef.current = {
-        activeId,
-        overId,
-      };
-
-      if (dragOverRafRef.current != null) {
-        return;
-      }
-
-      dragOverRafRef.current =
-        window.requestAnimationFrame(flushPendingDragOver);
-    },
-    [flushPendingDragOver]
-  );
-
-  useEffect(() => {
-    return () => {
-      if (dragOverRafRef.current != null) {
-        window.cancelAnimationFrame(dragOverRafRef.current);
-      }
-    };
-  }, []);
-
-  const collisionDetection = useCallback<CollisionDetection>((args) => {
-    const pointerCollisions = pointerWithin(args);
-    if (pointerCollisions.length > 0) {
-      return pointerCollisions;
-    }
-
-    const cornerCollisions = closestCorners(args);
-    if (cornerCollisions.length > 0) {
-      return cornerCollisions;
-    }
-
-    const rectCollisions = rectIntersection(args);
-    if (rectCollisions.length > 0) {
-      return rectCollisions;
-    }
-
-    return closestCenter(args);
-  }, []);
-
   const handleDragEnd = useCallback(
-    async (event: DragEndEvent) => {
-      const { active, over } = event;
-      const activeId = String(active.id);
-      const snapshot = dragSnapshotRef.current;
-
-      setActiveTicketId(null);
-      dragSnapshotRef.current = null;
-
-      if (snapshot == null) {
-        return;
-      }
-
+    (event: DragEndEvent) => {
+      const { active, over, delta } = event;
       if (over == null) {
-        setDraftBoardTicketIds(null);
         return;
       }
 
-      const effectiveBoardTicketIds = draftBoardTicketIds ?? baseBoardTicketIds;
-      const effectiveLocationIndex =
-        draftBoardTicketIds != null
-          ? boardTicketLocationIndex
-          : buildTicketLocationIndex(baseBoardTicketIds);
-      const snapshotLocationIndex = buildTicketLocationIndex(snapshot);
-      const finalSourceColumnId =
-        getTicketLocation(activeId, effectiveLocationIndex)?.columnId ?? null;
-      const initialSourceColumnId =
-        getTicketLocation(activeId, snapshotLocationIndex)?.columnId ?? null;
-
-      if (finalSourceColumnId == null || initialSourceColumnId == null) {
+      const dragPayload = parseDragId(active.id as string);
+      const dropPayload = parseDropId(over.id as string);
+      if (dragPayload == null || dropPayload == null) {
         return;
       }
 
-      const finalSourceIds = effectiveBoardTicketIds[finalSourceColumnId] ?? [];
-      const initialSourceIds = snapshot[initialSourceColumnId] ?? [];
-      const noPositionChange =
-        finalSourceColumnId === initialSourceColumnId &&
-        areIdArraysEqual(finalSourceIds, initialSourceIds);
-      if (noPositionChange) {
+      const { ticketId, columnId: sourceColumnId } = dragPayload;
+      const { columnId: targetColumnId, isEmpty, targetTicketId } = dropPayload;
+
+      const targetColumn = columnById.get(targetColumnId);
+      if (targetColumn?.status == null) {
         return;
       }
 
-      const finalTargetColumn = columnById.get(finalSourceColumnId);
-      if (finalTargetColumn?.status == null) {
-        setDraftBoardTicketIds(null);
-        return;
-      }
+      const ticketsInColumn = filteredTickets
+        .filter((t) => t.status === targetColumn.status)
+        .sort((a, b) => a.position - b.position);
 
-      try {
-        if (finalSourceColumnId === initialSourceColumnId) {
-          const ticketPositions = finalSourceIds.map((id, position) => ({
-            id,
-            position,
-          }));
-
-          await reorderTicketMutation.mutateAsync({
-            projectId,
-            ticketPositions,
-          });
+      if (sourceColumnId === targetColumnId) {
+        const draggedIndex = ticketsInColumn.findIndex(
+          (t) => t.id === ticketId
+        );
+        if (draggedIndex === -1) {
           return;
         }
 
-        const sourceIds = effectiveBoardTicketIds[initialSourceColumnId] ?? [];
-        const targetIds = effectiveBoardTicketIds[finalSourceColumnId] ?? [];
-        const movedTicketPosition = targetIds.indexOf(activeId);
+        const withoutDragged = ticketsInColumn.filter((t) => t.id !== ticketId);
+        let insertIndex: number;
+        if (isEmpty || targetTicketId == null) {
+          insertIndex = withoutDragged.length;
+        } else {
+          const dropIndex = withoutDragged.findIndex(
+            (t) => t.id === targetTicketId
+          );
+          const targetIndexInColumn = ticketsInColumn.findIndex(
+            (t) => t.id === targetTicketId
+          );
+          if (dropIndex === -1) {
+            insertIndex = withoutDragged.length;
+          } else if (draggedIndex < targetIndexInColumn) {
+            insertIndex = dropIndex + 1;
+          } else {
+            insertIndex = dropIndex;
+          }
+        }
 
-        if (movedTicketPosition === -1) {
-          setDraftBoardTicketIds(null);
+        if (insertIndex === draggedIndex) {
           return;
         }
 
-        await moveTicketMutation.mutateAsync({
-          projectId,
-          ticketId: activeId,
-          status: finalTargetColumn.status,
-          position: movedTicketPosition,
-        });
+        const intendedMoveDown = insertIndex > draggedIndex;
+        const intendedMoveUp = insertIndex < draggedIndex;
+        const draggedEnoughDown = delta.y >= DROP_THRESHOLD_PX;
+        const draggedEnoughUp = delta.y <= -DROP_THRESHOLD_PX;
+        const shouldApplyReorder =
+          (intendedMoveDown && draggedEnoughDown) ||
+          (intendedMoveUp && draggedEnoughUp);
 
-        const updatedPositions = [
-          ...sourceIds.map((id, position) => ({
-            id,
-            position,
-          })),
-          ...targetIds.map((id, position) => ({
-            id,
-            position,
-          })),
+        if (!shouldApplyReorder) {
+          return;
+        }
+
+        const reordered = [
+          ...withoutDragged.slice(0, insertIndex),
+          ticketsInColumn[draggedIndex],
+          ...withoutDragged.slice(insertIndex),
         ];
 
-        await reorderTicketMutation.mutateAsync({
+        const ticketPositions = reordered.map((t, position) => ({
+          id: t.id,
+          position,
+        }));
+
+        reorderTicketMutation.mutate({
           projectId,
-          ticketPositions: updatedPositions,
+          ticketPositions,
         });
-        setDraftBoardTicketIds(null);
-      } catch {
-        setDraftBoardTicketIds(null);
+        return;
       }
+
+      const ticketsInTarget = ticketsInColumn.filter((t) => t.id !== ticketId);
+      const position = ticketsInTarget.length;
+
+      moveTicketMutation.mutate({
+        ticketId,
+        status: targetColumn.status,
+        position,
+      });
     },
     [
-      baseBoardTicketIds,
-      boardTicketLocationIndex,
       columnById,
-      draftBoardTicketIds,
+      filteredTickets,
       moveTicketMutation,
       reorderTicketMutation,
       projectId,
@@ -530,79 +285,32 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
 
   const renderColumnProps = useMemo(() => {
     return (column: BoardColumnConfig) => {
-      const ticketsForColumn = boardColumnTickets.get(column.id) ?? [];
+      const ticketsForColumn =
+        column.status != null ? (ticketsByStatus.get(column.status) ?? []) : [];
       return {
         tickets: ticketsForColumn,
         onTicketClick: handleEditTicket,
       };
     };
-  }, [boardColumnTickets, handleEditTicket]);
-
-  const activeTicket = activeTicketId
-    ? ticketCardById.get(activeTicketId)
-    : null;
-
-  const selectedTicket = useMemo(() => {
-    if (!selectedTicketId) {
-      return null;
-    }
-
-    return tickets.find((ticket) => ticket.id === selectedTicketId) ?? null;
-  }, [selectedTicketId, tickets]);
-
-  const modalTitle = useMemo(() => {
-    const baseTitle = tTicket("title");
-    if (!selectedTicket) {
-      return baseTitle;
-    }
-
-    const ticketCode = tTicket("ticketCode", {
-      code: selectedTicket.codeNumber,
-    });
-    return `${ticketCode} ${selectedTicket.title}`;
-  }, [selectedTicket, tTicket]);
+  }, [handleEditTicket, ticketsByStatus]);
 
   return (
     <section className={styles["board-layout"]} aria-labelledby={layoutId}>
-      <DndContext
-        sensors={sensors}
-        collisionDetection={collisionDetection}
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-        onDragCancel={() => {
-          dragSnapshotRef.current = null;
-          setDraftBoardTicketIds(null);
-          setActiveTicketId(null);
-        }}
-      >
+      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
         <BoardView
           columns={columns}
           renderColumn={renderColumnProps}
-          isDragging={activeTicketId != null}
           isLoading={isLoading}
           isEmpty={!boardConfiguration?.columns?.length}
           errorMessage={error?.message}
         />
-        <DragOverlay
-          dropAnimation={{
-            duration: 180,
-            easing: "cubic-bezier(0.25, 1, 0.5, 1)",
-          }}
-        >
-          {activeTicket ? (
-            <div className={styles["board-overlay"]}>
-              <TicketCard {...activeTicket} />
-            </div>
-          ) : null}
-        </DragOverlay>
       </DndContext>
       <Modal
         isOpen={Boolean(selectedTicketId)}
         onClose={() => {
           updateSearchParam(null);
         }}
-        title={modalTitle}
+        title={tTicket("modalTitle")}
         size="full"
       >
         {selectedTicketId && (
@@ -610,6 +318,10 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
             key={selectedTicketId}
             projectId={projectId}
             ticketId={selectedTicketId}
+            mode="modal"
+            onClose={() => {
+              updateSearchParam(null);
+            }}
           />
         )}
       </Modal>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
 import type { TicketPriority } from "@/core/domain/schema/ticket.schema";
@@ -46,12 +47,15 @@ import {
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { useTranslation } from "@/shared/i18n";
+import { buildTicketDetailRoute } from "@/shared/utils/routes";
 
 import styles from "./TicketDetailView.module.scss";
 
 type Props = {
   projectId: string;
   ticketId: string;
+  mode?: "page" | "modal";
+  onClose?: () => void;
 };
 
 const PRIORITY_VALUES: TicketPriority[] = [
@@ -62,7 +66,13 @@ const PRIORITY_VALUES: TicketPriority[] = [
   "lowest",
 ];
 
-const TicketDetailView = ({ projectId, ticketId }: Props) => {
+const TicketDetailView = ({
+  projectId,
+  ticketId,
+  mode = "page",
+  onClose,
+}: Props) => {
+  const router = useRouter();
   const t = useTranslation("pages.ticketDetail.page");
   const tCommon = useTranslation("common");
 
@@ -97,6 +107,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
   const [priorityDraft, setPriorityDraft] = useState<string | null>(null);
   const [sprintIdDraft, setSprintIdDraft] = useState<string | null>(null);
   const [epicIdDraft, setEpicIdDraft] = useState<string | null>(null);
+  const [positionDraft, setPositionDraft] = useState<string | null>(null);
   const [commentInput, setCommentInput] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentContent, setEditingCommentContent] = useState("");
@@ -144,6 +155,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
   const effectivePriority = priorityDraft ?? ticket?.priority ?? "";
   const effectiveSprintId = sprintIdDraft ?? ticket?.sprintId ?? "";
   const effectiveEpicId = epicIdDraft ?? ticket?.epicId ?? "";
+  const effectivePosition = positionDraft ?? String(ticket?.position ?? 0);
 
   const handleSaveMainFields = useCallback(async (): Promise<void> => {
     if (!ticket) {
@@ -159,12 +171,15 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
         priority: (effectivePriority as TicketPriority) || null,
         sprintId: effectiveSprintId || null,
         epicId: effectiveEpicId || null,
-        position: ticket.position,
+        position: Number.isNaN(Number(effectivePosition))
+          ? 0
+          : Number(effectivePosition),
       },
     });
   }, [
     effectiveDescription,
     effectiveEpicId,
+    effectivePosition,
     effectivePriority,
     effectiveSprintId,
     effectiveStatus,
@@ -289,6 +304,33 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
 
   return (
     <section className={styles["ticket-detail"]}>
+      <header className={styles["ticket-detail__header"]}>
+        <div className={styles["ticket-detail__header-main"]}>
+          <Text variant="caption" className={styles["ticket-detail__code"]}>
+            {t("ticketCode", { code: ticket.codeNumber })}
+          </Text>
+          <Title variant="h2">{t("title")}</Title>
+        </div>
+        <div className={styles["ticket-detail__header-actions"]}>
+          {mode === "modal" && (
+            <Button
+              label={t("actions.openFullPage")}
+              variant="secondary"
+              onClick={() => {
+                router.push(buildTicketDetailRoute(projectId, ticketId));
+              }}
+            />
+          )}
+          {onClose && (
+            <Button
+              label={tCommon("cancel")}
+              variant="secondary"
+              onClick={onClose}
+            />
+          )}
+        </div>
+      </header>
+
       <div className={styles["ticket-detail__grid"]}>
         <Card className={styles["ticket-detail__main"]}>
           <div className={styles["ticket-detail__field"]}>
@@ -328,7 +370,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
             />
             <Button
               label={t("comments.addButton")}
-              variant="publish"
               onClick={handleCreateComment}
               disabled={createCommentMutation.isPending}
             />
@@ -369,7 +410,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
                           <>
                             <Button
                               label={t("comments.saveEdit")}
-                              variant="save"
                               onClick={async () => {
                                 await updateCommentMutation.mutateAsync({
                                   commentId: comment.id,
@@ -391,24 +431,32 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
                           </>
                         ) : (
                           <>
-                            <Button
-                              label={t("comments.editButton")}
-                              variant="edit"
+                            <button
+                              type="button"
+                              className={
+                                styles["ticket-detail__comment-action-button"]
+                              }
                               onClick={() => {
                                 setEditingCommentId(comment.id);
                                 setEditingCommentContent(comment.content);
                               }}
-                            />
-                            <Button
-                              label={t("comments.deleteButton")}
-                              variant="delete"
+                              aria-label={t("comments.editButton")}
+                            >
+                              {t("comments.editButton")}
+                            </button>
+                            <button
+                              type="button"
+                              className={`${styles["ticket-detail__comment-action-button"]} ${styles["ticket-detail__comment-action-button--danger"]}`}
                               onClick={async () => {
                                 await deleteCommentMutation.mutateAsync(
                                   comment.id
                                 );
                               }}
                               disabled={deleteCommentMutation.isPending}
-                            />
+                              aria-label={t("comments.deleteButton")}
+                            >
+                              {t("comments.deleteButton")}
+                            </button>
                           </>
                         )}
                       </div>
@@ -459,6 +507,22 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
             }}
           />
 
+          <div className={styles["ticket-detail__field"]}>
+            <label htmlFor={getAccessibilityId("ticket-position")}>
+              {t("fields.position")}
+            </label>
+            <input
+              id={getAccessibilityId("ticket-position")}
+              className={styles["ticket-detail__input"]}
+              type="number"
+              min="0"
+              value={effectivePosition}
+              onChange={(event) => {
+                setPositionDraft(event.target.value);
+              }}
+            />
+          </div>
+
           <div className={styles["ticket-detail__labels"]}>
             <Text variant="caption">{t("fields.labels")}</Text>
             <div className={styles["ticket-detail__label-list"]}>
@@ -496,7 +560,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
 
           <Button
             label={t("actions.save")}
-            variant="save"
             onClick={() => {
               void handleSaveMainFields();
             }}
