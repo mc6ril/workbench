@@ -1,7 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
-
 import { reorderTicket } from "@/core/usecases/ticket/reorderTicket";
 
 import { ticketRepository } from "@/infrastructure/supabase/repositories";
@@ -23,50 +21,7 @@ export const useReorderTicket = () => {
   return useMutation({
     mutationFn: ({ ticketPositions }: ReorderTicketVariables) =>
       reorderTicket(ticketRepository, { ticketPositions }),
-    onMutate: async ({ projectId, ticketPositions }) => {
-      await queryClient.cancelQueries({
-        queryKey: queryKeys.projects.ticketsRoot(projectId),
-      });
-
-      const previousTicketLists = queryClient.getQueriesData<Ticket[]>({
-        queryKey: queryKeys.projects.ticketsRoot(projectId),
-      });
-
-      const positionById = new Map(
-        ticketPositions.map((ticketPosition) => [ticketPosition.id, ticketPosition.position])
-      );
-
-      queryClient.setQueriesData<Ticket[]>(
-        { queryKey: queryKeys.projects.ticketsRoot(projectId) },
-        (previous) => {
-          if (!Array.isArray(previous)) {
-            return previous;
-          }
-
-          return previous.map((ticket) => {
-            const nextPosition = positionById.get(ticket.id);
-            if (nextPosition == null) {
-              return ticket;
-            }
-
-            return {
-              ...ticket,
-              position: nextPosition,
-            };
-          });
-        }
-      );
-
-      return {
-        previousTicketLists,
-      };
-    },
-    onError: (_error, _variables, context) => {
-      for (const [queryKey, data] of context?.previousTicketLists ?? []) {
-        queryClient.setQueryData(queryKey, data);
-      }
-    },
-    onSettled: (_tickets, _error, variables) => {
+    onSuccess: (_tickets, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.ticketsRoot(variables.projectId),
       });

@@ -30,7 +30,6 @@ export type BoardViewProps = {
   };
   isLoading?: boolean;
   isEmpty?: boolean;
-  isDragging?: boolean;
   errorMessage?: string;
   className?: string;
 };
@@ -40,7 +39,6 @@ const BoardView = ({
   renderColumn,
   isLoading,
   isEmpty,
-  isDragging,
   errorMessage,
   className,
 }: BoardViewProps) => {
@@ -112,11 +110,7 @@ const BoardView = ({
       <Title id={containerId} variant="h2" className="visually-hidden">
         {t("title")}
       </Title>
-      <div
-        className={styles["board-view__columns"]}
-        role="list"
-        data-dragging={isDragging}
-      >
+      <div className={styles["board-view__columns"]} role="list">
         {columns
           .filter((column) => column.isVisible !== false)
           .map((column) => {
@@ -131,7 +125,6 @@ const BoardView = ({
                 <BoardColumn
                   id={column.id}
                   title={column.title}
-                  isDragging={isDragging}
                   {...columnProps}
                 />
               </div>

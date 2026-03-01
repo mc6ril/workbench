@@ -323,32 +323,32 @@ export const createTicketRepository = (
     ticketPositions: Array<{ id: string; position: number }>
   ): Promise<Ticket[]> {
     try {
-      const updateResults = await Promise.all(
-        ticketPositions.map(async ({ id, position }) => {
-          const { data, error } = await client
-            .from("tickets")
-            .update({ position })
-            .eq("id", id)
-            .select()
-            .single();
+      const updatedTickets: Ticket[] = [];
 
-          if (error) {
-            return handleRepositoryError(error, "Ticket", id);
-          }
+      for (const { id, position } of ticketPositions) {
+        const { data, error } = await client
+          .from("tickets")
+          .update({ position })
+          .eq("id", id)
+          .select()
+          .single();
 
-          if (!data) {
-            return handleRepositoryError(
-              createNotFoundError("Ticket", id),
-              "Ticket",
-              id
-            );
-          }
+        if (error) {
+          return handleRepositoryError(error, "Ticket", id);
+        }
 
-          return mapTicketRowToDomain(data as TicketRow);
-        })
-      );
+        if (!data) {
+          return handleRepositoryError(
+            createNotFoundError("Ticket", id),
+            "Ticket",
+            id
+          );
+        }
 
-      return updateResults;
+        updatedTickets.push(mapTicketRowToDomain(data as TicketRow));
+      }
+
+      return updatedTickets;
     } catch (error) {
       return handleRepositoryError(error, "Ticket");
     }
