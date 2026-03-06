@@ -62,6 +62,12 @@
   margin-bottom: $spacing-xxs;
 }
 
+.ticket-card__assignee {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .ticket-card__id {
   margin: 0;
   @include typography-caption;

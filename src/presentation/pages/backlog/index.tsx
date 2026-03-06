@@ -15,6 +15,7 @@ import { useEpics } from "@/presentation/hooks/epic/useEpics";
 import { useProject } from "@/presentation/hooks/project/useProject";
 import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
 import { useCreateTicket } from "@/presentation/hooks/ticket/useCreateTicket";
+import { useTicketAssigneesByTicketIds } from "@/presentation/hooks/ticket/useTicketAssigneesByTicketIds";
 import { useTickets } from "@/presentation/hooks/ticket/useTickets";
 
 import { useTranslation } from "@/shared/i18n";
@@ -44,10 +45,15 @@ const BacklogPage = ({ projectId }: Props) => {
     useBoardConfiguration(projectId);
   const { hasAccess: hasEpicsAccess } = useFeatureAccess(PlanFeature.EPICS);
   const createTicketMutation = useCreateTicket();
+  const ticketIds = useMemo(() => tickets.map((ticket) => ticket.id), [tickets]);
+  const { data: assigneesByTicketId = {} } =
+    useTicketAssigneesByTicketIds(ticketIds);
 
   const ticketViewModels = useMemo(() => {
     const epicMap = new Map(epics.map((epic) => [epic.id, epic.name]));
     return tickets.map((ticket) => ({
+      assigneeAvatarUrl: assigneesByTicketId[ticket.id]?.[0]?.avatarUrl ?? null,
+      assigneeName: assigneesByTicketId[ticket.id]?.[0]?.displayName ?? null,
       id: ticket.id,
       title: ticket.title,
       ticketCode: buildTicketCode(project?.shortCode, ticket.codeNumber),
@@ -55,7 +61,7 @@ const BacklogPage = ({ projectId }: Props) => {
       status: ticket.status,
       epicName: ticket.epicId ? (epicMap.get(ticket.epicId) ?? null) : null,
     }));
-  }, [epics, tickets, project?.shortCode]);
+  }, [assigneesByTicketId, epics, tickets, project?.shortCode]);
 
   const isCreateTicketModalOpen = searchParams.get("createTicket") === "1";
 

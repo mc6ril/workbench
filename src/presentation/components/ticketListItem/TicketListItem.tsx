@@ -2,6 +2,7 @@
 
 import React, { useCallback, useMemo } from "react";
 
+import Avatar from "@/presentation/components/ui/Avatar";
 import Button from "@/presentation/components/ui/Button";
 import Text from "@/presentation/components/ui/Text";
 
@@ -15,6 +16,8 @@ export type TicketListItemProps = {
   title: string;
   status?: string;
   epicName?: string | null;
+  assigneeName?: string | null;
+  assigneeAvatarUrl?: string | null;
   description?: string | null;
   isSelected?: boolean;
   ticketCode?: string | null;
@@ -28,6 +31,8 @@ const TicketListItem = ({
   title,
   status,
   epicName,
+  assigneeName,
+  assigneeAvatarUrl,
   description,
   isSelected = false,
   onOpen,
@@ -70,8 +75,12 @@ const TicketListItem = ({
       parts.push(`${t("epicLabel")}: ${epicName}`);
     }
 
+    if (assigneeName) {
+      parts.push(`${t("assigneeLabel")}: ${assigneeName}`);
+    }
+
     return `${t("ticketAriaLabel")}: ${parts.join(", ")}`;
-  }, [t, title, ticketCode, status, epicName]);
+  }, [t, title, ticketCode, status, epicName, assigneeName]);
 
   return (
     <li
@@ -82,6 +91,18 @@ const TicketListItem = ({
     >
       <div className={styles["ticket-list-item__content"]}>
         <div className={styles["ticket-list-item__meta"]}>
+          <span className={styles["ticket-list-item__assignee"]}>
+            <Avatar
+              src={assigneeAvatarUrl ?? "/default-profile.svg"}
+              name={assigneeName}
+              size="sm"
+              aria-label={
+                assigneeName
+                  ? `${t("assigneeLabel")}: ${assigneeName}`
+                  : t("assigneeLabel")
+              }
+            />
+          </span>
           {ticketCode && (
             <Text
               as="span"

@@ -79,6 +79,12 @@
   gap: $spacing-xs;
 }
 
+.ticket-list-item__assignee {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .ticket-list-item__id {
   margin: 0;
   @include typography-caption;

@@ -35,6 +35,7 @@ import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfig
 import { useProject } from "@/presentation/hooks/project";
 import { useMoveTicket } from "@/presentation/hooks/ticket/useMoveTicket";
 import { useReorderTicket } from "@/presentation/hooks/ticket/useReorderTicket";
+import { useTicketAssigneesByTicketIds } from "@/presentation/hooks/ticket/useTicketAssigneesByTicketIds";
 import { useTickets } from "@/presentation/hooks/ticket/useTickets";
 import { useFilterStore } from "@/presentation/stores/useFilterStore";
 
@@ -66,13 +67,17 @@ type TicketLocationIndex = Record<string, TicketLocation>;
 
 const mapTicketToCardProps = (
   ticket: Ticket,
-  projectShortCode: string | null | undefined
+  projectShortCode: string | null | undefined,
+  assigneeName?: string | null,
+  assigneeAvatarUrl?: string | null
 ): TicketCardProps => {
   return {
     id: ticket.id,
     title: ticket.title,
     ticketCode: buildTicketCode(projectShortCode, ticket.codeNumber),
     status: ticket.status,
+    assigneeName: assigneeName ?? null,
+    assigneeAvatarUrl: assigneeAvatarUrl ?? null,
   };
 };
 
@@ -260,6 +265,12 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     () => filterTicketsBySearch(tickets, search),
     [tickets, search]
   );
+  const filteredTicketIds = useMemo(
+    () => filteredTickets.map((ticket) => ticket.id),
+    [filteredTickets]
+  );
+  const { data: assigneesByTicketId = {} } =
+    useTicketAssigneesByTicketIds(filteredTicketIds);
   const moveTicketMutation = useMoveTicket();
   const reorderTicketMutation = useReorderTicket();
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
@@ -318,10 +329,19 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   const ticketCardById = useMemo(() => {
     const map = new Map<string, TicketCardProps>();
     for (const ticket of filteredTickets) {
-      map.set(ticket.id, mapTicketToCardProps(ticket, project?.shortCode));
+      const primaryAssignee = assigneesByTicketId[ticket.id]?.[0];
+      map.set(
+        ticket.id,
+        mapTicketToCardProps(
+          ticket,
+          project?.shortCode,
+          primaryAssignee?.displayName,
+          primaryAssignee?.avatarUrl
+        )
+      );
     }
     return map;
-  }, [filteredTickets, project?.shortCode]);
+  }, [assigneesByTicketId, filteredTickets, project?.shortCode]);
 
   const boardColumnTickets = useMemo(() => {
     const map = new Map<string, TicketCardProps[]>();

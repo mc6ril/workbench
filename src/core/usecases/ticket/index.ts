@@ -3,6 +3,7 @@ export { assignTicketToEpic } from "./assignTicketToEpic";
 export { createSubtask } from "./createSubtask";
 export { createTicket } from "./createTicket";
 export { deleteTicket } from "./deleteTicket";
+export { getTicketAssigneesByTicketIds } from "./getTicketAssigneesByTicketIds";
 export { getTicketByCode } from "./getTicketByCode";
 export { getTicketDetail } from "./getTicketDetail";
 export { listTickets } from "./listTickets";

@@ -2,6 +2,7 @@
 
 import React, { useCallback, useMemo } from "react";
 
+import Avatar from "@/presentation/components/ui/Avatar";
 import Button from "@/presentation/components/ui/Button";
 import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
@@ -18,6 +19,7 @@ export type TicketCardProps = {
   status?: string;
   epicName?: string | null;
   assigneeName?: string | null;
+  assigneeAvatarUrl?: string | null;
   priority?: string | null;
   storyPoints?: number | null;
   onEdit?: (id: string) => void;
@@ -31,6 +33,7 @@ const TicketCard = ({
   ticketCode,
   epicName,
   assigneeName,
+  assigneeAvatarUrl,
   priority,
   storyPoints,
   onEdit,
@@ -83,6 +86,18 @@ const TicketCard = ({
     >
       <div className={styles["ticket-card__main"]}>
         <div className={styles["ticket-card__meta"]}>
+          <span className={styles["ticket-card__assignee"]}>
+            <Avatar
+              src={assigneeAvatarUrl ?? "/default-profile.svg"}
+              name={assigneeName}
+              size="sm"
+              aria-label={
+                assigneeName
+                  ? `${t("assigneeLabel")}: ${assigneeName}`
+                  : t("assigneeLabel")
+              }
+            />
+          </span>
           {ticketCode && (
             <Text
               as="span"
