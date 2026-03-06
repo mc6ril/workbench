@@ -2,12 +2,13 @@
 
 import React, { useCallback, useMemo } from "react";
 
-import Avatar from "@/presentation/components/ui/Avatar";
+import TicketMeta from "@/presentation/components/ticketShared/TicketMeta";
 import Button from "@/presentation/components/ui/Button";
 import Text from "@/presentation/components/ui/Text";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
+import { buildTicketAriaLabel } from "@/shared/utils/ticketUtils";
 
 import styles from "./TicketListItem.module.scss";
 
@@ -61,25 +62,17 @@ const TicketListItem = ({
     .join(" ");
 
   const itemAriaLabel = useMemo(() => {
-    const parts: string[] = [title];
-
-    if (ticketCode) {
-      parts.push(ticketCode);
-    }
-
-    if (status) {
-      parts.push(`${t("statusLabel")}: ${status}`);
-    }
-
-    if (epicName) {
-      parts.push(`${t("epicLabel")}: ${epicName}`);
-    }
-
-    if (assigneeName) {
-      parts.push(`${t("assigneeLabel")}: ${assigneeName}`);
-    }
-
-    return `${t("ticketAriaLabel")}: ${parts.join(", ")}`;
+    return buildTicketAriaLabel({
+      ticketAriaLabel: t("ticketAriaLabel"),
+      title,
+      ticketCode,
+      status,
+      statusLabel: t("statusLabel"),
+      epicName,
+      epicLabel: t("epicLabel"),
+      assigneeName,
+      assigneeLabel: t("assigneeLabel"),
+    });
   }, [t, title, ticketCode, status, epicName, assigneeName]);
 
   return (
@@ -90,29 +83,15 @@ const TicketListItem = ({
       aria-label={itemAriaLabel}
     >
       <div className={styles["ticket-list-item__content"]}>
-        <div className={styles["ticket-list-item__meta"]}>
-          <span className={styles["ticket-list-item__assignee"]}>
-            <Avatar
-              src={assigneeAvatarUrl ?? "/default-profile.svg"}
-              name={assigneeName}
-              size="sm"
-              aria-label={
-                assigneeName
-                  ? `${t("assigneeLabel")}: ${assigneeName}`
-                  : t("assigneeLabel")
-              }
-            />
-          </span>
-          {ticketCode && (
-            <Text
-              as="span"
-              variant="caption"
-              className={styles["ticket-list-item__id"]}
-            >
-              {ticketCode}
-            </Text>
-          )}
-        </div>
+        <TicketMeta
+          className={styles["ticket-list-item__meta"]}
+          assigneeClassName={styles["ticket-list-item__assignee"]}
+          ticketCodeClassName={styles["ticket-list-item__id"]}
+          ticketCode={ticketCode}
+          assigneeName={assigneeName}
+          assigneeAvatarUrl={assigneeAvatarUrl}
+          assigneeLabel={t("assigneeLabel")}
+        />
         <div className={styles["ticket-list-item__header"]}>
           <Text
             id={titleId}

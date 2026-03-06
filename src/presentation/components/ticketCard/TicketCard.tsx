@@ -2,13 +2,13 @@
 
 import React, { useCallback, useMemo } from "react";
 
-import Avatar from "@/presentation/components/ui/Avatar";
+import TicketMeta from "@/presentation/components/ticketShared/TicketMeta";
 import Button from "@/presentation/components/ui/Button";
-import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
+import { buildTicketAriaLabel } from "@/shared/utils/ticketUtils";
 
 import styles from "./TicketCard.module.scss";
 
@@ -52,29 +52,21 @@ const TicketCard = ({
   }, [onEdit, id]);
 
   const cardAriaLabel = useMemo(() => {
-    const parts: string[] = [title];
-
-    if (ticketCode) {
-      parts.push(ticketCode);
-    }
-
-    if (epicName) {
-      parts.push(`${t("epicLabel")}: ${epicName}`);
-    }
-
-    if (assigneeName) {
-      parts.push(`${t("assigneeLabel")}: ${assigneeName}`);
-    }
-
-    if (priority) {
-      parts.push(`${t("priorityLabel")}: ${priority}`);
-    }
-
-    if (typeof storyPoints === "number") {
-      parts.push(t("storyPointsLabel", { count: storyPoints }));
-    }
-
-    return `${t("ticketAriaLabel")}: ${parts.join(", ")}`;
+    return buildTicketAriaLabel({
+      ticketAriaLabel: t("ticketAriaLabel"),
+      title,
+      ticketCode,
+      epicName,
+      epicLabel: t("epicLabel"),
+      assigneeName,
+      assigneeLabel: t("assigneeLabel"),
+      priority,
+      priorityLabel: t("priorityLabel"),
+      storyPointsLabel:
+        typeof storyPoints === "number"
+          ? t("storyPointsLabel", { count: storyPoints })
+          : undefined,
+    });
   }, [t, title, ticketCode, epicName, assigneeName, priority, storyPoints]);
 
   return (
@@ -85,29 +77,15 @@ const TicketCard = ({
       aria-label={cardAriaLabel}
     >
       <div className={styles["ticket-card__main"]}>
-        <div className={styles["ticket-card__meta"]}>
-          <span className={styles["ticket-card__assignee"]}>
-            <Avatar
-              src={assigneeAvatarUrl ?? "/default-profile.svg"}
-              name={assigneeName}
-              size="sm"
-              aria-label={
-                assigneeName
-                  ? `${t("assigneeLabel")}: ${assigneeName}`
-                  : t("assigneeLabel")
-              }
-            />
-          </span>
-          {ticketCode && (
-            <Text
-              as="span"
-              variant="caption"
-              className={styles["ticket-card__id"]}
-            >
-              {ticketCode}
-            </Text>
-          )}
-        </div>
+        <TicketMeta
+          className={styles["ticket-card__meta"]}
+          assigneeClassName={styles["ticket-card__assignee"]}
+          ticketCodeClassName={styles["ticket-card__id"]}
+          ticketCode={ticketCode}
+          assigneeName={assigneeName}
+          assigneeAvatarUrl={assigneeAvatarUrl}
+          assigneeLabel={t("assigneeLabel")}
+        />
         <Title
           id={titleId}
           variant="h3"
@@ -129,4 +107,4 @@ const TicketCard = ({
   );
 };
 
-export default TicketCard;
+export default React.memo(TicketCard);

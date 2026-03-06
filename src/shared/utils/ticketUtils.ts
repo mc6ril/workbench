@@ -1,5 +1,7 @@
 import type { Ticket } from "@/core/domain/schema/ticket.schema";
 
+import type { BuildTicketAriaLabelParams } from "@/shared/types";
+
 /**
  * Filters tickets by search term (case-insensitive).
  * Matches against ticket title and description.
@@ -38,4 +40,50 @@ export const buildTicketCode = (
   }
 
   return `${normalizedShortCode}-${codeNumber}`;
+};
+
+/**
+ * Builds a consistent ARIA label for ticket UI representations.
+ */
+export const buildTicketAriaLabel = ({
+  ticketAriaLabel,
+  title,
+  ticketCode,
+  status,
+  statusLabel,
+  epicName,
+  epicLabel,
+  assigneeName,
+  assigneeLabel,
+  priority,
+  priorityLabel,
+  storyPointsLabel,
+}: BuildTicketAriaLabelParams): string => {
+  const parts: string[] = [title];
+
+  if (ticketCode) {
+    parts.push(ticketCode);
+  }
+
+  if (status && statusLabel) {
+    parts.push(`${statusLabel}: ${status}`);
+  }
+
+  if (epicName && epicLabel) {
+    parts.push(`${epicLabel}: ${epicName}`);
+  }
+
+  if (assigneeName && assigneeLabel) {
+    parts.push(`${assigneeLabel}: ${assigneeName}`);
+  }
+
+  if (priority && priorityLabel) {
+    parts.push(`${priorityLabel}: ${priority}`);
+  }
+
+  if (storyPointsLabel) {
+    parts.push(storyPointsLabel);
+  }
+
+  return `${ticketAriaLabel}: ${parts.join(", ")}`;
 };
