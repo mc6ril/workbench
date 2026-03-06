@@ -1,4 +1,7 @@
-import type { ProjectWithRole } from "@/core/domain/schema/project.schema";
+import {
+  ProjectRole,
+  type ProjectWithRole,
+} from "@/core/domain/schema/project.schema";
 import type { Ticket, TicketFilters, TicketSort } from "@/core/domain/schema/ticket.schema";
 
 import { listProjects } from "@/core/usecases/project/listProjects";
@@ -15,9 +18,10 @@ describe("Ticket Flow Tests", () => {
   const mockProjectWithRole: ProjectWithRole = {
     id: projectId,
     name: "Test Project",
+    shortCode: "TP",
     createdAt: new Date("2024-01-01T00:00:00Z"),
     updatedAt: new Date("2024-01-01T00:00:00Z"),
-    role: "admin",
+    role: ProjectRole.ADMIN,
   };
 
   const mockTicket1: Ticket = {
@@ -189,9 +193,10 @@ describe("Ticket Flow Tests", () => {
       const differentProject: ProjectWithRole = {
         id: differentProjectId,
         name: "Different Project",
+        shortCode: "DP",
         createdAt: new Date("2024-01-02T00:00:00Z"),
         updatedAt: new Date("2024-01-02T00:00:00Z"),
-        role: "member",
+        role: ProjectRole.MEMBER,
       };
       const projects: ProjectWithRole[] = [differentProject];
       const tickets: Ticket[] = [mockTicket1];

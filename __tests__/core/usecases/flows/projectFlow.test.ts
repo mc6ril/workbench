@@ -2,8 +2,11 @@ import {
   createConstraintError,
   createNotFoundError,
 } from "@/core/domain/repositoryError";
-import type { Project } from "@/core/domain/schema/project.schema";
-import type { ProjectWithRole } from "@/core/domain/schema/project.schema";
+import {
+  type Project,
+  ProjectRole,
+  type ProjectWithRole,
+} from "@/core/domain/schema/project.schema";
 
 import { addUserToProject } from "@/core/usecases/project/addUserToProject";
 import { getProject } from "@/core/usecases/project/getProject";
@@ -18,13 +21,14 @@ describe("Project Flow Tests", () => {
   const mockProject: Project = {
     id: projectId,
     name: "Test Project",
+    shortCode: "TP",
     createdAt: new Date("2024-01-01T00:00:00Z"),
     updatedAt: new Date("2024-01-01T00:00:00Z"),
   };
 
   const mockProjectWithRole: ProjectWithRole = {
     ...mockProject,
-    role: "admin",
+    role: ProjectRole.ADMIN,
   };
 
   describe("complete project access flow: listProjects → getProject → addUserToProject", () => {
@@ -66,14 +70,14 @@ describe("Project Flow Tests", () => {
       const addedProjectResult = await addUserToProject(
         repository,
         projectId,
-        "member"
+        ProjectRole.MEMBER
       );
 
       // Assert - Step 3: User should be added to project
       expect(repository.addCurrentUserAsMember).toHaveBeenCalledTimes(1);
       expect(repository.addCurrentUserAsMember).toHaveBeenCalledWith(
         projectId,
-        "member"
+        ProjectRole.MEMBER
       );
       expect(addedProjectResult).toEqual(mockProject);
       expect(addedProjectResult.id).toBe(projectId);
