@@ -2,7 +2,7 @@ import {
   createConstraintError,
   createNotFoundError,
 } from "@/core/domain/repositoryError";
-import type { Project } from "@/core/domain/schema/project.schema";
+import { type Project,ProjectRole } from "@/core/domain/schema/project.schema";
 
 import { addUserToProject } from "@/core/usecases/project/addUserToProject";
 
@@ -15,6 +15,7 @@ describe("addUserToProject", () => {
   const mockProject: Project = {
     id: projectId,
     name: "Test Project",
+    shortCode: "TP",
     createdAt: new Date("2024-01-01T00:00:00Z"),
     updatedAt: new Date("2024-01-01T00:00:00Z"),
   };
@@ -35,7 +36,7 @@ describe("addUserToProject", () => {
     expect(repository.addCurrentUserAsMember).toHaveBeenCalledTimes(1);
     expect(repository.addCurrentUserAsMember).toHaveBeenCalledWith(
       projectId,
-      "viewer"
+      ProjectRole.VIEWER
     );
     expect(result).toEqual(mockProject);
     expect(result.id).toBe(projectId);
@@ -51,13 +52,17 @@ describe("addUserToProject", () => {
     });
 
     // Act
-    const result = await addUserToProject(repository, projectId, "member");
+    const result = await addUserToProject(
+      repository,
+      projectId,
+      ProjectRole.MEMBER
+    );
 
     // Assert
     expect(repository.addCurrentUserAsMember).toHaveBeenCalledTimes(1);
     expect(repository.addCurrentUserAsMember).toHaveBeenCalledWith(
       projectId,
-      "member"
+      ProjectRole.MEMBER
     );
     expect(result).toEqual(mockProject);
   });
@@ -72,13 +77,17 @@ describe("addUserToProject", () => {
     });
 
     // Act
-    const result = await addUserToProject(repository, projectId, "admin");
+    const result = await addUserToProject(
+      repository,
+      projectId,
+      ProjectRole.ADMIN
+    );
 
     // Assert
     expect(repository.addCurrentUserAsMember).toHaveBeenCalledTimes(1);
     expect(repository.addCurrentUserAsMember).toHaveBeenCalledWith(
       projectId,
-      "admin"
+      ProjectRole.ADMIN
     );
     expect(result).toEqual(mockProject);
   });

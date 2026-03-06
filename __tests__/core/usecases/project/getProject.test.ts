@@ -11,6 +11,7 @@ describe("getProject", () => {
   const mockProject: Project = {
     id: "123e4567-e89b-12d3-a456-426614174000",
     name: "Test Project",
+    shortCode: "TP",
     createdAt: new Date("2024-01-01T00:00:00Z"),
     updatedAt: new Date("2024-01-01T00:00:00Z"),
   };
@@ -84,6 +85,7 @@ describe("getProject", () => {
     const differentProject: Project = {
       id: differentProjectId,
       name: "Different Project",
+      shortCode: "DP",
       createdAt: new Date("2024-01-02T00:00:00Z"),
       updatedAt: new Date("2024-01-02T00:00:00Z"),
     };

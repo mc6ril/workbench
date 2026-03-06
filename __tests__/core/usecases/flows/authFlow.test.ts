@@ -1,5 +1,8 @@
 import type { AuthResult, AuthSession } from "@/core/domain/schema/auth.schema";
-import type { ProjectWithRole } from "@/core/domain/schema/project.schema";
+import {
+  ProjectRole,
+  type ProjectWithRole,
+} from "@/core/domain/schema/project.schema";
 
 import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
 import { signInUser } from "@/core/usecases/auth/signInUser";
@@ -89,9 +92,10 @@ describe("Auth Flow Tests", () => {
       {
         id: "123e4567-e89b-12d3-a456-426614174000",
         name: "Test Project",
+        shortCode: "TP",
         createdAt: new Date("2024-01-01T00:00:00Z"),
         updatedAt: new Date("2024-01-01T00:00:00Z"),
-        role: "admin",
+        role: ProjectRole.ADMIN,
       },
     ];
 

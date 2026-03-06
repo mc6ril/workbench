@@ -1,4 +1,7 @@
-import type { ProjectWithRole } from "@/core/domain/schema/project.schema";
+import {
+  ProjectRole,
+  type ProjectWithRole,
+} from "@/core/domain/schema/project.schema";
 
 import { listProjects } from "@/core/usecases/project/listProjects";
 
@@ -9,17 +12,19 @@ describe("listProjects", () => {
   const mockProjectWithRole1: ProjectWithRole = {
     id: "123e4567-e89b-12d3-a456-426614174000",
     name: "Project 1",
+    shortCode: "P1",
     createdAt: new Date("2024-01-01T00:00:00Z"),
     updatedAt: new Date("2024-01-01T00:00:00Z"),
-    role: "admin",
+    role: ProjectRole.ADMIN,
   };
 
   const mockProjectWithRole2: ProjectWithRole = {
     id: "456e7890-e89b-12d3-a456-426614174001",
     name: "Project 2",
+    shortCode: "P2",
     createdAt: new Date("2024-01-02T00:00:00Z"),
     updatedAt: new Date("2024-01-02T00:00:00Z"),
-    role: "member",
+    role: ProjectRole.MEMBER,
   };
 
   it("should list projects with user roles", async () => {
@@ -43,12 +48,12 @@ describe("listProjects", () => {
     expect(result[0]).toMatchObject({
       id: mockProjectWithRole1.id,
       name: mockProjectWithRole1.name,
-      role: "admin",
+      role: ProjectRole.ADMIN,
     });
     expect(result[1]).toMatchObject({
       id: mockProjectWithRole2.id,
       name: mockProjectWithRole2.name,
-      role: "member",
+      role: ProjectRole.MEMBER,
     });
   });
 
@@ -85,14 +90,15 @@ describe("listProjects", () => {
   it("should return projects with different roles", async () => {
     // Arrange
     const projects: ProjectWithRole[] = [
-      { ...mockProjectWithRole1, role: "admin" },
-      { ...mockProjectWithRole2, role: "member" },
+      { ...mockProjectWithRole1, role: ProjectRole.ADMIN },
+      { ...mockProjectWithRole2, role: ProjectRole.MEMBER },
       {
         id: "789e0123-e89b-12d3-a456-426614174002",
         name: "Project 3",
+        shortCode: "P3",
         createdAt: new Date("2024-01-03T00:00:00Z"),
         updatedAt: new Date("2024-01-03T00:00:00Z"),
-        role: "viewer",
+        role: ProjectRole.VIEWER,
       },
     ];
     const repository = createProjectRepositoryMock({
@@ -104,8 +110,8 @@ describe("listProjects", () => {
 
     // Assert
     expect(result).toHaveLength(3);
-    expect(result[0].role).toBe("admin");
-    expect(result[1].role).toBe("member");
-    expect(result[2].role).toBe("viewer");
+    expect(result[0].role).toBe(ProjectRole.ADMIN);
+    expect(result[1].role).toBe(ProjectRole.MEMBER);
+    expect(result[2].role).toBe(ProjectRole.VIEWER);
   });
 });
