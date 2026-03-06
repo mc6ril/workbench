@@ -68,12 +68,7 @@ const queryKeysObject = {
       ["projects", projectId, "board", "configuration"] as const,
   },
   tickets: {
-    all: () => ["tickets"] as const,
-    byProject: (projectId: string) =>
-      ["tickets", "project", projectId] as const,
     detail: (id: string) => ["tickets", id] as const,
-    byStatus: (projectId: string, status: string) =>
-      ["tickets", "project", projectId, "status", status] as const,
     assignees: (ticketId: string) => ["ticket-assignees", ticketId] as const,
     assigneesByTicketIds: (ticketIds: string[]) =>
       ["ticket-assignees", "batch", ...[...ticketIds].sort()] as const,

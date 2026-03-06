@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import type { TicketAssignee } from "@/core/domain/schema/ticket.schema";
@@ -16,13 +15,9 @@ import { queryKeys } from "@/presentation/hooks/queryKeys";
  * @returns Record keyed by ticketId
  */
 export const useTicketAssigneesByTicketIds = (ticketIds: string[]) => {
-  const stableTicketIds = useMemo(() => [...ticketIds].sort(), [ticketIds]);
-  const hasIds = stableTicketIds.length > 0;
-
   return useQuery<Record<string, TicketAssignee[]>>({
-    queryKey: queryKeys.tickets.assigneesByTicketIds(stableTicketIds),
-    queryFn: () =>
-      getTicketAssigneesByTicketIds(ticketRepository, stableTicketIds),
-    enabled: hasIds,
+    queryKey: queryKeys.tickets.assigneesByTicketIds(ticketIds),
+    queryFn: () => getTicketAssigneesByTicketIds(ticketRepository, ticketIds),
+    enabled: ticketIds.length > 0,
   });
 };
