@@ -87,9 +87,14 @@ export const createTicketRepository = (
     sort?: TicketSort
   ): Promise<Ticket[]> {
     try {
+      const assigneeIds = filters?.assigneeIds ?? [];
+      const hasAssigneeFilter = assigneeIds.length > 0;
+      const selectClause: "*" | "*,ticket_assignees!inner(user_id)" =
+        hasAssigneeFilter ? "*,ticket_assignees!inner(user_id)" : "*";
+
       let query = client
         .from("tickets")
-        .select("*")
+        .select(selectClause)
         .eq("project_id", projectId);
 
       // Apply filters if provided
@@ -126,20 +131,8 @@ export const createTicketRepository = (
         query = query.eq("priority", filters.priority);
       }
 
-      if (filters?.assigneeIds && filters.assigneeIds.length > 0) {
-        const { data: assigneeTicketIds } = await client
-          .from("ticket_assignees")
-          .select("ticket_id")
-          .in("user_id", filters.assigneeIds);
-
-        const ticketIds = (assigneeTicketIds ?? []).map(
-          (r: { ticket_id: string }) => r.ticket_id
-        );
-
-        if (ticketIds.length === 0) {
-          return [];
-        }
-        query = query.in("id", ticketIds);
+      if (hasAssigneeFilter) {
+        query = query.in("ticket_assignees.user_id", assigneeIds);
       }
 
       if (filters?.labelIds && filters.labelIds.length > 0) {
@@ -181,7 +174,12 @@ export const createTicketRepository = (
         return [];
       }
 
-      return mapTicketRowsToDomain(data as TicketRow[]);
+      const ticketRows = data as unknown as TicketRow[];
+      const uniqueTicketRows = Array.from(
+        new Map(ticketRows.map((row) => [row.id, row])).values()
+      );
+
+      return mapTicketRowsToDomain(uniqueTicketRows);
     } catch (error) {
       return handleRepositoryError(error, "Ticket");
     }
