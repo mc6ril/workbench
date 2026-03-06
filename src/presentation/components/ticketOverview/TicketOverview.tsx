@@ -101,12 +101,6 @@ const TicketOverview = ({
             spacing="xs"
             className={styles["ticket-overview__badges"]}
           >
-            {status && (
-              <Badge
-                label={status}
-                className={styles["ticket-overview__badge-status"]}
-              />
-            )}
             {priority && (
               <Badge
                 label={priority}

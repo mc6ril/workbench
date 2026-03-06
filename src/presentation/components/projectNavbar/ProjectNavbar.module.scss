@@ -54,20 +54,22 @@
   align-items: center;
   justify-content: center;
   gap: $spacing-xs;
-  height: $spacing-button-height;
-  padding: 0 $spacing-md;
+  height: auto;
+  padding: $spacing-sm $spacing-md;
   border: $border-width solid $color-border;
-  border-radius: $border-radius-button;
-  background-color: $color-secondary;
-  color: $color-text;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
+  border-radius: $border-radius-full;
+  background-color: transparent;
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-normal;
+  letter-spacing: $letter-spacing-tight;
   cursor: pointer;
   transition: $transition-background, $transition-color, $transition-border;
 
   &:hover {
-    background-color: $color-surface-subtle;
-    border-color: $color-border-subtle;
+    background-color: transparent;
+    border-color: $color-accent;
+    color: $color-accent;
   }
 
   &:focus {

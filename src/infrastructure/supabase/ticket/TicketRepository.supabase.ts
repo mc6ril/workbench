@@ -31,7 +31,8 @@ import type { TicketRepository } from "@/core/ports/ticketRepository";
  */
 export const createTicketRepository = (
   client: SupabaseClient
-): TicketRepository => ({
+): TicketRepository => {
+  const repo: TicketRepository = {
   async findById(id: string): Promise<Ticket | null> {
     try {
       const { data, error } = await client
@@ -323,32 +324,15 @@ export const createTicketRepository = (
     ticketPositions: Array<{ id: string; position: number }>
   ): Promise<Ticket[]> {
     try {
-      const updatedTickets: Ticket[] = [];
+      const { data, error } = await client.rpc("update_ticket_positions", {
+        p_positions: ticketPositions,
+      });
 
-      for (const { id, position } of ticketPositions) {
-        const { data, error } = await client
-          .from("tickets")
-          .update({ position })
-          .eq("id", id)
-          .select()
-          .single();
-
-        if (error) {
-          return handleRepositoryError(error, "Ticket", id);
-        }
-
-        if (!data) {
-          return handleRepositoryError(
-            createNotFoundError("Ticket", id),
-            "Ticket",
-            id
-          );
-        }
-
-        updatedTickets.push(mapTicketRowToDomain(data as TicketRow));
+      if (error) {
+        return handleRepositoryError(error, "Ticket");
       }
 
-      return updatedTickets;
+      return mapTicketRowsToDomain((data ?? []) as TicketRow[]);
     } catch (error) {
       return handleRepositoryError(error, "Ticket");
     }
@@ -386,57 +370,11 @@ export const createTicketRepository = (
   },
 
   async assignToEpic(ticketId: string, epicId: string): Promise<Ticket> {
-    try {
-      const { data, error } = await client
-        .from("tickets")
-        .update({ epic_id: epicId })
-        .eq("id", ticketId)
-        .select()
-        .single();
-
-      if (error) {
-        return handleRepositoryError(error, "Ticket", ticketId);
-      }
-
-      if (!data) {
-        return handleRepositoryError(
-          createNotFoundError("Ticket", ticketId),
-          "Ticket",
-          ticketId
-        );
-      }
-
-      return mapTicketRowToDomain(data as TicketRow);
-    } catch (error) {
-      return handleRepositoryError(error, "Ticket", ticketId);
-    }
+    return repo.update(ticketId, { epicId });
   },
 
   async unassignFromEpic(ticketId: string): Promise<Ticket> {
-    try {
-      const { data, error } = await client
-        .from("tickets")
-        .update({ epic_id: null })
-        .eq("id", ticketId)
-        .select()
-        .single();
-
-      if (error) {
-        return handleRepositoryError(error, "Ticket", ticketId);
-      }
-
-      if (!data) {
-        return handleRepositoryError(
-          createNotFoundError("Ticket", ticketId),
-          "Ticket",
-          ticketId
-        );
-      }
-
-      return mapTicketRowToDomain(data as TicketRow);
-    } catch (error) {
-      return handleRepositoryError(error, "Ticket", ticketId);
-    }
+    return repo.update(ticketId, { epicId: null });
   },
 
   async findByCode(
@@ -584,4 +522,6 @@ export const createTicketRepository = (
 
     return result;
   },
-});
+  };
+  return repo;
+};

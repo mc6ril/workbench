@@ -2,13 +2,13 @@
 
 import React, { useCallback, useMemo } from "react";
 
-import Badge from "@/presentation/components/ui/Badge";
+import TicketMeta from "@/presentation/components/ticketShared/TicketMeta";
 import Button from "@/presentation/components/ui/Button";
-import Checkbox from "@/presentation/components/ui/Checkbox";
 import Text from "@/presentation/components/ui/Text";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
+import { buildTicketAriaLabel } from "@/shared/utils/ticketUtils";
 
 import styles from "./TicketListItem.module.scss";
 
@@ -17,10 +17,12 @@ export type TicketListItemProps = {
   title: string;
   status?: string;
   epicName?: string | null;
+  assigneeName?: string | null;
+  assigneeAvatarUrl?: string | null;
   description?: string | null;
   isSelected?: boolean;
+  ticketCode?: string | null;
   onOpen?: (id: string) => void;
-  onToggleSelect?: (id: string) => void;
 };
 
 type Props = TicketListItemProps;
@@ -30,10 +32,12 @@ const TicketListItem = ({
   title,
   status,
   epicName,
+  assigneeName,
+  assigneeAvatarUrl,
   description,
   isSelected = false,
   onOpen,
-  onToggleSelect,
+  ticketCode,
 }: Props) => {
   const t = useTranslation("pages.backlog.ticketListItem");
 
@@ -43,12 +47,6 @@ const TicketListItem = ({
   );
   const titleId = `${baseId}-title`;
   const descriptionId = description ? `${baseId}-description` : undefined;
-
-  const handleToggleSelect = useCallback((): void => {
-    if (onToggleSelect) {
-      onToggleSelect(id);
-    }
-  }, [onToggleSelect, id]);
 
   const handleOpen = useCallback((): void => {
     if (onOpen) {
@@ -64,18 +62,18 @@ const TicketListItem = ({
     .join(" ");
 
   const itemAriaLabel = useMemo(() => {
-    const parts: string[] = [title];
-
-    if (status) {
-      parts.push(`${t("statusLabel")}: ${status}`);
-    }
-
-    if (epicName) {
-      parts.push(`${t("epicLabel")}: ${epicName}`);
-    }
-
-    return `${t("ticketAriaLabel")}: ${parts.join(", ")}`;
-  }, [t, title, status, epicName]);
+    return buildTicketAriaLabel({
+      ticketAriaLabel: t("ticketAriaLabel"),
+      title,
+      ticketCode,
+      status,
+      statusLabel: t("statusLabel"),
+      epicName,
+      epicLabel: t("epicLabel"),
+      assigneeName,
+      assigneeLabel: t("assigneeLabel"),
+    });
+  }, [t, title, ticketCode, status, epicName, assigneeName]);
 
   return (
     <li
@@ -84,17 +82,16 @@ const TicketListItem = ({
       aria-describedby={descriptionId}
       aria-label={itemAriaLabel}
     >
-      <div className={styles["ticket-list-item__selection"]}>
-        {onToggleSelect && (
-          <Checkbox
-            label={t("selectTicketLabel")}
-            checked={isSelected}
-            onChange={handleToggleSelect}
-            aria-label={t("selectTicketLabel")}
-          />
-        )}
-      </div>
       <div className={styles["ticket-list-item__content"]}>
+        <TicketMeta
+          className={styles["ticket-list-item__meta"]}
+          assigneeClassName={styles["ticket-list-item__assignee"]}
+          ticketCodeClassName={styles["ticket-list-item__id"]}
+          ticketCode={ticketCode}
+          assigneeName={assigneeName}
+          assigneeAvatarUrl={assigneeAvatarUrl}
+          assigneeLabel={t("assigneeLabel")}
+        />
         <div className={styles["ticket-list-item__header"]}>
           <Text
             id={titleId}
@@ -104,33 +101,17 @@ const TicketListItem = ({
             {title}
           </Text>
         </div>
-        <div className={styles["ticket-list-item__meta"]}>
+        <div className={styles["ticket-list-item__header"]}>
           {epicName && (
             <Text
               as="span"
               variant="caption"
-              className={styles["ticket-list-item__epic"]}
+              className={styles["ticket-list-item__title"]}
             >
               {epicName}
             </Text>
           )}
-          {status && (
-            <Badge
-              label={status}
-              className={styles["ticket-list-item__status"]}
-            />
-          )}
         </div>
-        {description && (
-          <Text
-            id={descriptionId}
-            as="p"
-            variant="body"
-            className={styles["ticket-list-item__description"]}
-          >
-            {description}
-          </Text>
-        )}
       </div>
       <div className={styles["ticket-list-item__actions"]}>
         {onOpen && (

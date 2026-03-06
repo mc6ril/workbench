@@ -89,13 +89,13 @@ export const buildProjectRoute = (projectId: string, view: string): string => {
  *
  * @param projectId - The project UUID
  * @param ticketId - The ticket UUID
- * @returns The ticket detail route pathname
+ * @returns The canonical ticket detail route pathname (board modal)
  */
 export const buildTicketDetailRoute = (
   projectId: string,
   ticketId: string
 ): string => {
-  return `/${projectId}/tickets/${ticketId}`;
+  return `/${projectId}/board?ticket=${ticketId}`;
 };
 
 /**

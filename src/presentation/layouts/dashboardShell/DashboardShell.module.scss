@@ -5,15 +5,15 @@
 
 .dashboard-shell {
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: $layout-dashboard-sidebar-height $layout-dashboard-content-min-height;
+  grid-template-rows: $layout-dashboard-sidebar-height minmax(0, 1fr);
   background-color: $color-background;
 
   @media (min-width: $breakpoint-md) {
     grid-template-columns: $layout-dashboard-sidebar-width 1fr;
-    grid-template-rows: 1fr;
+    grid-template-rows: minmax(0, 1fr);
   }
 }
 
@@ -32,10 +32,11 @@
 
 .dashboard-shell__content {
   width: 100%;
-  min-height: $layout-dashboard-content-min-height;
+  min-height: 0;
+  height: 100%;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: $layout-dashboard-header-height $layout-dashboard-breadcrumbs-height 1fr $layout-dashboard-footer-height;
+  grid-template-rows: $layout-dashboard-header-height $layout-dashboard-breadcrumbs-height minmax(0, 1fr) $layout-dashboard-footer-height;
 }
 
 .dashboard-shell__header {
@@ -57,8 +58,9 @@
 
 .dashboard-shell__main {
   width: 100%;
-  min-height: $layout-dashboard-main-min-height;
+  min-height: 0;
   padding: $layout-dashboard-main-padding;
+  overflow-y: auto;
 }
 
 .dashboard-shell__footer {

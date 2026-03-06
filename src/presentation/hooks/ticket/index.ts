@@ -10,5 +10,6 @@ export {
   useTicketAssignees,
   useUnassignTicket,
 } from "./useTicketAssignees";
+export { useTicketAssigneesByTicketIds } from "./useTicketAssigneesByTicketIds";
 export { useTickets } from "./useTickets";
 export { useUpdateTicket } from "./useUpdateTicket";

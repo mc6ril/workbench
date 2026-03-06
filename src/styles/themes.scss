@@ -49,6 +49,13 @@
   --color-accent-tan: #b8a89a;
   --color-accent-subtle: rgba(196, 120, 138, 0.06);
 
+  // Ticket action buttons (publish / save / edit / delete)
+  --color-action-publish-bg: #6b3a46;
+  --color-action-publish-hover: #8b4d5c;
+  --color-action-publish-text: #f8f4ef;
+  --color-action-save-gradient-start: #c4788a;
+  --color-action-save-gradient-end: #8b4d5c;
+
   // Highlight box gradient
   --color-highlight-gradient-start: #f5e6df;
   --color-highlight-gradient-end: #ede0d8;
@@ -165,6 +172,13 @@
   --color-accent-peach: #e5b69a;
   --color-accent-tan: #d4c4b8;
   --color-accent-subtle: rgba(216, 154, 168, 0.12);
+
+  // Ticket action buttons (publish / save / edit / delete)
+  --color-action-publish-bg: #d89aa8;
+  --color-action-publish-hover: #e5adb9;
+  --color-action-publish-text: #2a1f1a;
+  --color-action-save-gradient-start: #e5adb9;
+  --color-action-save-gradient-end: #b5798a;
 
   // Highlight box gradient — Golden glow on velvet
   --color-highlight-gradient-start: #4a3640;

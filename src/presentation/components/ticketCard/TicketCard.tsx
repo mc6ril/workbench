@@ -2,24 +2,24 @@
 
 import React, { useCallback, useMemo } from "react";
 
-import Badge from "@/presentation/components/ui/Badge";
+import TicketMeta from "@/presentation/components/ticketShared/TicketMeta";
 import Button from "@/presentation/components/ui/Button";
-import Card from "@/presentation/components/ui/Card";
-import Stack from "@/presentation/components/ui/Stack";
-import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
+import { buildTicketAriaLabel } from "@/shared/utils/ticketUtils";
 
 import styles from "./TicketCard.module.scss";
 
 export type TicketCardProps = {
   id: string;
   title: string;
+  ticketCode?: string | null;
   status?: string;
   epicName?: string | null;
   assigneeName?: string | null;
+  assigneeAvatarUrl?: string | null;
   priority?: string | null;
   storyPoints?: number | null;
   onEdit?: (id: string) => void;
@@ -30,9 +30,10 @@ type Props = TicketCardProps;
 const TicketCard = ({
   id,
   title,
-  status,
+  ticketCode,
   epicName,
   assigneeName,
+  assigneeAvatarUrl,
   priority,
   storyPoints,
   onEdit,
@@ -42,7 +43,7 @@ const TicketCard = ({
   const baseId = useMemo(() => getAccessibilityId(`board-ticket-${id}`), [id]);
 
   const titleId = `${baseId}-title`;
-  const descriptionId = `${baseId}-meta`;
+  const descriptionId = `${baseId}-description`;
 
   const handleEdit = useCallback((): void => {
     if (onEdit) {
@@ -51,110 +52,59 @@ const TicketCard = ({
   }, [onEdit, id]);
 
   const cardAriaLabel = useMemo(() => {
-    const parts: string[] = [title];
-
-    if (status) {
-      parts.push(`${t("statusLabel")}: ${status}`);
-    }
-
-    if (epicName) {
-      parts.push(`${t("epicLabel")}: ${epicName}`);
-    }
-
-    if (assigneeName) {
-      parts.push(`${t("assigneeLabel")}: ${assigneeName}`);
-    }
-
-    if (priority) {
-      parts.push(`${t("priorityLabel")}: ${priority}`);
-    }
-
-    if (typeof storyPoints === "number") {
-      parts.push(t("storyPointsLabel", { count: storyPoints }));
-    }
-
-    return `${t("ticketAriaLabel")}: ${parts.join(", ")}`;
-  }, [t, title, status, epicName, assigneeName, priority, storyPoints]);
+    return buildTicketAriaLabel({
+      ticketAriaLabel: t("ticketAriaLabel"),
+      title,
+      ticketCode,
+      epicName,
+      epicLabel: t("epicLabel"),
+      assigneeName,
+      assigneeLabel: t("assigneeLabel"),
+      priority,
+      priorityLabel: t("priorityLabel"),
+      storyPointsLabel:
+        typeof storyPoints === "number"
+          ? t("storyPointsLabel", { count: storyPoints })
+          : undefined,
+    });
+  }, [t, title, ticketCode, epicName, assigneeName, priority, storyPoints]);
 
   return (
-    <div
+    <article
+      className={styles["ticket-card__row"]}
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       aria-label={cardAriaLabel}
     >
-      <Card className={styles["ticket-card__card"]}>
-        <div className={styles["ticket-card__header"]}>
-          <Title
-            id={titleId}
-            variant="h3"
-            className={styles["ticket-card__title"]}
-          >
-            {title}
-          </Title>
-          <Stack
-            as="div"
-            direction="horizontal"
-            spacing="xs"
-            className={styles["ticket-card__badges"]}
-          >
-            {status && (
-              <Badge label={status} className={styles["ticket-card__status"]} />
-            )}
-            {priority && (
-              <Badge
-                label={priority}
-                className={styles["ticket-card__priority"]}
-              />
-            )}
-          </Stack>
-        </div>
-        <div
-          id={descriptionId}
+      <div className={styles["ticket-card__main"]}>
+        <TicketMeta
           className={styles["ticket-card__meta"]}
-          aria-hidden="true"
+          assigneeClassName={styles["ticket-card__assignee"]}
+          ticketCodeClassName={styles["ticket-card__id"]}
+          ticketCode={ticketCode}
+          assigneeName={assigneeName}
+          assigneeAvatarUrl={assigneeAvatarUrl}
+          assigneeLabel={t("assigneeLabel")}
+        />
+        <Title
+          id={titleId}
+          variant="h3"
+          className={styles["ticket-card__title"]}
         >
-          <Stack as="div" direction="vertical" spacing="xs">
-            {epicName && (
-              <Text
-                as="span"
-                variant="caption"
-                className={styles["ticket-card__epic"]}
-              >
-                {epicName}
-              </Text>
-            )}
-            {assigneeName && (
-              <Text
-                as="span"
-                variant="caption"
-                className={styles["ticket-card__assignee"]}
-              >
-                {assigneeName}
-              </Text>
-            )}
-            {typeof storyPoints === "number" && (
-              <Text
-                as="span"
-                variant="caption"
-                className={styles["ticket-card__story-points"]}
-              >
-                {storyPoints}
-              </Text>
-            )}
-          </Stack>
-        </div>
-        <div className={styles["ticket-card__actions"]}>
-          {onEdit && (
-            <Button
-              label={t("editTicketLabel")}
-              onClick={handleEdit}
-              variant="secondary"
-            />
-          )}
-        </div>
-      </Card>
-    </div>
+          {title}
+        </Title>
+      </div>
+      <div className={styles["ticket-card__actions"]}>
+        {onEdit && (
+          <Button
+            label={t("openTicketLabel")}
+            onClick={handleEdit}
+            variant="edit"
+          />
+        )}
+      </div>
+    </article>
   );
 };
 
-export default TicketCard;
+export default React.memo(TicketCard);

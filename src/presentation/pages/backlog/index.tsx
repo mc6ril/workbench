@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
@@ -12,12 +13,22 @@ import Modal from "@/presentation/components/ui/Modal";
 import Text from "@/presentation/components/ui/Text";
 import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfiguration";
 import { useEpics } from "@/presentation/hooks/epic/useEpics";
+import { useProject } from "@/presentation/hooks/project/useProject";
 import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
 import { useCreateTicket } from "@/presentation/hooks/ticket/useCreateTicket";
+import { useTicketAssigneesByTicketIds } from "@/presentation/hooks/ticket/useTicketAssigneesByTicketIds";
 import { useTickets } from "@/presentation/hooks/ticket/useTickets";
 
 import { useTranslation } from "@/shared/i18n";
-import { buildTicketDetailRoute } from "@/shared/utils/routes";
+import { buildTicketCode } from "@/shared/utils/ticketUtils";
+
+const TicketDetailView = dynamic(
+  () => import("@/presentation/components/ticketDetailView/TicketDetailView"),
+  {
+    ssr: false,
+    loading: () => <Loader variant="inline" />,
+  }
+);
 
 type Props = {
   projectId: string;
@@ -29,6 +40,7 @@ const BacklogPage = ({ projectId }: Props) => {
   const searchParams = useSearchParams();
   const tBacklog = useTranslation("pages.backlog");
   const tCreateForm = useTranslation("pages.backlog.createTicketForm");
+  const tTicket = useTranslation("pages.ticketDetail.page");
   const {
     data: tickets = [],
     isLoading,
@@ -37,22 +49,69 @@ const BacklogPage = ({ projectId }: Props) => {
     parentId: null,
   });
   const { data: epics = [] } = useEpics(projectId);
+  const { data: project } = useProject(projectId);
   const { data: boardConfiguration, isLoading: isBoardConfigurationLoading } =
     useBoardConfiguration(projectId);
   const { hasAccess: hasEpicsAccess } = useFeatureAccess(PlanFeature.EPICS);
   const createTicketMutation = useCreateTicket();
+  const ticketIds = useMemo(() => tickets.map((ticket) => ticket.id), [tickets]);
+  const { data: assigneesByTicketId = {} } =
+    useTicketAssigneesByTicketIds(ticketIds);
 
   const ticketViewModels = useMemo(() => {
     const epicMap = new Map(epics.map((epic) => [epic.id, epic.name]));
     return tickets.map((ticket) => ({
+      assigneeAvatarUrl: assigneesByTicketId[ticket.id]?.[0]?.avatarUrl ?? null,
+      assigneeName: assigneesByTicketId[ticket.id]?.[0]?.displayName ?? null,
       id: ticket.id,
       title: ticket.title,
+      ticketCode: buildTicketCode(project?.shortCode, ticket.codeNumber),
       description: ticket.description ?? null,
       status: ticket.status,
       epicName: ticket.epicId ? (epicMap.get(ticket.epicId) ?? null) : null,
     }));
-  }, [epics, tickets]);
+  }, [assigneesByTicketId, epics, tickets, project?.shortCode]);
+
   const isCreateTicketModalOpen = searchParams.get("createTicket") === "1";
+  const selectedTicketId = searchParams.get("ticket");
+
+  const updateSearchParam = useCallback(
+    (key: string, value: string | null) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) {
+        params.set(key, value);
+      } else {
+        params.delete(key);
+      }
+      const query = params.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, {
+        scroll: false,
+      });
+    },
+    [pathname, router, searchParams]
+  );
+
+  const closeCreateTicketModal = useCallback(() => {
+    updateSearchParam("createTicket", null);
+  }, [updateSearchParam]);
+
+  const closeTicketDetailModal = useCallback(() => {
+    updateSearchParam("ticket", null);
+  }, [updateSearchParam]);
+
+  const selectedTicket = useMemo(
+    () => tickets.find((t) => t.id === selectedTicketId) ?? null,
+    [tickets, selectedTicketId]
+  );
+
+  const ticketModalTitle = useMemo(() => {
+    const baseTitle = tTicket("title");
+    if (!selectedTicket) {
+      return baseTitle;
+    }
+    const ticketCode = tTicket("ticketCode", { code: selectedTicket.codeNumber });
+    return `${ticketCode} ${selectedTicket.title}`;
+  }, [selectedTicket, tTicket]);
 
   const statusOptions = useMemo(() => {
     const columns = boardConfiguration?.columns ?? [];
@@ -68,15 +127,6 @@ const BacklogPage = ({ projectId }: Props) => {
       label: epic.name,
     }));
   }, [epics]);
-
-  const closeCreateTicketModal = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete("createTicket");
-    const query = params.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname, {
-      scroll: false,
-    });
-  };
 
   const createTicketErrorMessage =
     createTicketMutation.error instanceof Error
@@ -94,9 +144,24 @@ const BacklogPage = ({ projectId }: Props) => {
         errorMessage={error?.message}
         isEmpty={ticketViewModels.length === 0}
         onItemOpen={(ticketId) => {
-          router.push(buildTicketDetailRoute(projectId, ticketId));
+          updateSearchParam("ticket", ticketId);
         }}
       />
+
+      <Modal
+        isOpen={Boolean(selectedTicketId)}
+        onClose={closeTicketDetailModal}
+        title={ticketModalTitle}
+        size="full"
+      >
+        {selectedTicketId && (
+          <TicketDetailView
+            key={selectedTicketId}
+            projectId={projectId}
+            ticketId={selectedTicketId}
+          />
+        )}
+      </Modal>
 
       <Modal
         isOpen={isCreateTicketModalOpen}

@@ -16,12 +16,7 @@ $font-family-sans:
   Arial,
   sans-serif;
 $font-family-mono:
-  ui-monospace,
-  SFMono-Regular,
-  "SF Mono",
-  Menlo,
-  Consolas,
-  "Liberation Mono",
+  ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
   monospace;
 
 // ============================================================================
@@ -99,9 +94,10 @@ $letter-spacing-wider: 3px;
 
 @mixin typography-caption {
   font-family: $font-family-sans;
-  font-size: $font-size-xs;
+  font-size: $font-size-2xs;
   line-height: $line-height-normal;
   font-weight: $font-weight-medium;
+  letter-spacing: $letter-spacing-wide;
 }
 
 @mixin typography-heading-serif {

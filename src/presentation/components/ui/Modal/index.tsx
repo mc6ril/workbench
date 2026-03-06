@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
@@ -60,6 +60,11 @@ const Modal = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const t = useTranslation("common");
+  const isHydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   const modalId = getAccessibilityId("modal");
   const titleId = getAccessibilityId("modal-title");
@@ -173,7 +178,9 @@ const Modal = ({
     onClose();
   }, [onClose]);
 
-  if (!isOpen) {
+  const portalTarget = isHydrated ? document.body : null;
+
+  if (!isOpen || portalTarget == null) {
     return null;
   }
 
@@ -213,7 +220,7 @@ const Modal = ({
         {footer && <div className={styles["modal__footer"]}>{footer}</div>}
       </div>
     </div>,
-    document.body
+    portalTarget
   );
 
   return modalContent;

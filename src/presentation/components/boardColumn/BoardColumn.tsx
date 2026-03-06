@@ -1,13 +1,18 @@
 "use client";
 
 import React, { useMemo } from "react";
+import { useDroppable } from "@dnd-kit/core";
+import {
+  defaultAnimateLayoutChanges,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import TicketCard, {
   TicketCardProps,
 } from "@/presentation/components/ticketCard/TicketCard";
-import DraggableItem from "@/presentation/components/ui/DraggableItem";
-import DroppableZone from "@/presentation/components/ui/DroppableZone";
-import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
@@ -19,18 +24,69 @@ export type BoardColumnProps = {
   id: string;
   title: string;
   tickets: TicketCardProps[];
+  isDragging?: boolean;
   onTicketClick?: (ticketId: string) => void;
   className?: string;
+};
+
+type SortableTicketItemProps = {
+  ticket: TicketCardProps;
+  onTicketClick?: (ticketId: string) => void;
+};
+
+const SortableTicketItem = ({ ticket, onTicketClick }: SortableTicketItemProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: ticket.id,
+    animateLayoutChanges: (args) => defaultAnimateLayoutChanges(args),
+    transition: {
+      duration: 160,
+      easing: "cubic-bezier(0.25, 1, 0.5, 1)",
+    },
+  });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      className={styles["board-column__list-item"]}
+      data-dragging={isDragging}
+    >
+      <div
+        {...attributes}
+        {...listeners}
+        className={styles["board-column__sortable-card"]}
+      >
+        <TicketCard {...ticket} onEdit={onTicketClick} />
+      </div>
+    </li>
+  );
 };
 
 const BoardColumn = ({
   id,
   title,
   tickets,
+  isDragging,
   onTicketClick,
   className,
 }: BoardColumnProps) => {
   const t = useTranslation("pages.board.column");
+  const droppableId = `column:${id}`;
+  const { setNodeRef, isOver } = useDroppable({
+    id: droppableId,
+  });
 
   const baseId = useMemo(() => getAccessibilityId(`board-column-${id}`), [id]);
 
@@ -59,47 +115,29 @@ const BoardColumn = ({
         </Title>
       </header>
       <ul
+        ref={setNodeRef}
         id={listId}
         className={styles["board-column__list"]}
         role="list"
         aria-labelledby={headerId}
+        data-over={isOver}
+        data-dragging={isDragging}
       >
-        {tickets.map((ticket) => {
-          const draggableId = `drag:${id}:${ticket.id}`;
-          const droppableId = `drop:${id}:${ticket.id}`;
-
-          return (
-            <li key={ticket.id} className={styles["board-column__list-item"]}>
-              <DroppableZone
-                id={droppableId}
-                ariaLabel={t("dropZoneAriaLabel", { title })}
-              >
-                <DraggableItem
-                  id={draggableId}
-                  onClick={
-                    onTicketClick ? () => onTicketClick(ticket.id) : undefined
-                  }
-                >
-                  <TicketCard {...ticket} />
-                </DraggableItem>
-              </DroppableZone>
-            </li>
-          );
-        })}
-        {tickets.length === 0 && (
-          <li className={styles["board-column__list-item"]}>
-            <DroppableZone
-              id={`drop:${id}:_empty`}
-              ariaLabel={t("emptyDropZoneAriaLabel", { title })}
-            >
-              <div className={styles["board-column__empty"]}>
-                <Text as="p" variant="caption">
-                  {t("emptyColumnPlaceholder")}
-                </Text>
-              </div>
-            </DroppableZone>
-          </li>
-        )}
+        <SortableContext
+          items={tickets.map((ticket) => ticket.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {tickets.map((ticket) => {
+            return (
+              <SortableTicketItem
+                key={ticket.id}
+                ticket={ticket}
+                onTicketClick={onTicketClick}
+              />
+            );
+          })}
+        </SortableContext>
+        {tickets.length === 0 && <li className={styles["board-column__list-item"]} />}
       </ul>
     </section>
   );
