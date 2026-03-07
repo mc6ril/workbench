@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import AppFooter from "@/presentation/components/appFooter/AppFooter";
@@ -30,6 +30,13 @@ const ProjectShell = ({ projectId, children }: Props) => {
 
   const search = useFilterStore((state) => state.search);
   const setSearch = useFilterStore((state) => state.setSearch);
+  const resetSearch = useFilterStore((state) => state.resetSearch);
+  const resetFilters = useFilterStore((state) => state.resetFilters);
+
+  useEffect(() => {
+    resetSearch();
+    resetFilters();
+  }, [projectId, resetFilters, resetSearch]);
 
   const handleFilterClick = useCallback(() => {
     // TODO: Open filter panel / modal
