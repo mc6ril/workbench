@@ -31,3 +31,6 @@ export {
   API_MESSAGES_COMMON,
   API_MESSAGES_STRIPE,
 } from "./apiMessages";
+
+// Re-export board UI constants
+export { BOARD_COLUMN_DROP_PREFIX } from "./board";

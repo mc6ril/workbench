@@ -10,31 +10,26 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import TicketCard, {
-  TicketCardProps,
-} from "@/presentation/components/ticketCard/TicketCard";
+import type { BoardColumnProps } from "@/presentation/components/board/boardColumn/BoardColumn.types";
+import TicketCard from "@/presentation/components/ticketCard/TicketCard";
 import Title from "@/presentation/components/ui/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
+import { BOARD_COLUMN_DROP_PREFIX } from "@/shared/constants/board";
 import { useTranslation } from "@/shared/i18n";
+import type { BoardTicketViewModel } from "@/shared/types/board";
 
 import styles from "./BoardColumn.module.scss";
 
-export type BoardColumnProps = {
-  id: string;
-  title: string;
-  tickets: TicketCardProps[];
-  isDragging?: boolean;
-  onTicketClick?: (ticketId: string) => void;
-  className?: string;
-};
-
 type SortableTicketItemProps = {
-  ticket: TicketCardProps;
+  ticket: BoardTicketViewModel;
   onTicketClick?: (ticketId: string) => void;
 };
 
-const SortableTicketItem = ({ ticket, onTicketClick }: SortableTicketItemProps) => {
+const SortableTicketItem = ({
+  ticket,
+  onTicketClick,
+}: SortableTicketItemProps) => {
   const {
     attributes,
     listeners,
@@ -83,7 +78,7 @@ const BoardColumn = ({
   className,
 }: BoardColumnProps) => {
   const t = useTranslation("pages.board.column");
-  const droppableId = `column:${id}`;
+  const droppableId = `${BOARD_COLUMN_DROP_PREFIX}${id}`;
   const { setNodeRef, isOver } = useDroppable({
     id: droppableId,
   });
@@ -137,7 +132,9 @@ const BoardColumn = ({
             );
           })}
         </SortableContext>
-        {tickets.length === 0 && <li className={styles["board-column__list-item"]} />}
+        {tickets.length === 0 && (
+          <li className={styles["board-column__list-item"]} />
+        )}
       </ul>
     </section>
   );

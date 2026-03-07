@@ -2,6 +2,7 @@
 
 import React from "react";
 
+import { BoardFiltersProps } from "@/presentation/components/board/boardFilters/BoardFilters.types";
 import Button from "@/presentation/components/ui/Button";
 import Input from "@/presentation/components/ui/Input";
 import Select from "@/presentation/components/ui/Select";
@@ -12,27 +13,6 @@ import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./BoardFilters.module.scss";
-
-type Option = {
-  value: string;
-  label: string;
-};
-
-export type BoardFiltersProps = {
-  search: string;
-  status?: string;
-  epicId?: string;
-  assigneeId?: string;
-  statusOptions: Option[];
-  epicOptions: Option[];
-  assigneeOptions: Option[];
-  onSearchChange: (value: string) => void;
-  onStatusChange: (value?: string) => void;
-  onEpicChange: (value?: string) => void;
-  onAssigneeChange: (value?: string) => void;
-  onResetFilters?: () => void;
-  className?: string;
-};
 
 const BoardFilters = ({
   search,

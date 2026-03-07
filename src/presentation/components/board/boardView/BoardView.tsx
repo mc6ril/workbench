@@ -2,9 +2,8 @@
 
 import React, { useMemo } from "react";
 
-import BoardColumn, {
-  BoardColumnProps,
-} from "@/presentation/components/boardColumn/BoardColumn";
+import BoardColumn from "@/presentation/components/board/boardColumn/BoardColumn";
+import type { BoardViewProps } from "@/presentation/components/board/boardView/BoardView.types";
 import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
 
@@ -12,28 +11,6 @@ import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./BoardView.module.scss";
-
-export type BoardColumnConfig = {
-  id: string;
-  title: string;
-  status?: string;
-  isVisible?: boolean;
-};
-
-export type BoardViewProps = {
-  columns: BoardColumnConfig[];
-  renderColumn: (config: BoardColumnConfig) => Omit<
-    BoardColumnProps,
-    "id" | "title"
-  > & {
-    tickets: BoardColumnProps["tickets"];
-  };
-  isLoading?: boolean;
-  isEmpty?: boolean;
-  isDragging?: boolean;
-  errorMessage?: string;
-  className?: string;
-};
 
 const BoardView = ({
   columns,
