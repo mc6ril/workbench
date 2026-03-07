@@ -22,7 +22,7 @@ import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
 import type { Ticket } from "@/core/domain/schema/ticket.schema";
 
-import { useMoveTicket } from "@/presentation/hooks/ticket/useMoveTicket";
+import { useMoveAndReorderTicket } from "@/presentation/hooks/ticket/useMoveAndReorderTicket";
 import { useReorderTicket } from "@/presentation/hooks/ticket/useReorderTicket";
 
 import { BOARD_COLUMN_DROP_PREFIX } from "@/shared/constants/board";
@@ -58,7 +58,9 @@ const buildBoardTicketIds = (
 
   const orderedTickets = [...tickets].sort((a, b) => a.position - b.position);
   for (const ticket of orderedTickets) {
-    const targetColumn = columns.find((column) => column.status === ticket.status);
+    const targetColumn = columns.find(
+      (column) => column.status === ticket.status
+    );
     if (targetColumn) {
       boardTicketIds[targetColumn.id].push(ticket.id);
     }
@@ -192,7 +194,7 @@ export const useBoardDnD = ({
   ticketViewModelById,
   columnById,
 }: UseBoardDnDInput) => {
-  const moveTicketMutation = useMoveTicket();
+  const moveAndReorderTicketMutation = useMoveAndReorderTicket();
   const reorderTicketMutation = useReorderTicket();
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
   const [draftBoardTicketIds, setDraftBoardTicketIds] =
@@ -421,13 +423,6 @@ export const useBoardDnD = ({
           return;
         }
 
-        await moveTicketMutation.mutateAsync({
-          projectId,
-          ticketId: activeId,
-          status: finalTargetColumn.status,
-          position: movedTicketPosition,
-        });
-
         const updatedPositions = [
           ...sourceIds.map((id, position) => ({
             id,
@@ -437,14 +432,17 @@ export const useBoardDnD = ({
             id,
             position,
           })),
-        ];
+        ].filter((ticketPosition) => ticketPosition.id !== activeId);
 
-        await reorderTicketMutation.mutateAsync({
+        await moveAndReorderTicketMutation.mutateAsync({
           projectId,
+          ticketId: activeId,
+          status: finalTargetColumn.status,
+          position: movedTicketPosition,
           ticketPositions: updatedPositions,
         });
       } catch {
-        // no-op: optimistic state is reverted in finally.
+        // Optimistic state is reverted by mutation's onError.
       } finally {
         setDraftBoardTicketIds(null);
       }
@@ -454,7 +452,7 @@ export const useBoardDnD = ({
       boardTicketLocationIndex,
       columnById,
       draftBoardTicketIds,
-      moveTicketMutation,
+      moveAndReorderTicketMutation,
       reorderTicketMutation,
       projectId,
     ]

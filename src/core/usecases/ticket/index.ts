@@ -7,6 +7,7 @@ export { getTicketAssigneesByTicketIds } from "./getTicketAssigneesByTicketIds";
 export { getTicketByCode } from "./getTicketByCode";
 export { getTicketDetail } from "./getTicketDetail";
 export { listTickets } from "./listTickets";
+export { moveAndReorderTicket } from "./moveAndReorderTicket";
 export { moveTicket } from "./moveTicket";
 export { reorderTicket } from "./reorderTicket";
 export { unassignTicket } from "./unassignTicket";

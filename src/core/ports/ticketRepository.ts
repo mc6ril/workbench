@@ -117,6 +117,22 @@ export type TicketRepository = {
   moveTicket(id: string, status: string, position: number): Promise<Ticket>;
 
   /**
+   * Atomically move a ticket to a new status/position and reorder affected tickets.
+   * Designed for cross-column drag-and-drop to avoid partial updates.
+   * @param input - Move target + affected ticket positions
+   * @returns Array of updated tickets
+   * @throws NotFoundError if moved ticket not found
+   * @throws ConstraintError if constraint violation occurs
+   * @throws DatabaseError if database operation fails
+   */
+  moveAndReorderTicket(input: {
+    ticketId: string;
+    status: string;
+    position: number;
+    ticketPositions: Array<{ id: string; position: number }>;
+  }): Promise<Ticket[]>;
+
+  /**
    * Assign a ticket to an epic.
    * Updates the ticket's epicId field to reference the epic.
    * @param ticketId - Ticket ID to assign

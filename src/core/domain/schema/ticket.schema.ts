@@ -107,6 +107,26 @@ export const ReorderTicketInputSchema = z.object({
 export type ReorderTicketInput = z.infer<typeof ReorderTicketInputSchema>;
 
 /**
+ * Input for atomically moving and reordering tickets.
+ * Used for cross-column drag-and-drop operations.
+ */
+export const MoveAndReorderTicketInputSchema = z.object({
+  ticketId: z.string().uuid("Ticket ID must be a valid UUID"),
+  status: z.string().min(1, "Status must not be empty"),
+  position: z.number().int().nonnegative("Position must be non-negative"),
+  ticketPositions: z.array(
+    z.object({
+      id: z.string().uuid(),
+      position: z.number().int().nonnegative(),
+    })
+  ),
+});
+
+export type MoveAndReorderTicketInput = z.infer<
+  typeof MoveAndReorderTicketInputSchema
+>;
+
+/**
  * Filters for querying tickets.
  * Used for filtering support in ticket queries.
  */
