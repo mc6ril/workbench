@@ -2,7 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 
 import { listEpics } from "@/core/usecases/epic/listEpics";
 
-import { epicRepository } from "@/infrastructure/supabase/repositories";
+import {
+  boardRepository,
+  epicRepository,
+} from "@/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 
@@ -15,7 +18,7 @@ export const useEpics = (
 ) => {
   return useQuery({
     queryKey: queryKeys.projects.epicsList(projectId),
-    queryFn: () => listEpics(epicRepository, projectId),
+    queryFn: () => listEpics(epicRepository, boardRepository, projectId),
     enabled: !!projectId && (options?.enabled ?? true),
   });
 };

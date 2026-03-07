@@ -1,7 +1,10 @@
+import type { ColumnWorkflowState } from "@/core/domain/schema/board.schema";
+
 export type BoardColumnConfig = {
   id: string;
   title: string;
   status?: string;
+  state: ColumnWorkflowState;
   isVisible?: boolean;
 };
 

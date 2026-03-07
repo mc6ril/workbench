@@ -54,6 +54,12 @@ type Props = {
   ticketId: string;
 };
 
+type StatusOption = {
+  value: string;
+  label: string;
+  state: "todo" | "in_progress" | "done";
+};
+
 const PRIORITY_VALUES: TicketPriority[] = [
   "highest",
   "high",
@@ -102,11 +108,12 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
   const [editingCommentContent, setEditingCommentContent] = useState("");
   const [isSubtaskFormOpen, setIsSubtaskFormOpen] = useState(false);
 
-  const statusOptions = useMemo(() => {
+  const statusOptions = useMemo<StatusOption[]>(() => {
     const columns = boardConfiguration?.columns ?? [];
     return columns.map((column) => ({
       value: column.status,
       label: column.name,
+      state: column.state,
     }));
   }, [boardConfiguration?.columns]);
 
@@ -251,8 +258,8 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
         return;
       }
 
-      const doneStatus = statusOptions.find((option) =>
-        option.value.toLowerCase().includes("done")
+      const doneStatus = statusOptions.find(
+        (option) => option.state === "done"
       )?.value;
       const defaultStatus = statusOptions[0]?.value ?? subtask.status;
 
@@ -273,6 +280,13 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     createSubtaskMutation.error instanceof Error
       ? createSubtaskMutation.error.message
       : undefined;
+  const doneStatuses = useMemo(() => {
+    return new Set(
+      statusOptions
+        .filter((option) => option.state === "done")
+        .map((option) => option.value)
+    );
+  }, [statusOptions]);
 
   if (isLoading) {
     return <Loader variant="full-page" />;
@@ -513,7 +527,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
           subtasks={subtasks.map((subtask) => ({
             id: subtask.id,
             title: subtask.title,
-            isCompleted: subtask.status.toLowerCase().includes("done"),
+            isCompleted: doneStatuses.has(subtask.status),
           }))}
           onToggleCompleted={handleToggleSubtaskCompleted}
           onDelete={(subtaskId) => {

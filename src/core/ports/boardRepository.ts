@@ -64,17 +64,17 @@ export type BoardRepository = {
 
   /**
    * Create a new column.
-   * Note: Business rules should validate column ordering and status uniqueness within the board.
+   * Note: Business rules should validate column ordering and terminal-state presence within the board.
    * @param input - Column creation data
    * @returns Created column
-   * @throws ConstraintError if constraint violation occurs (e.g., duplicate status or position)
+   * @throws ConstraintError if constraint violation occurs (e.g., duplicate position)
    * @throws DatabaseError if database operation fails
    */
   createColumn(input: CreateColumnInput): Promise<Column>;
 
   /**
    * Update an existing column.
-   * Note: Business rules should validate column ordering and status uniqueness when updating position or status.
+   * Note: Business rules should validate column ordering and terminal-state presence when updating configuration.
    * @param id - Column ID
    * @param input - Column update data
    * @returns Updated column

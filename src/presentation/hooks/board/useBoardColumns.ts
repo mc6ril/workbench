@@ -9,6 +9,7 @@ type BoardConfigurationLike = {
     id: string;
     name: string;
     status?: string;
+    state?: "todo" | "in_progress" | "done";
     visible?: boolean;
   }[];
 } | null;
@@ -20,6 +21,7 @@ export const useBoardColumns = (boardConfiguration?: BoardConfigurationLike) => 
         id: column.id,
         title: column.name,
         status: column.status,
+        state: column.state ?? "todo",
         isVisible: column.visible,
       })) ?? []
     );

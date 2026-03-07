@@ -180,6 +180,7 @@ export const createBoardRepository = (
           board_id: input.boardId,
           name: input.name,
           status: input.status,
+          state: input.state,
           position: input.position ?? 0,
           visible: input.visible ?? true,
         })
@@ -212,6 +213,9 @@ export const createBoardRepository = (
       }
       if (input.status !== undefined) {
         updateData.status = input.status;
+      }
+      if (input.state !== undefined) {
+        updateData.state = input.state;
       }
       if (input.position !== undefined) {
         updateData.position = input.position;
