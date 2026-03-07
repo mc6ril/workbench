@@ -33,7 +33,9 @@ const queryKeysObject = {
     ticketsList: (
       projectId: string,
       filters?: TicketFilters,
-      sort?: TicketSort
+      sort?: TicketSort,
+      search?: string,
+      limit?: number
     ) => {
       // Create stable query keys by extracting filter/sort values
       // This ensures identical values create the same key regardless of object reference.
@@ -59,6 +61,8 @@ const queryKeysObject = {
         "list",
         filterKey,
         sortKey,
+        search?.trim() || null,
+        limit ?? null,
       ] as const;
     },
     epicsRoot: (projectId: string) => ["projects", projectId, "epics"] as const,

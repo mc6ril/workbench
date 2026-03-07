@@ -43,13 +43,17 @@ export type TicketRepository = {
    * @param projectId - Project ID
    * @param filters - Optional filters for ticket filtering
    * @param sort - Optional sorting applied at the database level
+   * @param search - Optional search term (title, description, code number)
+   * @param limit - Optional max number of rows
    * @returns Array of tickets
    * @throws DatabaseError if database operation fails
    */
   listByProject(
     projectId: string,
     filters?: TicketFilters,
-    sort?: TicketSort
+    sort?: TicketSort,
+    search?: string,
+    limit?: number
   ): Promise<Ticket[]>;
 
   /**

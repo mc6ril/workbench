@@ -1,5 +1,3 @@
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
-
 import type { BuildTicketAriaLabelParams } from "@/shared/types";
 
 /**
@@ -19,45 +17,31 @@ export const buildTicketCode = (
   return `${normalizedShortCode}-${codeNumber}`;
 };
 
-const normalizeSearchToken = (value: string): string => {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "");
-};
-
 /**
- * Filters tickets by search term (case-insensitive).
- * Matches against ticket title, description, and ticket code (e.g. WB-123).
- * Returns all tickets when search is empty or whitespace-only.
+ * Keeps project-code-only searches (e.g. "WB") from hiding all tickets.
+ * Such terms are treated as no-op ticket search.
  */
-export function filterTicketsBySearch(
-  tickets: Ticket[],
+export const normalizeTicketSearch = (
   search: string,
   projectShortCode?: string | null
-): Ticket[] {
-  const term = search.trim().toLowerCase();
+): string => {
+  const term = search.trim();
   if (term === "") {
-    return tickets;
+    return "";
   }
 
-  const normalizedTerm = normalizeSearchToken(term);
+  const shortCode = projectShortCode?.trim().toLowerCase();
+  if (!shortCode) {
+    return search;
+  }
 
-  return tickets.filter((ticket) => {
-    const titleMatch =
-      ticket.title != null && ticket.title.toLowerCase().includes(term);
-    const descriptionMatch =
-      ticket.description != null &&
-      ticket.description.toLowerCase().includes(term);
-    const ticketCode = buildTicketCode(projectShortCode, ticket.codeNumber);
-    const ticketCodeMatch =
-      ticketCode != null &&
-      (ticketCode.toLowerCase().includes(term) ||
-        normalizeSearchToken(ticketCode).includes(normalizedTerm));
+  const normalizedTerm = term.toLowerCase();
+  if (normalizedTerm === shortCode || normalizedTerm === `${shortCode}-`) {
+    return "";
+  }
 
-    return titleMatch || descriptionMatch || ticketCodeMatch;
-  });
-}
+  return search;
+};
 
 /**
  * Builds a consistent ARIA label for ticket UI representations.

@@ -5,11 +5,12 @@ import type { TicketFilters } from "@/core/domain/schema/ticket.schema";
 type FilterState = {
   /**
    * Domain-aligned filters (single source of truth).
-   * IMPORTANT: UI-only search must never be merged into this object.
+   * IMPORTANT: search must never be merged into this object.
    */
   filters: TicketFilters;
   /**
-   * UI-only search value. Not part of TicketFilters and must not be used in query keys.
+   * Search value used by server-side ticket queries.
+   * Not part of TicketFilters to keep the domain filter shape stable.
    */
   search: string;
 };
@@ -105,4 +106,3 @@ export const useFilterStore = create<FilterStore>((set) => ({
     set({ filters: initialFilters });
   },
 }));
-

@@ -84,7 +84,9 @@ export const createTicketRepository = (
     async listByProject(
       projectId: string,
       filters?: TicketFilters,
-      sort?: TicketSort
+      sort?: TicketSort,
+      search?: string,
+      limit?: number
     ): Promise<Ticket[]> {
       try {
         const assigneeIds = filters?.assigneeIds ?? [];
@@ -151,6 +153,47 @@ export const createTicketRepository = (
           query = query.in("id", ticketIds);
         }
 
+        const searchTerm = search?.trim();
+        if (searchTerm) {
+          const escapedSearchTerm = searchTerm
+            .replace(/\\/g, "\\\\")
+            .replace(/[%_]/g, "\\$&")
+            .replace(/"/g, '\\"');
+          const codeMatch = searchTerm.match(/^(?:[a-z]+-)?(\d+)$/i);
+          const codePrefix = codeMatch?.[1] ?? "";
+          const hasCodePrefixMatch = codePrefix !== "";
+
+          const searchClauses = [
+            `title.ilike."%${escapedSearchTerm}%"`,
+            `description.ilike."%${escapedSearchTerm}%"`,
+          ];
+
+          if (hasCodePrefixMatch) {
+            const parsedPrefix = Number.parseInt(codePrefix, 10);
+            const maxCodeNumber = 2_147_483_647;
+            if (Number.isInteger(parsedPrefix) && parsedPrefix >= 0) {
+              for (let scale = 0; scale <= 9; scale += 1) {
+                const factor = 10 ** scale;
+                const rangeStart = parsedPrefix * factor;
+                if (rangeStart > maxCodeNumber) {
+                  break;
+                }
+
+                const rangeEnd = Math.min(
+                  (parsedPrefix + 1) * factor - 1,
+                  maxCodeNumber
+                );
+
+                searchClauses.push(
+                  `and(code_number.gte.${rangeStart},code_number.lte.${rangeEnd})`
+                );
+              }
+            }
+          }
+
+          query = query.or(searchClauses.join(","));
+        }
+
         const sortField = sort?.field ?? "createdAt";
         const sortDirection = sort?.direction ?? "desc";
         const sortFieldMap: Record<string, string> = {
@@ -161,6 +204,10 @@ export const createTicketRepository = (
           dueDate: "due_date",
         };
         const orderColumn = sortFieldMap[sortField] ?? "created_at";
+
+        if (typeof limit === "number" && limit > 0) {
+          query = query.limit(limit);
+        }
 
         const { data, error } = await query.order(orderColumn, {
           ascending: sortDirection === "asc",

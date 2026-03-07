@@ -21,6 +21,7 @@ import { useSortStore } from "@/presentation/stores/useSortStore";
 import { getAccessibilityId } from "@/shared/a11y";
 import { useTranslation } from "@/shared/i18n";
 import type { BoardColumnConfig } from "@/shared/types/board";
+import { normalizeTicketSearch } from "@/shared/utils/ticketUtils";
 
 import styles from "./styles.module.scss";
 
@@ -72,13 +73,20 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   const { data: project } = useProject(projectId);
   const filters = useFilterStore((state) => state.filters);
   const sort = useSortStore((state) => state.sort);
-  const { data: tickets = [] } = useTickets(projectId, filters, sort);
   const search = useFilterStore((state) => state.search);
+  const effectiveSearch = useMemo(() => {
+    return normalizeTicketSearch(search, project?.shortCode);
+  }, [project?.shortCode, search]);
+  const { data: tickets = [] } = useTickets(
+    projectId,
+    filters,
+    sort,
+    effectiveSearch
+  );
 
   const { columns, columnById } = useBoardColumns(boardConfiguration);
   const { filteredTickets, ticketViewModelById } = useBoardTickets({
     tickets,
-    search,
     projectShortCode: project?.shortCode,
   });
 
