@@ -16,6 +16,7 @@ import { useBoardTickets } from "@/presentation/hooks/board/useBoardTickets";
 import { useProject } from "@/presentation/hooks/project";
 import { useTickets } from "@/presentation/hooks/ticket/useTickets";
 import { useFilterStore } from "@/presentation/stores/useFilterStore";
+import { useSortStore } from "@/presentation/stores/useSortStore";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { useTranslation } from "@/shared/i18n";
@@ -69,7 +70,9 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     error,
   } = useBoardConfiguration(projectId);
   const { data: project } = useProject(projectId);
-  const { data: tickets = [] } = useTickets(projectId);
+  const filters = useFilterStore((state) => state.filters);
+  const sort = useSortStore((state) => state.sort);
+  const { data: tickets = [] } = useTickets(projectId, filters, sort);
   const search = useFilterStore((state) => state.search);
 
   const { columns, columnById } = useBoardColumns(boardConfiguration);

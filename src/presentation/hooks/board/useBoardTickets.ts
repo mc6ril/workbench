@@ -40,8 +40,8 @@ export const useBoardTickets = ({
   projectShortCode,
 }: UseBoardTicketsInput) => {
   const filteredTickets = useMemo(() => {
-    return filterTicketsBySearch(tickets, search);
-  }, [tickets, search]);
+    return filterTicketsBySearch(tickets, search, projectShortCode);
+  }, [tickets, search, projectShortCode]);
 
   const filteredTicketIds = useMemo(() => {
     return filteredTickets.map((ticket) => ticket.id);

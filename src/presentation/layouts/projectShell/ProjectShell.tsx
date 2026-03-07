@@ -1,17 +1,33 @@
 "use client";
 
-import React, { useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import AppFooter from "@/presentation/components/appFooter/AppFooter";
 import Breadcrumbs from "@/presentation/components/breadcrumbs/Breadcrumbs";
-import ProjectNavbar from "@/presentation/components/projectNavbar/ProjectNavbar";
+import EpicFilterControls from "@/presentation/components/projectShellControls/EpicFilterControls";
+import EpicSortControls from "@/presentation/components/projectShellControls/EpicSortControls";
+import TicketFilterControls from "@/presentation/components/projectShellControls/TicketFilterControls";
+import TicketSortControls from "@/presentation/components/projectShellControls/TicketSortControls";
+import ProjectToolbar from "@/presentation/components/projectToolbar/ProjectToolbar";
 import SidebarNavigation from "@/presentation/components/sidebarNavigation/SidebarNavigation";
 import SkipLink from "@/presentation/components/skipLink/SkipLink";
+import Modal from "@/presentation/components/ui/Modal";
+import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfiguration";
+import { useEpicQueryParams } from "@/presentation/hooks/epic/useEpicQueryParams";
+import { useEpics } from "@/presentation/hooks/epic/useEpics";
+import { useProjectSearchSuggestions } from "@/presentation/hooks/project/useProjectSearchSuggestions";
 import DashboardShell from "@/presentation/layouts/dashboardShell/DashboardShell";
+import { getProjectViewKeyFromPath } from "@/presentation/navigation/projectViews.config";
 import { useFilterStore } from "@/presentation/stores/useFilterStore";
+import { useSortStore } from "@/presentation/stores/useSortStore";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
+import {
+  EPIC_PROGRESS_FILTER_VALUES,
+  EPIC_SORT_FIELD_VALUES,
+  SORT_DIRECTION_VALUES,
+} from "@/shared/constants/filterSort";
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { buildProjectRoute } from "@/shared/utils/routes";
@@ -23,27 +39,96 @@ type Props = {
 
 const ProjectShell = ({ projectId, children }: Props) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const tSkipLink = useTranslation("navigation.skipLink");
   const tSidebar = useTranslation("navigation.sidebar");
   const tBreadcrumbs = useTranslation("navigation.breadcrumbs");
+  const tNavbar = useTranslation("navigation.navbar");
   const mainContentId = getAccessibilityId("main-content");
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isSortModalOpen, setIsSortModalOpen] = useState(false);
+
+  const viewKey = useMemo(
+    () => getProjectViewKeyFromPath(pathname, projectId),
+    [pathname, projectId]
+  );
+  const isTicketView =
+    viewKey === PROJECT_VIEWS.BACKLOG || viewKey === PROJECT_VIEWS.BOARD;
 
   const search = useFilterStore((state) => state.search);
   const setSearch = useFilterStore((state) => state.setSearch);
+  const filters = useFilterStore((state) => state.filters);
+  const setStatus = useFilterStore((state) => state.setStatus);
+  const clearStatus = useFilterStore((state) => state.clearStatus);
+  const setEpicId = useFilterStore((state) => state.setEpicId);
+  const clearEpicId = useFilterStore((state) => state.clearEpicId);
   const resetSearch = useFilterStore((state) => state.resetSearch);
   const resetFilters = useFilterStore((state) => state.resetFilters);
+  const sort = useSortStore((state) => state.sort);
+  const setField = useSortStore((state) => state.setField);
+  const setDirection = useSortStore((state) => state.setDirection);
+  const resetSort = useSortStore((state) => state.resetSort);
+  const { data: boardConfiguration } = useBoardConfiguration(projectId);
+  const { data: epics = [] } = useEpics(projectId, { enabled: isTicketView });
+  const searchSuggestions = useProjectSearchSuggestions({
+    projectId,
+    viewKey,
+    searchValue: search,
+  });
+
+  const updateQueryParams = useCallback(
+    (updates: Record<string, string | null>) => {
+      const params = new URLSearchParams(searchParams.toString());
+      for (const [key, value] of Object.entries(updates)) {
+        if (value == null || value === "") {
+          params.delete(key);
+          continue;
+        }
+        params.set(key, value);
+      }
+      const query = params.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, {
+        scroll: false,
+      });
+    },
+    [pathname, router, searchParams]
+  );
+
+  const { epicProgressFilter, epicSortField, epicSortDirection } =
+    useEpicQueryParams(searchParams);
+
+  const statusOptions = useMemo(() => {
+    const columns = boardConfiguration?.columns ?? [];
+    return columns.map((column) => ({
+      value: column.status,
+      label: column.name,
+    }));
+  }, [boardConfiguration?.columns]);
+
+  const epicOptions = useMemo(() => {
+    if (!isTicketView) {
+      return [];
+    }
+
+    return epics.map((epic) => ({
+      value: epic.id,
+      label: epic.name,
+    }));
+  }, [epics, isTicketView]);
 
   useEffect(() => {
     resetSearch();
     resetFilters();
-  }, [projectId, resetFilters, resetSearch]);
+    resetSort();
+  }, [projectId, resetFilters, resetSearch, resetSort]);
 
   const handleFilterClick = useCallback(() => {
-    // TODO: Open filter panel / modal
+    setIsFilterModalOpen(true);
   }, []);
 
   const handleSortClick = useCallback(() => {
-    // TODO: Open sort panel / modal
+    setIsSortModalOpen(true);
   }, []);
 
   const handleAddClick = useCallback(() => {
@@ -60,9 +145,10 @@ const ProjectShell = ({ projectId, children }: Props) => {
         sidebar={<SidebarNavigation projectId={projectId} />}
         sidebarAriaLabel={tSidebar("ariaLabel")}
         header={
-          <ProjectNavbar
+          <ProjectToolbar
             projectId={projectId}
             searchValue={search}
+            searchSuggestions={searchSuggestions}
             onSearchChange={setSearch}
             onFilterClick={handleFilterClick}
             onSortClick={handleSortClick}
@@ -75,6 +161,73 @@ const ProjectShell = ({ projectId, children }: Props) => {
       >
         {children}
       </DashboardShell>
+
+      <Modal
+        isOpen={isFilterModalOpen}
+        onClose={() => {
+          setIsFilterModalOpen(false);
+        }}
+        title={tNavbar("filter")}
+      >
+        {isTicketView ? (
+          <TicketFilterControls
+            filters={filters}
+            statusOptions={statusOptions}
+            epicOptions={epicOptions}
+            onSetStatus={setStatus}
+            onClearStatus={clearStatus}
+            onSetEpicId={setEpicId}
+            onClearEpicId={clearEpicId}
+            onResetFilters={resetFilters}
+          />
+        ) : (
+          <EpicFilterControls
+            epicProgressFilter={epicProgressFilter}
+            onChange={(nextFilter) => {
+              updateQueryParams({ epicProgress: nextFilter });
+            }}
+            onReset={() => {
+              updateQueryParams({
+                epicProgress: EPIC_PROGRESS_FILTER_VALUES.ALL,
+              });
+            }}
+          />
+        )}
+      </Modal>
+
+      <Modal
+        isOpen={isSortModalOpen}
+        onClose={() => {
+          setIsSortModalOpen(false);
+        }}
+        title={tNavbar("sort")}
+      >
+        {isTicketView ? (
+          <TicketSortControls
+            sort={sort}
+            onSetField={setField}
+            onSetDirection={setDirection}
+            onResetSort={resetSort}
+          />
+        ) : (
+          <EpicSortControls
+            epicSortField={epicSortField}
+            epicSortDirection={epicSortDirection}
+            onSetField={(nextField) => {
+              updateQueryParams({ epicSortField: nextField });
+            }}
+            onSetDirection={(nextDirection) => {
+              updateQueryParams({ epicSortDirection: nextDirection });
+            }}
+            onReset={() => {
+              updateQueryParams({
+                epicSortField: EPIC_SORT_FIELD_VALUES.UPDATED_AT,
+                epicSortDirection: SORT_DIRECTION_VALUES.DESC,
+              });
+            }}
+          />
+        )}
+      </Modal>
     </>
   );
 };
