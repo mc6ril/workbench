@@ -3,6 +3,7 @@ import {
   validateEpicTicketAssignment,
   validateEpicWithTickets,
 } from "@/core/domain/rules/epic.rules";
+import type { Column } from "@/core/domain/schema/board.schema";
 import type { CreateEpicInput, Epic } from "@/core/domain/schema/epic.schema";
 import type { Ticket } from "@/core/domain/schema/ticket.schema";
 
@@ -36,6 +37,18 @@ describe("Epic Business Rules", () => {
     dueDate: null,
     storyPoints: null,
     createdBy: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    ...overrides,
+  });
+  const createMockColumn = (overrides?: Partial<Column>): Column => ({
+    id: "column-1",
+    boardId: "board-1",
+    name: "Todo",
+    status: "todo",
+    state: "todo",
+    position: 0,
+    visible: true,
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,
@@ -115,9 +128,13 @@ describe("Epic Business Rules", () => {
     it("should return 0 for empty tickets array", () => {
       // Arrange
       const tickets: Ticket[] = [];
+      const columns: Column[] = [
+        createMockColumn({ status: "todo", state: "todo" }),
+        createMockColumn({ id: "c2", status: "done", state: "done" }),
+      ];
 
       // Act
-      const result = calculateEpicProgress(tickets);
+      const result = calculateEpicProgress(tickets, columns);
 
       // Assert
       expect(result).toBe(0);
@@ -129,52 +146,76 @@ describe("Epic Business Rules", () => {
         createMockTicket({ status: "todo" }),
         createMockTicket({ status: "in-progress" }),
       ];
+      const columns: Column[] = [
+        createMockColumn({ status: "todo", state: "todo" }),
+        createMockColumn({
+          id: "c2",
+          status: "in-progress",
+          state: "in_progress",
+        }),
+        createMockColumn({ id: "c3", status: "completed", state: "done" }),
+      ];
 
       // Act
-      const result = calculateEpicProgress(tickets);
+      const result = calculateEpicProgress(tickets, columns);
 
       // Assert
       expect(result).toBe(0);
     });
 
-    it("should return 100 when all tickets are completed", () => {
+    it("should return 100 when all tickets are in a done-state column", () => {
       // Arrange
       const tickets: Ticket[] = [
         createMockTicket({ status: "completed" }),
         createMockTicket({ status: "completed" }),
       ];
-
-      // Act
-      const result = calculateEpicProgress(tickets);
-
-      // Assert
-      expect(result).toBe(100);
-    });
-
-    it("should return 100 when all tickets are done", () => {
-      // Arrange
-      const tickets: Ticket[] = [
-        createMockTicket({ status: "done" }),
-        createMockTicket({ status: "done" }),
+      const columns: Column[] = [
+        createMockColumn({ status: "completed", state: "done" }),
       ];
 
       // Act
-      const result = calculateEpicProgress(tickets);
+      const result = calculateEpicProgress(tickets, columns);
 
       // Assert
       expect(result).toBe(100);
     });
 
-    it("should treat completed and done as finished statuses", () => {
+    it("should support renamed done column labels", () => {
+      // Arrange
+      const tickets: Ticket[] = [
+        createMockTicket({ status: "finit" }),
+        createMockTicket({ status: "finit" }),
+      ];
+      const columns: Column[] = [
+        createMockColumn({
+          status: "finit",
+          name: "Finit",
+          state: "done",
+        }),
+      ];
+
+      // Act
+      const result = calculateEpicProgress(tickets, columns);
+
+      // Assert
+      expect(result).toBe(100);
+    });
+
+    it("should support multiple done columns", () => {
       // Arrange
       const tickets: Ticket[] = [
         createMockTicket({ status: "completed" }),
         createMockTicket({ status: "done" }),
         createMockTicket({ status: "todo" }),
       ];
+      const columns: Column[] = [
+        createMockColumn({ status: "completed", state: "done" }),
+        createMockColumn({ id: "c2", status: "done", state: "done" }),
+        createMockColumn({ id: "c3", status: "todo", state: "todo" }),
+      ];
 
       // Act
-      const result = calculateEpicProgress(tickets);
+      const result = calculateEpicProgress(tickets, columns);
 
       // Assert
       expect(result).toBe(67);
@@ -186,9 +227,13 @@ describe("Epic Business Rules", () => {
         createMockTicket({ status: "completed" }),
         createMockTicket({ status: "todo" }),
       ];
+      const columns: Column[] = [
+        createMockColumn({ status: "completed", state: "done" }),
+        createMockColumn({ id: "c2", status: "todo", state: "todo" }),
+      ];
 
       // Act
-      const result = calculateEpicProgress(tickets);
+      const result = calculateEpicProgress(tickets, columns);
 
       // Assert
       expect(result).toBe(50);
@@ -201,9 +246,18 @@ describe("Epic Business Rules", () => {
         createMockTicket({ status: "todo" }),
         createMockTicket({ status: "in-progress" }),
       ];
+      const columns: Column[] = [
+        createMockColumn({ status: "completed", state: "done" }),
+        createMockColumn({ id: "c2", status: "todo", state: "todo" }),
+        createMockColumn({
+          id: "c3",
+          status: "in-progress",
+          state: "in_progress",
+        }),
+      ];
 
       // Act
-      const result = calculateEpicProgress(tickets);
+      const result = calculateEpicProgress(tickets, columns);
 
       // Assert
       expect(result).toBe(33);
@@ -216,9 +270,13 @@ describe("Epic Business Rules", () => {
         createMockTicket({ status: "todo" }),
         createMockTicket({ status: "todo" }),
       ]; // 1/3 = 33.33... -> 33
+      const columns: Column[] = [
+        createMockColumn({ status: "completed", state: "done" }),
+        createMockColumn({ id: "c2", status: "todo", state: "todo" }),
+      ];
 
       // Act
-      const result = calculateEpicProgress(tickets);
+      const result = calculateEpicProgress(tickets, columns);
 
       // Assert
       expect(result).toBe(33);

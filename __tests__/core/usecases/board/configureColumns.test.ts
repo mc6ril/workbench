@@ -29,6 +29,7 @@ describe("configureColumns", () => {
     boardId,
     name: "Todo",
     status: "todo",
+    state: "todo",
     position: 0,
     visible: true,
     createdAt: new Date("2024-01-01T00:00:00Z"),
@@ -38,8 +39,9 @@ describe("configureColumns", () => {
   const mockColumn2: Column = {
     id: "423e4567-e89b-12d3-a456-426614174001",
     boardId,
-    name: "In Progress",
-    status: "in-progress",
+    name: "Done",
+    status: "completed",
+    state: "done",
     position: 1,
     visible: true,
     createdAt: new Date("2024-01-01T00:00:00Z"),
@@ -55,12 +57,14 @@ describe("configureColumns", () => {
           id: mockColumn1.id,
           name: "Updated Todo",
           status: "todo",
+          state: "todo",
           position: 0,
           visible: true,
         },
         {
           name: "New Column",
           status: "new-status",
+          state: "done",
           position: 2,
           visible: true,
         },
@@ -75,6 +79,7 @@ describe("configureColumns", () => {
       boardId,
       name: "New Column",
       status: "new-status",
+      state: "done",
       position: 2,
       visible: true,
       createdAt: new Date("2024-01-02T00:00:00Z"),
@@ -114,6 +119,7 @@ describe("configureColumns", () => {
     expect(repository.updateColumn).toHaveBeenCalledWith(mockColumn1.id, {
       name: "Updated Todo",
       status: "todo",
+      state: "todo",
       position: 0,
       visible: true,
     });
@@ -122,6 +128,7 @@ describe("configureColumns", () => {
       boardId,
       name: "New Column",
       status: "new-status",
+      state: "done",
       position: 2,
       visible: true,
     });
@@ -138,8 +145,20 @@ describe("configureColumns", () => {
     const input: ConfigureColumnsInput = {
       projectId,
       columns: [
-        { name: "Todo", status: "todo", position: 0, visible: true },
-        { name: "Done", status: "completed", position: 1, visible: true },
+        {
+          name: "Todo",
+          status: "todo",
+          state: "todo",
+          position: 0,
+          visible: true,
+        },
+        {
+          name: "Done",
+          status: "completed",
+          state: "done",
+          position: 1,
+          visible: true,
+        },
       ],
     };
     const newColumn1: Column = {
@@ -147,6 +166,7 @@ describe("configureColumns", () => {
       boardId,
       name: "Todo",
       status: "todo",
+      state: "todo",
       position: 0,
       visible: true,
       createdAt: new Date("2024-01-01T00:00:00Z"),
@@ -157,6 +177,7 @@ describe("configureColumns", () => {
       boardId,
       name: "Done",
       status: "completed",
+      state: "done",
       position: 1,
       visible: true,
       createdAt: new Date("2024-01-01T00:00:00Z"),
@@ -204,6 +225,7 @@ describe("configureColumns", () => {
           id: mockColumn1.id,
           name: mockColumn1.name,
           status: mockColumn1.status,
+          state: mockColumn1.state,
           position: mockColumn1.position,
           visible: mockColumn1.visible,
         },
@@ -211,6 +233,7 @@ describe("configureColumns", () => {
           id: mockColumn2.id,
           name: mockColumn2.name,
           status: mockColumn2.status,
+          state: mockColumn2.state,
           position: mockColumn2.position,
           visible: mockColumn2.visible,
         },
@@ -260,13 +283,25 @@ describe("configureColumns", () => {
     expect(repository.findByProject).not.toHaveBeenCalled();
   });
 
-  it("should throw DomainRuleError on duplicate statuses", async () => {
+  it("should throw DomainRuleError when no terminal done column is active", async () => {
     // Arrange
     const input: ConfigureColumnsInput = {
       projectId,
       columns: [
-        { name: "Todo 1", status: "todo", position: 0, visible: true },
-        { name: "Todo 2", status: "todo", position: 1, visible: true },
+        {
+          name: "Todo 1",
+          status: "todo",
+          state: "todo",
+          position: 0,
+          visible: true,
+        },
+        {
+          name: "Todo 2",
+          status: "todo-2",
+          state: "in_progress",
+          position: 1,
+          visible: true,
+        },
       ],
     };
     const repository = createBoardRepositoryMock({
@@ -280,6 +315,7 @@ describe("configureColumns", () => {
           boardId,
           name: input.name,
           status: input.status,
+          state: input.state,
           position: input.position,
           visible: input.visible ?? true,
           createdAt: new Date(),
@@ -287,7 +323,7 @@ describe("configureColumns", () => {
         })
       ),
     });
-    // Mock final columns with duplicate statuses
+    // Mock final columns without any done state
     repository.listColumnsByBoard.mockResolvedValueOnce([]);
     repository.listColumnsByBoard.mockResolvedValueOnce([
       {
@@ -295,6 +331,7 @@ describe("configureColumns", () => {
         boardId,
         name: "Todo 1",
         status: "todo",
+        state: "todo",
         position: 0,
         visible: true,
         createdAt: new Date(),
@@ -304,7 +341,8 @@ describe("configureColumns", () => {
         id: "2",
         boardId,
         name: "Todo 2",
-        status: "todo",
+        status: "todo-2",
+        state: "in_progress",
         position: 1,
         visible: true,
         createdAt: new Date(),
@@ -314,7 +352,7 @@ describe("configureColumns", () => {
 
     // Act & Assert
     await expect(configureColumns(repository, input)).rejects.toMatchObject({
-      code: "DUPLICATE_COLUMN_STATUS",
+      code: "MISSING_DONE_COLUMN",
     });
     expect(repository.findByProject).toHaveBeenCalledTimes(1);
     expect(repository.createColumn).toHaveBeenCalledTimes(2);
@@ -325,8 +363,20 @@ describe("configureColumns", () => {
     const input: ConfigureColumnsInput = {
       projectId,
       columns: [
-        { name: "Column 1", status: "status1", position: 0, visible: true },
-        { name: "Column 2", status: "status2", position: 0, visible: true },
+        {
+          name: "Column 1",
+          status: "status1",
+          state: "todo",
+          position: 0,
+          visible: true,
+        },
+        {
+          name: "Column 2",
+          status: "status2",
+          state: "done",
+          position: 0,
+          visible: true,
+        },
       ],
     };
     const repository = createBoardRepositoryMock({
@@ -340,6 +390,7 @@ describe("configureColumns", () => {
           boardId,
           name: input.name,
           status: input.status,
+          state: input.state,
           position: input.position,
           visible: input.visible ?? true,
           createdAt: new Date(),
@@ -355,6 +406,7 @@ describe("configureColumns", () => {
         boardId,
         name: "Column 1",
         status: "status1",
+        state: "todo",
         position: 0,
         visible: true,
         createdAt: new Date(),
@@ -365,6 +417,7 @@ describe("configureColumns", () => {
         boardId,
         name: "Column 2",
         status: "status2",
+        state: "done",
         position: 0,
         visible: true,
         createdAt: new Date(),
@@ -384,7 +437,15 @@ describe("configureColumns", () => {
     // Arrange
     const input: ConfigureColumnsInput = {
       projectId,
-      columns: [{ name: "Todo", status: "todo", position: 0, visible: true }],
+      columns: [
+        {
+          name: "Todo",
+          status: "todo",
+          state: "done",
+          position: 0,
+          visible: true,
+        },
+      ],
     };
     const repositoryError = new Error("Database error");
     const repository = createBoardRepositoryMock({

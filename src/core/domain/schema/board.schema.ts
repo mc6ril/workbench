@@ -26,6 +26,18 @@ export const CreateBoardInputSchema = z.object({
 export type CreateBoardInput = z.infer<typeof CreateBoardInputSchema>;
 
 /**
+ * Canonical workflow state for board columns.
+ * This state is stable and drives business logic (progress metrics).
+ */
+export const ColumnWorkflowStateSchema = z.enum([
+  "todo",
+  "in_progress",
+  "done",
+]);
+
+export type ColumnWorkflowState = z.infer<typeof ColumnWorkflowStateSchema>;
+
+/**
  * Zod schema for Column entity.
  * Validates data coming from external sources.
  */
@@ -34,6 +46,7 @@ export const ColumnSchema = z.object({
   boardId: z.string().uuid(),
   name: z.string().min(1, "Column name must not be empty"),
   status: z.string().min(1, "Column status must not be empty"),
+  state: ColumnWorkflowStateSchema,
   position: z.number().int().nonnegative("Position must be non-negative"),
   visible: z.boolean().default(true),
   createdAt: z.coerce.date(),
@@ -52,6 +65,7 @@ export const CreateColumnInputSchema = z.object({
   boardId: z.string().uuid(),
   name: z.string().min(1, "Column name must not be empty"),
   status: z.string().min(1, "Column status must not be empty"),
+  state: ColumnWorkflowStateSchema,
   position: z.number().int().nonnegative().default(0),
   visible: z.boolean().default(true).optional(),
 });
@@ -64,6 +78,7 @@ export type CreateColumnInput = z.infer<typeof CreateColumnInputSchema>;
 export const UpdateColumnInputSchema = z.object({
   name: z.string().min(1, "Column name must not be empty").optional(),
   status: z.string().min(1, "Column status must not be empty").optional(),
+  state: ColumnWorkflowStateSchema.optional(),
   position: z.number().int().nonnegative().optional(),
   visible: z.boolean().optional(),
 });
@@ -83,6 +98,7 @@ export const ConfigureColumnsInputSchema = z.object({
         id: z.string().uuid().optional(), // Optional: if provided, update existing; if not, create new
         name: z.string().min(1, "Column name must not be empty"),
         status: z.string().min(1, "Column status must not be empty"),
+        state: ColumnWorkflowStateSchema,
         position: z.number().int().nonnegative(),
         visible: z.boolean().default(true),
       })

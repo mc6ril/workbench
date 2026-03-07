@@ -1,6 +1,7 @@
 import { calculateEpicProgress } from "@/core/domain/rules/epic.rules";
 import type { EpicWithProgress } from "@/core/domain/schema/epic.schema";
 
+import type { BoardRepository } from "@/core/ports/boardRepository";
 import type { EpicRepository } from "@/core/ports/epicRepository";
 
 /**
@@ -15,10 +16,15 @@ import type { EpicRepository } from "@/core/ports/epicRepository";
  */
 export const listEpics = async (
   repository: EpicRepository,
+  boardRepository: BoardRepository,
   projectId: string
 ): Promise<EpicWithProgress[]> => {
   // Fetch all epics for project
   const epics = await repository.listByProject(projectId);
+  const board = await boardRepository.findByProject(projectId);
+  const columns = board
+    ? await boardRepository.listColumnsByBoard(board.id)
+    : [];
 
   // Calculate progress for each epic
   const epicsWithProgress: EpicWithProgress[] = await Promise.all(
@@ -27,7 +33,7 @@ export const listEpics = async (
       const tickets = await repository.listTicketsByEpic(epic.id);
 
       // Calculate progress
-      const progress = calculateEpicProgress(tickets);
+      const progress = calculateEpicProgress(tickets, columns);
 
       // Return epic with progress
       return {

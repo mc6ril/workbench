@@ -30,9 +30,15 @@ describe("moveAndReorderTicket", () => {
     createdAt: new Date("2024-01-01T00:00:00Z"),
     updatedAt: new Date("2024-01-01T00:00:00Z"),
   };
+  type MoveAndReorderInput = {
+    ticketId: string;
+    status: string;
+    position: number;
+    ticketPositions: Array<{ id: string; position: number }>;
+  };
 
   it("should atomically move and reorder tickets", async () => {
-    const input = {
+    const input: MoveAndReorderInput = {
       ticketId,
       status: "in-progress",
       position: 1,
@@ -59,7 +65,7 @@ describe("moveAndReorderTicket", () => {
   });
 
   it("should allow empty ticketPositions", async () => {
-    const input = {
+    const input: MoveAndReorderInput = {
       ticketId,
       status: "in-progress",
       position: 1,

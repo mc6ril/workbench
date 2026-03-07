@@ -2,6 +2,7 @@ import { createNotFoundError } from "@/core/domain/repositoryError";
 import { calculateEpicProgress } from "@/core/domain/rules/epic.rules";
 import type { EpicDetail } from "@/core/domain/schema/epic.schema";
 
+import type { BoardRepository } from "@/core/ports/boardRepository";
 import type { EpicRepository } from "@/core/ports/epicRepository";
 
 /**
@@ -17,6 +18,7 @@ import type { EpicRepository } from "@/core/ports/epicRepository";
  */
 export const getEpicDetail = async (
   repository: EpicRepository,
+  boardRepository: BoardRepository,
   id: string
 ): Promise<EpicDetail> => {
   // Fetch epic
@@ -27,9 +29,13 @@ export const getEpicDetail = async (
 
   // Fetch tickets assigned to epic
   const tickets = await repository.listTicketsByEpic(id);
+  const board = await boardRepository.findByProject(epic.projectId);
+  const columns = board
+    ? await boardRepository.listColumnsByBoard(board.id)
+    : [];
 
   // Calculate progress
-  const progress = calculateEpicProgress(tickets);
+  const progress = calculateEpicProgress(tickets, columns);
 
   // Map tickets to minimal ticket info (id, title, status only)
   const ticketInfo = tickets.map((ticket) => ({

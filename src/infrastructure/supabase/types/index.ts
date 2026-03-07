@@ -17,6 +17,7 @@ export type ColumnRow = {
   board_id: string;
   name: string;
   status: string;
+  state: string;
   position: number;
   visible: boolean;
   created_at: string;

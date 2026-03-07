@@ -17,7 +17,7 @@ import type { BoardRepository } from "@/core/ports/boardRepository";
  * @param input - Board configuration input with project ID and columns
  * @returns Updated board configuration with board and columns
  * @throws ZodError if input is invalid
- * @throws DomainRuleError if validation fails (duplicate IDs, invalid order, duplicate statuses)
+ * @throws DomainRuleError if validation fails (invalid order, missing done state)
  * @throws DatabaseError if database operation fails
  */
 export const configureColumns = async (
@@ -51,6 +51,7 @@ export const configureColumns = async (
         return repository.updateColumn(columnInput.id, {
           name: columnInput.name,
           status: columnInput.status,
+          state: columnInput.state,
           position: columnInput.position,
           visible: columnInput.visible,
         });
@@ -60,6 +61,7 @@ export const configureColumns = async (
           boardId: board.id,
           name: columnInput.name,
           status: columnInput.status,
+          state: columnInput.state,
           position: columnInput.position,
           visible: columnInput.visible ?? true,
         });

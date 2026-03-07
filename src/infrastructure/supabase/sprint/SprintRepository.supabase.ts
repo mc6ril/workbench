@@ -20,6 +20,23 @@ import {
 
 import type { SprintRepository } from "@/core/ports/sprintRepository";
 
+export const countCompletedByDoneStatuses = (
+  tickets: Array<{ status: string }>,
+  doneStatuses: Set<string>
+): number => {
+  if (doneStatuses.size === 0) {
+    return 0;
+  }
+
+  return tickets.filter((ticket) =>
+    doneStatuses.has(ticket.status.trim().toLowerCase())
+  ).length;
+};
+
+const normalizeWorkflowStatus = (status: string): string => {
+  return status.trim().toLowerCase();
+};
+
 /**
  * Create a SprintRepository implementation using the provided Supabase client.
  */
@@ -178,6 +195,56 @@ export const createSprintRepository = (
     sprintId: string
   ): Promise<{ ticketCount: number; completedCount: number }> {
     try {
+      const { data: sprintData, error: sprintError } = await client
+        .from("sprints")
+        .select("project_id")
+        .eq("id", sprintId)
+        .single();
+
+      if (sprintError) {
+        return handleRepositoryError(sprintError, "Sprint", sprintId);
+      }
+
+      const projectId = (sprintData as { project_id: string } | null)
+        ?.project_id;
+
+      if (!projectId) {
+        return {
+          ticketCount: 0,
+          completedCount: 0,
+        };
+      }
+
+      const { data: boardData, error: boardError } = await client
+        .from("boards")
+        .select("id")
+        .eq("project_id", projectId)
+        .maybeSingle();
+
+      if (boardError) {
+        return handleRepositoryError(boardError, "Board");
+      }
+
+      const boardId = (boardData as { id: string } | null)?.id;
+      const doneStatuses = new Set<string>();
+
+      if (boardId) {
+        const { data: columnData, error: columnError } = await client
+          .from("columns")
+          .select("status")
+          .eq("board_id", boardId)
+          .eq("state", "done")
+          .eq("visible", true);
+
+        if (columnError) {
+          return handleRepositoryError(columnError, "Column");
+        }
+
+        for (const row of (columnData ?? []) as Array<{ status: string }>) {
+          doneStatuses.add(normalizeWorkflowStatus(row.status));
+        }
+      }
+
       const { data, error } = await client
         .from("tickets")
         .select("status")
@@ -188,7 +255,10 @@ export const createSprintRepository = (
       }
 
       const tickets = (data ?? []) as Array<{ status: string }>;
-      const completedCount = tickets.filter((t) => t.status === "done").length;
+      const completedCount = countCompletedByDoneStatuses(
+        tickets,
+        doneStatuses
+      );
 
       return {
         ticketCount: tickets.length,

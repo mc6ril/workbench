@@ -65,43 +65,34 @@ export const validateColumnOrder = (columns: Column[]): ValidationResult => {
 };
 
 /**
- * Validates that column statuses are unique within each board.
- * Ensures no two columns in the same board have the same status.
- *
- * @param columns - Array of columns to validate
- * @returns Validation result
+ * Validates that each board has at least one visible terminal workflow state.
  */
-export const validateColumnStatusUniqueness = (
+export const validateBoardHasActiveDoneState = (
   columns: Column[]
 ): ValidationResult => {
   if (columns.length === 0) {
     return { success: true };
   }
 
-  // Group columns by boardId to validate per board
   const columnsByBoard = new Map<string, Column[]>();
   for (const column of columns) {
-    const boardColumns = columnsByBoard.get(column.boardId) || [];
+    const boardColumns = columnsByBoard.get(column.boardId) ?? [];
     boardColumns.push(column);
     columnsByBoard.set(column.boardId, boardColumns);
   }
 
-  // Validate each board's columns
   for (const [boardId, boardColumns] of Array.from(columnsByBoard.entries())) {
-    const statuses = boardColumns.map((col) => col.status);
-    const statusSet = new Set(statuses);
+    const hasActiveDoneColumn = boardColumns.some(
+      (column) => column.visible && column.state === "done"
+    );
 
-    // Check for duplicates
-    if (statuses.length !== statusSet.size) {
-      const duplicates = statuses.filter(
-        (status, index) => statuses.indexOf(status) !== index
-      );
+    if (!hasActiveDoneColumn) {
       return {
         success: false,
         error: {
-          code: "DUPLICATE_COLUMN_STATUS",
-          message: `Duplicate column statuses found in board ${boardId}: ${duplicates.join(", ")}`,
-          field: "status",
+          code: "MISSING_DONE_COLUMN",
+          message: `Board ${boardId} must have at least one visible terminal column`,
+          field: "state",
         },
       };
     }
@@ -138,7 +129,7 @@ export const validateBoardColumnRelationship = (
 
 /**
  * Validates a board with all its columns.
- * Combines board validation, column ordering, status uniqueness, and relationships.
+ * Combines board validation, column ordering, active done-state requirement, and relationships.
  * Filters columns by board.id (or first column's boardId for CreateBoardInput) to ensure all columns belong to the same board.
  *
  * @param board - Board to validate (can be Board or CreateBoardInput)
@@ -193,10 +184,10 @@ export const validateBoardWithColumns = (
     return orderResult;
   }
 
-  // Validate status uniqueness
-  const uniquenessResult = validateColumnStatusUniqueness(boardColumns);
-  if (!uniquenessResult.success) {
-    return uniquenessResult;
+  // Validate at least one active terminal state
+  const doneStateResult = validateBoardHasActiveDoneState(boardColumns);
+  if (!doneStateResult.success) {
+    return doneStateResult;
   }
 
   // Validate all columns belong to this board
@@ -229,6 +220,7 @@ export const getDefaultBoardConfiguration = (
         boardId: "", // Will be set in usecase after board creation
         name: "Todo",
         status: "todo",
+        state: "todo",
         position: 0,
         visible: true,
       },
@@ -236,6 +228,7 @@ export const getDefaultBoardConfiguration = (
         boardId: "", // Will be set in usecase after board creation
         name: "In Progress",
         status: "in-progress",
+        state: "in_progress",
         position: 1,
         visible: true,
       },
@@ -243,6 +236,7 @@ export const getDefaultBoardConfiguration = (
         boardId: "", // Will be set in usecase after board creation
         name: "Done",
         status: "completed",
+        state: "done",
         position: 2,
         visible: true,
       },

@@ -1,4 +1,5 @@
 import type { Board, Column } from "@/core/domain/schema/board.schema";
+import { ColumnWorkflowStateSchema } from "@/core/domain/schema/board.schema";
 
 import type { BoardRow, ColumnRow } from "@/infrastructure/supabase/types";
 
@@ -47,6 +48,7 @@ export const mapColumnRowToDomain = (row: ColumnRow): Column => {
     boardId: row.board_id,
     name: row.name,
     status: row.status,
+    state: ColumnWorkflowStateSchema.parse(row.state),
     position: row.position,
     visible: row.visible,
     createdAt: toDate(row.created_at),

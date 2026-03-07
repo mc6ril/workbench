@@ -1,8 +1,11 @@
+import type { Board, Column } from "@/core/domain/schema/board.schema";
 import type { Epic } from "@/core/domain/schema/epic.schema";
 import type { Ticket } from "@/core/domain/schema/ticket.schema";
 
 import { listEpics } from "@/core/usecases/epic/listEpics";
 
+// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createEpicRepositoryMock } from "../../../../__mocks__/core/ports/epicRepository";
 
@@ -40,7 +43,7 @@ describe("listEpics", () => {
     projectId,
     title: "Ticket 1",
     description: "First ticket",
-    status: "completed",
+    status: "finit",
     position: 0,
     codeNumber: 1,
     epicId: mockEpic1.id,
@@ -78,7 +81,7 @@ describe("listEpics", () => {
     projectId,
     title: "Ticket 3",
     description: "Third ticket",
-    status: "completed",
+    status: "finit",
     position: 2,
     codeNumber: 3,
     epicId: mockEpic1.id,
@@ -91,6 +94,31 @@ describe("listEpics", () => {
     createdAt: new Date("2024-01-03T00:00:00Z"),
     updatedAt: new Date("2024-01-03T00:00:00Z"),
   };
+  const boardId = "423e4567-e89b-12d3-a456-426614174010";
+  const columns: Column[] = [
+    {
+      id: "col-1",
+      boardId,
+      name: "A faire",
+      status: "todo",
+      state: "todo",
+      position: 0,
+      visible: true,
+      createdAt: new Date("2024-01-01T00:00:00Z"),
+      updatedAt: new Date("2024-01-01T00:00:00Z"),
+    },
+    {
+      id: "col-2",
+      boardId,
+      name: "Finit",
+      status: "finit",
+      state: "done",
+      position: 1,
+      visible: true,
+      createdAt: new Date("2024-01-01T00:00:00Z"),
+      updatedAt: new Date("2024-01-01T00:00:00Z"),
+    },
+  ];
 
   it("should return epics with progress", async () => {
     // Arrange
@@ -100,15 +128,28 @@ describe("listEpics", () => {
 
     const repository = createEpicRepositoryMock({
       listByProject: jest.fn<Promise<Epic[]>, [string]>(async () => epics),
-      listTicketsByEpic: jest.fn<Promise<Ticket[]>, [string]>(async (epicId) => {
-        if (epicId === mockEpic1.id) return epic1Tickets;
-        if (epicId === mockEpic2.id) return epic2Tickets;
-        return [];
-      }),
+      listTicketsByEpic: jest.fn<Promise<Ticket[]>, [string]>(
+        async (epicId) => {
+          if (epicId === mockEpic1.id) return epic1Tickets;
+          if (epicId === mockEpic2.id) return epic2Tickets;
+          return [];
+        }
+      ),
+    });
+    const boardRepository = createBoardRepositoryMock({
+      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => ({
+        id: boardId,
+        projectId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
     });
 
     // Act
-    const result = await listEpics(repository, projectId);
+    const result = await listEpics(repository, boardRepository, projectId);
 
     // Assert
     expect(repository.listByProject).toHaveBeenCalledTimes(1);
@@ -132,9 +173,10 @@ describe("listEpics", () => {
     const repository = createEpicRepositoryMock({
       listByProject: jest.fn<Promise<Epic[]>, [string]>(async () => []),
     });
+    const boardRepository = createBoardRepositoryMock();
 
     // Act
-    const result = await listEpics(repository, projectId);
+    const result = await listEpics(repository, boardRepository, projectId);
 
     // Assert
     expect(repository.listByProject).toHaveBeenCalledTimes(1);
@@ -151,9 +193,20 @@ describe("listEpics", () => {
       listByProject: jest.fn<Promise<Epic[]>, [string]>(async () => epics),
       listTicketsByEpic: jest.fn<Promise<Ticket[]>, [string]>(async () => []),
     });
+    const boardRepository = createBoardRepositoryMock({
+      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => ({
+        id: boardId,
+        projectId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
+    });
 
     // Act
-    const result = await listEpics(repository, projectId);
+    const result = await listEpics(repository, boardRepository, projectId);
 
     // Assert
     expect(repository.listByProject).toHaveBeenCalledTimes(1);
@@ -170,9 +223,9 @@ describe("listEpics", () => {
     // Arrange
     const epics: Epic[] = [mockEpic1];
     const allCompletedTickets: Ticket[] = [
-      { ...mockTicket1, status: "completed" },
-      { ...mockTicket2, status: "completed" },
-      { ...mockTicket3, status: "completed" },
+      { ...mockTicket1, status: "finit" },
+      { ...mockTicket2, status: "finit" },
+      { ...mockTicket3, status: "finit" },
     ];
     const repository = createEpicRepositoryMock({
       listByProject: jest.fn<Promise<Epic[]>, [string]>(async () => epics),
@@ -180,9 +233,20 @@ describe("listEpics", () => {
         async () => allCompletedTickets
       ),
     });
+    const boardRepository = createBoardRepositoryMock({
+      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => ({
+        id: boardId,
+        projectId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
+    });
 
     // Act
-    const result = await listEpics(repository, projectId);
+    const result = await listEpics(repository, boardRepository, projectId);
 
     // Assert
     expect(repository.listByProject).toHaveBeenCalledTimes(1);
@@ -207,9 +271,20 @@ describe("listEpics", () => {
         async () => noCompletedTickets
       ),
     });
+    const boardRepository = createBoardRepositoryMock({
+      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => ({
+        id: boardId,
+        projectId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
+    });
 
     // Act
-    const result = await listEpics(repository, projectId);
+    const result = await listEpics(repository, boardRepository, projectId);
 
     // Assert
     expect(repository.listByProject).toHaveBeenCalledTimes(1);
@@ -225,9 +300,9 @@ describe("listEpics", () => {
     // Arrange
     const epics: Epic[] = [mockEpic1];
     const mixedTickets: Ticket[] = [
-      { ...mockTicket1, status: "completed" },
+      { ...mockTicket1, status: "finit" },
       { ...mockTicket2, status: "todo" },
-      { ...mockTicket3, status: "completed" },
+      { ...mockTicket3, status: "finit" },
     ]; // 2 completed, 1 todo = 66.67% rounded to 67%
     const repository = createEpicRepositoryMock({
       listByProject: jest.fn<Promise<Epic[]>, [string]>(async () => epics),
@@ -235,9 +310,20 @@ describe("listEpics", () => {
         async () => mixedTickets
       ),
     });
+    const boardRepository = createBoardRepositoryMock({
+      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => ({
+        id: boardId,
+        projectId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
+    });
 
     // Act
-    const result = await listEpics(repository, projectId);
+    const result = await listEpics(repository, boardRepository, projectId);
 
     // Assert
     expect(repository.listByProject).toHaveBeenCalledTimes(1);
@@ -257,11 +343,12 @@ describe("listEpics", () => {
         throw repositoryError;
       }),
     });
+    const boardRepository = createBoardRepositoryMock();
 
     // Act & Assert
-    await expect(listEpics(repository, projectId)).rejects.toThrow(
-      repositoryError
-    );
+    await expect(
+      listEpics(repository, boardRepository, projectId)
+    ).rejects.toThrow(repositoryError);
     expect(repository.listByProject).toHaveBeenCalledTimes(1);
     expect(repository.listTicketsByEpic).not.toHaveBeenCalled();
   });
@@ -276,11 +363,22 @@ describe("listEpics", () => {
         throw repositoryError;
       }),
     });
+    const boardRepository = createBoardRepositoryMock({
+      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => ({
+        id: boardId,
+        projectId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
+    });
 
     // Act & Assert
-    await expect(listEpics(repository, projectId)).rejects.toThrow(
-      repositoryError
-    );
+    await expect(
+      listEpics(repository, boardRepository, projectId)
+    ).rejects.toThrow(repositoryError);
     expect(repository.listByProject).toHaveBeenCalledTimes(1);
     expect(repository.listTicketsByEpic).toHaveBeenCalledTimes(1);
   });

@@ -1,11 +1,6 @@
+import type { Column } from "@/core/domain/schema/board.schema";
 import type { CreateEpicInput, Epic } from "@/core/domain/schema/epic.schema";
 import type { Ticket } from "@/core/domain/schema/ticket.schema";
-
-/**
- * Status values considered completed for progress calculation.
- * Supports both legacy ("completed") and current ("done") board semantics.
- */
-const COMPLETED_STATUSES = new Set(["completed", "done"]);
 
 /**
  * Validation result type for business rules.
@@ -62,20 +57,34 @@ export const validateEpicTicketAssignment = (
 };
 
 /**
- * Calculates epic progress based on ticket statuses.
+ * Calculates epic progress based on canonical workflow state.
  * Pure calculation function (no validation, just calculation).
- * Returns percentage (0-100) of tickets with completed status.
+ * Returns percentage (0-100) of tickets mapped to a column with state="done".
  *
  * @param tickets - Array of tickets assigned to epic
+ * @param columns - Board columns used to resolve ticket status to workflow state
  * @returns Progress percentage (0-100)
  */
-export const calculateEpicProgress = (tickets: Ticket[]): number => {
+export const calculateEpicProgress = (
+  tickets: Ticket[],
+  columns: Array<Pick<Column, "status" | "state">>
+): number => {
   if (tickets.length === 0) {
     return 0;
   }
 
+  const doneStatuses = new Set(
+    columns
+      .filter((column) => column.state === "done")
+      .map((column) => column.status.trim().toLowerCase())
+  );
+
+  if (doneStatuses.size === 0) {
+    return 0;
+  }
+
   const completedCount = tickets.filter((ticket) =>
-    COMPLETED_STATUSES.has(ticket.status.trim().toLowerCase())
+    doneStatuses.has(ticket.status.trim().toLowerCase())
   ).length;
 
   return Math.round((completedCount / tickets.length) * 100);

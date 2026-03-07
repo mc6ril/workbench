@@ -1,8 +1,8 @@
 import {
   validateBoardColumnRelationship,
+  validateBoardHasActiveDoneState,
   validateBoardWithColumns,
   validateColumnOrder,
-  validateColumnStatusUniqueness,
 } from "@/core/domain/rules/board.rules";
 import type {
   Board,
@@ -17,6 +17,7 @@ describe("Board Business Rules", () => {
     boardId: "board-1",
     name: "To Do",
     status: "todo",
+    state: "todo",
     position: 0,
     visible: true,
     createdAt: new Date(),
@@ -108,64 +109,42 @@ describe("Board Business Rules", () => {
     });
   });
 
-  describe("validateColumnStatusUniqueness", () => {
-    it("should return success for empty array", () => {
-      // Arrange
-      const columns: Column[] = [];
+  describe("validateBoardHasActiveDoneState", () => {
+    it("should return success when at least one visible done column exists", () => {
+      const columns: Column[] = [
+        createMockColumn({ id: "col-1", state: "todo", visible: true }),
+        createMockColumn({ id: "col-2", state: "done", visible: true }),
+      ];
 
-      // Act
-      const result = validateColumnStatusUniqueness(columns);
+      const result = validateBoardHasActiveDoneState(columns);
 
-      // Assert
       expect(result.success).toBe(true);
     });
 
-    it("should return success for unique statuses within same board", () => {
-      // Arrange
+    it("should return error when done columns are missing", () => {
       const columns: Column[] = [
-        createMockColumn({ id: "col-1", status: "todo" }),
-        createMockColumn({ id: "col-2", status: "in-progress" }),
-        createMockColumn({ id: "col-3", status: "done" }),
+        createMockColumn({ id: "col-1", state: "todo", visible: true }),
+        createMockColumn({ id: "col-2", state: "in_progress", visible: true }),
       ];
 
-      // Act
-      const result = validateColumnStatusUniqueness(columns);
+      const result = validateBoardHasActiveDoneState(columns);
 
-      // Assert
-      expect(result.success).toBe(true);
-    });
-
-    it("should return error for duplicate statuses within same board", () => {
-      // Arrange
-      const columns: Column[] = [
-        createMockColumn({ id: "col-1", status: "todo" }),
-        createMockColumn({ id: "col-2", status: "todo" }), // Duplicate
-        createMockColumn({ id: "col-3", status: "done" }),
-      ];
-
-      // Act
-      const result = validateColumnStatusUniqueness(columns);
-
-      // Assert
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.code).toBe("DUPLICATE_COLUMN_STATUS");
-        expect(result.error.field).toBe("status");
+        expect(result.error.code).toBe("MISSING_DONE_COLUMN");
+        expect(result.error.field).toBe("state");
       }
     });
 
-    it("should return success for same status in different boards", () => {
-      // Arrange
+    it("should return error when only done columns are hidden", () => {
       const columns: Column[] = [
-        createMockColumn({ id: "col-1", boardId: "board-1", status: "todo" }),
-        createMockColumn({ id: "col-2", boardId: "board-2", status: "todo" }), // Same status, different board
+        createMockColumn({ id: "col-1", state: "todo", visible: true }),
+        createMockColumn({ id: "col-2", state: "done", visible: false }),
       ];
 
-      // Act
-      const result = validateColumnStatusUniqueness(columns);
+      const result = validateBoardHasActiveDoneState(columns);
 
-      // Assert
-      expect(result.success).toBe(true);
+      expect(result.success).toBe(false);
     });
   });
 
@@ -204,6 +183,7 @@ describe("Board Business Rules", () => {
         boardId: "board-1",
         name: "To Do",
         status: "todo",
+        state: "todo",
         position: 0,
       };
       const boardId = "board-1";
@@ -238,18 +218,21 @@ describe("Board Business Rules", () => {
           boardId: "board-1",
           position: 0,
           status: "todo",
+          state: "todo",
         }),
         createMockColumn({
           id: "col-2",
           boardId: "board-1",
           position: 1,
           status: "in-progress",
+          state: "in_progress",
         }),
         createMockColumn({
           id: "col-3",
           boardId: "board-1",
           position: 2,
           status: "done",
+          state: "done",
         }),
       ];
 
@@ -296,7 +279,7 @@ describe("Board Business Rules", () => {
       }
     });
 
-    it("should return error for duplicate statuses", () => {
+    it("should return error when there is no visible done state", () => {
       // Arrange
       const board = createMockBoard({ id: "board-1" });
       const columns: Column[] = [
@@ -305,13 +288,15 @@ describe("Board Business Rules", () => {
           boardId: "board-1",
           position: 0,
           status: "todo",
+          state: "todo",
         }),
         createMockColumn({
           id: "col-2",
           boardId: "board-1",
           position: 1,
-          status: "todo",
-        }), // Duplicate status, different position
+          status: "in-progress",
+          state: "in_progress",
+        }),
       ];
 
       // Act
@@ -320,7 +305,7 @@ describe("Board Business Rules", () => {
       // Assert
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.code).toBe("DUPLICATE_COLUMN_STATUS");
+        expect(result.error.code).toBe("MISSING_DONE_COLUMN");
       }
     });
 
@@ -335,6 +320,14 @@ describe("Board Business Rules", () => {
           boardId: "board-1",
           position: 0,
           status: "todo",
+          state: "todo",
+        }),
+        createMockColumn({
+          id: "col-2",
+          boardId: "board-1",
+          position: 1,
+          status: "completed",
+          state: "done",
         }),
       ];
 
