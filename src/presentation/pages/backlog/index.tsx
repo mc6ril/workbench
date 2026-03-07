@@ -22,10 +22,7 @@ import { useFilterStore } from "@/presentation/stores/useFilterStore";
 import { useSortStore } from "@/presentation/stores/useSortStore";
 
 import { useTranslation } from "@/shared/i18n";
-import {
-  buildTicketCode,
-  filterTicketsBySearch,
-} from "@/shared/utils/ticketUtils";
+import { buildTicketCode, normalizeTicketSearch } from "@/shared/utils/ticketUtils";
 
 const TicketDetailView = dynamic(
   () => import("@/presentation/components/ticketDetailView/TicketDetailView"),
@@ -49,36 +46,36 @@ const BacklogPage = ({ projectId }: Props) => {
   const search = useFilterStore((state) => state.search);
   const filters = useFilterStore((state) => state.filters);
   const sort = useSortStore((state) => state.sort);
+  const { data: project } = useProject(projectId);
   const ticketFilters = useMemo(() => {
     return {
       ...filters,
       parentId: null,
     };
   }, [filters]);
+  const effectiveSearch = useMemo(() => {
+    return normalizeTicketSearch(search, project?.shortCode);
+  }, [project?.shortCode, search]);
   const {
     data: tickets = [],
     isLoading,
     error,
-  } = useTickets(projectId, ticketFilters, sort);
+  } = useTickets(projectId, ticketFilters, sort, effectiveSearch);
   const { data: epics = [] } = useEpics(projectId);
-  const { data: project } = useProject(projectId);
   const { data: boardConfiguration, isLoading: isBoardConfigurationLoading } =
     useBoardConfiguration(projectId);
   const { hasAccess: hasEpicsAccess } = useFeatureAccess(PlanFeature.EPICS);
   const createTicketMutation = useCreateTicket();
-  const filteredTickets = useMemo(() => {
-    return filterTicketsBySearch(tickets, search, project?.shortCode);
-  }, [project?.shortCode, search, tickets]);
   const ticketIds = useMemo(
-    () => filteredTickets.map((ticket) => ticket.id),
-    [filteredTickets]
+    () => tickets.map((ticket) => ticket.id),
+    [tickets]
   );
   const { data: assigneesByTicketId = {} } =
     useTicketAssigneesByTicketIds(ticketIds);
 
   const ticketViewModels = useMemo(() => {
     const epicMap = new Map(epics.map((epic) => [epic.id, epic.name]));
-    return filteredTickets.map((ticket) => ({
+    return tickets.map((ticket) => ({
       assigneeAvatarUrl: assigneesByTicketId[ticket.id]?.[0]?.avatarUrl ?? null,
       assigneeName: assigneesByTicketId[ticket.id]?.[0]?.displayName ?? null,
       id: ticket.id,
@@ -88,7 +85,7 @@ const BacklogPage = ({ projectId }: Props) => {
       status: ticket.status,
       epicName: ticket.epicId ? (epicMap.get(ticket.epicId) ?? null) : null,
     }));
-  }, [assigneesByTicketId, epics, filteredTickets, project?.shortCode]);
+  }, [assigneesByTicketId, epics, project?.shortCode, tickets]);
 
   const isCreateTicketModalOpen = searchParams.get("createTicket") === "1";
   const selectedTicketId = searchParams.get("ticket");

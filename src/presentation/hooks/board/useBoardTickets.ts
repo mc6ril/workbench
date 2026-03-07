@@ -7,14 +7,10 @@ import type { Ticket } from "@/core/domain/schema/ticket.schema";
 import { useTicketAssigneesByTicketIds } from "@/presentation/hooks/ticket/useTicketAssigneesByTicketIds";
 
 import type { BoardTicketViewModel } from "@/shared/types/board";
-import {
-  buildTicketCode,
-  filterTicketsBySearch,
-} from "@/shared/utils/ticketUtils";
+import { buildTicketCode } from "@/shared/utils/ticketUtils";
 
 type UseBoardTicketsInput = {
   tickets: Ticket[];
-  search: string;
   projectShortCode?: string | null;
 };
 
@@ -36,16 +32,11 @@ const mapTicketToViewModel = (
 
 export const useBoardTickets = ({
   tickets,
-  search,
   projectShortCode,
 }: UseBoardTicketsInput) => {
-  const filteredTickets = useMemo(() => {
-    return filterTicketsBySearch(tickets, search, projectShortCode);
-  }, [tickets, search, projectShortCode]);
-
   const filteredTicketIds = useMemo(() => {
-    return filteredTickets.map((ticket) => ticket.id);
-  }, [filteredTickets]);
+    return tickets.map((ticket) => ticket.id);
+  }, [tickets]);
 
   const { data: assigneesByTicketId = {} } =
     useTicketAssigneesByTicketIds(filteredTicketIds);
@@ -53,7 +44,7 @@ export const useBoardTickets = ({
   const ticketViewModelById = useMemo(() => {
     const map = new Map<string, BoardTicketViewModel>();
 
-    for (const ticket of filteredTickets) {
+    for (const ticket of tickets) {
       const primaryAssignee = assigneesByTicketId[ticket.id]?.[0];
       map.set(
         ticket.id,
@@ -67,10 +58,10 @@ export const useBoardTickets = ({
     }
 
     return map;
-  }, [assigneesByTicketId, filteredTickets, projectShortCode]);
+  }, [assigneesByTicketId, projectShortCode, tickets]);
 
   return {
-    filteredTickets,
+    filteredTickets: tickets,
     ticketViewModelById,
   };
 };

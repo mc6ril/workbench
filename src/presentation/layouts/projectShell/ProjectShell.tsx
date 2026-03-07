@@ -58,6 +58,7 @@ const ProjectShell = ({ projectId, children }: Props) => {
 
   const search = useFilterStore((state) => state.search);
   const setSearch = useFilterStore((state) => state.setSearch);
+  const [searchInput, setSearchInput] = useState(search);
   const filters = useFilterStore((state) => state.filters);
   const setStatus = useFilterStore((state) => state.setStatus);
   const clearStatus = useFilterStore((state) => state.clearStatus);
@@ -76,6 +77,22 @@ const ProjectShell = ({ projectId, children }: Props) => {
     viewKey,
     searchValue: search,
   });
+
+  useEffect(() => {
+    setSearchInput(search);
+  }, [search]);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      if (searchInput !== search) {
+        setSearch(searchInput);
+      }
+    }, 400);
+
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [search, searchInput, setSearch]);
 
   const updateQueryParams = useCallback(
     (updates: Record<string, string | null>) => {
@@ -147,9 +164,9 @@ const ProjectShell = ({ projectId, children }: Props) => {
         header={
           <ProjectToolbar
             projectId={projectId}
-            searchValue={search}
+            searchValue={searchInput}
             searchSuggestions={searchSuggestions}
-            onSearchChange={setSearch}
+            onSearchChange={setSearchInput}
             onFilterClick={handleFilterClick}
             onSortClick={handleSortClick}
             onAddClick={handleAddClick}

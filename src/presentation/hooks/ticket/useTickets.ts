@@ -17,16 +17,28 @@ import { queryKeys } from "@/presentation/hooks/queryKeys";
  * @param projectId - Project ID
  * @param filters - Optional filters (status, epicId, parentId)
  * @param sort - Optional sort configuration
+ * @param search - Optional server-side search term
+ * @param options - Query options (enabled, limit)
  */
 export const useTickets = (
   projectId: string,
   filters?: TicketFilters,
   sort?: TicketSort,
-  options?: { enabled?: boolean }
+  search?: string,
+  options?: { enabled?: boolean; limit?: number }
 ) => {
+  const limit = options?.limit;
+
   return useQuery({
-    queryKey: queryKeys.projects.ticketsList(projectId, filters, sort),
-    queryFn: () => listTickets(ticketRepository, projectId, filters, sort),
+    queryKey: queryKeys.projects.ticketsList(
+      projectId,
+      filters,
+      sort,
+      search,
+      limit
+    ),
+    queryFn: () =>
+      listTickets(ticketRepository, projectId, filters, sort, search, limit),
     enabled: !!projectId && (options?.enabled ?? true),
   });
 };

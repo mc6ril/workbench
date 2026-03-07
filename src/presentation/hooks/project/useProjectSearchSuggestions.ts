@@ -9,7 +9,7 @@ import { filterEpicsBySearch } from "@/shared/utils/epicUtils";
 import { buildProjectRoute } from "@/shared/utils/routes";
 import {
   buildTicketCode,
-  filterTicketsBySearch,
+  normalizeTicketSearch,
 } from "@/shared/utils/ticketUtils";
 
 import { useProject } from "./useProject";
@@ -35,10 +35,19 @@ export const useProjectSearchSuggestions = ({
     viewKey === PROJECT_VIEWS.BACKLOG || viewKey === PROJECT_VIEWS.BOARD;
   const isBacklogView = viewKey === PROJECT_VIEWS.BACKLOG;
   const isEpicsView = viewKey === PROJECT_VIEWS.EPICS;
+  const searchTerm = searchValue.trim();
 
   const { data: project } = useProject(projectId, {
     enabled: isTicketView,
   });
+
+  const { data: epics = [] } = useEpics(projectId, { enabled: isEpicsView });
+
+  const projectShortCode = project?.shortCode;
+  const effectiveSearch = useMemo(() => {
+    return normalizeTicketSearch(searchTerm, projectShortCode);
+  }, [projectShortCode, searchTerm]);
+  const hasEffectiveSearchTerm = effectiveSearch.trim() !== "";
 
   // Intentionally ignore active filter/sort stores here:
   // suggestions should act as a global lookup within the current ticket view.
@@ -46,15 +55,10 @@ export const useProjectSearchSuggestions = ({
     projectId,
     isBacklogView ? { parentId: null } : undefined,
     undefined,
-    { enabled: isTicketView }
+    effectiveSearch,
+    { enabled: isTicketView && hasEffectiveSearchTerm, limit: 20 }
   );
-
-  const { data: epics = [] } = useEpics(projectId, { enabled: isEpicsView });
-
-  const projectShortCode = project?.shortCode;
-
   return useMemo(() => {
-    const searchTerm = searchValue.trim();
     if (searchTerm === "") {
       return [];
     }
@@ -70,13 +74,11 @@ export const useProjectSearchSuggestions = ({
     }
 
     if (isTicketView) {
-      return filterTicketsBySearch(tickets, searchTerm, projectShortCode)
-        .slice(0, 6)
-        .map((ticket) => ({
-          id: ticket.id,
-          label: `${buildTicketCode(projectShortCode, ticket.codeNumber) ?? ticket.codeNumber} ${ticket.title}`,
-          href: `${buildProjectRoute(projectId, viewKey)}?ticket=${ticket.id}`,
-        }));
+      return tickets.slice(0, 6).map((ticket) => ({
+        id: ticket.id,
+        label: `${buildTicketCode(projectShortCode, ticket.codeNumber) ?? ticket.codeNumber} ${ticket.title}`,
+        href: `${buildProjectRoute(projectId, viewKey)}?ticket=${ticket.id}`,
+      }));
     }
 
     return [];
@@ -86,7 +88,7 @@ export const useProjectSearchSuggestions = ({
     isTicketView,
     projectId,
     projectShortCode,
-    searchValue,
+    searchTerm,
     tickets,
     viewKey,
   ]);

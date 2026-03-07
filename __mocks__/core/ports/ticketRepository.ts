@@ -17,7 +17,7 @@ export type TicketRepositoryMock = {
   findById: jest.Mock<Promise<Ticket | null>, [string]>;
   listByProject: jest.Mock<
     Promise<Ticket[]>,
-    [string, TicketFilters?, TicketSort?]
+    [string, TicketFilters?, TicketSort?, string?, number?]
   >;
   listByStatus: jest.Mock<Promise<Ticket[]>, [string, string]>;
   create: jest.Mock<Promise<Ticket>, [CreateTicketInput]>;
@@ -69,7 +69,7 @@ export const createTicketRepositoryMock = (
     findById: jest.fn<Promise<Ticket | null>, [string]>(),
     listByProject: jest.fn<
       Promise<Ticket[]>,
-      [string, TicketFilters?, TicketSort?]
+      [string, TicketFilters?, TicketSort?, string?, number?]
     >(),
     listByStatus: jest.fn<Promise<Ticket[]>, [string, string]>(),
     create: jest.fn<Promise<Ticket>, [CreateTicketInput]>(),

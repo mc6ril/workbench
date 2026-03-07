@@ -1,76 +1,93 @@
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
+import {
+  buildTicketAriaLabel,
+  buildTicketCode,
+  normalizeTicketSearch,
+} from "@/shared/utils/ticketUtils";
 
-import { filterTicketsBySearch } from "@/shared/utils/ticketUtils";
-
-const createTicket = (overrides: Partial<Ticket> = {}): Ticket =>
-  ({
-    id: "ticket-1",
-    projectId: "project-1",
-    title: "Default ticket",
-    description: null,
-    status: "todo",
-    position: 0,
-    codeNumber: 1,
-    epicId: null,
-    parentId: null,
-    sprintId: null,
-    priority: null,
-    storyPoints: null,
-    assigneeId: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    ...overrides,
-  }) as Ticket;
-
-describe("filterTicketsBySearch", () => {
-  const tickets: Ticket[] = [
-    createTicket({
-      id: "1",
-      title: "Fix login bug",
-      description: "Auth issue",
-    }),
-    createTicket({ id: "2", title: "Add dashboard", description: null }),
-    createTicket({
-      id: "3",
-      title: "Update API",
-      description: "REST endpoints",
-    }),
-  ];
-
-  it("should return all tickets when search is empty", () => {
-    expect(filterTicketsBySearch(tickets, "")).toEqual(tickets);
+describe("buildTicketCode", () => {
+  it("returns uppercase code with number", () => {
+    expect(buildTicketCode("wb", 12)).toBe("WB-12");
+    expect(buildTicketCode("  prj ", 3)).toBe("PRJ-3");
   });
 
-  it("should return all tickets when search is whitespace", () => {
-    expect(filterTicketsBySearch(tickets, "   ")).toEqual(tickets);
+  it("returns null when short code is missing", () => {
+    expect(buildTicketCode("", 1)).toBeNull();
+    expect(buildTicketCode("   ", 1)).toBeNull();
+    expect(buildTicketCode(null, 1)).toBeNull();
+    expect(buildTicketCode(undefined, 1)).toBeNull();
+  });
+});
+
+describe("normalizeTicketSearch", () => {
+  it("returns empty for empty search", () => {
+    expect(normalizeTicketSearch("", "WB")).toBe("");
+    expect(normalizeTicketSearch("   ", "WB")).toBe("");
   });
 
-  it("should filter by title match (case-insensitive)", () => {
-    const result = filterTicketsBySearch(tickets, "login");
-    expect(result).toHaveLength(1);
-    expect(result[0]?.id).toBe("1");
+  it("keeps regular terms", () => {
+    expect(normalizeTicketSearch("bug", "WB")).toBe("bug");
+    expect(normalizeTicketSearch("WB-12", "WB")).toBe("WB-12");
   });
 
-  it("should filter by description match", () => {
-    const result = filterTicketsBySearch(tickets, "REST");
-    expect(result).toHaveLength(1);
-    expect(result[0]?.id).toBe("3");
+  it("returns input when project short code is unavailable", () => {
+    expect(normalizeTicketSearch("WB", undefined)).toBe("WB");
+    expect(normalizeTicketSearch("WB", null)).toBe("WB");
+    expect(normalizeTicketSearch("WB", "   ")).toBe("WB");
   });
 
-  it("should return empty array when no match", () => {
-    const result = filterTicketsBySearch(tickets, "nonexistent");
-    expect(result).toHaveLength(0);
+  it("turns project shortcode terms into no-op search", () => {
+    expect(normalizeTicketSearch("WB", "WB")).toBe("");
+    expect(normalizeTicketSearch("wb-", "WB")).toBe("");
+    expect(normalizeTicketSearch(" wb ", "WB")).toBe("");
+  });
+});
+
+describe("buildTicketAriaLabel", () => {
+  it("builds full aria label with all optional fields", () => {
+    const result = buildTicketAriaLabel({
+      ticketAriaLabel: "Ticket",
+      title: "Fix login",
+      ticketCode: "WB-1",
+      status: "todo",
+      statusLabel: "Status",
+      epicName: "Authentication",
+      epicLabel: "Epic",
+      assigneeName: "Alice",
+      assigneeLabel: "Assignee",
+      priority: "high",
+      priorityLabel: "Priority",
+      storyPointsLabel: "3 points",
+    });
+
+    expect(result).toBe(
+      "Ticket: Fix login, WB-1, Status: todo, Epic: Authentication, Assignee: Alice, Priority: high, 3 points"
+    );
   });
 
-  it("should handle tickets with null title gracefully", () => {
-    const ticketsWithNull = [
-      createTicket({
-        id: "1",
-        title: null as unknown as string,
-        description: "Some desc",
-      }),
-    ];
-    const result = filterTicketsBySearch(ticketsWithNull, "Some");
-    expect(result).toHaveLength(1);
+  it("keeps only mandatory title when optional fields are absent", () => {
+    const result = buildTicketAriaLabel({
+      ticketAriaLabel: "Ticket",
+      title: "Refactor API",
+      ticketCode: null,
+      epicName: null,
+      assigneeName: null,
+      priority: null,
+    });
+
+    expect(result).toBe("Ticket: Refactor API");
+  });
+
+  it("skips fields when value or label is missing", () => {
+    const result = buildTicketAriaLabel({
+      ticketAriaLabel: "Ticket",
+      title: "Write tests",
+      status: "in-progress",
+      epicName: "QA",
+      assigneeName: "Bob",
+      priority: "medium",
+      storyPointsLabel: "5 points",
+    });
+
+    expect(result).toBe("Ticket: Write tests, 5 points");
   });
 });
