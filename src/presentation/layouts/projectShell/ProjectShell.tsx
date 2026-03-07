@@ -5,30 +5,32 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import AppFooter from "@/presentation/components/appFooter/AppFooter";
 import Breadcrumbs from "@/presentation/components/breadcrumbs/Breadcrumbs";
+import EpicFilterControls from "@/presentation/components/projectShellControls/EpicFilterControls";
+import EpicSortControls from "@/presentation/components/projectShellControls/EpicSortControls";
+import TicketFilterControls from "@/presentation/components/projectShellControls/TicketFilterControls";
+import TicketSortControls from "@/presentation/components/projectShellControls/TicketSortControls";
 import ProjectToolbar from "@/presentation/components/projectToolbar/ProjectToolbar";
 import SidebarNavigation from "@/presentation/components/sidebarNavigation/SidebarNavigation";
 import SkipLink from "@/presentation/components/skipLink/SkipLink";
-import Button from "@/presentation/components/ui/Button";
 import Modal from "@/presentation/components/ui/Modal";
-import Select from "@/presentation/components/ui/Select";
 import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfiguration";
+import { useEpicQueryParams } from "@/presentation/hooks/epic/useEpicQueryParams";
 import { useEpics } from "@/presentation/hooks/epic/useEpics";
+import { useProjectSearchSuggestions } from "@/presentation/hooks/project/useProjectSearchSuggestions";
 import DashboardShell from "@/presentation/layouts/dashboardShell/DashboardShell";
 import { getProjectViewKeyFromPath } from "@/presentation/navigation/projectViews.config";
 import { useFilterStore } from "@/presentation/stores/useFilterStore";
 import { useSortStore } from "@/presentation/stores/useSortStore";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
+import {
+  EPIC_PROGRESS_FILTER_VALUES,
+  EPIC_SORT_FIELD_VALUES,
+  SORT_DIRECTION_VALUES,
+} from "@/shared/constants/filterSort";
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
-import type {
-  EpicProgressFilter,
-  EpicSortField,
-  SortDirection,
-} from "@/shared/types";
 import { buildProjectRoute } from "@/shared/utils/routes";
-
-import styles from "./ProjectShell.module.scss";
 
 type Props = {
   projectId: string;
@@ -43,7 +45,6 @@ const ProjectShell = ({ projectId, children }: Props) => {
   const tSidebar = useTranslation("navigation.sidebar");
   const tBreadcrumbs = useTranslation("navigation.breadcrumbs");
   const tNavbar = useTranslation("navigation.navbar");
-  const tTicketFilters = useTranslation("pages.backlog.filters");
   const mainContentId = getAccessibilityId("main-content");
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
@@ -69,7 +70,12 @@ const ProjectShell = ({ projectId, children }: Props) => {
   const setDirection = useSortStore((state) => state.setDirection);
   const resetSort = useSortStore((state) => state.resetSort);
   const { data: boardConfiguration } = useBoardConfiguration(projectId);
-  const { data: epics = [] } = useEpics(projectId);
+  const { data: epics = [] } = useEpics(projectId, { enabled: isTicketView });
+  const searchSuggestions = useProjectSearchSuggestions({
+    projectId,
+    viewKey,
+    searchValue: search,
+  });
 
   const updateQueryParams = useCallback(
     (updates: Record<string, string | null>) => {
@@ -89,39 +95,8 @@ const ProjectShell = ({ projectId, children }: Props) => {
     [pathname, router, searchParams]
   );
 
-  const epicProgressFilter = useMemo<EpicProgressFilter>(() => {
-    const value = searchParams.get("epicProgress");
-    if (
-      value === "all" ||
-      value === "notStarted" ||
-      value === "inProgress" ||
-      value === "completed"
-    ) {
-      return value;
-    }
-    return "all";
-  }, [searchParams]);
-
-  const epicSortField = useMemo<EpicSortField>(() => {
-    const value = searchParams.get("epicSortField");
-    if (
-      value === "name" ||
-      value === "createdAt" ||
-      value === "updatedAt" ||
-      value === "progress"
-    ) {
-      return value;
-    }
-    return "updatedAt";
-  }, [searchParams]);
-
-  const epicSortDirection = useMemo<SortDirection>(() => {
-    const value = searchParams.get("epicSortDirection");
-    if (value === "asc" || value === "desc") {
-      return value;
-    }
-    return "desc";
-  }, [searchParams]);
+  const { epicProgressFilter, epicSortField, epicSortDirection } =
+    useEpicQueryParams(searchParams);
 
   const statusOptions = useMemo(() => {
     const columns = boardConfiguration?.columns ?? [];
@@ -132,11 +107,15 @@ const ProjectShell = ({ projectId, children }: Props) => {
   }, [boardConfiguration?.columns]);
 
   const epicOptions = useMemo(() => {
+    if (!isTicketView) {
+      return [];
+    }
+
     return epics.map((epic) => ({
       value: epic.id,
       label: epic.name,
     }));
-  }, [epics]);
+  }, [epics, isTicketView]);
 
   useEffect(() => {
     resetSearch();
@@ -169,6 +148,7 @@ const ProjectShell = ({ projectId, children }: Props) => {
           <ProjectToolbar
             projectId={projectId}
             searchValue={search}
+            searchSuggestions={searchSuggestions}
             onSearchChange={setSearch}
             onFilterClick={handleFilterClick}
             onSortClick={handleSortClick}
@@ -190,76 +170,28 @@ const ProjectShell = ({ projectId, children }: Props) => {
         title={tNavbar("filter")}
       >
         {isTicketView ? (
-          <div className={styles["project-shell__modal-controls"]}>
-            <Select
-              label={tTicketFilters("statusLabel")}
-              value={filters.status ?? ""}
-              onChange={(event) => {
-                const nextStatus = event.target.value;
-                if (nextStatus) {
-                  setStatus(nextStatus);
-                  return;
-                }
-                clearStatus();
-              }}
-              options={[
-                { value: "", label: "" },
-                ...statusOptions.map((option) => ({
-                  value: option.value,
-                  label: option.label,
-                })),
-              ]}
-            />
-            <Select
-              label={tTicketFilters("epicLabel")}
-              value={filters.epicId ?? ""}
-              onChange={(event) => {
-                const nextEpicId = event.target.value;
-                if (nextEpicId) {
-                  setEpicId(nextEpicId);
-                  return;
-                }
-                clearEpicId();
-              }}
-              options={[
-                { value: "", label: "" },
-                ...epicOptions.map((option) => ({
-                  value: option.value,
-                  label: option.label,
-                })),
-              ]}
-            />
-            <Button
-              label={tTicketFilters("resetLabel")}
-              onClick={resetFilters}
-              variant="secondary"
-            />
-          </div>
+          <TicketFilterControls
+            filters={filters}
+            statusOptions={statusOptions}
+            epicOptions={epicOptions}
+            onSetStatus={setStatus}
+            onClearStatus={clearStatus}
+            onSetEpicId={setEpicId}
+            onClearEpicId={clearEpicId}
+            onResetFilters={resetFilters}
+          />
         ) : (
-          <div className={styles["project-shell__modal-controls"]}>
-            <Select
-              label={tNavbar("epicFilterLabel")}
-              value={epicProgressFilter}
-              onChange={(event) => {
-                updateQueryParams({
-                  epicProgress: event.target.value,
-                });
-              }}
-              options={[
-                { value: "all", label: tNavbar("epicFilterAll") },
-                { value: "notStarted", label: tNavbar("epicFilterNotStarted") },
-                { value: "inProgress", label: tNavbar("epicFilterInProgress") },
-                { value: "completed", label: tNavbar("epicFilterCompleted") },
-              ]}
-            />
-            <Button
-              label={tNavbar("resetEpicFilters")}
-              onClick={() => {
-                updateQueryParams({ epicProgress: "all" });
-              }}
-              variant="secondary"
-            />
-          </div>
+          <EpicFilterControls
+            epicProgressFilter={epicProgressFilter}
+            onChange={(nextFilter) => {
+              updateQueryParams({ epicProgress: nextFilter });
+            }}
+            onReset={() => {
+              updateQueryParams({
+                epicProgress: EPIC_PROGRESS_FILTER_VALUES.ALL,
+              });
+            }}
+          />
         )}
       </Modal>
 
@@ -271,79 +203,29 @@ const ProjectShell = ({ projectId, children }: Props) => {
         title={tNavbar("sort")}
       >
         {isTicketView ? (
-          <div className={styles["project-shell__modal-controls"]}>
-            <Select
-              label={tNavbar("ticketSortFieldLabel")}
-              value={sort.field}
-              onChange={(event) => {
-                setField(event.target.value as typeof sort.field);
-              }}
-              options={[
-                { value: "createdAt", label: tNavbar("ticketSortCreatedAt") },
-                { value: "title", label: tNavbar("ticketSortTitle") },
-                { value: "position", label: tNavbar("ticketSortPosition") },
-                { value: "priority", label: tNavbar("ticketSortPriority") },
-                { value: "dueDate", label: tNavbar("ticketSortDueDate") },
-              ]}
-            />
-            <Select
-              label={tNavbar("sortDirectionLabel")}
-              value={sort.direction}
-              onChange={(event) => {
-                setDirection(event.target.value as typeof sort.direction);
-              }}
-              options={[
-                { value: "asc", label: tNavbar("sortDirectionAsc") },
-                { value: "desc", label: tNavbar("sortDirectionDesc") },
-              ]}
-            />
-            <Button
-              label={tNavbar("resetTicketSort")}
-              onClick={resetSort}
-              variant="secondary"
-            />
-          </div>
+          <TicketSortControls
+            sort={sort}
+            onSetField={setField}
+            onSetDirection={setDirection}
+            onResetSort={resetSort}
+          />
         ) : (
-          <div className={styles["project-shell__modal-controls"]}>
-            <Select
-              label={tNavbar("epicSortFieldLabel")}
-              value={epicSortField}
-              onChange={(event) => {
-                updateQueryParams({
-                  epicSortField: event.target.value,
-                });
-              }}
-              options={[
-                { value: "updatedAt", label: tNavbar("epicSortUpdatedAt") },
-                { value: "createdAt", label: tNavbar("epicSortCreatedAt") },
-                { value: "name", label: tNavbar("epicSortName") },
-                { value: "progress", label: tNavbar("epicSortProgress") },
-              ]}
-            />
-            <Select
-              label={tNavbar("sortDirectionLabel")}
-              value={epicSortDirection}
-              onChange={(event) => {
-                updateQueryParams({
-                  epicSortDirection: event.target.value,
-                });
-              }}
-              options={[
-                { value: "asc", label: tNavbar("sortDirectionAsc") },
-                { value: "desc", label: tNavbar("sortDirectionDesc") },
-              ]}
-            />
-            <Button
-              label={tNavbar("resetEpicSort")}
-              onClick={() => {
-                updateQueryParams({
-                  epicSortField: "updatedAt",
-                  epicSortDirection: "desc",
-                });
-              }}
-              variant="secondary"
-            />
-          </div>
+          <EpicSortControls
+            epicSortField={epicSortField}
+            epicSortDirection={epicSortDirection}
+            onSetField={(nextField) => {
+              updateQueryParams({ epicSortField: nextField });
+            }}
+            onSetDirection={(nextDirection) => {
+              updateQueryParams({ epicSortDirection: nextDirection });
+            }}
+            onReset={() => {
+              updateQueryParams({
+                epicSortField: EPIC_SORT_FIELD_VALUES.UPDATED_AT,
+                epicSortDirection: SORT_DIRECTION_VALUES.DESC,
+              });
+            }}
+          />
         )}
       </Modal>
     </>

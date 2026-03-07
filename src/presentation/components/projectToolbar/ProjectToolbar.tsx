@@ -1,30 +1,25 @@
 "use client";
 
-import React, { useCallback, useMemo } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { FilterIcon, SortIcon } from "@/presentation/components/icons";
 import Button from "@/presentation/components/ui/Button";
 import Input from "@/presentation/components/ui/Input";
-import { useEpics } from "@/presentation/hooks/epic/useEpics";
-import { useProject } from "@/presentation/hooks/project/useProject";
-import { useTickets } from "@/presentation/hooks/ticket/useTickets";
+import type { ProjectSearchSuggestion } from "@/presentation/hooks/project/useProjectSearchSuggestions";
 import {
   getProjectViewConfig,
   getProjectViewKeyFromPath,
 } from "@/presentation/navigation/projectViews.config";
-import { useFilterStore } from "@/presentation/stores/useFilterStore";
-import { useSortStore } from "@/presentation/stores/useSortStore";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
-import { filterEpicsBySearch } from "@/shared/utils/epicUtils";
-import { buildProjectRoute } from "@/shared/utils/routes";
-import {
-  buildTicketCode,
-  filterTicketsBySearch,
-} from "@/shared/utils/ticketUtils";
 
 import styles from "./ProjectToolbar.module.scss";
 
@@ -35,12 +30,7 @@ type Props = {
   onFilterClick?: () => void;
   onSortClick?: () => void;
   onAddClick?: () => void;
-};
-
-type SearchSuggestion = {
-  id: string;
-  label: string;
-  href: string;
+  searchSuggestions?: ProjectSearchSuggestion[];
 };
 
 const ProjectToolbar = ({
@@ -50,14 +40,17 @@ const ProjectToolbar = ({
   onFilterClick,
   onSortClick,
   onAddClick,
+  searchSuggestions = [],
 }: Props) => {
   const pathname = usePathname();
   const router = useRouter();
+  const searchContainerRef = useRef<HTMLDivElement>(null);
   const tSidebar = useTranslation("navigation.sidebar");
   const tNavbar = useTranslation("navigation.navbar");
   const tSearch = useTranslation("navigation.searchBar");
-  const filters = useFilterStore((state) => state.filters);
-  const sort = useSortStore((state) => state.sort);
+  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] =
+    useState<number>(-1);
 
   const viewKey = useMemo(
     () => getProjectViewKeyFromPath(pathname, projectId),
@@ -81,80 +74,111 @@ const ProjectToolbar = ({
       ? tNavbar("addEpicAriaLabel")
       : tNavbar("addTicketAriaLabel");
 
+  const showSuggestions =
+    isSuggestionsOpen &&
+    searchValue.trim() !== "" &&
+    searchSuggestions.length > 0;
+
+  const closeSuggestions = useCallback(() => {
+    setIsSuggestionsOpen(false);
+    setActiveSuggestionIndex(-1);
+  }, []);
+
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      onSearchChange?.(e.target.value);
+      const nextValue = e.target.value;
+      onSearchChange?.(nextValue);
+
+      if (nextValue.trim() === "") {
+        closeSuggestions();
+        return;
+      }
+
+      setIsSuggestionsOpen(true);
     },
-    [onSearchChange]
+    [closeSuggestions, onSearchChange]
   );
 
-  const effectiveTicketFilters = useMemo(() => {
-    if (viewKey === PROJECT_VIEWS.BACKLOG) {
-      return {
-        ...filters,
-        parentId: null,
-      };
+  const openSuggestions = useCallback(() => {
+    if (searchValue.trim() === "" || searchSuggestions.length === 0) {
+      return;
     }
+    setIsSuggestionsOpen(true);
+  }, [searchSuggestions.length, searchValue]);
 
-    if (viewKey === PROJECT_VIEWS.BOARD) {
-      return filters;
-    }
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent): void => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        closeSuggestions();
+      }
+    };
 
-    return undefined;
-  }, [filters, viewKey]);
-
-  const ticketSearchProjectId =
-    viewKey === PROJECT_VIEWS.BACKLOG || viewKey === PROJECT_VIEWS.BOARD
-      ? projectId
-      : "";
-  const epicSearchProjectId = viewKey === PROJECT_VIEWS.EPICS ? projectId : "";
-
-  const { data: project } = useProject(ticketSearchProjectId);
-  const { data: tickets = [] } = useTickets(
-    ticketSearchProjectId,
-    effectiveTicketFilters,
-    sort
-  );
-  const { data: epics = [] } = useEpics(epicSearchProjectId);
-
-  const projectShortCode = project?.shortCode;
-
-  const searchSuggestions = useMemo<SearchSuggestion[]>(() => {
-    const searchTerm = searchValue.trim();
-    if (searchTerm === "") {
-      return [];
-    }
-
-    if (viewKey === PROJECT_VIEWS.EPICS) {
-      return filterEpicsBySearch(epics, searchTerm)
-        .slice(0, 6)
-        .map((epic) => ({
-          id: epic.id,
-          label: epic.name,
-          href: `${buildProjectRoute(projectId, PROJECT_VIEWS.EPICS)}#epic-${epic.id}`,
-        }));
-    }
-
-    if (viewKey === PROJECT_VIEWS.BACKLOG || viewKey === PROJECT_VIEWS.BOARD) {
-      const targetView =
-        viewKey === PROJECT_VIEWS.BACKLOG
-          ? PROJECT_VIEWS.BACKLOG
-          : PROJECT_VIEWS.BOARD;
-
-      return filterTicketsBySearch(tickets, searchTerm, projectShortCode)
-        .slice(0, 6)
-        .map((ticket) => ({
-          id: ticket.id,
-          label: `${buildTicketCode(projectShortCode, ticket.codeNumber) ?? ticket.codeNumber} ${ticket.title}`,
-          href: `${buildProjectRoute(projectId, targetView)}?ticket=${ticket.id}`,
-        }));
-    }
-
-    return [];
-  }, [epics, projectId, projectShortCode, searchValue, tickets, viewKey]);
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+    };
+  }, [closeSuggestions]);
 
   const navbarId = getAccessibilityId("project-toolbar");
   const searchId = getAccessibilityId("project-toolbar-search");
+  const suggestionsId = getAccessibilityId("project-toolbar-suggestions");
+
+  const navigateToSuggestion = useCallback(
+    (href: string) => {
+      closeSuggestions();
+      router.push(href);
+    },
+    [closeSuggestions, router]
+  );
+
+  const handleSearchKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (searchSuggestions.length === 0) {
+        return;
+      }
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        openSuggestions();
+        setActiveSuggestionIndex((prev) =>
+          prev < searchSuggestions.length - 1 ? prev + 1 : 0
+        );
+        return;
+      }
+
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        openSuggestions();
+        setActiveSuggestionIndex((prev) =>
+          prev > 0 ? prev - 1 : searchSuggestions.length - 1
+        );
+        return;
+      }
+
+      if (event.key === "Escape") {
+        closeSuggestions();
+        return;
+      }
+
+      if (event.key === "Enter" && activeSuggestionIndex >= 0) {
+        event.preventDefault();
+        const suggestion = searchSuggestions[activeSuggestionIndex];
+        if (suggestion) {
+          navigateToSuggestion(suggestion.href);
+        }
+      }
+    },
+    [
+      activeSuggestionIndex,
+      closeSuggestions,
+      navigateToSuggestion,
+      openSuggestions,
+      searchSuggestions,
+    ]
+  );
 
   return (
     <header
@@ -197,25 +221,59 @@ const ProjectToolbar = ({
         </div>
 
         <div className={styles["project-toolbar__right"]}>
-          <div className={styles["project-toolbar__search"]}>
+          <div
+            ref={searchContainerRef}
+            className={styles["project-toolbar__search"]}
+          >
             <Input
               id={searchId}
               type="search"
               placeholder={tSearch("placeholder")}
               aria-label={tSearch("ariaLabel")}
+              role="combobox"
+              aria-autocomplete="list"
+              aria-controls={suggestionsId}
+              aria-expanded={showSuggestions}
+              aria-activedescendant={
+                activeSuggestionIndex >= 0
+                  ? `${suggestionsId}-option-${activeSuggestionIndex}`
+                  : undefined
+              }
               value={searchValue}
               onChange={handleSearchChange}
+              onFocus={openSuggestions}
+              onKeyDown={handleSearchKeyDown}
               inline
             />
-            {searchSuggestions.length > 0 && (
-              <div className={styles["project-toolbar__search-results"]}>
-                {searchSuggestions.map((suggestion) => (
+            {showSuggestions && (
+              <div
+                id={suggestionsId}
+                role="listbox"
+                className={styles["project-toolbar__search-results"]}
+              >
+                {searchSuggestions.map((suggestion, index) => (
                   <button
+                    id={`${suggestionsId}-option-${index}`}
                     key={suggestion.id}
                     type="button"
-                    className={styles["project-toolbar__search-result-item"]}
+                    role="option"
+                    aria-selected={index === activeSuggestionIndex}
+                    className={[
+                      styles["project-toolbar__search-result-item"],
+                      index === activeSuggestionIndex
+                        ? styles["project-toolbar__search-result-item--active"]
+                        : undefined,
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                    onMouseEnter={() => {
+                      setActiveSuggestionIndex(index);
+                    }}
+                    onMouseDown={(event) => {
+                      event.preventDefault();
+                    }}
                     onClick={() => {
-                      router.push(suggestion.href);
+                      navigateToSuggestion(suggestion.href);
                     }}
                   >
                     {suggestion.label}

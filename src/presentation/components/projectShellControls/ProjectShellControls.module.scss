@@ -1,6 +1,6 @@
 @use "@/styles/variables/spacing" as *;
 
-.project-shell__modal-controls {
+.project-shell-controls {
   display: grid;
   gap: $spacing-md;
 }

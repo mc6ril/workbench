@@ -170,3 +170,7 @@
     box-shadow: $shadow-focus;
   }
 }
+
+.project-toolbar__search-result-item--active {
+  background-color: $color-surface-hover;
+}

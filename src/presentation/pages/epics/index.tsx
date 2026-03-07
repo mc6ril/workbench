@@ -5,6 +5,7 @@ import EpicsList from "@/presentation/components/epicsList/EpicsList";
 import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
 import Loader from "@/presentation/components/ui/Loader";
 import { useEpics } from "@/presentation/hooks/epic";
+import { useEpicQueryParams } from "@/presentation/hooks/epic/useEpicQueryParams";
 import { useFilterStore } from "@/presentation/stores/useFilterStore";
 
 import { getAccessibilityId } from "@/shared/a11y";
@@ -27,39 +28,8 @@ const EpicsLayout = ({ projectId }: Props) => {
 
   //fetch epics
   const { data: epics, isLoading, error } = useEpics(projectId);
-  const epicProgressFilter = useMemo(() => {
-    const value = searchParams.get("epicProgress");
-    if (
-      value === "all" ||
-      value === "notStarted" ||
-      value === "inProgress" ||
-      value === "completed"
-    ) {
-      return value;
-    }
-    return "all" as const;
-  }, [searchParams]);
-
-  const epicSortField = useMemo(() => {
-    const value = searchParams.get("epicSortField");
-    if (
-      value === "name" ||
-      value === "createdAt" ||
-      value === "updatedAt" ||
-      value === "progress"
-    ) {
-      return value;
-    }
-    return "updatedAt" as const;
-  }, [searchParams]);
-
-  const epicSortDirection = useMemo(() => {
-    const value = searchParams.get("epicSortDirection");
-    if (value === "asc" || value === "desc") {
-      return value;
-    }
-    return "desc" as const;
-  }, [searchParams]);
+  const { epicProgressFilter, epicSortField, epicSortDirection } =
+    useEpicQueryParams(searchParams);
 
   const visibleEpics = useMemo(() => {
     const withSearch = filterEpicsBySearch(epics ?? [], search);
