@@ -31,7 +31,11 @@ const DashboardHeader = ({
     <header id={headerId} className={headerClasses}>
       <div className={styles["dashboard-header__content"]}>
         <div className={styles["dashboard-header__text"]}>
-          <Title id={titleId} variant="h1" className={styles["dashboard-header__title"]}>
+          <Title
+            id={titleId}
+            variant="h1"
+            className={styles["dashboard-header__title"]}
+          >
             {title}
           </Title>
           {subtitle && (

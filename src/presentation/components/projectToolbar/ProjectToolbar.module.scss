@@ -6,13 +6,13 @@
 @use "@/styles/variables/animations" as *;
 @use "@/styles/variables/shadows" as *;
 
-.project-navbar {
+.project-toolbar {
   width: 100%;
   height: 100%;
   min-height: $layout-dashboard-header-height;
 }
 
-.project-navbar__content {
+.project-toolbar__content {
   width: 100%;
   height: 100%;
   min-height: $layout-dashboard-header-height;
@@ -24,14 +24,14 @@
   padding: 0 $layout-dashboard-main-padding;
 }
 
-.project-navbar__left {
+.project-toolbar__left {
   display: flex;
   align-items: center;
   gap: $spacing-md;
   min-width: 0;
 }
 
-.project-navbar__title {
+.project-toolbar__title {
   margin: 0;
   font-family: $font-family-serif;
   font-size: $font-size-xl;
@@ -43,13 +43,13 @@
   text-overflow: ellipsis;
 }
 
-.project-navbar__tools {
+.project-toolbar__tools {
   display: flex;
   align-items: center;
   gap: $spacing-xs;
 }
 
-.project-navbar__tool {
+.project-toolbar__tool {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -87,7 +87,7 @@
   }
 }
 
-.project-navbar__tool-label {
+.project-toolbar__tool-label {
   @media (max-width: #{$breakpoint-md - 1px}) {
     position: absolute;
     width: 1px;
@@ -101,7 +101,7 @@
   }
 }
 
-.project-navbar__right {
+.project-toolbar__right {
   display: flex;
   align-items: center;
   gap: $spacing-md;
@@ -115,7 +115,8 @@
   }
 }
 
-.project-navbar__search {
+.project-toolbar__search {
+  position: relative;
   flex: 1;
   min-width: 0;
   max-width: 20rem;
@@ -126,10 +127,46 @@
   }
 }
 
-.project-navbar__search :global(.input-wrapper) {
+.project-toolbar__search :global(.input-wrapper) {
   margin: 0;
 }
 
-.project-navbar__search :global(.input) {
+.project-toolbar__search :global(.input) {
   width: 100%;
+}
+
+.project-toolbar__search-results {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + #{$spacing-xs});
+  left: 0;
+  right: 0;
+  display: grid;
+  gap: $spacing-2xs;
+  padding: $spacing-2xs;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-md;
+  background-color: $color-surface;
+  box-shadow: $shadow-md;
+}
+
+.project-toolbar__search-result-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  border-radius: $border-radius-sm;
+  background: transparent;
+  color: $color-text;
+  padding: $spacing-xs $spacing-sm;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $color-surface-hover;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: $shadow-focus;
+  }
 }

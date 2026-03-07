@@ -74,6 +74,7 @@ const EpicCard = ({
 
   return (
     <li
+      id={`epic-${id}`}
       className={styles["epic-card"]}
       aria-describedby={describedById}
       aria-label={cardAriaLabel}

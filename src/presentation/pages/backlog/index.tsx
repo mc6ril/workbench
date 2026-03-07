@@ -18,9 +18,14 @@ import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAc
 import { useCreateTicket } from "@/presentation/hooks/ticket/useCreateTicket";
 import { useTicketAssigneesByTicketIds } from "@/presentation/hooks/ticket/useTicketAssigneesByTicketIds";
 import { useTickets } from "@/presentation/hooks/ticket/useTickets";
+import { useFilterStore } from "@/presentation/stores/useFilterStore";
+import { useSortStore } from "@/presentation/stores/useSortStore";
 
 import { useTranslation } from "@/shared/i18n";
-import { buildTicketCode } from "@/shared/utils/ticketUtils";
+import {
+  buildTicketCode,
+  filterTicketsBySearch,
+} from "@/shared/utils/ticketUtils";
 
 const TicketDetailView = dynamic(
   () => import("@/presentation/components/ticketDetailView/TicketDetailView"),
@@ -41,26 +46,39 @@ const BacklogPage = ({ projectId }: Props) => {
   const tBacklog = useTranslation("pages.backlog");
   const tCreateForm = useTranslation("pages.backlog.createTicketForm");
   const tTicket = useTranslation("pages.ticketDetail.page");
+  const search = useFilterStore((state) => state.search);
+  const filters = useFilterStore((state) => state.filters);
+  const sort = useSortStore((state) => state.sort);
+  const ticketFilters = useMemo(() => {
+    return {
+      ...filters,
+      parentId: null,
+    };
+  }, [filters]);
   const {
     data: tickets = [],
     isLoading,
     error,
-  } = useTickets(projectId, {
-    parentId: null,
-  });
+  } = useTickets(projectId, ticketFilters, sort);
   const { data: epics = [] } = useEpics(projectId);
   const { data: project } = useProject(projectId);
   const { data: boardConfiguration, isLoading: isBoardConfigurationLoading } =
     useBoardConfiguration(projectId);
   const { hasAccess: hasEpicsAccess } = useFeatureAccess(PlanFeature.EPICS);
   const createTicketMutation = useCreateTicket();
-  const ticketIds = useMemo(() => tickets.map((ticket) => ticket.id), [tickets]);
+  const filteredTickets = useMemo(() => {
+    return filterTicketsBySearch(tickets, search, project?.shortCode);
+  }, [project?.shortCode, search, tickets]);
+  const ticketIds = useMemo(
+    () => filteredTickets.map((ticket) => ticket.id),
+    [filteredTickets]
+  );
   const { data: assigneesByTicketId = {} } =
     useTicketAssigneesByTicketIds(ticketIds);
 
   const ticketViewModels = useMemo(() => {
     const epicMap = new Map(epics.map((epic) => [epic.id, epic.name]));
-    return tickets.map((ticket) => ({
+    return filteredTickets.map((ticket) => ({
       assigneeAvatarUrl: assigneesByTicketId[ticket.id]?.[0]?.avatarUrl ?? null,
       assigneeName: assigneesByTicketId[ticket.id]?.[0]?.displayName ?? null,
       id: ticket.id,
@@ -70,7 +88,7 @@ const BacklogPage = ({ projectId }: Props) => {
       status: ticket.status,
       epicName: ticket.epicId ? (epicMap.get(ticket.epicId) ?? null) : null,
     }));
-  }, [assigneesByTicketId, epics, tickets, project?.shortCode]);
+  }, [assigneesByTicketId, epics, filteredTickets, project?.shortCode]);
 
   const isCreateTicketModalOpen = searchParams.get("createTicket") === "1";
   const selectedTicketId = searchParams.get("ticket");
@@ -109,7 +127,9 @@ const BacklogPage = ({ projectId }: Props) => {
     if (!selectedTicket) {
       return baseTitle;
     }
-    const ticketCode = tTicket("ticketCode", { code: selectedTicket.codeNumber });
+    const ticketCode = tTicket("ticketCode", {
+      code: selectedTicket.codeNumber,
+    });
     return `${ticketCode} ${selectedTicket.title}`;
   }, [selectedTicket, tTicket]);
 
