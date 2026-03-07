@@ -15,7 +15,10 @@ export type TicketRepositoryMock = {
   getNextCodeNumberForProject: jest.Mock<Promise<number>, [string]>;
   findByCode: jest.Mock<Promise<Ticket | null>, [string, number]>;
   findById: jest.Mock<Promise<Ticket | null>, [string]>;
-  listByProject: jest.Mock<Promise<Ticket[]>, [string, TicketFilters?, TicketSort?]>;
+  listByProject: jest.Mock<
+    Promise<Ticket[]>,
+    [string, TicketFilters?, TicketSort?]
+  >;
   listByStatus: jest.Mock<Promise<Ticket[]>, [string, string]>;
   create: jest.Mock<Promise<Ticket>, [CreateTicketInput]>;
   update: jest.Mock<Promise<Ticket>, [string, UpdateTicketInput]>;
@@ -25,6 +28,17 @@ export type TicketRepositoryMock = {
     [Array<{ id: string; position: number }>]
   >;
   moveTicket: jest.Mock<Promise<Ticket>, [string, string, number]>;
+  moveAndReorderTicket: jest.Mock<
+    Promise<Ticket[]>,
+    [
+      {
+        ticketId: string;
+        status: string;
+        position: number;
+        ticketPositions: Array<{ id: string; position: number }>;
+      },
+    ]
+  >;
   assignToEpic: jest.Mock<Promise<Ticket>, [string, string]>;
   unassignFromEpic: jest.Mock<Promise<Ticket>, [string]>;
   assignUsers: jest.Mock<Promise<void>, [string, string[]]>;
@@ -53,7 +67,10 @@ export const createTicketRepositoryMock = (
     getNextCodeNumberForProject: jest.fn<Promise<number>, [string]>(),
     findByCode: jest.fn<Promise<Ticket | null>, [string, number]>(),
     findById: jest.fn<Promise<Ticket | null>, [string]>(),
-    listByProject: jest.fn<Promise<Ticket[]>, [string, TicketFilters?, TicketSort?]>(),
+    listByProject: jest.fn<
+      Promise<Ticket[]>,
+      [string, TicketFilters?, TicketSort?]
+    >(),
     listByStatus: jest.fn<Promise<Ticket[]>, [string, string]>(),
     create: jest.fn<Promise<Ticket>, [CreateTicketInput]>(),
     update: jest.fn<Promise<Ticket>, [string, UpdateTicketInput]>(),
@@ -63,6 +80,17 @@ export const createTicketRepositoryMock = (
       [Array<{ id: string; position: number }>]
     >(),
     moveTicket: jest.fn<Promise<Ticket>, [string, string, number]>(),
+    moveAndReorderTicket: jest.fn<
+      Promise<Ticket[]>,
+      [
+        {
+          ticketId: string;
+          status: string;
+          position: number;
+          ticketPositions: Array<{ id: string; position: number }>;
+        },
+      ]
+    >(),
     assignToEpic: jest.fn<Promise<Ticket>, [string, string]>(),
     unassignFromEpic: jest.fn<Promise<Ticket>, [string]>(),
     assignUsers: jest.fn<Promise<void>, [string, string[]]>(),
