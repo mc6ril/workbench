@@ -151,6 +151,35 @@ describe("Epic Business Rules", () => {
       expect(result).toBe(100);
     });
 
+    it("should return 100 when all tickets are done", () => {
+      // Arrange
+      const tickets: Ticket[] = [
+        createMockTicket({ status: "done" }),
+        createMockTicket({ status: "done" }),
+      ];
+
+      // Act
+      const result = calculateEpicProgress(tickets);
+
+      // Assert
+      expect(result).toBe(100);
+    });
+
+    it("should treat completed and done as finished statuses", () => {
+      // Arrange
+      const tickets: Ticket[] = [
+        createMockTicket({ status: "completed" }),
+        createMockTicket({ status: "done" }),
+        createMockTicket({ status: "todo" }),
+      ];
+
+      // Act
+      const result = calculateEpicProgress(tickets);
+
+      // Assert
+      expect(result).toBe(67);
+    });
+
     it("should return 50 when half of tickets are completed", () => {
       // Arrange
       const tickets: Ticket[] = [

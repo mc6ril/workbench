@@ -2,10 +2,10 @@ import type { CreateEpicInput, Epic } from "@/core/domain/schema/epic.schema";
 import type { Ticket } from "@/core/domain/schema/ticket.schema";
 
 /**
- * Status that indicates a ticket is completed.
- * Used for progress calculation.
+ * Status values considered completed for progress calculation.
+ * Supports both legacy ("completed") and current ("done") board semantics.
  */
-const COMPLETED_STATUS = "completed";
+const COMPLETED_STATUSES = new Set(["completed", "done"]);
 
 /**
  * Validation result type for business rules.
@@ -74,8 +74,8 @@ export const calculateEpicProgress = (tickets: Ticket[]): number => {
     return 0;
   }
 
-  const completedCount = tickets.filter(
-    (ticket) => ticket.status === COMPLETED_STATUS
+  const completedCount = tickets.filter((ticket) =>
+    COMPLETED_STATUSES.has(ticket.status.trim().toLowerCase())
   ).length;
 
   return Math.round((completedCount / tickets.length) * 100);
