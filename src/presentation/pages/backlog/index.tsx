@@ -5,6 +5,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
 
+import { addLabelsToTicket } from "@/core/usecases/label";
+
+import { labelRepository } from "@/infrastructure/supabase/repositories";
+
 import CreateTicketForm from "@/presentation/components/createTicketForm/CreateTicketForm";
 import TicketDetailView from "@/presentation/components/ticketDetailView/TicketDetailView";
 import TicketList from "@/presentation/components/ticketList/TicketList";
@@ -13,6 +17,7 @@ import Modal from "@/presentation/components/ui/Modal";
 import Text from "@/presentation/components/ui/Text";
 import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfiguration";
 import { useEpics } from "@/presentation/hooks/epic/useEpics";
+import { useLabels } from "@/presentation/hooks/label";
 import { useProject } from "@/presentation/hooks/project/useProject";
 import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
 import { useCreateTicket } from "@/presentation/hooks/ticket/useCreateTicket";
@@ -60,6 +65,7 @@ const BacklogPage = ({ projectId }: Props) => {
     error,
   } = useTickets(projectId, ticketFilters, sort, effectiveSearch);
   const { data: epics = [] } = useEpics(projectId);
+  const { data: labels = [] } = useLabels(projectId);
   const { data: boardConfiguration, isLoading: isBoardConfigurationLoading } =
     useBoardConfiguration(projectId);
   const { hasAccess: hasEpicsAccess } = useFeatureAccess(PlanFeature.EPICS);
@@ -142,6 +148,12 @@ const BacklogPage = ({ projectId }: Props) => {
       label: epic.name,
     }));
   }, [epics]);
+  const labelOptions = useMemo(() => {
+    return labels.map((label) => ({
+      value: label.id,
+      label: label.name,
+    }));
+  }, [labels]);
 
   const createTicketErrorMessage =
     createTicketMutation.error instanceof Error
@@ -193,6 +205,7 @@ const BacklogPage = ({ projectId }: Props) => {
           <CreateTicketForm
             statusOptions={statusOptions}
             epicOptions={epicOptions}
+            labelOptions={labelOptions}
             showEpicField={hasEpicsAccess}
             isSubmitting={createTicketMutation.isPending}
             errorMessage={createTicketErrorMessage}
@@ -202,7 +215,7 @@ const BacklogPage = ({ projectId }: Props) => {
                 return;
               }
 
-              await createTicketMutation.mutateAsync({
+              const createdTicket = await createTicketMutation.mutateAsync({
                 projectId,
                 title: values.title,
                 description: values.description ?? null,
@@ -210,6 +223,14 @@ const BacklogPage = ({ projectId }: Props) => {
                 epicId: values.epicId ?? null,
                 position: ticketViewModels.length,
               });
+
+              if (values.labelIds && values.labelIds.length > 0) {
+                await addLabelsToTicket(
+                  createdTicket.id,
+                  values.labelIds,
+                  labelRepository
+                );
+              }
 
               closeCreateTicketModal();
             }}

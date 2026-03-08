@@ -89,14 +89,9 @@ export const createTicketRepository = (
       limit?: number
     ): Promise<Ticket[]> {
       try {
-        const assigneeIds = filters?.assigneeIds ?? [];
-        const hasAssigneeFilter = assigneeIds.length > 0;
-        const selectClause: "*" | "*,ticket_assignees!inner(user_id)" =
-          hasAssigneeFilter ? "*,ticket_assignees!inner(user_id)" : "*";
-
         let query = client
           .from("tickets")
-          .select(selectClause)
+          .select("*")
           .eq("project_id", projectId);
 
         // Apply filters if provided
@@ -133,15 +128,15 @@ export const createTicketRepository = (
           query = query.eq("priority", filters.priority);
         }
 
-        if (hasAssigneeFilter) {
-          query = query.in("ticket_assignees.user_id", assigneeIds);
-        }
-
         if (filters?.labelIds && filters.labelIds.length > 0) {
-          const { data: labelTicketIds } = await client
+          const { data: labelTicketIds, error: labelFilterError } = await client
             .from("ticket_labels")
             .select("ticket_id")
             .in("label_id", filters.labelIds);
+
+          if (labelFilterError) {
+            return handleRepositoryError(labelFilterError, "Ticket");
+          }
 
           const ticketIds = (labelTicketIds ?? []).map(
             (r: { ticket_id: string }) => r.ticket_id
@@ -201,17 +196,22 @@ export const createTicketRepository = (
           position: "position",
           title: "title",
           priority: "priority",
+          sprint: "sprint_id",
           dueDate: "due_date",
         };
         const orderColumn = sortFieldMap[sortField] ?? "created_at";
 
-        if (typeof limit === "number" && limit > 0) {
-          query = query.limit(limit);
+        if (sortField !== "priority") {
+          query = query.order(orderColumn, {
+            ascending: sortDirection === "asc",
+          });
+
+          if (typeof limit === "number" && limit > 0) {
+            query = query.limit(limit);
+          }
         }
 
-        const { data, error } = await query.order(orderColumn, {
-          ascending: sortDirection === "asc",
-        });
+        const { data, error } = await query;
 
         if (error) {
           return handleRepositoryError(error, "Ticket");
@@ -222,11 +222,37 @@ export const createTicketRepository = (
         }
 
         const ticketRows = data as unknown as TicketRow[];
-        const uniqueTicketRows = Array.from(
-          new Map(ticketRows.map((row) => [row.id, row])).values()
-        );
 
-        return mapTicketRowsToDomain(uniqueTicketRows);
+        if (sortField === "priority") {
+          // DB stores priority as text, so semantic priority sort is done in-memory.
+          // Trade-off: for this specific sort mode, all matching rows are fetched
+          // before applying `limit`.
+          const priorityRank: Record<string, number> = {
+            highest: 5,
+            high: 4,
+            medium: 3,
+            low: 2,
+            lowest: 1,
+          };
+
+          ticketRows.sort((a, b) => {
+            const rankA = a.priority ? (priorityRank[a.priority] ?? 0) : 0;
+            const rankB = b.priority ? (priorityRank[b.priority] ?? 0) : 0;
+            if (rankA === rankB) {
+              // TicketRow timestamps are ISO strings from Supabase row types.
+              return a.created_at.localeCompare(b.created_at);
+            }
+
+            return sortDirection === "asc" ? rankA - rankB : rankB - rankA;
+          });
+        }
+
+        const limitedTicketRows =
+          typeof limit === "number" && limit > 0
+            ? ticketRows.slice(0, limit)
+            : ticketRows;
+
+        return mapTicketRowsToDomain(limitedTicketRows);
       } catch (error) {
         return handleRepositoryError(error, "Ticket");
       }
@@ -414,7 +440,7 @@ export const createTicketRepository = (
       }
     },
 
-  async moveAndReorderTicket(input: {
+    async moveAndReorderTicket(input: {
       ticketId: string;
       status: string;
       position: number;
@@ -428,25 +454,25 @@ export const createTicketRepository = (
           p_positions: input.ticketPositions,
         });
 
-      if (error) {
+        if (error) {
+          return handleRepositoryError(error, "Ticket", input.ticketId);
+        }
+
+        const rows = (data ?? []) as TicketRow[];
+        const movedTicketExists = rows.some((row) => row.id === input.ticketId);
+        if (!movedTicketExists) {
+          return handleRepositoryError(
+            createNotFoundError("Ticket", input.ticketId),
+            "Ticket",
+            input.ticketId
+          );
+        }
+
+        return mapTicketRowsToDomain(rows);
+      } catch (error) {
         return handleRepositoryError(error, "Ticket", input.ticketId);
       }
-
-      const rows = (data ?? []) as TicketRow[];
-      const movedTicketExists = rows.some((row) => row.id === input.ticketId);
-      if (!movedTicketExists) {
-        return handleRepositoryError(
-          createNotFoundError("Ticket", input.ticketId),
-          "Ticket",
-          input.ticketId
-        );
-      }
-
-      return mapTicketRowsToDomain(rows);
-    } catch (error) {
-      return handleRepositoryError(error, "Ticket", input.ticketId);
-    }
-  },
+    },
 
     async assignToEpic(ticketId: string, epicId: string): Promise<Ticket> {
       return repo.update(ticketId, { epicId });

@@ -97,6 +97,13 @@ const Select = forwardRef<HTMLSelectElement, Props>(
     ]
       .filter(Boolean)
       .join(" ");
+    const isMultiple = Boolean(selectProps.multiple);
+    const selectClasses = [
+      styles.select,
+      isMultiple && styles["select--multiple"],
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     const hasValue = value !== undefined && value !== null && value !== "";
 
@@ -108,7 +115,7 @@ const Select = forwardRef<HTMLSelectElement, Props>(
         <select
           ref={ref}
           id={selectId}
-          className={styles.select}
+          className={selectClasses}
           aria-label={ariaLabel || label}
           aria-invalid={error ? "true" : "false"}
           aria-describedby={describedBy}
@@ -119,7 +126,7 @@ const Select = forwardRef<HTMLSelectElement, Props>(
           onChange={onChange}
           {...selectProps}
         >
-          {placeholder && !hasValue && (
+          {placeholder && !isMultiple && !hasValue && (
             <option value="" disabled>
               {placeholder}
             </option>

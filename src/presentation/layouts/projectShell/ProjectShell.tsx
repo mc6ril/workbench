@@ -16,8 +16,10 @@ import Modal from "@/presentation/components/ui/Modal";
 import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfiguration";
 import { useEpicQueryParams } from "@/presentation/hooks/epic/useEpicQueryParams";
 import { useEpics } from "@/presentation/hooks/epic/useEpics";
+import { useLabels } from "@/presentation/hooks/label";
 import { useProjectSearchSuggestions } from "@/presentation/hooks/project/useProjectSearchSuggestions";
 import { useProjectRealtime } from "@/presentation/hooks/realtime/useProjectRealtime";
+import { useSprints } from "@/presentation/hooks/sprint";
 import DashboardShell from "@/presentation/layouts/dashboardShell/DashboardShell";
 import { getProjectViewKeyFromPath } from "@/presentation/navigation/projectViews.config";
 import {
@@ -32,6 +34,7 @@ import {
   EPIC_PROGRESS_FILTER_VALUES,
   EPIC_SORT_FIELD_VALUES,
   SORT_DIRECTION_VALUES,
+  TICKET_SORT_FIELD_VALUES,
 } from "@/shared/constants/filterSort";
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
@@ -74,6 +77,12 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
   const clearStatus = useFilterStore((state) => state.clearStatus);
   const setEpicId = useFilterStore((state) => state.setEpicId);
   const clearEpicId = useFilterStore((state) => state.clearEpicId);
+  const setSprintId = useFilterStore((state) => state.setSprintId);
+  const clearSprintId = useFilterStore((state) => state.clearSprintId);
+  const setPriority = useFilterStore((state) => state.setPriority);
+  const clearPriority = useFilterStore((state) => state.clearPriority);
+  const setLabelIds = useFilterStore((state) => state.setLabelIds);
+  const clearLabelIds = useFilterStore((state) => state.clearLabelIds);
   const resetSearch = useFilterStore((state) => state.resetSearch);
   const resetFilters = useFilterStore((state) => state.resetFilters);
   const sort = useSortStore((state) => state.sort);
@@ -83,6 +92,8 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
   const { data: boardConfiguration } = useBoardConfiguration(projectId);
   useProjectRealtime(projectId, boardConfiguration?.board.id);
   const { data: epics = [] } = useEpics(projectId, { enabled: isTicketView });
+  const { data: sprints = [] } = useSprints(projectId);
+  const { data: labels = [] } = useLabels(projectId);
   const searchSuggestions = useProjectSearchSuggestions({
     projectId,
     viewKey,
@@ -125,6 +136,19 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
 
   const { epicProgressFilter, epicSortField, epicSortDirection } =
     useEpicQueryParams(searchParams);
+  const isTicketFilterActive = Object.keys(filters).length > 0;
+  const isTicketSortActive =
+    sort.field !== TICKET_SORT_FIELD_VALUES.CREATED_AT ||
+    sort.direction !== SORT_DIRECTION_VALUES.DESC;
+  const isEpicFilterActive =
+    epicProgressFilter !== EPIC_PROGRESS_FILTER_VALUES.ALL;
+  const isEpicSortActive =
+    epicSortField !== EPIC_SORT_FIELD_VALUES.UPDATED_AT ||
+    epicSortDirection !== SORT_DIRECTION_VALUES.DESC;
+  const isFilterActive = isTicketView
+    ? isTicketFilterActive
+    : isEpicFilterActive;
+  const isSortActive = isTicketView ? isTicketSortActive : isEpicSortActive;
 
   const statusOptions = useMemo(() => {
     const columns = boardConfiguration?.columns ?? [];
@@ -145,6 +169,28 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
     }));
   }, [epics, isTicketView]);
 
+  const sprintOptions = useMemo(() => {
+    if (!isTicketView) {
+      return [];
+    }
+
+    return sprints.map((sprint) => ({
+      value: sprint.id,
+      label: sprint.name,
+    }));
+  }, [isTicketView, sprints]);
+
+  const labelOptions = useMemo(() => {
+    if (!isTicketView) {
+      return [];
+    }
+
+    return labels.map((label) => ({
+      value: label.id,
+      label: label.name,
+    }));
+  }, [isTicketView, labels]);
+
   useEffect(() => {
     resetSearch();
     resetFilters();
@@ -158,6 +204,14 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
   const handleSortClick = useCallback(() => {
     setIsSortModalOpen(true);
   }, []);
+  const handleResetTicketFilters = useCallback(() => {
+    resetFilters();
+    setIsFilterModalOpen(false);
+  }, [resetFilters]);
+  const handleResetTicketSort = useCallback(() => {
+    resetSort();
+    setIsSortModalOpen(false);
+  }, [resetSort]);
 
   const canAddAction = useMemo(() => {
     if (viewKey === PROJECT_VIEWS.EPICS) {
@@ -203,6 +257,8 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
             onSearchChange={setSearchInput}
             onFilterClick={handleFilterClick}
             onSortClick={handleSortClick}
+            isFilterActive={isFilterActive}
+            isSortActive={isSortActive}
             onAddClick={handleAddClick}
             canAddAction={canAddAction}
             isPermissionsLoading={isPermissionsLoading}
@@ -227,11 +283,19 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
             filters={filters}
             statusOptions={statusOptions}
             epicOptions={epicOptions}
+            sprintOptions={sprintOptions}
+            labelOptions={labelOptions}
             onSetStatus={setStatus}
             onClearStatus={clearStatus}
             onSetEpicId={setEpicId}
             onClearEpicId={clearEpicId}
-            onResetFilters={resetFilters}
+            onSetSprintId={setSprintId}
+            onClearSprintId={clearSprintId}
+            onSetPriority={setPriority}
+            onClearPriority={clearPriority}
+            onSetLabelIds={setLabelIds}
+            onClearLabelIds={clearLabelIds}
+            onResetFilters={handleResetTicketFilters}
           />
         ) : (
           <EpicFilterControls
@@ -243,6 +307,7 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
               updateQueryParams({
                 epicProgress: EPIC_PROGRESS_FILTER_VALUES.ALL,
               });
+              setIsFilterModalOpen(false);
             }}
           />
         )}
@@ -260,7 +325,7 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
             sort={sort}
             onSetField={setField}
             onSetDirection={setDirection}
-            onResetSort={resetSort}
+            onResetSort={handleResetTicketSort}
           />
         ) : (
           <EpicSortControls
@@ -277,6 +342,7 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
                 epicSortField: EPIC_SORT_FIELD_VALUES.UPDATED_AT,
                 epicSortDirection: SORT_DIRECTION_VALUES.DESC,
               });
+              setIsSortModalOpen(false);
             }}
           />
         )}

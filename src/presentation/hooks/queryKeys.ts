@@ -48,9 +48,6 @@ const queryKeysObject = {
             filters.parentId ?? null,
             filters.sprintId ?? null,
             filters.priority ?? null,
-            filters.assigneeIds?.length
-              ? [...filters.assigneeIds].sort()
-              : null,
             filters.labelIds?.length ? [...filters.labelIds].sort() : null,
           ]
         : null;

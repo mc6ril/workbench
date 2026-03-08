@@ -50,6 +50,7 @@
 }
 
 .project-toolbar__tool {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -84,6 +85,24 @@
   @media (max-width: #{$breakpoint-md - 1px}) {
     padding: 0 $spacing-sm;
     min-width: $spacing-button-height;
+  }
+}
+
+.project-toolbar__tool--active {
+  border-color: $color-accent;
+  background-color: $color-accent-subtle;
+  color: $color-accent;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0.35rem;
+    right: 0.35rem;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: $border-radius-full;
+    background-color: $color-accent;
+    box-shadow: 0 0 0 3px $color-accent-bg-soft;
   }
 }
 

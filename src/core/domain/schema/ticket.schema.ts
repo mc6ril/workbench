@@ -135,7 +135,6 @@ export type TicketFilters = {
   epicId?: string;
   parentId?: string | null;
   sprintId?: string | null;
-  assigneeIds?: string[];
   priority?: TicketPriority;
   labelIds?: string[];
 };
@@ -149,6 +148,7 @@ export const TicketSortFieldSchema = z.enum([
   "position",
   "title",
   "priority",
+  "sprint",
   "dueDate",
 ]);
 export type TicketSortField = z.infer<typeof TicketSortFieldSchema>;

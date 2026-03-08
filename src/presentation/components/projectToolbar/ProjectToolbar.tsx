@@ -29,6 +29,8 @@ type Props = {
   onSearchChange?: (value: string) => void;
   onFilterClick?: () => void;
   onSortClick?: () => void;
+  isFilterActive?: boolean;
+  isSortActive?: boolean;
   onAddClick?: () => void;
   canAddAction?: boolean;
   isPermissionsLoading?: boolean;
@@ -41,6 +43,8 @@ const ProjectToolbar = ({
   onSearchChange,
   onFilterClick,
   onSortClick,
+  isFilterActive = false,
+  isSortActive = false,
   onAddClick,
   canAddAction = true,
   isPermissionsLoading = false,
@@ -198,10 +202,18 @@ const ProjectToolbar = ({
             <div className={styles["project-toolbar__tools"]}>
               <button
                 type="button"
-                className={styles["project-toolbar__tool"]}
+                className={[
+                  styles["project-toolbar__tool"],
+                  isFilterActive
+                    ? styles["project-toolbar__tool--active"]
+                    : undefined,
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
                 onClick={onFilterClick}
                 aria-label={tNavbar("filterAriaLabel")}
                 title={tNavbar("filter")}
+                aria-pressed={isFilterActive}
               >
                 <FilterIcon />
                 <span className={styles["project-toolbar__tool-label"]}>
@@ -210,10 +222,18 @@ const ProjectToolbar = ({
               </button>
               <button
                 type="button"
-                className={styles["project-toolbar__tool"]}
+                className={[
+                  styles["project-toolbar__tool"],
+                  isSortActive
+                    ? styles["project-toolbar__tool--active"]
+                    : undefined,
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
                 onClick={onSortClick}
                 aria-label={tNavbar("sortAriaLabel")}
                 title={tNavbar("sort")}
+                aria-pressed={isSortActive}
               >
                 <SortIcon />
                 <span className={styles["project-toolbar__tool-label"]}>

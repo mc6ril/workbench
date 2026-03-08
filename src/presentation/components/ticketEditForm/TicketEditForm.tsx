@@ -25,12 +25,14 @@ export type TicketEditFormValues = {
   description?: string;
   status?: string;
   epicId?: string | null;
+  labelIds?: string[];
 };
 
 type Props = {
   initialValues: TicketEditFormValues;
   statusOptions: Option[];
   epicOptions: Option[];
+  labelOptions?: Option[];
   onSubmit: (values: TicketEditFormValues) => void;
   onCancel?: () => void;
   isSubmitting?: boolean;
@@ -42,6 +44,7 @@ const TicketEditForm = ({
   initialValues,
   statusOptions,
   epicOptions,
+  labelOptions = [],
   onSubmit,
   onCancel,
   isSubmitting = false,
@@ -62,6 +65,9 @@ const TicketEditForm = ({
     initialValues.status ?? statusOptions[0]?.value ?? ""
   );
   const [epicId, setEpicId] = useState<string>(initialValues.epicId ?? "");
+  const [labelIds, setLabelIds] = useState<string[]>(
+    initialValues.labelIds ?? []
+  );
 
   const handleSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>): void => {
@@ -72,9 +78,10 @@ const TicketEditForm = ({
         description: description || undefined,
         status: status || undefined,
         epicId: epicId || null,
+        labelIds,
       });
     },
-    [description, epicId, onSubmit, status, title]
+    [description, epicId, labelIds, onSubmit, status, title]
   );
 
   const containerClasses = [styles["ticket-edit-form"], className]
@@ -137,6 +144,26 @@ const TicketEditForm = ({
             />
           </div>
 
+          <div
+            className={`${styles["ticket-edit-form__field"]} ${styles["ticket-edit-form__field--half"]}`}
+          >
+            <Select
+              label={t("fields.labels")}
+              value={labelIds}
+              onChange={(event) => {
+                const nextLabelIds = Array.from(
+                  event.target.selectedOptions,
+                  (option) => option.value
+                ).filter(Boolean);
+                setLabelIds(nextLabelIds);
+              }}
+              options={labelOptions}
+              disabled={isSubmitting}
+              multiple
+              size={Math.min(4, Math.max(1, labelOptions.length))}
+            />
+          </div>
+
           <div className={styles["ticket-edit-form__field"]}>
             <Textarea
               label={t("fields.description")}
@@ -176,4 +203,3 @@ const TicketEditForm = ({
 };
 
 export default React.memo(TicketEditForm);
-

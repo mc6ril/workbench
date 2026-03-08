@@ -1,4 +1,8 @@
-import { TicketFilters, TicketSort } from "@/core/domain/schema/ticket.schema";
+import {
+  TicketFilters,
+  TicketPriority,
+  TicketSort,
+} from "@/core/domain/schema/ticket.schema";
 
 import {
   EpicProgressFilter,
@@ -21,10 +25,18 @@ export type TicketFilterControlsProps = {
   filters: TicketFilters;
   statusOptions: Option[];
   epicOptions: Option[];
+  sprintOptions: Option[];
+  labelOptions: Option[];
   onSetStatus: (value: string) => void;
   onClearStatus: () => void;
   onSetEpicId: (value: string) => void;
   onClearEpicId: () => void;
+  onSetSprintId: (value: string | null) => void;
+  onClearSprintId: () => void;
+  onSetPriority: (value: TicketPriority) => void;
+  onClearPriority: () => void;
+  onSetLabelIds: (value: string[]) => void;
+  onClearLabelIds: () => void;
   onResetFilters: () => void;
 };
 

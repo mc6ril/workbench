@@ -24,12 +24,14 @@ export type CreateTicketFormValues = {
   description?: string;
   status: string;
   epicId?: string;
+  labelIds?: string[];
 };
 
 type Props = {
   initialValues?: Partial<CreateTicketFormValues>;
   statusOptions: Option[];
   epicOptions: Option[];
+  labelOptions?: Option[];
   showEpicField?: boolean;
   onSubmit: (values: CreateTicketFormValues) => void;
   onCancel?: () => void;
@@ -42,6 +44,7 @@ const CreateTicketForm = ({
   initialValues,
   statusOptions,
   epicOptions,
+  labelOptions = [],
   showEpicField = true,
   onSubmit,
   onCancel,
@@ -60,6 +63,7 @@ const CreateTicketForm = ({
     initialValues?.status ?? statusOptions[0]?.value ?? ""
   );
   const [epicId, setEpicId] = useState(initialValues?.epicId ?? "");
+  const [labelIds, setLabelIds] = useState(initialValues?.labelIds ?? []);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
@@ -69,6 +73,7 @@ const CreateTicketForm = ({
       description: description || undefined,
       status,
       epicId: showEpicField ? epicId || undefined : undefined,
+      labelIds,
     });
   };
 
@@ -125,6 +130,25 @@ const CreateTicketForm = ({
             />
           </div>
         )}
+        <div
+          className={`${styles["create-ticket-form__field"]} ${styles["create-ticket-form__field--half"]}`}
+        >
+          <Select
+            label={t("fields.labels")}
+            value={labelIds}
+            onChange={(event) => {
+              const nextLabelIds = Array.from(
+                event.target.selectedOptions,
+                (option) => option.value
+              ).filter(Boolean);
+              setLabelIds(nextLabelIds);
+            }}
+            options={labelOptions}
+            multiple
+            size={Math.min(4, Math.max(1, labelOptions.length))}
+            disabled={isSubmitting}
+          />
+        </div>
         <div className={styles["create-ticket-form__field"]}>
           <Textarea
             label={t("fields.description")}
