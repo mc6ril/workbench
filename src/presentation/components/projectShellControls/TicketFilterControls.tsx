@@ -1,5 +1,8 @@
+import type { TicketPriority } from "@/core/domain/schema/ticket.schema";
+
 import Button from "@/presentation/components/ui/Button";
 import Select from "@/presentation/components/ui/Select";
+import Text from "@/presentation/components/ui/Text";
 
 import { useTranslation } from "@/shared/i18n";
 
@@ -10,13 +13,22 @@ const TicketFilterControls = ({
   filters,
   statusOptions,
   epicOptions,
+  sprintOptions,
+  labelOptions,
   onSetStatus,
   onClearStatus,
   onSetEpicId,
   onClearEpicId,
+  onSetSprintId,
+  onClearSprintId,
+  onSetPriority,
+  onClearPriority,
+  onSetLabelIds,
+  onClearLabelIds,
   onResetFilters,
 }: TicketFilterControlsProps) => {
   const t = useTranslation("pages.backlog.filters");
+  const tTicket = useTranslation("pages.ticketDetail.page");
 
   return (
     <div className={styles["project-shell-controls"]}>
@@ -46,6 +58,74 @@ const TicketFilterControls = ({
         }}
         options={[{ value: "", label: "" }, ...epicOptions]}
       />
+      <Select
+        label={t("priorityLabel")}
+        value={filters.priority ?? ""}
+        onChange={(event) => {
+          const nextPriority = event.target.value as TicketPriority | "";
+          if (nextPriority) {
+            onSetPriority(nextPriority);
+            return;
+          }
+          onClearPriority();
+        }}
+        options={[
+          { value: "", label: "" },
+          { value: "highest", label: tTicket("priority.highest") },
+          { value: "high", label: tTicket("priority.high") },
+          { value: "medium", label: tTicket("priority.medium") },
+          { value: "low", label: tTicket("priority.low") },
+          { value: "lowest", label: tTicket("priority.lowest") },
+        ]}
+      />
+      <Select
+        label={t("sprintLabel")}
+        value={
+          filters.sprintId === null ? "__no_sprint__" : (filters.sprintId ?? "")
+        }
+        onChange={(event) => {
+          const nextSprintId = event.target.value;
+          if (!nextSprintId) {
+            onClearSprintId();
+            return;
+          }
+
+          if (nextSprintId === "__no_sprint__") {
+            onSetSprintId(null);
+            return;
+          }
+
+          onSetSprintId(nextSprintId);
+        }}
+        options={[
+          { value: "", label: "" },
+          { value: "__no_sprint__", label: t("noSprintLabel") },
+          ...sprintOptions,
+        ]}
+      />
+      {labelOptions.length > 0 && (
+        <Select
+          label={t("labelLabel")}
+          value={filters.labelIds ?? []}
+          multiple
+          size={Math.min(6, Math.max(4, labelOptions.length))}
+          onChange={(event) => {
+            const nextLabelIds = Array.from(
+              event.target.selectedOptions,
+              (option) => option.value
+            ).filter(Boolean);
+            if (nextLabelIds.length > 0) {
+              onSetLabelIds(nextLabelIds);
+              return;
+            }
+            onClearLabelIds();
+          }}
+          options={labelOptions}
+        />
+      )}
+      {labelOptions.length === 0 && (
+        <Text variant="caption">{t("noLabelOptions")}</Text>
+      )}
       <Button
         label={t("resetLabel")}
         onClick={onResetFilters}

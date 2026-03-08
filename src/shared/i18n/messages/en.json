@@ -80,16 +80,9 @@
       "epicFilterInProgress": "In progress",
       "epicFilterCompleted": "Completed",
       "resetEpicFilters": "Reset epic filters",
-      "ticketSortFieldLabel": "Ticket sort field",
-      "ticketSortCreatedAt": "Created date",
-      "ticketSortTitle": "Title",
-      "ticketSortPosition": "Board position",
-      "ticketSortPriority": "Priority",
-      "ticketSortDueDate": "Due date",
       "sortDirectionLabel": "Sort direction",
       "sortDirectionAsc": "Ascending",
       "sortDirectionDesc": "Descending",
-      "resetTicketSort": "Reset ticket sort",
       "epicSortFieldLabel": "Epic sort field",
       "epicSortUpdatedAt": "Updated date",
       "epicSortCreatedAt": "Created date",
@@ -425,6 +418,11 @@
         "searchPlaceholder": "Search by title or description",
         "statusLabel": "Status",
         "epicLabel": "Epic",
+        "priorityLabel": "Priority",
+        "sprintLabel": "Sprint",
+        "noSprintLabel": "No sprint",
+        "labelLabel": "Label",
+        "noLabelOptions": "No labels available for this project",
         "resetLabel": "Reset filters"
       },
       "sort": {
@@ -432,8 +430,14 @@
         "fieldCreatedAt": "Creation date",
         "fieldTitle": "Title",
         "fieldStatus": "Status",
+        "fieldPosition": "Board position",
+        "fieldPriority": "Priority",
+        "fieldSprint": "Sprint",
+        "fieldDueDate": "Due date",
+        "sortDirectionLabel": "Sort direction",
         "directionAsc": "Ascending",
-        "directionDesc": "Descending"
+        "directionDesc": "Descending",
+        "resetLabel": "Reset sort"
       },
       "bulkActions": {
         "title": "Bulk actions",
@@ -449,7 +453,8 @@
           "title": "Title",
           "description": "Description",
           "status": "Status",
-          "epic": "Epic"
+          "epic": "Epic",
+          "labels": "Labels"
         },
         "submitButton": "Create ticket",
         "cancelButton": "Cancel",
@@ -460,6 +465,7 @@
         "ticketAriaLabel": "Ticket",
         "statusLabel": "Status",
         "epicLabel": "Epic",
+        "assigneeLabel": "Assignee",
         "openTicketLabel": "Open ticket",
         "editTicketLabel": "Edit ticket",
         "selectTicketLabel": "Select ticket"
@@ -671,7 +677,8 @@
           "title": "Title",
           "status": "Status",
           "epic": "Epic",
-          "description": "Description"
+          "description": "Description",
+          "labels": "Labels"
         },
         "epicNoneOption": "None",
         "saveButton": "Save",

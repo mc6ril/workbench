@@ -80,16 +80,9 @@
       "epicFilterInProgress": "En cours",
       "epicFilterCompleted": "Terminées",
       "resetEpicFilters": "Réinitialiser les filtres epics",
-      "ticketSortFieldLabel": "Champ de tri des tickets",
-      "ticketSortCreatedAt": "Date de création",
-      "ticketSortTitle": "Titre",
-      "ticketSortPosition": "Position du tableau",
-      "ticketSortPriority": "Priorité",
-      "ticketSortDueDate": "Date d'échéance",
       "sortDirectionLabel": "Sens du tri",
       "sortDirectionAsc": "Croissant",
       "sortDirectionDesc": "Décroissant",
-      "resetTicketSort": "Réinitialiser le tri des tickets",
       "epicSortFieldLabel": "Champ de tri des epics",
       "epicSortUpdatedAt": "Date de mise à jour",
       "epicSortCreatedAt": "Date de création",
@@ -425,6 +418,11 @@
         "searchPlaceholder": "Rechercher par titre ou description",
         "statusLabel": "Statut",
         "epicLabel": "Epic",
+        "priorityLabel": "Priorité",
+        "sprintLabel": "Sprint",
+        "noSprintLabel": "Sans sprint",
+        "labelLabel": "Label",
+        "noLabelOptions": "Aucun label disponible pour ce projet",
         "resetLabel": "Réinitialiser les filtres"
       },
       "sort": {
@@ -432,8 +430,14 @@
         "fieldCreatedAt": "Date de création",
         "fieldTitle": "Titre",
         "fieldStatus": "Statut",
+        "fieldPosition": "Position du tableau",
+        "fieldPriority": "Priorité",
+        "fieldSprint": "Sprint",
+        "fieldDueDate": "Date d'échéance",
+        "sortDirectionLabel": "Sens du tri",
         "directionAsc": "Ascendant",
-        "directionDesc": "Descendant"
+        "directionDesc": "Descendant",
+        "resetLabel": "Réinitialiser le tri"
       },
       "bulkActions": {
         "title": "Actions groupées",
@@ -449,7 +453,8 @@
           "title": "Titre",
           "description": "Description",
           "status": "Statut",
-          "epic": "Epic"
+          "epic": "Epic",
+          "labels": "Labels"
         },
         "submitButton": "Créer le ticket",
         "cancelButton": "Annuler",
@@ -460,6 +465,7 @@
         "ticketAriaLabel": "Ticket",
         "statusLabel": "Statut",
         "epicLabel": "Epic",
+        "assigneeLabel": "Assigné à",
         "openTicketLabel": "Ouvrir le ticket",
         "editTicketLabel": "Modifier le ticket",
         "selectTicketLabel": "Sélectionner le ticket"
@@ -671,7 +677,8 @@
           "title": "Titre",
           "status": "Statut",
           "epic": "Epic",
-          "description": "Description"
+          "description": "Description",
+          "labels": "Labels"
         },
         "epicNoneOption": "Aucun",
         "saveButton": "Enregistrer",

@@ -1,6 +1,9 @@
 import { create } from "zustand";
 
-import type { TicketFilters } from "@/core/domain/schema/ticket.schema";
+import type {
+  TicketFilters,
+  TicketPriority,
+} from "@/core/domain/schema/ticket.schema";
 
 type FilterState = {
   /**
@@ -24,6 +27,15 @@ type FilterActions = {
 
   setEpicId: (epicId: string) => void;
   clearEpicId: () => void;
+
+  setSprintId: (sprintId: string | null) => void;
+  clearSprintId: () => void;
+
+  setPriority: (priority: TicketPriority) => void;
+  clearPriority: () => void;
+
+  setLabelIds: (labelIds: string[]) => void;
+  clearLabelIds: () => void;
 
   /**
    * parentId supports two explicit modes:
@@ -83,6 +95,51 @@ export const useFilterStore = create<FilterStore>((set) => ({
   clearEpicId: (): void => {
     set((state) => {
       const { epicId: _epicId, ...rest } = state.filters;
+      return { filters: rest };
+    });
+  },
+
+  setSprintId: (sprintId: string | null): void => {
+    set((state) => ({
+      filters: {
+        ...state.filters,
+        sprintId,
+      },
+    }));
+  },
+  clearSprintId: (): void => {
+    set((state) => {
+      const { sprintId: _sprintId, ...rest } = state.filters;
+      return { filters: rest };
+    });
+  },
+
+  setPriority: (priority: TicketPriority): void => {
+    set((state) => ({
+      filters: {
+        ...state.filters,
+        priority,
+      },
+    }));
+  },
+  clearPriority: (): void => {
+    set((state) => {
+      const { priority: _priority, ...rest } = state.filters;
+      return { filters: rest };
+    });
+  },
+
+  setLabelIds: (labelIds: string[]): void => {
+    set((state) => ({
+      filters: {
+        ...state.filters,
+        labelIds,
+      },
+    }));
+  },
+  clearLabelIds: (): void => {
+    set((state) => {
+      const { labelIds: _labelIds, ...rest } = state.filters;
       return { filters: rest };
     });
   },

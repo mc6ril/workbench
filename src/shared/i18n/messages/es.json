@@ -80,16 +80,9 @@
       "epicFilterInProgress": "En progreso",
       "epicFilterCompleted": "Completadas",
       "resetEpicFilters": "Restablecer filtros de epics",
-      "ticketSortFieldLabel": "Campo de orden de tickets",
-      "ticketSortCreatedAt": "Fecha de creación",
-      "ticketSortTitle": "Título",
-      "ticketSortPosition": "Posición en tablero",
-      "ticketSortPriority": "Prioridad",
-      "ticketSortDueDate": "Fecha de vencimiento",
       "sortDirectionLabel": "Dirección de orden",
       "sortDirectionAsc": "Ascendente",
       "sortDirectionDesc": "Descendente",
-      "resetTicketSort": "Restablecer orden de tickets",
       "epicSortFieldLabel": "Campo de orden de epics",
       "epicSortUpdatedAt": "Fecha de actualización",
       "epicSortCreatedAt": "Fecha de creación",
@@ -425,6 +418,11 @@
         "searchPlaceholder": "Buscar por título o descripción",
         "statusLabel": "Estado",
         "epicLabel": "Epic",
+        "priorityLabel": "Prioridad",
+        "sprintLabel": "Sprint",
+        "noSprintLabel": "Sin sprint",
+        "labelLabel": "Etiqueta",
+        "noLabelOptions": "No hay etiquetas disponibles para este proyecto",
         "resetLabel": "Restablecer filtros"
       },
       "sort": {
@@ -432,8 +430,14 @@
         "fieldCreatedAt": "Fecha de creación",
         "fieldTitle": "Título",
         "fieldStatus": "Estado",
+        "fieldPosition": "Posición en tablero",
+        "fieldPriority": "Prioridad",
+        "fieldSprint": "Sprint",
+        "fieldDueDate": "Fecha de vencimiento",
+        "sortDirectionLabel": "Dirección de orden",
         "directionAsc": "Ascendente",
-        "directionDesc": "Descendente"
+        "directionDesc": "Descendente",
+        "resetLabel": "Restablecer orden"
       },
       "bulkActions": {
         "title": "Acciones en lote",
@@ -449,7 +453,8 @@
           "title": "Título",
           "description": "Descripción",
           "status": "Estado",
-          "epic": "Epic"
+          "epic": "Epic",
+          "labels": "Etiquetas"
         },
         "submitButton": "Crear ticket",
         "cancelButton": "Cancelar",
@@ -460,6 +465,7 @@
         "ticketAriaLabel": "Ticket",
         "statusLabel": "Estado",
         "epicLabel": "Epic",
+        "assigneeLabel": "Asignado a",
         "openTicketLabel": "Abrir ticket",
         "editTicketLabel": "Editar ticket",
         "selectTicketLabel": "Seleccionar ticket"
@@ -671,7 +677,8 @@
           "title": "Título",
           "status": "Estado",
           "epic": "Epic",
-          "description": "Descripción"
+          "description": "Descripción",
+          "labels": "Etiquetas"
         },
         "epicNoneOption": "Ninguno",
         "saveButton": "Guardar",

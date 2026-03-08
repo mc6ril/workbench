@@ -18,12 +18,12 @@ const TicketSortControls = ({
   onSetDirection,
   onResetSort,
 }: TicketSortControlsProps) => {
-  const t = useTranslation("navigation.navbar");
+  const t = useTranslation("pages.backlog.sort");
 
   return (
     <div className={styles["project-shell-controls"]}>
       <Select
-        label={t("ticketSortFieldLabel")}
+        label={t("label")}
         value={sort.field}
         onChange={(event) => {
           onSetField(event.target.value as TicketSort["field"]);
@@ -31,20 +31,27 @@ const TicketSortControls = ({
         options={[
           {
             value: TICKET_SORT_FIELD_VALUES.CREATED_AT,
-            label: t("ticketSortCreatedAt"),
+            label: t("fieldCreatedAt"),
           },
-          { value: TICKET_SORT_FIELD_VALUES.TITLE, label: t("ticketSortTitle") },
+          {
+            value: TICKET_SORT_FIELD_VALUES.TITLE,
+            label: t("fieldTitle"),
+          },
           {
             value: TICKET_SORT_FIELD_VALUES.POSITION,
-            label: t("ticketSortPosition"),
+            label: t("fieldPosition"),
           },
           {
             value: TICKET_SORT_FIELD_VALUES.PRIORITY,
-            label: t("ticketSortPriority"),
+            label: t("fieldPriority"),
+          },
+          {
+            value: TICKET_SORT_FIELD_VALUES.SPRINT,
+            label: t("fieldSprint"),
           },
           {
             value: TICKET_SORT_FIELD_VALUES.DUE_DATE,
-            label: t("ticketSortDueDate"),
+            label: t("fieldDueDate"),
           },
         ]}
       />
@@ -55,12 +62,12 @@ const TicketSortControls = ({
           onSetDirection(event.target.value as TicketSort["direction"]);
         }}
         options={[
-          { value: SORT_DIRECTION_VALUES.ASC, label: t("sortDirectionAsc") },
-          { value: SORT_DIRECTION_VALUES.DESC, label: t("sortDirectionDesc") },
+          { value: SORT_DIRECTION_VALUES.ASC, label: t("directionAsc") },
+          { value: SORT_DIRECTION_VALUES.DESC, label: t("directionDesc") },
         ]}
       />
       <Button
-        label={t("resetTicketSort")}
+        label={t("resetLabel")}
         onClick={onResetSort}
         variant="secondary"
       />

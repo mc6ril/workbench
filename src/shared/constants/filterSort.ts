@@ -1,9 +1,18 @@
+import {
+  SortDirectionSchema,
+  TicketSortFieldSchema,
+} from "@/core/domain/schema/ticket.schema";
+
+const ticketSortFields = TicketSortFieldSchema.enum;
+const sortDirections = SortDirectionSchema.enum;
+
 export const TICKET_SORT_FIELD_VALUES = Object.freeze({
-  CREATED_AT: "createdAt",
-  TITLE: "title",
-  POSITION: "position",
-  PRIORITY: "priority",
-  DUE_DATE: "dueDate",
+  CREATED_AT: ticketSortFields.createdAt,
+  TITLE: ticketSortFields.title,
+  POSITION: ticketSortFields.position,
+  PRIORITY: ticketSortFields.priority,
+  SPRINT: ticketSortFields.sprint,
+  DUE_DATE: ticketSortFields.dueDate,
 });
 
 export const EPIC_PROGRESS_FILTER_VALUES = Object.freeze({
@@ -21,6 +30,6 @@ export const EPIC_SORT_FIELD_VALUES = Object.freeze({
 });
 
 export const SORT_DIRECTION_VALUES = Object.freeze({
-  ASC: "asc",
-  DESC: "desc",
+  ASC: sortDirections.asc,
+  DESC: sortDirections.desc,
 });

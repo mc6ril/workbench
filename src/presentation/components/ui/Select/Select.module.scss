@@ -76,6 +76,12 @@
   }
 }
 
+.select--multiple {
+  appearance: auto;
+  background-image: none;
+  padding-right: $spacing-input-padding-x;
+}
+
 .select-error {
   font-size: $font-size-sm;
   line-height: $line-height-normal;
