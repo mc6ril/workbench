@@ -1,10 +1,14 @@
 import {
   canAccessFeature,
+  getEffectivePlan,
   getFeatureLimit,
   getMinimumPlanForFeature,
   PlanFeature,
 } from "@/core/domain/rules/planFeatures.rules";
-import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
+import {
+  SubscriptionPlan,
+  SubscriptionStatus,
+} from "@/core/domain/schema/subscription.schema";
 
 describe("Plan Features Domain Rules", () => {
   describe("canAccessFeature", () => {
@@ -141,6 +145,79 @@ describe("Plan Features Domain Rules", () => {
       expect(getMinimumPlanForFeature(PlanFeature.MEMBERS_PER_WORKSPACE)).toBe(
         SubscriptionPlan.FREE
       );
+    });
+  });
+
+  describe("getEffectivePlan", () => {
+    const createSubscription = (
+      overrides?: Partial<{
+        plan: SubscriptionPlan;
+        status: SubscriptionStatus;
+        isSuperuser: boolean;
+      }>
+    ) => ({
+      id: "123e4567-e89b-12d3-a456-426614174000",
+      userId: "223e4567-e89b-12d3-a456-426614174000",
+      plan: overrides?.plan ?? SubscriptionPlan.PRO,
+      status: overrides?.status ?? SubscriptionStatus.ACTIVE,
+      stripeCustomerId: null,
+      stripeSubscriptionId: null,
+      currentPeriodStart: null,
+      currentPeriodEnd: null,
+      cancelAtPeriodEnd: false,
+      createdAt: new Date("2024-01-01T00:00:00Z"),
+      updatedAt: new Date("2024-01-01T00:00:00Z"),
+      isSuperuser: overrides?.isSuperuser ?? false,
+    });
+
+    it("returns TEAM for superuser regardless of plan/status", () => {
+      const subscription = createSubscription({
+        plan: SubscriptionPlan.FREE,
+        status: SubscriptionStatus.CANCELED,
+        isSuperuser: true,
+      });
+
+      expect(getEffectivePlan(subscription)).toBe(SubscriptionPlan.TEAM);
+    });
+
+    it("returns FREE for canceled or past-due subscriptions", () => {
+      expect(
+        getEffectivePlan(
+          createSubscription({
+            plan: SubscriptionPlan.TEAM,
+            status: SubscriptionStatus.CANCELED,
+          })
+        )
+      ).toBe(SubscriptionPlan.FREE);
+
+      expect(
+        getEffectivePlan(
+          createSubscription({
+            plan: SubscriptionPlan.PRO,
+            status: SubscriptionStatus.PAST_DUE,
+          })
+        )
+      ).toBe(SubscriptionPlan.FREE);
+    });
+
+    it("returns current plan for healthy subscriptions", () => {
+      expect(
+        getEffectivePlan(
+          createSubscription({
+            plan: SubscriptionPlan.PRO,
+            status: SubscriptionStatus.ACTIVE,
+          })
+        )
+      ).toBe(SubscriptionPlan.PRO);
+
+      expect(
+        getEffectivePlan(
+          createSubscription({
+            plan: SubscriptionPlan.TEAM,
+            status: SubscriptionStatus.TRIALING,
+          })
+        )
+      ).toBe(SubscriptionPlan.TEAM);
     });
   });
 });
