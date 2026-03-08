@@ -76,11 +76,13 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     projectId,
     filters,
     sort,
-    effectiveSearch
+    effectiveSearch,
+    { useProjectWideCache: true }
   );
 
   const { columns, columnById } = useBoardColumns(boardConfiguration);
   const { filteredTickets, ticketViewModelById } = useBoardTickets({
+    projectId,
     tickets,
     projectShortCode: project?.shortCode,
   });

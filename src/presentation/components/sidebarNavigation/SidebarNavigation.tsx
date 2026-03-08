@@ -9,16 +9,22 @@ import React, {
 } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { getEffectivePlan } from "@/core/domain/rules/planFeatures.rules";
 import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
+import { listProjectsWithStats } from "@/core/usecases/project/listProjectsWithStats";
+import { listReclaimableProjects } from "@/core/usecases/project/listReclaimableProjects";
 import { computeFeatureLockState } from "@/core/usecases/subscription/computeFeatureLockState";
+
+import { projectRepository } from "@/infrastructure/supabase/repositories";
 
 import { PlusIcon, UserProfileIcon } from "@/presentation/components/icons";
 import NavigationItem from "@/presentation/components/ui/NavigationItem";
 import { useSession } from "@/presentation/hooks/auth/useSession";
 import { useSignOut } from "@/presentation/hooks/auth/useSignOut";
+import { queryKeys } from "@/presentation/hooks/queryKeys";
 import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
 import {
   buildProjectViewHref,
@@ -48,6 +54,7 @@ type SidebarItem = {
 const SidebarNavigation = ({ projectId }: Props) => {
   const pathname = usePathname();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const t = useTranslation("navigation.sidebar");
   const signOutMutation = useSignOut();
   const { data: session, isLoading: isSessionLoading } = useSession();
@@ -79,12 +86,7 @@ const SidebarNavigation = ({ projectId }: Props) => {
     }
 
     return isSubscriptionFetched;
-  }, [
-    isSessionLoading,
-    isSubscriptionFetched,
-    isSubscriptionLoading,
-    session,
-  ]);
+  }, [isSessionLoading, isSubscriptionFetched, isSubscriptionLoading, session]);
 
   const effectivePlan = useMemo((): SubscriptionPlan | null => {
     if (!isEntitlementsReady) {
@@ -130,9 +132,32 @@ const SidebarNavigation = ({ projectId }: Props) => {
     // Future: add tab action. No-op for now.
   }, []);
 
+  const prefetchWorkspace = useCallback(() => {
+    void router.prefetch(PAGE_ROUTES.WORKSPACE);
+
+    if (!session?.userId) {
+      return;
+    }
+
+    void queryClient.prefetchQuery({
+      queryKey: queryKeys.projects.withStats(),
+      queryFn: () => listProjectsWithStats(projectRepository),
+    });
+    void queryClient.prefetchQuery({
+      queryKey: queryKeys.projects.reclaimable(),
+      queryFn: () => listReclaimableProjects(projectRepository),
+    });
+  }, [queryClient, router, session?.userId]);
+
   const handleProfileTriggerClick = useCallback(() => {
-    setProfileMenuOpen((prev) => !prev);
-  }, []);
+    setProfileMenuOpen((prev) => {
+      const next = !prev;
+      if (next) {
+        prefetchWorkspace();
+      }
+      return next;
+    });
+  }, [prefetchWorkspace]);
 
   const closeProfileMenu = useCallback(() => {
     setProfileMenuOpen(false);
@@ -253,6 +278,8 @@ const SidebarNavigation = ({ projectId }: Props) => {
               href={PAGE_ROUTES.WORKSPACE}
               role="menuitem"
               className={styles["sidebar-navigation__profile-menu-item"]}
+              onMouseEnter={prefetchWorkspace}
+              onFocus={prefetchWorkspace}
               onClick={closeProfileMenu}
             >
               {t("profile.backToWorkspace")}

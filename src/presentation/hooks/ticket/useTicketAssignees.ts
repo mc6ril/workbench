@@ -43,7 +43,7 @@ export const useAssignTicket = () => {
     }) => assignTicket(ticketRepository, ticketId, userIds),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.tickets.assignees(variables.ticketId),
+        queryKey: queryKeys.tickets.assigneesRoot(),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.ticketsRoot(variables.projectId),
@@ -72,7 +72,7 @@ export const useUnassignTicket = () => {
     }) => unassignTicket(ticketRepository, ticketId, userIds),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.tickets.assignees(variables.ticketId),
+        queryKey: queryKeys.tickets.assigneesRoot(),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.ticketsRoot(variables.projectId),

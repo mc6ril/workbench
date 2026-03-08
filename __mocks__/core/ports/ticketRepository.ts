@@ -48,6 +48,10 @@ export type TicketRepositoryMock = {
     Promise<Record<string, TicketAssignee[]>>,
     [string[]]
   >;
+  getAssigneesByProjectId: jest.Mock<
+    Promise<Record<string, TicketAssignee[]>>,
+    [string]
+  >;
 };
 
 type TicketRepositoryMockOverrides = Partial<TicketRepositoryMock>;
@@ -99,6 +103,10 @@ export const createTicketRepositoryMock = (
     getAssigneesByTicketIds: jest.fn<
       Promise<Record<string, TicketAssignee[]>>,
       [string[]]
+    >(),
+    getAssigneesByProjectId: jest.fn<
+      Promise<Record<string, TicketAssignee[]>>,
+      [string]
     >(),
   };
 

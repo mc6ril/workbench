@@ -74,6 +74,8 @@ const queryKeysObject = {
     detail: (id: string) => ["tickets", id] as const,
     assigneesRoot: () => ["ticket-assignees"] as const,
     assignees: (ticketId: string) => ["ticket-assignees", ticketId] as const,
+    assigneesByProjectId: (projectId: string) =>
+      ["ticket-assignees", "project", projectId] as const,
     assigneesByTicketIds: (ticketIds: string[]) =>
       ["ticket-assignees", "batch", ...[...ticketIds].sort()] as const,
   },

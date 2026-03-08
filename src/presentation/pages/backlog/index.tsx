@@ -21,7 +21,7 @@ import { useLabels } from "@/presentation/hooks/label";
 import { useProject } from "@/presentation/hooks/project/useProject";
 import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
 import { useCreateTicket } from "@/presentation/hooks/ticket/useCreateTicket";
-import { useTicketAssigneesByTicketIds } from "@/presentation/hooks/ticket/useTicketAssigneesByTicketIds";
+import { useTicketAssigneesByProjectId } from "@/presentation/hooks/ticket/useTicketAssigneesByProjectId";
 import { useTickets } from "@/presentation/hooks/ticket/useTickets";
 import { useProjectPermissions } from "@/presentation/providers/permissions";
 import { useFilterStore } from "@/presentation/stores/useFilterStore";
@@ -63,19 +63,17 @@ const BacklogPage = ({ projectId }: Props) => {
     data: tickets = [],
     isLoading,
     error,
-  } = useTickets(projectId, ticketFilters, sort, effectiveSearch);
+  } = useTickets(projectId, ticketFilters, sort, effectiveSearch, {
+    useProjectWideCache: true,
+  });
   const { data: epics = [] } = useEpics(projectId);
   const { data: labels = [] } = useLabels(projectId);
   const { data: boardConfiguration, isLoading: isBoardConfigurationLoading } =
     useBoardConfiguration(projectId);
   const { hasAccess: hasEpicsAccess } = useFeatureAccess(PlanFeature.EPICS);
   const createTicketMutation = useCreateTicket();
-  const ticketIds = useMemo(
-    () => tickets.map((ticket) => ticket.id),
-    [tickets]
-  );
   const { data: assigneesByTicketId = {} } =
-    useTicketAssigneesByTicketIds(ticketIds);
+    useTicketAssigneesByProjectId(projectId);
 
   const ticketViewModels = useMemo(() => {
     const epicMap = new Map(epics.map((epic) => [epic.id, epic.name]));
