@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
 
 import CreateTicketForm from "@/presentation/components/createTicketForm/CreateTicketForm";
+import TicketDetailView from "@/presentation/components/ticketDetailView/TicketDetailView";
 import TicketList from "@/presentation/components/ticketList/TicketList";
 import Loader from "@/presentation/components/ui/Loader";
 import Modal from "@/presentation/components/ui/Modal";
@@ -27,14 +27,6 @@ import {
   buildTicketCode,
   normalizeTicketSearch,
 } from "@/shared/utils/ticketUtils";
-
-const TicketDetailView = dynamic(
-  () => import("@/presentation/components/ticketDetailView/TicketDetailView"),
-  {
-    ssr: false,
-    loading: () => <Loader variant="inline" />,
-  }
-);
 
 type Props = {
   projectId: string;

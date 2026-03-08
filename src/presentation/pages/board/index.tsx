@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import dynamic from "next/dynamic";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 
 import BoardView from "@/presentation/components/board/boardView/BoardView";
 import TicketCard from "@/presentation/components/ticketCard/TicketCard";
+import TicketDetailView from "@/presentation/components/ticketDetailView/TicketDetailView";
 import Loader from "@/presentation/components/ui/Loader";
 import Modal from "@/presentation/components/ui/Modal";
 import { useBoardColumns } from "@/presentation/hooks/board/useBoardColumns";
@@ -25,14 +25,6 @@ import type { BoardColumnConfig } from "@/shared/types/board";
 import { normalizeTicketSearch } from "@/shared/utils/ticketUtils";
 
 import styles from "./styles.module.scss";
-
-const TicketDetailView = dynamic(
-  () => import("@/presentation/components/ticketDetailView/TicketDetailView"),
-  {
-    ssr: false,
-    loading: () => <Loader variant="inline" />,
-  }
-);
 
 const BoardLayout = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
