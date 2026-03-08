@@ -750,6 +750,7 @@
         "comments": {
           "title": "Comments",
           "newLabel": "Add comment",
+          "readOnlyHint": "Viewers cannot post comments.",
           "addButton": "Post",
           "author": "Author: {author}",
           "unknownAuthor": "User",

@@ -17,6 +17,7 @@ import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfig
 import { useEpicQueryParams } from "@/presentation/hooks/epic/useEpicQueryParams";
 import { useEpics } from "@/presentation/hooks/epic/useEpics";
 import { useProjectSearchSuggestions } from "@/presentation/hooks/project/useProjectSearchSuggestions";
+import { useProjectRealtime } from "@/presentation/hooks/realtime/useProjectRealtime";
 import DashboardShell from "@/presentation/layouts/dashboardShell/DashboardShell";
 import { getProjectViewKeyFromPath } from "@/presentation/navigation/projectViews.config";
 import { useFilterStore } from "@/presentation/stores/useFilterStore";
@@ -71,6 +72,7 @@ const ProjectShell = ({ projectId, children }: Props) => {
   const setDirection = useSortStore((state) => state.setDirection);
   const resetSort = useSortStore((state) => state.resetSort);
   const { data: boardConfiguration } = useBoardConfiguration(projectId);
+  useProjectRealtime(projectId, boardConfiguration?.board.id);
   const { data: epics = [] } = useEpics(projectId, { enabled: isTicketView });
   const searchSuggestions = useProjectSearchSuggestions({
     projectId,
