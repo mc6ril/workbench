@@ -22,6 +22,9 @@ export * from "./board";
 // Subscription hooks
 export * from "./subscription";
 
+// Realtime hooks
+export * from "./realtime";
+
 // Generic hooks
 export { useTranslation } from "./useTranslation";
 

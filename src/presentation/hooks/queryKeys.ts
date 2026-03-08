@@ -73,6 +73,7 @@ const queryKeysObject = {
   },
   tickets: {
     detail: (id: string) => ["tickets", id] as const,
+    assigneesRoot: () => ["ticket-assignees"] as const,
     assignees: (ticketId: string) => ["ticket-assignees", ticketId] as const,
     assigneesByTicketIds: (ticketIds: string[]) =>
       ["ticket-assignees", "batch", ...[...ticketIds].sort()] as const,
@@ -87,9 +88,11 @@ const queryKeysObject = {
       ["sprints", "project", projectId] as const,
   },
   comments: {
+    root: () => ["comments"] as const,
     byTicket: (ticketId: string) => ["comments", "ticket", ticketId] as const,
   },
   labels: {
+    root: () => ["labels"] as const,
     byProject: (projectId: string) => ["labels", "project", projectId] as const,
     byTicket: (ticketId: string) => ["labels", "ticket", ticketId] as const,
   },

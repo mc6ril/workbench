@@ -3,6 +3,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 
 import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
+import { ProjectRole } from "@/core/domain/schema/project.schema";
 import type { TicketPriority } from "@/core/domain/schema/ticket.schema";
 
 import AssigneePicker from "@/presentation/components/assigneePicker/AssigneePicker";
@@ -145,6 +146,19 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     return new Set(ticketLabelIds);
   }, [ticketLabelIds]);
 
+  const canCreateComment = useMemo(() => {
+    if (!session?.userId) {
+      return false;
+    }
+
+    return projectMembers.some(
+      (member) =>
+        member.userId === session.userId &&
+        (member.role === ProjectRole.ADMIN ||
+          member.role === ProjectRole.MEMBER)
+    );
+  }, [projectMembers, session]);
+
   const effectiveTitle = titleDraft ?? ticket?.title ?? "";
   const effectiveDescription = descriptionDraft ?? ticket?.description ?? "";
   const effectiveStatus = statusDraft ?? ticket?.status ?? "";
@@ -214,6 +228,10 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
   );
 
   const handleCreateComment = useCallback(async (): Promise<void> => {
+    if (!canCreateComment) {
+      return;
+    }
+
     const content = commentInput.trim();
     if (!content) {
       return;
@@ -224,7 +242,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
       content,
     });
     setCommentInput("");
-  }, [commentInput, createCommentMutation, ticketId]);
+  }, [canCreateComment, commentInput, createCommentMutation, ticketId]);
 
   const handleCreateSubtask = useCallback(
     async (values: { title: string; description?: string }): Promise<void> => {
@@ -336,6 +354,10 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
               label={t("comments.newLabel")}
               value={commentInput}
               rows={3}
+              helperText={
+                canCreateComment ? undefined : t("comments.readOnlyHint")
+              }
+              disabled={!canCreateComment || createCommentMutation.isPending}
               onChange={(event) => {
                 setCommentInput(event.target.value);
               }}
@@ -344,7 +366,11 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
               label={t("comments.addButton")}
               variant="publish"
               onClick={handleCreateComment}
-              disabled={createCommentMutation.isPending}
+              disabled={
+                !canCreateComment ||
+                createCommentMutation.isPending ||
+                commentInput.trim().length === 0
+              }
             />
 
             <div className={styles["ticket-detail__comment-list"]}>

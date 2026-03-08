@@ -750,6 +750,7 @@
         "comments": {
           "title": "Commentaires",
           "newLabel": "Ajouter un commentaire",
+          "readOnlyHint": "Les lecteurs ne peuvent pas publier de commentaires.",
           "addButton": "Publier",
           "author": "Auteur : {author}",
           "unknownAuthor": "Utilisateur",
