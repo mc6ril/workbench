@@ -732,6 +732,13 @@
         "ticketCode": "WB-{code}",
         "actions": {
           "save": "Guardar",
+          "delete": "Eliminar ticket",
+          "deleteModal": {
+            "title": "Eliminar ticket",
+            "message": "Deseas eliminar este ticket? Esta accion no se puede deshacer.",
+            "confirm": "Eliminar definitivamente",
+            "deleting": "Eliminando..."
+          },
           "openFullPage": "Abrir a pantalla completa"
         },
         "states": {

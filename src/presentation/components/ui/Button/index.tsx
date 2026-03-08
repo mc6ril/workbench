@@ -13,6 +13,7 @@ import styles from "./Button.module.scss";
  * - ghost: Minimal style with no background or border
  * - publish: Ticket detail "publish" action style
  * - save: Ticket detail "save" action style
+ * - saveDanger: Destructive primary action with save shape
  * - edit: Ticket comment "edit" action style
  * - delete: Ticket comment "delete" action style
  */
@@ -23,6 +24,7 @@ type ButtonVariant =
   | "ghost"
   | "publish"
   | "save"
+  | "saveDanger"
   | "edit"
   | "delete";
 

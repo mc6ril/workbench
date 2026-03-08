@@ -133,6 +133,22 @@
   gap: $spacing-sm;
 }
 
+.ticket-detail__actions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+  padding-top: $spacing-lg;
+  border-top: $border-width solid $color-border-subtle;
+}
+
+.ticket-detail__delete-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+}
+
 .ticket-detail__label-list {
   display: flex;
   flex-wrap: wrap;
