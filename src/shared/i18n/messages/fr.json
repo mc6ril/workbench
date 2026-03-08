@@ -732,6 +732,13 @@
         "ticketCode": "WB-{code}",
         "actions": {
           "save": "Enregistrer",
+          "delete": "Supprimer le ticket",
+          "deleteModal": {
+            "title": "Supprimer le ticket",
+            "message": "Voulez-vous vraiment supprimer ce ticket ? Cette action est irreversible.",
+            "confirm": "Supprimer definitivement",
+            "deleting": "Suppression..."
+          },
           "openFullPage": "Ouvrir en pleine page"
         },
         "states": {

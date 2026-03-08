@@ -234,6 +234,30 @@
   }
 }
 
+.button--saveDanger {
+  background-image: linear-gradient(
+    135deg,
+    $color-action-save-gradient-end 0%,
+    $color-error 100%
+  );
+  color: $color-primary-text;
+  border-color: transparent;
+  border-radius: $border-radius-xs;
+  font-size: $font-size-sm;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+  font-weight: $font-weight-normal;
+
+  &:hover:not(:disabled) {
+    opacity: 0.95;
+    border-color: transparent;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
 .button--edit {
   background-color: transparent;
   color: $color-text-muted;

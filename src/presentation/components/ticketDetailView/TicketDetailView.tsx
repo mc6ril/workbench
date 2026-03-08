@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
 import type { TicketPriority } from "@/core/domain/schema/ticket.schema";
@@ -11,6 +12,7 @@ import SubtasksList from "@/presentation/components/subtasksList/SubtasksList";
 import Button from "@/presentation/components/ui/Button";
 import Card from "@/presentation/components/ui/Card";
 import Loader from "@/presentation/components/ui/Loader";
+import Modal from "@/presentation/components/ui/Modal";
 import Select from "@/presentation/components/ui/Select";
 import Text from "@/presentation/components/ui/Text";
 import Textarea from "@/presentation/components/ui/Textarea";
@@ -46,7 +48,9 @@ import {
 import { useProjectPermissions } from "@/presentation/providers/permissions";
 
 import { getAccessibilityId } from "@/shared/a11y";
+import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
+import { buildProjectRoute } from "@/shared/utils/routes";
 
 import styles from "./TicketDetailView.module.scss";
 
@@ -70,6 +74,9 @@ const PRIORITY_VALUES: TicketPriority[] = [
 ];
 
 const TicketDetailView = ({ projectId, ticketId }: Props) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const t = useTranslation("pages.ticketDetail.page");
   const tCommon = useTranslation("common");
 
@@ -114,6 +121,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentContent, setEditingCommentContent] = useState("");
   const [isSubtaskFormOpen, setIsSubtaskFormOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const statusOptions = useMemo<StatusOption[]>(() => {
     const columns = boardConfiguration?.columns ?? [];
@@ -327,6 +335,37 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     },
     [canDeleteTicket, deleteTicketMutation, projectId]
   );
+
+  const handleDeleteTicket = useCallback(async (): Promise<void> => {
+    if (!canDeleteTicket || deleteTicketMutation.isPending) {
+      return;
+    }
+
+    await deleteTicketMutation.mutateAsync({
+      projectId,
+      ticketId,
+    });
+
+    const params = new URLSearchParams(searchParams.toString());
+    if (params.get("ticket") === ticketId) {
+      params.delete("ticket");
+      const query = params.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, {
+        scroll: false,
+      });
+      return;
+    }
+
+    router.push(buildProjectRoute(projectId, PROJECT_VIEWS.BOARD));
+  }, [
+    canDeleteTicket,
+    deleteTicketMutation,
+    pathname,
+    projectId,
+    router,
+    searchParams,
+    ticketId,
+  ]);
 
   const createSubtaskErrorMessage =
     createSubtaskMutation.error instanceof Error
@@ -577,18 +616,32 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
             }
           />
 
-          <Button
-            label={t("actions.save")}
-            variant="save"
-            onClick={() => {
-              void handleSaveMainFields();
-            }}
-            disabled={
-              !canEditTicket ||
-              updateMainTicketMutation.isPending ||
-              effectiveTitle.trim().length === 0
-            }
-          />
+          <div className={styles["ticket-detail__actions"]}>
+            <Button
+              label={t("actions.save")}
+              variant="save"
+              fullWidth
+              onClick={() => {
+                void handleSaveMainFields();
+              }}
+              disabled={
+                !canEditTicket ||
+                updateMainTicketMutation.isPending ||
+                effectiveTitle.trim().length === 0
+              }
+            />
+            {canDeleteTicket && (
+              <Button
+                label={t("actions.delete")}
+                variant="saveDanger"
+                fullWidth
+                onClick={() => {
+                  setIsDeleteModalOpen(true);
+                }}
+                disabled={deleteTicketMutation.isPending}
+              />
+            )}
+          </div>
         </Card>
       </div>
 
@@ -628,6 +681,40 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
           />
         )}
       </section>
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+        }}
+        title={t("actions.deleteModal.title")}
+        size="medium"
+      >
+        <Text variant="small">{t("actions.deleteModal.message")}</Text>
+        <div className={styles["ticket-detail__delete-modal-actions"]}>
+          <Button
+            label={
+              deleteTicketMutation.isPending
+                ? t("actions.deleteModal.deleting")
+                : t("actions.deleteModal.confirm")
+            }
+            variant="saveDanger"
+            fullWidth
+            onClick={() => {
+              void handleDeleteTicket();
+            }}
+            disabled={deleteTicketMutation.isPending}
+          />
+          <Button
+            label={tCommon("cancel")}
+            variant="secondary"
+            fullWidth
+            onClick={() => {
+              setIsDeleteModalOpen(false);
+            }}
+            disabled={deleteTicketMutation.isPending}
+          />
+        </div>
+      </Modal>
     </section>
   );
 };

@@ -732,6 +732,13 @@
         "ticketCode": "WB-{code}",
         "actions": {
           "save": "Save",
+          "delete": "Delete ticket",
+          "deleteModal": {
+            "title": "Delete ticket",
+            "message": "Do you really want to delete this ticket? This action cannot be undone.",
+            "confirm": "Delete permanently",
+            "deleting": "Deleting..."
+          },
           "openFullPage": "Open full page"
         },
         "states": {
