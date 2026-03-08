@@ -453,7 +453,8 @@
         },
         "submitButton": "Créer le ticket",
         "cancelButton": "Annuler",
-        "errorGeneric": "Une erreur s'est produite lors de la création du ticket"
+        "errorGeneric": "Une erreur s'est produite lors de la création du ticket",
+        "readOnlyHint": "Les lecteurs ne peuvent pas créer de tickets."
       },
       "ticketListItem": {
         "ticketAriaLabel": "Ticket",
@@ -531,6 +532,7 @@
         },
         "submitButton": "Créer",
         "cancelButton": "Annuler",
+        "readOnlyHint": "Les lecteurs ne peuvent pas créer d'epics.",
         "errorGeneric": "Une erreur s'est produite lors de la création de l'epic"
       },
       "epicDetail": {

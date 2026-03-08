@@ -14,6 +14,13 @@ import type { ProjectMember } from "@/core/domain/schema/projectMember.schema";
  */
 export type MemberRepository = {
   /**
+   * Get current authenticated user's role for a project.
+   * Returns null when the user is not a member (or has no access).
+   * @throws DatabaseError if database operation fails
+   */
+  getCurrentRole(projectId: string): Promise<ProjectRole | null>;
+
+  /**
    * List all members of a project with their profile information.
    * Returns members joined with user_profiles for display data.
    * @returns Array of members ordered by role (admin first) then creation date

@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import { createDatabaseError } from "@/core/domain/repositoryError";
 import type { ProjectRole } from "@/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/core/domain/schema/projectMember.schema";
 
@@ -8,6 +9,8 @@ import type {
   ProjectMemberRow,
   UserProfileRow,
 } from "@/infrastructure/supabase/types";
+
+import { isProjectRole } from "@/shared/utils/guards";
 
 import { mapMemberRowsToDomain } from "./MemberMapper.supabase";
 
@@ -22,6 +25,29 @@ import type { MemberRepository } from "@/core/ports/memberRepository";
 export const createMemberRepository = (
   client: SupabaseClient
 ): MemberRepository => ({
+  async getCurrentRole(projectId: string): Promise<ProjectRole | null> {
+    const { data, error } = await client.rpc("get_project_role", {
+      project_uuid: projectId,
+    });
+
+    if (error) {
+      return handleRepositoryError(error, "ProjectMember");
+    }
+
+    if (data == null) {
+      return null;
+    }
+
+    if (typeof data !== "string" || !isProjectRole(data)) {
+      return handleRepositoryError(
+        createDatabaseError(`Invalid project role: ${String(data)}`),
+        "ProjectMember"
+      );
+    }
+
+    return data;
+  },
+
   async listByProject(projectId: string): Promise<ProjectMember[]> {
     const { data: membersData, error: membersError } = await client
       .from("project_members")

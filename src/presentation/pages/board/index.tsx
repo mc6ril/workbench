@@ -15,6 +15,7 @@ import { useBoardDnD } from "@/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/presentation/hooks/board/useBoardTickets";
 import { useProject } from "@/presentation/hooks/project";
 import { useTickets } from "@/presentation/hooks/ticket/useTickets";
+import { useProjectPermissions } from "@/presentation/providers/permissions";
 import { useFilterStore } from "@/presentation/stores/useFilterStore";
 import { useSortStore } from "@/presentation/stores/useSortStore";
 
@@ -40,6 +41,8 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   const layoutId = useMemo(() => getAccessibilityId("board-layout"), []);
   const tTicket = useTranslation("pages.ticketDetail.page");
   const selectedTicketId = searchParams.get("ticket");
+  const { canMoveTicket, isLoading: isPermissionsLoading } =
+    useProjectPermissions();
 
   const updateSearchParam = useCallback(
     (ticketId: string | null) => {
@@ -139,20 +142,25 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     };
   }, [boardColumnTickets, handleEditTicket]);
 
+  if (isPermissionsLoading) {
+    return <Loader variant="full-page" />;
+  }
+
   return (
     <section className={styles["board-layout"]} aria-labelledby={layoutId}>
       <DndContext
         sensors={sensors}
         collisionDetection={collisionDetection}
-        onDragStart={onDragStart}
-        onDragOver={onDragOver}
-        onDragEnd={onDragEnd}
-        onDragCancel={onDragCancel}
+        onDragStart={canMoveTicket ? onDragStart : undefined}
+        onDragOver={canMoveTicket ? onDragOver : undefined}
+        onDragEnd={canMoveTicket ? onDragEnd : undefined}
+        onDragCancel={canMoveTicket ? onDragCancel : undefined}
       >
         <BoardView
           columns={columns}
           renderColumn={renderColumnProps}
           isDragging={activeTicketId != null}
+          isDragEnabled={canMoveTicket}
           isLoading={isLoading}
           isEmpty={!boardConfiguration?.columns?.length}
           errorMessage={error?.message}

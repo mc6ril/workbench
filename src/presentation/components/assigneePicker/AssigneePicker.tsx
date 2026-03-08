@@ -28,6 +28,8 @@ type Props = {
   onUnassign: (userId: string) => Promise<void> | void;
   /** Whether mutations are in progress */
   isLoading?: boolean;
+  /** Disable assignment interactions (read-only mode) */
+  disabled?: boolean;
 };
 
 /**
@@ -40,6 +42,7 @@ const AssigneePicker = ({
   onAssign,
   onUnassign,
   isLoading = false,
+  disabled = false,
 }: Props) => {
   const t = useTranslation("ui.assigneePicker");
   const [isOpen, setIsOpen] = useState(false);
@@ -53,6 +56,10 @@ const AssigneePicker = ({
 
   const handleToggle = useCallback(
     async (userId: string) => {
+      if (disabled) {
+        return;
+      }
+
       if (assignedUserIds.has(userId)) {
         await onUnassign(userId);
       } else {
@@ -61,12 +68,16 @@ const AssigneePicker = ({
       // Close after selection to avoid requiring an extra click.
       setIsOpen(false);
     },
-    [assignedUserIds, onAssign, onUnassign]
+    [assignedUserIds, disabled, onAssign, onUnassign]
   );
 
   const handleToggleOpen = useCallback(() => {
+    if (disabled) {
+      return;
+    }
+
     setIsOpen((prev) => !prev);
-  }, []);
+  }, [disabled]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -119,7 +130,7 @@ const AssigneePicker = ({
           label={t("assign")}
           onClick={handleToggleOpen}
           variant="ghost"
-          disabled={isLoading}
+          disabled={disabled || isLoading}
           aria-label={t("assignAriaLabel")}
         />
       </div>
@@ -139,7 +150,7 @@ const AssigneePicker = ({
                   isAssigned ? styles["assignee-picker__option--selected"] : ""
                 }`}
                 onClick={() => handleToggle(member.userId)}
-                disabled={isLoading}
+                disabled={disabled || isLoading}
                 role="option"
                 aria-selected={isAssigned}
                 type="button"

@@ -5,6 +5,7 @@ export type BoardColumnProps = {
   title: string;
   tickets: BoardTicketViewModel[];
   isDragging?: boolean;
+  isSortable?: boolean;
   onTicketClick?: (ticketId: string) => void;
   className?: string;
 };

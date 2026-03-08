@@ -237,6 +237,9 @@ describe("useProjectRealtime", () => {
     expect(invalidateQueriesSpy).toHaveBeenCalledWith({
       queryKey: queryKeys.members.byProject(PROJECT_ID),
     });
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
+      queryKey: queryKeys.projects.currentRole(PROJECT_ID),
+    });
   });
 
   it("subscribes only to tickets when boardId is not available", () => {

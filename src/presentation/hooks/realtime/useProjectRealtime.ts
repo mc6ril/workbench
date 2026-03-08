@@ -184,6 +184,9 @@ export const useProjectRealtime = (projectId: string, boardId?: string) => {
         void queryClient.invalidateQueries({
           queryKey: queryKeys.members.byProject(projectId),
         });
+        void queryClient.invalidateQueries({
+          queryKey: queryKeys.projects.currentRole(projectId),
+        });
       }
     );
 

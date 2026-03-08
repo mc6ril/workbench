@@ -3,7 +3,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 
 import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
-import { ProjectRole } from "@/core/domain/schema/project.schema";
 import type { TicketPriority } from "@/core/domain/schema/ticket.schema";
 
 import AssigneePicker from "@/presentation/components/assigneePicker/AssigneePicker";
@@ -44,6 +43,7 @@ import {
   useUnassignTicket,
   useUpdateTicket,
 } from "@/presentation/hooks/ticket";
+import { useProjectPermissions } from "@/presentation/providers/permissions";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { useTranslation } from "@/shared/i18n";
@@ -74,6 +74,12 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
   const tCommon = useTranslation("common");
 
   const { data: session } = useSession();
+  const {
+    canComment,
+    canDeleteTicket,
+    canEditTicket,
+    isLoading: isPermissionsLoading,
+  } = useProjectPermissions();
   const { data: ticket, isLoading, error } = useTicket(ticketId);
   const { data: boardConfiguration } = useBoardConfiguration(projectId);
   const { data: epics = [] } = useEpics(projectId);
@@ -146,19 +152,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     return new Set(ticketLabelIds);
   }, [ticketLabelIds]);
 
-  const canCreateComment = useMemo(() => {
-    if (!session?.userId) {
-      return false;
-    }
-
-    return projectMembers.some(
-      (member) =>
-        member.userId === session.userId &&
-        (member.role === ProjectRole.ADMIN ||
-          member.role === ProjectRole.MEMBER)
-    );
-  }, [projectMembers, session]);
-
   const effectiveTitle = titleDraft ?? ticket?.title ?? "";
   const effectiveDescription = descriptionDraft ?? ticket?.description ?? "";
   const effectiveStatus = statusDraft ?? ticket?.status ?? "";
@@ -167,7 +160,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
   const effectiveEpicId = epicIdDraft ?? ticket?.epicId ?? "";
 
   const handleSaveMainFields = useCallback(async (): Promise<void> => {
-    if (!ticket) {
+    if (!ticket || !canEditTicket) {
       return;
     }
 
@@ -190,45 +183,63 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     effectiveSprintId,
     effectiveStatus,
     effectiveTitle,
+    canEditTicket,
     ticket,
     updateMainTicketMutation,
   ]);
 
   const handleToggleLabel = useCallback(
     async (labelId: string): Promise<void> => {
+      if (!canEditTicket) {
+        return;
+      }
+
       if (assignedLabelIdSet.has(labelId)) {
         await removeTicketLabelsMutation.mutateAsync([labelId]);
       } else {
         await addTicketLabelsMutation.mutateAsync([labelId]);
       }
     },
-    [addTicketLabelsMutation, assignedLabelIdSet, removeTicketLabelsMutation]
+    [
+      addTicketLabelsMutation,
+      assignedLabelIdSet,
+      canEditTicket,
+      removeTicketLabelsMutation,
+    ]
   );
 
   const handleAssign = useCallback(
     async (userId: string): Promise<void> => {
+      if (!canEditTicket) {
+        return;
+      }
+
       await assignTicketMutation.mutateAsync({
         ticketId,
         userIds: [userId],
         projectId,
       });
     },
-    [assignTicketMutation, projectId, ticketId]
+    [assignTicketMutation, canEditTicket, projectId, ticketId]
   );
 
   const handleUnassign = useCallback(
     async (userId: string): Promise<void> => {
+      if (!canEditTicket) {
+        return;
+      }
+
       await unassignTicketMutation.mutateAsync({
         ticketId,
         userIds: [userId],
         projectId,
       });
     },
-    [projectId, ticketId, unassignTicketMutation]
+    [canEditTicket, projectId, ticketId, unassignTicketMutation]
   );
 
   const handleCreateComment = useCallback(async (): Promise<void> => {
-    if (!canCreateComment) {
+    if (!canComment) {
       return;
     }
 
@@ -242,10 +253,14 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
       content,
     });
     setCommentInput("");
-  }, [canCreateComment, commentInput, createCommentMutation, ticketId]);
+  }, [canComment, commentInput, createCommentMutation, ticketId]);
 
   const handleCreateSubtask = useCallback(
     async (values: { title: string; description?: string }): Promise<void> => {
+      if (!canEditTicket) {
+        return;
+      }
+
       const fallbackStatus = statusOptions[0]?.value ?? ticket?.status ?? "";
 
       await createSubtaskMutation.mutateAsync({
@@ -260,6 +275,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
       setIsSubtaskFormOpen(false);
     },
     [
+      canEditTicket,
       createSubtaskMutation,
       projectId,
       statusOptions,
@@ -271,6 +287,10 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
 
   const handleToggleSubtaskCompleted = useCallback(
     (subtaskId: string): void => {
+      if (!canEditTicket) {
+        return;
+      }
+
       const subtask = subtasks.find((item) => item.id === subtaskId);
       if (!subtask) {
         return;
@@ -291,7 +311,21 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
         input: { status: nextStatus },
       });
     },
-    [statusOptions, subtasks, updateSubtaskMutation]
+    [canEditTicket, statusOptions, subtasks, updateSubtaskMutation]
+  );
+
+  const handleDeleteSubtask = useCallback(
+    (subtaskId: string): void => {
+      if (!canDeleteTicket) {
+        return;
+      }
+
+      deleteTicketMutation.mutate({
+        projectId,
+        ticketId: subtaskId,
+      });
+    },
+    [canDeleteTicket, deleteTicketMutation, projectId]
   );
 
   const createSubtaskErrorMessage =
@@ -306,7 +340,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     );
   }, [statusOptions]);
 
-  if (isLoading) {
+  if (isLoading || isPermissionsLoading) {
     return <Loader variant="full-page" />;
   }
 
@@ -331,6 +365,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
               id={getAccessibilityId("ticket-title")}
               className={styles["ticket-detail__input"]}
               value={effectiveTitle}
+              disabled={!canEditTicket}
               onChange={(event) => {
                 setTitleDraft(event.target.value);
               }}
@@ -342,6 +377,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
               label={t("fields.description")}
               value={effectiveDescription}
               rows={6}
+              disabled={!canEditTicket}
               onChange={(event) => {
                 setDescriptionDraft(event.target.value);
               }}
@@ -355,9 +391,9 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
               value={commentInput}
               rows={3}
               helperText={
-                canCreateComment ? undefined : t("comments.readOnlyHint")
+                canComment ? undefined : t("comments.readOnlyHint")
               }
-              disabled={!canCreateComment || createCommentMutation.isPending}
+              disabled={!canComment || createCommentMutation.isPending}
               onChange={(event) => {
                 setCommentInput(event.target.value);
               }}
@@ -367,7 +403,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
               variant="publish"
               onClick={handleCreateComment}
               disabled={
-                !canCreateComment ||
+                !canComment ||
                 createCommentMutation.isPending ||
                 commentInput.trim().length === 0
               }
@@ -375,7 +411,8 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
 
             <div className={styles["ticket-detail__comment-list"]}>
               {comments.map((comment) => {
-                const canEdit = comment.authorId === session?.userId;
+                const canEdit =
+                  canComment && comment.authorId === session?.userId;
                 const isEditing = editingCommentId === comment.id;
 
                 return (
@@ -465,6 +502,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
             label={t("fields.status")}
             value={effectiveStatus}
             options={statusOptions}
+            disabled={!canEditTicket}
             onChange={(event) => {
               setStatusDraft(event.target.value);
             }}
@@ -474,6 +512,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
             label={t("fields.priority")}
             value={effectivePriority}
             options={priorityOptions}
+            disabled={!canEditTicket}
             onChange={(event) => {
               setPriorityDraft(event.target.value);
             }}
@@ -484,6 +523,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
               label={t("fields.epic")}
               value={effectiveEpicId}
               options={epicOptions}
+              disabled={!canEditTicket}
               onChange={(event) => {
                 setEpicIdDraft(event.target.value);
               }}
@@ -494,6 +534,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
             label={t("fields.sprint")}
             value={effectiveSprintId}
             options={sprintOptions}
+            disabled={!canEditTicket}
             onChange={(event) => {
               setSprintIdDraft(event.target.value);
             }}
@@ -513,6 +554,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
                         ? styles["ticket-detail__label-chip--active"]
                         : ""
                     }`}
+                    disabled={!canEditTicket}
                     onClick={() => {
                       void handleToggleLabel(label.id);
                     }}
@@ -529,6 +571,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
             assignees={assignees}
             onAssign={handleAssign}
             onUnassign={handleUnassign}
+            disabled={!canEditTicket}
             isLoading={
               assignTicketMutation.isPending || unassignTicketMutation.isPending
             }
@@ -541,6 +584,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
               void handleSaveMainFields();
             }}
             disabled={
+              !canEditTicket ||
               updateMainTicketMutation.isPending ||
               effectiveTitle.trim().length === 0
             }
@@ -555,24 +599,25 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
             title: subtask.title,
             isCompleted: doneStatuses.has(subtask.status),
           }))}
-          onToggleCompleted={handleToggleSubtaskCompleted}
-          onDelete={(subtaskId) => {
-            deleteTicketMutation.mutate({
-              projectId,
-              ticketId: subtaskId,
-            });
-          }}
+          onToggleCompleted={
+            canEditTicket ? handleToggleSubtaskCompleted : undefined
+          }
+          onDelete={
+            canDeleteTicket ? handleDeleteSubtask : undefined
+          }
           emptyStateAction={
-            <Button
-              label={t("subtasks.addButton")}
-              variant="secondary"
-              onClick={() => {
-                setIsSubtaskFormOpen(true);
-              }}
-            />
+            canEditTicket ? (
+              <Button
+                label={t("subtasks.addButton")}
+                variant="secondary"
+                onClick={() => {
+                  setIsSubtaskFormOpen(true);
+                }}
+              />
+            ) : undefined
           }
         />
-        {isSubtaskFormOpen && (
+        {canEditTicket && isSubtaskFormOpen && (
           <CreateSubtaskForm
             onSubmit={handleCreateSubtask}
             onCancel={() => {

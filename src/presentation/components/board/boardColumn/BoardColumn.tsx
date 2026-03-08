@@ -23,11 +23,13 @@ import styles from "./BoardColumn.module.scss";
 
 type SortableTicketItemProps = {
   ticket: BoardTicketViewModel;
+  isSortable: boolean;
   onTicketClick?: (ticketId: string) => void;
 };
 
 const SortableTicketItem = ({
   ticket,
+  isSortable,
   onTicketClick,
 }: SortableTicketItemProps) => {
   const {
@@ -39,6 +41,7 @@ const SortableTicketItem = ({
     isDragging,
   } = useSortable({
     id: ticket.id,
+    disabled: !isSortable,
     animateLayoutChanges: (args) => defaultAnimateLayoutChanges(args),
     transition: {
       duration: 160,
@@ -50,6 +53,7 @@ const SortableTicketItem = ({
     transform: CSS.Transform.toString(transform),
     transition,
   };
+  const sortableProps = isSortable ? { ...attributes, ...listeners } : {};
 
   return (
     <li
@@ -58,11 +62,7 @@ const SortableTicketItem = ({
       className={styles["board-column__list-item"]}
       data-dragging={isDragging}
     >
-      <div
-        {...attributes}
-        {...listeners}
-        className={styles["board-column__sortable-card"]}
-      >
+      <div {...sortableProps} className={styles["board-column__sortable-card"]}>
         <TicketCard {...ticket} onEdit={onTicketClick} />
       </div>
     </li>
@@ -74,6 +74,7 @@ const BoardColumn = ({
   title,
   tickets,
   isDragging,
+  isSortable = true,
   onTicketClick,
   className,
 }: BoardColumnProps) => {
@@ -81,6 +82,7 @@ const BoardColumn = ({
   const droppableId = `${BOARD_COLUMN_DROP_PREFIX}${id}`;
   const { setNodeRef, isOver } = useDroppable({
     id: droppableId,
+    disabled: !isSortable,
   });
 
   const baseId = useMemo(() => getAccessibilityId(`board-column-${id}`), [id]);
@@ -127,6 +129,7 @@ const BoardColumn = ({
               <SortableTicketItem
                 key={ticket.id}
                 ticket={ticket}
+                isSortable={isSortable}
                 onTicketClick={onTicketClick}
               />
             );

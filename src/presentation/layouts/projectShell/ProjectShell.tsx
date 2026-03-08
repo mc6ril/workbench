@@ -20,6 +20,10 @@ import { useProjectSearchSuggestions } from "@/presentation/hooks/project/usePro
 import { useProjectRealtime } from "@/presentation/hooks/realtime/useProjectRealtime";
 import DashboardShell from "@/presentation/layouts/dashboardShell/DashboardShell";
 import { getProjectViewKeyFromPath } from "@/presentation/navigation/projectViews.config";
+import {
+  ProjectPermissionsProvider,
+  useProjectPermissions,
+} from "@/presentation/providers/permissions";
 import { useFilterStore } from "@/presentation/stores/useFilterStore";
 import { useSortStore } from "@/presentation/stores/useSortStore";
 
@@ -38,10 +42,15 @@ type Props = {
   children: React.ReactNode;
 };
 
-const ProjectShell = ({ projectId, children }: Props) => {
+const ProjectShellContent = ({ projectId, children }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const {
+    canCreateEpic,
+    canCreateTicket,
+    isLoading: isPermissionsLoading,
+  } = useProjectPermissions();
   const tSkipLink = useTranslation("navigation.skipLink");
   const tSidebar = useTranslation("navigation.sidebar");
   const tBreadcrumbs = useTranslation("navigation.breadcrumbs");
@@ -150,11 +159,34 @@ const ProjectShell = ({ projectId, children }: Props) => {
     setIsSortModalOpen(true);
   }, []);
 
+  const canAddAction = useMemo(() => {
+    if (viewKey === PROJECT_VIEWS.EPICS) {
+      return canCreateEpic;
+    }
+
+    if (viewKey === PROJECT_VIEWS.BACKLOG || viewKey === PROJECT_VIEWS.BOARD) {
+      return canCreateTicket;
+    }
+
+    return false;
+  }, [canCreateEpic, canCreateTicket, viewKey]);
+
   const handleAddClick = useCallback(() => {
+    if (!canAddAction) {
+      return;
+    }
+
+    if (viewKey === PROJECT_VIEWS.EPICS) {
+      router.push(
+        `${buildProjectRoute(projectId, PROJECT_VIEWS.EPICS)}?createEpic=1`
+      );
+      return;
+    }
+
     router.push(
       `${buildProjectRoute(projectId, PROJECT_VIEWS.BACKLOG)}?createTicket=1`
     );
-  }, [projectId, router]);
+  }, [canAddAction, projectId, router, viewKey]);
 
   return (
     <>
@@ -172,6 +204,8 @@ const ProjectShell = ({ projectId, children }: Props) => {
             onFilterClick={handleFilterClick}
             onSortClick={handleSortClick}
             onAddClick={handleAddClick}
+            canAddAction={canAddAction}
+            isPermissionsLoading={isPermissionsLoading}
           />
         }
         breadcrumbs={<Breadcrumbs projectId={projectId} />}
@@ -248,6 +282,16 @@ const ProjectShell = ({ projectId, children }: Props) => {
         )}
       </Modal>
     </>
+  );
+};
+
+const ProjectShell = ({ projectId, children }: Props) => {
+  return (
+    <ProjectPermissionsProvider projectId={projectId}>
+      <ProjectShellContent projectId={projectId}>
+        {children}
+      </ProjectShellContent>
+    </ProjectPermissionsProvider>
   );
 };
 
