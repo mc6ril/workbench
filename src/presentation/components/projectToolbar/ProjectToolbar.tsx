@@ -30,6 +30,8 @@ type Props = {
   onFilterClick?: () => void;
   onSortClick?: () => void;
   onAddClick?: () => void;
+  canAddAction?: boolean;
+  isPermissionsLoading?: boolean;
   searchSuggestions?: ProjectSearchSuggestion[];
 };
 
@@ -40,6 +42,8 @@ const ProjectToolbar = ({
   onFilterClick,
   onSortClick,
   onAddClick,
+  canAddAction = true,
+  isPermissionsLoading = false,
   searchSuggestions = [],
 }: Props) => {
   const pathname = usePathname();
@@ -282,11 +286,12 @@ const ProjectToolbar = ({
               </div>
             )}
           </div>
-          {showAddAction && (
+          {showAddAction && !isPermissionsLoading && (
             <Button
               label={addLabel}
               onClick={onAddClick}
               variant="primary"
+              disabled={!canAddAction}
               aria-label={addAriaLabel}
             />
           )}

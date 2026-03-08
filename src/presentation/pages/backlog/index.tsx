@@ -18,11 +18,15 @@ import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAc
 import { useCreateTicket } from "@/presentation/hooks/ticket/useCreateTicket";
 import { useTicketAssigneesByTicketIds } from "@/presentation/hooks/ticket/useTicketAssigneesByTicketIds";
 import { useTickets } from "@/presentation/hooks/ticket/useTickets";
+import { useProjectPermissions } from "@/presentation/providers/permissions";
 import { useFilterStore } from "@/presentation/stores/useFilterStore";
 import { useSortStore } from "@/presentation/stores/useSortStore";
 
 import { useTranslation } from "@/shared/i18n";
-import { buildTicketCode, normalizeTicketSearch } from "@/shared/utils/ticketUtils";
+import {
+  buildTicketCode,
+  normalizeTicketSearch,
+} from "@/shared/utils/ticketUtils";
 
 const TicketDetailView = dynamic(
   () => import("@/presentation/components/ticketDetailView/TicketDetailView"),
@@ -44,6 +48,8 @@ const BacklogPage = ({ projectId }: Props) => {
   const tCreateForm = useTranslation("pages.backlog.createTicketForm");
   const tTicket = useTranslation("pages.ticketDetail.page");
   const search = useFilterStore((state) => state.search);
+  const { canCreateTicket, isLoading: isPermissionsLoading } =
+    useProjectPermissions();
   const filters = useFilterStore((state) => state.filters);
   const sort = useSortStore((state) => state.sort);
   const { data: project } = useProject(projectId);
@@ -150,7 +156,7 @@ const BacklogPage = ({ projectId }: Props) => {
       ? createTicketMutation.error.message
       : undefined;
 
-  if (isLoading) {
+  if (isLoading || isPermissionsLoading) {
     return <Loader variant="full-page" />;
   }
 
@@ -189,6 +195,8 @@ const BacklogPage = ({ projectId }: Props) => {
           <Loader variant="inline" />
         ) : statusOptions.length === 0 ? (
           <Text variant="small">{tBacklog("subtitle")}</Text>
+        ) : !canCreateTicket ? (
+          <Text variant="small">{tCreateForm("readOnlyHint")}</Text>
         ) : (
           <CreateTicketForm
             statusOptions={statusOptions}
@@ -198,6 +206,10 @@ const BacklogPage = ({ projectId }: Props) => {
             errorMessage={createTicketErrorMessage}
             onCancel={closeCreateTicketModal}
             onSubmit={async (values) => {
+              if (!canCreateTicket) {
+                return;
+              }
+
               await createTicketMutation.mutateAsync({
                 projectId,
                 title: values.title,

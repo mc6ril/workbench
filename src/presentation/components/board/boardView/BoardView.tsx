@@ -18,6 +18,7 @@ const BoardView = ({
   isLoading,
   isEmpty,
   isDragging,
+  isDragEnabled = true,
   errorMessage,
   className,
 }: BoardViewProps) => {
@@ -106,10 +107,11 @@ const BoardView = ({
                 className={styles["board-view__column-wrapper"]}
               >
                 <BoardColumn
+                  {...columnProps}
                   id={column.id}
                   title={column.title}
                   isDragging={isDragging}
-                  {...columnProps}
+                  isSortable={isDragEnabled}
                 />
               </div>
             );
