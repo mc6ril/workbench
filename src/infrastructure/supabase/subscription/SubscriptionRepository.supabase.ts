@@ -23,6 +23,27 @@ export const createSubscriptionRepository = (
   browserClient: SupabaseClient,
   adminClient: SupabaseClient
 ): SubscriptionRepository => ({
+  async getCurrent(): Promise<Subscription | null> {
+    try {
+      const { data, error } = await browserClient
+        .from("subscriptions")
+        .select("*")
+        .maybeSingle();
+
+      if (error) {
+        return handleRepositoryError(error, "Subscription");
+      }
+
+      if (!data) {
+        return null;
+      }
+
+      return mapSubscriptionRowToDomain(data as SubscriptionRow);
+    } catch (error) {
+      return handleRepositoryError(error, "Subscription");
+    }
+  },
+
   async getByUserId(userId: string): Promise<Subscription | null> {
     try {
       const { data, error } = await browserClient

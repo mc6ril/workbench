@@ -10,6 +10,13 @@ import type {
  */
 export type SubscriptionRepository = {
   /**
+   * Get the current authenticated user's subscription using auth context (RLS).
+   * @returns Subscription or null if user has no subscription (= free plan)
+   * @throws DatabaseError if database operation fails
+   */
+  getCurrent(): Promise<Subscription | null>;
+
+  /**
    * Get a subscription by user ID.
    * @returns Subscription or null if user has no subscription (= free plan)
    * @throws DatabaseError if database operation fails

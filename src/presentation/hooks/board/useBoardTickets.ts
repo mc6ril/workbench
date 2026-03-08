@@ -4,12 +4,13 @@ import { useMemo } from "react";
 
 import type { Ticket } from "@/core/domain/schema/ticket.schema";
 
-import { useTicketAssigneesByTicketIds } from "@/presentation/hooks/ticket/useTicketAssigneesByTicketIds";
+import { useTicketAssigneesByProjectId } from "@/presentation/hooks/ticket/useTicketAssigneesByProjectId";
 
 import type { BoardTicketViewModel } from "@/shared/types/board";
 import { buildTicketCode } from "@/shared/utils/ticketUtils";
 
 type UseBoardTicketsInput = {
+  projectId: string;
   tickets: Ticket[];
   projectShortCode?: string | null;
 };
@@ -31,15 +32,12 @@ const mapTicketToViewModel = (
 };
 
 export const useBoardTickets = ({
+  projectId,
   tickets,
   projectShortCode,
 }: UseBoardTicketsInput) => {
-  const filteredTicketIds = useMemo(() => {
-    return tickets.map((ticket) => ticket.id);
-  }, [tickets]);
-
   const { data: assigneesByTicketId = {} } =
-    useTicketAssigneesByTicketIds(filteredTicketIds);
+    useTicketAssigneesByProjectId(projectId);
 
   const ticketViewModelById = useMemo(() => {
     const map = new Map<string, BoardTicketViewModel>();

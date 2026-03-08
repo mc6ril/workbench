@@ -194,4 +194,15 @@ export type TicketRepository = {
   getAssigneesByTicketIds(
     ticketIds: string[]
   ): Promise<Record<string, TicketAssignee[]>>;
+
+  /**
+   * Load assignees for all tickets in a project.
+   * Useful when views already load project-scoped tickets and want to avoid request waterfalls.
+   * @param projectId - Project ID
+   * @returns Map of ticketId -> assignees array
+   * @throws DatabaseError if database operation fails
+   */
+  getAssigneesByProjectId(
+    projectId: string
+  ): Promise<Record<string, TicketAssignee[]>>;
 };

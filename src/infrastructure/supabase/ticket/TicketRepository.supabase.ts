@@ -7,6 +7,7 @@ import {
 import type {
   CreateTicketInput,
   Ticket,
+  TicketAssignee,
   TicketFilters,
   TicketSort,
   UpdateTicketInput,
@@ -22,6 +23,58 @@ import {
 
 import type { TicketRepository } from "@/core/ports/ticketRepository";
 
+type TicketAssigneeRow = {
+  ticket_id: string;
+  user_id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  assigned_at: string;
+};
+
+type PostgrestErrorLike = {
+  code?: string;
+  message?: string;
+  details?: string;
+};
+
+const isMissingProjectAssigneesRpcError = (error: unknown): boolean => {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const postgrestError = error as PostgrestErrorLike;
+  if (postgrestError.code !== "PGRST202") {
+    return false;
+  }
+
+  return [postgrestError.message, postgrestError.details].some(
+    (value) =>
+      typeof value === "string" &&
+      value.includes("get_project_ticket_assignees")
+  );
+};
+
+const mapAssigneeRowsToTicketMap = (
+  rows: TicketAssigneeRow[]
+): Record<string, TicketAssignee[]> => {
+  const result: Record<string, TicketAssignee[]> = {};
+
+  for (const row of rows) {
+    if (!result[row.ticket_id]) {
+      result[row.ticket_id] = [];
+    }
+
+    result[row.ticket_id].push({
+      userId: row.user_id,
+      displayName: row.display_name,
+      avatarUrl: row.avatar_url,
+      assignedAt: new Date(row.assigned_at),
+    });
+  }
+
+  return result;
+};
+
 /**
  * Create a TicketRepository implementation using the provided Supabase client.
  * This allows using different clients (browser/server) based on context.
@@ -32,6 +85,34 @@ import type { TicketRepository } from "@/core/ports/ticketRepository";
 export const createTicketRepository = (
   client: SupabaseClient
 ): TicketRepository => {
+  const getAssigneesByProjectIdFallback = async (
+    projectId: string
+  ): Promise<Record<string, TicketAssignee[]>> => {
+    const { data: ticketRows, error: ticketIdsError } = await client
+      .from("tickets")
+      .select("id")
+      .eq("project_id", projectId);
+
+    if (ticketIdsError) {
+      return handleRepositoryError(ticketIdsError, "TicketAssignee", projectId);
+    }
+
+    const ticketIds = (ticketRows ?? []).map((row: { id: string }) => row.id);
+    if (ticketIds.length === 0) {
+      return {};
+    }
+
+    const { data, error } = await client.rpc("get_ticket_assignees", {
+      ticket_ids: ticketIds,
+    });
+
+    if (error) {
+      return handleRepositoryError(error, "TicketAssignee", projectId);
+    }
+
+    return mapAssigneeRowsToTicketMap((data ?? []) as TicketAssigneeRow[]);
+  };
+
   const repo: TicketRepository = {
     async findById(id: string): Promise<Ticket | null> {
       try {
@@ -555,9 +636,7 @@ export const createTicketRepository = (
       }
     },
 
-    async getAssignees(
-      ticketId: string
-    ): Promise<import("@/core/domain/schema/ticket.schema").TicketAssignee[]> {
+    async getAssignees(ticketId: string): Promise<TicketAssignee[]> {
       const { data, error } = await client.rpc("get_ticket_assignees", {
         ticket_ids: [ticketId],
       });
@@ -566,15 +645,7 @@ export const createTicketRepository = (
         return handleRepositoryError(error, "TicketAssignee", ticketId);
       }
 
-      return (
-        (data ?? []) as Array<{
-          ticket_id: string;
-          user_id: string;
-          display_name: string | null;
-          avatar_url: string | null;
-          assigned_at: string;
-        }>
-      ).map((row) => ({
+      return ((data ?? []) as TicketAssigneeRow[]).map((row) => ({
         userId: row.user_id,
         displayName: row.display_name,
         avatarUrl: row.avatar_url,
@@ -584,12 +655,7 @@ export const createTicketRepository = (
 
     async getAssigneesByTicketIds(
       ticketIds: string[]
-    ): Promise<
-      Record<
-        string,
-        import("@/core/domain/schema/ticket.schema").TicketAssignee[]
-      >
-    > {
+    ): Promise<Record<string, TicketAssignee[]>> {
       if (ticketIds.length === 0) {
         return {};
       }
@@ -602,30 +668,25 @@ export const createTicketRepository = (
         return handleRepositoryError(error, "TicketAssignee");
       }
 
-      const result: Record<
-        string,
-        import("@/core/domain/schema/ticket.schema").TicketAssignee[]
-      > = {};
+      return mapAssigneeRowsToTicketMap((data ?? []) as TicketAssigneeRow[]);
+    },
 
-      for (const row of (data ?? []) as Array<{
-        ticket_id: string;
-        user_id: string;
-        display_name: string | null;
-        avatar_url: string | null;
-        assigned_at: string;
-      }>) {
-        if (!result[row.ticket_id]) {
-          result[row.ticket_id] = [];
+    async getAssigneesByProjectId(
+      projectId: string
+    ): Promise<Record<string, TicketAssignee[]>> {
+      const { data, error } = await client.rpc("get_project_ticket_assignees", {
+        p_project_id: projectId,
+      });
+
+      if (error) {
+        if (isMissingProjectAssigneesRpcError(error)) {
+          return getAssigneesByProjectIdFallback(projectId);
         }
-        result[row.ticket_id].push({
-          userId: row.user_id,
-          displayName: row.display_name,
-          avatarUrl: row.avatar_url,
-          assignedAt: new Date(row.assigned_at),
-        });
+
+        return handleRepositoryError(error, "TicketAssignee", projectId);
       }
 
-      return result;
+      return mapAssigneeRowsToTicketMap((data ?? []) as TicketAssigneeRow[]);
     },
   };
   return repo;
