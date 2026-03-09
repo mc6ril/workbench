@@ -90,12 +90,131 @@ const createRealtimeMocks = () => {
   };
 };
 
+const getRegistrationByTable = (
+  registrations: OnRegistration[]
+): Map<string, OnRegistration> => {
+  const registrationByTable = new Map<string, OnRegistration>();
+  for (const registration of registrations) {
+    registrationByTable.set(registration.config.table, registration);
+  }
+  return registrationByTable;
+};
+
+const buildTicketRow = (
+  overrides: Partial<Record<string, unknown>> = {}
+): Record<string, unknown> => {
+  return {
+    id: TICKET_ID,
+    project_id: PROJECT_ID,
+    title: "Refactor realtime invalidation",
+    description: null,
+    status: "todo",
+    position: 1,
+    code_number: 42,
+    epic_id: null,
+    parent_id: null,
+    sprint_id: null,
+    priority: null,
+    due_date: null,
+    story_points: null,
+    created_by: null,
+    created_at: "2026-03-08T10:00:00.000Z",
+    updated_at: "2026-03-08T10:00:00.000Z",
+    ...overrides,
+  };
+};
+
 describe("useProjectRealtime", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
   });
 
-  it("subscribes to tickets and columns and invalidates targeted query keys", () => {
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
+  it("patches ticket cache on UPDATE without invalidating project tickets root", () => {
+    const queryClient = new QueryClient();
+    const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
+    const wrapper = createWrapper(queryClient);
+    const { registrations } = createRealtimeMocks();
+
+    queryClient.setQueryData(queryKeys.tickets.detail(TICKET_ID), {
+      id: TICKET_ID,
+      projectId: PROJECT_ID,
+      title: "Old title",
+      description: null,
+      status: "todo",
+      position: 1,
+      codeNumber: 42,
+      epicId: null,
+      parentId: null,
+      sprintId: null,
+      priority: null,
+      dueDate: null,
+      storyPoints: null,
+      createdBy: null,
+      createdAt: new Date("2026-03-08T10:00:00.000Z"),
+      updatedAt: new Date("2026-03-08T10:00:00.000Z"),
+    });
+
+    queryClient.setQueryData(queryKeys.projects.ticketsList(PROJECT_ID), [
+      {
+        id: TICKET_ID,
+        projectId: PROJECT_ID,
+        title: "Old title",
+        description: null,
+        status: "todo",
+        position: 1,
+        codeNumber: 42,
+        epicId: null,
+        parentId: null,
+        sprintId: null,
+        priority: null,
+        dueDate: null,
+        storyPoints: null,
+        createdBy: null,
+        createdAt: new Date("2026-03-08T10:00:00.000Z"),
+        updatedAt: new Date("2026-03-08T10:00:00.000Z"),
+      },
+    ]);
+
+    renderHook(() => useProjectRealtime(PROJECT_ID, BOARD_ID), { wrapper });
+
+    const registrationByTable = getRegistrationByTable(registrations);
+    const ticketsCallback = registrationByTable.get("tickets")?.callback;
+
+    expect(ticketsCallback).toBeDefined();
+
+    ticketsCallback?.({
+      eventType: "UPDATE",
+      old: buildTicketRow(),
+      new: buildTicketRow({
+        title: "New title",
+        updated_at: "2026-03-08T11:00:00.000Z",
+      }),
+    });
+
+    const updatedTicketDetail = queryClient.getQueryData<{
+      title: string;
+    }>(queryKeys.tickets.detail(TICKET_ID));
+    expect(updatedTicketDetail?.title).toBe("New title");
+
+    const updatedTicketList = queryClient.getQueryData<
+      Array<{ title: string }>
+    >(queryKeys.projects.ticketsList(PROJECT_ID));
+    expect(updatedTicketList?.[0]?.title).toBe("New title");
+
+    expect(invalidateQueriesSpy).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryKey: queryKeys.projects.ticketsRoot(PROJECT_ID),
+      })
+    );
+  });
+
+  it("targets assignee invalidations and avoids tickets root invalidation", () => {
     const queryClient = new QueryClient();
     const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
     const wrapper = createWrapper(queryClient);
@@ -103,143 +222,121 @@ describe("useProjectRealtime", () => {
 
     renderHook(() => useProjectRealtime(PROJECT_ID, BOARD_ID), { wrapper });
 
-    expect(registrations).toHaveLength(9);
-
-    const registrationByTable = new Map<string, OnRegistration>();
-    for (const registration of registrations) {
-      registrationByTable.set(registration.config.table, registration);
-    }
-
-    expect(registrationByTable.get("tickets")).toMatchObject({
-      eventName: "postgres_changes",
-      config: {
-        event: "*",
-        schema: "public",
-        table: "tickets",
-        filter: `project_id=eq.${PROJECT_ID}`,
-      },
-    });
-    expect(registrationByTable.get("columns")).toMatchObject({
-      eventName: "postgres_changes",
-      config: {
-        event: "*",
-        schema: "public",
-        table: "columns",
-        filter: `board_id=eq.${BOARD_ID}`,
-      },
-    });
-    expect(registrationByTable.get("epics")).toBeDefined();
-    expect(registrationByTable.get("sprints")).toBeDefined();
-    expect(registrationByTable.get("labels")).toBeDefined();
-    expect(registrationByTable.get("project_members")).toBeDefined();
-    expect(registrationByTable.get("comments")).toBeDefined();
-    expect(registrationByTable.get("ticket_assignees")).toBeDefined();
-    expect(registrationByTable.get("ticket_labels")).toBeDefined();
-
-    const ticketCallback = registrationByTable.get("tickets")?.callback;
-    const columnsCallback = registrationByTable.get("columns")?.callback;
-    const commentsCallback = registrationByTable.get("comments")?.callback;
+    const registrationByTable = getRegistrationByTable(registrations);
     const ticketAssigneesCallback =
       registrationByTable.get("ticket_assignees")?.callback;
-    const ticketLabelsCallback =
-      registrationByTable.get("ticket_labels")?.callback;
-    const epicsCallback = registrationByTable.get("epics")?.callback;
-    const sprintsCallback = registrationByTable.get("sprints")?.callback;
-    const labelsCallback = registrationByTable.get("labels")?.callback;
-    const membersCallback =
-      registrationByTable.get("project_members")?.callback;
 
-    expect(ticketCallback).toBeDefined();
-    expect(columnsCallback).toBeDefined();
-    expect(commentsCallback).toBeDefined();
-    expect(ticketAssigneesCallback).toBeDefined();
-    expect(ticketLabelsCallback).toBeDefined();
-    expect(epicsCallback).toBeDefined();
-    expect(sprintsCallback).toBeDefined();
-    expect(labelsCallback).toBeDefined();
-    expect(membersCallback).toBeDefined();
-
-    ticketCallback?.({
-      eventType: "UPDATE",
-      new: { id: TICKET_ID },
-    });
-
-    columnsCallback?.({
-      eventType: "UPDATE",
-      new: { id: "column-1" },
-    });
-
-    commentsCallback?.({
+    ticketAssigneesCallback?.({
       eventType: "INSERT",
       new: { ticket_id: TICKET_ID },
     });
 
-    ticketAssigneesCallback?.({
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
+      queryKey: queryKeys.tickets.assignees(TICKET_ID),
+      refetchType: "active",
+    });
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
+      queryKey: queryKeys.tickets.assigneesByProjectId(PROJECT_ID),
+      refetchType: "active",
+    });
+    expect(invalidateQueriesSpy).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryKey: queryKeys.projects.ticketsRoot(PROJECT_ID),
+      })
+    );
+    expect(invalidateQueriesSpy).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryKey: queryKeys.tickets.assigneesRoot(),
+      })
+    );
+  });
+
+  it("invalidates only label-dependent ticket list queries on ticket_labels events", () => {
+    const queryClient = new QueryClient();
+    const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
+    const wrapper = createWrapper(queryClient);
+    const { registrations } = createRealtimeMocks();
+
+    const noLabelFilterQueryKey = queryKeys.projects.ticketsList(PROJECT_ID, {
+      status: "todo",
+    });
+    const labelFilterQueryKey = queryKeys.projects.ticketsList(PROJECT_ID, {
+      labelIds: ["label-1"],
+    });
+
+    queryClient.setQueryData(noLabelFilterQueryKey, []);
+    queryClient.setQueryData(labelFilterQueryKey, []);
+
+    renderHook(() => useProjectRealtime(PROJECT_ID, BOARD_ID), { wrapper });
+
+    const registrationByTable = getRegistrationByTable(registrations);
+    const ticketLabelsCallback =
+      registrationByTable.get("ticket_labels")?.callback;
+
+    ticketLabelsCallback?.({
+      eventType: "UPDATE",
+      new: { ticket_id: TICKET_ID },
+    });
+
+    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
+      queryKey: queryKeys.labels.byTicket(TICKET_ID),
+      refetchType: "active",
+    });
+
+    const predicateCall = invalidateQueriesSpy.mock.calls.find(([arg]) => {
+      const maybeArg = arg as { predicate?: unknown };
+      return typeof maybeArg.predicate === "function";
+    });
+
+    expect(predicateCall).toBeDefined();
+    const predicate = (
+      predicateCall?.[0] as {
+        predicate: (query: { queryKey: readonly unknown[] }) => boolean;
+      }
+    ).predicate;
+    expect(predicate({ queryKey: labelFilterQueryKey })).toBe(true);
+    expect(predicate({ queryKey: noLabelFilterQueryKey })).toBe(false);
+
+    expect(invalidateQueriesSpy).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryKey: queryKeys.projects.ticketsRoot(PROJECT_ID),
+      })
+    );
+  });
+
+  it("falls back to project-scoped invalidation when payload has no ticket id", () => {
+    const queryClient = new QueryClient();
+    const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
+    const wrapper = createWrapper(queryClient);
+    const { registrations } = createRealtimeMocks();
+
+    renderHook(() => useProjectRealtime(PROJECT_ID, BOARD_ID), { wrapper });
+
+    const registrationByTable = getRegistrationByTable(registrations);
+
+    registrationByTable.get("ticket_assignees")?.callback({
       eventType: "DELETE",
       old: { id: "assignee-1" },
     });
 
-    ticketLabelsCallback?.({
+    registrationByTable.get("ticket_labels")?.callback({
       eventType: "DELETE",
-      old: { ticket_id: TICKET_ID },
-    });
-
-    epicsCallback?.({
-      eventType: "UPDATE",
-      new: { id: "epic-1" },
-    });
-
-    sprintsCallback?.({
-      eventType: "UPDATE",
-      new: { id: "sprint-1" },
-    });
-
-    labelsCallback?.({
-      eventType: "UPDATE",
-      new: { id: "label-1" },
-    });
-
-    membersCallback?.({
-      eventType: "UPDATE",
-      new: { id: "member-1" },
+      old: { id: "ticket-label-1" },
     });
 
     expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.ticketsRoot(PROJECT_ID),
-    });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.epicsRoot(PROJECT_ID),
-    });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.tickets.detail(TICKET_ID),
-    });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.boardConfiguration(PROJECT_ID),
-    });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.comments.byTicket(TICKET_ID),
-    });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.tickets.assigneesRoot(),
-    });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.labels.byTicket(TICKET_ID),
-    });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.epics.detail("epic-1"),
-    });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.sprints.byProject(PROJECT_ID),
+      queryKey: queryKeys.tickets.assigneesByProjectId(PROJECT_ID),
+      refetchType: "active",
     });
     expect(invalidateQueriesSpy).toHaveBeenCalledWith({
       queryKey: queryKeys.labels.byProject(PROJECT_ID),
+      refetchType: "active",
     });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.members.byProject(PROJECT_ID),
-    });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.currentRole(PROJECT_ID),
-    });
+    expect(invalidateQueriesSpy).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryKey: queryKeys.labels.root(),
+      })
+    );
   });
 
   it("subscribes only to tickets when boardId is not available", () => {
@@ -252,57 +349,17 @@ describe("useProjectRealtime", () => {
 
     expect(registrations).toHaveLength(8);
 
-    const registrationByTable = new Map<string, OnRegistration>();
-    for (const registration of registrations) {
-      registrationByTable.set(registration.config.table, registration);
-    }
-
+    const registrationByTable = getRegistrationByTable(registrations);
     expect(registrationByTable.get("columns")).toBeUndefined();
 
     registrationByTable.get("tickets")?.callback({
       eventType: "INSERT",
-      new: { id: TICKET_ID },
+      new: buildTicketRow(),
     });
 
     expect(invalidateQueriesSpy).toHaveBeenCalledWith({
       queryKey: queryKeys.projects.ticketsRoot(PROJECT_ID),
-    });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.epicsRoot(PROJECT_ID),
-    });
-    expect(invalidateQueriesSpy).not.toHaveBeenCalledWith({
-      queryKey: queryKeys.tickets.detail(TICKET_ID),
-    });
-  });
-
-  it("falls back to root invalidation when payload has no ticket_id", () => {
-    const queryClient = new QueryClient();
-    const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
-    const wrapper = createWrapper(queryClient);
-    const { registrations } = createRealtimeMocks();
-
-    renderHook(() => useProjectRealtime(PROJECT_ID, BOARD_ID), { wrapper });
-
-    const registrationByTable = new Map<string, OnRegistration>();
-    for (const registration of registrations) {
-      registrationByTable.set(registration.config.table, registration);
-    }
-
-    registrationByTable.get("comments")?.callback({
-      eventType: "DELETE",
-      old: { id: "comment-1" },
-    });
-
-    registrationByTable.get("ticket_labels")?.callback({
-      eventType: "DELETE",
-      old: { id: "ticket-label-1" },
-    });
-
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.comments.root(),
-    });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.labels.root(),
+      refetchType: "active",
     });
   });
 

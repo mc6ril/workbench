@@ -9,11 +9,13 @@ import { queryKeys } from "@/presentation/hooks/queryKeys";
 /**
  * Hook for fetching the board configuration (board + columns) for a project.
  */
-export const useBoardConfiguration = (projectId: string) => {
+export const useBoardConfiguration = (
+  projectId: string,
+  options?: { enabled?: boolean }
+) => {
   return useQuery({
     queryKey: queryKeys.projects.boardConfiguration(projectId),
     queryFn: () => getBoardConfiguration(boardRepository, projectId),
-    enabled: !!projectId,
+    enabled: !!projectId && (options?.enabled ?? true),
   });
 };
-

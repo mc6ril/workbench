@@ -9,10 +9,13 @@ import { queryKeys } from "@/presentation/hooks/queryKeys";
 /**
  * Hook for fetching sprints for a project with ticket statistics.
  */
-export const useSprints = (projectId: string) => {
+export const useSprints = (
+  projectId: string,
+  options?: { enabled?: boolean }
+) => {
   return useQuery({
     queryKey: queryKeys.sprints.byProject(projectId),
     queryFn: () => listSprints(projectId, sprintRepository),
-    enabled: !!projectId,
+    enabled: !!projectId && (options?.enabled ?? true),
   });
 };

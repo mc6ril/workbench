@@ -1,5 +1,7 @@
 import { createBrowserClient } from "@supabase/ssr";
 
+import { createInstrumentedSupabaseFetch } from "@/shared/observability";
+
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
@@ -39,5 +41,20 @@ const validateEnvironmentVariables = (): void => {
 export const createSupabaseBrowserClient = () => {
   validateEnvironmentVariables();
 
-  return createBrowserClient(SUPABASE_URL!, SUPABASE_PUBLISHABLE_KEY!);
+  const baseFetch =
+    typeof window !== "undefined" && typeof window.fetch === "function"
+      ? window.fetch.bind(window)
+      : typeof globalThis.fetch === "function"
+        ? globalThis.fetch.bind(globalThis)
+        : null;
+
+  if (!baseFetch) {
+    return createBrowserClient(SUPABASE_URL!, SUPABASE_PUBLISHABLE_KEY!);
+  }
+
+  return createBrowserClient(SUPABASE_URL!, SUPABASE_PUBLISHABLE_KEY!, {
+    global: {
+      fetch: createInstrumentedSupabaseFetch(baseFetch),
+    },
+  });
 };

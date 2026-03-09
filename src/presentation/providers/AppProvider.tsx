@@ -1,6 +1,7 @@
 "use client";
 
 import { type PropsWithChildren, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { ThemeProvider } from "next-themes";
 
 import Toast from "@/presentation/components/ui/Toast";
@@ -10,8 +11,19 @@ import ReactQueryProvider from "@/presentation/providers/ReactQueryProvider";
 import { useLocaleStore } from "@/presentation/stores/useLocaleStore";
 
 import { registerLocaleGetter } from "@/shared/i18n/config";
+import { markNavigationSettled } from "@/shared/observability";
 
 type Props = PropsWithChildren;
+
+const NavigationPerfTracker = () => {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    markNavigationSettled(pathname);
+  }, [pathname]);
+
+  return null;
+};
 
 /**
  * Syncs locale from session preferences into the Zustand store.
@@ -51,6 +63,7 @@ const AppProvider = ({ children }: Props) => {
       <ReactQueryProvider>
         <LocaleSyncProvider>
           <ThemeSyncProvider>
+            <NavigationPerfTracker />
             {children}
             <Toast />
           </ThemeSyncProvider>

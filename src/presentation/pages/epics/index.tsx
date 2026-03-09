@@ -74,7 +74,10 @@ const EpicsLayout = ({ projectId }: Props) => {
     updateSearchParam("createEpic", null);
   }, [updateSearchParam]);
 
-  if (isLoading || isPermissionsLoading) {
+  const shouldShowFullPageLoader =
+    isPermissionsLoading || (isLoading && epics === undefined);
+
+  if (shouldShowFullPageLoader) {
     return <Loader ariaLabel="Loading epics" />;
   }
 

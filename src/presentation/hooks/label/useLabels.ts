@@ -9,10 +9,13 @@ import { queryKeys } from "@/presentation/hooks/queryKeys";
 /**
  * Hook for fetching labels for a project.
  */
-export const useLabels = (projectId: string) => {
+export const useLabels = (
+  projectId: string,
+  options?: { enabled?: boolean }
+) => {
   return useQuery({
     queryKey: queryKeys.labels.byProject(projectId),
     queryFn: () => listLabels(projectId, labelRepository),
-    enabled: !!projectId,
+    enabled: !!projectId && (options?.enabled ?? true),
   });
 };
