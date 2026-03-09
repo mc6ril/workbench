@@ -12,13 +12,24 @@ import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { getEffectivePlan } from "@/core/domain/rules/planFeatures.rules";
+import type { Project } from "@/core/domain/schema/project.schema";
 import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
+import type { TicketFilters } from "@/core/domain/schema/ticket.schema";
 
+import { getBoardConfiguration } from "@/core/usecases/board/getBoardConfiguration";
+import { listEpics } from "@/core/usecases/epic/listEpics";
 import { listProjectsWithStats } from "@/core/usecases/project/listProjectsWithStats";
 import { listReclaimableProjects } from "@/core/usecases/project/listReclaimableProjects";
 import { computeFeatureLockState } from "@/core/usecases/subscription/computeFeatureLockState";
+import { getTicketAssigneesByProjectId } from "@/core/usecases/ticket/getTicketAssigneesByProjectId";
+import { listTickets } from "@/core/usecases/ticket/listTickets";
 
-import { projectRepository } from "@/infrastructure/supabase/repositories";
+import {
+  boardRepository,
+  epicRepository,
+  projectRepository,
+  ticketRepository,
+} from "@/infrastructure/supabase/repositories";
 
 import { PlusIcon, UserProfileIcon } from "@/presentation/components/icons";
 import NavigationItem from "@/presentation/components/ui/NavigationItem";
@@ -29,12 +40,17 @@ import { useSubscription } from "@/presentation/hooks/subscription/useSubscripti
 import {
   buildProjectViewHref,
   getProjectViewConfigsForSidebar,
+  type ProjectViewKey,
 } from "@/presentation/navigation/projectViews.config";
+import { useFilterStore } from "@/presentation/stores/useFilterStore";
+import { useSortStore } from "@/presentation/stores/useSortStore";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { PAGE_ROUTES } from "@/shared/constants/routes";
+import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
+import { markNavigationStart } from "@/shared/observability";
 import { getInitials, isActiveHref } from "@/shared/utils";
+import { normalizeTicketSearch } from "@/shared/utils/ticketUtils";
 
 import styles from "./SidebarNavigation.module.scss";
 
@@ -43,12 +59,21 @@ type Props = {
 };
 
 type SidebarItem = {
-  key: string;
+  key: ProjectViewKey;
   href: string;
   label: string;
   exactOnly: boolean;
   locked: boolean;
   planBadge?: string;
+};
+
+const omitParentIdFilter = (filters: TicketFilters): TicketFilters => {
+  if (!Object.prototype.hasOwnProperty.call(filters, "parentId")) {
+    return filters;
+  }
+
+  const { parentId: _parentId, ...rest } = filters;
+  return rest;
 };
 
 const SidebarNavigation = ({ projectId }: Props) => {
@@ -57,6 +82,9 @@ const SidebarNavigation = ({ projectId }: Props) => {
   const queryClient = useQueryClient();
   const t = useTranslation("navigation.sidebar");
   const signOutMutation = useSignOut();
+  const filters = useFilterStore((state) => state.filters);
+  const search = useFilterStore((state) => state.search);
+  const sort = useSortStore((state) => state.sort);
   const { data: session, isLoading: isSessionLoading } = useSession();
   const {
     data: subscription,
@@ -132,6 +160,76 @@ const SidebarNavigation = ({ projectId }: Props) => {
     // Future: add tab action. No-op for now.
   }, []);
 
+  const projectWideFilters = useMemo(() => {
+    return omitParentIdFilter(filters);
+  }, [filters]);
+
+  const effectiveSearch = useMemo(() => {
+    const project = queryClient.getQueryData<Project>(
+      queryKeys.projects.detail(projectId)
+    );
+    return normalizeTicketSearch(search, project?.shortCode);
+  }, [projectId, queryClient, search]);
+
+  const prefetchTicketViews = useCallback(() => {
+    void queryClient.prefetchQuery({
+      queryKey: queryKeys.projects.boardConfiguration(projectId),
+      queryFn: () => getBoardConfiguration(boardRepository, projectId),
+    });
+
+    void queryClient.prefetchQuery({
+      queryKey: queryKeys.projects.ticketsList(
+        projectId,
+        projectWideFilters,
+        sort,
+        effectiveSearch
+      ),
+      queryFn: () =>
+        listTickets(
+          ticketRepository,
+          projectId,
+          projectWideFilters,
+          sort,
+          effectiveSearch
+        ),
+    });
+
+    void queryClient.prefetchQuery({
+      queryKey: queryKeys.tickets.assigneesByProjectId(projectId),
+      queryFn: () => getTicketAssigneesByProjectId(ticketRepository, projectId),
+    });
+  }, [effectiveSearch, projectId, projectWideFilters, queryClient, sort]);
+
+  const prefetchEpicsView = useCallback(() => {
+    void queryClient.prefetchQuery({
+      queryKey: queryKeys.projects.epicsList(projectId),
+      queryFn: () => listEpics(epicRepository, boardRepository, projectId),
+    });
+  }, [projectId, queryClient]);
+
+  const prefetchProjectView = useCallback(
+    (item: SidebarItem) => {
+      if (item.locked) {
+        return;
+      }
+
+      void router.prefetch(item.href);
+
+      if (
+        item.key === PROJECT_VIEWS.BOARD ||
+        item.key === PROJECT_VIEWS.BACKLOG
+      ) {
+        prefetchTicketViews();
+        return;
+      }
+
+      if (item.key === PROJECT_VIEWS.EPICS) {
+        prefetchEpicsView();
+      }
+    },
+    [prefetchEpicsView, prefetchTicketViews, router]
+  );
+
   const prefetchWorkspace = useCallback(() => {
     void router.prefetch(PAGE_ROUTES.WORKSPACE);
 
@@ -194,6 +292,28 @@ const SidebarNavigation = ({ projectId }: Props) => {
     signOutMutation.mutate();
   }, [closeProfileMenu, signOutMutation]);
 
+  const handleSidebarItemClick = useCallback(
+    (item: SidebarItem) => {
+      if (item.locked) {
+        handleLockedClick();
+        return;
+      }
+
+      markNavigationStart(item.href, "sidebar");
+    },
+    [handleLockedClick]
+  );
+
+  const handleWorkspaceLinkClick = useCallback(() => {
+    markNavigationStart(PAGE_ROUTES.WORKSPACE, "profile-menu");
+    closeProfileMenu();
+  }, [closeProfileMenu]);
+
+  const handleAccountLinkClick = useCallback(() => {
+    markNavigationStart(PAGE_ROUTES.ACCOUNT, "profile-menu");
+    closeProfileMenu();
+  }, [closeProfileMenu]);
+
   return (
     <div className={styles["sidebar-navigation"]}>
       <div className={styles["sidebar-navigation__nav"]}>
@@ -211,7 +331,15 @@ const SidebarNavigation = ({ projectId }: Props) => {
               }
               locked={item.locked}
               planBadge={item.planBadge}
-              onClick={item.locked ? handleLockedClick : undefined}
+              onClick={() => {
+                handleSidebarItemClick(item);
+              }}
+              onMouseEnter={() => {
+                prefetchProjectView(item);
+              }}
+              onFocus={() => {
+                prefetchProjectView(item);
+              }}
               ariaLabel={
                 item.locked
                   ? t("locked.ariaLabel")
@@ -280,7 +408,7 @@ const SidebarNavigation = ({ projectId }: Props) => {
               className={styles["sidebar-navigation__profile-menu-item"]}
               onMouseEnter={prefetchWorkspace}
               onFocus={prefetchWorkspace}
-              onClick={closeProfileMenu}
+              onClick={handleWorkspaceLinkClick}
             >
               {t("profile.backToWorkspace")}
             </Link>
@@ -288,7 +416,7 @@ const SidebarNavigation = ({ projectId }: Props) => {
               href={`${PAGE_ROUTES.ACCOUNT}?from=${encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE)}`}
               role="menuitem"
               className={styles["sidebar-navigation__profile-menu-item"]}
-              onClick={closeProfileMenu}
+              onClick={handleAccountLinkClick}
             >
               {t("profile.profileSettings")}
             </Link>

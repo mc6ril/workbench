@@ -89,11 +89,15 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
   const setField = useSortStore((state) => state.setField);
   const setDirection = useSortStore((state) => state.setDirection);
   const resetSort = useSortStore((state) => state.resetSort);
-  const { data: boardConfiguration } = useBoardConfiguration(projectId);
+  const { data: boardConfiguration } = useBoardConfiguration(projectId, {
+    enabled: isTicketView,
+  });
   useProjectRealtime(projectId, boardConfiguration?.board.id);
   const { data: epics = [] } = useEpics(projectId, { enabled: isTicketView });
-  const { data: sprints = [] } = useSprints(projectId);
-  const { data: labels = [] } = useLabels(projectId);
+  const { data: sprints = [] } = useSprints(projectId, {
+    enabled: isTicketView,
+  });
+  const { data: labels = [] } = useLabels(projectId, { enabled: isTicketView });
   const searchSuggestions = useProjectSearchSuggestions({
     projectId,
     viewKey,

@@ -19,6 +19,10 @@ type Props = {
   active?: boolean;
   /** Click handler (optional, for custom navigation logic) */
   onClick?: () => void;
+  /** Hover prefetch hook */
+  onMouseEnter?: () => void;
+  /** Focus prefetch hook */
+  onFocus?: () => void;
   /** Custom ARIA label for accessibility */
   ariaLabel?: string;
   /** Additional CSS class name */
@@ -55,6 +59,8 @@ const NavigationItem = ({
   icon,
   active = false,
   onClick,
+  onMouseEnter,
+  onFocus,
   ariaLabel,
   className,
   locked = false,
@@ -85,6 +91,8 @@ const NavigationItem = ({
           aria-label={displayAriaLabel}
           role="link"
           onClick={onClick}
+          onMouseEnter={onMouseEnter}
+          onFocus={onFocus}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
@@ -130,6 +138,8 @@ const NavigationItem = ({
         className={styles["navigation-item__link"]}
         aria-label={displayAriaLabel}
         onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onFocus={onFocus}
         {...linkProps}
       >
         {icon && (

@@ -29,6 +29,7 @@ import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
 import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import { markNavigationStart } from "@/shared/observability";
 import { getWorkspaceEmoji } from "@/shared/utils";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
@@ -151,9 +152,12 @@ const WorkspacePage = () => {
     if (createProjectMutation.isSuccess && createProjectMutation.data) {
       isSubmittingRef.current = false;
       closeCreateModal();
-      router.push(
-        buildProjectRoute(createProjectMutation.data.id, PROJECT_VIEWS.BOARD)
+      const targetRoute = buildProjectRoute(
+        createProjectMutation.data.id,
+        PROJECT_VIEWS.BOARD
       );
+      markNavigationStart(targetRoute, "programmatic", PAGE_ROUTES.WORKSPACE);
+      router.push(targetRoute);
     }
   }, [
     createProjectMutation.isSuccess,
@@ -345,20 +349,34 @@ const WorkspacePage = () => {
                   <div
                     key={project.id}
                     className={styles["workspace-card"]}
-                    onClick={() =>
-                      router.push(
-                        buildProjectRoute(project.id, PROJECT_VIEWS.BOARD)
-                      )
-                    }
+                    onClick={() => {
+                      const targetRoute = buildProjectRoute(
+                        project.id,
+                        PROJECT_VIEWS.BOARD
+                      );
+                      markNavigationStart(
+                        targetRoute,
+                        "workspace-card",
+                        PAGE_ROUTES.WORKSPACE
+                      );
+                      router.push(targetRoute);
+                    }}
                     role="button"
                     tabIndex={0}
                     aria-label={openAriaLabel}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault();
-                        router.push(
-                          buildProjectRoute(project.id, PROJECT_VIEWS.BOARD)
+                        const targetRoute = buildProjectRoute(
+                          project.id,
+                          PROJECT_VIEWS.BOARD
                         );
+                        markNavigationStart(
+                          targetRoute,
+                          "workspace-card",
+                          PAGE_ROUTES.WORKSPACE
+                        );
+                        router.push(targetRoute);
                       }
                     }}
                   >

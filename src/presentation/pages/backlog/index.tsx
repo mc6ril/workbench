@@ -60,12 +60,13 @@ const BacklogPage = ({ projectId }: Props) => {
     return normalizeTicketSearch(search, project?.shortCode);
   }, [project?.shortCode, search]);
   const {
-    data: tickets = [],
+    data: ticketsData,
     isLoading,
     error,
   } = useTickets(projectId, ticketFilters, sort, effectiveSearch, {
     useProjectWideCache: true,
   });
+  const tickets = useMemo(() => ticketsData ?? [], [ticketsData]);
   const { data: epics = [] } = useEpics(projectId);
   const { data: labels = [] } = useLabels(projectId);
   const { data: boardConfiguration, isLoading: isBoardConfigurationLoading } =
@@ -158,7 +159,10 @@ const BacklogPage = ({ projectId }: Props) => {
       ? createTicketMutation.error.message
       : undefined;
 
-  if (isLoading || isPermissionsLoading) {
+  const shouldShowFullPageLoader =
+    isPermissionsLoading || (isLoading && ticketsData === undefined);
+
+  if (shouldShowFullPageLoader) {
     return <Loader variant="full-page" />;
   }
 
