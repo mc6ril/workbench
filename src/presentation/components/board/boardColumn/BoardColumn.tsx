@@ -11,7 +11,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 import type { BoardColumnProps } from "@/presentation/components/board/boardColumn/BoardColumn.types";
-import TicketCard from "@/presentation/components/ticketCard/TicketCard";
+import TicketCard from "@/presentation/components/ticket/ticketCard/TicketCard";
 import Title from "@/presentation/components/ui/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";

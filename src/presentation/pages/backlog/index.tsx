@@ -9,9 +9,9 @@ import { addLabelsToTicket } from "@/core/usecases/label";
 
 import { labelRepository } from "@/infrastructure/supabase/repositories";
 
-import CreateTicketForm from "@/presentation/components/createTicketForm/CreateTicketForm";
-import TicketDetailView from "@/presentation/components/ticketDetailView/TicketDetailView";
-import TicketList from "@/presentation/components/ticketList/TicketList";
+import CreateTicketForm from "@/presentation/components/ticket/createTicketForm/CreateTicketForm";
+import TicketDetailView from "@/presentation/components/ticket/ticketDetailView/TicketDetailView";
+import TicketList from "@/presentation/components/ticket/ticketList/TicketList";
 import Loader from "@/presentation/components/ui/Loader";
 import Modal from "@/presentation/components/ui/Modal";
 import Text from "@/presentation/components/ui/Text";
