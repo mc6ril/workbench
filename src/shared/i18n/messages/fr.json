@@ -970,8 +970,8 @@
       },
       "trust": {
         "title": "Conçu pour les créateurs et les équipes",
-        "description": "Workbench est pensé pour ceux qui veulent avancer sans friction. Un outil qui reste à sa place et vous laisse vous concentrer.",
-        "freeForever": "Plan gratuit, pour toujours",
+        "description": "Commencez avec une version gratuite, puis activez des fonctionnalités premium si vous avez besoin d'aller plus loin.",
+        "freeForever": "Version gratuite disponible",
         "noCreditCard": "Aucune carte bancaire requise",
         "noComplexity": "Zéro configuration complexe"
       },

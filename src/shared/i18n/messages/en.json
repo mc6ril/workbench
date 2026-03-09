@@ -970,8 +970,8 @@
       },
       "trust": {
         "title": "Built for creators and teams",
-        "description": "Workbench is designed for those who want to move forward without friction. A tool that stays out of your way and lets you focus.",
-        "freeForever": "Free plan, forever",
+        "description": "Start with a free version, then unlock premium features if you need to go further.",
+        "freeForever": "Free version available",
         "noCreditCard": "No credit card required",
         "noComplexity": "Zero complex setup"
       },
