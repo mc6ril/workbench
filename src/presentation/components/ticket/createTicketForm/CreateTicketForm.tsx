@@ -1,31 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { type FormEvent, useState } from "react";
 
-import Button from "@/presentation/components/ui/Button";
 import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
 import Form from "@/presentation/components/ui/Form";
-import Input from "@/presentation/components/ui/Input";
-import Select from "@/presentation/components/ui/Select";
-import Textarea from "@/presentation/components/ui/Textarea";
 
 import { BUTTON_LABELS } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
+import CreateTicketFormActions from "./components/CreateTicketFormActions";
+import CreateTicketFormFields from "./components/CreateTicketFormFields";
 import styles from "./CreateTicketForm.module.scss";
+import type { CreateTicketFormValues, Option } from "./CreateTicketForm.types";
+import { buildCreateTicketFormValues } from "./CreateTicketForm.utils";
 
-type Option = {
-  value: string;
-  label: string;
-};
-
-export type CreateTicketFormValues = {
-  title: string;
-  description?: string;
-  status: string;
-  epicId?: string;
-  labelIds?: string[];
-};
+export type { CreateTicketFormValues } from "./CreateTicketForm.types";
 
 type Props = {
   initialValues?: Partial<CreateTicketFormValues>;
@@ -65,16 +54,19 @@ const CreateTicketForm = ({
   const [epicId, setEpicId] = useState(initialValues?.epicId ?? "");
   const [labelIds, setLabelIds] = useState(initialValues?.labelIds ?? []);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
 
-    onSubmit({
-      title,
-      description: description || undefined,
-      status,
-      epicId: showEpicField ? epicId || undefined : undefined,
-      labelIds,
-    });
+    onSubmit(
+      buildCreateTicketFormValues({
+        title,
+        description,
+        status,
+        epicId,
+        labelIds,
+        showEpicField,
+      })
+    );
   };
 
   const containerClasses = [styles["create-ticket-form"], className]
@@ -87,100 +79,42 @@ const CreateTicketForm = ({
       aria-label={t("title")}
       onSubmit={handleSubmit}
     >
-      <div className={styles["create-ticket-form__fields"]}>
-        <div className={styles["create-ticket-form__field"]}>
-          <Input
-            label={t("fields.title")}
-            value={title}
-            onChange={(event) => {
-              setTitle(event.target.value);
-            }}
-            required
-          />
-        </div>
-        <div
-          className={`${styles["create-ticket-form__field"]} ${styles["create-ticket-form__field--half"]}`}
-        >
-          <Select
-            label={t("fields.status")}
-            value={status}
-            onChange={(event) => {
-              setStatus(event.target.value);
-            }}
-            options={statusOptions}
-          />
-        </div>
-        {showEpicField && (
-          <div
-            className={`${styles["create-ticket-form__field"]} ${styles["create-ticket-form__field--half"]}`}
-          >
-            <Select
-              label={t("fields.epic")}
-              value={epicId}
-              onChange={(event) => {
-                setEpicId(event.target.value);
-              }}
-              options={[
-                { value: "", label: "" },
-                ...epicOptions.map((option) => ({
-                  value: option.value,
-                  label: option.label,
-                })),
-              ]}
-            />
-          </div>
-        )}
-        <div
-          className={`${styles["create-ticket-form__field"]} ${styles["create-ticket-form__field--half"]}`}
-        >
-          <Select
-            label={t("fields.labels")}
-            value={labelIds}
-            onChange={(event) => {
-              const nextLabelIds = Array.from(
-                event.target.selectedOptions,
-                (option) => option.value
-              ).filter(Boolean);
-              setLabelIds(nextLabelIds);
-            }}
-            options={labelOptions}
-            multiple
-            size={Math.min(4, Math.max(1, labelOptions.length))}
-            disabled={isSubmitting}
-          />
-        </div>
-        <div className={styles["create-ticket-form__field"]}>
-          <Textarea
-            label={t("fields.description")}
-            value={description}
-            onChange={(event) => {
-              setDescription(event.target.value);
-            }}
-          />
-        </div>
-      </div>
+      <CreateTicketFormFields
+        title={title}
+        description={description}
+        status={status}
+        epicId={epicId}
+        labelIds={labelIds}
+        statusOptions={statusOptions}
+        epicOptions={epicOptions}
+        labelOptions={labelOptions}
+        showEpicField={showEpicField}
+        isSubmitting={isSubmitting}
+        titleLabel={t("fields.title")}
+        statusLabel={t("fields.status")}
+        epicLabel={t("fields.epic")}
+        labelsLabel={t("fields.labels")}
+        descriptionLabel={t("fields.description")}
+        onTitleChange={setTitle}
+        onStatusChange={setStatus}
+        onEpicChange={setEpicId}
+        onLabelIdsChange={setLabelIds}
+        onDescriptionChange={setDescription}
+      />
 
       {errorMessage && (
         <ErrorMessage message={errorMessage} title={t("errorGeneric")} />
       )}
 
-      <div className={styles["create-ticket-form__actions"]}>
-        <Button
-          label={t("submitButton")}
-          type="submit"
-          disabled={isSubmitting || !title}
-          aria-label={tCommon(BUTTON_LABELS.SUBMIT)}
-        />
-        {onCancel && (
-          <Button
-            label={t("cancelButton")}
-            onClick={onCancel}
-            variant="secondary"
-            disabled={isSubmitting}
-            aria-label={tCommon(BUTTON_LABELS.CANCEL)}
-          />
-        )}
-      </div>
+      <CreateTicketFormActions
+        submitLabel={t("submitButton")}
+        submitAriaLabel={tCommon(BUTTON_LABELS.SUBMIT)}
+        cancelLabel={t("cancelButton")}
+        cancelAriaLabel={tCommon(BUTTON_LABELS.CANCEL)}
+        canSubmit={Boolean(title)}
+        isSubmitting={isSubmitting}
+        onCancel={onCancel}
+      />
     </Form>
   );
 };
