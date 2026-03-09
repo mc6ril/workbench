@@ -202,7 +202,7 @@ const SignupPage = () => {
               control={control}
               render={({ field }) => (
                 <Checkbox
-                  label=""
+                  label={tFields("acceptedTerms.label")}
                   checked={field.value === true}
                   onChange={(e) => field.onChange(e.target.checked)}
                   required
@@ -211,7 +211,6 @@ const SignupPage = () => {
               )}
             />
             <Text variant="small" className={styles["signup-terms__label"]}>
-              {tFields("acceptedTerms.label")}{" "}
               <Link href="/legal" className={styles["signup-terms__link"]}>
                 {tFields("acceptedTerms.linkLabel")}
               </Link>
