@@ -4,7 +4,6 @@ import React, { useCallback, useMemo } from "react";
 
 import Button from "@/presentation/components/ui/Button";
 import Card from "@/presentation/components/ui/Card";
-import Input from "@/presentation/components/ui/Input";
 import Stack from "@/presentation/components/ui/Stack";
 import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
@@ -12,12 +11,18 @@ import Title from "@/presentation/components/ui/Title";
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
+import PriorityRow from "./components/PriorityRow";
 import styles from "./PrioritiesSettings.module.scss";
+import type {
+  MoveDirection,
+  PriorityItem,
+} from "./PrioritiesSettings.types";
+import {
+  movePriority,
+  renamePriority,
+} from "./PrioritiesSettings.utils";
 
-export type PriorityItem = {
-  id: string;
-  name: string;
-};
+export type { PriorityItem } from "./PrioritiesSettings.types";
 
 type Props = {
   priorities: PriorityItem[];
@@ -38,7 +43,10 @@ const PrioritiesSettings = ({
 }: Props) => {
   const t = useTranslation("pages.settings.priorities");
 
-  const sectionId = useMemo(() => getAccessibilityId("settings-priorities"), []);
+  const sectionId = useMemo(
+    () => getAccessibilityId("settings-priorities"),
+    []
+  );
   const titleId = `${sectionId}-title`;
 
   const containerClasses = [styles["priorities-settings"], className]
@@ -47,33 +55,27 @@ const PrioritiesSettings = ({
 
   const handleRename = useCallback(
     (id: string, name: string): void => {
-      const updated = priorities.map((priority) =>
-        priority.id === id ? { ...priority, name } : priority
-      );
-      onChange(updated);
+      onChange(renamePriority(priorities, id, name));
     },
     [onChange, priorities]
   );
 
   const handleMove = useCallback(
-    (id: string, direction: "up" | "down"): void => {
-      const index = priorities.findIndex((priority) => priority.id === id);
-      if (index === -1) {
+    (id: string, direction: MoveDirection): void => {
+      const updated = movePriority(priorities, id, direction);
+      if (!updated) {
         return;
       }
 
-      const targetIndex = direction === "up" ? index - 1 : index + 1;
-      if (targetIndex < 0 || targetIndex >= priorities.length) {
-        return;
-      }
-
-      const updated = [...priorities];
-      const [moved] = updated.splice(index, 1);
-      updated.splice(targetIndex, 0, moved);
       onChange(updated);
     },
     [onChange, priorities]
   );
+  const hasPriorities = priorities.length > 0;
+  const nameLabel = t("fields.name.label");
+  const namePlaceholder = t("fields.name.placeholder");
+  const moveUpLabel = t("actions.moveUp");
+  const moveDownLabel = t("actions.moveDown");
 
   return (
     <section
@@ -84,10 +86,18 @@ const PrioritiesSettings = ({
       <Card className={styles["priorities-settings__card"]}>
         <header className={styles["priorities-settings__header"]}>
           <div className={styles["priorities-settings__header-text"]}>
-            <Title id={titleId} variant="h2" className={styles["priorities-settings__title"]}>
+            <Title
+              id={titleId}
+              variant="h2"
+              className={styles["priorities-settings__title"]}
+            >
               {t("title")}
             </Title>
-            <Text as="p" variant="caption" className={styles["priorities-settings__subtitle"]}>
+            <Text
+              as="p"
+              variant="caption"
+              className={styles["priorities-settings__subtitle"]}
+            >
               {t("subtitle")}
             </Text>
           </div>
@@ -107,18 +117,34 @@ const PrioritiesSettings = ({
             role="alert"
             aria-live="assertive"
           >
-            <Text as="p" variant="body" className={styles["priorities-settings__status-error"]}>
+            <Text
+              as="p"
+              variant="body"
+              className={styles["priorities-settings__status-error"]}
+            >
               {errorMessage}
             </Text>
           </div>
         )}
 
-        {priorities.length === 0 ? (
-          <div className={styles["priorities-settings__empty"]} role="status" aria-live="polite">
-            <Text as="p" variant="body" className={styles["priorities-settings__empty-title"]}>
+        {!hasPriorities ? (
+          <div
+            className={styles["priorities-settings__empty"]}
+            role="status"
+            aria-live="polite"
+          >
+            <Text
+              as="p"
+              variant="body"
+              className={styles["priorities-settings__empty-title"]}
+            >
               {t("empty.title")}
             </Text>
-            <Text as="p" variant="caption" className={styles["priorities-settings__empty-message"]}>
+            <Text
+              as="p"
+              variant="caption"
+              className={styles["priorities-settings__empty-message"]}
+            >
               {t("empty.message")}
             </Text>
           </div>
@@ -131,40 +157,29 @@ const PrioritiesSettings = ({
             aria-label={t("listAriaLabel")}
           >
             {priorities.map((priority, index) => {
-              const canMoveUp = index > 0;
-              const canMoveDown = index < priorities.length - 1;
-              const itemId = getAccessibilityId(`settings-priority-${priority.id}`);
-
               return (
-                <li key={priority.id} className={styles["priorities-settings__item"]}>
-                  <div className={styles["priorities-settings__item-main"]}>
-                    <Input
-                      id={`${itemId}-name`}
-                      label={t("fields.name.label")}
-                      value={priority.name}
-                      placeholder={t("fields.name.placeholder")}
-                      onChange={(e) => handleRename(priority.id, e.target.value)}
-                      disabled={isSaving}
-                      aria-label={t("fields.name.ariaLabel", { name: priority.name })}
-                    />
-                  </div>
-                  <div className={styles["priorities-settings__item-actions"]}>
-                    <Button
-                      label={t("actions.moveUp")}
-                      onClick={() => handleMove(priority.id, "up")}
-                      variant="ghost"
-                      disabled={!canMoveUp || isSaving}
-                      aria-label={t("actions.moveUpAriaLabel", { name: priority.name })}
-                    />
-                    <Button
-                      label={t("actions.moveDown")}
-                      onClick={() => handleMove(priority.id, "down")}
-                      variant="ghost"
-                      disabled={!canMoveDown || isSaving}
-                      aria-label={t("actions.moveDownAriaLabel", { name: priority.name })}
-                    />
-                  </div>
-                </li>
+                <PriorityRow
+                  key={priority.id}
+                  priority={priority}
+                  index={index}
+                  total={priorities.length}
+                  isSaving={isSaving}
+                  nameLabel={nameLabel}
+                  namePlaceholder={namePlaceholder}
+                  nameAriaLabel={t("fields.name.ariaLabel", {
+                    name: priority.name,
+                  })}
+                  moveUpLabel={moveUpLabel}
+                  moveDownLabel={moveDownLabel}
+                  moveUpAriaLabel={t("actions.moveUpAriaLabel", {
+                    name: priority.name,
+                  })}
+                  moveDownAriaLabel={t("actions.moveDownAriaLabel", {
+                    name: priority.name,
+                  })}
+                  onRename={handleRename}
+                  onMove={handleMove}
+                />
               );
             })}
           </Stack>
@@ -175,4 +190,3 @@ const PrioritiesSettings = ({
 };
 
 export default React.memo(PrioritiesSettings);
-

@@ -4,8 +4,6 @@ import React, { useCallback, useMemo } from "react";
 
 import Button from "@/presentation/components/ui/Button";
 import Card from "@/presentation/components/ui/Card";
-import Checkbox from "@/presentation/components/ui/Checkbox";
-import Input from "@/presentation/components/ui/Input";
 import Stack from "@/presentation/components/ui/Stack";
 import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
@@ -13,13 +11,19 @@ import Title from "@/presentation/components/ui/Title";
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
+import StatusColumnRow from "./components/StatusColumnRow";
 import styles from "./StatusesColumnsSettings.module.scss";
+import type {
+  MoveDirection,
+  StatusColumnItem,
+} from "./StatusesColumnsSettings.types";
+import {
+  moveStatusColumn,
+  renameStatusColumn,
+  toggleStatusColumnEnabled,
+} from "./StatusesColumnsSettings.utils";
 
-export type StatusColumnItem = {
-  id: string;
-  name: string;
-  isEnabled: boolean;
-};
+export type { StatusColumnItem } from "./StatusesColumnsSettings.types";
 
 type Props = {
   columns: StatusColumnItem[];
@@ -49,42 +53,34 @@ const StatusesColumnsSettings = ({
 
   const handleToggleEnabled = useCallback(
     (id: string): void => {
-      const updated = columns.map((column) =>
-        column.id === id ? { ...column, isEnabled: !column.isEnabled } : column
-      );
-      onChange(updated);
+      onChange(toggleStatusColumnEnabled(columns, id));
     },
     [columns, onChange]
   );
 
   const handleRename = useCallback(
     (id: string, name: string): void => {
-      const updated = columns.map((column) => (column.id === id ? { ...column, name } : column));
-      onChange(updated);
+      onChange(renameStatusColumn(columns, id, name));
     },
     [columns, onChange]
   );
 
   const handleMove = useCallback(
-    (id: string, direction: "up" | "down"): void => {
-      const index = columns.findIndex((column) => column.id === id);
-      if (index === -1) {
+    (id: string, direction: MoveDirection): void => {
+      const updated = moveStatusColumn(columns, id, direction);
+      if (!updated) {
         return;
       }
-
-      const targetIndex = direction === "up" ? index - 1 : index + 1;
-      if (targetIndex < 0 || targetIndex >= columns.length) {
-        return;
-      }
-
-      const updated = [...columns];
-      const [moved] = updated.splice(index, 1);
-      updated.splice(targetIndex, 0, moved);
-
       onChange(updated);
     },
     [columns, onChange]
   );
+  const hasColumns = columns.length > 0;
+  const enabledLabel = t("fields.enabled.label");
+  const nameLabel = t("fields.name.label");
+  const namePlaceholder = t("fields.name.placeholder");
+  const moveUpLabel = t("actions.moveUp");
+  const moveDownLabel = t("actions.moveDown");
 
   return (
     <section
@@ -132,7 +128,7 @@ const StatusesColumnsSettings = ({
           </div>
         )}
 
-        {columns.length === 0 ? (
+        {!hasColumns ? (
           <div
             className={styles["statuses-columns-settings__empty"]}
             role="status"
@@ -154,49 +150,34 @@ const StatusesColumnsSettings = ({
             aria-label={t("listAriaLabel")}
           >
             {columns.map((column, index) => {
-              const canMoveUp = index > 0;
-              const canMoveDown = index < columns.length - 1;
-              const itemId = getAccessibilityId(`settings-status-column-${column.id}`);
-
               return (
-                <li key={column.id} className={styles["statuses-columns-settings__item"]}>
-                  <div className={styles["statuses-columns-settings__item-main"]}>
-                    <Checkbox
-                      id={`${itemId}-enabled`}
-                      label={t("fields.enabled.label")}
-                      checked={column.isEnabled}
-                      onChange={() => handleToggleEnabled(column.id)}
-                      disabled={isSaving}
-                      aria-label={t("fields.enabled.ariaLabel", { name: column.name })}
-                    />
-                    <Input
-                      id={`${itemId}-name`}
-                      label={t("fields.name.label")}
-                      value={column.name}
-                      placeholder={t("fields.name.placeholder")}
-                      onChange={(e) => handleRename(column.id, e.target.value)}
-                      disabled={isSaving}
-                      aria-label={t("fields.name.ariaLabel", { name: column.name })}
-                    />
-                  </div>
-
-                  <div className={styles["statuses-columns-settings__item-actions"]}>
-                    <Button
-                      label={t("actions.moveUp")}
-                      onClick={() => handleMove(column.id, "up")}
-                      variant="ghost"
-                      disabled={!canMoveUp || isSaving}
-                      aria-label={t("actions.moveUpAriaLabel", { name: column.name })}
-                    />
-                    <Button
-                      label={t("actions.moveDown")}
-                      onClick={() => handleMove(column.id, "down")}
-                      variant="ghost"
-                      disabled={!canMoveDown || isSaving}
-                      aria-label={t("actions.moveDownAriaLabel", { name: column.name })}
-                    />
-                  </div>
-                </li>
+                <StatusColumnRow
+                  key={column.id}
+                  column={column}
+                  index={index}
+                  total={columns.length}
+                  isSaving={isSaving}
+                  enabledLabel={enabledLabel}
+                  enabledAriaLabel={t("fields.enabled.ariaLabel", {
+                    name: column.name,
+                  })}
+                  nameLabel={nameLabel}
+                  namePlaceholder={namePlaceholder}
+                  nameAriaLabel={t("fields.name.ariaLabel", {
+                    name: column.name,
+                  })}
+                  moveUpLabel={moveUpLabel}
+                  moveUpAriaLabel={t("actions.moveUpAriaLabel", {
+                    name: column.name,
+                  })}
+                  moveDownLabel={moveDownLabel}
+                  moveDownAriaLabel={t("actions.moveDownAriaLabel", {
+                    name: column.name,
+                  })}
+                  onToggleEnabled={handleToggleEnabled}
+                  onRename={handleRename}
+                  onMove={handleMove}
+                />
               );
             })}
           </Stack>
@@ -207,4 +188,3 @@ const StatusesColumnsSettings = ({
 };
 
 export default React.memo(StatusesColumnsSettings);
-

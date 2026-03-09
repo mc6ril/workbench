@@ -3,6 +3,8 @@
 import { use, useCallback, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 
+import { getDefaultBoardConfiguration } from "@/core/domain/rules/board.rules";
+
 import type { PriorityItem } from "@/presentation/components/prioritiesSettings/PrioritiesSettings";
 import type { StatusColumnItem } from "@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
 import SettingsLayout from "@/presentation/layouts/settingsLayout/SettingsLayout";
@@ -41,6 +43,14 @@ const SettingsPage = ({
   const t = useTranslation("pages.settings.page");
 
   const [activeTabId, setActiveTabId] = useState<string>("project");
+  const [statusColumns, setStatusColumns] = useState<StatusColumnItem[]>(
+    () =>
+      getDefaultBoardConfiguration(projectId).columns.map((column, index) => ({
+        id: `${column.state}-${index}`,
+        name: column.name,
+        isEnabled: column.visible ?? true,
+      }))
+  );
 
   const tabs = useMemo(
     () => [
@@ -58,8 +68,10 @@ const SettingsPage = ({
 
   const handleNoop = useCallback((): void => {}, []);
   const handleNoopChange = useCallback((_value: string): void => {}, []);
-  const handleNoopStatusColumnsChange = useCallback(
-    (_columns: StatusColumnItem[]): void => {},
+  const handleStatusColumnsChange = useCallback(
+    (columns: StatusColumnItem[]): void => {
+      setStatusColumns(columns);
+    },
     []
   );
   const handleNoopPrioritiesChange = useCallback(
@@ -84,8 +96,8 @@ const SettingsPage = ({
       case "statusesColumns":
         return (
           <StatusesColumnsSettings
-            columns={[]}
-            onChange={handleNoopStatusColumnsChange}
+            columns={statusColumns}
+            onChange={handleStatusColumnsChange}
             onCreate={handleNoop}
           />
         );
@@ -113,8 +125,9 @@ const SettingsPage = ({
     handleNoopChange,
     handleNoopImportFile,
     handleNoopPrioritiesChange,
-    handleNoopStatusColumnsChange,
+    handleStatusColumnsChange,
     projectId,
+    statusColumns,
   ]);
 
   return (

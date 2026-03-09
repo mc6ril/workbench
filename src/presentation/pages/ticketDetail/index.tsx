@@ -1,6 +1,6 @@
 "use client";
 
-import TicketDetailView from "@/presentation/components/ticketDetailView/TicketDetailView";
+import TicketDetailView from "@/presentation/components/ticket/ticketDetailView/TicketDetailView";
 import Container from "@/presentation/components/ui/Container";
 
 import styles from "./styles.module.scss";

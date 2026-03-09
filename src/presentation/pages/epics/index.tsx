@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import CreateEpicForm from "@/presentation/components/createEpicForm/CreateEpicForm";
-import EpicsList from "@/presentation/components/epicsList/EpicsList";
+import CreateEpicForm from "@/presentation/components/epic/createEpicForm/CreateEpicForm";
+import EpicsList from "@/presentation/components/epic/epicsList/EpicsList";
 import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
 import Loader from "@/presentation/components/ui/Loader";
 import Modal from "@/presentation/components/ui/Modal";

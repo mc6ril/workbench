@@ -7,14 +7,12 @@ import React, {
   useRef,
   useState,
 } from "react";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { getEffectivePlan } from "@/core/domain/rules/planFeatures.rules";
 import type { Project } from "@/core/domain/schema/project.schema";
 import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
-import type { TicketFilters } from "@/core/domain/schema/ticket.schema";
 
 import { getBoardConfiguration } from "@/core/usecases/board/getBoardConfiguration";
 import { listEpics } from "@/core/usecases/epic/listEpics";
@@ -31,8 +29,6 @@ import {
   ticketRepository,
 } from "@/infrastructure/supabase/repositories";
 
-import { PlusIcon, UserProfileIcon } from "@/presentation/components/icons";
-import NavigationItem from "@/presentation/components/ui/NavigationItem";
 import { useSession } from "@/presentation/hooks/auth/useSession";
 import { useSignOut } from "@/presentation/hooks/auth/useSignOut";
 import { queryKeys } from "@/presentation/hooks/queryKeys";
@@ -40,7 +36,6 @@ import { useSubscription } from "@/presentation/hooks/subscription/useSubscripti
 import {
   buildProjectViewHref,
   getProjectViewConfigsForSidebar,
-  type ProjectViewKey,
 } from "@/presentation/navigation/projectViews.config";
 import { useFilterStore } from "@/presentation/stores/useFilterStore";
 import { useSortStore } from "@/presentation/stores/useSortStore";
@@ -49,34 +44,19 @@ import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { markNavigationStart } from "@/shared/observability";
-import { getInitials, isActiveHref } from "@/shared/utils";
+import { getInitials } from "@/shared/utils";
 import { normalizeTicketSearch } from "@/shared/utils/ticketUtils";
 
+import SidebarNavigationList from "./components/SidebarNavigationList";
+import SidebarProfileMenu from "./components/SidebarProfileMenu";
 import styles from "./SidebarNavigation.module.scss";
+import type {
+  SidebarItem,
+  SidebarNavigationProps,
+} from "./SidebarNavigation.types";
+import { omitParentIdFilter } from "./SidebarNavigation.utils";
 
-type Props = {
-  projectId: string;
-};
-
-type SidebarItem = {
-  key: ProjectViewKey;
-  href: string;
-  label: string;
-  exactOnly: boolean;
-  locked: boolean;
-  planBadge?: string;
-};
-
-const omitParentIdFilter = (filters: TicketFilters): TicketFilters => {
-  if (!Object.prototype.hasOwnProperty.call(filters, "parentId")) {
-    return filters;
-  }
-
-  const { parentId: _parentId, ...rest } = filters;
-  return rest;
-};
-
-const SidebarNavigation = ({ projectId }: Props) => {
+const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -155,6 +135,9 @@ const SidebarNavigation = ({ projectId }: Props) => {
   const displayName =
     session?.displayName ?? session?.email ?? t("profile.userFallbackName");
   const initials = getInitials(session?.displayName ?? session?.email);
+  const lockedAriaLabelTemplate = t("locked.ariaLabel");
+  const workspaceHref = PAGE_ROUTES.WORKSPACE;
+  const accountHref = `${PAGE_ROUTES.ACCOUNT}?from=${encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE)}`;
 
   const handleAddTabClick = useCallback(() => {
     // Future: add tab action. No-op for now.
@@ -314,124 +297,50 @@ const SidebarNavigation = ({ projectId }: Props) => {
     closeProfileMenu();
   }, [closeProfileMenu]);
 
+  const getLockedAriaLabel = useCallback(
+    (item: SidebarItem): string => {
+      return lockedAriaLabelTemplate
+        .replace("{feature}", item.label)
+        .replace("{plan}", item.planBadge ?? "");
+    },
+    [lockedAriaLabelTemplate]
+  );
+
   return (
     <div className={styles["sidebar-navigation"]}>
-      <div className={styles["sidebar-navigation__nav"]}>
-        <ul id={navListId} className={styles["sidebar-navigation__list"]}>
-          {items.map((item) => (
-            <NavigationItem
-              key={item.key}
-              href={item.href}
-              label={item.label}
-              active={
-                !item.locked &&
-                isActiveHref(pathname, item.href, {
-                  exactOnly: item.exactOnly,
-                })
-              }
-              locked={item.locked}
-              planBadge={item.planBadge}
-              onClick={() => {
-                handleSidebarItemClick(item);
-              }}
-              onMouseEnter={() => {
-                prefetchProjectView(item);
-              }}
-              onFocus={() => {
-                prefetchProjectView(item);
-              }}
-              ariaLabel={
-                item.locked
-                  ? t("locked.ariaLabel")
-                      .replace("{feature}", item.label)
-                      .replace("{plan}", item.planBadge ?? "")
-                  : undefined
-              }
-            />
-          ))}
-        </ul>
+      <SidebarNavigationList
+        items={items}
+        pathname={pathname}
+        navListId={navListId}
+        addTabLabel={t("addTab")}
+        addTabAriaLabel={t("addTabAriaLabel")}
+        getLockedAriaLabel={getLockedAriaLabel}
+        onAddTabClick={handleAddTabClick}
+        onItemClick={handleSidebarItemClick}
+        onItemPrefetch={prefetchProjectView}
+      />
 
-        <button
-          type="button"
-          className={styles["sidebar-navigation__add-tab"]}
-          onClick={handleAddTabClick}
-          aria-label={t("addTabAriaLabel")}
-        >
-          <PlusIcon
-            className={styles["sidebar-navigation__add-tab-icon"]}
-            size={16}
-          />
-          <span className={styles["sidebar-navigation__add-tab-label"]}>
-            {t("addTab")}
-          </span>
-        </button>
-      </div>
-
-      <div className={styles["sidebar-navigation__profile"]}>
-        <button
-          ref={profileTriggerRef}
-          id={profileTriggerId}
-          type="button"
-          className={styles["sidebar-navigation__profile-trigger"]}
-          onClick={handleProfileTriggerClick}
-          aria-label={t("profile.ariaLabel")}
-          aria-expanded={profileMenuOpen}
-          aria-haspopup="menu"
-          aria-controls={profileMenuId}
-        >
-          <span
-            className={styles["sidebar-navigation__profile-avatar"]}
-            aria-hidden
-          >
-            {initials}
-          </span>
-          <span className={styles["sidebar-navigation__profile-name"]}>
-            {displayName}
-          </span>
-          <UserProfileIcon
-            className={styles["sidebar-navigation__profile-icon"]}
-            size={14}
-          />
-        </button>
-
-        {profileMenuOpen && (
-          <div
-            ref={profileMenuRef}
-            id={profileMenuId}
-            role="menu"
-            className={styles["sidebar-navigation__profile-menu"]}
-            aria-labelledby={profileTriggerId}
-          >
-            <Link
-              href={PAGE_ROUTES.WORKSPACE}
-              role="menuitem"
-              className={styles["sidebar-navigation__profile-menu-item"]}
-              onMouseEnter={prefetchWorkspace}
-              onFocus={prefetchWorkspace}
-              onClick={handleWorkspaceLinkClick}
-            >
-              {t("profile.backToWorkspace")}
-            </Link>
-            <Link
-              href={`${PAGE_ROUTES.ACCOUNT}?from=${encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE)}`}
-              role="menuitem"
-              className={styles["sidebar-navigation__profile-menu-item"]}
-              onClick={handleAccountLinkClick}
-            >
-              {t("profile.profileSettings")}
-            </Link>
-            <button
-              type="button"
-              role="menuitem"
-              className={styles["sidebar-navigation__profile-menu-item"]}
-              onClick={handleLogout}
-              disabled={signOutMutation.isPending}
-            >
-              {t("profile.logout")}
-            </button>
-          </div>
-        )}
-      </div>
+      <SidebarProfileMenu
+        profileTriggerRef={profileTriggerRef}
+        profileMenuRef={profileMenuRef}
+        profileTriggerId={profileTriggerId}
+        profileMenuId={profileMenuId}
+        profileMenuOpen={profileMenuOpen}
+        displayName={displayName}
+        initials={initials}
+        profileAriaLabel={t("profile.ariaLabel")}
+        workspaceHref={workspaceHref}
+        workspaceLabel={t("profile.backToWorkspace")}
+        accountHref={accountHref}
+        accountLabel={t("profile.profileSettings")}
+        logoutLabel={t("profile.logout")}
+        isSignOutPending={signOutMutation.isPending}
+        onProfileTriggerClick={handleProfileTriggerClick}
+        onWorkspacePrefetch={prefetchWorkspace}
+        onWorkspaceLinkClick={handleWorkspaceLinkClick}
+        onAccountLinkClick={handleAccountLinkClick}
+        onLogout={handleLogout}
+      />
     </div>
   );
 };

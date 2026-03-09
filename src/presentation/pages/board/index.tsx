@@ -5,8 +5,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 
 import BoardView from "@/presentation/components/board/boardView/BoardView";
-import TicketCard from "@/presentation/components/ticketCard/TicketCard";
-import TicketDetailView from "@/presentation/components/ticketDetailView/TicketDetailView";
+import TicketCard from "@/presentation/components/ticket/ticketCard/TicketCard";
+import TicketDetailView from "@/presentation/components/ticket/ticketDetailView/TicketDetailView";
 import Loader from "@/presentation/components/ui/Loader";
 import Modal from "@/presentation/components/ui/Modal";
 import { useBoardColumns } from "@/presentation/hooks/board/useBoardColumns";
