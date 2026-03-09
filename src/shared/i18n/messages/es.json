@@ -36,10 +36,10 @@
       "addTabAriaLabel": "Añadir pestaña (próximamente)",
       "items": {
         "home": "Inicio",
-        "backlog": "Backlog",
+        "backlog": "Lista de tareas",
         "board": "Tablero",
-        "ticketDetail": "Ticket",
-        "epics": "Epics",
+        "ticketDetail": "Tarea",
+        "epics": "Objetivos",
         "settings": "Configuración"
       },
       "locked": {
@@ -70,25 +70,25 @@
       "filterAriaLabel": "Abrir filtros",
       "sort": "Ordenar",
       "sortAriaLabel": "Abrir ordenación",
-      "addTicket": "Añadir ticket",
-      "addTicketAriaLabel": "Crear un nuevo ticket",
-      "addEpic": "Añadir epic",
-      "addEpicAriaLabel": "Crear una nueva epic",
-      "epicFilterLabel": "Progreso de epics",
-      "epicFilterAll": "Todas las epics",
+      "addTicket": "Añadir tarea",
+      "addTicketAriaLabel": "Crear una nueva tarea",
+      "addEpic": "Añadir objetivo",
+      "addEpicAriaLabel": "Crear un nuevo objetivo",
+      "epicFilterLabel": "Progreso de objetivos",
+      "epicFilterAll": "Todos los objetivos",
       "epicFilterNotStarted": "No iniciadas",
       "epicFilterInProgress": "En progreso",
       "epicFilterCompleted": "Completadas",
-      "resetEpicFilters": "Restablecer filtros de epics",
+      "resetEpicFilters": "Restablecer filtros de objetivos",
       "sortDirectionLabel": "Dirección de orden",
       "sortDirectionAsc": "Ascendente",
       "sortDirectionDesc": "Descendente",
-      "epicSortFieldLabel": "Campo de orden de epics",
+      "epicSortFieldLabel": "Campo de orden de objetivos",
       "epicSortUpdatedAt": "Fecha de actualización",
       "epicSortCreatedAt": "Fecha de creación",
       "epicSortName": "Nombre",
       "epicSortProgress": "Progreso",
-      "resetEpicSort": "Restablecer orden de epics"
+      "resetEpicSort": "Restablecer orden de objetivos"
     }
   },
   "layout": {
@@ -100,7 +100,7 @@
   "pages": {
     "signup": {
       "title": "Crear cuenta",
-      "subtitle": "Regístrate para empezar con Workbench",
+      "subtitle": "Regístrate para empezar a reducir tu carga mental.",
       "button": "Registrarse",
       "buttonLoading": "Registrando...",
       "buttonAriaLabel": "Registrarse",
@@ -292,15 +292,15 @@
         "generic": "Se ha producido un error al crear el proyecto"
       },
       "quickAddTicket": {
-        "title": "Título del ticket",
-        "placeholder": "Introduce el título del ticket",
+        "title": "Título de la tarea",
+        "placeholder": "Introduce el título de la tarea",
         "submitButton": "Añadir",
-        "submitButtonAriaLabel": "Añadir ticket"
+        "submitButtonAriaLabel": "Añadir tarea"
       },
       "myWorkWidget": {
         "title": "Mi trabajo",
-        "emptyMessage": "Ningún ticket activo",
-        "ticketAriaLabel": "Ticket",
+        "emptyMessage": "Ninguna tarea activa",
+        "ticketAriaLabel": "Tarea",
         "statusLabel": "Estado"
       },
       "recentActivityWidget": {
@@ -308,17 +308,17 @@
         "emptyMessage": "Ninguna actividad reciente",
         "activityAriaLabel": "Actividad",
         "types": {
-          "ticket_created": "Ticket creado",
-          "ticket_updated": "Ticket modificado",
-          "ticket_completed": "Ticket completado"
+          "ticket_created": "Tarea creada",
+          "ticket_updated": "Tarea modificada",
+          "ticket_completed": "Tarea completada"
         }
       },
       "shortcutsWidget": {
         "title": "Accesos directos",
         "shortcuts": {
           "board": "Tablero",
-          "backlog": "Backlog",
-          "epics": "Epics",
+          "backlog": "Lista de tareas",
+          "epics": "Objetivos",
           "settings": "Configuración"
         }
       }
@@ -334,19 +334,19 @@
         "title": "Accesos directos",
         "shortcuts": {
           "board": "Tablero",
-          "backlog": "Backlog",
-          "epics": "Epics",
+          "backlog": "Lista de tareas",
+          "epics": "Objetivos",
           "settings": "Configuración"
         }
       }
     },
     "workspace": {
-      "title": "Espacios de trabajo",
+      "title": "Espacios familiares",
       "subtitle": "Crea un espacio o únete a los que tienes acceso.",
       "welcomeBanner": "Bienvenido {name}",
       "welcomeLabel": "Hola 👋",
       "welcomeSubtitle": "¿Listo para crear algo genial hoy?",
-      "sectionDescription": "Todos tus espacios de trabajo colaborativos",
+      "sectionDescription": "Todos tus espacios compartidos",
       "membersCount": "{count} miembro",
       "membersCount_other": "{count} miembros",
       "tasksCount": "{count} tarea",
@@ -354,25 +354,25 @@
       "statInProgress": "En curso",
       "statCompleted": "Completadas",
       "emptyStateCardTitle": "Tu espacio te espera",
-      "emptyStateCardDescription": "Crea tu primer workspace para organizar proyectos, colaborar con tu equipo y convertir ideas en realidad.",
+      "emptyStateCardDescription": "Crea tu primer espacio para organizar el dia a dia en equipo y avanzar juntos.",
       "userFallbackName": "Usuario",
-      "addWorkspaceButton": "Añadir espacio",
+      "addWorkspaceButton": "Crear un espacio",
       "addWorkspaceButtonAriaLabel": "Abrir formulario para crear un nuevo espacio de trabajo",
       "joinWorkspaceButton": "Unirse a un espacio",
       "joinWorkspaceButtonAriaLabel": "Abrir formulario para unirse a un espacio existente",
-      "yourWorkspacesTitle": "Tus espacios de trabajo",
-      "noWorkspaces": "Ningún espacio de trabajo",
+      "yourWorkspacesTitle": "Tus espacios",
+      "noWorkspaces": "Ningún espacio",
       "noWorkspacesMessage": "Crea tu primer espacio o únete a uno existente con un identificador.",
-      "emptyStateTitle": "Bienvenido a Workbench",
-      "emptyStateMessage": "Crea un espacio de trabajo para organizar tus proyectos, tickets y epics. Podrás invitar a otras personas y gestionar todo desde un mismo lugar.",
+      "emptyStateTitle": "Bienvenido a casa",
+      "emptyStateMessage": "Crea un espacio para compartir tareas diarias, reducir la carga mental y seguir objetivos juntos.",
       "addFirstProjectButton": "Crear mi primer espacio",
       "addFirstProjectButtonAriaLabel": "Crear mi primer espacio de trabajo",
-      "createWorkspaceTitle": "Crear espacio de trabajo",
+      "createWorkspaceTitle": "Crear un espacio",
       "createWorkspaceDescription": "Dale un nombre a tu nuevo espacio para empezar.",
       "projectNameLabel": "Nombre del espacio de trabajo",
       "projectNamePlaceholder": "Ej. Mi proyecto",
-      "createButton": "Crear espacio de trabajo",
-      "createButtonAriaLabel": "Crear espacio de trabajo",
+      "createButton": "Crear espacio",
+      "createButtonAriaLabel": "Crear espacio",
       "joinWorkspaceTitle": "Unirse a un espacio existente",
       "joinWorkspaceDescription": "Introduce el identificador del proyecto para unirte a un espacio al que te han invitado.",
       "projectIdLabel": "Identificador del proyecto",
@@ -403,24 +403,24 @@
       }
     },
     "backlog": {
-      "title": "Backlog",
-      "subtitle": "Gestiona y organiza tus tickets",
+      "title": "Lista de tareas",
+      "subtitle": "Gestiona y organiza tus tareas",
       "ticketList": {
-        "ariaLabel": "Lista de tickets del backlog",
-        "emptyTitle": "Ningún ticket en el backlog",
-        "emptyMessage": "Crea un ticket para empezar a trabajar",
-        "errorTitle": "Error al cargar los tickets",
-        "count": "{count} ticket",
-        "count_other": "{count} tickets"
+        "ariaLabel": "Lista de tareas",
+        "emptyTitle": "Aun no hay tareas",
+        "emptyMessage": "Añade tu primera tarea para empezar a reducir la carga mental desde hoy.",
+        "errorTitle": "Error al cargar las tareas",
+        "count": "{count} tarea",
+        "count_other": "{count} tareas"
       },
       "filters": {
         "searchLabel": "Buscar",
         "searchPlaceholder": "Buscar por título o descripción",
         "statusLabel": "Estado",
-        "epicLabel": "Epic",
+        "epicLabel": "Objetivo",
         "priorityLabel": "Prioridad",
-        "sprintLabel": "Sprint",
-        "noSprintLabel": "Sin sprint",
+        "sprintLabel": "Semana",
+        "noSprintLabel": "Sin semana",
         "labelLabel": "Etiqueta",
         "noLabelOptions": "No hay etiquetas disponibles para este proyecto",
         "resetLabel": "Restablecer filtros"
@@ -432,7 +432,7 @@
         "fieldStatus": "Estado",
         "fieldPosition": "Posición en tablero",
         "fieldPriority": "Prioridad",
-        "fieldSprint": "Sprint",
+        "fieldSprint": "Semana",
         "fieldDueDate": "Fecha de vencimiento",
         "sortDirectionLabel": "Dirección de orden",
         "directionAsc": "Ascendente",
@@ -441,34 +441,34 @@
       },
       "bulkActions": {
         "title": "Acciones en lote",
-        "selectedCount": "{count} ticket seleccionado",
-        "selectedCount_other": "{count} tickets seleccionados",
+        "selectedCount": "{count} tarea seleccionada",
+        "selectedCount_other": "{count} tareas seleccionadas",
         "deleteLabel": "Eliminar",
         "moveLabel": "Mover",
         "changeStatusLabel": "Cambiar estado"
       },
       "createTicketForm": {
-        "title": "Crear ticket",
+        "title": "Crear tarea",
         "fields": {
           "title": "Título",
           "description": "Descripción",
           "status": "Estado",
-          "epic": "Epic",
+          "epic": "Objetivo",
           "labels": "Etiquetas"
         },
-        "submitButton": "Crear ticket",
+        "submitButton": "Crear tarea",
         "cancelButton": "Cancelar",
-        "errorGeneric": "Se ha producido un error al crear el ticket",
-        "readOnlyHint": "Los lectores no pueden crear tickets."
+        "errorGeneric": "Se ha producido un error al crear la tarea",
+        "readOnlyHint": "Los lectores no pueden crear tareas."
       },
       "ticketListItem": {
-        "ticketAriaLabel": "Ticket",
+        "ticketAriaLabel": "Tarea",
         "statusLabel": "Estado",
-        "epicLabel": "Epic",
+        "epicLabel": "Objetivo",
         "assigneeLabel": "Asignado a",
-        "openTicketLabel": "Abrir ticket",
-        "editTicketLabel": "Editar ticket",
-        "selectTicketLabel": "Seleccionar ticket"
+        "openTicketLabel": "Abrir tarea",
+        "editTicketLabel": "Editar tarea",
+        "selectTicketLabel": "Seleccionar tarea"
       }
     },
     "board": {
@@ -476,32 +476,32 @@
         "title": "Tablero",
         "ariaLabel": "Vista de tablero",
         "loading": "Cargando tablero...",
-        "emptyMessage": "Ningún ticket que mostrar en el tablero"
+        "emptyMessage": "Aun no hay tareas en el tablero. Añade una para empezar."
       },
       "column": {
         "ariaLabel": "Columna {title}",
         "dropZoneAriaLabel": "Zona de soltar para la columna {title}",
         "emptyDropZoneAriaLabel": "Zona de soltar vacía para la columna {title}",
-        "emptyColumnPlaceholder": "Ningún ticket"
+        "emptyColumnPlaceholder": "Ninguna tarea"
       },
       "filters": {
         "searchLabel": "Buscar",
         "searchPlaceholder": "Buscar por título o descripción",
         "statusLabel": "Estado",
-        "epicLabel": "Epic",
+        "epicLabel": "Objetivo",
         "assigneeLabel": "Asignado a",
         "resetLabel": "Restablecer filtros"
       },
       "ticketCard": {
-        "ticketAriaLabel": "Ticket",
+        "ticketAriaLabel": "Tarea",
         "statusLabel": "Estado",
-        "epicLabel": "Epic",
+        "epicLabel": "Objetivo",
         "assigneeLabel": "Asignado a",
         "priorityLabel": "Prioridad",
         "storyPointsLabel": "{count} point",
         "storyPointsLabel_other": "{count} points",
-        "openTicketLabel": "Abrir ticket",
-        "editTicketLabel": "Editar ticket"
+        "openTicketLabel": "Abrir tarea",
+        "editTicketLabel": "Editar tarea"
       },
       "columnsConfiguration": {
         "title": "Configuración de columnas",
@@ -922,50 +922,50 @@
     },
     "landing": {
       "hero": {
-        "title": "Workbench",
-        "subtitle": "Gestiona tus proyectos con claridad. Una herramienta simple, visual y estructurada para concentrarte en lo esencial.",
+        "title": "La carga mental, se acabo.",
+        "subtitle": "Un espacio compartido para que tu y tu pareja avancen juntos, sin que una sola persona lo cargue todo.",
         "ctaSignUp": "Crea tu cuenta gratis",
         "ctaSignIn": "Iniciar sesión"
       },
       "values": {
         "title": "¿Por qué Workbench?",
         "simplicity": {
-          "icon": "✨",
-          "title": "Simple por naturaleza",
-          "description": "Sin configuración compleja, sin sobrecarga. Crea un proyecto y empieza a trabajar en segundos."
+          "icon": "❤️",
+          "title": "Para los dos",
+          "description": "Compartid y asignad tareas en segundos."
         },
         "clarity": {
-          "icon": "🎯",
-          "title": "Claridad en cada paso",
-          "description": "Un backlog limpio, un tablero visual y epics estructurados. Cada vista te da exactamente lo que necesitas."
+          "icon": "🧠",
+          "title": "Vaciar la cabeza",
+          "description": "Sacad todo lo que os ronda y organizadlo juntos."
         },
         "control": {
-          "icon": "🛠️",
-          "title": "Control total",
-          "description": "Personaliza tus columnas, filtra, ordena y organiza tu trabajo como quieras. Tu espacio, tus reglas."
+          "icon": "✅",
+          "title": "Avanzar de verdad",
+          "description": "Seguid el progreso de vuestros proyectos de vida."
         }
       },
       "features": {
-        "title": "Todo lo que necesitas, nada que sobre",
+        "title": "Casos de uso pensados para la vida en familia",
         "backlog": {
           "icon": "📋",
-          "title": "Backlog",
-          "description": "Crea, filtra y prioriza tus tickets. Una vista clara de todo lo pendiente."
+          "title": "Compra semanal",
+          "description": "Preparad la lista, repartid las compras y ved lo que ya esta hecho."
         },
         "board": {
-          "icon": "📊",
-          "title": "Tablero visual",
-          "description": "Arrastra y suelta tickets entre columnas personalizadas. Visualiza tu flujo de trabajo de un vistazo."
+          "icon": "🧹",
+          "title": "Tareas del hogar",
+          "description": "Repartid las tareas diarias para que todos avancen juntos."
         },
         "epics": {
-          "icon": "🗂️",
-          "title": "Epics",
-          "description": "Agrupa tus tickets por tema. Sigue el progreso de cada iniciativa con precisión."
+          "icon": "🏠",
+          "title": "Proyecto de casa",
+          "description": "Seguid reformas y mejoras del hogar paso a paso."
         },
         "subtasks": {
-          "icon": "✅",
-          "title": "Subtareas",
-          "description": "Descompón tickets complejos en pasos simples. Avanza paso a paso, sin perder el hilo."
+          "icon": "🏖️",
+          "title": "Plan de vacaciones",
+          "description": "Centralizad reservas, maletas y tramites en un mismo lugar."
         }
       },
       "trust": {
@@ -1273,6 +1273,9 @@
       "assign": "Asignar",
       "assignAriaLabel": "Abrir el selector de asignados",
       "memberListAriaLabel": "Lista de miembros disponibles"
+    },
+    "draggableItem": {
+      "ariaLabel": "Elemento arrastrable {id}"
     },
     "avatarUpload": {
       "ariaLabel": "Gestión del avatar",

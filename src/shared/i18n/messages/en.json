@@ -36,10 +36,10 @@
       "addTabAriaLabel": "Add tab (coming soon)",
       "items": {
         "home": "Home",
-        "backlog": "Backlog",
+        "backlog": "Task list",
         "board": "Board",
-        "ticketDetail": "Ticket",
-        "epics": "Epics",
+        "ticketDetail": "Task",
+        "epics": "Goals",
         "settings": "Settings"
       },
       "locked": {
@@ -70,25 +70,25 @@
       "filterAriaLabel": "Open filters",
       "sort": "Sort",
       "sortAriaLabel": "Open sort",
-      "addTicket": "Add ticket",
-      "addTicketAriaLabel": "Create a new ticket",
-      "addEpic": "Add epic",
-      "addEpicAriaLabel": "Create a new epic",
-      "epicFilterLabel": "Epic progress",
-      "epicFilterAll": "All epics",
+      "addTicket": "Add task",
+      "addTicketAriaLabel": "Create a new task",
+      "addEpic": "Add goal",
+      "addEpicAriaLabel": "Create a new goal",
+      "epicFilterLabel": "Goal progress",
+      "epicFilterAll": "All goals",
       "epicFilterNotStarted": "Not started",
       "epicFilterInProgress": "In progress",
       "epicFilterCompleted": "Completed",
-      "resetEpicFilters": "Reset epic filters",
+      "resetEpicFilters": "Reset goal filters",
       "sortDirectionLabel": "Sort direction",
       "sortDirectionAsc": "Ascending",
       "sortDirectionDesc": "Descending",
-      "epicSortFieldLabel": "Epic sort field",
+      "epicSortFieldLabel": "Goal sort field",
       "epicSortUpdatedAt": "Updated date",
       "epicSortCreatedAt": "Created date",
       "epicSortName": "Name",
       "epicSortProgress": "Progress",
-      "resetEpicSort": "Reset epic sort"
+      "resetEpicSort": "Reset goal sort"
     }
   },
   "layout": {
@@ -100,7 +100,7 @@
   "pages": {
     "signup": {
       "title": "Create an account",
-      "subtitle": "Sign up to get started with Workbench",
+      "subtitle": "Sign up to start lightening your mental load.",
       "button": "Sign up",
       "buttonLoading": "Signing up...",
       "buttonAriaLabel": "Sign up",
@@ -292,15 +292,15 @@
         "generic": "An error occurred while creating the project"
       },
       "quickAddTicket": {
-        "title": "Ticket title",
-        "placeholder": "Enter the ticket title",
+        "title": "Task title",
+        "placeholder": "Enter the task title",
         "submitButton": "Add",
-        "submitButtonAriaLabel": "Add ticket"
+        "submitButtonAriaLabel": "Add task"
       },
       "myWorkWidget": {
         "title": "My work",
-        "emptyMessage": "No active tickets",
-        "ticketAriaLabel": "Ticket",
+        "emptyMessage": "No active tasks",
+        "ticketAriaLabel": "Task",
         "statusLabel": "Status"
       },
       "recentActivityWidget": {
@@ -308,17 +308,17 @@
         "emptyMessage": "No recent activity",
         "activityAriaLabel": "Activity",
         "types": {
-          "ticket_created": "Ticket created",
-          "ticket_updated": "Ticket updated",
-          "ticket_completed": "Ticket completed"
+          "ticket_created": "Task created",
+          "ticket_updated": "Task updated",
+          "ticket_completed": "Task completed"
         }
       },
       "shortcutsWidget": {
         "title": "Shortcuts",
         "shortcuts": {
           "board": "Board",
-          "backlog": "Backlog",
-          "epics": "Epics",
+          "backlog": "Task list",
+          "epics": "Goals",
           "settings": "Settings"
         }
       }
@@ -334,19 +334,19 @@
         "title": "Shortcuts",
         "shortcuts": {
           "board": "Board",
-          "backlog": "Backlog",
-          "epics": "Epics",
+          "backlog": "Task list",
+          "epics": "Goals",
           "settings": "Settings"
         }
       }
     },
     "workspace": {
-      "title": "Workspaces",
+      "title": "Family spaces",
       "subtitle": "Create a workspace or join those you have access to.",
       "welcomeBanner": "Welcome {name}",
       "welcomeLabel": "Hello 👋",
       "welcomeSubtitle": "Ready to create something wonderful today?",
-      "sectionDescription": "Find all your collaborative workspaces",
+      "sectionDescription": "Find all your shared spaces",
       "membersCount": "{count} member",
       "membersCount_other": "{count} members",
       "tasksCount": "{count} task",
@@ -354,25 +354,25 @@
       "statInProgress": "In progress",
       "statCompleted": "Completed",
       "emptyStateCardTitle": "Your workspace awaits",
-      "emptyStateCardDescription": "Create your first workspace to start organizing your projects, collaborating with your team, and turning ideas into reality.",
+      "emptyStateCardDescription": "Create your first space to organize everyday life as a team and move forward together.",
       "userFallbackName": "User",
-      "addWorkspaceButton": "Add workspace",
+      "addWorkspaceButton": "Create a space",
       "addWorkspaceButtonAriaLabel": "Open form to create a new workspace",
       "joinWorkspaceButton": "Join a workspace",
       "joinWorkspaceButtonAriaLabel": "Open form to join an existing workspace",
-      "yourWorkspacesTitle": "Your workspaces",
-      "noWorkspaces": "No workspace",
+      "yourWorkspacesTitle": "Your spaces",
+      "noWorkspaces": "No space",
       "noWorkspacesMessage": "Create your first workspace or join an existing one with an ID.",
-      "emptyStateTitle": "Welcome to Workbench",
-      "emptyStateMessage": "Create a workspace to organize your projects, tickets, and epics. You can invite others and manage everything from one place.",
+      "emptyStateTitle": "Welcome home",
+      "emptyStateMessage": "Create a space to share daily tasks, reduce mental load, and track your goals together.",
       "addFirstProjectButton": "Create my first workspace",
       "addFirstProjectButtonAriaLabel": "Create my first workspace",
       "createWorkspaceTitle": "Create a workspace",
       "createWorkspaceDescription": "Give your new workspace a name to get started.",
       "projectNameLabel": "Workspace name",
       "projectNamePlaceholder": "e.g. My project",
-      "createButton": "Create workspace",
-      "createButtonAriaLabel": "Create workspace",
+      "createButton": "Create space",
+      "createButtonAriaLabel": "Create space",
       "joinWorkspaceTitle": "Join an existing workspace",
       "joinWorkspaceDescription": "Enter the project ID to join a workspace you've been invited to.",
       "projectIdLabel": "Project ID",
@@ -403,24 +403,24 @@
       }
     },
     "backlog": {
-      "title": "Backlog",
-      "subtitle": "Manage and organize your tickets",
+      "title": "Task list",
+      "subtitle": "Manage and organize your tasks",
       "ticketList": {
-        "ariaLabel": "Backlog ticket list",
-        "emptyTitle": "No tickets in the backlog",
-        "emptyMessage": "Create a ticket to start working",
-        "errorTitle": "Error loading tickets",
-        "count": "{count} ticket",
-        "count_other": "{count} tickets"
+        "ariaLabel": "Task list",
+        "emptyTitle": "No tasks yet",
+        "emptyMessage": "Add your first task to start reducing your mental load right away.",
+        "errorTitle": "Error loading tasks",
+        "count": "{count} task",
+        "count_other": "{count} tasks"
       },
       "filters": {
         "searchLabel": "Search",
         "searchPlaceholder": "Search by title or description",
         "statusLabel": "Status",
-        "epicLabel": "Epic",
+        "epicLabel": "Goal",
         "priorityLabel": "Priority",
-        "sprintLabel": "Sprint",
-        "noSprintLabel": "No sprint",
+        "sprintLabel": "Week",
+        "noSprintLabel": "No week",
         "labelLabel": "Label",
         "noLabelOptions": "No labels available for this project",
         "resetLabel": "Reset filters"
@@ -432,7 +432,7 @@
         "fieldStatus": "Status",
         "fieldPosition": "Board position",
         "fieldPriority": "Priority",
-        "fieldSprint": "Sprint",
+        "fieldSprint": "Week",
         "fieldDueDate": "Due date",
         "sortDirectionLabel": "Sort direction",
         "directionAsc": "Ascending",
@@ -441,34 +441,34 @@
       },
       "bulkActions": {
         "title": "Bulk actions",
-        "selectedCount": "{count} ticket selected",
-        "selectedCount_other": "{count} tickets selected",
+        "selectedCount": "{count} task selected",
+        "selectedCount_other": "{count} tasks selected",
         "deleteLabel": "Delete",
         "moveLabel": "Move",
         "changeStatusLabel": "Change status"
       },
       "createTicketForm": {
-        "title": "Create ticket",
+        "title": "Create task",
         "fields": {
           "title": "Title",
           "description": "Description",
           "status": "Status",
-          "epic": "Epic",
+          "epic": "Goal",
           "labels": "Labels"
         },
-        "submitButton": "Create ticket",
+        "submitButton": "Create task",
         "cancelButton": "Cancel",
-        "errorGeneric": "An error occurred while creating the ticket",
-        "readOnlyHint": "Viewers cannot create tickets."
+        "errorGeneric": "An error occurred while creating the task",
+        "readOnlyHint": "Viewers cannot create tasks."
       },
       "ticketListItem": {
-        "ticketAriaLabel": "Ticket",
+        "ticketAriaLabel": "Task",
         "statusLabel": "Status",
-        "epicLabel": "Epic",
+        "epicLabel": "Goal",
         "assigneeLabel": "Assignee",
-        "openTicketLabel": "Open ticket",
-        "editTicketLabel": "Edit ticket",
-        "selectTicketLabel": "Select ticket"
+        "openTicketLabel": "Open task",
+        "editTicketLabel": "Edit task",
+        "selectTicketLabel": "Select task"
       }
     },
     "board": {
@@ -476,32 +476,32 @@
         "title": "Board",
         "ariaLabel": "Board view",
         "loading": "Loading board...",
-        "emptyMessage": "No tickets to display on the board"
+        "emptyMessage": "No tasks on the board yet. Add one to get started."
       },
       "column": {
         "ariaLabel": "Column {title}",
         "dropZoneAriaLabel": "Drop zone for column {title}",
         "emptyDropZoneAriaLabel": "Empty drop zone for column {title}",
-        "emptyColumnPlaceholder": "No tickets"
+        "emptyColumnPlaceholder": "No tasks"
       },
       "filters": {
         "searchLabel": "Search",
         "searchPlaceholder": "Search by title or description",
         "statusLabel": "Status",
-        "epicLabel": "Epic",
+        "epicLabel": "Goal",
         "assigneeLabel": "Assignee",
         "resetLabel": "Reset filters"
       },
       "ticketCard": {
-        "ticketAriaLabel": "Ticket",
+        "ticketAriaLabel": "Task",
         "statusLabel": "Status",
-        "epicLabel": "Epic",
+        "epicLabel": "Goal",
         "assigneeLabel": "Assignee",
         "priorityLabel": "Priority",
         "storyPointsLabel": "{count} point",
         "storyPointsLabel_other": "{count} points",
-        "openTicketLabel": "Open ticket",
-        "editTicketLabel": "Edit ticket"
+        "openTicketLabel": "Open task",
+        "editTicketLabel": "Edit task"
       },
       "columnsConfiguration": {
         "title": "Column configuration",
@@ -922,50 +922,50 @@
     },
     "landing": {
       "hero": {
-        "title": "Workbench",
-        "subtitle": "Manage your projects with clarity. A simple, visual, and structured tool to stay focused on what matters.",
+        "title": "Mental load, gone.",
+        "subtitle": "A shared space so you and your partner can move forward together, without one person carrying it all.",
         "ctaSignUp": "Create your free account",
         "ctaSignIn": "Sign in"
       },
       "values": {
         "title": "Why Workbench?",
         "simplicity": {
-          "icon": "✨",
-          "title": "Simple by nature",
-          "description": "No complex setup, no overload. Create a project and start working in seconds."
+          "icon": "❤️",
+          "title": "For both of you",
+          "description": "Share and assign tasks in seconds."
         },
         "clarity": {
-          "icon": "🎯",
-          "title": "Clarity at every step",
-          "description": "A clean backlog, a visual board, and structured epics. Each view gives you exactly what you need."
+          "icon": "🧠",
+          "title": "Clear your mind",
+          "description": "Get everything out of your head and organize it together."
         },
         "control": {
-          "icon": "🛠️",
-          "title": "Total control",
-          "description": "Customize your columns, filter, sort, and organize your work however you like. Your space, your rules."
+          "icon": "✅",
+          "title": "Actually move forward",
+          "description": "Track progress on your real-life projects."
         }
       },
       "features": {
-        "title": "Everything you need, nothing you don't",
+        "title": "Use cases built for family life",
         "backlog": {
           "icon": "📋",
-          "title": "Backlog",
-          "description": "Create, filter, and prioritize your tickets. A clear view of everything left to do."
+          "title": "Weekly groceries",
+          "description": "Prepare your list, split shopping tasks, and see what is already done."
         },
         "board": {
-          "icon": "📊",
-          "title": "Visual board",
-          "description": "Drag and drop tickets between custom columns. Visualize your workflow at a glance."
+          "icon": "🧹",
+          "title": "Household chores",
+          "description": "Share daily chores so everyone moves forward together."
         },
         "epics": {
-          "icon": "🗂️",
-          "title": "Epics",
-          "description": "Group your tickets by theme. Track the progress of each initiative with precision."
+          "icon": "🏠",
+          "title": "Home projects",
+          "description": "Track renovations and home improvements step by step."
         },
         "subtasks": {
-          "icon": "✅",
-          "title": "Subtasks",
-          "description": "Break complex tickets into simple steps. Move forward step by step, without losing track."
+          "icon": "🏖️",
+          "title": "Vacation planning",
+          "description": "Keep bookings, packing, and paperwork in one shared place."
         }
       },
       "trust": {
@@ -1273,6 +1273,9 @@
       "assign": "Assign",
       "assignAriaLabel": "Open assignee picker",
       "memberListAriaLabel": "Available members list"
+    },
+    "draggableItem": {
+      "ariaLabel": "Draggable item {id}"
     },
     "avatarUpload": {
       "ariaLabel": "Avatar management",

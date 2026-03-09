@@ -36,10 +36,10 @@
       "addTabAriaLabel": "Ajouter un onglet (à venir)",
       "items": {
         "home": "Accueil",
-        "backlog": "Backlog",
+        "backlog": "Liste des tâches",
         "board": "Tableau",
-        "ticketDetail": "Ticket",
-        "epics": "Epics",
+        "ticketDetail": "Tâche",
+        "epics": "Objectifs",
         "settings": "Paramètres"
       },
       "locked": {
@@ -70,25 +70,25 @@
       "filterAriaLabel": "Ouvrir les filtres",
       "sort": "Trier",
       "sortAriaLabel": "Ouvrir le tri",
-      "addTicket": "Ajouter un ticket",
-      "addTicketAriaLabel": "Créer un nouveau ticket",
-      "addEpic": "Ajouter une epic",
-      "addEpicAriaLabel": "Créer une nouvelle epic",
-      "epicFilterLabel": "Progression des epics",
-      "epicFilterAll": "Toutes les epics",
+      "addTicket": "Ajouter une tâche",
+      "addTicketAriaLabel": "Créer une nouvelle tâche",
+      "addEpic": "Ajouter un objectif",
+      "addEpicAriaLabel": "Créer un nouvel objectif",
+      "epicFilterLabel": "Progression des objectifs",
+      "epicFilterAll": "Tous les objectifs",
       "epicFilterNotStarted": "Non démarrées",
       "epicFilterInProgress": "En cours",
       "epicFilterCompleted": "Terminées",
-      "resetEpicFilters": "Réinitialiser les filtres epics",
+      "resetEpicFilters": "Réinitialiser les filtres objectifs",
       "sortDirectionLabel": "Sens du tri",
       "sortDirectionAsc": "Croissant",
       "sortDirectionDesc": "Décroissant",
-      "epicSortFieldLabel": "Champ de tri des epics",
+      "epicSortFieldLabel": "Champ de tri des objectifs",
       "epicSortUpdatedAt": "Date de mise à jour",
       "epicSortCreatedAt": "Date de création",
       "epicSortName": "Nom",
       "epicSortProgress": "Progression",
-      "resetEpicSort": "Réinitialiser le tri des epics"
+      "resetEpicSort": "Réinitialiser le tri des objectifs"
     }
   },
   "layout": {
@@ -100,7 +100,7 @@
   "pages": {
     "signup": {
       "title": "Créer un compte",
-      "subtitle": "Inscrivez-vous pour commencer avec Workbench",
+      "subtitle": "Inscrivez-vous pour commencer a alleger votre charge mentale.",
       "button": "S'inscrire",
       "buttonLoading": "Inscription en cours...",
       "buttonAriaLabel": "S'inscrire",
@@ -292,15 +292,15 @@
         "generic": "Une erreur s'est produite lors de la création du projet"
       },
       "quickAddTicket": {
-        "title": "Titre du ticket",
-        "placeholder": "Entrez le titre du ticket",
+        "title": "Titre de la tâche",
+        "placeholder": "Entrez le titre de la tâche",
         "submitButton": "Ajouter",
-        "submitButtonAriaLabel": "Ajouter le ticket"
+        "submitButtonAriaLabel": "Ajouter la tâche"
       },
       "myWorkWidget": {
         "title": "Mon travail",
-        "emptyMessage": "Aucun ticket actif",
-        "ticketAriaLabel": "Ticket",
+        "emptyMessage": "Aucune tâche active",
+        "ticketAriaLabel": "Tâche",
         "statusLabel": "Statut"
       },
       "recentActivityWidget": {
@@ -308,17 +308,17 @@
         "emptyMessage": "Aucune activité récente",
         "activityAriaLabel": "Activité",
         "types": {
-          "ticket_created": "Ticket créé",
-          "ticket_updated": "Ticket modifié",
-          "ticket_completed": "Ticket terminé"
+          "ticket_created": "Tâche créée",
+          "ticket_updated": "Tâche modifiée",
+          "ticket_completed": "Tâche terminée"
         }
       },
       "shortcutsWidget": {
         "title": "Raccourcis",
         "shortcuts": {
           "board": "Tableau",
-          "backlog": "Backlog",
-          "epics": "Epics",
+          "backlog": "Liste des tâches",
+          "epics": "Objectifs",
           "settings": "Paramètres"
         }
       }
@@ -334,19 +334,19 @@
         "title": "Raccourcis",
         "shortcuts": {
           "board": "Tableau",
-          "backlog": "Backlog",
-          "epics": "Epics",
+          "backlog": "Liste des tâches",
+          "epics": "Objectifs",
           "settings": "Paramètres"
         }
       }
     },
     "workspace": {
-      "title": "Espaces de travail",
+      "title": "Espaces famille",
       "subtitle": "Créez un espace ou rejoignez ceux auxquels vous avez accès.",
       "welcomeBanner": "Bienvenue {name}",
       "welcomeLabel": "Bonjour 👋",
       "welcomeSubtitle": "Prête à créer quelque chose de merveilleux aujourd'hui ?",
-      "sectionDescription": "Retrouvez tous vos espaces de travail collaboratifs",
+      "sectionDescription": "Retrouvez tous vos espaces partagés",
       "membersCount": "{count} membre",
       "membersCount_other": "{count} membres",
       "tasksCount": "{count} tâche",
@@ -354,25 +354,25 @@
       "statInProgress": "En cours",
       "statCompleted": "Terminées",
       "emptyStateCardTitle": "Votre espace vous attend",
-      "emptyStateCardDescription": "Créez votre premier workspace pour commencer à organiser vos projets, collaborer avec votre équipe et transformer vos idées en réalité.",
+      "emptyStateCardDescription": "Créez votre premier espace pour organiser le quotidien en duo et avancer ensemble.",
       "userFallbackName": "Utilisateur",
-      "addWorkspaceButton": "Ajouter un espace",
+      "addWorkspaceButton": "Créer un espace",
       "addWorkspaceButtonAriaLabel": "Ouvrir le formulaire pour créer un nouvel espace de travail",
       "joinWorkspaceButton": "Rejoindre un espace",
       "joinWorkspaceButtonAriaLabel": "Ouvrir le formulaire pour rejoindre un espace existant",
-      "yourWorkspacesTitle": "Vos espaces de travail",
-      "noWorkspaces": "Aucun espace de travail",
+      "yourWorkspacesTitle": "Vos espaces",
+      "noWorkspaces": "Aucun espace",
       "noWorkspacesMessage": "Créez votre premier espace ou rejoignez un espace existant avec un identifiant.",
-      "emptyStateTitle": "Bienvenue sur Workbench",
-      "emptyStateMessage": "Créez un espace de travail pour organiser vos projets, tickets et epics. Vous pourrez inviter d'autres personnes et gérer tout depuis un même endroit.",
+      "emptyStateTitle": "Bienvenue chez vous",
+      "emptyStateMessage": "Créez un espace pour partager les tâches du quotidien, répartir la charge mentale et suivre vos objectifs ensemble.",
       "addFirstProjectButton": "Créer mon premier espace",
       "addFirstProjectButtonAriaLabel": "Créer mon premier espace de travail",
-      "createWorkspaceTitle": "Créer un espace de travail",
+      "createWorkspaceTitle": "Créer un espace",
       "createWorkspaceDescription": "Donnez un nom à votre nouvel espace pour commencer.",
       "projectNameLabel": "Nom de l'espace de travail",
       "projectNamePlaceholder": "Ex. Mon projet",
-      "createButton": "Créer l'espace de travail",
-      "createButtonAriaLabel": "Créer l'espace de travail",
+      "createButton": "Créer l'espace",
+      "createButtonAriaLabel": "Créer l'espace",
       "joinWorkspaceTitle": "Rejoindre un espace existant",
       "joinWorkspaceDescription": "Entrez l'identifiant du projet pour rejoindre un espace auquel vous avez été invité.",
       "projectIdLabel": "Identifiant du projet",
@@ -403,24 +403,24 @@
       }
     },
     "backlog": {
-      "title": "Backlog",
-      "subtitle": "Gérez et organisez vos tickets",
+      "title": "Liste des tâches",
+      "subtitle": "Gérez et organisez vos tâches",
       "ticketList": {
-        "ariaLabel": "Liste des tickets du backlog",
-        "emptyTitle": "Aucun ticket dans le backlog",
-        "emptyMessage": "Créez un ticket pour commencer à travailler",
-        "errorTitle": "Erreur lors du chargement des tickets",
-        "count": "{count} ticket",
-        "count_other": "{count} tickets"
+        "ariaLabel": "Liste des tâches",
+        "emptyTitle": "Aucune tâche pour le moment",
+        "emptyMessage": "Ajoutez votre première tâche pour alléger votre charge mentale dès maintenant.",
+        "errorTitle": "Erreur lors du chargement des tâches",
+        "count": "{count} tâche",
+        "count_other": "{count} tâches"
       },
       "filters": {
         "searchLabel": "Rechercher",
         "searchPlaceholder": "Rechercher par titre ou description",
         "statusLabel": "Statut",
-        "epicLabel": "Epic",
+        "epicLabel": "Objectif",
         "priorityLabel": "Priorité",
-        "sprintLabel": "Sprint",
-        "noSprintLabel": "Sans sprint",
+        "sprintLabel": "Semaine",
+        "noSprintLabel": "Sans semaine",
         "labelLabel": "Label",
         "noLabelOptions": "Aucun label disponible pour ce projet",
         "resetLabel": "Réinitialiser les filtres"
@@ -432,7 +432,7 @@
         "fieldStatus": "Statut",
         "fieldPosition": "Position du tableau",
         "fieldPriority": "Priorité",
-        "fieldSprint": "Sprint",
+        "fieldSprint": "Semaine",
         "fieldDueDate": "Date d'échéance",
         "sortDirectionLabel": "Sens du tri",
         "directionAsc": "Ascendant",
@@ -441,34 +441,34 @@
       },
       "bulkActions": {
         "title": "Actions groupées",
-        "selectedCount": "{count} ticket sélectionné",
-        "selectedCount_other": "{count} tickets sélectionnés",
+        "selectedCount": "{count} tâche sélectionnée",
+        "selectedCount_other": "{count} tâches sélectionnées",
         "deleteLabel": "Supprimer",
         "moveLabel": "Déplacer",
         "changeStatusLabel": "Modifier le statut"
       },
       "createTicketForm": {
-        "title": "Créer un ticket",
+        "title": "Créer une tâche",
         "fields": {
           "title": "Titre",
           "description": "Description",
           "status": "Statut",
-          "epic": "Epic",
+          "epic": "Objectif",
           "labels": "Labels"
         },
-        "submitButton": "Créer le ticket",
+        "submitButton": "Créer la tâche",
         "cancelButton": "Annuler",
-        "errorGeneric": "Une erreur s'est produite lors de la création du ticket",
-        "readOnlyHint": "Les lecteurs ne peuvent pas créer de tickets."
+        "errorGeneric": "Une erreur s'est produite lors de la création de la tâche",
+        "readOnlyHint": "Les lecteurs ne peuvent pas créer de tâches."
       },
       "ticketListItem": {
-        "ticketAriaLabel": "Ticket",
+        "ticketAriaLabel": "Tâche",
         "statusLabel": "Statut",
-        "epicLabel": "Epic",
+        "epicLabel": "Objectif",
         "assigneeLabel": "Assigné à",
-        "openTicketLabel": "Ouvrir le ticket",
-        "editTicketLabel": "Modifier le ticket",
-        "selectTicketLabel": "Sélectionner le ticket"
+        "openTicketLabel": "Ouvrir la tâche",
+        "editTicketLabel": "Modifier la tâche",
+        "selectTicketLabel": "Sélectionner la tâche"
       }
     },
     "board": {
@@ -476,32 +476,32 @@
         "title": "Tableau de bord",
         "ariaLabel": "Vue tableau de bord",
         "loading": "Chargement du tableau...",
-        "emptyMessage": "Aucun ticket à afficher dans le tableau"
+        "emptyMessage": "Aucune tâche dans le tableau pour le moment. Ajoutez-en une pour lancer la dynamique."
       },
       "column": {
         "ariaLabel": "Colonne {title}",
         "dropZoneAriaLabel": "Zone de dépôt pour la colonne {title}",
         "emptyDropZoneAriaLabel": "Zone de dépôt vide pour la colonne {title}",
-        "emptyColumnPlaceholder": "Aucun ticket"
+        "emptyColumnPlaceholder": "Aucune tâche"
       },
       "filters": {
         "searchLabel": "Rechercher",
         "searchPlaceholder": "Rechercher par titre ou description",
         "statusLabel": "Statut",
-        "epicLabel": "Epic",
+        "epicLabel": "Objectif",
         "assigneeLabel": "Assigné à",
         "resetLabel": "Réinitialiser les filtres"
       },
       "ticketCard": {
-        "ticketAriaLabel": "Ticket",
+        "ticketAriaLabel": "Tâche",
         "statusLabel": "Statut",
-        "epicLabel": "Epic",
+        "epicLabel": "Objectif",
         "assigneeLabel": "Assigné à",
         "priorityLabel": "Priorité",
         "storyPointsLabel": "{count} point",
         "storyPointsLabel_other": "{count} points",
-        "openTicketLabel": "Ouvrir le ticket",
-        "editTicketLabel": "Modifier le ticket"
+        "openTicketLabel": "Ouvrir la tâche",
+        "editTicketLabel": "Modifier la tâche"
       },
       "columnsConfiguration": {
         "title": "Configuration des colonnes",
@@ -515,41 +515,41 @@
     },
     "epics": {
       "epicsList": {
-        "ariaLabel": "Liste des epics",
-        "title": "Epics",
-        "count": "{count} epic",
-        "count_other": "{count} epics",
-        "emptyTitle": "Aucun epic",
-        "emptyMessage": "Créez votre premier epic pour commencer",
-        "errorTitle": "Erreur lors du chargement des epics"
+        "ariaLabel": "Liste des objectifs",
+        "title": "Objectifs",
+        "count": "{count} objectif",
+        "count_other": "{count} objectifs",
+        "emptyTitle": "Aucun objectif",
+        "emptyMessage": "Créez votre premier objectif pour donner une direction claire à votre semaine.",
+        "errorTitle": "Erreur lors du chargement des objectifs"
       },
       "epicCard": {
-        "epicAriaLabel": "Epic",
+        "epicAriaLabel": "Objectif",
         "progressLabel": "{progress}% complété",
         "viewDetailLabel": "Voir les détails",
         "editLabel": "Modifier",
         "deleteLabel": "Supprimer"
       },
       "createEpicForm": {
-        "title": "Créer un epic",
+        "title": "Créer un objectif",
         "fields": {
           "name": "Nom",
           "description": "Description"
         },
         "submitButton": "Créer",
         "cancelButton": "Annuler",
-        "readOnlyHint": "Les lecteurs ne peuvent pas créer d'epics.",
-        "errorGeneric": "Une erreur s'est produite lors de la création de l'epic"
+        "readOnlyHint": "Les lecteurs ne peuvent pas créer d'objectifs.",
+        "errorGeneric": "Une erreur s'est produite lors de la création de l'objectif"
       },
       "epicDetail": {
-        "title": "Détails de l'epic",
-        "ticketsTitle": "Tickets associés",
-        "noTickets": "Aucun ticket associé",
+        "title": "Détails de l'objectif",
+        "ticketsTitle": "Tâches associées",
+        "noTickets": "Aucune tâche associée",
         "editLabel": "Modifier",
         "deleteLabel": "Supprimer"
       },
       "epicProgress": {
-        "ariaLabel": "Progression de l'epic",
+        "ariaLabel": "Progression de l'objectif",
         "progressLabel": "{progress}% complété"
       }
     },
@@ -658,10 +658,10 @@
     },
     "ticketDetail": {
       "ticketOverview": {
-        "ariaLabel": "Détails du ticket",
+        "ariaLabel": "Détails de la tâche",
         "meta": {
           "status": "Statut",
-          "epic": "Epic",
+          "epic": "Objectif",
           "assignee": "Assigné à",
           "priority": "Priorité",
           "storyPoints": "Story points",
@@ -671,29 +671,29 @@
         }
       },
       "ticketEditForm": {
-        "title": "Modifier le ticket",
-        "ariaLabel": "Formulaire de modification du ticket",
+        "title": "Modifier la tâche",
+        "ariaLabel": "Formulaire de modification de la tâche",
         "fields": {
           "title": "Titre",
           "status": "Statut",
-          "epic": "Epic",
+          "epic": "Objectif",
           "description": "Description",
           "labels": "Labels"
         },
         "epicNoneOption": "Aucun",
         "saveButton": "Enregistrer",
         "cancelButton": "Annuler",
-        "errorGeneric": "Une erreur s'est produite lors de l'enregistrement du ticket"
+        "errorGeneric": "Une erreur s'est produite lors de l'enregistrement de la tâche"
       },
       "subtasks": {
         "list": {
           "title": "Sous-tâches",
-          "ariaLabel": "Section des sous-tâches du ticket",
+          "ariaLabel": "Section des sous-tâches de la tâche",
           "itemsAriaLabel": "Liste des sous-tâches",
           "loadingAriaLabel": "Chargement des sous-tâches",
           "errorTitle": "Erreur lors du chargement des sous-tâches",
           "emptyTitle": "Aucune sous-tâche",
-          "emptyMessage": "Ajoutez une sous-tâche pour décomposer ce ticket",
+          "emptyMessage": "Ajoutez une sous-tâche pour décomposer cette tâche",
           "emptyAriaLabel": "Aucune sous-tâche"
         },
         "subtaskItem": {
@@ -714,44 +714,44 @@
         "errorGeneric": "Une erreur s'est produite lors de la création de la sous-tâche"
       },
       "epicLinkSelector": {
-        "title": "Epic",
-        "loadingAriaLabel": "Chargement des epics",
-        "errorTitle": "Erreur lors du chargement des epics",
-        "emptyTitle": "Aucun epic",
-        "emptyMessage": "Créez un epic pour pouvoir lier ce ticket",
-        "emptyAriaLabel": "Aucun epic disponible",
-        "selectLabel": "Lier à un epic",
+        "title": "Objectif",
+        "loadingAriaLabel": "Chargement des objectifs",
+        "errorTitle": "Erreur lors du chargement des objectifs",
+        "emptyTitle": "Aucun objectif",
+        "emptyMessage": "Créez un objectif pour pouvoir lier cette tâche",
+        "emptyAriaLabel": "Aucun objectif disponible",
+        "selectLabel": "Lier à un objectif",
         "noneOption": "Aucun",
-        "currentEpic": "Epic actuel : {name}",
-        "noEpicSelected": "Aucun epic lié",
+        "currentEpic": "Objectif actuel : {name}",
+        "noEpicSelected": "Aucun objectif lié",
         "unlinkButton": "Délier"
       },
       "page": {
-        "title": "Détail du ticket",
-        "modalTitle": "Ticket",
+        "title": "Détail de la tâche",
+        "modalTitle": "Tâche",
         "ticketCode": "WB-{code}",
         "actions": {
           "save": "Enregistrer",
-          "delete": "Supprimer le ticket",
+          "delete": "Supprimer la tâche",
           "deleteModal": {
-            "title": "Supprimer le ticket",
-            "message": "Voulez-vous vraiment supprimer ce ticket ? Cette action est irreversible.",
+            "title": "Supprimer la tâche",
+            "message": "Voulez-vous vraiment supprimer cette tâche ? Cette action est irreversible.",
             "confirm": "Supprimer definitivement",
             "deleting": "Suppression..."
           },
           "openFullPage": "Ouvrir en pleine page"
         },
         "states": {
-          "errorTitle": "Ticket introuvable",
-          "errorMessage": "Ce ticket n'existe pas ou vous n'avez pas accès à son contenu."
+          "errorTitle": "Tâche introuvable",
+          "errorMessage": "Cette tâche n'existe pas ou vous n'avez pas accès à son contenu."
         },
         "fields": {
           "title": "Titre",
           "description": "Description",
           "status": "Statut",
           "priority": "Priorité",
-          "epic": "Epic",
-          "sprint": "Sprint",
+          "epic": "Objectif",
+          "sprint": "Semaine",
           "position": "Position",
           "labels": "Labels",
           "none": "Aucun"
@@ -832,7 +832,7 @@
         "icon": "🎨",
         "emailNotifications": {
           "label": "Notifications par email",
-          "description": "Recevoir des emails sur l'activité de vos workspaces"
+          "description": "Recevoir des emails sur l'activité de vos espaces"
         },
         "theme": {
           "label": "Thème",
@@ -922,50 +922,50 @@
     },
     "landing": {
       "hero": {
-        "title": "Workbench",
-        "subtitle": "Gérez vos projets avec clarté. Un outil simple, visuel et structuré pour rester concentré sur l'essentiel.",
+        "title": "La charge mentale, c'est fini.",
+        "subtitle": "Un espace partagé pour que vous et votre partenaire avanciez ensemble, sans tout porter seul·e.",
         "ctaSignUp": "Créer son compte gratuitement",
         "ctaSignIn": "Se connecter"
       },
       "values": {
         "title": "Pourquoi Workbench ?",
         "simplicity": {
-          "icon": "✨",
-          "title": "Simple par nature",
-          "description": "Pas de configuration complexe, pas de surcharge. Créez un projet et commencez à travailler en quelques secondes."
+          "icon": "❤️",
+          "title": "Pour vous deux",
+          "description": "Partagez et assignez les tâches en quelques secondes."
         },
         "clarity": {
-          "icon": "🎯",
-          "title": "Clarté à chaque étape",
-          "description": "Un backlog propre, un tableau visuel et des epics structurés. Chaque vue vous donne exactement ce dont vous avez besoin."
+          "icon": "🧠",
+          "title": "Videz votre tête",
+          "description": "Sortez tout ce qui tourne dans votre esprit, organisez-le ensemble."
         },
         "control": {
-          "icon": "🛠️",
-          "title": "Contrôle total",
-          "description": "Personnalisez vos colonnes, filtrez, triez et organisez votre travail comme vous le souhaitez. Votre espace, vos règles."
+          "icon": "✅",
+          "title": "Avancez vraiment",
+          "description": "Suivez la progression de vos projets de vie."
         }
       },
       "features": {
-        "title": "Tout ce qu'il faut, rien de superflu",
+        "title": "Des cas d'usage pensés pour la vie de famille",
         "backlog": {
           "icon": "📋",
-          "title": "Backlog",
-          "description": "Créez, filtrez et priorisez vos tickets. Une vue claire de tout ce qui reste à faire."
+          "title": "Courses de la semaine",
+          "description": "Préparez la liste, répartissez les achats et suivez ce qui est déjà fait."
         },
         "board": {
-          "icon": "📊",
-          "title": "Tableau visuel",
-          "description": "Glissez-déposez vos tickets entre colonnes personnalisées. Visualisez votre flux de travail en un coup d'œil."
+          "icon": "🧹",
+          "title": "Tâches ménagères",
+          "description": "Répartissez les tâches du quotidien pour que tout le monde avance ensemble."
         },
         "epics": {
-          "icon": "🗂️",
-          "title": "Epics",
-          "description": "Regroupez vos tickets par thématique. Suivez la progression de chaque initiative avec précision."
+          "icon": "🏠",
+          "title": "Projet maison",
+          "description": "Suivez vos rénovations ou aménagements étape par étape, sans oublier l'essentiel."
         },
         "subtasks": {
-          "icon": "✅",
-          "title": "Sous-tâches",
-          "description": "Décomposez les tickets complexes en étapes simples. Avancez pas à pas, sans perdre le fil."
+          "icon": "🏖️",
+          "title": "Planning vacances",
+          "description": "Centralisez réservations, valises et démarches pour préparer les vacances sereinement."
         }
       },
       "trust": {
@@ -1086,12 +1086,12 @@
         "title": "Comparaison détaillée des offres"
       },
       "features": {
-        "workspaces": "Espaces de travail",
+        "workspaces": "Espaces",
         "membersPerWorkspace": "Membres par espace",
-        "tickets": "Tickets",
+        "tickets": "Tâches",
         "boardView": "Vue Tableau",
-        "backlogView": "Vue Backlog",
-        "epics": "Epics",
+        "backlogView": "Vue Liste des tâches",
+        "epics": "Objectifs",
         "subtasks": "Sous-tâches",
         "customColumns": "Colonnes personnalisées",
         "priorities": "Priorités",
@@ -1152,14 +1152,14 @@
       "ctaLabel": "Voir les tarifs",
       "ctaAriaLabel": "Voir les tarifs et passer à un plan supérieur",
       "featureNames": {
-        "epics": "Epics",
+        "epics": "Objectifs",
         "subtasks": "Sous-tâches",
         "priorities": "Priorités",
         "exportImport": "Export / Import",
         "advancedRoles": "Rôles avancés",
-        "workspaces": "Espaces de travail",
+        "workspaces": "Espaces",
         "membersPerWorkspace": "Membres par espace",
-        "tickets": "Tickets",
+        "tickets": "Tâches",
         "customColumns": "Colonnes personnalisées"
       },
       "planBadges": {
@@ -1248,12 +1248,12 @@
       "DATABASE_ERROR": "Une erreur de base de données s'est produite"
     },
     "domain": {
-      "INVALID_TICKET_PARENT": "Le ticket ne peut pas être son propre parent",
+      "INVALID_TICKET_PARENT": "La tâche ne peut pas être son propre parent",
       "INVALID_TICKET_PARENT_MULTI_LEVEL": "L'imbrication multi-niveaux n'est pas autorisée",
-      "TICKET_PROJECT_MISMATCH": "Le ticket n'appartient pas au même projet",
-      "TICKET_HAS_SUBTASKS": "Le ticket ne peut pas être supprimé car il contient des sous-tâches",
-      "DUPLICATE_EPIC_ASSIGNMENT": "Le ticket est déjà assigné à un autre epic",
-      "INVALID_EPIC_TICKET_CONSISTENCY": "Incohérence dans l'assignation du ticket à l'epic",
+      "TICKET_PROJECT_MISMATCH": "La tâche n'appartient pas au même projet",
+      "TICKET_HAS_SUBTASKS": "La tâche ne peut pas être supprimée car elle contient des sous-tâches",
+      "DUPLICATE_EPIC_ASSIGNMENT": "La tâche est déjà assignée à un autre objectif",
+      "INVALID_EPIC_TICKET_CONSISTENCY": "Incohérence dans l'assignation de la tâche à l'objectif",
       "INVALID_COLUMN_ORDER": "Ordre de colonnes invalide",
       "DUPLICATE_COLUMN_STATUS": "Statut de colonne en double",
       "INVALID_BOARD_COLUMN_RELATIONSHIP": "La colonne n'appartient pas au tableau spécifié",
