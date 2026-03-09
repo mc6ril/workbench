@@ -1,34 +1,19 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
+import React, { useCallback, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
+
+import { useModalAccessibility } from "@/presentation/hooks/modal/useModalAccessibility";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
+import ModalDialog from "./components/ModalDialog";
 import styles from "./Modal.module.scss";
+import type { ModalProps } from "./Modal.types";
 
-type ModalSize = "small" | "medium" | "large" | "full";
-
-type Props = {
-  /** Whether modal is open */
-  isOpen: boolean;
-  /** Close handler */
-  onClose: () => void;
-  /** Modal title */
-  title: string;
-  /** Modal content */
-  children: React.ReactNode;
-  /** Optional modal footer */
-  footer?: React.ReactNode;
-  /** Modal size variant */
-  size?: ModalSize;
-  /** Whether to close on backdrop click */
-  closeOnBackdropClick?: boolean;
-  /** Custom ARIA label */
-  ariaLabel?: string;
-  /** Custom ARIA description ID */
-  ariaDescribedBy?: string;
+const subscribeToHydration = (): (() => void) => {
+  return () => {};
 };
 
 /**
@@ -56,118 +41,24 @@ const Modal = ({
   closeOnBackdropClick = true,
   ariaLabel,
   ariaDescribedBy,
-}: Props) => {
+}: ModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const t = useTranslation("common");
   const isHydrated = useSyncExternalStore(
-    () => () => {},
+    subscribeToHydration,
     () => true,
     () => false
   );
 
   const modalId = getAccessibilityId("modal");
   const titleId = getAccessibilityId("modal-title");
-  const descriptionId =
-    ariaDescribedBy || getAccessibilityId("modal-description");
+  const descriptionId = ariaDescribedBy ?? getAccessibilityId("modal-description");
 
-  // Body scroll lock
-  useEffect(() => {
-    if (isOpen) {
-      const originalStyle = window.getComputedStyle(document.body).overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = originalStyle;
-      };
-    }
-  }, [isOpen]);
-
-  // Focus management
-  useEffect(() => {
-    if (isOpen) {
-      previousActiveElementRef.current = document.activeElement as HTMLElement;
-      const firstFocusable = modalRef.current?.querySelector(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      ) as HTMLElement;
-      firstFocusable?.focus();
-    } else {
-      previousActiveElementRef.current?.focus();
-    }
-  }, [isOpen]);
-
-  // Focus trapping
-  const handleTabKey = useCallback(
-    (e: KeyboardEvent) => {
-      if (!isOpen || !modalRef.current) {
-        return;
-      }
-
-      const focusableElements = modalRef.current.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-      const firstFocusable = focusableElements[0] as HTMLElement;
-      const lastFocusable = focusableElements[
-        focusableElements.length - 1
-      ] as HTMLElement;
-
-      if (e.shiftKey) {
-        if (document.activeElement === firstFocusable) {
-          e.preventDefault();
-          lastFocusable?.focus();
-        }
-      } else {
-        if (document.activeElement === lastFocusable) {
-          e.preventDefault();
-          firstFocusable?.focus();
-        }
-      }
-    },
-    [isOpen]
-  );
-
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener("keydown", handleTabKey);
-      return () => {
-        document.removeEventListener("keydown", handleTabKey);
-      };
-    }
-  }, [isOpen, handleTabKey]);
-
-  // Escape key handling
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (isOpen && e.key === "Escape") {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("keydown", handleEscape);
-      return () => {
-        document.removeEventListener("keydown", handleEscape);
-      };
-    }
-  }, [isOpen, onClose]);
-
-  // Hide background content from screen readers
-  useEffect(() => {
-    if (isOpen) {
-      const mainContent = document.querySelector("main");
-      if (mainContent) {
-        mainContent.setAttribute("aria-hidden", "true");
-      }
-      return () => {
-        if (mainContent) {
-          mainContent.removeAttribute("aria-hidden");
-        }
-      };
-    }
-  }, [isOpen]);
+  useModalAccessibility({ isOpen, modalRef, onClose });
 
   const handleBackdropClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (closeOnBackdropClick && e.target === e.currentTarget) {
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      if (closeOnBackdropClick && event.target === event.currentTarget) {
         onClose();
       }
     },
@@ -184,46 +75,31 @@ const Modal = ({
     return null;
   }
 
-  const modalContent = createPortal(
+  return createPortal(
     <div
       className={styles["modal-backdrop"]}
       onClick={handleBackdropClick}
       aria-hidden="true"
     >
-      <div
-        ref={modalRef}
-        id={modalId}
-        className={`${styles.modal} ${styles[`modal--${size}`]}`}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        aria-describedby={ariaDescribedBy ? descriptionId : undefined}
-        aria-label={ariaLabel}
-        onClick={(e) => e.stopPropagation()}
+      <ModalDialog
+        modalRef={modalRef}
+        modalId={modalId}
+        size={size}
+        titleId={titleId}
+        title={title}
+        descriptionId={descriptionId}
+        ariaDescribedBy={ariaDescribedBy}
+        ariaLabel={ariaLabel}
+        dismissAriaLabel={t("dismissAriaLabel")}
+        dismissLabel={t("dismiss")}
+        onCloseButtonClick={handleCloseButtonClick}
+        footer={footer}
       >
-        <div className={styles["modal__header"]}>
-          <h2 id={titleId} className={styles["modal__title"]}>
-            {title}
-          </h2>
-          <button
-            type="button"
-            onClick={handleCloseButtonClick}
-            className={styles["modal__close-button"]}
-            aria-label={t("dismissAriaLabel")}
-          >
-            {t("dismiss")}
-          </button>
-        </div>
-        <div id={descriptionId} className={styles["modal__body"]}>
-          {children}
-        </div>
-        {footer && <div className={styles["modal__footer"]}>{footer}</div>}
-      </div>
+        {children}
+      </ModalDialog>
     </div>,
     portalTarget
   );
-
-  return modalContent;
 };
 
 export default React.memo(Modal);

@@ -37,7 +37,9 @@ const AssigneePickerDropdown = ({
           <button
             key={member.userId}
             className={optionClasses}
-            onClick={() => onToggle(member.userId)}
+            onClick={() => {
+              void onToggle(member.userId);
+            }}
             disabled={isDisabled}
             role="option"
             aria-selected={isAssigned}

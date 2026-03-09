@@ -59,13 +59,17 @@ const AssigneePicker = ({
         return;
       }
 
-      if (assignedUserIds.has(userId)) {
-        await onUnassign(userId);
-      } else {
-        await onAssign(userId);
+      try {
+        if (assignedUserIds.has(userId)) {
+          await onUnassign(userId);
+        } else {
+          await onAssign(userId);
+        }
+        // Close after selection to avoid requiring an extra click.
+        setIsOpen(false);
+      } catch {
+        // Keep dropdown open so user can retry after a failed mutation.
       }
-      // Close after selection to avoid requiring an extra click.
-      setIsOpen(false);
     },
     [assignedUserIds, disabled, onAssign, onUnassign]
   );
