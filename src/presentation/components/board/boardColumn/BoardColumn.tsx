@@ -21,6 +21,15 @@ import type { BoardTicketViewModel } from "@/shared/types/board";
 
 import styles from "./BoardColumn.module.scss";
 
+const SORTABLE_TRANSITION = Object.freeze({
+  duration: 160,
+  easing: "cubic-bezier(0.25, 1, 0.5, 1)",
+});
+
+const getColumnClassName = (className?: string): string => {
+  return [styles["board-column"], className].filter(Boolean).join(" ");
+};
+
 type SortableTicketItemProps = {
   ticket: BoardTicketViewModel;
   isSortable: boolean;
@@ -42,17 +51,16 @@ const SortableTicketItem = ({
   } = useSortable({
     id: ticket.id,
     disabled: !isSortable,
-    animateLayoutChanges: (args) => defaultAnimateLayoutChanges(args),
-    transition: {
-      duration: 160,
-      easing: "cubic-bezier(0.25, 1, 0.5, 1)",
-    },
+    animateLayoutChanges: defaultAnimateLayoutChanges,
+    transition: SORTABLE_TRANSITION,
   });
 
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+  const style = useMemo<React.CSSProperties>(() => {
+    return {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+  }, [transform, transition]);
   const sortableProps = isSortable ? { ...attributes, ...listeners } : {};
 
   return (
@@ -85,15 +93,22 @@ const BoardColumn = ({
     disabled: !isSortable,
   });
 
-  const baseId = useMemo(() => getAccessibilityId(`board-column-${id}`), [id]);
+  const { sectionId, headerId, listId } = useMemo(() => {
+    const baseId = getAccessibilityId(`board-column-${id}`);
+    return {
+      sectionId: baseId,
+      headerId: `${baseId}-header`,
+      listId: `${baseId}-list`,
+    };
+  }, [id]);
 
-  const sectionId = baseId;
-  const headerId = `${baseId}-header`;
-  const listId = `${baseId}-list`;
-
-  const columnClasses = [styles["board-column"], className]
-    .filter(Boolean)
-    .join(" ");
+  const ticketIds = useMemo(() => {
+    return tickets.map((ticket) => ticket.id);
+  }, [tickets]);
+  const columnClasses = useMemo(
+    () => getColumnClassName(className),
+    [className]
+  );
 
   return (
     <section
@@ -121,7 +136,7 @@ const BoardColumn = ({
         data-dragging={isDragging}
       >
         <SortableContext
-          items={tickets.map((ticket) => ticket.id)}
+          items={ticketIds}
           strategy={verticalListSortingStrategy}
         >
           {tickets.map((ticket) => {
@@ -135,7 +150,7 @@ const BoardColumn = ({
             );
           })}
         </SortableContext>
-        {tickets.length === 0 && (
+        {ticketIds.length === 0 && (
           <li className={styles["board-column__list-item"]} />
         )}
       </ul>

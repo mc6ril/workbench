@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 
-import Button from "@/presentation/components/ui/Button";
 import Card from "@/presentation/components/ui/Card";
 import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
@@ -10,6 +9,9 @@ import Title from "@/presentation/components/ui/Title";
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
+import ExportSection from "./components/ExportSection";
+import ImportSection from "./components/ImportSection";
+import LiveRegionMessage from "./components/LiveRegionMessage";
 import styles from "./ExportImportSettings.module.scss";
 
 type Props = {
@@ -33,7 +35,10 @@ const ExportImportSettings = ({
 }: Props) => {
   const t = useTranslation("pages.settings.exportImport");
 
-  const baseId = useMemo(() => getAccessibilityId("settings-export-import"), []);
+  const baseId = useMemo(
+    () => getAccessibilityId("settings-export-import"),
+    []
+  );
   const titleId = `${baseId}-title`;
   const liveRegionId = `${baseId}-live-region`;
   const fileInputId = `${baseId}-file-input`;
@@ -43,122 +48,64 @@ const ExportImportSettings = ({
     .join(" ");
 
   const isBusy = isExporting || isImporting;
-
-  const handleFileChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>): void => {
-      if (!onImportFile) {
-        return;
-      }
-
-      const file = event.target.files?.[0];
-      if (!file) {
-        return;
-      }
-
-      onImportFile(file);
-      event.target.value = "";
-    },
-    [onImportFile]
-  );
-
   const liveMessage = errorMessage || statusMessage || "";
+  const hasLiveMessage = Boolean(liveMessage);
 
   return (
     <section
       className={containerClasses}
       aria-labelledby={titleId}
-      aria-describedby={liveMessage ? liveRegionId : undefined}
+      aria-describedby={hasLiveMessage ? liveRegionId : undefined}
       aria-busy={isBusy ? "true" : undefined}
     >
       <Card className={styles["export-import-settings__card"]}>
         <header className={styles["export-import-settings__header"]}>
           <div className={styles["export-import-settings__header-text"]}>
-            <Title id={titleId} variant="h2" className={styles["export-import-settings__title"]}>
+            <Title
+              id={titleId}
+              variant="h2"
+              className={styles["export-import-settings__title"]}
+            >
               {t("title")}
             </Title>
-            <Text as="p" variant="caption" className={styles["export-import-settings__subtitle"]}>
+            <Text
+              as="p"
+              variant="caption"
+              className={styles["export-import-settings__subtitle"]}
+            >
               {t("subtitle")}
             </Text>
           </div>
         </header>
-
-        <div
+        <LiveRegionMessage
           id={liveRegionId}
-          className={styles["export-import-settings__live-region"]}
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          {liveMessage && (
-            <Text
-              as="p"
-              variant="body"
-              className={
-                errorMessage
-                  ? styles["export-import-settings__message-error"]
-                  : styles["export-import-settings__message"]
-              }
-            >
-              {liveMessage}
-            </Text>
-          )}
-        </div>
+          message={liveMessage}
+          isError={Boolean(errorMessage)}
+        />
 
         <div className={styles["export-import-settings__sections"]}>
-          <section className={styles["export-import-settings__section"]}>
-            <Title variant="h3" className={styles["export-import-settings__section-title"]}>
-              {t("export.title")}
-            </Title>
-            <Text as="p" variant="caption" className={styles["export-import-settings__section-hint"]}>
-              {t("export.hint")}
-            </Text>
-            {onExport && (
-              <Button
-                label={isExporting ? t("export.exporting") : t("export.action")}
-                onClick={onExport}
-                variant="primary"
-                disabled={isBusy}
-              />
-            )}
-          </section>
-
-          <section className={styles["export-import-settings__section"]}>
-            <Title variant="h3" className={styles["export-import-settings__section-title"]}>
-              {t("import.title")}
-            </Title>
-            <Text as="p" variant="caption" className={styles["export-import-settings__section-hint"]}>
-              {t("import.hint")}
-            </Text>
-
-            {onImportFile && (
-              <div className={styles["export-import-settings__import-controls"]}>
-                <label
-                  htmlFor={fileInputId}
-                  className={styles["export-import-settings__file-label"]}
-                >
-                  {t("import.fileLabel")}
-                </label>
-                <input
-                  id={fileInputId}
-                  type="file"
-                  accept={t("import.accept")}
-                  onChange={handleFileChange}
-                  disabled={isBusy}
-                  aria-label={t("import.fileAriaLabel")}
-                  className={styles["export-import-settings__file-input"]}
-                />
-                <Text as="p" variant="caption" className={styles["export-import-settings__file-hint"]}>
-                  {t("import.fileHint")}
-                </Text>
-              </div>
-            )}
-
-            {isImporting && (
-              <Text as="p" variant="body" className={styles["export-import-settings__message"]}>
-                {t("import.importing")}
-              </Text>
-            )}
-          </section>
+          <ExportSection
+            title={t("export.title")}
+            hint={t("export.hint")}
+            actionLabel={
+              isExporting ? t("export.exporting") : t("export.action")
+            }
+            isBusy={isBusy}
+            onExport={onExport}
+          />
+          <ImportSection
+            fileInputId={fileInputId}
+            title={t("import.title")}
+            hint={t("import.hint")}
+            fileLabel={t("import.fileLabel")}
+            accept={t("import.accept")}
+            fileAriaLabel={t("import.fileAriaLabel")}
+            fileHint={t("import.fileHint")}
+            importingLabel={t("import.importing")}
+            isBusy={isBusy}
+            isImporting={isImporting}
+            onImportFile={onImportFile}
+          />
         </div>
       </Card>
     </section>
@@ -166,4 +113,3 @@ const ExportImportSettings = ({
 };
 
 export default React.memo(ExportImportSettings);
-
