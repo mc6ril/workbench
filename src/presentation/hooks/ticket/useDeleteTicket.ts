@@ -13,7 +13,7 @@ type DeleteTicketVariables = {
 
 /**
  * Hook for deleting a ticket.
- * Invalidates the project tickets root on success.
+ * Invalidates project ticket and epic caches on success.
  *
  * Note: `projectId` is required for reliable invalidation without extra fetches.
  */
@@ -26,6 +26,9 @@ export const useDeleteTicket = () => {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.ticketsRoot(variables.projectId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.epicsRoot(variables.projectId),
       });
     },
   });
