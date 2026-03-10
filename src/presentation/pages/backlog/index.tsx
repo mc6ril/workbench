@@ -127,11 +127,14 @@ const BacklogPage = ({ projectId }: Props) => {
     if (!selectedTicket) {
       return baseTitle;
     }
+    const humanReadableCode =
+      buildTicketCode(project?.shortCode, selectedTicket.codeNumber) ??
+      selectedTicket.codeNumber;
     const ticketCode = tTicket("ticketCode", {
-      code: selectedTicket.codeNumber,
+      code: humanReadableCode,
     });
     return `${ticketCode} ${selectedTicket.title}`;
-  }, [selectedTicket, tTicket]);
+  }, [project?.shortCode, selectedTicket, tTicket]);
 
   const statusOptions = useMemo(() => {
     const columns = boardConfiguration?.columns ?? [];

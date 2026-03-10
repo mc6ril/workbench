@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
@@ -21,6 +21,7 @@ import Text from "@/presentation/components/ui/Text";
 import { useSession } from "@/presentation/hooks/auth/useSession";
 import { useAddUserToProject } from "@/presentation/hooks/project/useAddUserToProject";
 import { useCreateProject } from "@/presentation/hooks/project/useCreateProject";
+import { useLastActivitySubtitle } from "@/presentation/hooks/project/useLastActivitySubtitle";
 import { useProjectsWithStats } from "@/presentation/hooks/project/useProjectsWithStats";
 import { useReclaimableProjects } from "@/presentation/hooks/project/useReclaimableProjects";
 import { shouldShowLoading } from "@/presentation/utils/queryStatus";
@@ -36,6 +37,27 @@ import { buildProjectRoute } from "@/shared/utils/routes";
 import styles from "./styles.module.scss";
 
 type CreateProjectFormData = CreateProjectInput;
+
+const WORKSPACE_EMOJI_OPTIONS = Object.freeze([
+  "🏡",
+  "🏠",
+  "👨‍👩‍👧‍👦",
+  "❤️",
+  "🧺",
+  "🛒",
+  "📆",
+  "🌿",
+]);
+
+const stripWorkspaceEmojiPrefix = (value: string): string => {
+  const trimmed = value.trim();
+  for (const emoji of WORKSPACE_EMOJI_OPTIONS) {
+    if (trimmed.startsWith(`${emoji} `)) {
+      return trimmed.slice(emoji.length + 1).trim();
+    }
+  }
+  return trimmed;
+};
 
 const WorkspacePage = () => {
   const router = useRouter();
@@ -54,6 +76,9 @@ const WorkspacePage = () => {
   const [joinError, setJoinError] = useState<string | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [joinModalOpen, setJoinModalOpen] = useState(false);
+  const [selectedEmoji, setSelectedEmoji] = useState<string>(
+    WORKSPACE_EMOJI_OPTIONS[0]
+  );
   const [reclaimingProjectId, setReclaimingProjectId] = useState<string | null>(
     null
   );
@@ -79,6 +104,8 @@ const WorkspacePage = () => {
     formState: { errors },
     setError: setFormError,
     reset: resetCreateForm,
+    setValue,
+    getValues,
   } = useForm<CreateProjectFormData>({
     resolver: zodResolver(CreateProjectInputSchema),
     mode: "onBlur",
@@ -87,6 +114,7 @@ const WorkspacePage = () => {
   const openCreateModal = useCallback(() => {
     setCreateModalOpen(true);
     resetCreateForm();
+    setSelectedEmoji(WORKSPACE_EMOJI_OPTIONS[0]);
   }, [resetCreateForm]);
 
   const closeCreateModal = useCallback(() => {
@@ -180,7 +208,12 @@ const WorkspacePage = () => {
     }
     isSubmittingRef.current = true;
     try {
-      await createProjectMutation.mutateAsync(data);
+      const normalizedName = stripWorkspaceEmojiPrefix(data.name);
+      const prefixedName = `${selectedEmoji} ${normalizedName}`.trim();
+      await createProjectMutation.mutateAsync({
+        ...data,
+        name: prefixedName,
+      });
     } finally {
       submitTimerRef.current = setTimeout(() => {
         isSubmittingRef.current = false;
@@ -188,6 +221,14 @@ const WorkspacePage = () => {
       }, 100);
     }
   };
+
+  const formatLastActivity = useLastActivitySubtitle();
+
+  const selectedEmojiIndex = useMemo(() => {
+    return WORKSPACE_EMOJI_OPTIONS.findIndex(
+      (emoji) => emoji === selectedEmoji
+    );
+  }, [selectedEmoji]);
 
   const showInitialLoader =
     shouldShowLoading({
@@ -386,6 +427,9 @@ const WorkspacePage = () => {
                       </div>
                     </div>
                     <h3 className={styles["workspace-name"]}>{project.name}</h3>
+                    <p className={styles["workspace-last-activity"]}>
+                      {formatLastActivity(project.updatedAt)}
+                    </p>
                     <div className={styles["workspace-meta"]}>
                       <span className={styles["workspace-meta-item"]}>
                         <span aria-hidden="true">👥</span>
@@ -487,6 +531,41 @@ const WorkspacePage = () => {
         <Text variant="small" className={styles["workspace-modal-description"]}>
           {t("createWorkspaceDescription")}
         </Text>
+        <div
+          className={styles["workspace-emoji-picker"]}
+          role="group"
+          aria-label={t("emojiPickerAriaLabel")}
+        >
+          <Text
+            variant="small"
+            className={styles["workspace-emoji-picker__label"]}
+          >
+            {t("emojiPickerLabel")}
+          </Text>
+          <div className={styles["workspace-emoji-picker__list"]}>
+            {WORKSPACE_EMOJI_OPTIONS.map((emoji, index) => (
+              <button
+                key={emoji}
+                type="button"
+                className={
+                  index === selectedEmojiIndex
+                    ? `${styles["workspace-emoji-option"]} ${styles["workspace-emoji-option--selected"]}`
+                    : styles["workspace-emoji-option"]
+                }
+                aria-label={t("emojiPickerOptionAriaLabel", { emoji })}
+                onClick={() => {
+                  setSelectedEmoji(emoji);
+                  const currentName = stripWorkspaceEmojiPrefix(
+                    getValues("name") ?? ""
+                  );
+                  setValue("name", currentName, { shouldValidate: true });
+                }}
+              >
+                {emoji}
+              </button>
+            ))}
+          </div>
+        </div>
         <Form
           onSubmit={handleSubmit(onCreateProjectSubmit)}
           className={styles["workspace-modal-form"]}

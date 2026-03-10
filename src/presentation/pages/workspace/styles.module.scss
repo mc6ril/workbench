@@ -224,6 +224,12 @@
   margin-bottom: $spacing-sm;
 }
 
+.workspace-last-activity {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-md;
+}
+
 .workspace-meta {
   display: flex;
   gap: $spacing-lg;
@@ -457,6 +463,48 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-lg;
+}
+
+.workspace-emoji-picker {
+  margin-bottom: $spacing-xl;
+}
+
+.workspace-emoji-picker__label {
+  display: block;
+  margin-bottom: $spacing-sm;
+  color: $color-text-secondary;
+}
+
+.workspace-emoji-picker__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.workspace-emoji-option {
+  width: $spacing-4xl;
+  height: $spacing-4xl;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-md;
+  background: $color-secondary;
+  cursor: pointer;
+  font-size: $font-size-xl;
+  line-height: 1;
+  transition: border-color $animation-duration-base $easing-ease-out;
+
+  &:hover {
+    border-color: $color-accent;
+  }
+
+  &:focus {
+    outline: $border-width-thick solid $color-focus;
+    outline-offset: $border-width-thick;
+  }
+}
+
+.workspace-emoji-option--selected {
+  border-color: $color-accent;
+  background: $color-accent-bg-soft;
 }
 
 // ============================================================================

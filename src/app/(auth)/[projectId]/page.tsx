@@ -1,6 +1,5 @@
 import ProjectHeader from "@/presentation/components/projectHeader/ProjectHeader";
-import Container from "@/presentation/components/ui/Container";
-import Stack from "@/presentation/components/ui/Stack";
+import ProjectHomeDashboard from "@/presentation/components/projectHomeDashboard/ProjectHomeDashboard";
 
 import { getProjectForRoute } from "./getProjectForRoute";
 import styles from "./ProjectPage.module.scss";
@@ -18,16 +17,20 @@ const ProjectPage = async ({
   const project = await getProjectForRoute(projectId);
 
   return (
-    <div className={styles["project-page"]}>
-      <Container maxWidth="large" className={styles["project-page__container"]}>
-        <Stack spacing="xl">
+    <main className={styles["project-page"]}>
+      <div className={styles["project-page__header"]}>
+        <div className={styles["project-page__header-content"]}>
           <ProjectHeader
+            projectId={projectId}
             name={project.name}
-            updatedAtIso={project.updatedAt.toISOString()}
+            fallbackUpdatedAtIso={project.updatedAt.toISOString()}
           />
-        </Stack>
-      </Container>
-    </div>
+        </div>
+      </div>
+      <div className={styles["project-page__container"]}>
+        <ProjectHomeDashboard projectId={projectId} />
+      </div>
+    </main>
   );
 };
 
