@@ -325,11 +325,25 @@
     },
     "projectHome": {
       "title": "Accueil",
+      "lastActivityNow": "Dernière activité: à l'instant",
       "lastActivityHours": "Dernière activité: {hours} heure",
       "lastActivityHours_plural": "Dernière activité: {hours} heures",
       "lastActivityDays": "Dernière activité: {days} jour",
       "lastActivityDays_plural": "Dernière activité: {days} jours",
       "lastActivityDate": "Dernière activité: {date}",
+      "myTasksTitle": "Mes tâches",
+      "myTasksDescription": "Vos tâches assignées en priorité.",
+      "myTasksEmpty": "Aucune tâche personnelle pour le moment.",
+      "recentTitle": "Récent",
+      "recentDescription": "Les derniers éléments mis à jour dans ce projet.",
+      "recentEmpty": "Aucune activité récente pour l'instant.",
+      "openBacklog": "Voir toutes les tâches",
+      "openBacklogAriaLabel": "Ouvrir la liste complète des tâches",
+      "goalProgressDeltaTitle": "Objectifs qui avancent",
+      "goalProgressDeltaDescription": "Les objectifs récemment travaillés avec une vraie progression.",
+      "goalProgressDeltaEmpty": "Aucun objectif n'a progressé récemment.",
+      "goalProgressDeltaValue": "+ {progress}%",
+      "goalProgressCurrentValue": "Avancement actuel : {progress}%",
       "shortcutsWidget": {
         "title": "Raccourcis",
         "shortcuts": {
@@ -371,6 +385,9 @@
       "createWorkspaceDescription": "Donnez un nom à votre nouvel espace pour commencer.",
       "projectNameLabel": "Nom de l'espace de travail",
       "projectNamePlaceholder": "Ex. Mon projet",
+      "emojiPickerLabel": "Choisissez une ambiance",
+      "emojiPickerAriaLabel": "Sélecteur d'emoji d'espace",
+      "emojiPickerOptionAriaLabel": "Choisir l'emoji {emoji}",
       "createButton": "Créer l'espace",
       "createButtonAriaLabel": "Créer l'espace",
       "joinWorkspaceTitle": "Rejoindre un espace existant",
@@ -397,9 +414,9 @@
       },
       "footer": {
         "ariaLabel": "Liens utiles et informations",
-        "account": "Paramètres du compte",
-        "legal": "Mentions légales",
-        "subscriptions": "Abonnements"
+        "account": "Mon compte",
+        "legal": "Informations légales",
+        "subscriptions": "Plans et options"
       }
     },
     "backlog": {
@@ -477,6 +494,14 @@
         "ariaLabel": "Vue tableau de bord",
         "loading": "Chargement du tableau...",
         "emptyMessage": "Aucune tâche dans le tableau pour le moment. Ajoutez-en une pour lancer la dynamique."
+      },
+      "quickAdd": {
+        "label": "Ajout rapide",
+        "placeholder": "Ajouter une tâche sans ouvrir de fenêtre",
+        "button": "Ajouter",
+        "buttonAriaLabel": "Ajouter rapidement une tâche",
+        "success": "Tâche \"{title}\" ajoutée.",
+        "error": "Impossible d'ajouter la tâche. Réessayez."
       },
       "column": {
         "ariaLabel": "Colonne {title}",
@@ -729,7 +754,7 @@
       "page": {
         "title": "Détail de la tâche",
         "modalTitle": "Tâche",
-        "ticketCode": "WB-{code}",
+        "ticketCode": "Ref. {code}",
         "actions": {
           "save": "Enregistrer",
           "delete": "Supprimer la tâche",
@@ -928,7 +953,7 @@
         "ctaSignIn": "Se connecter"
       },
       "values": {
-        "title": "Pourquoi Workbench ?",
+        "title": "Pourquoi Maison Duo ?",
         "simplicity": {
           "icon": "❤️",
           "title": "Pour vous deux",
@@ -977,7 +1002,7 @@
       },
       "cta": {
         "title": "Prêt à vous organiser ?",
-        "description": "Rejoignez Workbench et commencez à gérer vos projets avec sérénité.",
+        "description": "Rejoignez Maison Duo et commencez à gérer vos projets avec sérénité.",
         "button": "Commencer gratuitement"
       },
       "footer": {

@@ -18,9 +18,30 @@
   min-height: 0;
 }
 
+.board-quick-add {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: $spacing-md;
+  align-items: flex-end;
+}
+
+.board-quick-add__input {
+  min-width: min(100%, $spacing-unit * 80);
+}
+
 .board-overlay {
-  width: 320px;
+  width: $spacing-unit * 80;
   max-width: 100%;
   pointer-events: none;
   box-shadow: $shadow-lg;
+}
+
+@media (max-width: $breakpoint-md) {
+  .board-quick-add {
+    grid-template-columns: 1fr;
+  }
+
+  .board-quick-add__input {
+    min-width: 0;
+  }
 }

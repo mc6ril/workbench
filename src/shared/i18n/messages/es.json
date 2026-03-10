@@ -325,11 +325,25 @@
     },
     "projectHome": {
       "title": "Inicio",
+      "lastActivityNow": "Última actividad: justo ahora",
       "lastActivityHours": "Última actividad: {hours} hora",
       "lastActivityHours_plural": "Última actividad: {hours} horas",
       "lastActivityDays": "Última actividad: {days} día",
       "lastActivityDays_plural": "Última actividad: {days} días",
       "lastActivityDate": "Última actividad: {date}",
+      "myTasksTitle": "Mis tareas",
+      "myTasksDescription": "Tus tareas asignadas para priorizar.",
+      "myTasksEmpty": "No hay tareas personales por ahora.",
+      "recentTitle": "Reciente",
+      "recentDescription": "Los ultimos elementos actualizados en este proyecto.",
+      "recentEmpty": "Aun no hay actividad reciente.",
+      "openBacklog": "Ver todas las tareas",
+      "openBacklogAriaLabel": "Abrir la lista completa de tareas",
+      "goalProgressDeltaTitle": "Objetivos en avance",
+      "goalProgressDeltaDescription": "Objetivos trabajados recientemente con progreso real.",
+      "goalProgressDeltaEmpty": "Ningún objetivo avanzó recientemente.",
+      "goalProgressDeltaValue": "+ {progress}%",
+      "goalProgressCurrentValue": "Progreso actual: {progress}%",
       "shortcutsWidget": {
         "title": "Accesos directos",
         "shortcuts": {
@@ -371,6 +385,9 @@
       "createWorkspaceDescription": "Dale un nombre a tu nuevo espacio para empezar.",
       "projectNameLabel": "Nombre del espacio de trabajo",
       "projectNamePlaceholder": "Ej. Mi proyecto",
+      "emojiPickerLabel": "Elige un estilo",
+      "emojiPickerAriaLabel": "Selector de emoji del espacio",
+      "emojiPickerOptionAriaLabel": "Elegir emoji {emoji}",
       "createButton": "Crear espacio",
       "createButtonAriaLabel": "Crear espacio",
       "joinWorkspaceTitle": "Unirse a un espacio existente",
@@ -397,9 +414,9 @@
       },
       "footer": {
         "ariaLabel": "Enlaces útiles e información",
-        "account": "Configuración de la cuenta",
-        "legal": "Aviso legal",
-        "subscriptions": "Suscripciones"
+        "account": "Mi cuenta",
+        "legal": "Informacion legal",
+        "subscriptions": "Planes y opciones"
       }
     },
     "backlog": {
@@ -478,6 +495,14 @@
         "loading": "Cargando tablero...",
         "emptyMessage": "Aun no hay tareas en el tablero. Añade una para empezar."
       },
+      "quickAdd": {
+        "label": "Alta rapida",
+        "placeholder": "Añade una tarea sin abrir una ventana",
+        "button": "Añadir",
+        "buttonAriaLabel": "Añadir rapidamente una tarea",
+        "success": "Tarea \"{title}\" añadida.",
+        "error": "No se pudo añadir la tarea. Intentalo de nuevo."
+      },
       "column": {
         "ariaLabel": "Columna {title}",
         "dropZoneAriaLabel": "Zona de soltar para la columna {title}",
@@ -515,41 +540,41 @@
     },
     "epics": {
       "epicsList": {
-        "ariaLabel": "Lista de epics",
-        "title": "Epics",
-        "count": "{count} epic",
-        "count_other": "{count} epics",
-        "emptyTitle": "Ningún epic",
-        "emptyMessage": "Crea tu primer epic para empezar",
-        "errorTitle": "Error al cargar los epics"
+        "ariaLabel": "Lista de objetivos",
+        "title": "Objetivos",
+        "count": "{count} objetivo",
+        "count_other": "{count} objetivos",
+        "emptyTitle": "Ningun objetivo",
+        "emptyMessage": "Crea tu primer objetivo para empezar",
+        "errorTitle": "Error al cargar los objetivos"
       },
       "epicCard": {
-        "epicAriaLabel": "Epic",
+        "epicAriaLabel": "Objetivo",
         "progressLabel": "{progress}% completado",
         "viewDetailLabel": "Ver detalles",
         "editLabel": "Editar",
         "deleteLabel": "Eliminar"
       },
       "createEpicForm": {
-        "title": "Crear epic",
+        "title": "Crear objetivo",
         "fields": {
           "name": "Nombre",
           "description": "Descripción"
         },
         "submitButton": "Crear",
         "cancelButton": "Cancelar",
-        "readOnlyHint": "Los lectores no pueden crear epics.",
-        "errorGeneric": "Se ha producido un error al crear el epic"
+        "readOnlyHint": "Los lectores no pueden crear objetivos.",
+        "errorGeneric": "Se ha producido un error al crear el objetivo"
       },
       "epicDetail": {
-        "title": "Detalles del epic",
-        "ticketsTitle": "Tickets asociados",
-        "noTickets": "Ningún ticket asociado",
+        "title": "Detalles del objetivo",
+        "ticketsTitle": "Tareas asociadas",
+        "noTickets": "Ninguna tarea asociada",
         "editLabel": "Editar",
         "deleteLabel": "Eliminar"
       },
       "epicProgress": {
-        "ariaLabel": "Progreso del epic",
+        "ariaLabel": "Progreso del objetivo",
         "progressLabel": "{progress}% completado"
       }
     },
@@ -658,10 +683,10 @@
     },
     "ticketDetail": {
       "ticketOverview": {
-        "ariaLabel": "Detalles del ticket",
+        "ariaLabel": "Detalles de la tarea",
         "meta": {
           "status": "Estado",
-          "epic": "Epic",
+          "epic": "Objetivo",
           "assignee": "Asignado a",
           "priority": "Prioridad",
           "storyPoints": "Story points",
@@ -671,29 +696,29 @@
         }
       },
       "ticketEditForm": {
-        "title": "Editar ticket",
-        "ariaLabel": "Formulario de edición del ticket",
+        "title": "Editar tarea",
+        "ariaLabel": "Formulario de edicion de la tarea",
         "fields": {
           "title": "Título",
           "status": "Estado",
-          "epic": "Epic",
+          "epic": "Objetivo",
           "description": "Descripción",
           "labels": "Etiquetas"
         },
         "epicNoneOption": "Ninguno",
         "saveButton": "Guardar",
         "cancelButton": "Cancelar",
-        "errorGeneric": "Se ha producido un error al guardar el ticket"
+        "errorGeneric": "Se ha producido un error al guardar la tarea"
       },
       "subtasks": {
         "list": {
           "title": "Subtareas",
-          "ariaLabel": "Sección de subtareas del ticket",
+          "ariaLabel": "Seccion de subtareas de la tarea",
           "itemsAriaLabel": "Lista de subtareas",
           "loadingAriaLabel": "Cargando subtareas",
           "errorTitle": "Error al cargar las subtareas",
           "emptyTitle": "Ninguna subtarea",
-          "emptyMessage": "Añade una subtarea para desglosar este ticket",
+          "emptyMessage": "Añade una subtarea para desglosar esta tarea",
           "emptyAriaLabel": "Ninguna subtarea"
         },
         "subtaskItem": {
@@ -714,44 +739,44 @@
         "errorGeneric": "Se ha producido un error al crear la subtarea"
       },
       "epicLinkSelector": {
-        "title": "Epic",
-        "loadingAriaLabel": "Cargando epics",
-        "errorTitle": "Error al cargar los epics",
-        "emptyTitle": "Ningún epic",
-        "emptyMessage": "Crea un epic para poder vincular este ticket",
-        "emptyAriaLabel": "Ningún epic disponible",
-        "selectLabel": "Vincular a un epic",
+        "title": "Objetivo",
+        "loadingAriaLabel": "Cargando objetivos",
+        "errorTitle": "Error al cargar los objetivos",
+        "emptyTitle": "Ningun objetivo",
+        "emptyMessage": "Crea un objetivo para poder vincular esta tarea",
+        "emptyAriaLabel": "Ningun objetivo disponible",
+        "selectLabel": "Vincular a un objetivo",
         "noneOption": "Ninguno",
-        "currentEpic": "Epic actual: {name}",
-        "noEpicSelected": "Ningún epic vinculado",
+        "currentEpic": "Objetivo actual: {name}",
+        "noEpicSelected": "Ningun objetivo vinculado",
         "unlinkButton": "Desvincular"
       },
       "page": {
-        "title": "Detalle del ticket",
-        "modalTitle": "Ticket",
-        "ticketCode": "WB-{code}",
+        "title": "Detalle de la tarea",
+        "modalTitle": "Tarea",
+        "ticketCode": "Ref. {code}",
         "actions": {
           "save": "Guardar",
-          "delete": "Eliminar ticket",
+          "delete": "Eliminar tarea",
           "deleteModal": {
-            "title": "Eliminar ticket",
-            "message": "Deseas eliminar este ticket? Esta accion no se puede deshacer.",
+            "title": "Eliminar tarea",
+            "message": "Deseas eliminar esta tarea? Esta accion no se puede deshacer.",
             "confirm": "Eliminar definitivamente",
             "deleting": "Eliminando..."
           },
           "openFullPage": "Abrir a pantalla completa"
         },
         "states": {
-          "errorTitle": "Ticket no encontrado",
-          "errorMessage": "Este ticket no existe o no tienes acceso a su contenido."
+          "errorTitle": "Tarea no encontrada",
+          "errorMessage": "Esta tarea no existe o no tienes acceso a su contenido."
         },
         "fields": {
           "title": "Título",
           "description": "Descripción",
           "status": "Estado",
           "priority": "Prioridad",
-          "epic": "Epic",
-          "sprint": "Sprint",
+          "epic": "Objetivo",
+          "sprint": "Semana",
           "position": "Posición",
           "labels": "Etiquetas",
           "none": "Ninguno"
@@ -928,7 +953,7 @@
         "ctaSignIn": "Iniciar sesión"
       },
       "values": {
-        "title": "¿Por qué Workbench?",
+        "title": "¿Por qué Maison Duo?",
         "simplicity": {
           "icon": "❤️",
           "title": "Para los dos",
@@ -977,7 +1002,7 @@
       },
       "cta": {
         "title": "¿Listo para organizarte?",
-        "description": "Únete a Workbench y empieza a gestionar tus proyectos con tranquilidad.",
+        "description": "Únete a Maison Duo y empieza a gestionar tus proyectos con tranquilidad.",
         "button": "Empezar gratis"
       },
       "footer": {

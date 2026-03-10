@@ -1,0 +1,237 @@
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/breakpoints" as *;
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/gradients" as *;
+@use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+
+// ============================================================================
+// Dashboard Grid
+// ============================================================================
+
+.project-home-dashboard {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-2xl;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// ============================================================================
+// Card
+// ============================================================================
+
+.project-home-card {
+  background: $color-secondary;
+  border-radius: $border-radius-lg;
+  border: $border-width solid $color-border;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: fadeInUp $animation-duration-slower $easing-ease-out backwards;
+
+  &:nth-child(1) {
+    animation-delay: calc(1 * #{$animation-delay-medium});
+  }
+
+  &:nth-child(2) {
+    animation-delay: calc(2 * #{$animation-delay-medium});
+  }
+
+  &:nth-child(3) {
+    animation-delay: calc(3 * #{$animation-delay-medium});
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY($spacing-xl);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================================================
+// Card Header
+// ============================================================================
+
+.project-home-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-lg;
+  padding: $spacing-2xl $spacing-3xl;
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    rgba($color-surface-subtle, 0.5) 0%,
+    $color-secondary 100%
+  );
+  border-bottom: $border-width solid $color-border-subtle;
+}
+
+.project-home-card__icon {
+  font-size: $font-size-2xl;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.project-home-card__title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  &::before {
+    content: "";
+    width: $accent-bar-width;
+    height: $accent-bar-height;
+    background: linear-gradient(
+      $gradient-angle-vertical,
+      $color-accent,
+      $color-accent-peach
+    );
+    border-radius: $border-radius-2xs;
+    flex-shrink: 0;
+  }
+}
+
+.project-home-card__description {
+  color: $color-text-secondary;
+  margin-top: $spacing-2xs;
+}
+
+// ============================================================================
+// Card Body
+// ============================================================================
+
+.project-home-card__body {
+  padding: $spacing-2xl $spacing-3xl;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.project-home-card__footer-link {
+  margin-top: auto;
+  align-self: flex-end;
+  font-size: $font-size-sm;
+}
+
+// ============================================================================
+// Task List
+// ============================================================================
+
+.project-home-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.project-home-item {
+  padding-bottom: $spacing-sm;
+  border-bottom: $border-width solid $color-border-subtle;
+}
+
+.project-home-item__main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
+}
+
+.project-home-item__link {
+  color: $color-text;
+  font-weight: $font-weight-medium;
+
+  &:visited {
+    color: $color-text;
+  }
+}
+
+.project-home-item__status {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-2xs $spacing-sm;
+  border-radius: $border-radius-full;
+  background: $color-surface-subtle;
+  color: $color-text-secondary;
+  font-size: $font-size-xs;
+  white-space: nowrap;
+}
+
+// ============================================================================
+// Goal List
+// ============================================================================
+
+.project-home-goal-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.project-home-goal-item {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+  padding-bottom: $spacing-sm;
+  border-bottom: $border-width solid $color-border-subtle;
+}
+
+.project-home-goal-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.project-home-goal-item__name {
+  color: $color-text;
+  font-weight: $font-weight-medium;
+}
+
+.project-home-goal-item__delta {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-2xs $spacing-sm;
+  border-radius: $border-radius-full;
+  background: rgba($color-success, 0.12);
+  color: $color-success;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}
+
+.project-home-goal-item__meta {
+  color: $color-text-secondary;
+}
+
+// ============================================================================
+// Accessibility & Reduced Motion
+// ============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .project-home-card {
+    animation: none;
+  }
+}
