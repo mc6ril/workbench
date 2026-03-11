@@ -1,5 +1,6 @@
 export * from "./errorHandling";
 export * from "./guards";
+export * from "./invitationUtils";
 export * from "./landingUtils";
 export * from "./routes";
 export * from "./ticketUtils";

@@ -103,6 +103,11 @@
       "button": "S'inscrire",
       "buttonLoading": "Inscription en cours...",
       "buttonAriaLabel": "S'inscrire",
+      "oauth": {
+        "divider": "ou",
+        "googleButton": "Continuer avec Google",
+        "googleButtonAriaLabel": "Se connecter avec Google"
+      },
       "footer": "Vous avez déjà un compte ?",
       "footerLink": "Se connecter",
       "fields": {
@@ -218,6 +223,11 @@
       "subtitle": "Connectez-vous pour accéder à votre Workbench",
       "button": "Se connecter",
       "buttonAriaLabel": "Se connecter",
+      "oauth": {
+        "divider": "ou",
+        "googleButton": "Continuer avec Google",
+        "googleButtonAriaLabel": "Se connecter avec Google"
+      },
       "forgotPassword": "Mot de passe oublié ?",
       "footer": "Vous n'avez pas de compte ?",
       "footerLink": "S'inscrire",
@@ -369,11 +379,11 @@
       "userFallbackName": "Utilisateur",
       "addWorkspaceButton": "Créer un espace",
       "addWorkspaceButtonAriaLabel": "Ouvrir le formulaire pour créer un nouvel espace de travail",
-      "joinWorkspaceButton": "Rejoindre un espace",
-      "joinWorkspaceButtonAriaLabel": "Ouvrir le formulaire pour rejoindre un espace existant",
+      "joinWorkspaceButton": "Entrer un lien d'invitation",
+      "joinWorkspaceButtonAriaLabel": "Ouvrir le formulaire pour rejoindre un espace avec un lien d'invitation",
       "yourWorkspacesTitle": "Vos espaces",
       "noWorkspaces": "Aucun espace",
-      "noWorkspacesMessage": "Créez votre premier espace ou rejoignez un espace existant avec un identifiant.",
+      "noWorkspacesMessage": "Créez votre premier espace ou rejoignez un espace avec un lien d'invitation.",
       "emptyStateTitle": "Bienvenue chez vous",
       "emptyStateMessage": "Créez un espace pour partager les tâches du quotidien, répartir la charge mentale et suivre vos objectifs ensemble.",
       "addFirstProjectButton": "Créer mon premier espace",
@@ -387,10 +397,10 @@
       "emojiPickerOptionAriaLabel": "Choisir l'emoji {emoji}",
       "createButton": "Créer l'espace",
       "createButtonAriaLabel": "Créer l'espace",
-      "joinWorkspaceTitle": "Rejoindre un espace existant",
-      "joinWorkspaceDescription": "Entrez l'identifiant du projet pour rejoindre un espace auquel vous avez été invité.",
-      "projectIdLabel": "Identifiant du projet",
-      "projectIdPlaceholder": "Entrez l'UUID du projet",
+      "joinWorkspaceTitle": "Rejoindre un espace avec un lien",
+      "joinWorkspaceDescription": "Collez le lien d'invitation reçu de votre partenaire pour rejoindre l'espace.",
+      "invitationLinkLabel": "Lien d'invitation",
+      "invitationLinkPlaceholder": "https://.../join/ABC123 ou token",
       "joinButton": "Rejoindre l'espace",
       "joinButtonAriaLabel": "Rejoindre l'espace",
       "roleAdmin": "Administrateur",
@@ -398,7 +408,20 @@
       "roleViewer": "Observateur",
       "roleAriaLabel": "Rôle",
       "openWorkspaceAriaLabel": "Ouvrir l'espace {name}, rôle : {role}",
-      "pleaseEnterProjectId": "Veuillez entrer un identifiant de projet",
+      "pleaseEnterInvitationLink": "Veuillez entrer un lien d'invitation ou un token",
+      "pendingInvitationsTitle": "Invitations en attente",
+      "pendingInvitationsDescription": "Acceptez rapidement les invitations reçues pour commencer en duo.",
+      "pendingInvitationsInvitedBy": "Invité par {name}",
+      "pendingInvitationsAccept": "Accepter",
+      "pendingInvitationsAcceptAriaLabel": "Accepter l'invitation pour {project}",
+      "pendingInvitationsDecline": "Refuser",
+      "pendingInvitationsDeclineAriaLabel": "Refuser l'invitation pour {project}",
+      "welcomeGuideTitle": "Parcours bienvenue",
+      "welcomeGuideDescription": "Vos espaces sont prêts. Invitez votre partenaire ou créez un nouvel espace pour démarrer ensemble.",
+      "welcomeGuidePrimaryCta": "Inviter mon partenaire",
+      "welcomeGuidePrimaryCtaAriaLabel": "Ouvrir le formulaire pour inviter un partenaire",
+      "welcomeGuideSecondaryCta": "Créer un autre espace",
+      "welcomeGuideSecondaryCtaAriaLabel": "Ouvrir le formulaire de création d'espace",
       "reclaimable": {
         "sectionTitle": "Projets à récupérer",
         "sectionDescription": "Ces projets étaient associés à votre adresse e-mail et peuvent être récupérés avant leur suppression définitive.",
@@ -415,6 +438,11 @@
         "legal": "Informations légales",
         "subscriptions": "Plans et options"
       }
+    },
+    "join": {
+      "processing": "Traitement de l'invitation en cours...",
+      "retry": "Réessayer",
+      "retryAriaLabel": "Réessayer d'accepter l'invitation"
     },
     "board": {
       "view": {

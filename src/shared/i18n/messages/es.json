@@ -103,6 +103,11 @@
       "button": "Registrarse",
       "buttonLoading": "Registrando...",
       "buttonAriaLabel": "Registrarse",
+      "oauth": {
+        "divider": "o",
+        "googleButton": "Continuar con Google",
+        "googleButtonAriaLabel": "Iniciar sesión con Google"
+      },
       "footer": "¿Ya tienes una cuenta?",
       "footerLink": "Iniciar sesión",
       "fields": {
@@ -218,6 +223,11 @@
       "subtitle": "Inicia sesión para acceder a tu Workbench",
       "button": "Iniciar sesión",
       "buttonAriaLabel": "Iniciar sesión",
+      "oauth": {
+        "divider": "o",
+        "googleButton": "Continuar con Google",
+        "googleButtonAriaLabel": "Iniciar sesión con Google"
+      },
       "forgotPassword": "¿Olvidaste tu contraseña?",
       "footer": "¿No tienes cuenta?",
       "footerLink": "Registrarse",
@@ -369,11 +379,11 @@
       "userFallbackName": "Usuario",
       "addWorkspaceButton": "Crear un espacio",
       "addWorkspaceButtonAriaLabel": "Abrir formulario para crear un nuevo espacio de trabajo",
-      "joinWorkspaceButton": "Unirse a un espacio",
-      "joinWorkspaceButtonAriaLabel": "Abrir formulario para unirse a un espacio existente",
+      "joinWorkspaceButton": "Usar enlace de invitacion",
+      "joinWorkspaceButtonAriaLabel": "Abrir formulario para unirse con un enlace de invitacion",
       "yourWorkspacesTitle": "Tus espacios",
       "noWorkspaces": "Ningún espacio",
-      "noWorkspacesMessage": "Crea tu primer espacio o únete a uno existente con un identificador.",
+      "noWorkspacesMessage": "Crea tu primer espacio o unete con un enlace de invitacion.",
       "emptyStateTitle": "Bienvenido a casa",
       "emptyStateMessage": "Crea un espacio para compartir tareas diarias, reducir la carga mental y seguir objetivos juntos.",
       "addFirstProjectButton": "Crear mi primer espacio",
@@ -387,10 +397,10 @@
       "emojiPickerOptionAriaLabel": "Elegir emoji {emoji}",
       "createButton": "Crear espacio",
       "createButtonAriaLabel": "Crear espacio",
-      "joinWorkspaceTitle": "Unirse a un espacio existente",
-      "joinWorkspaceDescription": "Introduce el identificador del proyecto para unirte a un espacio al que te han invitado.",
-      "projectIdLabel": "Identificador del proyecto",
-      "projectIdPlaceholder": "Introduce el UUID del proyecto",
+      "joinWorkspaceTitle": "Unirse con enlace",
+      "joinWorkspaceDescription": "Pega el enlace de invitacion de tu pareja para unirte al espacio.",
+      "invitationLinkLabel": "Enlace de invitacion",
+      "invitationLinkPlaceholder": "https://.../join/ABC123 o token",
       "joinButton": "Unirse al espacio",
       "joinButtonAriaLabel": "Unirse al espacio",
       "roleAdmin": "Administrador",
@@ -398,7 +408,20 @@
       "roleViewer": "Observador",
       "roleAriaLabel": "Rol",
       "openWorkspaceAriaLabel": "Abrir espacio {name}, rol: {role}",
-      "pleaseEnterProjectId": "Introduce un identificador de proyecto",
+      "pleaseEnterInvitationLink": "Introduce un enlace de invitacion o token",
+      "pendingInvitationsTitle": "Invitaciones pendientes",
+      "pendingInvitationsDescription": "Acepta rapido las invitaciones recibidas para empezar a colaborar.",
+      "pendingInvitationsInvitedBy": "Invitado por {name}",
+      "pendingInvitationsAccept": "Aceptar",
+      "pendingInvitationsAcceptAriaLabel": "Aceptar invitacion para {project}",
+      "pendingInvitationsDecline": "Rechazar",
+      "pendingInvitationsDeclineAriaLabel": "Rechazar invitacion para {project}",
+      "welcomeGuideTitle": "Guia de bienvenida",
+      "welcomeGuideDescription": "Tus espacios estan listos. Invita a tu pareja o crea otro espacio para empezar juntos.",
+      "welcomeGuidePrimaryCta": "Invitar a mi pareja",
+      "welcomeGuidePrimaryCtaAriaLabel": "Abrir formulario de invitacion para pareja",
+      "welcomeGuideSecondaryCta": "Crear otro espacio",
+      "welcomeGuideSecondaryCtaAriaLabel": "Abrir formulario de creacion de espacio",
       "reclaimable": {
         "sectionTitle": "Proyectos para recuperar",
         "sectionDescription": "Estos proyectos estaban asociados a tu dirección de correo electrónico y pueden ser recuperados antes de su eliminación definitiva.",
@@ -415,6 +438,11 @@
         "legal": "Informacion legal",
         "subscriptions": "Planes y opciones"
       }
+    },
+    "join": {
+      "processing": "Procesando invitacion...",
+      "retry": "Reintentar",
+      "retryAriaLabel": "Reintentar aceptar invitacion"
     },
     "board": {
       "view": {

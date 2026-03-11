@@ -21,6 +21,7 @@ import Input from "@/presentation/components/ui/Input";
 import PasswordStrengthIndicator from "@/presentation/components/ui/PasswordStrengthIndicator";
 import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
+import { useSignInWithGoogle } from "@/presentation/hooks/auth/useSignInWithGoogle";
 import { useSignUp } from "@/presentation/hooks/auth/useSignUp";
 
 import { useTranslation } from "@/shared/i18n";
@@ -32,6 +33,7 @@ import styles from "./styles.module.scss";
 const SignupPage = () => {
   const router = useRouter();
   const signUpMutation = useSignUp();
+  const signInWithGoogleMutation = useSignInWithGoogle();
   const t = useTranslation("pages.signup");
   const tCommon = useTranslation("common");
   const tErrors = useTranslation("errors");
@@ -113,6 +115,10 @@ const SignupPage = () => {
     },
     [signUpMutation]
   );
+
+  const handleGoogleSignIn = useCallback(() => {
+    signInWithGoogleMutation.mutate("/workspace");
+  }, [signInWithGoogleMutation]);
 
   if (
     signUpMutation.isSuccess &&
@@ -235,6 +241,18 @@ const SignupPage = () => {
             onClick={() => {}}
           />
         </Form>
+
+        <div className={styles["signup-divider"]}>
+          <span>{t("oauth.divider")}</span>
+        </div>
+        <Button
+          label={t("oauth.googleButton")}
+          variant="secondary"
+          fullWidth
+          onClick={handleGoogleSignIn}
+          disabled={signInWithGoogleMutation.isPending}
+          aria-label={t("oauth.googleButtonAriaLabel")}
+        />
 
         <Text variant="small" className={styles["signup-footer"]}>
           {t("footer")}{" "}

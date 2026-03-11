@@ -164,6 +164,31 @@ export const createAuthRepository = (
     }
   },
 
+  async signInWithGoogle(redirectPath?: string): Promise<void> {
+    try {
+      const baseOrigin =
+        typeof window !== "undefined" ? window.location.origin : "";
+      const safeNext =
+        redirectPath && redirectPath.startsWith("/") && !redirectPath.startsWith("//")
+          ? redirectPath
+          : "/workspace";
+      const redirectTo = `${baseOrigin}${AUTH_PAGE_ROUTES.CALLBACK}?next=${encodeURIComponent(safeNext)}`;
+
+      const { error } = await client.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo,
+        },
+      });
+
+      if (error) {
+        handleAuthError(error);
+      }
+    } catch (error) {
+      handleAuthError(error);
+    }
+  },
+
   async signOut(): Promise<void> {
     try {
       const { error } = await client.auth.signOut();

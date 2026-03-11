@@ -17,6 +17,7 @@ import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
 import { useResendVerification } from "@/presentation/hooks/auth/useResendVerification";
 import { useSignIn } from "@/presentation/hooks/auth/useSignIn";
+import { useSignInWithGoogle } from "@/presentation/hooks/auth/useSignInWithGoogle";
 
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
@@ -30,6 +31,7 @@ const SigninPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const signInMutation = useSignIn();
+  const signInWithGoogleMutation = useSignInWithGoogle();
   const resendVerificationMutation = useResendVerification();
   const t = useTranslation("pages.signin");
   const tCommon = useTranslation("common");
@@ -37,6 +39,13 @@ const SigninPage = () => {
   const tFields = useTranslation("pages.signin.fields");
 
   const isUnverifiedRedirect = searchParams.get("unverified") === "true";
+  const redirectPathParam = searchParams.get("redirect");
+  const redirectPath =
+    redirectPathParam &&
+    redirectPathParam.startsWith("/") &&
+    !redirectPathParam.startsWith("//")
+      ? redirectPathParam
+      : "/workspace";
 
   const {
     register,
@@ -98,9 +107,9 @@ const SigninPage = () => {
 
   useEffect(() => {
     if (signInMutation.isSuccess && signInMutation.data) {
-      router.push("/workspace");
+      router.push(redirectPath);
     }
-  }, [signInMutation.isSuccess, signInMutation.data, router]);
+  }, [redirectPath, signInMutation.isSuccess, signInMutation.data, router]);
 
   const onSubmit: SubmitHandler<FormData> = useCallback(
     (data) => {
@@ -115,6 +124,10 @@ const SigninPage = () => {
       resendVerificationMutation.mutate(email);
     }
   }, [getValues, resendVerificationMutation]);
+
+  const handleGoogleSignIn = useCallback(() => {
+    signInWithGoogleMutation.mutate(redirectPath);
+  }, [redirectPath, signInWithGoogleMutation]);
 
   const isEmailVerificationError =
     isUnverifiedRedirect ||
@@ -187,6 +200,18 @@ const SigninPage = () => {
             aria-label={t("buttonAriaLabel")}
           />
         </Form>
+
+        <div className={styles["signin-divider"]}>
+          <span>{t("oauth.divider")}</span>
+        </div>
+        <Button
+          label={t("oauth.googleButton")}
+          variant="secondary"
+          fullWidth
+          onClick={handleGoogleSignIn}
+          disabled={signInWithGoogleMutation.isPending}
+          aria-label={t("oauth.googleButtonAriaLabel")}
+        />
 
         <Text variant="small" className={styles["signin-footer"]}>
           {t("footer")}{" "}

@@ -19,6 +19,9 @@ import Loader from "@/presentation/components/ui/Loader";
 import Modal from "@/presentation/components/ui/Modal";
 import Text from "@/presentation/components/ui/Text";
 import { useSession } from "@/presentation/hooks/auth/useSession";
+import { useAcceptInvitation } from "@/presentation/hooks/invitation/useAcceptInvitation";
+import { useDeclineInvitation } from "@/presentation/hooks/invitation/useDeclineInvitation";
+import { usePendingInvitations } from "@/presentation/hooks/invitation/usePendingInvitations";
 import { useAddUserToProject } from "@/presentation/hooks/project/useAddUserToProject";
 import { useCreateProject } from "@/presentation/hooks/project/useCreateProject";
 import { useLastActivitySubtitle } from "@/presentation/hooks/project/useLastActivitySubtitle";
@@ -32,6 +35,7 @@ import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { markNavigationStart } from "@/shared/observability";
 import { getWorkspaceEmoji } from "@/shared/utils";
+import { extractInvitationToken } from "@/shared/utils/invitationUtils";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
 import styles from "./styles.module.scss";
@@ -69,10 +73,17 @@ const WorkspacePage = () => {
     error: projectsError,
     refetch: refetchProjects,
   } = useProjectsWithStats(!!session);
+  const {
+    data: pendingInvitations,
+    isLoading: isLoadingPendingInvitations,
+    error: pendingInvitationsError,
+  } = usePendingInvitations();
+  const acceptInvitationMutation = useAcceptInvitation();
+  const declineInvitationMutation = useDeclineInvitation();
   const addUserToProjectMutation = useAddUserToProject();
   const createProjectMutation = useCreateProject();
   const { data: reclaimableProjects } = useReclaimableProjects(!!session);
-  const [joinProjectId, setJoinProjectId] = useState("");
+  const [joinInvitationInput, setJoinInvitationInput] = useState("");
   const [joinError, setJoinError] = useState<string | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [joinModalOpen, setJoinModalOpen] = useState(false);
@@ -123,7 +134,7 @@ const WorkspacePage = () => {
 
   const openJoinModal = useCallback(() => {
     setJoinModalOpen(true);
-    setJoinProjectId("");
+    setJoinInvitationInput("");
     setJoinError(null);
   }, []);
 
@@ -147,15 +158,15 @@ const WorkspacePage = () => {
   );
 
   const handleJoinWorkspace = async (): Promise<void> => {
-    const trimmed = joinProjectId.trim();
-    if (!trimmed) {
-      setJoinError(t("pleaseEnterProjectId"));
+    const token = extractInvitationToken(joinInvitationInput);
+    if (!token) {
+      setJoinError(t("pleaseEnterInvitationLink"));
       return;
     }
     setJoinError(null);
     try {
-      await addUserToProjectMutation.mutateAsync({ projectId: trimmed });
-      setJoinProjectId("");
+      await acceptInvitationMutation.mutateAsync(token);
+      setJoinInvitationInput("");
       await refetchProjects();
       closeJoinModal();
     } catch (err) {
@@ -163,6 +174,29 @@ const WorkspacePage = () => {
       setJoinError(getErrorMessage(error, tErrors));
     }
   };
+
+  const handleAcceptInvitation = useCallback(
+    async (token: string): Promise<void> => {
+      try {
+        await acceptInvitationMutation.mutateAsync(token);
+        await refetchProjects();
+      } catch {
+        // Error is surfaced by query/mutation states.
+      }
+    },
+    [acceptInvitationMutation, refetchProjects]
+  );
+
+  const handleDeclineInvitation = useCallback(
+    async (token: string): Promise<void> => {
+      try {
+        await declineInvitationMutation.mutateAsync(token);
+      } catch {
+        // Error is surfaced by query/mutation states.
+      }
+    },
+    [declineInvitationMutation]
+  );
 
   useEffect(() => {
     if (createProjectMutation.error) {
@@ -245,6 +279,10 @@ const WorkspacePage = () => {
   }
 
   const hasProjects = Array.isArray(projects) && projects.length > 0;
+  const hasPendingInvitations =
+    Array.isArray(pendingInvitations) && pendingInvitations.length > 0;
+  const shouldShowWelcomeGuide =
+    hasProjects && projects.every((project) => project.ticketCount === 0);
 
   return (
     <main className={styles["workspace-page"]}>
@@ -286,6 +324,78 @@ const WorkspacePage = () => {
             )}
           />
         )}
+
+        {pendingInvitationsError && (
+          <ErrorMessage
+            message={getErrorMessage(
+              pendingInvitationsError as { code?: string },
+              tErrors
+            )}
+          />
+        )}
+
+        {hasPendingInvitations && (
+          <section
+            className={styles["pending-invitations"]}
+            aria-label={t("pendingInvitationsTitle")}
+          >
+            <div className={styles["pending-invitations__header"]}>
+              <h2 className={styles["pending-invitations__title"]}>
+                {t("pendingInvitationsTitle")}
+              </h2>
+              <p className={styles["pending-invitations__description"]}>
+                {t("pendingInvitationsDescription")}
+              </p>
+            </div>
+
+            <div className={styles["pending-invitations__list"]}>
+              {pendingInvitations.map((invitation) => (
+                <article
+                  key={invitation.id}
+                  className={styles["pending-invitations__item"]}
+                >
+                  <div className={styles["pending-invitations__content"]}>
+                    <h3 className={styles["pending-invitations__project-name"]}>
+                      {invitation.projectName}
+                    </h3>
+                    <p className={styles["pending-invitations__meta"]}>
+                      {t("pendingInvitationsInvitedBy", {
+                        name: invitation.invitedByName,
+                      })}
+                    </p>
+                  </div>
+                  <div className={styles["pending-invitations__actions"]}>
+                    <Button
+                      label={t("pendingInvitationsAccept")}
+                      onClick={() => handleAcceptInvitation(invitation.token)}
+                      disabled={
+                        acceptInvitationMutation.isPending ||
+                        declineInvitationMutation.isPending
+                      }
+                      aria-label={t("pendingInvitationsAcceptAriaLabel", {
+                        project: invitation.projectName,
+                      })}
+                    />
+                    <Button
+                      label={t("pendingInvitationsDecline")}
+                      variant="secondary"
+                      onClick={() => handleDeclineInvitation(invitation.token)}
+                      disabled={
+                        acceptInvitationMutation.isPending ||
+                        declineInvitationMutation.isPending
+                      }
+                      aria-label={t("pendingInvitationsDeclineAriaLabel", {
+                        project: invitation.projectName,
+                      })}
+                    />
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {isLoadingPendingInvitations && <Loader variant="inline" />}
 
         {Array.isArray(reclaimableProjects) &&
           reclaimableProjects.length > 0 && (
@@ -472,6 +582,36 @@ const WorkspacePage = () => {
                 );
               })}
             </div>
+
+            {shouldShowWelcomeGuide && (
+              <section
+                className={styles["welcome-guide"]}
+                aria-labelledby={getAccessibilityId("workspace-welcome-guide")}
+              >
+                <h3
+                  id={getAccessibilityId("workspace-welcome-guide")}
+                  className={styles["welcome-guide__title"]}
+                >
+                  {t("welcomeGuideTitle")}
+                </h3>
+                <p className={styles["welcome-guide__description"]}>
+                  {t("welcomeGuideDescription")}
+                </p>
+                <div className={styles["welcome-guide__actions"]}>
+                  <Button
+                    label={t("welcomeGuidePrimaryCta")}
+                    onClick={openJoinModal}
+                    aria-label={t("welcomeGuidePrimaryCtaAriaLabel")}
+                  />
+                  <Button
+                    label={t("welcomeGuideSecondaryCta")}
+                    onClick={openCreateModal}
+                    variant="secondary"
+                    aria-label={t("welcomeGuideSecondaryCtaAriaLabel")}
+                  />
+                </div>
+              </section>
+            )}
           </section>
         ) : Array.isArray(projects) && projects.length === 0 ? (
           <div className={styles["empty-state"]}>
@@ -602,21 +742,23 @@ const WorkspacePage = () => {
         </Text>
         <div className={styles["workspace-modal-form"]}>
           <Input
-            label={t("projectIdLabel")}
+            label={t("invitationLinkLabel")}
             type="text"
-            value={joinProjectId}
+            value={joinInvitationInput}
             onChange={(e) => {
-              setJoinProjectId(e.target.value);
+              setJoinInvitationInput(e.target.value);
               setJoinError(null);
             }}
             error={joinError ?? undefined}
-            placeholder={t("projectIdPlaceholder")}
+            placeholder={t("invitationLinkPlaceholder")}
           />
           <Button
             label={t("joinButton")}
             onClick={handleJoinWorkspace}
             disabled={
-              !joinProjectId.trim() || addUserToProjectMutation.isPending
+              !joinInvitationInput.trim() ||
+              addUserToProjectMutation.isPending ||
+              acceptInvitationMutation.isPending
             }
             variant="secondary"
             aria-label={t("joinButtonAriaLabel")}

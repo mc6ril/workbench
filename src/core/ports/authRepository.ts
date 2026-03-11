@@ -31,6 +31,14 @@ export type AuthRepository = {
   signIn(input: SignInInput): Promise<AuthResult>;
 
   /**
+   * Start Google OAuth sign-in flow.
+   * Redirects the browser to the OAuth provider and returns once navigation starts.
+   * @param redirectPath - Internal path to redirect to after callback
+   * @throws AuthenticationFailure if provider redirect cannot be initialized
+   */
+  signInWithGoogle?(redirectPath?: string): Promise<void>;
+
+  /**
    * Sign out the current user.
    * Clears the current session.
    * @throws AuthenticationFailure if signout fails

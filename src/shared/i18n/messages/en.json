@@ -103,6 +103,11 @@
       "button": "Sign up",
       "buttonLoading": "Signing up...",
       "buttonAriaLabel": "Sign up",
+      "oauth": {
+        "divider": "or",
+        "googleButton": "Continue with Google",
+        "googleButtonAriaLabel": "Sign in with Google"
+      },
       "footer": "Already have an account?",
       "footerLink": "Sign in",
       "fields": {
@@ -218,6 +223,11 @@
       "subtitle": "Sign in to access your Workbench",
       "button": "Sign in",
       "buttonAriaLabel": "Sign in",
+      "oauth": {
+        "divider": "or",
+        "googleButton": "Continue with Google",
+        "googleButtonAriaLabel": "Sign in with Google"
+      },
       "forgotPassword": "Forgot password?",
       "footer": "Don't have an account?",
       "footerLink": "Sign up",
@@ -369,11 +379,11 @@
       "userFallbackName": "User",
       "addWorkspaceButton": "Create a space",
       "addWorkspaceButtonAriaLabel": "Open form to create a new workspace",
-      "joinWorkspaceButton": "Join a workspace",
-      "joinWorkspaceButtonAriaLabel": "Open form to join an existing workspace",
+      "joinWorkspaceButton": "Use an invitation link",
+      "joinWorkspaceButtonAriaLabel": "Open form to join a space with an invitation link",
       "yourWorkspacesTitle": "Your spaces",
       "noWorkspaces": "No space",
-      "noWorkspacesMessage": "Create your first workspace or join an existing one with an ID.",
+      "noWorkspacesMessage": "Create your first space or join one with an invitation link.",
       "emptyStateTitle": "Welcome home",
       "emptyStateMessage": "Create a space to share daily tasks, reduce mental load, and track your goals together.",
       "addFirstProjectButton": "Create my first workspace",
@@ -387,10 +397,10 @@
       "emojiPickerOptionAriaLabel": "Choose emoji {emoji}",
       "createButton": "Create space",
       "createButtonAriaLabel": "Create space",
-      "joinWorkspaceTitle": "Join an existing workspace",
-      "joinWorkspaceDescription": "Enter the project ID to join a workspace you've been invited to.",
-      "projectIdLabel": "Project ID",
-      "projectIdPlaceholder": "Enter the project UUID",
+      "joinWorkspaceTitle": "Join a space with a link",
+      "joinWorkspaceDescription": "Paste the invitation link from your partner to join the space.",
+      "invitationLinkLabel": "Invitation link",
+      "invitationLinkPlaceholder": "https://.../join/ABC123 or token",
       "joinButton": "Join workspace",
       "joinButtonAriaLabel": "Join workspace",
       "roleAdmin": "Administrator",
@@ -398,7 +408,20 @@
       "roleViewer": "Viewer",
       "roleAriaLabel": "Role",
       "openWorkspaceAriaLabel": "Open workspace {name}, role: {role}",
-      "pleaseEnterProjectId": "Please enter a project ID",
+      "pleaseEnterInvitationLink": "Please enter an invitation link or token",
+      "pendingInvitationsTitle": "Pending invitations",
+      "pendingInvitationsDescription": "Accept incoming invitations quickly to start collaborating.",
+      "pendingInvitationsInvitedBy": "Invited by {name}",
+      "pendingInvitationsAccept": "Accept",
+      "pendingInvitationsAcceptAriaLabel": "Accept invitation for {project}",
+      "pendingInvitationsDecline": "Decline",
+      "pendingInvitationsDeclineAriaLabel": "Decline invitation for {project}",
+      "welcomeGuideTitle": "Welcome guide",
+      "welcomeGuideDescription": "Your spaces are ready. Invite your partner or create another space to get started together.",
+      "welcomeGuidePrimaryCta": "Invite my partner",
+      "welcomeGuidePrimaryCtaAriaLabel": "Open invitation form for partner",
+      "welcomeGuideSecondaryCta": "Create another space",
+      "welcomeGuideSecondaryCtaAriaLabel": "Open space creation form",
       "reclaimable": {
         "sectionTitle": "Projects to recover",
         "sectionDescription": "These projects were associated with your email and can be recovered before they are permanently deleted.",
@@ -415,6 +438,11 @@
         "legal": "Legal information",
         "subscriptions": "Plans and options"
       }
+    },
+    "join": {
+      "processing": "Processing invitation...",
+      "retry": "Retry",
+      "retryAriaLabel": "Retry accepting invitation"
     },
     "board": {
       "view": {
