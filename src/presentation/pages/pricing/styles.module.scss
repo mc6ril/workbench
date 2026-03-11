@@ -88,7 +88,7 @@
   background: $color-secondary;
   border-radius: $border-radius-lg;
   border: $border-width solid $color-border;
-  box-shadow: $shadow-card;
+  box-shadow: $shadow-premium-surface;
   padding: $spacing-3xl;
   display: flex;
   flex-direction: column;
@@ -224,7 +224,7 @@
   background: $color-secondary;
   border-radius: $border-radius-lg;
   border: $border-width solid $color-border;
-  box-shadow: $shadow-card;
+  box-shadow: $shadow-premium-surface;
   overflow: hidden;
   animation: fadeInUp $animation-duration-slower $easing-ease-out backwards;
   animation-delay: $animation-delay-long;
@@ -332,6 +332,36 @@
   font-weight: $font-weight-semibold;
   color: $color-text;
   margin-bottom: $spacing-sm;
+}
+
+.pricing-trust-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.pricing-trust-section__title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  text-align: center;
+}
+
+.pricing-trust-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $spacing-md;
+}
+
+.pricing-trust-item {
+  padding: $spacing-lg;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-md;
+  background: $color-secondary;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  text-align: center;
+  box-shadow: $shadow-sm;
 }
 
 // ============================================================================
@@ -486,6 +516,10 @@
 
 @media (max-width: $breakpoint-md) {
   .pricing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pricing-trust-list {
     grid-template-columns: 1fr;
   }
 

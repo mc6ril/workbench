@@ -947,65 +947,152 @@
     },
     "landing": {
       "hero": {
-        "title": "Mental load, gone.",
-        "subtitle": "A shared space so you and your partner can move forward together, without one person carrying it all.",
-        "ctaSignUp": "Create your free account",
-        "ctaSignIn": "Sign in"
+        "brandPill": "✨ Tribu Nova • Premium family planner",
+        "logoAriaLabel": "Tribu Nova logo",
+        "title": "Family life runs better when everything is clear.",
+        "subtitle": "One shared space to coordinate chores, appointments, and home projects without constant mental overload.",
+        "proofNoCard": "No credit card",
+        "proofFreeStart": "Set up in 2 minutes",
+        "proofCancelAnytime": "Built for parents and kids",
+        "ctaSignUp": "Create my family space",
+        "ctaSignIn": "Sign in",
+        "ctaPreview": "See preview"
       },
       "values": {
-        "title": "Why Maison Duo?",
+        "title": "Organization that still feels human",
         "simplicity": {
-          "icon": "❤️",
-          "title": "For both of you",
-          "description": "Share and assign tasks in seconds."
+          "icon": "🧭",
+          "title": "One shared direction",
+          "description": "Everyone in the household sees the week's priorities in one place."
         },
         "clarity": {
-          "icon": "🧠",
-          "title": "Clear your mind",
-          "description": "Get everything out of your head and organize it together."
+          "icon": "🗓️",
+          "title": "Visible routines",
+          "description": "Groceries, school, home, admin: everyone knows what is in motion."
         },
         "control": {
-          "icon": "✅",
-          "title": "Actually move forward",
-          "description": "Track progress on your real-life projects."
+          "icon": "🫶",
+          "title": "Better load sharing",
+          "description": "Assign ownership clearly so reminders do not fall on one person."
         }
       },
       "features": {
-        "title": "Use cases built for family life",
+        "title": "Practical use cases for everyday family life",
         "backlog": {
-          "icon": "📋",
-          "title": "Weekly groceries",
-          "description": "Prepare your list, split shopping tasks, and see what is already done."
+          "icon": "🛒",
+          "title": "Groceries and meals",
+          "description": "Plan menus, build the shopping list, and avoid duplicate buys."
         },
         "board": {
-          "icon": "🧹",
-          "title": "Household chores",
-          "description": "Share daily chores so everyone moves forward together."
+          "icon": "🧺",
+          "title": "Home routines",
+          "description": "Distribute recurring chores so the house runs smoothly."
         },
         "epics": {
-          "icon": "🏠",
-          "title": "Home projects",
-          "description": "Track renovations and home improvements step by step."
+          "icon": "🏡",
+          "title": "Family projects",
+          "description": "Renovations, moves, major purchases: keep milestones visible."
         },
         "subtasks": {
-          "icon": "🏖️",
-          "title": "Vacation planning",
-          "description": "Keep bookings, packing, and paperwork in one shared place."
+          "icon": "🎒",
+          "title": "School and activities",
+          "description": "Track school deadlines, registrations, and kid logistics in one place."
+        }
+      },
+      "impact": {
+        "title": "Visible benefits from the first days",
+        "description": "A simple structure that saves time and lowers family mental load.",
+        "time": {
+          "value": "Time back",
+          "title": "Less last-minute coordination",
+          "description": "Everything stays in one shared timeline, so no more message loops."
+        },
+        "alignment": {
+          "value": "Clear ownership",
+          "title": "Everyone knows what to do",
+          "description": "Responsibilities are explicit and distributed fairly."
+        },
+        "serenity": {
+          "value": "Lasting calm",
+          "title": "Fewer misses, fewer tensions",
+          "description": "Daily life feels smoother, even during packed weeks."
+        }
+      },
+      "rhythm": {
+        "title": "A simple 3-step family rhythm",
+        "capture": {
+          "icon": "🧩",
+          "title": "Capture",
+          "description": "Add a task or idea as soon as it appears."
+        },
+        "plan": {
+          "icon": "🗓️",
+          "title": "Plan",
+          "description": "Decide together who handles what for the week."
+        },
+        "act": {
+          "icon": "✨",
+          "title": "Move forward",
+          "description": "Track what is done and adjust without stress."
         }
       },
       "trust": {
-        "title": "Built for creators and teams",
-        "description": "Start with a free version, then unlock premium features if you need to go further.",
-        "freeForever": "Free version available",
-        "noCreditCard": "No credit card required",
-        "noComplexity": "Zero complex setup"
+        "title": "Built for real family life",
+        "description": "Tribu Nova helps you turn family discussions into clear actions with shared visibility.",
+        "freeForeverIcon": "👀",
+        "freeForever": "Shared clarity for everyone at home",
+        "noCreditCardIcon": "🤝",
+        "noCreditCard": "Fair and explicit responsibilities",
+        "noComplexityIcon": "🌿",
+        "noComplexity": "Less friction, more calm"
+      },
+      "examples": {
+        "title": "A concrete week snapshot",
+        "columns": {
+          "todo": "To do",
+          "inProgress": "In progress",
+          "done": "Done"
+        },
+        "backlog": {
+          "title": "Groceries and meals",
+          "description": "Visualize the list, assign ownership, and follow useful progress.",
+          "todo1": "Plan this week's meals",
+          "todo2": "Complete the online shopping list",
+          "inProgress1": "Supermarket run",
+          "done1": "Order baby essentials"
+        },
+        "board": {
+          "title": "Home routines",
+          "description": "Distribute recurring chores before overload builds up.",
+          "todo1": "Start evening laundry",
+          "todo2": "Prepare school bags",
+          "inProgress1": "Kitchen reset",
+          "done1": "Take out trash"
+        },
+        "epics": {
+          "title": "Family project",
+          "description": "Keep milestones and decisions visible for everyone.",
+          "todo1": "Validate storage quote",
+          "todo2": "Plan decluttering weekend",
+          "inProgress1": "Compare childcare options",
+          "done1": "Order main furniture"
+        },
+        "subtasks": {
+          "title": "School and activities",
+          "description": "Avoid misses across school, clubs, and kid logistics.",
+          "todo1": "Sign school field trip form",
+          "todo2": "Pack sports bag",
+          "inProgress1": "Register for activity camp",
+          "done1": "Pay cafeteria bill"
+        }
       },
       "cta": {
-        "title": "Ready to get organized?",
-        "description": "Join Maison Duo and start managing your projects with peace of mind.",
-        "button": "Get started for free"
+        "title": "Move from constant load to smooth family flow",
+        "description": "Join Tribu Nova and run daily family life with more clarity and calm.",
+        "button": "Start for free"
       },
       "footer": {
+        "ariaLabel": "Footer links",
         "legal": "Legal notice",
         "pricing": "Pricing"
       }
@@ -1021,16 +1108,16 @@
           "icon": "🏢",
           "title": "Website publisher",
           "description": "Information about the platform publisher",
-          "appName": "Workbench",
-          "appDescription": "Workbench is a personal project management application.",
-          "contact": "Contact: contact@workbench.app",
+          "appName": "Tribu Nova",
+          "appDescription": "Tribu Nova is a personal family management application.",
+          "contact": "Contact: contact@tribunova.app",
           "hosting": "Hosting: Vercel Inc. — 340 S Lemon Ave #4133, Walnut, CA 91789, United States"
         },
         "intellectualProperty": {
           "icon": "©️",
           "title": "Intellectual property",
           "description": "Copyright and content ownership",
-          "content": "All content on Workbench (text, interfaces, source code, logos, graphics) is protected by copyright law. Any reproduction, representation, or distribution, in whole or in part, without prior authorization is prohibited."
+          "content": "All content on Tribu Nova (text, interfaces, source code, logos, graphics) is protected by copyright law. Any reproduction, representation, or distribution, in whole or in part, without prior authorization is prohibited."
         },
         "dataProtection": {
           "icon": "🔒",
@@ -1046,13 +1133,13 @@
           "collectedData": "Data collected: email address, display name, user preferences.",
           "purpose": "Purpose: authentication, experience personalization, and service operation.",
           "retention": "Retention period: your data is kept as long as your account is active. It is deleted upon request.",
-          "exerciseRights": "To exercise your rights, contact us at: contact@workbench.app"
+          "exerciseRights": "To exercise your rights, contact us at: contact@tribunova.app"
         },
         "cookies": {
           "icon": "🍪",
           "title": "Cookies",
           "description": "Cookie usage on the platform",
-          "content": "Workbench uses only strictly necessary cookies for service operation (authentication, user session). No advertising or tracking cookies are used. These cookies are essential and do not require prior consent."
+          "content": "Tribu Nova uses only strictly necessary cookies for service operation (authentication, user session). No advertising or tracking cookies are used. These cookies are essential and do not require prior consent."
         },
         "liability": {
           "icon": "⚖️",
@@ -1101,17 +1188,19 @@
         "team": {
           "name": "Team",
           "description": "Collaborate as a team with advanced features",
-          "price": "€6.99",
+          "price": "€8.99",
           "cta": "Choose Team",
           "ctaAriaLabel": "Subscribe to the Team plan"
         },
         "currentBadge": "Active"
       },
       "comparison": {
-        "title": "Detailed plan comparison"
+        "title": "Detailed plan comparison",
+        "featuresColumn": "Included in plan"
       },
       "features": {
-        "workspaces": "Workspaces",
+        "projectsPerAccount": "Projects per account",
+        "workspaces": "Projects per account",
         "membersPerWorkspace": "Members per workspace",
         "tickets": "Tickets",
         "boardView": "Board view",
@@ -1126,12 +1215,16 @@
       },
       "values": {
         "one": "1",
+        "two": "2",
+        "four": "4",
         "three": "3",
         "five": "5",
+        "twenty": "20",
+        "hundred": "100",
         "ten": "10",
         "twentyFive": "25",
         "fifty": "50",
-        "threeColumns": "3 columns",
+        "threeColumns": "3 fixed columns (not customizable)",
         "unlimited": "Unlimited",
         "included": "Included",
         "notIncluded": "Not included"
@@ -1160,6 +1253,12 @@
       "guarantee": {
         "title": "Money-back guarantee",
         "description": "Try Workbench Pro or Team for 14 days. If you're not satisfied, we'll give you a full refund."
+      },
+      "trust": {
+        "title": "Premium, with clear expectations",
+        "item1": "A solid free version to get started without friction.",
+        "item2": "Premium features only when you truly need them.",
+        "item3": "Transparent pricing with no hidden costs."
       },
       "cta": {
         "currentPlan": "Current plan",
@@ -1196,11 +1295,12 @@
       "ctaAriaLabel": "View plans and upgrade your subscription",
       "featureNames": {
         "epics": "Epics",
+        "backlogView": "Backlog view",
         "subtasks": "Subtasks",
         "priorities": "Priorities",
         "exportImport": "Export / Import",
         "advancedRoles": "Advanced roles",
-        "workspaces": "Workspaces",
+        "workspaces": "Projects per account",
         "membersPerWorkspace": "Members per workspace",
         "tickets": "Tickets",
         "customColumns": "Custom columns"

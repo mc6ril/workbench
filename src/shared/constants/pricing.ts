@@ -15,24 +15,29 @@ export type FeatureRow = {
 export const PLAN_KEYS: PlanKey[] = ["free", "pro", "team"];
 
 export const FEATURE_ROWS: FeatureRow[] = [
-  { key: "workspaces", free: "one", pro: "five", team: "unlimited" },
   {
     key: "membersPerWorkspace",
-    free: "three",
-    pro: "ten",
-    team: "twentyFive",
+    free: "two",
+    pro: "four",
+    team: "twenty",
   },
-  { key: "tickets", free: "fifty", pro: "unlimited", team: "unlimited" },
+  { key: "projectsPerAccount", free: "one", pro: "five", team: "unlimited" },
+  { key: "tickets", free: "hundred", pro: "unlimited", team: "unlimited" },
   { key: "boardView", free: "included", pro: "included", team: "included" },
-  { key: "backlogView", free: "included", pro: "included", team: "included" },
-  { key: "epics", free: "notIncluded", pro: "included", team: "included" },
-  { key: "subtasks", free: "notIncluded", pro: "included", team: "included" },
+  { key: "epics", free: "included", pro: "included", team: "included" },
   {
     key: "customColumns",
-    free: "threeColumns",
-    pro: "unlimited",
-    team: "unlimited",
+    free: "notIncluded",
+    pro: "included",
+    team: "included",
   },
+  {
+    key: "backlogView",
+    free: "notIncluded",
+    pro: "included",
+    team: "included",
+  },
+  { key: "subtasks", free: "notIncluded", pro: "included", team: "included" },
   {
     key: "priorities",
     free: "notIncluded",
@@ -43,18 +48,6 @@ export const FEATURE_ROWS: FeatureRow[] = [
     key: "exportImport",
     free: "notIncluded",
     pro: "included",
-    team: "included",
-  },
-  {
-    key: "advancedRoles",
-    free: "notIncluded",
-    pro: "notIncluded",
-    team: "included",
-  },
-  {
-    key: "prioritySupport",
-    free: "notIncluded",
-    pro: "notIncluded",
     team: "included",
   },
 ];

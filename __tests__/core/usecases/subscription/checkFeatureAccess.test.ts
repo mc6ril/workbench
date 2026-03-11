@@ -26,12 +26,23 @@ describe("checkFeatureAccess", () => {
   });
 
   describe("active subscriptions", () => {
-    it("should deny epics access for FREE plan", () => {
+    it("should grant epics access for FREE plan", () => {
       const subscription = createMockSubscription({
         plan: SubscriptionPlan.FREE,
       });
 
       const result = checkFeatureAccess(subscription, PlanFeature.EPICS);
+
+      expect(result.hasAccess).toBe(true);
+      expect(result.currentPlan).toBe(SubscriptionPlan.FREE);
+    });
+
+    it("should deny backlog access for FREE plan", () => {
+      const subscription = createMockSubscription({
+        plan: SubscriptionPlan.FREE,
+      });
+
+      const result = checkFeatureAccess(subscription, PlanFeature.BACKLOG_VIEW);
 
       expect(result.hasAccess).toBe(false);
       expect(result.currentPlan).toBe(SubscriptionPlan.FREE);
@@ -132,7 +143,7 @@ describe("checkFeatureAccess", () => {
         status: SubscriptionStatus.CANCELED,
       });
 
-      const result = checkFeatureAccess(subscription, PlanFeature.EPICS);
+      const result = checkFeatureAccess(subscription, PlanFeature.BACKLOG_VIEW);
 
       expect(result.hasAccess).toBe(false);
       expect(result.currentPlan).toBe(SubscriptionPlan.FREE);

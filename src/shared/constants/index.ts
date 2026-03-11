@@ -25,6 +25,18 @@ export { GDPR_RIGHTS_KEYS, LEGAL_SECTIONS } from "./legal";
 export type { FeatureRow, PlanKey } from "./pricing";
 export { FAQ_KEYS, FEATURE_ROWS, PLAN_KEYS } from "./pricing";
 
+// Re-export landing page constants
+export {
+  FEATURE_KEYS,
+  HERO_PROOF_KEYS,
+  IMPACT_KEYS,
+  PREVIEW_COLUMNS,
+  PREVIEW_ITEM_KEYS,
+  RHYTHM_KEYS,
+  TRUST_ITEM_KEYS,
+  VALUE_KEYS,
+} from "./landing";
+
 // Re-export API message constants
 export {
   API_MESSAGES_AUTH,

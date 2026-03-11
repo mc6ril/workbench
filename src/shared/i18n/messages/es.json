@@ -947,65 +947,152 @@
     },
     "landing": {
       "hero": {
-        "title": "La carga mental, se acabo.",
-        "subtitle": "Un espacio compartido para que tu y tu pareja avancen juntos, sin que una sola persona lo cargue todo.",
-        "ctaSignUp": "Crea tu cuenta gratis",
-        "ctaSignIn": "Iniciar sesión"
+        "brandPill": "✨ Tribu Nova • Organizacion familiar premium",
+        "logoAriaLabel": "Logo de Tribu Nova",
+        "title": "La vida familiar funciona mejor cuando todo esta claro.",
+        "subtitle": "Un espacio compartido para coordinar tareas, citas y proyectos del hogar sin sobrecarga mental constante.",
+        "proofNoCard": "Sin tarjeta bancaria",
+        "proofFreeStart": "Configuracion en 2 minutos",
+        "proofCancelAnytime": "Pensado para padres e hijos",
+        "ctaSignUp": "Crear mi espacio familiar",
+        "ctaSignIn": "Iniciar sesión",
+        "ctaPreview": "Ver vista previa"
       },
       "values": {
-        "title": "¿Por qué Maison Duo?",
+        "title": "Organizacion que sigue siendo humana",
         "simplicity": {
-          "icon": "❤️",
-          "title": "Para los dos",
-          "description": "Compartid y asignad tareas en segundos."
+          "icon": "🧭",
+          "title": "Una direccion comun",
+          "description": "Todo el hogar ve las prioridades de la semana en un solo lugar."
         },
         "clarity": {
-          "icon": "🧠",
-          "title": "Vaciar la cabeza",
-          "description": "Sacad todo lo que os ronda y organizadlo juntos."
+          "icon": "🗓️",
+          "title": "Rutinas visibles",
+          "description": "Compra, escuela, casa, administracion: todos saben que esta en marcha."
         },
         "control": {
-          "icon": "✅",
-          "title": "Avanzar de verdad",
-          "description": "Seguid el progreso de vuestros proyectos de vida."
+          "icon": "🫶",
+          "title": "Carga mejor repartida",
+          "description": "Asignad responsabilidades con claridad para evitar recordatorios constantes."
         }
       },
       "features": {
-        "title": "Casos de uso pensados para la vida en familia",
+        "title": "Casos de uso practicos para el dia a dia familiar",
         "backlog": {
-          "icon": "📋",
-          "title": "Compra semanal",
-          "description": "Preparad la lista, repartid las compras y ved lo que ya esta hecho."
+          "icon": "🛒",
+          "title": "Compra y comidas",
+          "description": "Planificad menus, preparad la lista y evitad compras duplicadas."
         },
         "board": {
-          "icon": "🧹",
-          "title": "Tareas del hogar",
-          "description": "Repartid las tareas diarias para que todos avancen juntos."
+          "icon": "🧺",
+          "title": "Rutinas del hogar",
+          "description": "Repartid tareas recurrentes para que la casa funcione sin sobrecarga."
         },
         "epics": {
-          "icon": "🏠",
-          "title": "Proyecto de casa",
-          "description": "Seguid reformas y mejoras del hogar paso a paso."
+          "icon": "🏡",
+          "title": "Proyectos familiares",
+          "description": "Reformas, mudanzas y grandes compras con hitos claros."
         },
         "subtasks": {
-          "icon": "🏖️",
-          "title": "Plan de vacaciones",
-          "description": "Centralizad reservas, maletas y tramites en un mismo lugar."
+          "icon": "🎒",
+          "title": "Escuela y actividades",
+          "description": "Centralizad plazos escolares, inscripciones y logistica infantil."
+        }
+      },
+      "impact": {
+        "title": "Beneficios visibles desde los primeros dias",
+        "description": "Una estructura simple para ahorrar tiempo y reducir la carga mental familiar.",
+        "time": {
+          "value": "Tiempo recuperado",
+          "title": "Menos coordinacion de ultima hora",
+          "description": "Todo queda centralizado y se evitan cadenas interminables de mensajes."
+        },
+        "alignment": {
+          "value": "Responsabilidades claras",
+          "title": "Cada persona sabe que hacer",
+          "description": "Las tareas se reparten de forma visible y equilibrada."
+        },
+        "serenity": {
+          "value": "Serenidad estable",
+          "title": "Menos olvidos y menos tension",
+          "description": "La semana fluye mejor, incluso cuando hay mucho por hacer."
+        }
+      },
+      "rhythm": {
+        "title": "Un ritmo familiar simple en 3 pasos",
+        "capture": {
+          "icon": "🧩",
+          "title": "Capturar",
+          "description": "Anadid una tarea o idea en cuanto aparezca."
+        },
+        "plan": {
+          "icon": "🗓️",
+          "title": "Planificar",
+          "description": "Decidid juntos quien se encarga de cada cosa esta semana."
+        },
+        "act": {
+          "icon": "✨",
+          "title": "Avanzar",
+          "description": "Seguid lo completado y ajustad sin estres."
         }
       },
       "trust": {
-        "title": "Diseñado para creadores y equipos",
-        "description": "Empieza con una version gratuita y activa funciones premium si necesitas ir mas lejos.",
-        "freeForever": "Version gratuita disponible",
-        "noCreditCard": "Sin tarjeta de crédito",
-        "noComplexity": "Cero configuración compleja"
+        "title": "Disenado para la vida familiar real",
+        "description": "Tribu Nova transforma conversaciones familiares en acciones claras con una vision compartida del dia a dia.",
+        "freeForeverIcon": "👀",
+        "freeForever": "Visibilidad clara para todo el hogar",
+        "noCreditCardIcon": "🤝",
+        "noCreditCard": "Responsabilidades explicitas y justas",
+        "noComplexityIcon": "🌿",
+        "noComplexity": "Menos friccion y mas calma"
+      },
+      "examples": {
+        "title": "Vista previa de una semana real",
+        "columns": {
+          "todo": "Por hacer",
+          "inProgress": "En curso",
+          "done": "Hecho"
+        },
+        "backlog": {
+          "title": "Compra y comidas",
+          "description": "Visualiza la lista, asigna responsables y sigue el avance util.",
+          "todo1": "Planificar comidas de la semana",
+          "todo2": "Completar lista del super",
+          "inProgress1": "Compra principal",
+          "done1": "Pedir productos para bebe"
+        },
+        "board": {
+          "title": "Rutinas del hogar",
+          "description": "Reparte rutinas para evitar sobrecarga silenciosa.",
+          "todo1": "Poner lavadora de la tarde",
+          "todo2": "Preparar mochilas del cole",
+          "inProgress1": "Recoger cocina",
+          "done1": "Sacar la basura"
+        },
+        "epics": {
+          "title": "Proyecto familiar",
+          "description": "Manten visibles hitos y decisiones importantes.",
+          "todo1": "Validar presupuesto del armario",
+          "todo2": "Planificar fin de semana de orden",
+          "inProgress1": "Comparar opciones de cuidado",
+          "done1": "Comprar mobiliario principal"
+        },
+        "subtasks": {
+          "title": "Escuela y actividades",
+          "description": "Evita olvidos entre colegio, extraescolares y gestion diaria.",
+          "todo1": "Firmar autorizacion escolar",
+          "todo2": "Preparar bolsa de deporte",
+          "inProgress1": "Inscripcion al campamento",
+          "done1": "Pagar comedor"
+        }
       },
       "cta": {
-        "title": "¿Listo para organizarte?",
-        "description": "Únete a Maison Duo y empieza a gestionar tus proyectos con tranquilidad.",
+        "title": "Pasa de la carga constante a un flujo familiar claro",
+        "description": "Unete a Tribu Nova y organiza el dia a dia familiar con mas claridad y calma.",
         "button": "Empezar gratis"
       },
       "footer": {
+        "ariaLabel": "Enlaces del pie de página",
         "legal": "Aviso legal",
         "pricing": "Precios"
       }
@@ -1021,16 +1108,16 @@
           "icon": "🏢",
           "title": "Editor del sitio",
           "description": "Información sobre el editor de la plataforma",
-          "appName": "Workbench",
-          "appDescription": "Workbench es una aplicación de gestión de proyectos editada a título personal.",
-          "contact": "Contacto: contact@workbench.app",
+          "appName": "Tribu Nova",
+          "appDescription": "Tribu Nova es una aplicación de gestión familiar editada a título personal.",
+          "contact": "Contacto: contact@tribunova.app",
           "hosting": "Alojamiento: Vercel Inc. — 340 S Lemon Ave #4133, Walnut, CA 91789, Estados Unidos"
         },
         "intellectualProperty": {
           "icon": "©️",
           "title": "Propiedad intelectual",
           "description": "Derechos de autor y propiedad del contenido",
-          "content": "Todo el contenido de Workbench (textos, interfaces, código fuente, logotipos, elementos gráficos) está protegido por derechos de autor. Queda prohibida cualquier reproducción, representación o difusión, total o parcial, sin autorización previa."
+          "content": "Todo el contenido de Tribu Nova (textos, interfaces, código fuente, logotipos, elementos gráficos) está protegido por derechos de autor. Queda prohibida cualquier reproducción, representación o difusión, total o parcial, sin autorización previa."
         },
         "dataProtection": {
           "icon": "🔒",
@@ -1046,13 +1133,13 @@
           "collectedData": "Datos recogidos: dirección de email, nombre para mostrar, preferencias de usuario.",
           "purpose": "Finalidad: autenticación, personalización de la experiencia y funcionamiento del servicio.",
           "retention": "Plazo de conservación: tus datos se conservan mientras tu cuenta esté activa. Se eliminan a petición.",
-          "exerciseRights": "Para ejercer tus derechos, contáctanos en: contact@workbench.app"
+          "exerciseRights": "Para ejercer tus derechos, contáctanos en: contact@tribunova.app"
         },
         "cookies": {
           "icon": "🍪",
           "title": "Cookies",
           "description": "Uso de cookies en la plataforma",
-          "content": "Workbench utiliza únicamente cookies estrictamente necesarias para el funcionamiento del servicio (autenticación, sesión de usuario). No se utilizan cookies publicitarias ni de seguimiento. Estas cookies son esenciales y no requieren consentimiento previo."
+          "content": "Tribu Nova utiliza únicamente cookies estrictamente necesarias para el funcionamiento del servicio (autenticación, sesión de usuario). No se utilizan cookies publicitarias ni de seguimiento. Estas cookies son esenciales y no requieren consentimiento previo."
         },
         "liability": {
           "icon": "⚖️",
@@ -1101,17 +1188,19 @@
         "team": {
           "name": "Equipo",
           "description": "Para colaborar en equipo con funcionalidades avanzadas",
-          "price": "6,99€",
+          "price": "8,99€",
           "cta": "Elegir Equipo",
           "ctaAriaLabel": "Suscribirse al plan Equipo"
         },
         "currentBadge": "Activo"
       },
       "comparison": {
-        "title": "Comparación detallada de los planes"
+        "title": "Comparación detallada de los planes",
+        "featuresColumn": "Incluido en el plan"
       },
       "features": {
-        "workspaces": "Espacios de trabajo",
+        "projectsPerAccount": "Proyectos por cuenta",
+        "workspaces": "Proyectos por cuenta",
         "membersPerWorkspace": "Miembros por espacio",
         "tickets": "Tickets",
         "boardView": "Vista Tablero",
@@ -1126,12 +1215,16 @@
       },
       "values": {
         "one": "1",
+        "two": "2",
+        "four": "4",
         "three": "3",
         "five": "5",
+        "twenty": "20",
+        "hundred": "100",
         "ten": "10",
         "twentyFive": "25",
         "fifty": "50",
-        "threeColumns": "3 columnas",
+        "threeColumns": "3 columnas fijas (sin personalizacion)",
         "unlimited": "Ilimitado",
         "included": "Incluido",
         "notIncluded": "No incluido"
@@ -1160,6 +1253,12 @@
       "guarantee": {
         "title": "Garantía de satisfacción",
         "description": "Prueba Workbench Pro o Equipo durante 14 días. Si no estás satisfecho, te devolvemos el importe íntegro."
+      },
+      "trust": {
+        "title": "Premium, con expectativas claras",
+        "item1": "Versión gratuita sólida para empezar sin fricción.",
+        "item2": "Funciones premium solo cuando realmente las necesites.",
+        "item3": "Precios transparentes, sin costes ocultos."
       },
       "cta": {
         "currentPlan": "Plan actual",
@@ -1196,11 +1295,12 @@
       "ctaAriaLabel": "Ver planes y mejorar tu suscripción",
       "featureNames": {
         "epics": "Epics",
+        "backlogView": "Vista Backlog",
         "subtasks": "Subtareas",
         "priorities": "Prioridades",
         "exportImport": "Exportar / Importar",
         "advancedRoles": "Roles avanzados",
-        "workspaces": "Espacios de trabajo",
+        "workspaces": "Proyectos por cuenta",
         "membersPerWorkspace": "Miembros por espacio",
         "tickets": "Tickets",
         "customColumns": "Columnas personalizadas"

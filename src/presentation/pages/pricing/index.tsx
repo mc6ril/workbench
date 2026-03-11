@@ -346,7 +346,7 @@ const PricingPage = () => {
               <thead>
                 <tr>
                   <th className={styles["comparison-table__feature-header"]}>
-                    {t("features.workspaces").split(" ")[0]}
+                    {t("comparison.featuresColumn")}
                   </th>
                   {PLAN_KEYS.map((plan) => (
                     <th
@@ -390,6 +390,29 @@ const PricingPage = () => {
           <h3 className={styles["guarantee__title"]}>{t("guarantee.title")}</h3>
           <Text variant="small">{t("guarantee.description")}</Text>
         </div>
+
+        <section
+          className={styles["pricing-trust-section"]}
+          aria-labelledby={getAccessibilityId("pricing-trust-title")}
+        >
+          <h2
+            id={getAccessibilityId("pricing-trust-title")}
+            className={styles["pricing-trust-section__title"]}
+          >
+            {t("trust.title")}
+          </h2>
+          <div className={styles["pricing-trust-list"]} role="list">
+            <span className={styles["pricing-trust-item"]} role="listitem">
+              {t("trust.item1")}
+            </span>
+            <span className={styles["pricing-trust-item"]} role="listitem">
+              {t("trust.item2")}
+            </span>
+            <span className={styles["pricing-trust-item"]} role="listitem">
+              {t("trust.item3")}
+            </span>
+          </div>
+        </section>
 
         {/* FAQ */}
         <section

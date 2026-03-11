@@ -49,6 +49,7 @@ const PROJECT_VIEW_CONFIG_INPUTS: Record<
   },
   [PROJECT_VIEWS.BACKLOG]: {
     navbar: { showFilterSort: true, addActionType: "ticket" },
+    requiredFeature: PlanFeature.BACKLOG_VIEW,
   },
   [PROJECT_VIEWS.BOARD]: {
     navbar: { showFilterSort: true, addActionType: "ticket" },

@@ -2,6 +2,9 @@
 
 import { use } from "react";
 
+import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
+
+import FeatureGate from "@/presentation/layouts/featureGate/FeatureGate";
 import BacklogPageContent from "@/presentation/pages/backlog";
 
 const ProjectBacklogPage = ({
@@ -11,7 +14,11 @@ const ProjectBacklogPage = ({
 }) => {
   const { projectId } = use(params);
 
-  return <BacklogPageContent projectId={projectId} />;
+  return (
+    <FeatureGate feature={PlanFeature.BACKLOG_VIEW}>
+      <BacklogPageContent projectId={projectId} />
+    </FeatureGate>
+  );
 };
 
 export default ProjectBacklogPage;
