@@ -36,7 +36,6 @@
       "addTabAriaLabel": "Ajouter un onglet (à venir)",
       "items": {
         "home": "Accueil",
-        "backlog": "Liste des tâches",
         "board": "Tableau",
         "ticketDetail": "Tâche",
         "epics": "Objectifs",
@@ -317,7 +316,6 @@
         "title": "Raccourcis",
         "shortcuts": {
           "board": "Tableau",
-          "backlog": "Liste des tâches",
           "epics": "Objectifs",
           "settings": "Paramètres"
         }
@@ -348,7 +346,6 @@
         "title": "Raccourcis",
         "shortcuts": {
           "board": "Tableau",
-          "backlog": "Liste des tâches",
           "epics": "Objectifs",
           "settings": "Paramètres"
         }
@@ -419,75 +416,6 @@
         "subscriptions": "Plans et options"
       }
     },
-    "backlog": {
-      "title": "Liste des tâches",
-      "subtitle": "Gérez et organisez vos tâches",
-      "ticketList": {
-        "ariaLabel": "Liste des tâches",
-        "emptyTitle": "Aucune tâche pour le moment",
-        "emptyMessage": "Ajoutez votre première tâche pour alléger votre charge mentale dès maintenant.",
-        "errorTitle": "Erreur lors du chargement des tâches",
-        "count": "{count} tâche",
-        "count_other": "{count} tâches"
-      },
-      "filters": {
-        "searchLabel": "Rechercher",
-        "searchPlaceholder": "Rechercher par titre ou description",
-        "statusLabel": "Statut",
-        "epicLabel": "Objectif",
-        "priorityLabel": "Priorité",
-        "sprintLabel": "Semaine",
-        "noSprintLabel": "Sans semaine",
-        "labelLabel": "Label",
-        "noLabelOptions": "Aucun label disponible pour ce projet",
-        "resetLabel": "Réinitialiser les filtres"
-      },
-      "sort": {
-        "label": "Trier par",
-        "fieldCreatedAt": "Date de création",
-        "fieldTitle": "Titre",
-        "fieldStatus": "Statut",
-        "fieldPosition": "Position du tableau",
-        "fieldPriority": "Priorité",
-        "fieldSprint": "Semaine",
-        "fieldDueDate": "Date d'échéance",
-        "sortDirectionLabel": "Sens du tri",
-        "directionAsc": "Ascendant",
-        "directionDesc": "Descendant",
-        "resetLabel": "Réinitialiser le tri"
-      },
-      "bulkActions": {
-        "title": "Actions groupées",
-        "selectedCount": "{count} tâche sélectionnée",
-        "selectedCount_other": "{count} tâches sélectionnées",
-        "deleteLabel": "Supprimer",
-        "moveLabel": "Déplacer",
-        "changeStatusLabel": "Modifier le statut"
-      },
-      "createTicketForm": {
-        "title": "Créer une tâche",
-        "fields": {
-          "title": "Titre",
-          "description": "Description",
-          "status": "Statut",
-          "epic": "Objectif",
-          "labels": "Labels"
-        },
-        "submitButton": "Créer la tâche",
-        "cancelButton": "Annuler",
-        "errorGeneric": "Une erreur s'est produite lors de la création de la tâche",
-        "readOnlyHint": "Les lecteurs ne peuvent pas créer de tâches."
-      },
-      "ticketListItem": {
-        "ticketAriaLabel": "Tâche",
-        "statusLabel": "Statut",
-        "epicLabel": "Objectif",
-        "assigneeLabel": "Assigné à",
-        "openTicketLabel": "Ouvrir la tâche",
-        "editTicketLabel": "Modifier la tâche",
-        "selectTicketLabel": "Sélectionner la tâche"
-      }
-    },
     "board": {
       "view": {
         "title": "Tableau de bord",
@@ -514,8 +442,13 @@
         "searchPlaceholder": "Rechercher par titre ou description",
         "statusLabel": "Statut",
         "epicLabel": "Objectif",
-        "assigneeLabel": "Assigné à",
-        "resetLabel": "Réinitialiser les filtres"
+        "priorityLabel": "Priorité",
+        "sprintLabel": "Semaine",
+        "noSprintLabel": "Sans semaine",
+        "labelLabel": "Label",
+        "noLabelOptions": "Aucun label disponible pour ce projet",
+        "resetLabel": "Réinitialiser les filtres",
+        "assigneeLabel": "Assigné à"
       },
       "ticketCard": {
         "ticketAriaLabel": "Tâche",
@@ -536,6 +469,35 @@
         "moveDownLabel": "Descendre",
         "moveUpAriaLabel": "Déplacer la colonne {title} vers le haut",
         "moveDownAriaLabel": "Déplacer la colonne {title} vers le bas"
+      },
+      "sort": {
+        "label": "Trier par",
+        "fieldCreatedAt": "Date de création",
+        "fieldTitle": "Titre",
+        "fieldStatus": "Statut",
+        "fieldPosition": "Position du tableau",
+        "fieldPriority": "Priorité",
+        "fieldSprint": "Semaine",
+        "fieldDueDate": "Date d'échéance",
+        "sortDirectionLabel": "Sens du tri",
+        "directionAsc": "Ascendant",
+        "directionDesc": "Descendant",
+        "resetLabel": "Réinitialiser le tri"
+      },
+      "createTicketForm": {
+        "title": "Créer une tâche",
+        "fields": {
+          "title": "Titre",
+          "description": "Description",
+          "status": "Statut",
+          "epic": "Objectif",
+          "labels": "Labels"
+        },
+        "submitButton": "Créer la tâche",
+        "cancelButton": "Annuler",
+        "errorGeneric": "Une erreur s'est produite lors de la création de la tâche",
+        "readOnlyHint": "Les lecteurs ne peuvent pas créer de tâches.",
+        "noStatusHint": "Gérez et organisez vos tâches"
       }
     },
     "epics": {
@@ -978,11 +940,6 @@
       },
       "features": {
         "title": "Des usages concrets pour le quotidien familial",
-        "backlog": {
-          "icon": "🛒",
-          "title": "Courses et repas",
-          "description": "Anticipez les menus, la liste et les passages en magasin sans doublons."
-        },
         "board": {
           "icon": "🧺",
           "title": "Tâches de la maison",
@@ -1052,14 +1009,6 @@
           "todo": "À faire",
           "inProgress": "En cours",
           "done": "Fait"
-        },
-        "backlog": {
-          "title": "Courses et repas",
-          "description": "Visualisez la liste, assignez et suivez les achats utiles.",
-          "todo1": "Planifier les repas de la semaine",
-          "todo2": "Compléter la liste du drive",
-          "inProgress1": "Passage au supermarché",
-          "done1": "Commander les produits bébé"
         },
         "board": {
           "title": "Tâches de la maison",
@@ -1204,7 +1153,6 @@
         "membersPerWorkspace": "Membres du foyer",
         "tickets": "Tâches",
         "boardView": "Vue tableau",
-        "backlogView": "Vue liste simplifiée",
         "epics": "Objectifs partagés",
         "subtasks": "Sous-tâches",
         "customColumns": "Personnalisation des colonnes",
@@ -1277,7 +1225,6 @@
       "ctaAriaLabel": "Voir les tarifs et passer à un plan supérieur",
       "featureNames": {
         "epics": "Objectifs",
-        "backlogView": "Vue liste simplifiée",
         "subtasks": "Sous-tâches",
         "priorities": "Priorités",
         "exportImport": "Export / Import",

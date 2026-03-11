@@ -1,12 +1,10 @@
-import ProjectHeader from "@/presentation/components/projectHeader/ProjectHeader";
-import ProjectHomeDashboard from "@/presentation/components/projectHomeDashboard/ProjectHomeDashboard";
+import { redirect } from "next/navigation";
 
-import { getProjectForRoute } from "./getProjectForRoute";
-import styles from "./ProjectPage.module.scss";
+import { PROJECT_VIEWS } from "@/shared/constants/routes";
 
 /**
- * Project root page (Home).
- * This route is the landing dashboard for a single project.
+ * Project root page.
+ * This route redirects to the board view to keep a single default flow.
  */
 const ProjectPage = async ({
   params,
@@ -14,24 +12,7 @@ const ProjectPage = async ({
   params: Promise<{ projectId: string }>;
 }) => {
   const { projectId } = await params;
-  const project = await getProjectForRoute(projectId);
-
-  return (
-    <main className={styles["project-page"]}>
-      <div className={styles["project-page__header"]}>
-        <div className={styles["project-page__header-content"]}>
-          <ProjectHeader
-            projectId={projectId}
-            name={project.name}
-            fallbackUpdatedAtIso={project.updatedAt.toISOString()}
-          />
-        </div>
-      </div>
-      <div className={styles["project-page__container"]}>
-        <ProjectHomeDashboard projectId={projectId} />
-      </div>
-    </main>
-  );
+  redirect(`/${projectId}/${PROJECT_VIEWS.BOARD}`);
 };
 
 export default ProjectPage;

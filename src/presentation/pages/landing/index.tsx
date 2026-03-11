@@ -37,7 +37,7 @@ const LandingPageContent = () => {
   const tCta = useTranslation("pages.landing.cta");
   const tFooter = useTranslation("pages.landing.footer");
   const [selectedFeatureKey, setSelectedFeatureKey] = useState<FeatureKey>(
-    "backlog"
+    "board"
   );
 
   // Supabase redirects to /?code=... instead of dedicated pages

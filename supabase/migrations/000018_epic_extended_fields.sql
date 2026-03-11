@@ -7,7 +7,7 @@ ALTER TABLE epics
 ALTER TABLE epics
   ADD COLUMN IF NOT EXISTS target_date timestamptz DEFAULT NULL;
 
--- Color for visual identification on boards and backlog
+-- Color for visual identification on boards
 ALTER TABLE epics
   ADD COLUMN IF NOT EXISTS color text NOT NULL DEFAULT '#6B7280'
     CHECK (color ~ '^#[0-9a-fA-F]{6}$');

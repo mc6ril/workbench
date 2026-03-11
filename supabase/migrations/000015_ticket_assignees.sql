@@ -70,7 +70,7 @@ CREATE POLICY "Project editors can delete ticket assignees"
 -- ============================================================================
 
 -- Returns assignees for a list of tickets, joined with user_profiles.
--- Used to batch-load assignees for board/backlog views.
+-- Used to batch-load assignees for board views.
 CREATE OR REPLACE FUNCTION get_ticket_assignees(ticket_ids uuid[])
 RETURNS TABLE (
   ticket_id uuid,

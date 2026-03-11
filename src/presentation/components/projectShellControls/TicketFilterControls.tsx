@@ -27,7 +27,7 @@ const TicketFilterControls = ({
   onClearLabelIds,
   onResetFilters,
 }: TicketFilterControlsProps) => {
-  const t = useTranslation("pages.backlog.filters");
+  const t = useTranslation("pages.board.filters");
   const tTicket = useTranslation("pages.ticketDetail.page");
 
   return (

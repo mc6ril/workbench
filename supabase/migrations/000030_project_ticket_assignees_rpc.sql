@@ -1,4 +1,4 @@
--- Project-scoped assignee lookup for board/backlog initial render.
+-- Project-scoped assignee lookup for board initial render.
 -- Allows fetching assignees in parallel with tickets (no ticket-id dependency).
 
 CREATE OR REPLACE FUNCTION get_project_ticket_assignees(p_project_id uuid)

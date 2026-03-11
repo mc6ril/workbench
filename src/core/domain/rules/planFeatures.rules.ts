@@ -11,7 +11,6 @@ import {
  */
 export enum PlanFeature {
   EPICS = "epics",
-  BACKLOG_VIEW = "backlogView",
   SUBTASKS = "subtasks",
   PRIORITIES = "priorities",
   EXPORT_IMPORT = "exportImport",
@@ -45,7 +44,6 @@ const UNLIMITED = -1;
 export const PLAN_CAPABILITIES: Record<SubscriptionPlan, PlanCapabilityMap> = {
   [SubscriptionPlan.FREE]: {
     [PlanFeature.EPICS]: { type: "boolean", access: true },
-    [PlanFeature.BACKLOG_VIEW]: { type: "boolean", access: false },
     [PlanFeature.SUBTASKS]: { type: "boolean", access: false },
     [PlanFeature.PRIORITIES]: { type: "boolean", access: false },
     [PlanFeature.EXPORT_IMPORT]: { type: "boolean", access: false },
@@ -57,7 +55,6 @@ export const PLAN_CAPABILITIES: Record<SubscriptionPlan, PlanCapabilityMap> = {
   },
   [SubscriptionPlan.PRO]: {
     [PlanFeature.EPICS]: { type: "boolean", access: true },
-    [PlanFeature.BACKLOG_VIEW]: { type: "boolean", access: true },
     [PlanFeature.SUBTASKS]: { type: "boolean", access: true },
     [PlanFeature.PRIORITIES]: { type: "boolean", access: true },
     [PlanFeature.EXPORT_IMPORT]: { type: "boolean", access: true },
@@ -69,7 +66,6 @@ export const PLAN_CAPABILITIES: Record<SubscriptionPlan, PlanCapabilityMap> = {
   },
   [SubscriptionPlan.TEAM]: {
     [PlanFeature.EPICS]: { type: "boolean", access: true },
-    [PlanFeature.BACKLOG_VIEW]: { type: "boolean", access: true },
     [PlanFeature.SUBTASKS]: { type: "boolean", access: true },
     [PlanFeature.PRIORITIES]: { type: "boolean", access: true },
     [PlanFeature.EXPORT_IMPORT]: { type: "boolean", access: true },

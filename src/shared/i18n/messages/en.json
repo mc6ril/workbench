@@ -36,7 +36,6 @@
       "addTabAriaLabel": "Add tab (coming soon)",
       "items": {
         "home": "Home",
-        "backlog": "Task list",
         "board": "Board",
         "ticketDetail": "Task",
         "epics": "Goals",
@@ -317,7 +316,6 @@
         "title": "Shortcuts",
         "shortcuts": {
           "board": "Board",
-          "backlog": "Task list",
           "epics": "Goals",
           "settings": "Settings"
         }
@@ -348,7 +346,6 @@
         "title": "Shortcuts",
         "shortcuts": {
           "board": "Board",
-          "backlog": "Task list",
           "epics": "Goals",
           "settings": "Settings"
         }
@@ -419,75 +416,6 @@
         "subscriptions": "Plans and options"
       }
     },
-    "backlog": {
-      "title": "Task list",
-      "subtitle": "Manage and organize your tasks",
-      "ticketList": {
-        "ariaLabel": "Task list",
-        "emptyTitle": "No tasks yet",
-        "emptyMessage": "Add your first task to start reducing your mental load right away.",
-        "errorTitle": "Error loading tasks",
-        "count": "{count} task",
-        "count_other": "{count} tasks"
-      },
-      "filters": {
-        "searchLabel": "Search",
-        "searchPlaceholder": "Search by title or description",
-        "statusLabel": "Status",
-        "epicLabel": "Goal",
-        "priorityLabel": "Priority",
-        "sprintLabel": "Week",
-        "noSprintLabel": "No week",
-        "labelLabel": "Label",
-        "noLabelOptions": "No labels available for this project",
-        "resetLabel": "Reset filters"
-      },
-      "sort": {
-        "label": "Sort by",
-        "fieldCreatedAt": "Creation date",
-        "fieldTitle": "Title",
-        "fieldStatus": "Status",
-        "fieldPosition": "Board position",
-        "fieldPriority": "Priority",
-        "fieldSprint": "Week",
-        "fieldDueDate": "Due date",
-        "sortDirectionLabel": "Sort direction",
-        "directionAsc": "Ascending",
-        "directionDesc": "Descending",
-        "resetLabel": "Reset sort"
-      },
-      "bulkActions": {
-        "title": "Bulk actions",
-        "selectedCount": "{count} task selected",
-        "selectedCount_other": "{count} tasks selected",
-        "deleteLabel": "Delete",
-        "moveLabel": "Move",
-        "changeStatusLabel": "Change status"
-      },
-      "createTicketForm": {
-        "title": "Create task",
-        "fields": {
-          "title": "Title",
-          "description": "Description",
-          "status": "Status",
-          "epic": "Goal",
-          "labels": "Labels"
-        },
-        "submitButton": "Create task",
-        "cancelButton": "Cancel",
-        "errorGeneric": "An error occurred while creating the task",
-        "readOnlyHint": "Viewers cannot create tasks."
-      },
-      "ticketListItem": {
-        "ticketAriaLabel": "Task",
-        "statusLabel": "Status",
-        "epicLabel": "Goal",
-        "assigneeLabel": "Assignee",
-        "openTicketLabel": "Open task",
-        "editTicketLabel": "Edit task",
-        "selectTicketLabel": "Select task"
-      }
-    },
     "board": {
       "view": {
         "title": "Board",
@@ -514,8 +442,13 @@
         "searchPlaceholder": "Search by title or description",
         "statusLabel": "Status",
         "epicLabel": "Goal",
-        "assigneeLabel": "Assignee",
-        "resetLabel": "Reset filters"
+        "priorityLabel": "Priority",
+        "sprintLabel": "Week",
+        "noSprintLabel": "No week",
+        "labelLabel": "Label",
+        "noLabelOptions": "No labels available for this project",
+        "resetLabel": "Reset filters",
+        "assigneeLabel": "Assignee"
       },
       "ticketCard": {
         "ticketAriaLabel": "Task",
@@ -536,6 +469,35 @@
         "moveDownLabel": "Move down",
         "moveUpAriaLabel": "Move column {title} up",
         "moveDownAriaLabel": "Move column {title} down"
+      },
+      "sort": {
+        "label": "Sort by",
+        "fieldCreatedAt": "Creation date",
+        "fieldTitle": "Title",
+        "fieldStatus": "Status",
+        "fieldPosition": "Board position",
+        "fieldPriority": "Priority",
+        "fieldSprint": "Week",
+        "fieldDueDate": "Due date",
+        "sortDirectionLabel": "Sort direction",
+        "directionAsc": "Ascending",
+        "directionDesc": "Descending",
+        "resetLabel": "Reset sort"
+      },
+      "createTicketForm": {
+        "title": "Create task",
+        "fields": {
+          "title": "Title",
+          "description": "Description",
+          "status": "Status",
+          "epic": "Goal",
+          "labels": "Labels"
+        },
+        "submitButton": "Create task",
+        "cancelButton": "Cancel",
+        "errorGeneric": "An error occurred while creating the task",
+        "readOnlyHint": "Viewers cannot create tasks.",
+        "noStatusHint": "Manage and organize your tasks"
       }
     },
     "epics": {
@@ -978,11 +940,6 @@
       },
       "features": {
         "title": "Practical use cases for everyday family life",
-        "backlog": {
-          "icon": "🛒",
-          "title": "Groceries and meals",
-          "description": "Plan menus, build the shopping list, and avoid duplicate buys."
-        },
         "board": {
           "icon": "🧺",
           "title": "Home routines",
@@ -1052,14 +1009,6 @@
           "todo": "To do",
           "inProgress": "In progress",
           "done": "Done"
-        },
-        "backlog": {
-          "title": "Groceries and meals",
-          "description": "Visualize the list, assign ownership, and follow useful progress.",
-          "todo1": "Plan this week's meals",
-          "todo2": "Complete the online shopping list",
-          "inProgress1": "Supermarket run",
-          "done1": "Order baby essentials"
         },
         "board": {
           "title": "Home routines",
@@ -1204,7 +1153,6 @@
         "membersPerWorkspace": "Members per workspace",
         "tickets": "Tickets",
         "boardView": "Board view",
-        "backlogView": "Backlog view",
         "epics": "Epics",
         "subtasks": "Subtasks",
         "customColumns": "Custom columns",
@@ -1295,7 +1243,6 @@
       "ctaAriaLabel": "View plans and upgrade your subscription",
       "featureNames": {
         "epics": "Epics",
-        "backlogView": "Backlog view",
         "subtasks": "Subtasks",
         "priorities": "Priorities",
         "exportImport": "Export / Import",

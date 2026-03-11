@@ -12,7 +12,7 @@ export type SprintStatus = z.infer<typeof SprintStatusSchema>;
 
 /**
  * Zod schema for Sprint entity.
- * Sprints group tickets into iterations within a project backlog.
+ * Sprints group tickets into iterations within a project.
  */
 export const SprintSchema = z.object({
   id: z.string().uuid(),

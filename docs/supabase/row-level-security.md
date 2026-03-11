@@ -1,237 +1,107 @@
 # Row Level Security (RLS) and Permissions
 
-This document describes the Row Level Security policies and permission system for Workbench.
+This document summarizes how RLS protects Workbench data in Supabase.
 
-## Overview
+## Security Model
 
-Workbench uses Supabase Row Level Security (RLS) to restrict database access to authorized users only. All tables are protected by RLS policies that ensure users can only access and modify data for projects where they are members.
+- RLS is enabled on all application tables in `public`
+- Access is scoped by authenticated user identity (`auth.uid()`)
+- Project membership is the main authorization boundary
+- Service-role operations are reserved for trusted server contexts only
 
-Workbench supports both professional and personal projects. The same permission system applies regardless of project type: users must be authenticated and have project membership to access project data. Projects can be professional (development, business) or personal (vacations, home, hobbies), but the security model remains consistent.
+## Membership and Roles
 
-## Project Membership System
+Membership is stored in `project_members`:
 
-### Project Members Table
+- `admin`
+  - full project administration
+  - can manage members and destructive project actions
+- `member`
+  - can create and edit project work data
+- `viewer`
+  - read-only access
 
-The `project_members` table links users to projects with specific roles:
+## Helper Functions Used by Policies
 
-| Column     | Type        | Description                      |
-| ---------- | ----------- | -------------------------------- |
-| id         | uuid        | Primary key                      |
-| project_id | uuid        | Foreign key to projects          |
-| user_id    | uuid        | Foreign key to auth.users        |
-| role       | text        | User role: admin, member, viewer |
-| created_at | timestamptz | Creation timestamp               |
-| updated_at | timestamptz | Last update timestamp            |
+Core helper functions include:
 
-### User Roles
+- `is_project_member(project_uuid uuid)`
+- `get_project_role(project_uuid uuid)`
+- `is_project_admin(project_uuid uuid)`
+- `can_edit_project(project_uuid uuid)`
+- `has_any_project_access()`
 
-Three roles are available for project members:
+Project lifecycle functions include:
 
-- **admin**: Full access to the project
-  - Can view, create, update, and delete all project data
-  - Can add/remove project members
-  - Can delete the project
-  - Can update project settings
+- `create_project(project_name text)`
+- `reclaim_or_join_project(project_uuid uuid)`
+- `get_reclaimable_projects()`
+- `cleanup_expired_orphaned_projects()`
 
-- **member**: Can edit project data
-  - Can view all project data
-  - Can create, update, and delete tickets, epics, boards, and columns
-  - Cannot delete the project
-  - Cannot manage project members
+Invitation and profile collaboration functions include:
 
-- **viewer**: Read-only access
-  - Can view all project data
-  - Cannot create, update, or delete any data
-  - Cannot manage project members
+- `accept_invitation(invitation_token text)`
+- `decline_invitation(invitation_token text)`
+- `get_pending_invitations()`
+- `update_user_profile(...)`
 
-## Helper Functions
+## Policy Intent by Domain
 
-The following helper functions are available for RLS policies:
+### Projects and Membership
 
-### `is_project_member(project_uuid uuid)`
+- Read projects only when member of the project
+- Create projects as authenticated users (with controlled bootstrap behavior)
+- Update/delete limited by role checks
+- Membership table operations restricted to admin-grade actions
 
-Returns `true` if the current user is a member of the specified project.
+### Workflow Data (`boards`, `columns`, `tickets`, `epics`, `sprints`)
 
-```sql
-SELECT is_project_member('00000000-0000-0000-0000-000000000001');
-```
+- Read when project member
+- Write when edit-capable (`admin` or `member`)
+- Viewer role remains read-only
 
-### `get_project_role(project_uuid uuid)`
+### Collaboration Data (`comments`, `labels`, `ticket_labels`, `ticket_assignees`, `project_invitations`)
 
-Returns the current user's role in the specified project (or `NULL` if not a member).
+- Read scoped to related project membership
+- Write constrained by editor/admin permissions and ownership rules where applicable
 
-```sql
-SELECT get_project_role('00000000-0000-0000-0000-000000000001');
--- Returns: 'admin', 'member', 'viewer', or NULL
-```
+### User Projection Data (`user_profiles`, `subscriptions`)
 
-### `is_project_admin(project_uuid uuid)`
+- User profile and subscription access are constrained to appropriate self/member scopes
 
-Returns `true` if the current user is an admin of the specified project.
+## Operational Notes
 
-```sql
-SELECT is_project_admin('00000000-0000-0000-0000-000000000001');
-```
+### RLS performance
 
-### `can_edit_project(project_uuid uuid)`
+Supabase advisors currently report optimization opportunities for some policies that call `auth.*` directly.
 
-Returns `true` if the current user can edit the specified project (admin or member role).
-
-```sql
-SELECT can_edit_project('00000000-0000-0000-0000-000000000001');
-```
-
-### `has_any_project_access()`
-
-Returns `true` if the current user has access to any project (is a member of at least one project).
+Recommended optimization pattern:
 
 ```sql
-SELECT has_any_project_access();
+-- Preferred in policy expressions
+(select auth.uid())
 ```
 
-### `reclaim_or_join_project(project_uuid uuid)`
+instead of row-by-row function evaluation forms.
 
-Allows the current user to join a project or reclaim an orphaned project. Assigns `admin` role for orphaned projects, `viewer` for active ones.
+### Multiple permissive policies
 
-```sql
-SELECT * FROM reclaim_or_join_project('00000000-0000-0000-0000-000000000001');
--- Returns the project row after joining
-```
+Some tables may intentionally have multiple permissive policies (for different collaboration paths), but this can carry planner cost.  
+Consolidate policy logic only when behavior remains identical and fully tested.
 
-### `get_reclaimable_projects()`
+## Testing Checklist
 
-Returns orphaned projects where `creator_email` matches the current user's email.
+- Authenticated non-member cannot read target project data
+- Viewer cannot mutate tickets/epics/columns/comments
+- Member can mutate allowed workflow data
+- Admin can manage members and admin-only actions
+- Invitation flow honors token, expiration, and membership constraints
+- Reclaim/orphan lifecycle remains restricted to valid user context
 
-```sql
-SELECT * FROM get_reclaimable_projects();
--- Returns: id, name, short_code, orphaned_at
-```
+## References
 
-### `cleanup_expired_orphaned_projects()`
-
-Deletes orphaned projects older than 30 days. Returns the count of deleted projects.
-
-```sql
-SELECT cleanup_expired_orphaned_projects();
--- Returns: integer (number of deleted projects)
-```
-
-## RLS Policies
-
-### Projects
-
-- **SELECT**: Users can view projects where they are members
-- **INSERT**: Any authenticated users can create projects (creator is automatically added as admin)
-- **UPDATE**: Users can update projects where they have edit permission (admin or member)
-- **DELETE**: Only admins can delete projects
-
-**Note**: When a project is created, the creator is automatically added as an `admin` member via a database trigger.
-
-### Project Members
-
-- **SELECT**: Users can view project members for projects where they are members
-- **INSERT**: Only admins can add project members
-- **UPDATE**: Only admins can update project members (change roles)
-- **DELETE**: Only admins can remove project members
-
-### Tickets
-
-- **SELECT**: Users can view tickets for projects where they are members
-- **INSERT**: Users can create tickets if they have edit permission (admin or member)
-- **UPDATE**: Users can update tickets if they have edit permission (admin or member)
-- **DELETE**: Users can delete tickets if they have edit permission (admin or member)
-
-### Epics
-
-- **SELECT**: Users can view epics for projects where they are members
-- **INSERT**: Users can create epics if they have edit permission (admin or member)
-- **UPDATE**: Users can update epics if they have edit permission (admin or member)
-- **DELETE**: Users can delete epics if they have edit permission (admin or member)
-
-### Boards
-
-- **SELECT**: Users can view boards for projects where they are members
-- **INSERT**: Authenticated users can create boards (if they are project members)
-- **UPDATE**: Users can update boards if they have edit permission (admin or member)
-- **DELETE**: Boards are deleted automatically when projects are deleted (CASCADE)
-
-### Columns
-
-- **SELECT**: Users can view columns for boards where they are project members
-- **INSERT**: Users can create columns if they have edit permission (admin or member)
-- **UPDATE**: Users can update columns if they have edit permission (admin or member)
-- **DELETE**: Users can delete columns if they have edit permission (admin or member)
-
-## Security Notes
-
-1. **RLS is enabled on all tables**: No data can be accessed without proper policies.
-
-2. **Policies use `auth.uid()`**: All policies check the current authenticated user via Supabase's `auth.uid()` function.
-
-3. **Helper functions are SECURITY DEFINER**: The helper functions use `SECURITY DEFINER` to ensure they can access `auth.uid()` correctly.
-
-4. **Service role key bypasses RLS**: The service role key should never be used in client-side code. It's reserved for administrative tasks and server-side operations.
-
-5. **Cascade deletes**: When a project is deleted, all related data (tickets, epics, boards, columns, project members) is automatically deleted due to CASCADE constraints.
-
-## Creating Projects
-
-When a user creates a project:
-
-1. The user must be authenticated
-2. The user must not have access to any existing project (enforced by RLS policy)
-3. The project is created
-4. The creator is automatically added as an `admin` member via database trigger
-
-This ensures that each user can only have one project (MVP assumption), and the creator automatically becomes the project admin.
-
-## Adding Users to Projects
-
-To add a user to a project, insert a row into `project_members`:
-
-```sql
-INSERT INTO project_members (project_id, user_id, role)
-VALUES (
-  '00000000-0000-0000-0000-000000000001',
-  'user-uuid-here',
-  'member'
-);
-```
-
-**Note**: Only admins can add project members (enforced by RLS policy).
-
-## Migrations
-
-- **Migration 000003**: Creates project_members table and RLS policies
-- **Migration 000004**: Adds auto-add creator as admin trigger and restricts project creation to users without existing projects
-
-## Testing RLS Policies
-
-To test RLS policies:
-
-1. Create test users in Supabase Auth
-2. Create project memberships with different roles
-3. Authenticate as different users and verify access restrictions
-4. Test that unauthorized access attempts are blocked
-
-## Orphaned Project Lifecycle
-
-When a user deletes their account, `ON DELETE CASCADE` removes their `project_members` rows. If a project has no remaining members, it becomes **orphaned**:
-
-1. The `handle_project_member_removed` trigger sets `orphaned_at = NOW()` on the project
-2. The project becomes invisible to all users (no members = no RLS access)
-3. The `get_reclaimable_projects()` function (SECURITY DEFINER) bypasses RLS to find orphaned projects where `creator_email` matches the current user's email
-4. The user can reclaim the project via `reclaim_or_join_project()`, which adds them as admin
-5. The `handle_project_member_added` trigger automatically clears `orphaned_at`
-6. Projects orphaned for more than 30 days can be permanently deleted via `cleanup_expired_orphaned_projects()`
-
-**Security note**: `get_reclaimable_projects()` and `reclaim_or_join_project()` use `SECURITY DEFINER` to bypass RLS, as orphaned projects have no members and are therefore inaccessible via normal RLS policies. Access is scoped by email matching (`creator_email`) and authentication (`auth.uid()`).
-
-## Future Enhancements
-
-Possible future enhancements to the permission system:
-
-- Role-based permissions for specific operations (e.g., assign tickets, change ticket status)
-- Project-level permissions (e.g., restrict ticket creation to certain roles)
-- Team/organization-level permissions
-- Time-based access (e.g., temporary access)
+- `supabase/migrations/000003_add_project_members_and_rls.sql`
+- `supabase/migrations/000011_fix_security_linter_warnings.sql`
+- `supabase/migrations/000014_project_invitations.sql`
+- `supabase/migrations/000020_comments.sql`
+- `docs/supabase/database-schema.md`

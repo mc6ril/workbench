@@ -1,805 +1,123 @@
 # Database Schema Design
 
-This document describes the database schema for Workbench, including tables, relationships, constraints, and design decisions.
+This document reflects the effective Supabase schema used by Workbench after the current migration set.
+
+## Scope
+
+Workbench uses a project-centric collaborative model with role-based access and family-friendly workflow features.  
+The active app flow focuses on `board` and `epics`, while collaboration tables remain first-class and intentionally preserved.
+
+## Tables (public schema)
+
+### Core Project Structure
+
+- `projects`
+  - Core project metadata (`name`, `short_code`, orphan lifecycle fields)
+- `project_members`
+  - Membership and role (`admin`, `member`, `viewer`)
+- `boards`
+  - One board per project (`project_id` unique)
+- `columns`
+  - Board columns with order and workflow metadata
 
-## Overview
+### Work Items
 
-The Workbench database schema supports a single-user task management system with the following core entities:
+- `tickets`
+  - Main work item table
+  - Supports parent-child relation (`parent_id`) for one-level subtasks
+  - Supports links to epics/sprints, extended priority and date fields
+- `epics`
+  - Objectives table with color and date metadata
+- `sprints`
+  - Iteration buckets, linked to tickets via `tickets.sprint_id`
 
-- **Project**: Container for all work items (single project assumption for MVP)
-- **Ticket**: Individual work items that can be organized in a backlog or board
-- **Epic**: Grouping mechanism for related tickets
-- **Board**: Visual representation configuration for tickets
-- **Column**: Status columns within a board
+### Collaboration
 
-## Entity Relationship Summary
+- `comments`
+  - Ticket comments with author relation
+- `ticket_assignees`
+  - Many-to-many assignment table between tickets and users
+- `labels`
+  - Project-scoped labels
+- `ticket_labels`
+  - Join table between tickets and labels
+- `project_invitations`
+  - Token-based invitation workflow
+- `user_profiles`
+  - Public profile projection from auth users
 
-```
-Project (1) ──< (many) Ticket
-Project (1) ──< (many) Epic
-Project (1) ──< (1) Board
-Board (1) ──< (many) Column
-Epic (1) ──< (many) Ticket [optional, via epic_id]
-Ticket (1) ──< (many) Ticket [optional, via parent_id, single-level only]
-```
+### Billing / Plan
 
-## Tables
+- `subscriptions`
+  - User subscription state (`free/pro/team`) and billing metadata
 
-### project_members
+## Key Relationships
 
-The project_members table links users to projects with specific roles for access control.
+- `projects.id` -> `boards.project_id` (1:1 logical)
+- `projects.id` -> `columns` via `boards`
+- `projects.id` -> `tickets.project_id`
+- `projects.id` -> `epics.project_id`
+- `projects.id` -> `sprints.project_id`
+- `projects.id` -> `labels.project_id`
+- `projects.id` -> `project_members.project_id`
+- `projects.id` -> `project_invitations.project_id`
 
-| Column     | Type        | Constraints                     | Description                      |
-| ---------- | ----------- | ------------------------------- | -------------------------------- |
-| id         | uuid        | PRIMARY KEY, NOT NULL           | Unique identifier                |
-| project_id | uuid        | FOREIGN KEY, NOT NULL           | Reference to projects.id         |
-| user_id    | uuid        | FOREIGN KEY, NOT NULL           | Reference to auth.users.id       |
-| role       | text        | NOT NULL, CHECK (role IN (...)) | User role: admin, member, viewer |
-| created_at | timestamptz | NOT NULL, DEFAULT now           | Creation timestamp               |
-| updated_at | timestamptz | NOT NULL, DEFAULT now           | Last update timestamp            |
+- `epics.id` -> `tickets.epic_id` (optional)
+- `sprints.id` -> `tickets.sprint_id` (optional)
+- `tickets.id` -> `tickets.parent_id` (optional self-reference)
+- `tickets.id` -> `comments.ticket_id`
+- `tickets.id` -> `ticket_assignees.ticket_id`
+- `tickets.id` -> `ticket_labels.ticket_id`
+- `labels.id` -> `ticket_labels.label_id`
 
-**Foreign Keys:**
+## Important Constraints and Guarantees
 
-- `project_id` → `projects.id` (ON DELETE CASCADE)
-- `user_id` → `auth.users.id` (ON DELETE CASCADE)
+- Non-empty names/titles/statuses enforced with database checks
+- `short_code` is immutable 2-character project key
+- Per-project code uniqueness:
+  - `tickets(project_id, code_number)` unique
+  - `epics(project_id, code_number)` unique
+- One board per project via unique constraint on `boards.project_id`
+- Column order/status consistency enforced by unique constraints on board scope
 
-**Unique Constraints:**
+## Realtime Coverage
 
-- `(project_id, user_id)` UNIQUE: Each user can only have one role per project
+Realtime publication migrations ensure change streams are enabled for project workflow tables (including tickets, columns, and additional project detail tables used by the app synchronization layer).
 
-**Check Constraints:**
+## RPC / Function Highlights
 
-- `role IN ('admin', 'member', 'viewer')`: Role must be one of the valid values
+The schema includes RPC helpers for:
 
-**Indexes:**
+- project creation and membership bootstrap
+- project reclaim/join lifecycle
+- project-level statistics (`get_projects_with_stats`)
+- ticket move/reorder operations (transactional)
+- assignee aggregation (ticket-level and project-level)
+- invitation acceptance/decline and pending invitation retrieval
+- comment retrieval
 
-- Primary key index on `id` (automatic)
-- Index on `project_id` (for filtering by project)
-- Index on `user_id` (for filtering by user)
-- Composite index on `(project_id, user_id)` (for membership lookups)
+## Indexing Notes
 
-**Notes:**
+The migration set includes baseline indexes for project/workflow access patterns and search indexes for ticket text lookup.
 
-- See `docs/row-level-security.md` for RLS policies and permission details
-- Only admins can manage project members (enforced by RLS)
+Additionally, a safe production performance pass added missing foreign-key support indexes:
 
----
+- `idx_comments_author_id`
+- `idx_project_invitations_invited_by`
+- `idx_ticket_assignees_assigned_by`
+- `idx_tickets_created_by`
 
-### projects
+These indexes reduce planner regressions on joins/filtering without schema-breaking changes.
 
-The projects table stores project information. For the MVP, we assume a single project, but the schema supports multiple projects for future extensibility.
+## Current Product Alignment
 
-| Column        | Type        | Constraints                                            | Description                                                      |
-| ------------- | ----------- | ------------------------------------------------------ | ---------------------------------------------------------------- |
-| id            | uuid        | PRIMARY KEY, NOT NULL                                  | Unique identifier                                                |
-| name          | text        | NOT NULL, CHECK (length(trim(name)) > 0)               | Project name                                                     |
-| short_code    | text        | NOT NULL, UNIQUE, CHECK (length(trim(short_code)) = 2) | 2-letter human-readable project code (e.g. `WB`)                 |
-| creator_email | text        | DEFAULT NULL                                           | Email of the user who created the project (set at creation time) |
-| orphaned_at   | timestamptz | DEFAULT NULL                                           | Timestamp when project became orphaned (all members left)        |
-| created_at    | timestamptz | NOT NULL, DEFAULT now                                  | Creation timestamp                                               |
-| updated_at    | timestamptz | NOT NULL, DEFAULT now                                  | Last update timestamp                                            |
+Even though the UI no longer exposes backlog/home flows, schema support for collaboration and planning remains intentionally broader:
 
-**Check Constraints:**
+- invitations, labels, sprints, comments, and assignees are retained as essential capabilities
+- cleanup strategy is incremental and non-destructive for stability
 
-- `length(trim(name)) > 0`: Name must be non-empty after trimming whitespace (database-level constraint)
-- `length(trim(short_code)) = 2`: Project short code must be exactly 2 characters after trimming
+## References
 
-**Indexes:**
-
-- Primary key index on `id` (automatic)
-- Unique index on `short_code` (automatic from UNIQUE constraint)
-- Partial index on `orphaned_at` WHERE `orphaned_at IS NOT NULL` (for orphaned project queries)
-
-**Notes:**
-
-- `short_code` is used as the human-readable prefix for ticket and epic codes (`WB-1`, `WB-E-1`, etc.)
-- `creator_email` is populated by the `create_project()` function at creation time and is immutable
-- `orphaned_at` is set automatically by the `handle_project_member_removed` trigger when the last member leaves
-- When a new member joins an orphaned project, the `handle_project_member_added` trigger clears `orphaned_at`
-- Orphaned projects are eligible for reclaim via `get_reclaimable_projects()` (matches `creator_email`)
-- Orphaned projects older than 30 days can be cleaned up via `cleanup_expired_orphaned_projects()`
-
----
-
-### tickets
-
-The tickets table stores all work items (both regular tickets and sub-tasks).
-
-| Column      | Type        | Constraints                                | Description                                                         |
-| ----------- | ----------- | ------------------------------------------ | ------------------------------------------------------------------- |
-| id          | uuid        | PRIMARY KEY, NOT NULL                      | Unique identifier                                                   |
-| project_id  | uuid        | FOREIGN KEY, NOT NULL                      | Reference to projects.id                                            |
-| title       | text        | NOT NULL, CHECK (length(trim(title)) > 0)  | Ticket title (required, non-empty)                                  |
-| description | text        |                                            | Optional ticket description                                         |
-| status      | text        | NOT NULL, CHECK (length(trim(status)) > 0) | Ticket status (references columns.status)                           |
-| position    | integer     | NOT NULL, CHECK (position >= 0), DEFAULT 0 | Position within status/column                                       |
-| code_number | integer     | NOT NULL, CHECK (code_number > 0)          | Per-project positive integer used to build human code (`WB-1`, ...) |
-| epic_id     | uuid        | FOREIGN KEY                                | Optional reference to epics.id                                      |
-| parent_id   | uuid        | FOREIGN KEY                                | Optional reference to tickets.id (for sub-tasks)                    |
-| created_at  | timestamptz | NOT NULL, DEFAULT now                      | Creation timestamp                                                  |
-| updated_at  | timestamptz | NOT NULL, DEFAULT now                      | Last update timestamp                                               |
-
-**Foreign Keys:**
-
-- `project_id` → `projects.id` (ON DELETE CASCADE)
-- `epic_id` → `epics.id` (ON DELETE SET NULL)
-- `parent_id` → `tickets.id` (ON DELETE CASCADE)
-
-**Indexes:**
-
-- Primary key index on `id` (automatic)
-- Index on `project_id` (for filtering by project)
-- Index on `status` (for board column queries)
-- Index on `position` (for ordering within columns)
-- Index on `epic_id` (for epic ticket queries)
-- Index on `parent_id` (for sub-task queries)
-- Composite index on `(project_id, status, position)` (for board queries)
-- Composite index on `(project_id, code_number)` (for lookups by human-readable ticket code)
-
-**Unique Constraints:**
-
-- `(project_id, code_number)` UNIQUE: Each ticket code number is unique within a project
-
-**Check Constraints:**
-
-- `position >= 0`: Position must be non-negative
-- `code_number > 0`: Ticket code number must be a positive integer
-- `length(trim(title)) > 0`: Title must be non-empty after trimming whitespace (database-level constraint)
-- `length(trim(status)) > 0`: Status must be non-empty after trimming whitespace (database-level constraint)
-
-**Business Rules:**
-
-- A ticket can belong to at most one epic (`epic_id` is nullable, single value)
-- A ticket can have at most one parent (`parent_id` is nullable, single value)
-- Sub-tasks (tickets with `parent_id`) cannot have sub-tasks themselves (enforced in application layer)
-- Status must correspond to a valid column status in the board (enforced in application layer)
-
----
-
-### epics
-
-The epics table stores epic (feature group) information.
-
-| Column      | Type        | Constraints                              | Description                                      |
-| ----------- | ----------- | ---------------------------------------- | ------------------------------------------------ |
-| id          | uuid        | PRIMARY KEY, NOT NULL                    | Unique identifier                                |
-| project_id  | uuid        | FOREIGN KEY, NOT NULL                    | Reference to projects.id                         |
-| name        | text        | NOT NULL, CHECK (length(trim(name)) > 0) | Epic name (required, non-empty)                  |
-| description | text        |                                          | Optional epic description                        |
-| code_number | integer     | NOT NULL, CHECK (code_number > 0)        | Per-project positive integer for code (`WB-E-1`) |
-| created_at  | timestamptz | NOT NULL, DEFAULT now                    | Creation timestamp                               |
-| updated_at  | timestamptz | NOT NULL, DEFAULT now                    | Last update timestamp                            |
-
-**Foreign Keys:**
-
-- `project_id` → `projects.id` (ON DELETE CASCADE)
-
-**Indexes:**
-
-- Primary key index on `id` (automatic)
-- Index on `project_id` (for filtering by project)
-- Composite index on `(project_id, code_number)` (for lookups by human-readable epic code)
-
-**Check Constraints:**
-
-- `length(trim(name)) > 0`: Name must be non-empty after trimming whitespace (database-level constraint)
-- `code_number > 0`: Epic code number must be a positive integer
-
-**Unique Constraints:**
-
-- `(project_id, code_number)` UNIQUE: Each epic code number is unique within a project
-
-**Notes:**
-
-- Epics are scoped to a project
-- Epic progress is calculated dynamically from linked tickets (no stored field)
-
----
-
-### boards
-
-The boards table stores board configuration. Each project has one board.
-
-| Column     | Type        | Constraints                   | Description                                      |
-| ---------- | ----------- | ----------------------------- | ------------------------------------------------ |
-| id         | uuid        | PRIMARY KEY, NOT NULL         | Unique identifier                                |
-| project_id | uuid        | FOREIGN KEY, NOT NULL, UNIQUE | Reference to projects.id (one board per project) |
-| created_at | timestamptz | NOT NULL, DEFAULT now         | Creation timestamp                               |
-| updated_at | timestamptz | NOT NULL, DEFAULT now         | Last update timestamp                            |
-
-**Foreign Keys:**
-
-- `project_id` → `projects.id` (ON DELETE CASCADE)
-
-**Unique Constraints:**
-
-- `project_id` UNIQUE: One board per project (enforced at database level)
-
-**Indexes:**
-
-- Primary key index on `id` (automatic)
-- Unique index on `project_id` (automatic from UNIQUE constraint)
-
-**Notes:**
-
-- Board configuration is defined through its columns
-- MVP assumes one board per project
-
----
-
-### columns
-
-The columns table stores board column (status) definitions.
-
-| Column     | Type        | Constraints                                | Description                                |
-| ---------- | ----------- | ------------------------------------------ | ------------------------------------------ |
-| id         | uuid        | PRIMARY KEY, NOT NULL                      | Unique identifier                          |
-| board_id   | uuid        | FOREIGN KEY, NOT NULL                      | Reference to boards.id                     |
-| name       | text        | NOT NULL, CHECK (length(trim(name)) > 0)   | Column display name                        |
-| status     | text        | NOT NULL, CHECK (length(trim(status)) > 0) | Status identifier (used in tickets.status) |
-| position   | integer     | NOT NULL, CHECK (position >= 0), DEFAULT 0 | Column order within board                  |
-| visible    | boolean     | NOT NULL, DEFAULT true                     | Whether the column is visible in the board |
-| created_at | timestamptz | NOT NULL, DEFAULT now                      | Creation timestamp                         |
-| updated_at | timestamptz | NOT NULL, DEFAULT now                      | Last update timestamp                      |
-
-**Foreign Keys:**
-
-- `board_id` → `boards.id` (ON DELETE CASCADE)
-
-**Unique Constraints:**
-
-- `(board_id, status) UNIQUE`: Each status identifier is unique per board
-- `(board_id, position) UNIQUE`: Each position is unique per board (ensures ordered columns)
-
-**Indexes:**
-
-- Primary key index on `id` (automatic)
-- Index on `board_id` (for board column queries)
-- Unique index on `(board_id, status)` (automatic from UNIQUE constraint)
-- Unique index on `(board_id, position)` (automatic from UNIQUE constraint)
-- Index on `position` (for ordering queries)
-
-**Check Constraints:**
-
-- `position >= 0`: Position must be non-negative
-- `length(trim(name)) > 0`: Name must be non-empty after trimming whitespace (database-level constraint)
-- `length(trim(status)) > 0`: Status must be non-empty after trimming whitespace (database-level constraint)
-
-**Notes:**
-
-- Status values in `tickets.status` must match a `status` value in `columns` for the project's board
-- Columns are ordered by `position`
-- Column `status` is used as the value stored in `tickets.status`
-- Column `visible` controls whether the column is displayed in the board (default: true)
-
----
-
-## Relationships
-
-### One-to-Many Relationships
-
-1. **Project → Tickets**: A project contains many tickets
-   - Foreign key: `tickets.project_id` → `projects.id`
-   - Cascade delete: Deleting a project deletes all its tickets
-
-2. **Project → Epics**: A project contains many epics
-   - Foreign key: `epics.project_id` → `projects.id`
-   - Cascade delete: Deleting a project deletes all its epics
-
-3. **Project → Board**: A project has one board (1:1, but stored as FK)
-   - Foreign key: `boards.project_id` → `projects.id`
-   - Unique constraint: `boards.project_id` UNIQUE
-   - Cascade delete: Deleting a project deletes its board
-
-4. **Board → Columns**: A board contains many columns
-   - Foreign key: `columns.board_id` → `boards.id`
-   - Cascade delete: Deleting a board deletes all its columns
-
-5. **Epic → Tickets**: An epic can contain many tickets (optional)
-   - Foreign key: `tickets.epic_id` → `epics.id`
-   - Nullable: Tickets don't require an epic
-   - Set null on delete: Deleting an epic unassigns tickets (doesn't delete them)
-
-6. **Ticket → Sub-tasks**: A ticket can have many sub-tasks (optional, single-level)
-   - Foreign key: `tickets.parent_id` → `tickets.id` (self-referential)
-   - Nullable: Regular tickets don't have a parent
-   - Cascade delete: Deleting a ticket deletes all its sub-tasks
-   - **Business Rule**: Sub-tasks cannot have sub-tasks (enforced in application layer)
-
----
-
-## Design Decisions
-
-### UUIDs as Primary Keys (with human-readable codes)
-
-- **Decision**: Use `uuid` type for all primary keys, and introduce **human-readable codes** (`short_code` + `code_number`) for tickets and epics
-- **Rationale**:
-  - UUIDs remain stable, opaque technical identifiers (used in foreign keys and APIs)
-  - Human-readable codes (e.g. `WB-1`, `WB-E-1`) are easier to search, discuss, and type in the UI
-  - Codes are derived from:
-    - `projects.short_code` (2-letter prefix)
-    - `tickets.code_number` (WB-`1`, `2`, ...)
-    - `epics.code_number` (WB-`E-1`, `E-2`, ...)
-  - Supabase/PostgreSQL has excellent UUID support
-
-### Timestamps
-
-- **Decision**: Use `timestamptz` (timestamp with timezone) for all timestamp fields
-- **Rationale**: Ensures consistent time handling across timezones
-
-### Position Management
-
-- **Decision**: Store position as integer in both `tickets` and `columns`
-- **Rationale**:
-  - Simple ordering mechanism
-  - Allows gaps for efficient reordering
-  - Position gaps can be compacted periodically if needed
-
-### Status Storage
-
-- **Decision**: Store status as text in `tickets.status`, matching `columns.status`
-- **Rationale**:
-  - Flexible: columns can be renamed without changing ticket status values
-  - Status values must match existing column status (enforced in application layer)
-  - Enables queries filtering by status
-
-### Single-Level Sub-tasks
-
-- **Decision**: Support only single-level nesting via `parent_id` (no grandparent)
-- **Rationale**:
-  - Simpler mental model
-  - Easier to display and manage
-  - MVP requirement: "Only one level of nesting"
-  - Enforced in application layer (repositories/usecases)
-
-### One Board Per Project
-
-- **Decision**: Enforce one board per project via UNIQUE constraint
-- **Rationale**:
-  - MVP requirement: single project assumption
-  - Simpler initial implementation
-  - Can be extended later if needed
-
-### Cascade Deletes
-
-- **Decision**: Use CASCADE for project/board/ticket hierarchies, SET NULL for epic relationships
-- **Rationale**:
-  - Project deletion should clean up all related data
-  - Epic deletion should not delete tickets (just unassign them)
-  - Board deletion should clean up columns
-  - Ticket deletion should clean up sub-tasks
-
----
-
-## Constraints Summary
-
-### Foreign Key Constraints
-
-- `tickets.project_id` → `projects.id` (CASCADE)
-- `tickets.epic_id` → `epics.id` (SET NULL)
-- `tickets.parent_id` → `tickets.id` (CASCADE)
-- `epics.project_id` → `projects.id` (CASCADE)
-- `boards.project_id` → `projects.id` (CASCADE, UNIQUE)
-- `columns.board_id` → `boards.id` (CASCADE)
-
-### Unique Constraints
-
-- `boards.project_id` UNIQUE (one board per project)
-- `columns(board_id, status)` UNIQUE (unique status per board)
-- `columns(board_id, position)` UNIQUE (unique position per board)
-
-### Check Constraints
-
-- `tickets.position >= 0`: Position must be non-negative
-- `columns.position >= 0`: Position must be non-negative
-- `length(trim(tickets.title)) > 0`: Ticket title must be non-empty (database-level constraint)
-- `length(trim(tickets.status)) > 0`: Ticket status must be non-empty (database-level constraint)
-- `length(trim(projects.name)) > 0`: Project name must be non-empty (database-level constraint)
-- `length(trim(epics.name)) > 0`: Epic name must be non-empty (database-level constraint)
-- `length(trim(columns.name)) > 0`: Column name must be non-empty (database-level constraint)
-- `length(trim(columns.status)) > 0`: Column status must be non-empty (database-level constraint)
-
-### Not Null Constraints
-
-All primary keys, foreign keys, and essential fields are NOT NULL.
-
----
-
-## Indexes Summary
-
-### Primary Key Indexes (automatic)
-
-- All tables have primary key indexes on `id`
-
-### Foreign Key Indexes
-
-- `tickets.project_id`
-- `tickets.epic_id`
-- `tickets.parent_id`
-- `epics.project_id`
-- `boards.project_id`
-- `columns.board_id`
-
-### Query Optimization Indexes
-
-- `tickets.status` (for board column filtering)
-- `tickets.position` (for ordering)
-- `columns.position` (for ordering)
-- `tickets(project_id, status, position)` (composite index for board queries)
-- `tickets(project_id, epic_id)` (composite index for queries filtering tickets by project and epic)
-
----
-
-## Data Integrity Rules
-
-### Application-Level Enforcement
-
-The following rules are enforced in application logic (usecases/repositories) rather than database constraints:
-
-1. **Status Validation**: `tickets.status` must match a `columns.status` for the project's board
-2. **Single-Level Nesting**: Tickets with `parent_id` cannot have sub-tasks
-3. **Position Uniqueness**: Position uniqueness per status/board is managed in application layer for flexibility
-
-### Database-Level Enforcement
-
-- Foreign key relationships
-- Primary key uniqueness
-- Unique constraints (project_id on boards, status/position on columns)
-- NOT NULL constraints on required fields
-- Check constraints on position values (position >= 0)
-- Check constraints on string length (all text fields must be non-empty after trimming)
-
----
-
-## Project Members and Permissions
-
-The `project_members` table manages user access to projects with role-based permissions:
-
-- **admin**: Full access, can delete projects, manage members
-- **member**: Can edit project data (create/update/delete tickets, epics, etc.)
-- **viewer**: Read-only access
-
-See `docs/row-level-security.md` for detailed information about RLS policies and permissions.
-
-## RPC Functions
-
-The database includes several PostgreSQL RPC functions for optimized data access.
-
-### get_projects_with_stats()
-
-Returns all projects accessible to the current user with aggregated statistics.
-
-**Signature**:
-
-```sql
-get_projects_with_stats() RETURNS TABLE (
-  id uuid,
-  name text,
-  short_code text,
-  created_at timestamptz,
-  updated_at timestamptz,
-  role text,
-  member_count bigint,
-  ticket_count bigint,
-  in_progress_count bigint,
-  completed_count bigint
-)
-```
-
-**Security**: `SECURITY INVOKER` - Executes with the caller's permissions, respecting RLS policies.
-
-**Stability**: `STABLE` - Allows PostgreSQL to cache results within a transaction.
-
-**Return Values**:
-
-| Column            | Description                                           |
-| ----------------- | ----------------------------------------------------- |
-| id                | Project unique identifier                             |
-| name              | Project name                                          |
-| short_code        | 2-letter project code (e.g., 'WB')                    |
-| created_at        | Project creation timestamp                            |
-| updated_at        | Project last update timestamp                         |
-| role              | Current user's role: 'admin', 'member', or 'viewer'   |
-| member_count      | Total number of members in the project                |
-| ticket_count      | Total number of top-level tickets (excludes subtasks) |
-| in_progress_count | Number of tickets with status 'in-progress'           |
-| completed_count   | Number of tickets with status 'completed'             |
-
-**Implementation Details**:
-
-- Uses `INNER JOIN` on `project_members` to filter projects by current user (`auth.uid()`)
-- Uses `LEFT JOIN LATERAL` for efficient aggregation without N+1 queries
-- Excludes subtasks (`parent_id IS NOT NULL`) from ticket counts
-- Returns `0` for counts when no data exists (using `COALESCE`)
-- Results ordered by `created_at DESC`
-
-**Usage**:
-
-```sql
--- Get all projects with stats for the current user
-SELECT * FROM get_projects_with_stats();
-
--- Example result:
--- id                                   | name         | short_code | role   | member_count | ticket_count | in_progress_count | completed_count
--- 550e8400-e29b-41d4-a716-446655440000 | My Project   | MP         | admin  | 3            | 15           | 5                 | 8
-```
-
-**Performance**:
-
-- Single database round-trip (all statistics computed in one query)
-- Lateral joins prevent N+1 query patterns
-- Indexed lookups on `project_members.user_id` and `tickets.project_id`
-
----
-
-### create_project(project_name text)
-
-Creates a new project with a derived short code and adds the creator as admin.
-
-**Signature**:
-
-```sql
-create_project(project_name text) RETURNS TABLE (
-  id uuid,
-  name text,
-  short_code text,
-  created_at timestamptz,
-  updated_at timestamptz
-)
-```
-
-**Security**: `SECURITY DEFINER` - Bypasses RLS to create the project and add the creator as admin.
-
-**Behavior**:
-
-- Derives a 2-letter `short_code` from the project name (first letters of first two words, or first two characters)
-- Stores the creator's email in `creator_email` for future orphaned project reclaim
-- Adds the creator as admin via `add_project_member_admin()`
-
----
-
-### reclaim_or_join_project(project_uuid uuid)
-
-Allows a user to join or reclaim a project. If the project is orphaned, the user becomes admin; otherwise, they become a viewer.
-
-**Signature**:
-
-```sql
-reclaim_or_join_project(project_uuid uuid) RETURNS TABLE (
-  id uuid,
-  name text,
-  short_code text,
-  created_at timestamptz,
-  updated_at timestamptz
-)
-```
-
-**Security**: `SECURITY DEFINER` - Bypasses RLS to insert into `project_members`.
-
-**Error Codes**:
-
-| Code    | Condition                               |
-| ------- | --------------------------------------- |
-| `P0002` | Project not found                       |
-| `23505` | User is already a member of the project |
-
-**Behavior**:
-
-- Checks project existence and existing membership
-- Assigns `admin` role if project is orphaned (`orphaned_at IS NOT NULL`), `viewer` otherwise
-- The `handle_project_member_added` trigger automatically clears `orphaned_at`
-
----
-
-### get_reclaimable_projects()
-
-Returns orphaned projects that the current user can reclaim (matched by `creator_email`).
-
-**Signature**:
-
-```sql
-get_reclaimable_projects() RETURNS TABLE (
-  id uuid,
-  name text,
-  short_code text,
-  orphaned_at timestamptz
-)
-```
-
-**Security**: `SECURITY DEFINER` - Bypasses RLS to find orphaned projects not visible to any member.
-
-**Behavior**:
-
-- Looks up the current user's email from `auth.users`
-- Returns projects where `creator_email` matches and `orphaned_at IS NOT NULL`
-- Returns empty result set if the user has no email
-
----
-
-### cleanup_expired_orphaned_projects()
-
-Deletes projects that have been orphaned for more than 30 days.
-
-**Signature**:
-
-```sql
-cleanup_expired_orphaned_projects() RETURNS integer
-```
-
-**Security**: `SECURITY DEFINER`
-
-**Behavior**:
-
-- Deletes all projects where `orphaned_at < NOW() - INTERVAL '30 days'`
-- Returns the number of deleted projects
-- Intended to be called via pg_cron, Edge Function, or manually
-
----
-
-### has_any_project_access()
-
-Returns `true` if the current user is a member of at least one project.
-
-**Signature**:
-
-```sql
-has_any_project_access() RETURNS boolean
-```
-
-**Security**: `SECURITY DEFINER`
-
----
-
-## Triggers
-
-### Orphaned Project Lifecycle
-
-Two triggers on `project_members` manage the orphaned project lifecycle:
-
-| Trigger                      | Event        | Table             | Function                        | Description                                    |
-| ---------------------------- | ------------ | ----------------- | ------------------------------- | ---------------------------------------------- |
-| `trg_project_member_removed` | AFTER DELETE | `project_members` | `handle_project_member_removed` | Sets `orphaned_at` when the last member leaves |
-| `trg_project_member_added`   | AFTER INSERT | `project_members` | `handle_project_member_added`   | Clears `orphaned_at` when a new member joins   |
-
-**Flow**:
-
-```
-User deletes account
-  → CASCADE DELETE on project_members
-    → trg_project_member_removed fires
-      → If no members remain → SET orphaned_at = NOW()
-
-User reclaims project (via reclaim_or_join_project)
-  → INSERT into project_members
-    → trg_project_member_added fires
-      → Clears orphaned_at
-```
-
----
-
-## Team Collaboration Tables
-
-### user_profiles
-
-Public profile data synced from auth.users via database trigger. Readable by all authenticated users.
-
-| Column       | Type        | Constraints                            | Description                         |
-| ------------ | ----------- | -------------------------------------- | ----------------------------------- |
-| id           | uuid        | PRIMARY KEY, REFERENCES auth.users(id) | User ID (same as auth.users.id)     |
-| email        | text        | NOT NULL                               | User email (synced from auth.users) |
-| display_name | text        |                                        | Display name (from user_metadata)   |
-| avatar_url   | text        |                                        | URL of uploaded avatar image        |
-| created_at   | timestamptz | NOT NULL, DEFAULT now                  | Creation timestamp                  |
-| updated_at   | timestamptz | NOT NULL, DEFAULT now                  | Last update timestamp               |
-
-**Sync**: Populated automatically by `sync_user_profile()` trigger on `auth.users` INSERT/UPDATE.
-
----
-
-### project_invitations
-
-Token-based invitation system for adding users to projects.
-
-| Column     | Type        | Constraints                                 | Description                       |
-| ---------- | ----------- | ------------------------------------------- | --------------------------------- |
-| id         | uuid        | PRIMARY KEY, DEFAULT uuid_generate_v4()     | Unique identifier                 |
-| project_id | uuid        | FOREIGN KEY, NOT NULL                       | Reference to projects.id          |
-| invited_by | uuid        | FOREIGN KEY, NOT NULL                       | Reference to auth.users.id        |
-| email      | text        | NOT NULL                                    | Invited user's email              |
-| role       | text        | NOT NULL, DEFAULT 'member', CHECK IN (...)  | Role to assign on acceptance      |
-| token      | text        | NOT NULL, UNIQUE                            | Secure token for acceptance link  |
-| status     | text        | NOT NULL, DEFAULT 'pending', CHECK IN (...) | pending/accepted/declined/expired |
-| expires_at | timestamptz | NOT NULL, DEFAULT now + 7 days              | Invitation expiration             |
-| created_at | timestamptz | NOT NULL, DEFAULT now                       | Creation timestamp                |
-| updated_at | timestamptz | NOT NULL, DEFAULT now                       | Last update timestamp             |
-
-**Unique Constraints**: `(project_id, email)` - one pending invitation per email per project.
-
-**RPC Functions**: `accept_invitation(token)`, `decline_invitation(token)`, `get_pending_invitations()`.
-
----
-
-### ticket_assignees
-
-Many-to-many relationship between tickets and users for multi-assignee support.
-
-| Column      | Type        | Constraints                             | Description                  |
-| ----------- | ----------- | --------------------------------------- | ---------------------------- |
-| id          | uuid        | PRIMARY KEY, DEFAULT uuid_generate_v4() | Unique identifier            |
-| ticket_id   | uuid        | FOREIGN KEY, NOT NULL                   | Reference to tickets.id      |
-| user_id     | uuid        | FOREIGN KEY, NOT NULL                   | Reference to auth.users.id   |
-| assigned_at | timestamptz | NOT NULL, DEFAULT now                   | Assignment timestamp         |
-| assigned_by | uuid        | FOREIGN KEY                             | User who made the assignment |
-
-**Unique Constraints**: `(ticket_id, user_id)` - each user assigned once per ticket.
-
-**RPC Functions**: `get_ticket_assignees(ticket_ids uuid[])` for batch-loading assignees.
-
----
-
-## Future Extensibility
-
-The schema is designed to support future enhancements:
-
-1. **Multiple Projects**: Schema already supports multiple projects with user access control
-2. **User/Authentication**: Implemented via `project_members` table with role-based permissions
-3. **Team Collaboration**: Implemented via `user_profiles`, `project_invitations`, and `ticket_assignees`
-4. **Comments**: Can add `comments` table with foreign key to tickets
-5. **History/Audit Log**: Can add `audit_logs` table
-6. **Custom Fields**: Can extend tickets table with additional columns or use JSONB for flexible fields
-7. **Multi-Level Nesting**: Can add depth tracking if needed later (currently single-level only)
-
----
-
-## Seed Data Considerations
-
-For initial setup, seed data should include:
-
-1. **Default Project**: One project (e.g., "My Workbench")
-2. **Default Board**: One board linked to the default project
-3. **Default Columns**: Basic columns (e.g., "To Do", "In Progress", "Done") with appropriate status values and positions
-
-See Sub-Ticket 15.4 for seed data implementation details.
-
----
-
-## Migration Notes
-
-This schema is implemented via database migrations. The migrations include:
-
-### Initial Schema Migration (000001 - Consolidated)
-
-The initial schema migration (`000001_initial_schema.sql`) is a **consolidated migration** that creates the complete database schema in a single file:
-
-1. Create all tables in dependency order (projects → boards/epics → columns/tickets)
-2. Add all foreign key constraints
-3. Add all unique constraints
-4. Add all CHECK constraints:
-   - Position constraints: `position >= 0` for tickets and columns
-   - String length validation: `length(trim(field)) > 0` for:
-     - `projects.name`
-     - `tickets.title`, `tickets.status`
-     - `epics.name`
-     - `columns.name`, `columns.status`
-5. Create all indexes (including performance indexes like `idx_tickets_project_epic`)
-6. Set up triggers for `updated_at` timestamps
-7. Include `visible` field on columns table (`visible boolean NOT NULL DEFAULT true`)
-
-**Note**: This consolidated migration includes elements that were previously in separate migrations (000008, 000009, 000010). These are now included in the initial schema migration for simpler database setup.
-
-All migrations are idempotent and can be safely re-run.
-
----
-
-## Schema Validation Checklist
-
-Before implementing migrations, verify:
-
-- [x] All entities from domain model are represented
-- [x] All relationships match domain model requirements
-- [x] Business rules are enforced (database or application level)
-- [x] Indexes support expected query patterns
-- [x] Foreign key cascade behaviors are appropriate
-- [x] Constraints prevent invalid data states
-- [x] Schema supports MVP requirements
-- [x] Schema allows future extensibility
+- `supabase/migrations/`
+- `docs/supabase/migrations.md`
+- `docs/supabase/row-level-security.md`

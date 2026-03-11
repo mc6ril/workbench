@@ -196,7 +196,7 @@ export const createTicketRepository = (
           }
         }
 
-        // sprintId filter: null = backlog (no sprint), string = specific sprint
+        // sprintId filter: null = no sprint, string = specific sprint
         if (filters && "sprintId" in filters) {
           if (filters.sprintId === null) {
             query = query.is("sprint_id", null);

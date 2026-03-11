@@ -18,7 +18,7 @@ const TicketSortControls = ({
   onSetDirection,
   onResetSort,
 }: TicketSortControlsProps) => {
-  const t = useTranslation("pages.backlog.sort");
+  const t = useTranslation("pages.board.sort");
 
   return (
     <div className={styles["project-shell-controls"]}>
