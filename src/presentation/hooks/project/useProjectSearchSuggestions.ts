@@ -31,9 +31,7 @@ export const useProjectSearchSuggestions = ({
   viewKey,
   searchValue,
 }: Input): ProjectSearchSuggestion[] => {
-  const isTicketView =
-    viewKey === PROJECT_VIEWS.BACKLOG || viewKey === PROJECT_VIEWS.BOARD;
-  const isBacklogView = viewKey === PROJECT_VIEWS.BACKLOG;
+  const isTicketView = viewKey === PROJECT_VIEWS.BOARD;
   const isEpicsView = viewKey === PROJECT_VIEWS.EPICS;
   const searchTerm = searchValue.trim();
 
@@ -53,7 +51,7 @@ export const useProjectSearchSuggestions = ({
   // suggestions should act as a global lookup within the current ticket view.
   const { data: tickets = [] } = useTickets(
     projectId,
-    isBacklogView ? { parentId: null } : undefined,
+    undefined,
     undefined,
     effectiveSearch,
     { enabled: isTicketView && hasEffectiveSearchTerm, limit: 20 }

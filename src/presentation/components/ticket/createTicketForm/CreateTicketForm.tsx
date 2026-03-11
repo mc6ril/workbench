@@ -41,7 +41,7 @@ const CreateTicketForm = ({
   errorMessage,
   className,
 }: Props) => {
-  const t = useTranslation("pages.backlog.createTicketForm");
+  const t = useTranslation("pages.board.createTicketForm");
   const tCommon = useTranslation("common");
 
   const [title, setTitle] = useState(initialValues?.title ?? "");

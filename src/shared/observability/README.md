@@ -70,7 +70,7 @@ childLogger.debug("Loading projects");
 
 - **Hierarchical scopes**: Use dot separator for nested scopes
   - `"project.board"` - Board view within project
-  - `"project.backlog"` - Backlog view within project
+  - `"project.epics"` - Epics view within project
   - `"auth.signin"` - Sign in flow
 
 - **Scope segments**: Each segment should be kebab-case

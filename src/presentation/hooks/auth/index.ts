@@ -11,6 +11,5 @@ export { useUpdatePassword } from "./useUpdatePassword";
 export { useUpdatePasswordForm } from "./useUpdatePasswordForm";
 export { useUpdatePreferences } from "./useUpdatePreferences";
 export { useUpdateProfile } from "./useUpdateProfile";
-export { useUpdateUser } from "./useUpdateUser";
 export { useVerifyEmail } from "./useVerifyEmail";
 export { useVerifyEmailFlow } from "./useVerifyEmailFlow";

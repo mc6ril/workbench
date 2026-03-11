@@ -17,9 +17,6 @@ describe("Plan Features Domain Rules", () => {
         [PlanFeature.EPICS, SubscriptionPlan.FREE, true],
         [PlanFeature.EPICS, SubscriptionPlan.PRO, true],
         [PlanFeature.EPICS, SubscriptionPlan.TEAM, true],
-        [PlanFeature.BACKLOG_VIEW, SubscriptionPlan.FREE, false],
-        [PlanFeature.BACKLOG_VIEW, SubscriptionPlan.PRO, true],
-        [PlanFeature.BACKLOG_VIEW, SubscriptionPlan.TEAM, true],
         [PlanFeature.SUBTASKS, SubscriptionPlan.FREE, false],
         [PlanFeature.SUBTASKS, SubscriptionPlan.PRO, true],
         [PlanFeature.SUBTASKS, SubscriptionPlan.TEAM, true],
@@ -109,15 +106,14 @@ describe("Plan Features Domain Rules", () => {
     });
 
     it("should return 0 for inaccessible boolean features", () => {
-      expect(getFeatureLimit(SubscriptionPlan.FREE, PlanFeature.BACKLOG_VIEW)).toBe(0);
+      expect(getFeatureLimit(SubscriptionPlan.FREE, PlanFeature.SUBTASKS)).toBe(
+        0
+      );
     });
   });
 
   describe("getMinimumPlanForFeature", () => {
     it("should return PRO for features available from PRO", () => {
-      expect(getMinimumPlanForFeature(PlanFeature.BACKLOG_VIEW)).toBe(
-        SubscriptionPlan.PRO
-      );
       expect(getMinimumPlanForFeature(PlanFeature.SUBTASKS)).toBe(
         SubscriptionPlan.PRO
       );

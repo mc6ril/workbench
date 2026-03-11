@@ -36,7 +36,6 @@
       "addTabAriaLabel": "Añadir pestaña (próximamente)",
       "items": {
         "home": "Inicio",
-        "backlog": "Lista de tareas",
         "board": "Tablero",
         "ticketDetail": "Tarea",
         "epics": "Objetivos",
@@ -317,7 +316,6 @@
         "title": "Accesos directos",
         "shortcuts": {
           "board": "Tablero",
-          "backlog": "Lista de tareas",
           "epics": "Objetivos",
           "settings": "Configuración"
         }
@@ -348,7 +346,6 @@
         "title": "Accesos directos",
         "shortcuts": {
           "board": "Tablero",
-          "backlog": "Lista de tareas",
           "epics": "Objetivos",
           "settings": "Configuración"
         }
@@ -419,75 +416,6 @@
         "subscriptions": "Planes y opciones"
       }
     },
-    "backlog": {
-      "title": "Lista de tareas",
-      "subtitle": "Gestiona y organiza tus tareas",
-      "ticketList": {
-        "ariaLabel": "Lista de tareas",
-        "emptyTitle": "Aun no hay tareas",
-        "emptyMessage": "Añade tu primera tarea para empezar a reducir la carga mental desde hoy.",
-        "errorTitle": "Error al cargar las tareas",
-        "count": "{count} tarea",
-        "count_other": "{count} tareas"
-      },
-      "filters": {
-        "searchLabel": "Buscar",
-        "searchPlaceholder": "Buscar por título o descripción",
-        "statusLabel": "Estado",
-        "epicLabel": "Objetivo",
-        "priorityLabel": "Prioridad",
-        "sprintLabel": "Semana",
-        "noSprintLabel": "Sin semana",
-        "labelLabel": "Etiqueta",
-        "noLabelOptions": "No hay etiquetas disponibles para este proyecto",
-        "resetLabel": "Restablecer filtros"
-      },
-      "sort": {
-        "label": "Ordenar por",
-        "fieldCreatedAt": "Fecha de creación",
-        "fieldTitle": "Título",
-        "fieldStatus": "Estado",
-        "fieldPosition": "Posición en tablero",
-        "fieldPriority": "Prioridad",
-        "fieldSprint": "Semana",
-        "fieldDueDate": "Fecha de vencimiento",
-        "sortDirectionLabel": "Dirección de orden",
-        "directionAsc": "Ascendente",
-        "directionDesc": "Descendente",
-        "resetLabel": "Restablecer orden"
-      },
-      "bulkActions": {
-        "title": "Acciones en lote",
-        "selectedCount": "{count} tarea seleccionada",
-        "selectedCount_other": "{count} tareas seleccionadas",
-        "deleteLabel": "Eliminar",
-        "moveLabel": "Mover",
-        "changeStatusLabel": "Cambiar estado"
-      },
-      "createTicketForm": {
-        "title": "Crear tarea",
-        "fields": {
-          "title": "Título",
-          "description": "Descripción",
-          "status": "Estado",
-          "epic": "Objetivo",
-          "labels": "Etiquetas"
-        },
-        "submitButton": "Crear tarea",
-        "cancelButton": "Cancelar",
-        "errorGeneric": "Se ha producido un error al crear la tarea",
-        "readOnlyHint": "Los lectores no pueden crear tareas."
-      },
-      "ticketListItem": {
-        "ticketAriaLabel": "Tarea",
-        "statusLabel": "Estado",
-        "epicLabel": "Objetivo",
-        "assigneeLabel": "Asignado a",
-        "openTicketLabel": "Abrir tarea",
-        "editTicketLabel": "Editar tarea",
-        "selectTicketLabel": "Seleccionar tarea"
-      }
-    },
     "board": {
       "view": {
         "title": "Tablero",
@@ -514,8 +442,13 @@
         "searchPlaceholder": "Buscar por título o descripción",
         "statusLabel": "Estado",
         "epicLabel": "Objetivo",
-        "assigneeLabel": "Asignado a",
-        "resetLabel": "Restablecer filtros"
+        "priorityLabel": "Prioridad",
+        "sprintLabel": "Semana",
+        "noSprintLabel": "Sin semana",
+        "labelLabel": "Etiqueta",
+        "noLabelOptions": "No hay etiquetas disponibles para este proyecto",
+        "resetLabel": "Restablecer filtros",
+        "assigneeLabel": "Asignado a"
       },
       "ticketCard": {
         "ticketAriaLabel": "Tarea",
@@ -536,6 +469,35 @@
         "moveDownLabel": "Bajar",
         "moveUpAriaLabel": "Mover columna {title} hacia arriba",
         "moveDownAriaLabel": "Mover columna {title} hacia abajo"
+      },
+      "sort": {
+        "label": "Ordenar por",
+        "fieldCreatedAt": "Fecha de creación",
+        "fieldTitle": "Título",
+        "fieldStatus": "Estado",
+        "fieldPosition": "Posición en tablero",
+        "fieldPriority": "Prioridad",
+        "fieldSprint": "Semana",
+        "fieldDueDate": "Fecha de vencimiento",
+        "sortDirectionLabel": "Dirección de orden",
+        "directionAsc": "Ascendente",
+        "directionDesc": "Descendente",
+        "resetLabel": "Restablecer orden"
+      },
+      "createTicketForm": {
+        "title": "Crear tarea",
+        "fields": {
+          "title": "Título",
+          "description": "Descripción",
+          "status": "Estado",
+          "epic": "Objetivo",
+          "labels": "Etiquetas"
+        },
+        "submitButton": "Crear tarea",
+        "cancelButton": "Cancelar",
+        "errorGeneric": "Se ha producido un error al crear la tarea",
+        "readOnlyHint": "Los lectores no pueden crear tareas.",
+        "noStatusHint": "Gestiona y organiza tus tareas"
       }
     },
     "epics": {
@@ -978,11 +940,6 @@
       },
       "features": {
         "title": "Casos de uso practicos para el dia a dia familiar",
-        "backlog": {
-          "icon": "🛒",
-          "title": "Compra y comidas",
-          "description": "Planificad menus, preparad la lista y evitad compras duplicadas."
-        },
         "board": {
           "icon": "🧺",
           "title": "Rutinas del hogar",
@@ -1052,14 +1009,6 @@
           "todo": "Por hacer",
           "inProgress": "En curso",
           "done": "Hecho"
-        },
-        "backlog": {
-          "title": "Compra y comidas",
-          "description": "Visualiza la lista, asigna responsables y sigue el avance util.",
-          "todo1": "Planificar comidas de la semana",
-          "todo2": "Completar lista del super",
-          "inProgress1": "Compra principal",
-          "done1": "Pedir productos para bebe"
         },
         "board": {
           "title": "Rutinas del hogar",
@@ -1204,7 +1153,6 @@
         "membersPerWorkspace": "Miembros por espacio",
         "tickets": "Tickets",
         "boardView": "Vista Tablero",
-        "backlogView": "Vista Backlog",
         "epics": "Epics",
         "subtasks": "Subtareas",
         "customColumns": "Columnas personalizadas",
@@ -1295,7 +1243,6 @@
       "ctaAriaLabel": "Ver planes y mejorar tu suscripción",
       "featureNames": {
         "epics": "Epics",
-        "backlogView": "Vista Backlog",
         "subtasks": "Subtareas",
         "priorities": "Prioridades",
         "exportImport": "Exportar / Importar",

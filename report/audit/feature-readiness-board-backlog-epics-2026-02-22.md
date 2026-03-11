@@ -4,17 +4,17 @@ Report Type: audit
 Command: feature-readiness-check
 ---
 
-# Feature Readiness Audit — Board / Backlog / Epics
+# Feature Readiness Audit — Board / Board / Epics
 
 ## Executive Summary
 
-The codebase (~457 files) has a solid architectural foundation with Clean Architecture, full auth flow, workspace management, and a working Kanban board with drag-and-drop. However, most feature-rich components are **built but not wired** into their pages. The backlog page is a 5-line placeholder. The epics page is read-only. The project settings page is entirely non-functional. There are also critical gaps in the data model (no priorities, no due dates, no comments, no labels).
+The codebase (~457 files) has a solid architectural foundation with Clean Architecture, full auth flow, workspace management, and a working Kanban board with drag-and-drop. However, most feature-rich components are **built but not wired** into their pages. The board page is a 5-line placeholder. The epics page is read-only. The project settings page is entirely non-functional. There are also critical gaps in the data model (no priorities, no due dates, no comments, no labels).
 
 ---
 
 ## Priority Classification
 
-- **P0 — Blocker**: Prevents core usage of board/backlog/epics
+- **P0 — Blocker**: Prevents core usage of board/epics
 - **P1 — Critical**: Missing feature that users expect from any project management tool
 - **P2 — Important**: Significant gap vs Jira/Trello, noticeable to users
 - **P3 — Nice-to-have**: Improves polish, not essential for MVP
@@ -23,9 +23,9 @@ The codebase (~457 files) has a solid architectural foundation with Clean Archit
 
 ## P0 — BLOCKERS (Must fix before usable)
 
-### 1. Backlog Page is a Skeleton (5 lines)
+### 1. Board Page is a Skeleton (5 lines)
 
-`presentation/pages/backlog/index.tsx` renders `<div>BacklogPage</div>`. All child components are **fully built** but not composed:
+`presentation/pages/board/index.tsx` renders `<div>BoardPage</div>`. All child components are **fully built** but not composed:
 
 | Ready Component | Purpose |
 |---|---|
@@ -37,7 +37,7 @@ The codebase (~457 files) has a solid architectural foundation with Clean Archit
 | `QuickAddTicket` | Inline title-only creation |
 | `CreateTicketForm` | Full ticket creation form |
 
-**Work needed**: Compose these components into `BacklogLayout`, wire hooks (`useTickets`, `useCreateTicket`, filter/sort stores), connect selection store for bulk actions.
+**Work needed**: Compose these components into `BoardLayout`, wire hooks (`useTickets`, `useCreateTicket`, filter/sort stores), connect selection store for bulk actions.
 
 ### 2. ProjectShell Action Handlers are Stubs
 
@@ -222,7 +222,7 @@ Button renders but handler is empty.
 ### Phase 1 — Wire Existing Components (Biggest ROI, least new code)
 
 1. Wire `CreateTicketForm` + `CreateEpicForm` into modals triggered by ProjectShell
-2. Wire backlog page (compose existing components into BacklogLayout)
+2. Wire board page (compose existing components into BoardLayout)
 3. Wire epic page actions (view detail, edit, delete)
 4. Wire project settings (fetch data, connect handlers)
 5. Wire dashboard widgets on project home
@@ -264,11 +264,11 @@ Button renders but handler is empty.
 | BoardColumn | Yes | Yes | — |
 | BoardFilters | Yes | **No** | Not rendered on board |
 | TicketCard | Yes | Yes | Missing priority/storyPoints data |
-| TicketList | Yes | **No** | Backlog is skeleton |
-| TicketListItem | Yes | **No** | Backlog is skeleton |
-| TicketFilters | Yes | **No** | Backlog is skeleton |
-| TicketSort | Yes | **No** | Backlog is skeleton |
-| BulkActions | Yes | **No** | Backlog is skeleton + no hooks |
+| TicketList | Yes | **No** | Board is skeleton |
+| TicketListItem | Yes | **No** | Board is skeleton |
+| TicketFilters | Yes | **No** | Board is skeleton |
+| TicketSort | Yes | **No** | Board is skeleton |
+| BulkActions | Yes | **No** | Board is skeleton + no hooks |
 | QuickAddTicket | Yes | **No** | Not placed anywhere |
 | CreateTicketForm | Yes | **No** | No modal trigger |
 | CreateEpicForm | Yes | **No** | No modal trigger |

@@ -1,5 +1,5 @@
 export const VALUE_KEYS = ["simplicity", "clarity", "control"] as const;
-export const FEATURE_KEYS = ["backlog", "board", "epics", "subtasks"] as const;
+export const FEATURE_KEYS = ["board", "epics", "subtasks"] as const;
 export const PREVIEW_COLUMNS = ["todo", "inProgress", "done"] as const;
 export const IMPACT_KEYS = ["time", "alignment", "serenity"] as const;
 export const RHYTHM_KEYS = ["capture", "plan", "act"] as const;

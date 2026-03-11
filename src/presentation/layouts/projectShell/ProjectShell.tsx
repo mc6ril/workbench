@@ -66,8 +66,8 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
     () => getProjectViewKeyFromPath(pathname, projectId),
     [pathname, projectId]
   );
-  const isTicketView =
-    viewKey === PROJECT_VIEWS.BACKLOG || viewKey === PROJECT_VIEWS.BOARD;
+  const isTicketView = viewKey === PROJECT_VIEWS.BOARD;
+  const shouldLoadTicketFilterData = isTicketView && isFilterModalOpen;
 
   const search = useFilterStore((state) => state.search);
   const setSearch = useFilterStore((state) => state.setSearch);
@@ -93,11 +93,15 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
     enabled: isTicketView,
   });
   useProjectRealtime(projectId, boardConfiguration?.board.id);
-  const { data: epics = [] } = useEpics(projectId, { enabled: isTicketView });
-  const { data: sprints = [] } = useSprints(projectId, {
-    enabled: isTicketView,
+  const { data: epics = [] } = useEpics(projectId, {
+    enabled: shouldLoadTicketFilterData,
   });
-  const { data: labels = [] } = useLabels(projectId, { enabled: isTicketView });
+  const { data: sprints = [] } = useSprints(projectId, {
+    enabled: shouldLoadTicketFilterData,
+  });
+  const { data: labels = [] } = useLabels(projectId, {
+    enabled: shouldLoadTicketFilterData,
+  });
   const searchSuggestions = useProjectSearchSuggestions({
     projectId,
     viewKey,
@@ -222,7 +226,7 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
       return canCreateEpic;
     }
 
-    if (viewKey === PROJECT_VIEWS.BACKLOG || viewKey === PROJECT_VIEWS.BOARD) {
+    if (viewKey === PROJECT_VIEWS.BOARD) {
       return canCreateTicket;
     }
 
@@ -242,7 +246,7 @@ const ProjectShellContent = ({ projectId, children }: Props) => {
     }
 
     router.push(
-      `${buildProjectRoute(projectId, PROJECT_VIEWS.BACKLOG)}?createTicket=1`
+      `${buildProjectRoute(projectId, PROJECT_VIEWS.BOARD)}?createTicket=1`
     );
   }, [canAddAction, projectId, router, viewKey]);
 

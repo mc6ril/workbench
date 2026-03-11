@@ -186,7 +186,7 @@ export type TicketRepository = {
 
   /**
    * Batch-load assignees for multiple tickets.
-   * Used for efficient board/backlog rendering (avoids N+1).
+   * Used for efficient board rendering (avoids N+1).
    * @param ticketIds - Array of ticket IDs
    * @returns Map of ticketId -> assignees array
    * @throws DatabaseError if database operation fails

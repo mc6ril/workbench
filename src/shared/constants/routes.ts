@@ -43,12 +43,10 @@ export const PROTECTED_ROUTES: readonly string[] = Object.freeze([
 /**
  * Project route patterns.
  * Project routes follow the pattern: /{projectId}/{view}
- * where projectId is a UUID and view can be: board, backlog, epics, settings, etc.
+ * where projectId is a UUID and view can be: board, epics, settings, etc.
  */
 export const PROJECT_VIEWS = Object.freeze({
-  HOME: "home",
   BOARD: "board",
-  BACKLOG: "backlog",
   EPICS: "epics",
   SETTINGS: "settings",
 });

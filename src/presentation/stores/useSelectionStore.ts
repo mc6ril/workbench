@@ -3,7 +3,7 @@ import { create } from "zustand";
 type SelectionState = {
   /**
    * Scope identifier for selection.
-   * Example: `${projectId}:backlog` or `${projectId}:board`.
+   * Example: `${projectId}:board`.
    */
   scopeKey: string | null;
   /**

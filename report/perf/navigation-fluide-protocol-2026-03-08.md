@@ -1,7 +1,7 @@
 # Smooth Navigation - Protocol and Perf Snapshot
 
 Date: 2026-03-08
-Scope: board/backlog/epics/workspace navigation, realtime invalidation strategy
+Scope: board/epics/workspace navigation, realtime invalidation strategy
 
 ## Instrumentation
 
@@ -27,8 +27,8 @@ The collector reports:
 3. Open the app and execute in browser console:
    - `window.__WORKBENCH_NAV_PERF__.reset()`
 4. Execute each scenario 10 times:
-   - `board -> backlog -> board`
-   - `board -> epics -> backlog`
+   - `board -> board -> board`
+   - `board -> epics -> board`
    - `project -> workspace -> project`
 5. Retrieve snapshot:
    - `window.__WORKBENCH_NAV_PERF__.snapshot()`
@@ -38,8 +38,8 @@ The collector reports:
 
 | Scenario                        | Req total (before) | Req total (after) | p50 nav ms (before) | p50 nav ms (after) | p95 nav ms (before) | p95 nav ms (after) | Full-page loader (before) | Full-page loader (after) |
 | ------------------------------- | ------------------ | ----------------- | ------------------- | ------------------ | ------------------- | ------------------ | ------------------------- | ------------------------ |
-| board -> backlog -> board       | 29                 | TBD               | 8.3                 | TBD                | 10.2                | TBD                | 25                        | TBD                      |
-| board -> epics -> backlog       | 29                 | TBD               | 8.3                 | TBD                | 10.2                | TBD                | 25                        | TBD                      |
+| board -> board -> board       | 29                 | TBD               | 8.3                 | TBD                | 10.2                | TBD                | 25                        | TBD                      |
+| board -> epics -> board       | 29                 | TBD               | 8.3                 | TBD                | 10.2                | TBD                | 25                        | TBD                      |
 | project -> workspace -> project | 29                 | TBD               | 8.3                 | TBD                | 10.2                | TBD                | 25                        | TBD                      |
 
 ## Current Snapshot (Mixed Flow)

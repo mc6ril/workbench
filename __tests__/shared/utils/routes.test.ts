@@ -39,7 +39,7 @@ describe("isProtectedRoute", () => {
     const uuid = "123e4567-e89b-12d3-a456-426614174000";
     expect(isProtectedRoute(`/${uuid}`)).toBe(true);
     expect(isProtectedRoute(`/${uuid}/board`)).toBe(true);
-    expect(isProtectedRoute(`/${uuid}/backlog`)).toBe(true);
+    expect(isProtectedRoute(`/${uuid}/epics`)).toBe(true);
     expect(isProtectedRoute(`/${uuid}/settings`)).toBe(true);
   });
 
@@ -59,8 +59,8 @@ describe("isProjectRoute", () => {
 
   it("should return true for valid project routes", () => {
     expect(isProjectRoute(`/${uuid}/board`)).toBe(true);
-    expect(isProjectRoute(`/${uuid}/backlog`)).toBe(true);
     expect(isProjectRoute(`/${uuid}/epics`)).toBe(true);
+    expect(isProjectRoute(`/${uuid}/settings`)).toBe(true);
   });
 
   it("should return true for nested project routes", () => {
@@ -82,7 +82,7 @@ describe("extractProjectId", () => {
 
   it("should extract project ID from project route", () => {
     expect(extractProjectId(`/${uuid}/board`)).toBe(uuid);
-    expect(extractProjectId(`/${uuid}/backlog`)).toBe(uuid);
+    expect(extractProjectId(`/${uuid}/settings`)).toBe(uuid);
   });
 
   it("should extract project ID from root project path", () => {
@@ -101,7 +101,7 @@ describe("extractProjectView", () => {
 
   it("should extract view name from project route", () => {
     expect(extractProjectView(`/${uuid}/board`)).toBe("board");
-    expect(extractProjectView(`/${uuid}/backlog`)).toBe("backlog");
+    expect(extractProjectView(`/${uuid}/settings`)).toBe("settings");
     expect(extractProjectView(`/${uuid}/epics`)).toBe("epics");
   });
 
@@ -119,7 +119,7 @@ describe("buildProjectRoute", () => {
   it("should build a project route from ID and view", () => {
     const uuid = "123e4567-e89b-12d3-a456-426614174000";
     expect(buildProjectRoute(uuid, "board")).toBe(`/${uuid}/board`);
-    expect(buildProjectRoute(uuid, "backlog")).toBe(`/${uuid}/backlog`);
+    expect(buildProjectRoute(uuid, "settings")).toBe(`/${uuid}/settings`);
   });
 });
 

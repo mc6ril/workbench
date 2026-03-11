@@ -10,9 +10,7 @@ export type TranslationKey =
   | `pages.verifyEmail.${string}`
   | `pages.resetPassword.${string}`
   | `pages.updatePassword.${string}`
-  | `pages.home.${string}`
   | `pages.workspace.${string}`
-  | `pages.backlog.${string}`
   | `pages.board.${string}`
   | `pages.epics.${string}`
   | `pages.ticketDetail.${string}`
@@ -46,9 +44,7 @@ export type Namespace =
   | "pages.verifyEmail"
   | "pages.resetPassword"
   | "pages.updatePassword"
-  | "pages.home"
   | "pages.workspace"
-  | "pages.backlog"
   | "pages.board"
   | "pages.epics"
   | "pages.ticketDetail"

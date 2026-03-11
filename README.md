@@ -6,7 +6,7 @@
 
 Workbench is **not** meant to replicate Jira, but to provide:
 
-- A clean backlog for managing tickets
+- A clear board for managing tickets
 - A visual board (Trello-like) for workflow visualization
 - Structured planning via Epics and sub-tasks
 
@@ -21,7 +21,7 @@ All built **incrementally, feature by feature**, where each feature is a complet
 
 ### Core Features (MVP Scope)
 
-- **Backlog**: Create, edit, delete, view, filter, and sort tickets in a flat list
+- **Board**: Create, edit, delete, view, filter, and sort tickets in a flat list
 - **Board**: Custom columns (statuses), drag and drop tickets, reorder within columns, persist position and status
 - **Epics**: Create epics, assign tickets to epics, view epic progress
 - **Sub-tasks**: Create sub-tasks under tickets, view parent/child relationships, track completion
@@ -42,7 +42,7 @@ The domain knows nothing about frameworks, databases, or UI.
 Each feature is implemented as a complete vertical slice (UI + use case + domain logic + persistence). Features are built in order:
 
 1. Project setup and health check
-2. Backlog (ticket CRUD)
+2. Board (ticket CRUD)
 3. Board columns configuration
 4. Drag and drop workflow
 5. Epics

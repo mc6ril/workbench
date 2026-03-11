@@ -31,12 +31,6 @@ export const FEATURE_ROWS: FeatureRow[] = [
     pro: "included",
     team: "included",
   },
-  {
-    key: "backlogView",
-    free: "notIncluded",
-    pro: "included",
-    team: "included",
-  },
   { key: "subtasks", free: "notIncluded", pro: "included", team: "included" },
   {
     key: "priorities",

@@ -8,7 +8,7 @@ import { queryKeys } from "@/presentation/hooks/queryKeys";
 
 /**
  * Hook for deleting a sprint.
- * Tickets in the sprint will return to the backlog.
+ * Tickets in the sprint will return to the board flow.
  */
 export const useDeleteSprint = (projectId: string) => {
   const queryClient = useQueryClient();

@@ -1,27 +1,35 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 
+import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
+
+import { addLabelsToTicket } from "@/core/usecases/label";
+
+import { labelRepository } from "@/infrastructure/supabase/repositories";
+
 import BoardView from "@/presentation/components/board/boardView/BoardView";
+import CreateTicketForm from "@/presentation/components/ticket/createTicketForm/CreateTicketForm";
 import TicketCard from "@/presentation/components/ticket/ticketCard/TicketCard";
 import TicketDetailView from "@/presentation/components/ticket/ticketDetailView/TicketDetailView";
-import Button from "@/presentation/components/ui/Button";
-import Input from "@/presentation/components/ui/Input";
 import Loader from "@/presentation/components/ui/Loader";
 import Modal from "@/presentation/components/ui/Modal";
+import Text from "@/presentation/components/ui/Text";
 import { useBoardColumns } from "@/presentation/hooks/board/useBoardColumns";
 import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfiguration";
 import { useBoardDnD } from "@/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/presentation/hooks/board/useBoardTickets";
+import { useEpics } from "@/presentation/hooks/epic/useEpics";
+import { useLabels } from "@/presentation/hooks/label";
 import { useProject } from "@/presentation/hooks/project";
+import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
 import { useCreateTicket } from "@/presentation/hooks/ticket/useCreateTicket";
 import { useTickets } from "@/presentation/hooks/ticket/useTickets";
 import { useProjectPermissions } from "@/presentation/providers/permissions";
 import { useFilterStore } from "@/presentation/stores/useFilterStore";
 import { useSortStore } from "@/presentation/stores/useSortStore";
-import { useToastStore } from "@/presentation/stores/useToastStore";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { useTranslation } from "@/shared/i18n";
@@ -38,17 +46,17 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const layoutId = useMemo(() => getAccessibilityId("board-layout"), []);
-  const tTicket = useTranslation("pages.ticketDetail.page");
   const tBoard = useTranslation("pages.board");
+  const tTicket = useTranslation("pages.ticketDetail.page");
   const selectedTicketId = searchParams.get("ticket");
-  const [quickAddTitle, setQuickAddTitle] = useState("");
+  const tCreateForm = useTranslation("pages.board.createTicketForm");
+  const isCreateTicketModalOpen = searchParams.get("createTicket") === "1";
   const {
     canMoveTicket,
     canCreateTicket,
     isLoading: isPermissionsLoading,
   } = useProjectPermissions();
   const createTicketMutation = useCreateTicket();
-  const addToast = useToastStore((state) => state.addToast);
 
   const updateSearchParam = useCallback(
     (ticketId: string | null) => {
@@ -79,6 +87,13 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     isLoading,
     error,
   } = useBoardConfiguration(projectId);
+  const { data: epics = [] } = useEpics(projectId, {
+    enabled: isCreateTicketModalOpen,
+  });
+  const { data: labels = [] } = useLabels(projectId, {
+    enabled: isCreateTicketModalOpen,
+  });
+  const { hasAccess: hasEpicsAccess } = useFeatureAccess(PlanFeature.EPICS);
   const { data: project } = useProject(projectId);
   const filters = useFilterStore((state) => state.filters);
   const sort = useSortStore((state) => state.sort);
@@ -107,15 +122,22 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
 
     return Array.isArray(filters.labelIds) && filters.labelIds.length > 0;
   }, [filters]);
-  const shouldLoadProjectWideTicketsForQuickAdd =
-    hasActiveFilters || effectiveSearch.trim() !== "";
-  const {
-    data: projectWideTickets = [],
-    isLoading: isProjectWideTicketsLoading,
-  } = useTickets(projectId, undefined, undefined, "", {
-    enabled: shouldLoadProjectWideTicketsForQuickAdd,
-    useProjectWideCache: true,
-  });
+  const shouldLoadProjectWideTicketsForCreate =
+    isCreateTicketModalOpen &&
+    (hasActiveFilters || effectiveSearch.trim() !== "");
+  const { data: projectWideTickets = [] } = useTickets(
+    projectId,
+    undefined,
+    undefined,
+    "",
+    {
+      enabled: shouldLoadProjectWideTicketsForCreate,
+      useProjectWideCache: true,
+    }
+  );
+  const ticketsForCreatePosition = shouldLoadProjectWideTicketsForCreate
+    ? projectWideTickets
+    : tickets;
 
   const { columns, columnById } = useBoardColumns(boardConfiguration);
   const { filteredTickets, ticketViewModelById } = useBoardTickets({
@@ -177,72 +199,41 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     };
   }, [boardColumnTickets, handleEditTicket]);
 
-  const quickAddStatus = useMemo(() => {
-    return (
-      columns.find((column) => column.state === "todo")?.status ??
-      columns[0]?.status ??
-      "todo"
-    );
-  }, [columns]);
+  const closeCreateTicketModal = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("createTicket");
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, {
+      scroll: false,
+    });
+  }, [pathname, router, searchParams]);
 
-  const quickAddPosition = useMemo(() => {
-    const sourceTickets = shouldLoadProjectWideTicketsForQuickAdd
-      ? projectWideTickets
-      : tickets;
-    return sourceTickets.filter((ticket) => ticket.status === quickAddStatus)
-      .length;
-  }, [
-    projectWideTickets,
-    quickAddStatus,
-    shouldLoadProjectWideTicketsForQuickAdd,
-    tickets,
-  ]);
+  const statusOptions = useMemo(() => {
+    const currentColumns = boardConfiguration?.columns ?? [];
+    return currentColumns.map((column) => ({
+      value: column.status,
+      label: column.name,
+    }));
+  }, [boardConfiguration?.columns]);
 
-  const handleQuickAdd = useCallback(async (): Promise<void> => {
-    const normalizedTitle = quickAddTitle.trim();
-    if (!canCreateTicket || normalizedTitle === "") {
-      return;
-    }
+  const epicOptions = useMemo(() => {
+    return epics.map((epic) => ({
+      value: epic.id,
+      label: epic.name,
+    }));
+  }, [epics]);
 
-    try {
-      await createTicketMutation.mutateAsync({
-        projectId,
-        title: normalizedTitle,
-        status: quickAddStatus,
-        position: quickAddPosition,
-        description: null,
-        epicId: null,
-        parentId: null,
-        sprintId: null,
-        priority: null,
-        dueDate: null,
-        storyPoints: null,
-        createdBy: null,
-      });
+  const labelOptions = useMemo(() => {
+    return labels.map((label) => ({
+      value: label.id,
+      label: label.name,
+    }));
+  }, [labels]);
 
-      setQuickAddTitle("");
-      addToast({
-        message: tBoard("quickAdd.success", { title: normalizedTitle }),
-        variant: "success",
-        duration: 3500,
-      });
-    } catch {
-      addToast({
-        message: tBoard("quickAdd.error"),
-        variant: "error",
-        duration: 4500,
-      });
-    }
-  }, [
-    addToast,
-    canCreateTicket,
-    createTicketMutation,
-    projectId,
-    quickAddPosition,
-    quickAddStatus,
-    quickAddTitle,
-    tBoard,
-  ]);
+  const createTicketErrorMessage =
+    createTicketMutation.error instanceof Error
+      ? createTicketMutation.error.message
+      : undefined;
 
   if (isPermissionsLoading) {
     return <Loader variant="full-page" />;
@@ -250,41 +241,6 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
 
   return (
     <section className={styles["board-layout"]} aria-labelledby={layoutId}>
-      <div className={styles["board-quick-add"]}>
-        <div className={styles["board-quick-add__input"]}>
-          <Input
-            label={tBoard("quickAdd.label")}
-            placeholder={tBoard("quickAdd.placeholder")}
-            value={quickAddTitle}
-            onChange={(event) => {
-              setQuickAddTitle(event.target.value);
-            }}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                void handleQuickAdd();
-              }
-            }}
-            disabled={
-              !canCreateTicket ||
-              createTicketMutation.isPending ||
-              isProjectWideTicketsLoading
-            }
-          />
-        </div>
-        <Button
-          label={tBoard("quickAdd.button")}
-          onClick={() => {
-            void handleQuickAdd();
-          }}
-          disabled={
-            !canCreateTicket ||
-            createTicketMutation.isPending ||
-            isProjectWideTicketsLoading ||
-            quickAddTitle.trim() === ""
-          }
-          aria-label={tBoard("quickAdd.buttonAriaLabel")}
-        />
-      </div>
       <DndContext
         sensors={sensors}
         collisionDetection={collisionDetection}
@@ -328,6 +284,53 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
             key={selectedTicketId}
             projectId={projectId}
             ticketId={selectedTicketId}
+          />
+        )}
+      </Modal>
+      <Modal
+        isOpen={isCreateTicketModalOpen}
+        onClose={closeCreateTicketModal}
+        title={tCreateForm("title")}
+      >
+        {statusOptions.length === 0 ? (
+          <Text variant="small">{tBoard("createTicketForm.noStatusHint")}</Text>
+        ) : !canCreateTicket ? (
+          <Text variant="small">{tCreateForm("readOnlyHint")}</Text>
+        ) : (
+          <CreateTicketForm
+            statusOptions={statusOptions}
+            epicOptions={epicOptions}
+            labelOptions={labelOptions}
+            showEpicField={hasEpicsAccess}
+            isSubmitting={createTicketMutation.isPending}
+            errorMessage={createTicketErrorMessage}
+            onCancel={closeCreateTicketModal}
+            onSubmit={async (values) => {
+              if (!canCreateTicket) {
+                return;
+              }
+
+              const createdTicket = await createTicketMutation.mutateAsync({
+                projectId,
+                title: values.title,
+                description: values.description ?? null,
+                status: values.status,
+                epicId: values.epicId ?? null,
+                position: ticketsForCreatePosition.filter(
+                  (ticket) => ticket.status === values.status
+                ).length,
+              });
+
+              if (values.labelIds && values.labelIds.length > 0) {
+                await addLabelsToTicket(
+                  createdTicket.id,
+                  values.labelIds,
+                  labelRepository
+                );
+              }
+
+              closeCreateTicketModal();
+            }}
           />
         )}
       </Modal>

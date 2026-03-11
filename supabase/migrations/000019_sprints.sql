@@ -1,6 +1,6 @@
 -- Migration: Create sprints table and add sprint_id to tickets
--- Implements Jira-like sprint/backlog categorization:
--- - Tickets with sprint_id = NULL are in the "Backlog" section
+-- Implements Jira-like sprint categorization:
+-- - Tickets with sprint_id = NULL are in the "Board" section
 -- - Tickets with a sprint_id belong to that sprint
 -- - Only one sprint can be active per project at a time
 
@@ -36,7 +36,7 @@ DO $$ BEGIN
   END IF;
 END $$;
 
--- Add sprint_id to tickets (NULL = backlog, non-null = in sprint)
+-- Add sprint_id to tickets (NULL = no sprint, non-null = in sprint)
 ALTER TABLE tickets
   ADD COLUMN IF NOT EXISTS sprint_id uuid DEFAULT NULL
     REFERENCES sprints(id) ON DELETE SET NULL;

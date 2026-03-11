@@ -37,12 +37,12 @@ describe("checkFeatureAccess", () => {
       expect(result.currentPlan).toBe(SubscriptionPlan.FREE);
     });
 
-    it("should deny backlog access for FREE plan", () => {
+    it("should deny priorities access for FREE plan", () => {
       const subscription = createMockSubscription({
         plan: SubscriptionPlan.FREE,
       });
 
-      const result = checkFeatureAccess(subscription, PlanFeature.BACKLOG_VIEW);
+      const result = checkFeatureAccess(subscription, PlanFeature.PRIORITIES);
 
       expect(result.hasAccess).toBe(false);
       expect(result.currentPlan).toBe(SubscriptionPlan.FREE);
@@ -143,7 +143,7 @@ describe("checkFeatureAccess", () => {
         status: SubscriptionStatus.CANCELED,
       });
 
-      const result = checkFeatureAccess(subscription, PlanFeature.BACKLOG_VIEW);
+      const result = checkFeatureAccess(subscription, PlanFeature.PRIORITIES);
 
       expect(result.hasAccess).toBe(false);
       expect(result.currentPlan).toBe(SubscriptionPlan.FREE);

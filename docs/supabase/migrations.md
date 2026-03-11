@@ -1,466 +1,156 @@
 # Database Migrations Guide
 
-This document describes the database migration system for Workbench and how to run migrations.
+This document describes the current migration strategy for Workbench and reflects the state of the `supabase/migrations` directory.
 
-## Migration System
+## Migration Model
 
-Workbench uses **Supabase migrations** with SQL files stored in `supabase/migrations/`. Migrations are numbered sequentially and applied in order to create and modify the database schema.
+- SQL migrations are stored in `supabase/migrations/`
+- Files are applied in ascending order (`000001` -> `000030`)
+- Migrations should remain additive and idempotent whenever possible
+- Destructive changes should be handled in dedicated, explicit migrations
 
-## Directory Structure
+## Current Migration Timeline
 
-```
-supabase/
-└── migrations/
-    ├── 000001_initial_schema.sql
-    ├── 000002_seed_default_project.sql
-    ├── 000003_add_project_members_and_rls.sql
-    ├── 000004_auto_add_creator_as_admin.sql
-    ├── 000005_allow_users_to_add_themselves_as_viewer.sql
-    ├── 000006_fix_project_creation_rls.sql
-    ├── 000007_bypass_rls_with_function.sql
-    ├── 000008_add_ticket_epic_codes.sql
-    ├── 000009_project_stats_function.sql
-    ├── 000010_subscriptions.sql
-    ├── 000011_fix_security_linter_warnings.sql
-    ├── 000012_orphaned_project_soft_delete.sql
-    └── README.md
-```
+### Foundation and Access Control
 
-Migration files follow the naming convention:
+- `000001_initial_schema.sql`  
+  Creates core tables: `projects`, `boards`, `columns`, `epics`, `tickets` plus baseline indexes, constraints, and `updated_at` trigger logic.
 
-- `{timestamp}_{descriptive_name}.sql`
-- Example: `000001_initial_schema.sql`, `000002_add_priority_to_tickets.sql`
+- `000002_seed_default_project.sql`  
+  Seeds an initial project, board, and default columns.
 
-## Migration Files
+- `000003_add_project_members_and_rls.sql`  
+  Adds `project_members`, helper functions (`is_project_member`, `is_project_admin`, etc.), and enables RLS across core tables.
 
-### Initial Schema Migration
+- `000004_auto_add_creator_as_admin.sql`  
+  Adds creator auto-membership behavior and `has_any_project_access()`.
 
-**File**: `supabase/migrations/000001_initial_schema.sql`
+- `000005_allow_users_to_add_themselves_as_viewer.sql`  
+  Adjusts access bootstrapping flow.
 
-This **consolidated** migration creates the complete initial database schema in a single file:
+- `000006_fix_project_creation_rls.sql`  
+  Refines project creation policy behavior.
 
-- **Tables**: `projects`, `tickets`, `epics`, `boards`, `columns`
-- **Foreign Keys**: All relationships between entities
-- **Unique Constraints**: Board per project, column status/position per board
-- **Check Constraints**: 
-  - Position >= 0 for tickets and columns
-  - String length validation (non-empty after trim) for: projects.name, tickets.title, tickets.status, epics.name, columns.name, columns.status
-- **Indexes**: 
-  - Performance indexes on foreign keys and frequently queried fields
-  - Composite indexes including `idx_tickets_project_epic` for performance optimization
-- **Triggers**: Automatic `updated_at` timestamp updates
-- **Features**: `visible` field on columns table (default: true)
+- `000007_bypass_rls_with_function.sql`  
+  Adds controlled `SECURITY DEFINER` helpers for project creation/join flows.
 
-This migration consolidates elements that were previously in separate migrations (000008, 000009, 000010) into a single, well-organized initial schema migration.
+### Ticket and Epic Identity / Stats
 
-See `docs/database-schema.md` for detailed schema documentation.
+- `000008_add_ticket_epic_codes.sql`  
+  Adds human-readable code support (`short_code`, `code_number`) and supporting functions.
 
-### Subscriptions Migration
+- `000009_project_stats_function.sql`  
+  Adds `get_projects_with_stats()`.
 
-**File**: `supabase/migrations/000010_subscriptions.sql`
+### Subscription and Project Lifecycle
 
-This migration creates the subscription system for tracking user plans:
+- `000010_subscriptions.sql`  
+  Introduces `subscriptions` table and related policies.
 
-- **Table**: `subscriptions` - Tracks user subscription plans managed via Stripe
-- **Columns**: `user_id`, `plan` (free/pro/team), `status` (active/canceled/past_due/trialing), Stripe IDs, billing period
-- **RLS**: Enabled with policies for users to view/manage their own subscriptions
-- **Constraint**: One subscription per user (`user_id` UNIQUE)
+- `000011_fix_security_linter_warnings.sql`  
+  Search path and policy hardening pass.
 
-### Security Linter Fixes Migration
+- `000012_orphaned_project_soft_delete.sql`  
+  Adds orphaned project lifecycle (`orphaned_at`, `creator_email`, reclaim and cleanup functions).
 
-**File**: `supabase/migrations/000011_fix_security_linter_warnings.sql`
+### Collaboration Features
 
-This migration addresses Supabase database linter security warnings:
+- `000013_user_profiles.sql`  
+  Adds `user_profiles` with sync trigger and avatar update path.
 
-- **function_search_path_mutable**: Sets `search_path = 'public'` on all tracked functions to prevent search path injection
-- **rls_policy_always_true**: Replaces overly permissive projects INSERT RLS policy with a proper membership check
-- **Cleanup**: Drops orphaned debug functions not tracked in migrations
+- `000014_project_invitations.sql`  
+  Adds `project_invitations` and invitation RPC flows.
 
-### Orphaned Project Soft-Delete Migration
+- `000015_ticket_assignees.sql`  
+  Adds `ticket_assignees` and batch assignee RPC.
 
-**File**: `supabase/migrations/000012_orphaned_project_soft_delete.sql`
+- `000016_user_profiles_single_source.sql`  
+  Refines user profile synchronization/update behavior.
 
-This migration implements the orphaned project lifecycle with a 30-day soft-delete grace period and reclaim flow:
+### Domain Enrichment
 
-- **Schema Changes**:
-  - Adds `orphaned_at` (timestamptz) and `creator_email` (text) columns to `projects`
-  - Partial index on `orphaned_at` for orphaned project queries
-  - Backfills `creator_email` for existing projects from admin member's email
+- `000017_ticket_extended_fields.sql`  
+  Adds ticket extended fields (`priority`, `due_date`, `story_points`, `created_by`).
 
-- **Functions Updated**:
-  - `create_project()` - Now stores the creator's email in `creator_email`
+- `000018_epic_extended_fields.sql`  
+  Adds epic extended fields (`start_date`, `target_date`, `color`).
 
-- **Triggers Created**:
-  - `handle_project_member_removed` (AFTER DELETE on `project_members`) - Sets `orphaned_at` when last member leaves
-  - `handle_project_member_added` (AFTER INSERT on `project_members`) - Clears `orphaned_at` when a member joins
+- `000019_sprints.sql`  
+  Adds `sprints` and links tickets to sprints.
 
-- **RPC Functions Created**:
-  - `reclaim_or_join_project(uuid)` - Joins a project as viewer, or reclaims an orphaned project as admin
-  - `get_reclaimable_projects()` - Returns orphaned projects matching the current user's email via `creator_email`
-  - `cleanup_expired_orphaned_projects()` - Deletes projects orphaned for more than 30 days
+- `000020_comments.sql`  
+  Adds `comments` and comment retrieval RPC.
 
-### Project Statistics Function Migration
+- `000021_labels.sql`  
+  Adds `labels` and `ticket_labels`.
 
-**File**: `supabase/migrations/000009_project_stats_function.sql`
+### Positioning, Search, and Realtime
 
-This migration creates an optimized RPC function for fetching projects with aggregated statistics:
+- `000022_transactional_positions.sql`  
+  Adds transactional position update functions.
 
-- **Function**: `get_projects_with_stats()` - Returns all projects accessible to the current user with member count, ticket count, and status breakdown
-- **Security**: Uses `SECURITY INVOKER` to respect RLS policies
-- **Optimization**: Uses lateral joins to aggregate statistics in a single query (no N+1)
-- **Caching**: Marked as `STABLE` to allow PostgreSQL query caching
+- `000023_fix_search_path_security.sql`  
+  Hardens `search_path` on critical functions.
 
-**Return Columns**:
+- `000024_bulk_update_ticket_positions.sql`  
+  Adds JSON-based bulk position update function.
 
-| Column            | Type        | Description                                       |
-| ----------------- | ----------- | ------------------------------------------------- |
-| id                | uuid        | Project unique identifier                         |
-| name              | text        | Project name                                      |
-| short_code        | text        | 2-letter project code                             |
-| created_at        | timestamptz | Project creation timestamp                        |
-| updated_at        | timestamptz | Project last update timestamp                     |
-| role              | text        | Current user's role in the project                |
-| member_count      | bigint      | Total number of members in the project            |
-| ticket_count      | bigint      | Total number of top-level tickets (excludes subtasks) |
-| in_progress_count | bigint      | Number of tickets with status 'in-progress'       |
-| completed_count   | bigint      | Number of tickets with status 'completed'         |
+- `000025_move_and_reorder_ticket.sql`  
+  Adds atomic move + reorder function.
 
-**Usage Example**:
+- `000026_ticket_search_trigram.sql`  
+  Adds trigram indexes for ticket title/description search.
 
-```sql
-SELECT * FROM get_projects_with_stats();
-```
+- `000027_columns_workflow_state.sql`  
+  Adds workflow state handling on columns.
 
-**Notes**:
+- `000028_enable_realtime_for_project_views.sql`  
+  Ensures `tickets` and `columns` are in `supabase_realtime` publication.
 
-- Subtasks (`parent_id IS NOT NULL`) are excluded from ticket counts
-- Only returns projects where the current user is a member
-- Results are ordered by `created_at DESC`
+- `000029_enable_realtime_for_project_detail_tables.sql`  
+  Extends realtime publication for project detail tables.
 
----
+- `000030_project_ticket_assignees_rpc.sql`  
+  Adds project-wide ticket assignees RPC.
 
-### Seed Data Migration
+## Out-of-Band Changes
 
-**File**: `supabase/migrations/000002_seed_default_project.sql`
+An additional safe performance pass was applied directly to the remote project (not yet committed as a repository migration):
 
-This migration inserts initial seed data:
+- Added indexes:
+  - `idx_comments_author_id`
+  - `idx_project_invitations_invited_by`
+  - `idx_ticket_assignees_assigned_by`
+  - `idx_tickets_created_by`
 
-- **Default Project**: One project named "My Workbench"
-- **Default Board**: One board linked to the default project
-- **Default Columns**: Three columns with status values (all with `visible = true`):
-  - "To Do" (status: `todo`, position: 0)
-  - "In Progress" (status: `in_progress`, position: 1)
-  - "Done" (status: `done`, position: 2)
+If database history must be fully reproducible from git only, add a dedicated migration file that contains those four index statements.
 
-**Idempotency**: This migration is idempotent and safe to re-run. It uses fixed UUIDs and `ON CONFLICT` clauses to prevent duplicate inserts.
+## How to Run Migrations
 
-## Running Migrations
-
-### Option 1: Using Supabase CLI (Recommended)
-
-If you have Supabase CLI installed and your project linked:
-
-1. **Link your project** (if not already linked):
-
-   ```bash
-   supabase link --project-ref your-project-ref
-   ```
-
-2. **Push migrations to Supabase**:
-
-   ```bash
-   supabase db push
-   ```
-
-   This will apply all migrations that haven't been applied yet.
-
-3. **Check migration status**:
-   ```bash
-   supabase migration list
-   ```
-
-### Option 2: Using Supabase Dashboard
-
-1. **Open Supabase Dashboard**: Go to your project at [app.supabase.com](https://app.supabase.com)
-
-2. **Navigate to SQL Editor**: Go to **SQL Editor** in the left sidebar
-
-3. **Run migration SQL**:
-   - Copy the contents of `supabase/migrations/000001_initial_schema.sql`
-   - Paste into the SQL Editor
-   - Click **Run** (or press Cmd/Ctrl + Enter)
-
-4. **Verify**: Check that all tables are created in the **Table Editor**
-
-### Option 3: Using psql (Command Line)
-
-If you have direct database access:
+### Supabase CLI (recommended)
 
 ```bash
-# Connect to your Supabase database
-psql "postgresql://postgres:[YOUR-PASSWORD]@[YOUR-PROJECT-REF].supabase.co:5432/postgres"
-
-# Run the migration
-\i supabase/migrations/000001_initial_schema.sql
+supabase link --project-ref <project-ref>
+supabase db push
 ```
 
-Or using a connection string from Supabase Dashboard → Settings → Database:
+### Local reset
 
 ```bash
-psql "your-connection-string" -f supabase/migrations/000001_initial_schema.sql
+supabase start
+supabase db reset
 ```
 
-## Creating New Migrations
-
-1. **Create a new migration file** in `supabase/migrations/`:
-
-   ```bash
-   # Using Supabase CLI (generates timestamp automatically)
-   supabase migration new add_feature_name
-
-   # Or manually create: 000002_descriptive_name.sql
-   ```
-
-2. **Write migration SQL**:
-
-   ```sql
-   -- Example: Add a new column
-   ALTER TABLE tickets ADD COLUMN IF NOT EXISTS priority text;
-
-   -- Example: Create a new index
-   CREATE INDEX IF NOT EXISTS idx_tickets_priority ON tickets(priority);
-   ```
-
-3. **Make migrations idempotent**:
-   - Use `IF NOT EXISTS` for tables, indexes, constraints
-   - Use `IF EXISTS` for drops
-   - Check for existing data before inserting
-
-4. **Test the migration**:
-   - Apply to a local/test database first
-   - Verify the migration succeeds on a clean database
-   - Verify the migration is idempotent (can be run multiple times safely)
-
-5. **Apply to your database** using one of the methods above
-
-## Migration Best Practices
-
-### Idempotency
-
-All migrations should be **idempotent** - safe to run multiple times without errors. Use PostgreSQL conditional statements:
-
-```sql
--- ✅ Good: Idempotent
-CREATE TABLE IF NOT EXISTS projects (...);
-CREATE INDEX IF NOT EXISTS idx_projects_name ON projects(name);
-
--- ❌ Bad: Not idempotent (will fail on second run)
-CREATE TABLE projects (...);
-CREATE INDEX idx_projects_name ON projects(name);
-```
-
-### Ordering
-
-- Migrations are applied in **alphabetical/numerical order**
-- Use sequential prefixes: `000001_`, `000002_`, etc.
-- Never rename applied migrations (creates tracking issues)
-
-### Backwards Compatibility
-
-- When adding columns, make them nullable or provide defaults
-- Avoid breaking changes in migrations (prefer additive changes)
-- For breaking changes, create a new migration after deprecation period
-
-### Dependencies
-
-- Create tables in dependency order (parent tables before child tables)
-- Drop tables in reverse dependency order (child tables before parent tables)
-
-### Testing
-
-- Test migrations on a clean database
-- Test migrations on a database with existing data
-- Verify indexes are created correctly
-- Verify foreign key constraints work as expected
-
-## Migration File Structure
-
-Each migration file should include:
-
-1. **Header comment** describing what the migration does
-2. **CREATE statements** for new tables/columns/indexes
-3. **ALTER statements** for modifications
-4. **Comments** explaining non-obvious decisions
-
-Example:
-
-```sql
--- Migration: Add priority field to tickets
--- Description: Adds a priority text field to support ticket prioritization
-
-ALTER TABLE tickets ADD COLUMN IF NOT EXISTS priority text;
-
-CREATE INDEX IF NOT EXISTS idx_tickets_priority ON tickets(priority);
-```
-
-## Troubleshooting
-
-### Migration Already Applied
-
-If a migration has already been applied and you try to run it again:
-
-- **Supabase CLI**: Will skip already-applied migrations automatically
-- **Manual SQL**: Use `IF NOT EXISTS` clauses to avoid errors
-
-### Foreign Key Constraint Errors
-
-If you get foreign key constraint errors:
-
-1. Check table creation order (parent tables before child tables)
-2. Verify foreign key relationships are correct
-3. Check if referenced data exists before creating constraints
-
-### Index Creation Errors
-
-If index creation fails:
-
-- Check if the index already exists (use `IF NOT EXISTS`)
-- Verify column names are correct
-- Check for duplicate index names
-
-### Trigger Errors
-
-If trigger creation fails:
-
-- Verify the trigger function exists
-- Check table names are correct
-- Ensure triggers don't conflict with existing ones
-
-## Verifying Migrations
-
-After running migrations, verify:
-
-1. **Tables created**: Check all tables exist in Supabase Dashboard → Table Editor
-2. **Foreign keys**: Verify relationships in Table Editor → Foreign Keys tab
-3. **Indexes**: Check indexes in Supabase Dashboard → Database → Indexes
-4. **Constraints**: Verify unique and check constraints are applied
-5. **Triggers**: Check triggers in Supabase Dashboard → Database → Triggers
-
-## Migration History
-
-Supabase tracks applied migrations in the `supabase_migrations.schema_migrations` table. To view migration history:
-
-```sql
-SELECT * FROM supabase_migrations.schema_migrations ORDER BY version;
-```
-
-## Rollback
-
-Supabase migrations are **forward-only** by default. To rollback:
-
-1. **Create a new migration** that reverses the changes
-2. **Test the rollback migration** on a copy of the database
-3. **Apply the rollback migration** using normal migration process
-
-Example rollback migration:
-
-```sql
--- Migration: Remove priority field from tickets (rollback)
--- Description: Removes the priority column added in migration 000002
-
-ALTER TABLE tickets DROP COLUMN IF EXISTS priority;
-DROP INDEX IF EXISTS idx_tickets_priority;
-```
-
-## Local Development
-
-For local development with Supabase CLI:
-
-1. **Start local Supabase**:
-
-   ```bash
-   supabase start
-   ```
-
-2. **Run migrations locally**:
-
-   ```bash
-   supabase db reset  # Resets and applies all migrations
-   # or
-   supabase migration up  # Applies pending migrations
-   ```
-
-3. **Check local database**:
-   ```bash
-   supabase db dump  # View current schema
-   ```
-
-## Seed Data
-
-Seed data is included as part of the migration system. The seed migration (`000002_seed_default_project.sql`) runs automatically when you apply migrations.
-
-### Seed Data Contents
-
-- **Default Project**: "My Workbench" (ID: `00000000-0000-0000-0000-000000000001`)
-- **Default Board**: Linked to default project (ID: `00000000-0000-0000-0000-000000000002`)
-- **Default Columns**: Three columns for basic workflow:
-  - To Do (status: `todo`)
-  - In Progress (status: `in_progress`)
-  - Done (status: `done`)
-
-### Idempotency
-
-The seed migration is **idempotent** - it's safe to run multiple times:
-
-- Uses fixed UUIDs for all seed records
-- Uses `ON CONFLICT DO NOTHING` or `ON CONFLICT DO UPDATE` to prevent duplicates
-- Updates existing records if names/values have changed
-
-### Running Seed Data Separately
-
-If you need to re-seed data without re-running all migrations:
-
-```sql
--- Run only the seed migration
-\i supabase/migrations/000002_seed_default_project.sql
-```
-
-Or via Supabase Dashboard SQL Editor - copy and paste the seed migration file contents.
-
-### Customizing Seed Data
-
-To customize seed data:
-
-1. **Before first migration**: Edit `supabase/migrations/000002_seed_default_project.sql` and change names, status values, or add more columns
-
-2. **After migration applied**: Create a new migration to update seed data:
-   ```sql
-   -- Example: Update project name
-   UPDATE projects SET name = 'My Custom Project' WHERE id = '00000000-0000-0000-0000-000000000001';
-   ```
-
-## CI/CD Integration
-
-For automated deployments:
-
-1. **Add migration step to CI/CD pipeline**:
-
-   ```yaml
-   - name: Run database migrations
-     run: |
-       supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
-       supabase db push
-   ```
-
-   This will automatically apply both schema and seed migrations.
-
-2. **Or use SQL execution via API**:
-   - Use Supabase Management API to execute SQL
-   - Store connection credentials securely in CI/CD secrets
-   - Execute migrations in order (000001, then 000002)
+## Best Practices
+
+- Keep migrations forward-only and explicit
+- Prefer additive schema evolution over in-place destructive rewrites
+- Use `IF EXISTS` / `IF NOT EXISTS` when safe and appropriate
+- Test on local database before applying to shared environments
+- Re-run Supabase advisors after DDL changes
 
 ## References
 
-- [Supabase Migrations Documentation](https://supabase.com/docs/guides/cli/local-development#database-migrations)
-- [PostgreSQL Migration Best Practices](https://www.postgresql.org/docs/current/ddl-alter.html)
-- [Database Schema Design](./database-schema.md)
+- `supabase/migrations/README.md`
+- `docs/supabase/database-schema.md`
+- `docs/supabase/row-level-security.md`

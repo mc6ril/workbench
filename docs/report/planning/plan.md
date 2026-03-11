@@ -206,12 +206,12 @@ Simple implementation screens to verify authentication and user privilege system
 | Components | Home     | My Work Widget         | Create MyWorkWidget component showing user's active tickets         | Done   |
 | Components | Home     | Recent Activity Widget | Create RecentActivityWidget component showing recent changes        | Done   |
 | Components | Home     | Shortcuts Widget       | Create ShortcutsWidget component with navigation shortcuts          | Done   |
-| Components | Backlog  | Ticket List            | Create TicketList component displaying tickets in a flat list       | Done   |
-| Components | Backlog  | Ticket List Item       | Create TicketListItem component with title, description, actions    | Done   |
-| Components | Backlog  | Ticket Filters         | Create TicketFilters component with search, status, epic filters    | Done   |
-| Components | Backlog  | Ticket Sort            | Create TicketSort component with sort options (date, title, status) | Done   |
-| Components | Backlog  | Bulk Actions           | Create BulkActions component for multi-select and bulk operations   | Done   |
-| Components | Backlog  | Create Ticket Form     | Create CreateTicketForm component with modal or inline form         | Done   |
+| Components | Board  | Ticket List            | Create TicketList component displaying tickets in a flat list       | Done   |
+| Components | Board  | Ticket List Item       | Create TicketListItem component with title, description, actions    | Done   |
+| Components | Board  | Ticket Filters         | Create TicketFilters component with search, status, epic filters    | Done   |
+| Components | Board  | Ticket Sort            | Create TicketSort component with sort options (date, title, status) | Done   |
+| Components | Board  | Bulk Actions           | Create BulkActions component for multi-select and bulk operations   | Done   |
+| Components | Board  | Create Ticket Form     | Create CreateTicketForm component with modal or inline form         | Done   |
 | Components | Board    | Board View             | Create BoardView component with columns and drag-and-drop           | Done   |
 | Components | Board    | Board Column           | Create BoardColumn component displaying tickets in a column         | Done   |
 | Components | Board    | Ticket Card            | Create TicketCard component for board display with drag handle      | Done   |
@@ -240,7 +240,7 @@ Simple implementation screens to verify authentication and user privilege system
 | ------ | ---------- | ------------------ | -------------------------------------------------------------------------------------- | ------ |
 | Layout | Main       | Root Layout        | Create root layout with HTML structure and providers                                   | Done   |
 | Layout | Main       | Dashboard Layout   | Create dashboard layout with sidebar navigation                                        | Done   |
-| Layout | Navigation | Sidebar Navigation | Create SidebarNavigation component with routes (Home, Backlog, Board, Epics, Settings) | Done   |
+| Layout | Navigation | Sidebar Navigation | Create SidebarNavigation component with routes (Home, Board, Board, Epics, Settings) | Done   |
 | Layout | Navigation | Skip Link          | Create SkipLink component for accessibility                                            | Done   |
 | Layout | Navigation | Breadcrumbs        | Create Breadcrumbs component for navigation context                                    | Done   |
 | Layout | Header     | App Header         | Create AppHeader component with title and user menu (if needed)                        | Done   |
@@ -276,11 +276,11 @@ Simple implementation screens to verify authentication and user privilege system
 
 | Area   | Sub Area | Title           | Description                                                             | Status |
 | ------ | -------- | --------------- | ----------------------------------------------------------------------- | ------ |
-| Stores | UI State | Filter Store    | Create useFilterStore for backlog filters (search, status, epic)        | Done   |
+| Stores | UI State | Filter Store    | Create useFilterStore for board filters (search, status, epic)        | Done   |
 | Stores | UI State | Sort Store      | Create useSortStore for ticket sorting preferences                      | Done   |
 | Stores | UI State | Modal Store     | Create useModalStore for global modal state management                  | Done   |
 | Stores | UI State | Board Store     | Create useBoardStore for board view state (selected columns, filters)   | Done   |
-| Stores | UI State | Selection Store | Create useSelectionStore for bulk selection state in backlog            | Done   |
+| Stores | UI State | Selection Store | Create useSelectionStore for bulk selection state in board            | Done   |
 | Stores | UI State | Theme Store     | Create useThemeStore for theme preferences (light/dark, if implemented) | Done   |
 
 ### 5.3 Providers
@@ -299,7 +299,7 @@ Simple implementation screens to verify authentication and user privilege system
 | Area  | Sub Area | Title                    | Description                                                                           | Status  |
 | ----- | -------- | ------------------------ | ------------------------------------------------------------------------------------- | ------- |
 | Pages | Home     | Home Dashboard Page      | Create / page with dashboard widgets (quick add, my work, recent activity, shortcuts) | Pending |
-| Pages | Backlog  | Backlog Page             | Create /backlog page with ticket list, filters, sort, bulk actions                    | Pending |
+| Pages | Board  | Board Page             | Create /board page with ticket list, filters, sort, bulk actions                    | Pending |
 | Pages | Board    | Board Page               | Create /board page with board view, drag-and-drop, column configuration               | Pending |
 | Pages | Epics    | Epics List Page          | Create /epics page with epics list and create epic action                             | Pending |
 | Pages | Epics    | Epic Detail Page         | Create /epics/[id] page with epic detail and linked tickets                           | Pending |
@@ -505,7 +505,7 @@ This comprehensive plan covers all aspects of building a mature Workbench applic
 1. Project Setup (Section 1)
 2. Domain & Core Features (Section 2)
 3. Infrastructure Implementation (Section 3)
-4. Backlog Feature (Sections 4-6, focusing on backlog-related components)
+4. Board Feature (Sections 4-6, focusing on board-related components)
 5. Board Feature (Sections 4-6, focusing on board-related components)
 6. Epics Feature (Sections 4-6, focusing on epic-related components)
 7. Subtasks Feature (Sections 4-6, focusing on subtask functionality)

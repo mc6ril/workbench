@@ -11,6 +11,7 @@ import {
 } from "@/presentation/navigation/projectViews.config";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
+import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./Breadcrumbs.module.scss";
@@ -41,7 +42,7 @@ const Breadcrumbs = ({ projectId }: Props) => {
     `items.${currentViewConfig.sidebarLabelKey}`
   );
   const projectLabel = tBreadcrumbs("project");
-  const projectHref = buildProjectViewHref(projectId, "home");
+  const projectHref = buildProjectViewHref(projectId, PROJECT_VIEWS.BOARD);
 
   return (
     <ol id={listId} className={styles.breadcrumbs}>

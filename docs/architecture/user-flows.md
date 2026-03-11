@@ -18,11 +18,11 @@ stateDiagram-v2
    Workspace --> ProjectBoard: select project
    CreateProject --> ProjectBoard: project created
 
-   ProjectBoard --> ProjectBacklog: navigate
+   ProjectBoard --> ProjectBoard: navigate
    ProjectBoard --> ProjectEpics: navigate
    ProjectBoard --> ProjectSettings: navigate
 
-   ProjectBacklog --> ProjectBoard: navigate
+   ProjectBoard --> ProjectBoard: navigate
    ProjectEpics --> ProjectBoard: navigate
    ProjectSettings --> ProjectBoard: navigate
 ```
@@ -55,7 +55,7 @@ flowchart TD
 
    PROJ_CHILD -->|/:projectId| REDIRECT_BOARD[Redirect to /:projectId/board]
    PROJ_CHILD -->|/:projectId/board| BOARD_PAGE[Board Page<br/>Client: useProject(projectId)<br/>useProjectTickets(projectId)]
-   PROJ_CHILD -->|/:projectId/backlog| BACKLOG_PAGE[Backlog Page<br/>Client: useProject(projectId)<br/>useProjectTickets(projectId, filters)]
+   PROJ_CHILD -->|/:projectId/board| BOARD_PAGE[Board Page<br/>Client: useProject(projectId)<br/>useProjectTickets(projectId, filters)]
    PROJ_CHILD -->|/:projectId/epics| EPICS_PAGE[Epics Page<br/>Client: useProject(projectId)<br/>useProjectEpics(projectId)]
    PROJ_CHILD -->|/:projectId/settings| SETTINGS_PAGE[Settings Page<br/>Client: useProject(projectId)<br/>useProjectMembers(projectId)]
 ```
@@ -83,7 +83,7 @@ flowchart TD
 - `/workspace` - Workspace page (list projects, create/access projects)
 - `/:projectId` - Project root (redirects to `/:projectId/board`)
 - `/:projectId/board` - Board view
-- `/:projectId/backlog` - Backlog view
+- `/:projectId/board` - Board view
 - `/:projectId/epics` - Epics view
 - `/:projectId/settings` - Project settings
 

@@ -4,10 +4,16 @@ import { use, useCallback, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 
 import { getDefaultBoardConfiguration } from "@/core/domain/rules/board.rules";
+import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
 
 import type { PriorityItem } from "@/presentation/components/prioritiesSettings/PrioritiesSettings";
 import type { StatusColumnItem } from "@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
+import Loader from "@/presentation/components/ui/Loader";
+import UpgradePrompt from "@/presentation/components/upgradePrompt/UpgradePrompt";
+import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
 import SettingsLayout from "@/presentation/layouts/settingsLayout/SettingsLayout";
+
+import { useTranslation } from "@/shared/i18n";
 
 const ProjectSettings = dynamic(
   () => import("@/presentation/components/projectSettings/ProjectSettings"),
@@ -32,8 +38,6 @@ const ExportImportSettings = dynamic(
   { ssr: false }
 );
 
-import { useTranslation } from "@/shared/i18n";
-
 const SettingsPage = ({
   params,
 }: {
@@ -41,6 +45,9 @@ const SettingsPage = ({
 }) => {
   const { projectId } = use(params);
   const t = useTranslation("pages.settings.page");
+  const { hasAccess, minimumPlan, isLoading } = useFeatureAccess(
+    PlanFeature.PRIORITIES
+  );
 
   const [activeTabId, setActiveTabId] = useState<string>("project");
   const [statusColumns, setStatusColumns] = useState<StatusColumnItem[]>(
@@ -129,6 +136,19 @@ const SettingsPage = ({
     projectId,
     statusColumns,
   ]);
+
+  if (isLoading) {
+    return <Loader variant="full-page" />;
+  }
+
+  if (!hasAccess) {
+    return (
+      <UpgradePrompt
+        feature={PlanFeature.PRIORITIES}
+        minimumPlan={minimumPlan}
+      />
+    );
+  }
 
   return (
     <SettingsLayout

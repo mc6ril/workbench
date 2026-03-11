@@ -110,20 +110,25 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
 
   const items: SidebarItem[] = useMemo(() => {
     const configs = getProjectViewConfigsForSidebar();
-    return configs.map((config) => {
+    return configs.flatMap((config) => {
       const { locked, minimumPlan } =
         effectivePlan === null
           ? { locked: false, minimumPlan: undefined }
           : computeFeatureLockState(config.requiredFeature, effectivePlan);
 
-      return {
+      if (config.key === PROJECT_VIEWS.SETTINGS && locked) {
+        return [];
+      }
+
+      const item: SidebarItem = {
         key: config.key,
         href: buildProjectViewHref(projectId, config.key),
         label: t(`items.${config.sidebarLabelKey}`),
-        exactOnly: config.key === "home",
+        exactOnly: false,
         locked,
         planBadge: minimumPlan ? t(`locked.badge.${minimumPlan}`) : undefined,
       };
+      return [item];
     });
   }, [projectId, t, effectivePlan]);
 
@@ -198,10 +203,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
 
       void router.prefetch(item.href);
 
-      if (
-        item.key === PROJECT_VIEWS.BOARD ||
-        item.key === PROJECT_VIEWS.BACKLOG
-      ) {
+      if (item.key === PROJECT_VIEWS.BOARD) {
         prefetchTicketViews();
         return;
       }

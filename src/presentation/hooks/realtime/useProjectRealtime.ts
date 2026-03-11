@@ -303,7 +303,7 @@ const removeEntityFromArray = <T extends { id: string }>(
 
 /**
  * Subscribe to project realtime changes and keep project views fresh.
- * Mounted once at project shell level so board/backlog/epics stay synchronized.
+ * Mounted once at project shell level so board/epics stay synchronized.
  */
 export const useProjectRealtime = (projectId: string, boardId?: string) => {
   const queryClient = useQueryClient();

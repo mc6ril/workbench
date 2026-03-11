@@ -44,7 +44,7 @@ export type SprintRepository = {
 
   /**
    * Get ticket count and completed count for a sprint.
-   * Used for displaying progress in the backlog view.
+   * Used for displaying sprint progress in project workflow views.
    */
   getSprintStats(
     sprintId: string
