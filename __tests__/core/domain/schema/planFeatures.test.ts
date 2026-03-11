@@ -14,9 +14,12 @@ describe("Plan Features Domain Rules", () => {
   describe("canAccessFeature", () => {
     describe("boolean features", () => {
       it.each([
-        [PlanFeature.EPICS, SubscriptionPlan.FREE, false],
+        [PlanFeature.EPICS, SubscriptionPlan.FREE, true],
         [PlanFeature.EPICS, SubscriptionPlan.PRO, true],
         [PlanFeature.EPICS, SubscriptionPlan.TEAM, true],
+        [PlanFeature.BACKLOG_VIEW, SubscriptionPlan.FREE, false],
+        [PlanFeature.BACKLOG_VIEW, SubscriptionPlan.PRO, true],
+        [PlanFeature.BACKLOG_VIEW, SubscriptionPlan.TEAM, true],
         [PlanFeature.SUBTASKS, SubscriptionPlan.FREE, false],
         [PlanFeature.SUBTASKS, SubscriptionPlan.PRO, true],
         [PlanFeature.SUBTASKS, SubscriptionPlan.TEAM, true],
@@ -62,13 +65,13 @@ describe("Plan Features Domain Rules", () => {
           SubscriptionPlan.FREE,
           PlanFeature.MEMBERS_PER_WORKSPACE
         )
-      ).toBe(3);
+      ).toBe(2);
       expect(getFeatureLimit(SubscriptionPlan.FREE, PlanFeature.TICKETS)).toBe(
-        50
+        100
       );
       expect(
         getFeatureLimit(SubscriptionPlan.FREE, PlanFeature.CUSTOM_COLUMNS)
-      ).toBe(3);
+      ).toBe(0);
     });
 
     it("should return correct limits for PRO plan", () => {
@@ -77,7 +80,7 @@ describe("Plan Features Domain Rules", () => {
       ).toBe(5);
       expect(
         getFeatureLimit(SubscriptionPlan.PRO, PlanFeature.MEMBERS_PER_WORKSPACE)
-      ).toBe(10);
+      ).toBe(4);
       expect(getFeatureLimit(SubscriptionPlan.PRO, PlanFeature.TICKETS)).toBe(
         -1
       );
@@ -95,7 +98,7 @@ describe("Plan Features Domain Rules", () => {
           SubscriptionPlan.TEAM,
           PlanFeature.MEMBERS_PER_WORKSPACE
         )
-      ).toBe(25);
+      ).toBe(20);
       expect(getFeatureLimit(SubscriptionPlan.TEAM, PlanFeature.TICKETS)).toBe(
         -1
       );
@@ -106,13 +109,13 @@ describe("Plan Features Domain Rules", () => {
     });
 
     it("should return 0 for inaccessible boolean features", () => {
-      expect(getFeatureLimit(SubscriptionPlan.FREE, PlanFeature.EPICS)).toBe(0);
+      expect(getFeatureLimit(SubscriptionPlan.FREE, PlanFeature.BACKLOG_VIEW)).toBe(0);
     });
   });
 
   describe("getMinimumPlanForFeature", () => {
     it("should return PRO for features available from PRO", () => {
-      expect(getMinimumPlanForFeature(PlanFeature.EPICS)).toBe(
+      expect(getMinimumPlanForFeature(PlanFeature.BACKLOG_VIEW)).toBe(
         SubscriptionPlan.PRO
       );
       expect(getMinimumPlanForFeature(PlanFeature.SUBTASKS)).toBe(
@@ -133,17 +136,23 @@ describe("Plan Features Domain Rules", () => {
     });
 
     it("should return FREE for limit features available in all plans", () => {
+      expect(getMinimumPlanForFeature(PlanFeature.EPICS)).toBe(
+        SubscriptionPlan.FREE
+      );
       expect(getMinimumPlanForFeature(PlanFeature.WORKSPACES)).toBe(
         SubscriptionPlan.FREE
       );
       expect(getMinimumPlanForFeature(PlanFeature.TICKETS)).toBe(
         SubscriptionPlan.FREE
       );
-      expect(getMinimumPlanForFeature(PlanFeature.CUSTOM_COLUMNS)).toBe(
-        SubscriptionPlan.FREE
-      );
       expect(getMinimumPlanForFeature(PlanFeature.MEMBERS_PER_WORKSPACE)).toBe(
         SubscriptionPlan.FREE
+      );
+    });
+
+    it("should return PRO for custom columns", () => {
+      expect(getMinimumPlanForFeature(PlanFeature.CUSTOM_COLUMNS)).toBe(
+        SubscriptionPlan.PRO
       );
     });
   });

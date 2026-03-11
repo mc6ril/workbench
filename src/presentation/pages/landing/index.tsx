@@ -1,6 +1,7 @@
 "use client";
 
-import { Suspense, useCallback, useEffect } from "react";
+import type { MouseEvent } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -8,12 +9,20 @@ import Button from "@/presentation/components/ui/Button";
 import Text from "@/presentation/components/ui/Text";
 
 import { getAccessibilityId } from "@/shared/a11y";
+import {
+  FEATURE_KEYS,
+  HERO_PROOF_KEYS,
+  IMPACT_KEYS,
+  PREVIEW_COLUMNS,
+  RHYTHM_KEYS,
+  TRUST_ITEM_KEYS,
+  VALUE_KEYS,
+} from "@/shared/constants/landing";
 import { useTranslation } from "@/shared/i18n";
+import type { FeatureKey } from "@/shared/types/landing";
+import { buildFeaturePreviewContent, isFeatureKey } from "@/shared/utils";
 
 import styles from "./styles.module.scss";
-
-const VALUE_KEYS = Object.freeze(["simplicity", "clarity", "control"]);
-const FEATURE_KEYS = Object.freeze(["backlog", "board", "epics", "subtasks"]);
 
 const LandingPageContent = () => {
   const router = useRouter();
@@ -21,9 +30,15 @@ const LandingPageContent = () => {
   const tHero = useTranslation("pages.landing.hero");
   const tValues = useTranslation("pages.landing.values");
   const tFeatures = useTranslation("pages.landing.features");
+  const tExamples = useTranslation("pages.landing.examples");
+  const tImpact = useTranslation("pages.landing.impact");
+  const tRhythm = useTranslation("pages.landing.rhythm");
   const tTrust = useTranslation("pages.landing.trust");
   const tCta = useTranslation("pages.landing.cta");
   const tFooter = useTranslation("pages.landing.footer");
+  const [selectedFeatureKey, setSelectedFeatureKey] = useState<FeatureKey>(
+    "backlog"
+  );
 
   // Supabase redirects to /?code=... instead of dedicated pages
   useEffect(() => {
@@ -52,11 +67,29 @@ const LandingPageContent = () => {
     router.push("/auth/signin");
   }, [router]);
 
+  const handleFeatureSelect = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      const nextFeatureKey = event.currentTarget.dataset.featureKey;
+      if (nextFeatureKey && isFeatureKey(nextFeatureKey)) {
+        setSelectedFeatureKey(nextFeatureKey);
+      }
+    },
+    []
+  );
+
+  const selectedFeaturePreview = useMemo(() => {
+    return buildFeaturePreviewContent(selectedFeatureKey, tExamples);
+  }, [selectedFeatureKey, tExamples]);
+
   return (
     <main className={styles["landing-page"]}>
       {/* Hero */}
       <header className={styles["landing-hero"]}>
+        <div className={styles["landing-hero__aurora"]} aria-hidden="true" />
         <div className={styles["landing-hero__content"]}>
+          <span className={styles["landing-hero__pill"]}>
+            {tHero("brandPill")}
+          </span>
           <h1
             className={styles["landing-hero__title"]}
             id={getAccessibilityId("landing-hero-title")}
@@ -70,6 +103,17 @@ const LandingPageContent = () => {
           >
             {tHero("subtitle")}
           </Text>
+          <div className={styles["landing-hero__proofs"]} role="list">
+            {HERO_PROOF_KEYS.map((proofKey) => (
+              <span
+                key={proofKey}
+                className={styles["landing-hero__proof"]}
+                role="listitem"
+              >
+                {tHero(proofKey)}
+              </span>
+            ))}
+          </div>
           <div className={styles["landing-hero__actions"]}>
             <Button
               label={tHero("ctaSignUp")}
@@ -105,10 +149,7 @@ const LandingPageContent = () => {
                 className={styles["value-card"]}
                 role="listitem"
               >
-                <span
-                  className={styles["value-card__icon"]}
-                  aria-hidden="true"
-                >
+                <span className={styles["value-card__icon"]} aria-hidden="true">
                   {tValues(`${key}.icon`)}
                 </span>
                 <h3 className={styles["value-card__title"]}>
@@ -140,26 +181,173 @@ const LandingPageContent = () => {
             {FEATURE_KEYS.map((key) => (
               <article
                 key={key}
-                className={styles["feature-card"]}
+                className={[
+                  styles["feature-card"],
+                  selectedFeatureKey === key
+                    ? styles["feature-card--active"]
+                    : "",
+                ].join(" ")}
                 role="listitem"
               >
-                <span
-                  className={styles["feature-card__icon"]}
-                  aria-hidden="true"
+                <button
+                  type="button"
+                  className={styles["feature-card__button"]}
+                  data-feature-key={key}
+                  onClick={handleFeatureSelect}
+                  aria-pressed={selectedFeatureKey === key}
+                  aria-controls={getAccessibilityId("landing-example-preview")}
                 >
-                  {tFeatures(`${key}.icon`)}
-                </span>
-                <div className={styles["feature-card__content"]}>
-                  <h3 className={styles["feature-card__title"]}>
-                    {tFeatures(`${key}.title`)}
-                  </h3>
-                  <Text
-                    variant="body"
-                    className={styles["feature-card__description"]}
+                  <span
+                    className={styles["feature-card__icon"]}
+                    aria-hidden="true"
                   >
-                    {tFeatures(`${key}.description`)}
-                  </Text>
+                    {tFeatures(`${key}.icon`)}
+                  </span>
+                  <div className={styles["feature-card__content"]}>
+                    <h3 className={styles["feature-card__title"]}>
+                      {tFeatures(`${key}.title`)}
+                    </h3>
+                    <Text
+                      variant="body"
+                      className={styles["feature-card__description"]}
+                    >
+                      {tFeatures(`${key}.description`)}
+                    </Text>
+                  </div>
+                </button>
+              </article>
+            ))}
+          </div>
+          <section
+            id={getAccessibilityId("landing-example-preview")}
+            className={styles["landing-example-preview"]}
+            aria-labelledby={getAccessibilityId(
+              "landing-example-preview-title"
+            )}
+          >
+            <h3
+              id={getAccessibilityId("landing-example-preview-title")}
+              className={styles["landing-example-preview__title"]}
+            >
+              {tExamples("title")}
+            </h3>
+            <Text
+              variant="body"
+              className={styles["landing-example-preview__description"]}
+            >
+              {selectedFeaturePreview.title} -{" "}
+              {selectedFeaturePreview.description}
+            </Text>
+            <div
+              className={styles["landing-example-preview__board"]}
+              role="list"
+            >
+              {PREVIEW_COLUMNS.map((columnKey) => (
+                <article
+                  key={columnKey}
+                  className={styles["landing-example-preview__column"]}
+                  role="listitem"
+                >
+                  <h4
+                    className={styles["landing-example-preview__column-title"]}
+                  >
+                    {tExamples(`columns.${columnKey}`)}
+                  </h4>
+                  <ul className={styles["landing-example-preview__items"]}>
+                    {selectedFeaturePreview.columns[columnKey].map((item) => (
+                      <li
+                        key={item}
+                        className={styles["landing-example-preview__item"]}
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          </section>
+        </section>
+
+        {/* Impact */}
+        <section
+          className={styles["impact-section"]}
+          aria-labelledby={getAccessibilityId("landing-impact-title")}
+        >
+          <h2
+            className={styles["section-title"]}
+            id={getAccessibilityId("landing-impact-title")}
+          >
+            {tImpact("title")}
+          </h2>
+          <Text
+            variant="body"
+            className={styles["impact-section__description"]}
+          >
+            {tImpact("description")}
+          </Text>
+          <div className={styles["impact-grid"]} role="list">
+            {IMPACT_KEYS.map((key) => (
+              <article
+                key={key}
+                className={styles["impact-card"]}
+                role="listitem"
+              >
+                <p className={styles["impact-card__metric"]}>
+                  {tImpact(`${key}.value`)}
+                </p>
+                <h3 className={styles["impact-card__title"]}>
+                  {tImpact(`${key}.title`)}
+                </h3>
+                <Text
+                  variant="body"
+                  className={styles["impact-card__description"]}
+                >
+                  {tImpact(`${key}.description`)}
+                </Text>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* Rhythm */}
+        <section
+          className={styles["rhythm-section"]}
+          aria-labelledby={getAccessibilityId("landing-rhythm-title")}
+        >
+          <h2
+            className={styles["section-title"]}
+            id={getAccessibilityId("landing-rhythm-title")}
+          >
+            {tRhythm("title")}
+          </h2>
+          <div className={styles["rhythm-grid"]} role="list">
+            {RHYTHM_KEYS.map((key, index) => (
+              <article
+                key={key}
+                className={styles["rhythm-card"]}
+                role="listitem"
+              >
+                <div className={styles["rhythm-card__header"]}>
+                  <span className={styles["rhythm-card__step"]}>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span
+                    className={styles["rhythm-card__icon"]}
+                    aria-hidden="true"
+                  >
+                    {tRhythm(`${key}.icon`)}
+                  </span>
                 </div>
+                <h3 className={styles["rhythm-card__title"]}>
+                  {tRhythm(`${key}.title`)}
+                </h3>
+                <Text
+                  variant="body"
+                  className={styles["rhythm-card__description"]}
+                >
+                  {tRhythm(`${key}.description`)}
+                </Text>
               </article>
             ))}
           </div>
@@ -176,31 +364,18 @@ const LandingPageContent = () => {
           >
             {tTrust("title")}
           </h2>
-          <Text
-            variant="body"
-            className={styles["trust-section__description"]}
-          >
+          <Text variant="body" className={styles["trust-section__description"]}>
             {tTrust("description")}
           </Text>
           <div className={styles["trust-badges"]} role="list">
-            <span className={styles["trust-badge"]} role="listitem">
-              <span className={styles["trust-badge__check"]} aria-hidden="true">
-                ✓
+            {TRUST_ITEM_KEYS.map(({ iconKey, labelKey }) => (
+              <span key={labelKey} className={styles["trust-badge"]} role="listitem">
+                <span className={styles["trust-badge__icon"]} aria-hidden="true">
+                  {tTrust(iconKey)}
+                </span>
+                {tTrust(labelKey)}
               </span>
-              {tTrust("freeForever")}
-            </span>
-            <span className={styles["trust-badge"]} role="listitem">
-              <span className={styles["trust-badge__check"]} aria-hidden="true">
-                ✓
-              </span>
-              {tTrust("noCreditCard")}
-            </span>
-            <span className={styles["trust-badge"]} role="listitem">
-              <span className={styles["trust-badge__check"]} aria-hidden="true">
-                ✓
-              </span>
-              {tTrust("noComplexity")}
-            </span>
+            ))}
           </div>
         </section>
 
@@ -215,10 +390,7 @@ const LandingPageContent = () => {
           >
             {tCta("title")}
           </h2>
-          <Text
-            variant="body"
-            className={styles["cta-section__description"]}
-          >
+          <Text variant="body" className={styles["cta-section__description"]}>
             {tCta("description")}
           </Text>
           <Button
@@ -231,7 +403,10 @@ const LandingPageContent = () => {
 
       {/* Footer */}
       <footer className={styles["landing-footer"]}>
-        <nav className={styles["landing-footer__nav"]} aria-label="Footer">
+        <nav
+          className={styles["landing-footer__nav"]}
+          aria-label={tFooter("ariaLabel")}
+        >
           <Link href="/legal" className={styles["landing-footer__link"]}>
             {tFooter("legal")}
           </Link>
