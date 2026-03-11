@@ -103,6 +103,37 @@
   gap: $spacing-2xl;
 }
 
+.landing-hero__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.landing-hero__brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $spacing-5xl;
+  height: $spacing-5xl;
+  border-radius: $border-radius-full;
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    $color-accent,
+    $color-accent-peach
+  );
+  color: $color-secondary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  letter-spacing: $letter-spacing-wide;
+  box-shadow: $shadow-md;
+}
+
+.landing-hero__brand-name {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+}
+
 .landing-hero__pill {
   display: inline-flex;
   align-items: center;
@@ -481,6 +512,36 @@
   color: $color-text-secondary;
 }
 
+.landing-example-preview__surface {
+  border: $border-width solid $color-border-subtle;
+  border-radius: $border-radius-md;
+  background: $color-background;
+  overflow: hidden;
+}
+
+.landing-example-preview__toolbar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2xs;
+  padding: $spacing-sm $spacing-md;
+  border-bottom: $border-width solid $color-border-subtle;
+  background: $color-surface-subtle;
+}
+
+.landing-example-preview__dot {
+  width: $spacing-sm;
+  height: $spacing-sm;
+  border-radius: $border-radius-full;
+  background: $color-border;
+}
+
+.landing-example-preview__app-name {
+  margin-left: auto;
+  color: $color-text-secondary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
 .landing-example-preview__board {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -513,11 +574,19 @@
 }
 
 .landing-example-preview__item {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-2xs;
   padding: $spacing-2xs $spacing-sm;
   border-radius: $border-radius-sm;
   background: $color-secondary;
   font-size: $font-size-sm;
   color: $color-text-secondary;
+}
+
+.landing-example-preview__item-check {
+  color: $color-accent;
+  line-height: 1;
 }
 
 // ============================================================================
@@ -941,6 +1010,17 @@
 
   .landing-hero__proofs {
     justify-content: flex-start;
+  }
+
+  .landing-hero__actions {
+    width: 100%;
+    max-width: 24rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .landing-hero__actions button {
+    width: 100%;
   }
 
   .landing-container {

@@ -948,13 +948,15 @@
     "landing": {
       "hero": {
         "brandPill": "✨ Tribu Nova • Premium family planner",
+        "logoAriaLabel": "Tribu Nova logo",
         "title": "Family life runs better when everything is clear.",
         "subtitle": "One shared space to coordinate chores, appointments, and home projects without constant mental overload.",
         "proofNoCard": "No credit card",
         "proofFreeStart": "Set up in 2 minutes",
         "proofCancelAnytime": "Built for parents and kids",
         "ctaSignUp": "Create my family space",
-        "ctaSignIn": "Sign in"
+        "ctaSignIn": "Sign in",
+        "ctaPreview": "See preview"
       },
       "values": {
         "title": "Organization that still feels human",

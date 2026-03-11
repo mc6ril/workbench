@@ -67,6 +67,13 @@ const LandingPageContent = () => {
     router.push("/auth/signin");
   }, [router]);
 
+  const handleScrollToPreview = useCallback(() => {
+    const target = document.getElementById(getAccessibilityId("landing-example-preview"));
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
+
   const handleFeatureSelect = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
       const nextFeatureKey = event.currentTarget.dataset.featureKey;
@@ -87,6 +94,15 @@ const LandingPageContent = () => {
       <header className={styles["landing-hero"]}>
         <div className={styles["landing-hero__aurora"]} aria-hidden="true" />
         <div className={styles["landing-hero__content"]}>
+          <div
+            className={styles["landing-hero__brand"]}
+            aria-label={tHero("logoAriaLabel")}
+          >
+            <span className={styles["landing-hero__brand-mark"]} aria-hidden="true">
+              TN
+            </span>
+            <span className={styles["landing-hero__brand-name"]}>Tribu Nova</span>
+          </div>
           <span className={styles["landing-hero__pill"]}>
             {tHero("brandPill")}
           </span>
@@ -122,9 +138,15 @@ const LandingPageContent = () => {
             />
             <Button
               label={tHero("ctaSignIn")}
-              variant="secondary"
+              variant="ghost"
               onClick={handleSignIn}
               aria-label={tHero("ctaSignIn")}
+            />
+            <Button
+              label={tHero("ctaPreview")}
+              variant="secondary"
+              onClick={handleScrollToPreview}
+              aria-label={tHero("ctaPreview")}
             />
           </div>
         </div>
@@ -238,33 +260,58 @@ const LandingPageContent = () => {
               {selectedFeaturePreview.title} -{" "}
               {selectedFeaturePreview.description}
             </Text>
-            <div
-              className={styles["landing-example-preview__board"]}
-              role="list"
-            >
-              {PREVIEW_COLUMNS.map((columnKey) => (
-                <article
-                  key={columnKey}
-                  className={styles["landing-example-preview__column"]}
-                  role="listitem"
-                >
-                  <h4
-                    className={styles["landing-example-preview__column-title"]}
+            <div className={styles["landing-example-preview__surface"]}>
+              <div className={styles["landing-example-preview__toolbar"]}>
+                <span
+                  className={styles["landing-example-preview__dot"]}
+                  aria-hidden="true"
+                />
+                <span
+                  className={styles["landing-example-preview__dot"]}
+                  aria-hidden="true"
+                />
+                <span
+                  className={styles["landing-example-preview__dot"]}
+                  aria-hidden="true"
+                />
+                <span className={styles["landing-example-preview__app-name"]}>
+                  Tribu Nova
+                </span>
+              </div>
+              <div
+                className={styles["landing-example-preview__board"]}
+                role="list"
+              >
+                {PREVIEW_COLUMNS.map((columnKey) => (
+                  <article
+                    key={columnKey}
+                    className={styles["landing-example-preview__column"]}
+                    role="listitem"
                   >
-                    {tExamples(`columns.${columnKey}`)}
-                  </h4>
-                  <ul className={styles["landing-example-preview__items"]}>
-                    {selectedFeaturePreview.columns[columnKey].map((item) => (
-                      <li
-                        key={item}
-                        className={styles["landing-example-preview__item"]}
-                      >
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
+                    <h4
+                      className={styles["landing-example-preview__column-title"]}
+                    >
+                      {tExamples(`columns.${columnKey}`)}
+                    </h4>
+                    <ul className={styles["landing-example-preview__items"]}>
+                      {selectedFeaturePreview.columns[columnKey].map((item) => (
+                        <li
+                          key={item}
+                          className={styles["landing-example-preview__item"]}
+                        >
+                          <span
+                            className={styles["landing-example-preview__item-check"]}
+                            aria-hidden="true"
+                          >
+                            •
+                          </span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </article>
+                ))}
+              </div>
             </div>
           </section>
         </section>

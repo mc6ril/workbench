@@ -948,13 +948,15 @@
     "landing": {
       "hero": {
         "brandPill": "✨ Tribu Nova • Organizacion familiar premium",
+        "logoAriaLabel": "Logo de Tribu Nova",
         "title": "La vida familiar funciona mejor cuando todo esta claro.",
         "subtitle": "Un espacio compartido para coordinar tareas, citas y proyectos del hogar sin sobrecarga mental constante.",
         "proofNoCard": "Sin tarjeta bancaria",
         "proofFreeStart": "Configuracion en 2 minutos",
         "proofCancelAnytime": "Pensado para padres e hijos",
         "ctaSignUp": "Crear mi espacio familiar",
-        "ctaSignIn": "Iniciar sesión"
+        "ctaSignIn": "Iniciar sesión",
+        "ctaPreview": "Ver vista previa"
       },
       "values": {
         "title": "Organizacion que sigue siendo humana",
