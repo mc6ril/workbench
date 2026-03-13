@@ -8,6 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { CreateProjectInput } from "@/core/domain/schema/project.schema";
 import { CreateProjectInputSchema } from "@/core/domain/schema/project.schema";
+import { ProjectRole } from "@/core/domain/schema/project.schema";
+import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
 import Badge from "@/presentation/components/ui/Badge";
 import Button from "@/presentation/components/ui/Button";
@@ -19,14 +21,12 @@ import Loader from "@/presentation/components/ui/Loader";
 import Modal from "@/presentation/components/ui/Modal";
 import Text from "@/presentation/components/ui/Text";
 import { useSession } from "@/presentation/hooks/auth/useSession";
-import { useAcceptInvitation } from "@/presentation/hooks/invitation/useAcceptInvitation";
-import { useDeclineInvitation } from "@/presentation/hooks/invitation/useDeclineInvitation";
-import { usePendingInvitations } from "@/presentation/hooks/invitation/usePendingInvitations";
 import { useAddUserToProject } from "@/presentation/hooks/project/useAddUserToProject";
 import { useCreateProject } from "@/presentation/hooks/project/useCreateProject";
 import { useLastActivitySubtitle } from "@/presentation/hooks/project/useLastActivitySubtitle";
 import { useProjectsWithStats } from "@/presentation/hooks/project/useProjectsWithStats";
 import { useReclaimableProjects } from "@/presentation/hooks/project/useReclaimableProjects";
+import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
 import { shouldShowLoading } from "@/presentation/utils/queryStatus";
 
 import { getAccessibilityId } from "@/shared/a11y";
@@ -35,9 +35,9 @@ import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { markNavigationStart } from "@/shared/observability";
 import { getWorkspaceEmoji } from "@/shared/utils";
-import { extractInvitationToken } from "@/shared/utils/invitationUtils";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
+import ProjectCardActions from "./components/ProjectCardActions";
 import styles from "./styles.module.scss";
 
 type CreateProjectFormData = CreateProjectInput;
@@ -73,20 +73,12 @@ const WorkspacePage = () => {
     error: projectsError,
     refetch: refetchProjects,
   } = useProjectsWithStats(!!session);
-  const {
-    data: pendingInvitations,
-    isLoading: isLoadingPendingInvitations,
-    error: pendingInvitationsError,
-  } = usePendingInvitations();
-  const acceptInvitationMutation = useAcceptInvitation();
-  const declineInvitationMutation = useDeclineInvitation();
   const addUserToProjectMutation = useAddUserToProject();
   const createProjectMutation = useCreateProject();
   const { data: reclaimableProjects } = useReclaimableProjects(!!session);
-  const [joinInvitationInput, setJoinInvitationInput] = useState("");
-  const [joinError, setJoinError] = useState<string | null>(null);
+  const { data: subscription, isLoading: isSubscriptionLoading } =
+    useSubscription();
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [joinModalOpen, setJoinModalOpen] = useState(false);
   const [selectedEmoji, setSelectedEmoji] = useState<string>(
     WORKSPACE_EMOJI_OPTIONS[0]
   );
@@ -132,16 +124,6 @@ const WorkspacePage = () => {
     setCreateModalOpen(false);
   }, []);
 
-  const openJoinModal = useCallback(() => {
-    setJoinModalOpen(true);
-    setJoinInvitationInput("");
-    setJoinError(null);
-  }, []);
-
-  const closeJoinModal = useCallback(() => {
-    setJoinModalOpen(false);
-  }, []);
-
   const handleReclaimProject = useCallback(
     async (projectId: string): Promise<void> => {
       setReclaimingProjectId(projectId);
@@ -155,47 +137,6 @@ const WorkspacePage = () => {
       }
     },
     [addUserToProjectMutation, refetchProjects]
-  );
-
-  const handleJoinWorkspace = async (): Promise<void> => {
-    const token = extractInvitationToken(joinInvitationInput);
-    if (!token) {
-      setJoinError(t("pleaseEnterInvitationLink"));
-      return;
-    }
-    setJoinError(null);
-    try {
-      await acceptInvitationMutation.mutateAsync(token);
-      setJoinInvitationInput("");
-      await refetchProjects();
-      closeJoinModal();
-    } catch (err) {
-      const error = err as { code?: string };
-      setJoinError(getErrorMessage(error, tErrors));
-    }
-  };
-
-  const handleAcceptInvitation = useCallback(
-    async (token: string): Promise<void> => {
-      try {
-        await acceptInvitationMutation.mutateAsync(token);
-        await refetchProjects();
-      } catch {
-        // Error is surfaced by query/mutation states.
-      }
-    },
-    [acceptInvitationMutation, refetchProjects]
-  );
-
-  const handleDeclineInvitation = useCallback(
-    async (token: string): Promise<void> => {
-      try {
-        await declineInvitationMutation.mutateAsync(token);
-      } catch {
-        // Error is surfaced by query/mutation states.
-      }
-    },
-    [declineInvitationMutation]
   );
 
   useEffect(() => {
@@ -279,10 +220,6 @@ const WorkspacePage = () => {
   }
 
   const hasProjects = Array.isArray(projects) && projects.length > 0;
-  const hasPendingInvitations =
-    Array.isArray(pendingInvitations) && pendingInvitations.length > 0;
-  const shouldShowWelcomeGuide =
-    hasProjects && projects.every((project) => project.ticketCount === 0);
 
   return (
     <main className={styles["workspace-page"]}>
@@ -305,12 +242,6 @@ const WorkspacePage = () => {
               onClick={openCreateModal}
               aria-label={t("addWorkspaceButtonAriaLabel")}
             />
-            <Button
-              label={t("joinWorkspaceButton")}
-              onClick={openJoinModal}
-              variant="secondary"
-              aria-label={t("joinWorkspaceButtonAriaLabel")}
-            />
           </div>
         </div>
       </header>
@@ -324,78 +255,6 @@ const WorkspacePage = () => {
             )}
           />
         )}
-
-        {pendingInvitationsError && (
-          <ErrorMessage
-            message={getErrorMessage(
-              pendingInvitationsError as { code?: string },
-              tErrors
-            )}
-          />
-        )}
-
-        {hasPendingInvitations && (
-          <section
-            className={styles["pending-invitations"]}
-            aria-label={t("pendingInvitationsTitle")}
-          >
-            <div className={styles["pending-invitations__header"]}>
-              <h2 className={styles["pending-invitations__title"]}>
-                {t("pendingInvitationsTitle")}
-              </h2>
-              <p className={styles["pending-invitations__description"]}>
-                {t("pendingInvitationsDescription")}
-              </p>
-            </div>
-
-            <div className={styles["pending-invitations__list"]}>
-              {pendingInvitations.map((invitation) => (
-                <article
-                  key={invitation.id}
-                  className={styles["pending-invitations__item"]}
-                >
-                  <div className={styles["pending-invitations__content"]}>
-                    <h3 className={styles["pending-invitations__project-name"]}>
-                      {invitation.projectName}
-                    </h3>
-                    <p className={styles["pending-invitations__meta"]}>
-                      {t("pendingInvitationsInvitedBy", {
-                        name: invitation.invitedByName,
-                      })}
-                    </p>
-                  </div>
-                  <div className={styles["pending-invitations__actions"]}>
-                    <Button
-                      label={t("pendingInvitationsAccept")}
-                      onClick={() => handleAcceptInvitation(invitation.token)}
-                      disabled={
-                        acceptInvitationMutation.isPending ||
-                        declineInvitationMutation.isPending
-                      }
-                      aria-label={t("pendingInvitationsAcceptAriaLabel", {
-                        project: invitation.projectName,
-                      })}
-                    />
-                    <Button
-                      label={t("pendingInvitationsDecline")}
-                      variant="secondary"
-                      onClick={() => handleDeclineInvitation(invitation.token)}
-                      disabled={
-                        acceptInvitationMutation.isPending ||
-                        declineInvitationMutation.isPending
-                      }
-                      aria-label={t("pendingInvitationsDeclineAriaLabel", {
-                        project: invitation.projectName,
-                      })}
-                    />
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {isLoadingPendingInvitations && <Loader variant="inline" />}
 
         {Array.isArray(reclaimableProjects) &&
           reclaimableProjects.length > 0 && (
@@ -535,6 +394,16 @@ const WorkspacePage = () => {
                       <div className={styles["workspace-icon"]}>
                         {getWorkspaceEmoji(index)}
                       </div>
+                      {project.role === ProjectRole.ADMIN && (
+                        <ProjectCardActions
+                          projectId={project.id}
+                          projectName={project.name}
+                          currentPlan={
+                            subscription?.plan ?? SubscriptionPlan.FREE
+                          }
+                          isSubscriptionLoading={isSubscriptionLoading}
+                        />
+                      )}
                     </div>
                     <h3 className={styles["workspace-name"]}>{project.name}</h3>
                     <p className={styles["workspace-last-activity"]}>
@@ -582,36 +451,6 @@ const WorkspacePage = () => {
                 );
               })}
             </div>
-
-            {shouldShowWelcomeGuide && (
-              <section
-                className={styles["welcome-guide"]}
-                aria-labelledby={getAccessibilityId("workspace-welcome-guide")}
-              >
-                <h3
-                  id={getAccessibilityId("workspace-welcome-guide")}
-                  className={styles["welcome-guide__title"]}
-                >
-                  {t("welcomeGuideTitle")}
-                </h3>
-                <p className={styles["welcome-guide__description"]}>
-                  {t("welcomeGuideDescription")}
-                </p>
-                <div className={styles["welcome-guide__actions"]}>
-                  <Button
-                    label={t("welcomeGuidePrimaryCta")}
-                    onClick={openJoinModal}
-                    aria-label={t("welcomeGuidePrimaryCtaAriaLabel")}
-                  />
-                  <Button
-                    label={t("welcomeGuideSecondaryCta")}
-                    onClick={openCreateModal}
-                    variant="secondary"
-                    aria-label={t("welcomeGuideSecondaryCtaAriaLabel")}
-                  />
-                </div>
-              </section>
-            )}
           </section>
         ) : Array.isArray(projects) && projects.length === 0 ? (
           <div className={styles["empty-state"]}>
@@ -729,41 +568,6 @@ const WorkspacePage = () => {
             aria-label={t("createButtonAriaLabel")}
           />
         </Form>
-      </Modal>
-
-      <Modal
-        isOpen={joinModalOpen}
-        onClose={closeJoinModal}
-        title={t("joinWorkspaceTitle")}
-        size="medium"
-      >
-        <Text variant="small" className={styles["workspace-modal-description"]}>
-          {t("joinWorkspaceDescription")}
-        </Text>
-        <div className={styles["workspace-modal-form"]}>
-          <Input
-            label={t("invitationLinkLabel")}
-            type="text"
-            value={joinInvitationInput}
-            onChange={(e) => {
-              setJoinInvitationInput(e.target.value);
-              setJoinError(null);
-            }}
-            error={joinError ?? undefined}
-            placeholder={t("invitationLinkPlaceholder")}
-          />
-          <Button
-            label={t("joinButton")}
-            onClick={handleJoinWorkspace}
-            disabled={
-              !joinInvitationInput.trim() ||
-              addUserToProjectMutation.isPending ||
-              acceptInvitationMutation.isPending
-            }
-            variant="secondary"
-            aria-label={t("joinButtonAriaLabel")}
-          />
-        </div>
       </Modal>
     </main>
   );

@@ -120,7 +120,7 @@ export type InvitationRow = {
   id: string;
   project_id: string;
   invited_by: string;
-  email: string;
+  email: string | null;
   role: string;
   token: string;
   status: string;

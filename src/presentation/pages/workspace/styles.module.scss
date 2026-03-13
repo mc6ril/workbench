@@ -145,7 +145,7 @@
   transition: all $animation-duration-slow $easing-smooth;
   cursor: pointer;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: $shadow-card;
   animation: fadeInUp $animation-duration-slower $easing-ease-out backwards;
 

@@ -13,8 +13,8 @@ import {
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 
 /**
- * Hook for inviting a user to a project.
- * Invalidates invitations query on success.
+ * Hook for creating a project invitation link.
+ * Invalidates the project invitations query on success.
  *
  * @returns Mutation object
  */

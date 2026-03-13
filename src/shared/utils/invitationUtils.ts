@@ -1,4 +1,11 @@
 /**
+ * Build the internal route used to accept an invitation token.
+ */
+export const buildInvitationRoute = (token: string): string => {
+  return `/join/${encodeURIComponent(token)}`;
+};
+
+/**
  * Extract an invitation token from:
  * - raw token input
  * - full URL containing /join/{token}

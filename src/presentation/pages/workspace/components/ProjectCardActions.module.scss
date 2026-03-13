@@ -1,0 +1,111 @@
+@use "@/styles/variables/a11y" as *;
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/breakpoints" as *;
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+
+.project-card-actions {
+  position: relative;
+  z-index: 1;
+}
+
+.project-card-actions__toggle {
+  width: $spacing-5xl;
+  height: $spacing-5xl;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-sm;
+  background: $color-secondary;
+  color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-3xl;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    border-color $animation-duration-base $easing-ease-out,
+    color $animation-duration-base $easing-ease-out;
+
+  &:hover {
+    border-color: $color-accent;
+    color: $color-accent;
+  }
+
+  &:focus {
+    outline: $border-width-thick solid $color-focus;
+    outline-offset: $border-width-thick;
+  }
+}
+
+.project-card-actions__menu {
+  position: absolute;
+  top: calc(100% + $spacing-sm);
+  right: 0;
+  min-width: 200px;
+  padding: $spacing-2xs;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-md;
+  background: $color-secondary;
+  box-shadow: $shadow-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+  z-index: $a11y-dropdown-z-index;
+}
+
+.project-card-actions__item {
+  width: 100%;
+  padding: $spacing-sm $spacing-lg;
+  border: 0;
+  border-radius: $border-radius-2xs;
+  background: transparent;
+  color: $color-text;
+  text-align: left;
+  font-size: $font-size-sm;
+  cursor: pointer;
+  transition: background-color $animation-duration-base $easing-ease-out;
+
+  &:hover {
+    background: $color-surface-subtle;
+  }
+
+  &:focus {
+    outline: $border-width-thick solid $color-focus;
+    outline-offset: -$border-width-thick;
+  }
+}
+
+.project-card-actions__item--danger {
+  color: $color-error-text;
+}
+
+.project-card-actions__description {
+  display: block;
+  margin-bottom: $spacing-xl;
+}
+
+.project-card-actions__modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.project-card-actions__modal-actions {
+  margin-top: $spacing-xl;
+  display: flex;
+  gap: $spacing-sm;
+}
+
+@media (max-width: $breakpoint-md) {
+  .project-card-actions__menu {
+    left: 0;
+    right: auto;
+  }
+
+  .project-card-actions__modal-actions {
+    flex-direction: column;
+  }
+}

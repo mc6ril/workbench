@@ -47,7 +47,6 @@ export const createInvitationRepository = (
       .from("project_invitations")
       .insert({
         project_id: input.projectId,
-        email: input.email,
         role: input.role,
         invited_by: (await client.auth.getUser()).data.user?.id,
       })
@@ -114,16 +113,17 @@ export const createInvitationRepository = (
   },
 
   async countPending(projectId: string): Promise<number> {
-    const { count, error } = await client
+    const { data, error } = await client
       .from("project_invitations")
-      .select("id", { count: "exact", head: true })
+      .select("id")
       .eq("project_id", projectId)
-      .eq("status", "pending");
+      .eq("status", "pending")
+      .gt("expires_at", new Date().toISOString());
 
     if (error) {
       return handleRepositoryError(error, "ProjectInvitation");
     }
 
-    return count ?? 0;
+    return data?.length ?? 0;
   },
 });

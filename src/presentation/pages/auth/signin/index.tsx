@@ -46,6 +46,10 @@ const SigninPage = () => {
     !redirectPathParam.startsWith("//")
       ? redirectPathParam
       : "/workspace";
+  const signupHref =
+    redirectPath === "/workspace"
+      ? "/auth/signup"
+      : `/auth/signup?redirect=${encodeURIComponent(redirectPath)}`;
 
   const {
     register,
@@ -215,7 +219,7 @@ const SigninPage = () => {
 
         <Text variant="small" className={styles["signin-footer"]}>
           {t("footer")}{" "}
-          <Link href="/auth/signup" className={styles["signin-link"]}>
+          <Link href={signupHref} className={styles["signin-link"]}>
             {t("footerLink")}
           </Link>
         </Text>

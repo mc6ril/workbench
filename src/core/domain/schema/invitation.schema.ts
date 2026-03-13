@@ -19,7 +19,7 @@ export enum InvitationStatus {
 export const ProjectInvitationSchema = z.object({
   id: z.string().uuid(),
   projectId: z.string().uuid(),
-  email: z.string().email(),
+  email: z.string().email().nullable().optional(),
   role: z.nativeEnum(ProjectRole),
   status: z.nativeEnum(InvitationStatus),
   token: z.string(),
@@ -29,7 +29,7 @@ export const ProjectInvitationSchema = z.object({
   updatedAt: z.coerce.date(),
 });
 
-/** An invitation to join a project, sent to a user by email. */
+/** An invitation link to join a project. */
 export type ProjectInvitation = z.infer<typeof ProjectInvitationSchema>;
 
 /**
@@ -38,7 +38,6 @@ export type ProjectInvitation = z.infer<typeof ProjectInvitationSchema>;
  */
 export const CreateInvitationInputSchema = z.object({
   projectId: z.string().uuid(),
-  email: z.string().email("A valid email address is required"),
   role: z.nativeEnum(ProjectRole).default(ProjectRole.MEMBER),
 });
 

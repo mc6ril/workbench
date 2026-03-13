@@ -4,7 +4,7 @@ import { useCallback, useEffect } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { getNextUnmetCriterion } from "@/core/domain/passwordStrength";
@@ -32,12 +32,24 @@ import styles from "./styles.module.scss";
 
 const SignupPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const signUpMutation = useSignUp();
   const signInWithGoogleMutation = useSignInWithGoogle();
   const t = useTranslation("pages.signup");
   const tCommon = useTranslation("common");
   const tErrors = useTranslation("errors");
   const tFields = useTranslation("pages.signup.fields");
+  const redirectPathParam = searchParams.get("redirect");
+  const redirectPath =
+    redirectPathParam &&
+    redirectPathParam.startsWith("/") &&
+    !redirectPathParam.startsWith("//")
+      ? redirectPathParam
+      : "/workspace";
+  const signinHref =
+    redirectPath === "/workspace"
+      ? "/auth/signin"
+      : `/auth/signin?redirect=${encodeURIComponent(redirectPath)}`;
 
   const {
     register,
@@ -98,10 +110,10 @@ const SignupPage = () => {
       }
 
       if (signUpMutation.data.session) {
-        router.push("/auth/signin");
+        router.push(redirectPath);
       }
     }
-  }, [signUpMutation.isSuccess, signUpMutation.data, router]);
+  }, [redirectPath, signUpMutation.isSuccess, signUpMutation.data, router]);
 
   const onSubmit: SubmitHandler<SignUpFormInput> = useCallback(
     (data) => {
@@ -117,8 +129,8 @@ const SignupPage = () => {
   );
 
   const handleGoogleSignIn = useCallback(() => {
-    signInWithGoogleMutation.mutate("/workspace");
-  }, [signInWithGoogleMutation]);
+    signInWithGoogleMutation.mutate(redirectPath);
+  }, [redirectPath, signInWithGoogleMutation]);
 
   if (
     signUpMutation.isSuccess &&
@@ -137,7 +149,7 @@ const SignupPage = () => {
             {t("verification.instructions")}
           </Text>
           <div className={styles["signup-footer"]}>
-            <Link href="/auth/signin" className={styles["signup-link"]}>
+            <Link href={signinHref} className={styles["signup-link"]}>
               {t("verification.backToSignin")}
             </Link>
           </div>
@@ -256,7 +268,7 @@ const SignupPage = () => {
 
         <Text variant="small" className={styles["signup-footer"]}>
           {t("footer")}{" "}
-          <Link href="/auth/signin" className={styles["signup-link"]}>
+          <Link href={signinHref} className={styles["signup-link"]}>
             {t("footerLink")}
           </Link>
         </Text>

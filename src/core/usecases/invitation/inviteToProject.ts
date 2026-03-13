@@ -1,3 +1,4 @@
+import { createDomainRuleError } from "@/core/domain/domainRuleError";
 import {
   getFeatureLimit,
   PlanFeature,
@@ -19,16 +20,14 @@ import type { MemberRepository } from "@/core/ports/memberRepository";
  * Business rules:
  * - Only admins can invite (enforced by RLS)
  * - Cannot exceed MEMBERS_PER_WORKSPACE plan limit
- * - Cannot invite someone already in the project
- * - One pending invitation per (project, email)
+ * - Pending invitation links count against the member limit until consumed or expired
  *
  * @param invitationRepo - Invitation repository
  * @param memberRepo - Member repository (for counting current members)
- * @param input - Invitation details (projectId, email, role)
+ * @param input - Invitation details (projectId, role)
  * @param currentPlan - Current subscription plan (for limit checking)
  * @throws ZodError if input is invalid
- * @throws Error if plan limit would be exceeded
- * @throws ConstraintError if invitation already exists
+ * @throws DomainRuleError if plan limit would be exceeded
  */
 export const inviteToProject = async (
   invitationRepo: InvitationRepository,
@@ -47,8 +46,9 @@ export const inviteToProject = async (
     const total = currentMembers.length + pendingCount;
 
     if (total >= limit) {
-      throw new Error(
-        `Cannot invite: workspace member limit reached (${limit})`
+      throw createDomainRuleError(
+        "INVITATION_LIMIT_REACHED",
+        `Cannot create invitation link: workspace member limit reached (${limit})`
       );
     }
   }
