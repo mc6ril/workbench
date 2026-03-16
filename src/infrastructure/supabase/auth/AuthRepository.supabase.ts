@@ -20,7 +20,7 @@ import { handleAuthError } from "@/infrastructure/supabase/shared/errors/errorHa
 import type { UserProfileRow } from "@/infrastructure/supabase/types";
 import { mapUserProfileRowToDomain } from "@/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
 
-import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
+import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 
 import type { AuthRepository } from "@/core/ports/authRepository";
 
@@ -169,9 +169,11 @@ export const createAuthRepository = (
       const baseOrigin =
         typeof window !== "undefined" ? window.location.origin : "";
       const safeNext =
-        redirectPath && redirectPath.startsWith("/") && !redirectPath.startsWith("//")
+        redirectPath &&
+        redirectPath.startsWith("/") &&
+        !redirectPath.startsWith("//")
           ? redirectPath
-          : "/workspace";
+          : PAGE_ROUTES.WORKSPACE;
       const redirectTo = `${baseOrigin}${AUTH_PAGE_ROUTES.CALLBACK}?next=${encodeURIComponent(safeNext)}`;
 
       const { error } = await client.auth.signInWithOAuth({

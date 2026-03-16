@@ -10,6 +10,7 @@ import { UpdatePasswordFormSchema } from "@/core/domain/schema/auth.schema";
 
 import { useUpdatePassword } from "@/presentation/hooks/auth/useUpdatePassword";
 
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
@@ -61,7 +62,7 @@ export const useUpdatePasswordForm = () => {
       updatePasswordMutation.isSuccess &&
       updatePasswordMutation.data?.session
     ) {
-      router.push("/workspace");
+      router.push(PAGE_ROUTES.WORKSPACE);
     }
   }, [updatePasswordMutation.isSuccess, updatePasswordMutation.data, router]);
 

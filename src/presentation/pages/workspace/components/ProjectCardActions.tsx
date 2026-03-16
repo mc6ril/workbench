@@ -24,6 +24,7 @@ import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { buildInvitationRoute } from "@/shared/utils/invitationUtils";
 
 import styles from "./ProjectCardActions.module.scss";
+import ProjectMembersModal from "./ProjectMembersModal";
 
 type ProjectCardActionsProps = {
   projectId: string;
@@ -38,6 +39,11 @@ const INVITE_ROLE_OPTIONS = Object.freeze([
   ProjectRole.MEMBER,
   ProjectRole.ADMIN,
 ]);
+const INVITE_ROLE_DESCRIPTION_KEYS = Object.freeze({
+  [ProjectRole.VIEWER]: "actions.inviteRoleViewerDescription",
+  [ProjectRole.MEMBER]: "actions.inviteRoleMemberDescription",
+  [ProjectRole.ADMIN]: "actions.inviteRoleAdminDescription",
+} satisfies Record<ProjectRole, string>);
 
 const ProjectCardActions = ({
   projectId,
@@ -48,8 +54,10 @@ const ProjectCardActions = ({
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [membersModalOpen, setMembersModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [inviteRole, setInviteRole] = useState<ProjectRole>(DEFAULT_INVITE_ROLE);
+  const [inviteRole, setInviteRole] =
+    useState<ProjectRole>(DEFAULT_INVITE_ROLE);
   const [invitationLink, setInvitationLink] = useState("");
 
   const inviteMutation = useInviteMember();
@@ -58,6 +66,12 @@ const ProjectCardActions = ({
 
   const t = useTranslation("pages.workspace");
   const tErrors = useTranslation("errors");
+  const hasInvitationLink = invitationLink.length > 0;
+  const selectedRoleLabel = t(getRoleLabelKey(inviteRole));
+  const selectedRoleDescription = t(INVITE_ROLE_DESCRIPTION_KEYS[inviteRole]);
+  const invitationStatusLabel = hasInvitationLink
+    ? t("actions.inviteStatusReady")
+    : t("actions.inviteStatusDraft");
 
   useEffect(() => {
     if (!menuOpen) {
@@ -89,18 +103,11 @@ const ProjectCardActions = ({
     ? getErrorMessage(inviteMutation.error as { code?: string }, tErrors)
     : null;
   const deleteErrorMessage = deleteProjectMutation.error
-    ? getErrorMessage(
-        deleteProjectMutation.error as { code?: string },
-        tErrors
-      )
+    ? getErrorMessage(deleteProjectMutation.error as { code?: string }, tErrors)
     : null;
 
   const stopCardInteraction = useCallback(
-    (
-      event:
-        | ReactMouseEvent<HTMLElement>
-        | ReactKeyboardEvent<HTMLElement>
-    ) => {
+    (event: ReactMouseEvent<HTMLElement> | ReactKeyboardEvent<HTMLElement>) => {
       event.stopPropagation();
     },
     []
@@ -128,6 +135,15 @@ const ProjectCardActions = ({
     deleteProjectMutation.reset();
     setDeleteModalOpen(true);
   }, [deleteProjectMutation]);
+
+  const openMembersModal = useCallback(() => {
+    setMenuOpen(false);
+    setMembersModalOpen(true);
+  }, []);
+
+  const closeMembersModal = useCallback(() => {
+    setMembersModalOpen(false);
+  }, []);
 
   const closeDeleteModal = useCallback(() => {
     setDeleteModalOpen(false);
@@ -216,6 +232,14 @@ const ProjectCardActions = ({
               type="button"
               className={styles["project-card-actions__item"]}
               role="menuitem"
+              onClick={openMembersModal}
+            >
+              {t("actions.manageMembers")}
+            </button>
+            <button
+              type="button"
+              className={styles["project-card-actions__item"]}
+              role="menuitem"
               onClick={openInviteModal}
             >
               {t("actions.inviteProject")}
@@ -232,64 +256,206 @@ const ProjectCardActions = ({
         )}
       </div>
 
+      {membersModalOpen && (
+        <ProjectMembersModal
+          isOpen={membersModalOpen}
+          onClose={closeMembersModal}
+          projectId={projectId}
+          projectName={projectName}
+        />
+      )}
+
       <Modal
         isOpen={inviteModalOpen}
         onClose={closeInviteModal}
         title={t("actions.inviteModalTitle")}
         size="medium"
       >
-        <Text variant="small" className={styles["project-card-actions__description"]}>
-          {t("actions.inviteModalDescription", { name: projectName })}
-        </Text>
+        <div className={styles["project-card-actions__invite-shell"]}>
+          <section className={styles["project-card-actions__invite-hero"]}>
+            <div className={styles["project-card-actions__invite-eyebrow"]}>
+              {t("actions.inviteHeroEyebrow")}
+            </div>
+            <div
+              className={styles["project-card-actions__invite-project-name"]}
+            >
+              {projectName}
+            </div>
+            <Text
+              variant="small"
+              className={styles["project-card-actions__description"]}
+            >
+              {t("actions.inviteModalDescription", { name: projectName })}
+            </Text>
+            <div className={styles["project-card-actions__invite-pills"]}>
+              <span className={styles["project-card-actions__invite-pill"]}>
+                {t("actions.invitePillSingleUse")}
+              </span>
+              <span className={styles["project-card-actions__invite-pill"]}>
+                {t("actions.invitePillExpiring")}
+              </span>
+              <span
+                className={`${styles["project-card-actions__invite-pill"]} ${
+                  hasInvitationLink
+                    ? styles["project-card-actions__invite-pill--success"]
+                    : styles["project-card-actions__invite-pill--muted"]
+                }`}
+              >
+                {invitationStatusLabel}
+              </span>
+            </div>
+          </section>
 
-        {inviteErrorMessage && <ErrorMessage message={inviteErrorMessage} />}
+          {inviteErrorMessage && <ErrorMessage message={inviteErrorMessage} />}
 
-        <div className={styles["project-card-actions__modal-content"]}>
-          <Select
-            label={t("actions.inviteRoleLabel")}
-            aria-label={t("actions.inviteRoleAriaLabel")}
-            options={roleOptions}
-            value={inviteRole}
-            disabled={inviteMutation.isPending}
-            onChange={(event) => {
-              setInviteRole(event.target.value as ProjectRole);
-              setInvitationLink("");
-              inviteMutation.reset();
-            }}
-          />
+          <div className={styles["project-card-actions__invite-grid"]}>
+            <section className={styles["project-card-actions__invite-card"]}>
+              <div className={styles["project-card-actions__section-header"]}>
+                <div className={styles["project-card-actions__section-title"]}>
+                  {t("actions.inviteRoleSectionTitle")}
+                </div>
+                <Text
+                  variant="small"
+                  className={
+                    styles["project-card-actions__section-description"]
+                  }
+                >
+                  {t("actions.inviteRoleSectionDescription")}
+                </Text>
+              </div>
 
-          {invitationLink && (
-            <Input
-              label={t("actions.inviteLinkLabel")}
-              aria-label={t("actions.inviteLinkAriaLabel")}
-              type="text"
-              value={invitationLink}
-              readOnly
-            />
-          )}
-        </div>
+              <Select
+                label={t("actions.inviteRoleLabel")}
+                aria-label={t("actions.inviteRoleAriaLabel")}
+                options={roleOptions}
+                value={inviteRole}
+                disabled={inviteMutation.isPending}
+                onChange={(event) => {
+                  setInviteRole(event.target.value as ProjectRole);
+                  setInvitationLink("");
+                  inviteMutation.reset();
+                }}
+              />
 
-        <div className={styles["project-card-actions__modal-actions"]}>
-          {invitationLink ? (
+              <div
+                className={`${styles["project-card-actions__role-preview"]} ${
+                  styles[`project-card-actions__role-preview--${inviteRole}`]
+                }`}
+              >
+                <span
+                  className={`${styles["project-card-actions__role-pill"]} ${
+                    styles[`project-card-actions__role-pill--${inviteRole}`]
+                  }`}
+                >
+                  {selectedRoleLabel}
+                </span>
+                <Text
+                  variant="small"
+                  className={styles["project-card-actions__role-description"]}
+                >
+                  {selectedRoleDescription}
+                </Text>
+              </div>
+            </section>
+
+            <section
+              className={`${styles["project-card-actions__invite-card"]} ${
+                hasInvitationLink
+                  ? styles["project-card-actions__invite-card--ready"]
+                  : ""
+              }`}
+            >
+              <div className={styles["project-card-actions__section-header"]}>
+                <div className={styles["project-card-actions__section-title"]}>
+                  {t("actions.inviteLinkSectionTitle")}
+                </div>
+                <Text
+                  variant="small"
+                  className={
+                    styles["project-card-actions__section-description"]
+                  }
+                >
+                  {t("actions.inviteLinkSectionDescription")}
+                </Text>
+              </div>
+
+              {hasInvitationLink ? (
+                <>
+                  <div className={styles["project-card-actions__link-ready"]}>
+                    <div
+                      className={
+                        styles["project-card-actions__link-ready-title"]
+                      }
+                    >
+                      {t("actions.inviteLinkReadyTitle")}
+                    </div>
+                    <Text
+                      variant="small"
+                      className={
+                        styles["project-card-actions__link-ready-description"]
+                      }
+                    >
+                      {t("actions.inviteLinkReadyDescription")}
+                    </Text>
+                  </div>
+
+                  <Input
+                    label={t("actions.inviteLinkLabel")}
+                    aria-label={t("actions.inviteLinkAriaLabel")}
+                    type="text"
+                    value={invitationLink}
+                    helperText={t("actions.inviteLinkHelper")}
+                    readOnly
+                  />
+                </>
+              ) : (
+                <div
+                  className={styles["project-card-actions__link-placeholder"]}
+                >
+                  <div
+                    className={
+                      styles["project-card-actions__link-placeholder-title"]
+                    }
+                  >
+                    {t("actions.inviteLinkPlaceholderTitle")}
+                  </div>
+                  <Text
+                    variant="small"
+                    className={
+                      styles[
+                        "project-card-actions__link-placeholder-description"
+                      ]
+                    }
+                  >
+                    {t("actions.inviteLinkPlaceholderDescription")}
+                  </Text>
+                </div>
+              )}
+            </section>
+          </div>
+
+          <div className={styles["project-card-actions__modal-actions"]}>
+            {hasInvitationLink ? (
+              <Button
+                label={t("actions.inviteCopyLink")}
+                onClick={handleCopyInvitationLink}
+                aria-label={t("actions.inviteCopyLinkAriaLabel")}
+              />
+            ) : (
+              <Button
+                label={t("actions.inviteCreateLink")}
+                onClick={handleCreateInvitationLink}
+                disabled={inviteMutation.isPending || isSubscriptionLoading}
+                aria-label={t("actions.inviteCreateLinkAriaLabel")}
+              />
+            )}
             <Button
-              label={t("actions.inviteCopyLink")}
-              onClick={handleCopyInvitationLink}
-              aria-label={t("actions.inviteCopyLinkAriaLabel")}
+              label={t("actions.inviteModalClose")}
+              variant="secondary"
+              onClick={closeInviteModal}
+              aria-label={t("actions.inviteModalCloseAriaLabel")}
             />
-          ) : (
-            <Button
-              label={t("actions.inviteCreateLink")}
-              onClick={handleCreateInvitationLink}
-              disabled={inviteMutation.isPending || isSubscriptionLoading}
-              aria-label={t("actions.inviteCreateLinkAriaLabel")}
-            />
-          )}
-          <Button
-            label={t("actions.inviteModalClose")}
-            variant="secondary"
-            onClick={closeInviteModal}
-            aria-label={t("actions.inviteModalCloseAriaLabel")}
-          />
+          </div>
         </div>
       </Modal>
 
@@ -299,7 +465,10 @@ const ProjectCardActions = ({
         title={t("actions.deleteModalTitle")}
         size="medium"
       >
-        <Text variant="small" className={styles["project-card-actions__description"]}>
+        <Text
+          variant="small"
+          className={styles["project-card-actions__description"]}
+        >
           {t("actions.deleteModalDescription", { name: projectName })}
         </Text>
 

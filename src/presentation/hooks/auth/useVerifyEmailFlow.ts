@@ -3,6 +3,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { useVerifyEmail } from "@/presentation/hooks/auth/useVerifyEmail";
 
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
@@ -60,7 +61,7 @@ export const useVerifyEmailFlow = () => {
 
   useEffect(() => {
     if (verifyEmailMutation.isSuccess && verifyEmailMutation.data?.session) {
-      router.push("/workspace");
+      router.push(PAGE_ROUTES.WORKSPACE);
     }
   }, [verifyEmailMutation.isSuccess, verifyEmailMutation.data, router]);
 

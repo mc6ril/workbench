@@ -1,0 +1,339 @@
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/breakpoints" as *;
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+
+.project-members-modal {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.project-members-modal__hero {
+  position: relative;
+  overflow: hidden;
+  padding: $spacing-2xl;
+  border: $border-width solid $color-accent-border-subtle;
+  border-radius: $border-radius-lg;
+  background:
+    radial-gradient(
+      circle at top right,
+      $color-info-background 0%,
+      transparent 36%
+    ),
+    linear-gradient(
+      135deg,
+      $color-accent-bg-soft 0%,
+      $color-secondary 52%,
+      $color-info-background 100%
+    );
+  box-shadow: $shadow-card;
+}
+
+.project-members-modal__hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -12% -40% auto;
+  width: 13rem;
+  height: 13rem;
+  border-radius: 999px;
+  background: $color-info;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.project-members-modal__eyebrow {
+  @include typography-caption;
+  color: $color-text-secondary;
+}
+
+.project-members-modal__project-name {
+  margin-top: $spacing-sm;
+  font-family: $font-family-serif;
+  font-size: $font-size-3xl;
+  line-height: $line-height-tight;
+  color: $color-text;
+}
+
+.project-members-modal__description {
+  display: block;
+  margin-top: $spacing-sm;
+  color: $color-text-secondary;
+}
+
+.project-members-modal__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+}
+
+.project-members-modal__pill {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-2xs $spacing-md;
+  border: $border-width solid $color-border;
+  border-radius: 999px;
+  background: $color-secondary;
+  color: $color-text;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+}
+
+.project-members-modal__pill--accent {
+  border-color: $color-accent-border-soft;
+  background: $color-accent-bg-soft;
+  color: $color-text;
+}
+
+.project-members-modal__pill--muted {
+  border-color: $color-border-subtle;
+  background: $color-surface-subtle;
+  color: $color-text-secondary;
+}
+
+.project-members-modal__panel {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  padding: $spacing-xl;
+  border: $border-width solid $color-border-subtle;
+  border-radius: $border-radius-lg;
+  background: $color-secondary;
+  box-shadow: $shadow-card;
+}
+
+.project-members-modal__section-header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.project-members-modal__section-title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+}
+
+.project-members-modal__section-description {
+  color: $color-text-secondary;
+}
+
+.project-members-modal__loading,
+.project-members-modal__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-md;
+  min-height: 16rem;
+  padding: $spacing-2xl;
+  border: $border-width dashed $color-accent-border-soft;
+  border-radius: $border-radius-lg;
+  background: linear-gradient(
+    180deg,
+    $color-surface-subtle 0%,
+    $color-accent-bg-soft 100%
+  );
+  text-align: center;
+}
+
+.project-members-modal__empty-title {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+}
+
+.project-members-modal__empty-description {
+  color: $color-text-secondary;
+  max-width: 30rem;
+}
+
+.project-members-modal__list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.project-members-modal__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: $spacing-lg;
+  align-items: center;
+  padding: $spacing-lg;
+  border: $border-width solid $color-border-subtle;
+  border-radius: $border-radius-lg;
+  background: $color-surface-subtle;
+  transition:
+    border-color $animation-duration-base $easing-ease-out,
+    transform $animation-duration-fast $easing-ease-out,
+    box-shadow $animation-duration-base $easing-ease-out;
+}
+
+.project-members-modal__item:hover {
+  border-color: $color-accent-border-soft;
+  transform: translateY(-1px);
+  box-shadow: $shadow-sm;
+}
+
+.project-members-modal__item--busy {
+  opacity: 0.72;
+}
+
+.project-members-modal__identity {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  min-width: 0;
+}
+
+.project-members-modal__identity-copy {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+  min-width: 0;
+}
+
+.project-members-modal__name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.project-members-modal__name {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+}
+
+.project-members-modal__email {
+  color: $color-text-secondary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-members-modal__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-2xs $spacing-sm;
+  border-radius: 999px;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+}
+
+.project-members-modal__tag--viewer {
+  background: $color-info-background;
+  color: $color-info;
+}
+
+.project-members-modal__tag--member {
+  background: $color-accent-bg-soft;
+  color: $color-accent;
+}
+
+.project-members-modal__tag--admin {
+  background: $color-warning-background;
+  color: $color-text;
+}
+
+.project-members-modal__tag--current {
+  background: $color-success-background;
+  color: $color-success-text;
+}
+
+.project-members-modal__controls {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-sm;
+}
+
+.project-members-modal__role-field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+}
+
+.project-members-modal__role-label {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $color-text-secondary;
+}
+
+.project-members-modal__role-select {
+  min-width: 11rem;
+  padding: $spacing-sm $spacing-md;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-md;
+  background: $color-secondary;
+  color: $color-text;
+  font-size: $font-size-sm;
+  transition:
+    border-color $animation-duration-base $easing-ease-out,
+    box-shadow $animation-duration-base $easing-ease-out;
+
+  &:focus {
+    outline: none;
+    border-color: $color-accent;
+    box-shadow: 0 0 0 3px $color-accent-border-subtle;
+  }
+}
+
+.project-members-modal__remove {
+  padding: $spacing-sm $spacing-lg;
+  border: $border-width solid $color-error;
+  border-radius: $border-radius-md;
+  background: $color-secondary;
+  color: $color-error-text;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition:
+    background-color $animation-duration-base $easing-ease-out,
+    border-color $animation-duration-base $easing-ease-out,
+    color $animation-duration-base $easing-ease-out;
+
+  &:hover:not(:disabled) {
+    background: $color-error-background;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px $color-error-ring;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.project-members-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: $breakpoint-md) {
+  .project-members-modal__item {
+    grid-template-columns: 1fr;
+  }
+
+  .project-members-modal__controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .project-members-modal__role-select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .project-members-modal__remove,
+  .project-members-modal__footer > * {
+    width: 100%;
+  }
+}

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import ProjectShell from "@/presentation/layouts/projectShell/ProjectShell";
 
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { createLoggerFactory } from "@/shared/observability";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
@@ -46,7 +47,7 @@ const ProjectLayout = async ({
 
     // On any other error, redirect to workspace (fail-closed for security)
     logger.error("Project access check error", { error });
-    redirect("/workspace");
+    redirect(PAGE_ROUTES.WORKSPACE);
   }
 
   // User has access, render children

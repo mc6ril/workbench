@@ -3,13 +3,11 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-import Button from "@/presentation/components/ui/Button";
-import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
-import Loader from "@/presentation/components/ui/Loader";
-import Text from "@/presentation/components/ui/Text";
+import RouteFallbackPage from "@/presentation/components/feedback/RouteFallbackPage";
 import { useSession } from "@/presentation/hooks/auth/useSession";
 import { useAcceptInvitation } from "@/presentation/hooks/invitation/useAcceptInvitation";
 
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
@@ -22,14 +20,22 @@ const JoinInvitationPage = () => {
   const { data: session, isLoading: isLoadingSession } = useSession();
   const acceptInvitationMutation = useAcceptInvitation();
   const hasStartedRef = useRef(false);
+  const rawToken = params?.token;
+  const token = typeof rawToken === "string" ? rawToken : undefined;
+  const invitationError = acceptInvitationMutation.error as {
+    code?: string;
+  } | null;
+  const errorDetail = invitationError
+    ? getErrorMessage(invitationError, tErrors)
+    : undefined;
+  const hasInvitationError = Boolean(invitationError);
 
   useEffect(() => {
     if (isLoadingSession || hasStartedRef.current) {
       return;
     }
 
-    const token = params?.token;
-    if (!token || Array.isArray(token)) {
+    if (!token) {
       return;
     }
 
@@ -48,39 +54,50 @@ const JoinInvitationPage = () => {
       .catch(() => {
         hasStartedRef.current = false;
       });
-  }, [
-    acceptInvitationMutation,
-    isLoadingSession,
-    params?.token,
-    router,
-    session,
-  ]);
+  }, [acceptInvitationMutation, isLoadingSession, router, session, token]);
 
   const handleRetry = useCallback(() => {
     hasStartedRef.current = false;
     router.refresh();
   }, [router]);
 
+  if (!token || hasInvitationError) {
+    return (
+      <RouteFallbackPage
+        tone="error"
+        eyebrow={t("errorEyebrow")}
+        statusLabel={t("errorStatus")}
+        statusValue={t("errorStatusValue")}
+        title={t("errorTitle")}
+        message={t("errorMessage")}
+        detail={errorDetail}
+        actions={[
+          {
+            label: t("retry"),
+            ariaLabel: t("retryAriaLabel"),
+            onClick: handleRetry,
+            variant: "primary",
+          },
+          {
+            label: t("backToWorkspace"),
+            ariaLabel: t("backToWorkspaceAriaLabel"),
+            href: PAGE_ROUTES.WORKSPACE,
+          },
+        ]}
+      />
+    );
+  }
+
   return (
-    <main>
-      <Loader variant="inline" />
-      <Text variant="body">{t("processing")}</Text>
-      {acceptInvitationMutation.error && (
-        <>
-          <ErrorMessage
-            message={getErrorMessage(
-              acceptInvitationMutation.error as { code?: string },
-              tErrors
-            )}
-          />
-          <Button
-            label={t("retry")}
-            onClick={handleRetry}
-            aria-label={t("retryAriaLabel")}
-          />
-        </>
-      )}
-    </main>
+    <RouteFallbackPage
+      tone="loading"
+      eyebrow={t("processingEyebrow")}
+      statusLabel={t("processingStatus")}
+      title={t("processingTitle")}
+      message={t("processingMessage")}
+      detail={t("processingDetail")}
+      ariaLabel={t("processingAriaLabel")}
+    />
   );
 };
 

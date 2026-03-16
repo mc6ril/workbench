@@ -84,7 +84,7 @@ const AccountPage = () => {
         variant: "success",
         duration: 6000,
       });
-      router.replace("/account", { scroll: false });
+      router.replace(PAGE_ROUTES.ACCOUNT, { scroll: false });
     }
   }, [searchParams, addToast, tStripe, router]);
 

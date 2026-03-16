@@ -7,6 +7,8 @@ import { authRepository } from "@/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 
+import { PAGE_ROUTES } from "@/shared/constants/routes";
+
 /**
  * Hook for signing out the current user.
  * Clears the session and redirects to the landing page.
@@ -26,8 +28,7 @@ export const useSignOut = () => {
       // Clear all queries
       queryClient.clear();
       // Redirect to landing page
-      router.push("/");
+      router.push(PAGE_ROUTES.HOME);
     },
   });
 };
-

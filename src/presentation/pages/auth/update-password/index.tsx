@@ -11,6 +11,7 @@ import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
 import { useUpdatePasswordForm } from "@/presentation/hooks/auth/useUpdatePasswordForm";
 
+import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
@@ -94,7 +95,10 @@ const UpdatePasswordPage = () => {
         )}
 
         <div className={styles["update-password-footer"]}>
-          <Link href="/auth/signin" className={styles["update-password-link"]}>
+          <Link
+            href={AUTH_PAGE_ROUTES.SIGNIN}
+            className={styles["update-password-link"]}
+          >
             {t("backToSignin")}
           </Link>
         </div>

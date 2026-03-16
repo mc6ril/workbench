@@ -24,6 +24,7 @@ import Title from "@/presentation/components/ui/Title";
 import { useSignInWithGoogle } from "@/presentation/hooks/auth/useSignInWithGoogle";
 import { useSignUp } from "@/presentation/hooks/auth/useSignUp";
 
+import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
@@ -45,11 +46,11 @@ const SignupPage = () => {
     redirectPathParam.startsWith("/") &&
     !redirectPathParam.startsWith("//")
       ? redirectPathParam
-      : "/workspace";
+      : PAGE_ROUTES.WORKSPACE;
   const signinHref =
-    redirectPath === "/workspace"
-      ? "/auth/signin"
-      : `/auth/signin?redirect=${encodeURIComponent(redirectPath)}`;
+    redirectPath === PAGE_ROUTES.WORKSPACE
+      ? AUTH_PAGE_ROUTES.SIGNIN
+      : `${AUTH_PAGE_ROUTES.SIGNIN}?redirect=${encodeURIComponent(redirectPath)}`;
 
   const {
     register,
@@ -229,7 +230,7 @@ const SignupPage = () => {
               )}
             />
             <Text variant="small" className={styles["signup-terms__label"]}>
-              <Link href="/legal" className={styles["signup-terms__link"]}>
+              <Link href={PAGE_ROUTES.LEGAL} className={styles["signup-terms__link"]}>
                 {tFields("acceptedTerms.linkLabel")}
               </Link>
             </Text>

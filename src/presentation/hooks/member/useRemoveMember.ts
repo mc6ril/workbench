@@ -6,6 +6,11 @@ import { memberRepository } from "@/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 
+type RemoveMemberVariables = {
+  memberId: string;
+  projectId: string;
+};
+
 /**
  * Hook for removing a member from a project.
  * Invalidates the members list and project stats queries on success.
@@ -16,21 +21,20 @@ export const useRemoveMember = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      memberId,
-      projectId,
-      memberRole,
-    }: {
-      memberId: string;
-      projectId: string;
-      memberRole: string;
-    }) => removeMember(memberRepository, memberId, projectId, memberRole),
+    mutationFn: ({ memberId }: RemoveMemberVariables) =>
+      removeMember(memberRepository, memberId),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.members.byProject(variables.projectId),
       });
       queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.currentRole(variables.projectId),
+      });
+      queryClient.invalidateQueries({
         queryKey: queryKeys.projects.withStats(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.all(),
       });
     },
   });

@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 
-import { API_ROUTES } from "@/shared/constants/routes";
+import { API_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 
 /**
  * Hook for deleting the current user account.
@@ -35,7 +35,7 @@ export const useDeleteUser = () => {
       // Clear all queries
       queryClient.clear();
       // Redirect to landing page
-      router.push("/");
+      router.push(PAGE_ROUTES.HOME);
     },
   });
 };

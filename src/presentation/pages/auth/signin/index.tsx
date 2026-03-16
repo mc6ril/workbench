@@ -19,6 +19,7 @@ import { useResendVerification } from "@/presentation/hooks/auth/useResendVerifi
 import { useSignIn } from "@/presentation/hooks/auth/useSignIn";
 import { useSignInWithGoogle } from "@/presentation/hooks/auth/useSignInWithGoogle";
 
+import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
@@ -45,11 +46,11 @@ const SigninPage = () => {
     redirectPathParam.startsWith("/") &&
     !redirectPathParam.startsWith("//")
       ? redirectPathParam
-      : "/workspace";
+      : PAGE_ROUTES.WORKSPACE;
   const signupHref =
-    redirectPath === "/workspace"
-      ? "/auth/signup"
-      : `/auth/signup?redirect=${encodeURIComponent(redirectPath)}`;
+    redirectPath === PAGE_ROUTES.WORKSPACE
+      ? AUTH_PAGE_ROUTES.SIGNUP
+      : `${AUTH_PAGE_ROUTES.SIGNUP}?redirect=${encodeURIComponent(redirectPath)}`;
 
   const {
     register,
@@ -191,7 +192,10 @@ const SigninPage = () => {
           />
 
           <div className={styles["signin-forgot-password"]}>
-            <Link href="/auth/reset-password" className={styles["signin-link"]}>
+            <Link
+              href={AUTH_PAGE_ROUTES.RESET_PASSWORD}
+              className={styles["signin-link"]}
+            >
               {t("forgotPassword")}
             </Link>
           </div>
