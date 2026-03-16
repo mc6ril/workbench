@@ -12,7 +12,6 @@ import type {
  *
  * Invariants:
  * - Only admins can create, revoke invitations (enforced by RLS)
- * - One pending invitation per (project, email) pair
  * - Invitations expire after 7 days
  * - Accepting an invitation adds the user to project_members
  */
@@ -25,8 +24,7 @@ export type InvitationRepository = {
   listByProject(projectId: string): Promise<ProjectInvitation[]>;
 
   /**
-   * Create a new invitation.
-   * @throws ConstraintError if an invitation already exists for this email/project
+   * Create a new invitation link for a project.
    * @throws DatabaseError if database operation fails or permission denied
    */
   create(input: CreateInvitationInput): Promise<ProjectInvitation>;

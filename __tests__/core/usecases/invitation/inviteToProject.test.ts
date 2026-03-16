@@ -33,7 +33,7 @@ describe("inviteToProject", () => {
   const mockInvitation: ProjectInvitation = {
     id: "inv-001",
     projectId,
-    email: "new@example.com",
+    email: null,
     role: ProjectRole.MEMBER,
     status: InvitationStatus.PENDING,
     token: "abc123",
@@ -78,7 +78,7 @@ describe("inviteToProject", () => {
     const result = await inviteToProject(
       invitationRepo,
       memberRepo,
-      { projectId, email: "new@example.com", role: ProjectRole.MEMBER },
+      { projectId, role: ProjectRole.MEMBER },
       SubscriptionPlan.FREE
     );
 
@@ -101,10 +101,10 @@ describe("inviteToProject", () => {
       inviteToProject(
         invitationRepo,
         memberRepo,
-        { projectId, email: "new@example.com", role: ProjectRole.MEMBER },
+        { projectId, role: ProjectRole.MEMBER },
         SubscriptionPlan.FREE
       )
-    ).rejects.toThrow("workspace member limit reached");
+    ).rejects.toMatchObject({ code: "INVITATION_LIMIT_REACHED" });
 
     expect(invitationRepo.create).not.toHaveBeenCalled();
   });
@@ -127,7 +127,7 @@ describe("inviteToProject", () => {
     const result = await inviteToProject(
       invitationRepo,
       memberRepo,
-      { projectId, email: "new@example.com", role: ProjectRole.MEMBER },
+      { projectId, role: ProjectRole.MEMBER },
       SubscriptionPlan.TEAM
     );
 
@@ -148,7 +148,7 @@ describe("inviteToProject", () => {
     const result = await inviteToProject(
       invitationRepo,
       memberRepo,
-      { projectId, email: "new@example.com", role: ProjectRole.MEMBER },
+      { projectId, role: ProjectRole.MEMBER },
       SubscriptionPlan.TEAM
     );
 
@@ -158,7 +158,7 @@ describe("inviteToProject", () => {
     expect(invitationRepo.countPending).not.toHaveBeenCalled();
   });
 
-  it("should throw ZodError for invalid email", async () => {
+  it("should throw ZodError for invalid project id", async () => {
     const invitationRepo = createInvitationRepositoryMock();
     const memberRepo = createMemberRepositoryMock();
 
@@ -166,7 +166,7 @@ describe("inviteToProject", () => {
       inviteToProject(
         invitationRepo,
         memberRepo,
-        { projectId, email: "not-an-email", role: ProjectRole.MEMBER },
+        { projectId: "not-a-uuid", role: ProjectRole.MEMBER },
         SubscriptionPlan.FREE
       )
     ).rejects.toThrow();

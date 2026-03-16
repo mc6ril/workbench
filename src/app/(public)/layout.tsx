@@ -7,6 +7,7 @@ import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
 import { createAuthRepository } from "@/infrastructure/supabase/repositories";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { createLoggerFactory } from "@/shared/observability";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
@@ -30,7 +31,7 @@ const LandingLayout = async ({
     // Check if user is authenticated (throws NotFoundError if no session)
     // If authenticated, redirect to workspace
     await getCurrentSession(authRepository);
-    redirect("/workspace");
+    redirect(PAGE_ROUTES.WORKSPACE);
   } catch (error) {
     // Next.js redirect() throws a special error that must be re-thrown
     if (

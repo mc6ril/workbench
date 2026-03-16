@@ -5,6 +5,8 @@ import { exchangeCodeForSession } from "@/core/usecases/auth/exchangeCodeForSess
 import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
+import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
+
 /**
  * Auth callback route handler for Supabase PKCE flow.
  * Exchanges the authorization code for a session, then redirects
@@ -13,12 +15,14 @@ import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/cli
 export const GET = async (request: NextRequest): Promise<NextResponse> => {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const nextParam = searchParams.get("next") ?? "/";
+  const nextParam = searchParams.get("next") ?? PAGE_ROUTES.HOME;
 
   // Security: reject protocol-relative URLs (//evil.com) and absolute URLs
   // to prevent open redirect attacks via crafted callback links.
   const next =
-    nextParam.startsWith("/") && !nextParam.startsWith("//") ? nextParam : "/";
+    nextParam.startsWith("/") && !nextParam.startsWith("//")
+      ? nextParam
+      : PAGE_ROUTES.HOME;
 
   if (code) {
     try {
@@ -32,5 +36,5 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
     }
   }
 
-  return NextResponse.redirect(`${origin}/auth/signin`);
+  return NextResponse.redirect(`${origin}${AUTH_PAGE_ROUTES.SIGNIN}`);
 };

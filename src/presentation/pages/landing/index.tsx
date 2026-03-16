@@ -18,6 +18,7 @@ import {
   TRUST_ITEM_KEYS,
   VALUE_KEYS,
 } from "@/shared/constants/landing";
+import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import type { FeatureKey } from "@/shared/types/landing";
 import { buildFeaturePreviewContent, isFeatureKey } from "@/shared/utils";
@@ -52,19 +53,23 @@ const LandingPageContent = () => {
         if (email) {
           params.set("email", email);
         }
-        router.replace(`/auth/update-password?${params.toString()}`);
+        router.replace(
+          `${AUTH_PAGE_ROUTES.UPDATE_PASSWORD}?${params.toString()}`
+        );
       } else {
-        router.replace(`/auth/verify-email?code=${encodeURIComponent(code)}`);
+        router.replace(
+          `${AUTH_PAGE_ROUTES.VERIFY_EMAIL}?code=${encodeURIComponent(code)}`
+        );
       }
     }
   }, [searchParams, router]);
 
   const handleSignUp = useCallback(() => {
-    router.push("/auth/signup");
+    router.push(AUTH_PAGE_ROUTES.SIGNUP);
   }, [router]);
 
   const handleSignIn = useCallback(() => {
-    router.push("/auth/signin");
+    router.push(AUTH_PAGE_ROUTES.SIGNIN);
   }, [router]);
 
   const handleScrollToPreview = useCallback(() => {
@@ -454,10 +459,13 @@ const LandingPageContent = () => {
           className={styles["landing-footer__nav"]}
           aria-label={tFooter("ariaLabel")}
         >
-          <Link href="/legal" className={styles["landing-footer__link"]}>
+          <Link href={PAGE_ROUTES.LEGAL} className={styles["landing-footer__link"]}>
             {tFooter("legal")}
           </Link>
-          <Link href="/pricing" className={styles["landing-footer__link"]}>
+          <Link
+            href={PAGE_ROUTES.PRICING}
+            className={styles["landing-footer__link"]}
+          >
             {tFooter("pricing")}
           </Link>
         </nav>

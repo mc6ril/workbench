@@ -4,7 +4,7 @@ import { useCallback, useEffect } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { getNextUnmetCriterion } from "@/core/domain/passwordStrength";
@@ -21,8 +21,10 @@ import Input from "@/presentation/components/ui/Input";
 import PasswordStrengthIndicator from "@/presentation/components/ui/PasswordStrengthIndicator";
 import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
+import { useSignInWithGoogle } from "@/presentation/hooks/auth/useSignInWithGoogle";
 import { useSignUp } from "@/presentation/hooks/auth/useSignUp";
 
+import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
@@ -31,11 +33,24 @@ import styles from "./styles.module.scss";
 
 const SignupPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const signUpMutation = useSignUp();
+  const signInWithGoogleMutation = useSignInWithGoogle();
   const t = useTranslation("pages.signup");
   const tCommon = useTranslation("common");
   const tErrors = useTranslation("errors");
   const tFields = useTranslation("pages.signup.fields");
+  const redirectPathParam = searchParams.get("redirect");
+  const redirectPath =
+    redirectPathParam &&
+    redirectPathParam.startsWith("/") &&
+    !redirectPathParam.startsWith("//")
+      ? redirectPathParam
+      : PAGE_ROUTES.WORKSPACE;
+  const signinHref =
+    redirectPath === PAGE_ROUTES.WORKSPACE
+      ? AUTH_PAGE_ROUTES.SIGNIN
+      : `${AUTH_PAGE_ROUTES.SIGNIN}?redirect=${encodeURIComponent(redirectPath)}`;
 
   const {
     register,
@@ -96,10 +111,10 @@ const SignupPage = () => {
       }
 
       if (signUpMutation.data.session) {
-        router.push("/auth/signin");
+        router.push(redirectPath);
       }
     }
-  }, [signUpMutation.isSuccess, signUpMutation.data, router]);
+  }, [redirectPath, signUpMutation.isSuccess, signUpMutation.data, router]);
 
   const onSubmit: SubmitHandler<SignUpFormInput> = useCallback(
     (data) => {
@@ -113,6 +128,10 @@ const SignupPage = () => {
     },
     [signUpMutation]
   );
+
+  const handleGoogleSignIn = useCallback(() => {
+    signInWithGoogleMutation.mutate(redirectPath);
+  }, [redirectPath, signInWithGoogleMutation]);
 
   if (
     signUpMutation.isSuccess &&
@@ -131,7 +150,7 @@ const SignupPage = () => {
             {t("verification.instructions")}
           </Text>
           <div className={styles["signup-footer"]}>
-            <Link href="/auth/signin" className={styles["signup-link"]}>
+            <Link href={signinHref} className={styles["signup-link"]}>
               {t("verification.backToSignin")}
             </Link>
           </div>
@@ -211,7 +230,7 @@ const SignupPage = () => {
               )}
             />
             <Text variant="small" className={styles["signup-terms__label"]}>
-              <Link href="/legal" className={styles["signup-terms__link"]}>
+              <Link href={PAGE_ROUTES.LEGAL} className={styles["signup-terms__link"]}>
                 {tFields("acceptedTerms.linkLabel")}
               </Link>
             </Text>
@@ -236,9 +255,21 @@ const SignupPage = () => {
           />
         </Form>
 
+        <div className={styles["signup-divider"]}>
+          <span>{t("oauth.divider")}</span>
+        </div>
+        <Button
+          label={t("oauth.googleButton")}
+          variant="secondary"
+          fullWidth
+          onClick={handleGoogleSignIn}
+          disabled={signInWithGoogleMutation.isPending}
+          aria-label={t("oauth.googleButtonAriaLabel")}
+        />
+
         <Text variant="small" className={styles["signup-footer"]}>
           {t("footer")}{" "}
-          <Link href="/auth/signin" className={styles["signup-link"]}>
+          <Link href={signinHref} className={styles["signup-link"]}>
             {t("footerLink")}
           </Link>
         </Text>

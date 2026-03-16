@@ -17,7 +17,9 @@ import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
 import { useResendVerification } from "@/presentation/hooks/auth/useResendVerification";
 import { useSignIn } from "@/presentation/hooks/auth/useSignIn";
+import { useSignInWithGoogle } from "@/presentation/hooks/auth/useSignInWithGoogle";
 
+import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
@@ -30,6 +32,7 @@ const SigninPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const signInMutation = useSignIn();
+  const signInWithGoogleMutation = useSignInWithGoogle();
   const resendVerificationMutation = useResendVerification();
   const t = useTranslation("pages.signin");
   const tCommon = useTranslation("common");
@@ -37,6 +40,17 @@ const SigninPage = () => {
   const tFields = useTranslation("pages.signin.fields");
 
   const isUnverifiedRedirect = searchParams.get("unverified") === "true";
+  const redirectPathParam = searchParams.get("redirect");
+  const redirectPath =
+    redirectPathParam &&
+    redirectPathParam.startsWith("/") &&
+    !redirectPathParam.startsWith("//")
+      ? redirectPathParam
+      : PAGE_ROUTES.WORKSPACE;
+  const signupHref =
+    redirectPath === PAGE_ROUTES.WORKSPACE
+      ? AUTH_PAGE_ROUTES.SIGNUP
+      : `${AUTH_PAGE_ROUTES.SIGNUP}?redirect=${encodeURIComponent(redirectPath)}`;
 
   const {
     register,
@@ -98,9 +112,9 @@ const SigninPage = () => {
 
   useEffect(() => {
     if (signInMutation.isSuccess && signInMutation.data) {
-      router.push("/workspace");
+      router.push(redirectPath);
     }
-  }, [signInMutation.isSuccess, signInMutation.data, router]);
+  }, [redirectPath, signInMutation.isSuccess, signInMutation.data, router]);
 
   const onSubmit: SubmitHandler<FormData> = useCallback(
     (data) => {
@@ -115,6 +129,10 @@ const SigninPage = () => {
       resendVerificationMutation.mutate(email);
     }
   }, [getValues, resendVerificationMutation]);
+
+  const handleGoogleSignIn = useCallback(() => {
+    signInWithGoogleMutation.mutate(redirectPath);
+  }, [redirectPath, signInWithGoogleMutation]);
 
   const isEmailVerificationError =
     isUnverifiedRedirect ||
@@ -174,7 +192,10 @@ const SigninPage = () => {
           />
 
           <div className={styles["signin-forgot-password"]}>
-            <Link href="/auth/reset-password" className={styles["signin-link"]}>
+            <Link
+              href={AUTH_PAGE_ROUTES.RESET_PASSWORD}
+              className={styles["signin-link"]}
+            >
               {t("forgotPassword")}
             </Link>
           </div>
@@ -188,9 +209,21 @@ const SigninPage = () => {
           />
         </Form>
 
+        <div className={styles["signin-divider"]}>
+          <span>{t("oauth.divider")}</span>
+        </div>
+        <Button
+          label={t("oauth.googleButton")}
+          variant="secondary"
+          fullWidth
+          onClick={handleGoogleSignIn}
+          disabled={signInWithGoogleMutation.isPending}
+          aria-label={t("oauth.googleButtonAriaLabel")}
+        />
+
         <Text variant="small" className={styles["signin-footer"]}>
           {t("footer")}{" "}
-          <Link href="/auth/signup" className={styles["signin-link"]}>
+          <Link href={signupHref} className={styles["signin-link"]}>
             {t("footerLink")}
           </Link>
         </Text>

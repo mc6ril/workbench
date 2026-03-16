@@ -9,6 +9,7 @@ import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
 import { useResetPasswordForm } from "@/presentation/hooks/auth/useResetPasswordForm";
 
+import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
@@ -36,7 +37,10 @@ const ResetPasswordPage = () => {
             <Text variant="body">{t("success.instructions")}</Text>
           </div>
           <div className={styles["reset-password-footer"]}>
-            <Link href="/auth/signin" className={styles["reset-password-link"]}>
+            <Link
+              href={AUTH_PAGE_ROUTES.SIGNIN}
+              className={styles["reset-password-link"]}
+            >
               {t("backToSignin")}
             </Link>
           </div>
@@ -81,7 +85,10 @@ const ResetPasswordPage = () => {
         </Form>
 
         <div className={styles["reset-password-footer"]}>
-          <Link href="/auth/signin" className={styles["reset-password-link"]}>
+          <Link
+            href={AUTH_PAGE_ROUTES.SIGNIN}
+            className={styles["reset-password-link"]}
+          >
             {t("backToSignin")}
           </Link>
         </div>

@@ -5,6 +5,7 @@ export { useResetPassword } from "./useResetPassword";
 export { useResetPasswordForm } from "./useResetPasswordForm";
 export { useSession } from "./useSession";
 export { useSignIn } from "./useSignIn";
+export { useSignInWithGoogle } from "./useSignInWithGoogle";
 export { useSignOut } from "./useSignOut";
 export { useSignUp } from "./useSignUp";
 export { useUpdatePassword } from "./useUpdatePassword";

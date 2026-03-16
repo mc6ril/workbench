@@ -17,6 +17,7 @@ import { useToastStore } from "@/presentation/stores/useToastStore";
 import { getAccessibilityId } from "@/shared/a11y";
 import type { PlanKey } from "@/shared/constants";
 import { FAQ_KEYS, FEATURE_ROWS, PLAN_KEYS } from "@/shared/constants";
+import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
@@ -154,7 +155,7 @@ const PricingPage = () => {
           label: tCta("signUpFirst"),
           variant: planKey === "pro" ? "primary" : "secondary",
           disabled: false,
-          onClick: () => router.push("/auth/signup"),
+          onClick: () => router.push(AUTH_PAGE_ROUTES.SIGNUP),
         };
       }
 

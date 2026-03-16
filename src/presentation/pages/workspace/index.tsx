@@ -8,6 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import type { CreateProjectInput } from "@/core/domain/schema/project.schema";
 import { CreateProjectInputSchema } from "@/core/domain/schema/project.schema";
+import { ProjectRole } from "@/core/domain/schema/project.schema";
+import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
 import Badge from "@/presentation/components/ui/Badge";
 import Button from "@/presentation/components/ui/Button";
@@ -24,6 +26,7 @@ import { useCreateProject } from "@/presentation/hooks/project/useCreateProject"
 import { useLastActivitySubtitle } from "@/presentation/hooks/project/useLastActivitySubtitle";
 import { useProjectsWithStats } from "@/presentation/hooks/project/useProjectsWithStats";
 import { useReclaimableProjects } from "@/presentation/hooks/project/useReclaimableProjects";
+import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
 import { shouldShowLoading } from "@/presentation/utils/queryStatus";
 
 import { getAccessibilityId } from "@/shared/a11y";
@@ -34,6 +37,7 @@ import { markNavigationStart } from "@/shared/observability";
 import { getWorkspaceEmoji } from "@/shared/utils";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
+import ProjectCardActions from "./components/ProjectCardActions";
 import styles from "./styles.module.scss";
 
 type CreateProjectFormData = CreateProjectInput;
@@ -72,10 +76,9 @@ const WorkspacePage = () => {
   const addUserToProjectMutation = useAddUserToProject();
   const createProjectMutation = useCreateProject();
   const { data: reclaimableProjects } = useReclaimableProjects(!!session);
-  const [joinProjectId, setJoinProjectId] = useState("");
-  const [joinError, setJoinError] = useState<string | null>(null);
+  const { data: subscription, isLoading: isSubscriptionLoading } =
+    useSubscription();
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [joinModalOpen, setJoinModalOpen] = useState(false);
   const [selectedEmoji, setSelectedEmoji] = useState<string>(
     WORKSPACE_EMOJI_OPTIONS[0]
   );
@@ -121,16 +124,6 @@ const WorkspacePage = () => {
     setCreateModalOpen(false);
   }, []);
 
-  const openJoinModal = useCallback(() => {
-    setJoinModalOpen(true);
-    setJoinProjectId("");
-    setJoinError(null);
-  }, []);
-
-  const closeJoinModal = useCallback(() => {
-    setJoinModalOpen(false);
-  }, []);
-
   const handleReclaimProject = useCallback(
     async (projectId: string): Promise<void> => {
       setReclaimingProjectId(projectId);
@@ -145,24 +138,6 @@ const WorkspacePage = () => {
     },
     [addUserToProjectMutation, refetchProjects]
   );
-
-  const handleJoinWorkspace = async (): Promise<void> => {
-    const trimmed = joinProjectId.trim();
-    if (!trimmed) {
-      setJoinError(t("pleaseEnterProjectId"));
-      return;
-    }
-    setJoinError(null);
-    try {
-      await addUserToProjectMutation.mutateAsync({ projectId: trimmed });
-      setJoinProjectId("");
-      await refetchProjects();
-      closeJoinModal();
-    } catch (err) {
-      const error = err as { code?: string };
-      setJoinError(getErrorMessage(error, tErrors));
-    }
-  };
 
   useEffect(() => {
     if (createProjectMutation.error) {
@@ -266,12 +241,6 @@ const WorkspacePage = () => {
               label={t("addWorkspaceButton")}
               onClick={openCreateModal}
               aria-label={t("addWorkspaceButtonAriaLabel")}
-            />
-            <Button
-              label={t("joinWorkspaceButton")}
-              onClick={openJoinModal}
-              variant="secondary"
-              aria-label={t("joinWorkspaceButtonAriaLabel")}
             />
           </div>
         </div>
@@ -425,6 +394,16 @@ const WorkspacePage = () => {
                       <div className={styles["workspace-icon"]}>
                         {getWorkspaceEmoji(index)}
                       </div>
+                      {project.role === ProjectRole.ADMIN && (
+                        <ProjectCardActions
+                          projectId={project.id}
+                          projectName={project.name}
+                          currentPlan={
+                            subscription?.plan ?? SubscriptionPlan.FREE
+                          }
+                          isSubscriptionLoading={isSubscriptionLoading}
+                        />
+                      )}
                     </div>
                     <h3 className={styles["workspace-name"]}>{project.name}</h3>
                     <p className={styles["workspace-last-activity"]}>
@@ -589,39 +568,6 @@ const WorkspacePage = () => {
             aria-label={t("createButtonAriaLabel")}
           />
         </Form>
-      </Modal>
-
-      <Modal
-        isOpen={joinModalOpen}
-        onClose={closeJoinModal}
-        title={t("joinWorkspaceTitle")}
-        size="medium"
-      >
-        <Text variant="small" className={styles["workspace-modal-description"]}>
-          {t("joinWorkspaceDescription")}
-        </Text>
-        <div className={styles["workspace-modal-form"]}>
-          <Input
-            label={t("projectIdLabel")}
-            type="text"
-            value={joinProjectId}
-            onChange={(e) => {
-              setJoinProjectId(e.target.value);
-              setJoinError(null);
-            }}
-            error={joinError ?? undefined}
-            placeholder={t("projectIdPlaceholder")}
-          />
-          <Button
-            label={t("joinButton")}
-            onClick={handleJoinWorkspace}
-            disabled={
-              !joinProjectId.trim() || addUserToProjectMutation.isPending
-            }
-            variant="secondary"
-            aria-label={t("joinButtonAriaLabel")}
-          />
-        </div>
       </Modal>
     </main>
   );

@@ -145,7 +145,7 @@
   transition: all $animation-duration-slow $easing-smooth;
   cursor: pointer;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: $shadow-card;
   animation: fadeInUp $animation-duration-slower $easing-ease-out backwards;
 
@@ -364,6 +364,106 @@
 }
 
 // ============================================================================
+// Pending Invitations
+// ============================================================================
+
+.pending-invitations {
+  margin-bottom: $spacing-3xl;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-lg;
+  background: $color-secondary;
+  padding: $spacing-2xl;
+}
+
+.pending-invitations__header {
+  margin-bottom: $spacing-lg;
+}
+
+.pending-invitations__title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  margin-bottom: $spacing-2xs;
+}
+
+.pending-invitations__description {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.pending-invitations__list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.pending-invitations__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-lg;
+  border: $border-width solid $color-border-subtle;
+  border-radius: $border-radius-md;
+  padding: $spacing-lg;
+}
+
+.pending-invitations__content {
+  min-width: 0;
+}
+
+.pending-invitations__project-name {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  margin-bottom: $spacing-2xs;
+}
+
+.pending-invitations__meta {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.pending-invitations__actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+// ============================================================================
+// Welcome Guide
+// ============================================================================
+
+.welcome-guide {
+  margin-top: $spacing-xl;
+  border-radius: $border-radius-lg;
+  border: $border-width solid $color-border;
+  background: linear-gradient(
+    135deg,
+    rgba($color-accent, 0.08),
+    rgba($color-accent-peach, 0.08)
+  );
+  padding: $spacing-2xl;
+}
+
+.welcome-guide__title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  margin-bottom: $spacing-2xs;
+}
+
+.welcome-guide__description {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-lg;
+}
+
+.welcome-guide__actions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+// ============================================================================
 // Empty State
 // ============================================================================
 
@@ -530,6 +630,12 @@
 
   .workspaces-grid {
     grid-template-columns: 1fr;
+  }
+
+  .pending-invitations__item,
+  .welcome-guide__actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .workspace-welcome__title {

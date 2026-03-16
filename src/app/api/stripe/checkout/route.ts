@@ -14,6 +14,7 @@ import { withRateLimit } from "@/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/infrastructure/web/security/csrf";
 
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { createLoggerFactory } from "@/shared/observability";
 
 const logger = createLoggerFactory().forScope("API.Checkout");
@@ -69,7 +70,7 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     );
 
     const origin = request.nextUrl.origin;
-    const cancelUrl = new URL("/pricing", origin);
+    const cancelUrl = new URL(PAGE_ROUTES.PRICING, origin);
     cancelUrl.searchParams.set("checkout", "canceled");
     if (body.from) {
       cancelUrl.searchParams.set("from", body.from);
@@ -82,7 +83,7 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
         userId: session.userId,
         email: session.email,
         plan,
-        successUrl: `${origin}/account?checkout=success`,
+        successUrl: `${origin}${PAGE_ROUTES.ACCOUNT}?checkout=success`,
         cancelUrl: cancelUrl.toString(),
       }
     );

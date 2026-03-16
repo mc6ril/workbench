@@ -56,6 +56,38 @@ export const mapSupabaseError = (
       details?: string;
       hint?: string;
     };
+    const normalizedMessage = supabaseError.message?.trim() ?? "";
+
+    if (normalizedMessage === "LAST_ADMIN_REQUIRED") {
+      return createConstraintError(
+        "LAST_ADMIN_REQUIRED",
+        normalizedMessage || supabaseError.details || undefined
+      );
+    }
+
+    if (supabaseError.code === "P0002") {
+      return createConstraintError(
+        "INVITATION_ALREADY_USED",
+        normalizedMessage || supabaseError.details || undefined
+      );
+    }
+
+    if (supabaseError.code === "P0003") {
+      return createConstraintError(
+        "INVITATION_EXPIRED",
+        normalizedMessage || supabaseError.details || undefined
+      );
+    }
+
+    if (
+      supabaseError.code === "P0004" ||
+      normalizedMessage === "Already a member of this project"
+    ) {
+      return createConstraintError(
+        "INVITATION_ALREADY_MEMBER",
+        normalizedMessage || supabaseError.details || undefined
+      );
+    }
 
     // Map specific Supabase error codes to domain errors
     // PGRST116: Not found (no rows returned)

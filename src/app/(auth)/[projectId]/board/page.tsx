@@ -1,13 +1,26 @@
 "use client";
 
-import { use } from "react";
+import { Suspense, use } from "react";
 
+import Loader from "@/presentation/components/ui/Loader";
 import BoardPageContent from "@/presentation/pages/board";
 
-const BoardPage = ({ params }: { params: Promise<{ projectId: string }> }) => {
+const BoardPageRouteContent = ({
+  params,
+}: {
+  params: Promise<{ projectId: string }>;
+}) => {
   const { projectId } = use(params);
 
   return <BoardPageContent projectId={projectId} />;
+};
+
+const BoardPage = ({ params }: { params: Promise<{ projectId: string }> }) => {
+  return (
+    <Suspense fallback={<Loader />}>
+      <BoardPageRouteContent params={params} />
+    </Suspense>
+  );
 };
 
 export default BoardPage;

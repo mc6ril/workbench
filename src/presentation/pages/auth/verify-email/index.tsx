@@ -9,6 +9,7 @@ import Text from "@/presentation/components/ui/Text";
 import Title from "@/presentation/components/ui/Title";
 import { useVerifyEmailFlow } from "@/presentation/hooks/auth/useVerifyEmailFlow";
 
+import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
@@ -33,7 +34,10 @@ const VerifyEmailContent = () => {
             />
           </div>
           <div className={styles["verify-email-footer"]}>
-            <Link href="/auth/signin" className={styles["verify-email-link"]}>
+            <Link
+              href={AUTH_PAGE_ROUTES.SIGNIN}
+              className={styles["verify-email-link"]}
+            >
               {t("backToSignin")}
             </Link>
           </div>
@@ -70,7 +74,10 @@ const VerifyEmailContent = () => {
 
         {isError && (
           <div className={styles["verify-email-footer"]}>
-            <Link href="/auth/signin" className={styles["verify-email-link"]}>
+            <Link
+              href={AUTH_PAGE_ROUTES.SIGNIN}
+              className={styles["verify-email-link"]}
+            >
               {t("backToSignin")}
             </Link>
           </div>

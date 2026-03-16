@@ -78,6 +78,29 @@
   justify-content: center;
 }
 
+.signin-divider {
+  position: relative;
+  text-align: center;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    border-top: $border-width solid $color-border;
+    transform: translateY(-50%);
+  }
+
+  span {
+    position: relative;
+    background: $color-background;
+    padding: 0 $spacing-sm;
+  }
+}
+
 .signin-footer {
   font-size: $font-size-sm;
   line-height: $line-height-normal;

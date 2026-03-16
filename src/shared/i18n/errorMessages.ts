@@ -1,4 +1,5 @@
 import { isDomainRuleError } from "@/core/domain/domainRuleError.guards";
+import type { ConstraintError } from "@/core/domain/repositoryError";
 import type { NotFoundError } from "@/core/domain/repositoryError";
 import { isRepositoryError } from "@/core/domain/repositoryError.guards";
 
@@ -29,6 +30,23 @@ export const getErrorMessage = (
           entityType: notFoundError.entityType,
           entityId: notFoundError.entityId,
         });
+      }
+    }
+
+    if (error.code === "CONSTRAINT_VIOLATION") {
+      const constraintError = error as ConstraintError;
+      const domainConstraintKeyMap: Record<string, string> = {
+        LAST_ADMIN_REQUIRED: "domain.LAST_ADMIN_REQUIRED",
+        INVITATION_ALREADY_USED: "domain.INVITATION_ALREADY_USED",
+        INVITATION_EXPIRED: "domain.INVITATION_EXPIRED",
+        INVITATION_ALREADY_MEMBER: "domain.INVITATION_ALREADY_MEMBER",
+      };
+
+      const domainConstraintKey =
+        domainConstraintKeyMap[constraintError.constraint];
+
+      if (domainConstraintKey) {
+        return tErrors(domainConstraintKey);
       }
     }
 

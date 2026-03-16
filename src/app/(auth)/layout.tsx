@@ -5,6 +5,7 @@ import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
 import { createAuthRepository } from "@/infrastructure/supabase/repositories";
 import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
 
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { createLoggerFactory } from "@/shared/observability";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
@@ -47,7 +48,7 @@ const AuthLayout = async ({
     // On any other error, fail-closed: redirect to landing
     // This prevents lockout but ensures security
     logger.error("Authentication error", { error });
-    redirect("/");
+    redirect(PAGE_ROUTES.HOME);
   }
 
   // User is authenticated, render children
