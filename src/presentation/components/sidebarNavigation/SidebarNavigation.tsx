@@ -27,7 +27,7 @@ import {
   epicRepository,
   projectRepository,
   ticketRepository,
-} from "@/infrastructure/supabase/repositories";
+} from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { useSession } from "@/presentation/hooks/auth/useSession";
 import { useSignOut } from "@/presentation/hooks/auth/useSignOut";

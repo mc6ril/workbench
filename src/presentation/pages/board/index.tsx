@@ -8,7 +8,7 @@ import { PlanFeature } from "@/domains/project-management/core/domain/rules/plan
 
 import { addLabelsToTicket } from "@/domains/project-management/core/usecases/label";
 
-import { labelRepository } from "@/infrastructure/supabase/repositories";
+import { labelRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import BoardView from "@/presentation/components/board/boardView/BoardView";
 import CreateTicketForm from "@/presentation/components/ticket/createTicketForm/CreateTicketForm";

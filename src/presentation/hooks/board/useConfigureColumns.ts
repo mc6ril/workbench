@@ -4,7 +4,7 @@ import type { ConfigureColumnsInput } from "@/domains/project-management/core/do
 
 import { configureColumns } from "@/domains/project-management/core/usecases/board/configureColumns";
 
-import { boardRepository } from "@/infrastructure/supabase/repositories";
+import { boardRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

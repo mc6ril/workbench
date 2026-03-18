@@ -4,7 +4,7 @@ import type { Ticket } from "@/domains/project-management/core/domain/schema/tic
 
 import { moveAndReorderTicket } from "@/domains/project-management/core/usecases/ticket/moveAndReorderTicket";
 
-import { ticketRepository } from "@/infrastructure/supabase/repositories";
+import { ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

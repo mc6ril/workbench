@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getProfile } from "@/domains/project-management/core/usecases/profile/getProfile";
 
-import { userProfileRepository } from "@/infrastructure/supabase/repositories";
+import { userProfileRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

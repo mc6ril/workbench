@@ -4,7 +4,7 @@ import type { ResetPasswordInput } from "@/domains/project-management/core/domai
 
 import { resetPasswordForEmail } from "@/domains/project-management/core/usecases/auth/resetPasswordForEmail";
 
-import { authRepository } from "@/infrastructure/supabase/repositories";
+import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

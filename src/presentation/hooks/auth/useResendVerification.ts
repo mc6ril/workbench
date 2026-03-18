@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { resendVerificationEmail } from "@/domains/project-management/core/usecases/auth/resendVerificationEmail";
 
-import { authRepository } from "@/infrastructure/supabase/repositories";
+import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

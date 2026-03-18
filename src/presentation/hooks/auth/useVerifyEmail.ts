@@ -4,7 +4,7 @@ import type { VerifyEmailInput } from "@/domains/project-management/core/domain/
 
 import { verifyEmail } from "@/domains/project-management/core/usecases/auth/verifyEmail";
 
-import { authRepository } from "@/infrastructure/supabase/repositories";
+import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

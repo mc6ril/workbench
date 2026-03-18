@@ -8,7 +8,7 @@ import type {
 
 import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
 
-import { ticketRepository } from "@/infrastructure/supabase/repositories";
+import { ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

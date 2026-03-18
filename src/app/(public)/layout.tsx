@@ -4,7 +4,7 @@ import { isNotFoundError } from "@/domains/project-management/core/domain/reposi
 
 import { getCurrentSession } from "@/domains/project-management/core/usecases/auth/getCurrentSession";
 
-import { createAuthRepository } from "@/infrastructure/supabase/repositories";
+import { createAuthRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";

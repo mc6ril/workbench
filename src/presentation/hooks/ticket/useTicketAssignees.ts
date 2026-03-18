@@ -5,7 +5,7 @@ import type { TicketAssignee } from "@/domains/project-management/core/domain/sc
 import { assignTicket } from "@/domains/project-management/core/usecases/ticket/assignTicket";
 import { unassignTicket } from "@/domains/project-management/core/usecases/ticket/unassignTicket";
 
-import { ticketRepository } from "@/infrastructure/supabase/repositories";
+import { ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

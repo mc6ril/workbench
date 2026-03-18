@@ -4,7 +4,7 @@ import type { ProjectRole } from "@/domains/project-management/core/domain/schem
 
 import { updateMemberRole } from "@/domains/project-management/core/usecases/member/updateMemberRole";
 
-import { memberRepository } from "@/infrastructure/supabase/repositories";
+import { memberRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

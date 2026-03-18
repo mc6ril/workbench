@@ -4,7 +4,7 @@ import type { CreateProjectInput } from "@/domains/project-management/core/domai
 
 import { createProject } from "@/domains/project-management/core/usecases/project/createProject";
 
-import { projectRepository } from "@/infrastructure/supabase/repositories";
+import { projectRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

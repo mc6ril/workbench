@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { deleteLabel } from "@/domains/project-management/core/usecases/label";
 
-import { labelRepository } from "@/infrastructure/supabase/repositories";
+import { labelRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

@@ -5,7 +5,7 @@ import { DEFAULT_USER_PREFERENCES } from "@/domains/project-management/core/doma
 
 import { updatePreferences } from "@/domains/project-management/core/usecases/profile/updatePreferences";
 
-import { userProfileRepository } from "@/infrastructure/supabase/repositories";
+import { userProfileRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

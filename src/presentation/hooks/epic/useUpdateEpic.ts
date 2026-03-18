@@ -4,7 +4,7 @@ import type { UpdateEpicInput } from "@/domains/project-management/core/domain/s
 
 import { updateEpic } from "@/domains/project-management/core/usecases/epic/updateEpic";
 
-import { epicRepository } from "@/infrastructure/supabase/repositories";
+import { epicRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 
