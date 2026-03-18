@@ -1,8 +1,8 @@
 import type { TicketPriority } from "@/core/domain/schema/ticket.schema";
 
-import Button from "@/presentation/components/ui/Button";
-import Select from "@/presentation/components/ui/Select";
-import Text from "@/presentation/components/ui/Text";
+import Button from "@/shared/design-system/Button";
+import Select from "@/shared/design-system/Select";
+import Text from "@/shared/design-system/Text";
 
 import { useTranslation } from "@/shared/i18n";
 

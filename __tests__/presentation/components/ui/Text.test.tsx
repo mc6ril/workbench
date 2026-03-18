@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import Text from "@/presentation/components/ui/Text";
+import Text from "@/shared/design-system/Text";
 
 describe("Text Component", () => {
   it("should render with default body variant and p tag", () => {

@@ -3,7 +3,7 @@
  * Provides browser instances for React Query hooks and factory functions for server contexts.
  */
 
-import { createSupabaseBrowserClient } from "@/infrastructure/supabase/shared/client-browser";
+import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
 
 import { createAuthRepository } from "./auth/AuthRepository.supabase";
 import { createBoardRepository } from "./board/BoardRepository.supabase";

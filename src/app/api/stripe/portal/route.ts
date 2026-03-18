@@ -5,11 +5,11 @@ import { createBillingPortalSession } from "@/core/usecases/subscription/createB
 
 import { stripePaymentGateway } from "@/infrastructure/stripe/stripePaymentGateway";
 import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
-import { createSupabaseAdminClient } from "@/infrastructure/supabase/shared/client-admin";
-import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
+import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
-import { withRateLimit } from "@/infrastructure/web/rateLimit";
-import { verifyCsrfOrigin } from "@/infrastructure/web/security/csrf";
+import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
+import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
 
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
 import { createLoggerFactory } from "@/shared/observability";

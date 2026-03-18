@@ -3,7 +3,7 @@ import type { Ticket } from "@/core/domain/schema/ticket.schema";
 import CreateSubtaskForm from "@/presentation/components/ticket/createSubtaskForm/CreateSubtaskForm";
 import SubtasksList from "@/presentation/components/ticket/subtasksList/SubtasksList";
 import styles from "@/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
-import Button from "@/presentation/components/ui/Button";
+import Button from "@/shared/design-system/Button";
 
 import { useTranslation } from "@/shared/i18n";
 

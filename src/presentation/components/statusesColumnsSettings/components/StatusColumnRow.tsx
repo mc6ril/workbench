@@ -3,9 +3,9 @@ import type {
   MoveDirection,
   StatusColumnItem,
 } from "@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings.types";
-import Button from "@/presentation/components/ui/Button";
-import Checkbox from "@/presentation/components/ui/Checkbox";
-import Input from "@/presentation/components/ui/Input";
+import Button from "@/shared/design-system/Button";
+import Checkbox from "@/shared/design-system/Checkbox";
+import Input from "@/shared/design-system/Input";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 

@@ -5,12 +5,12 @@ import { useCallback, useState } from "react";
 import { ProjectRole } from "@/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/core/domain/schema/projectMember.schema";
 
-import Avatar from "@/presentation/components/ui/Avatar";
-import Button from "@/presentation/components/ui/Button";
-import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
-import Loader from "@/presentation/components/ui/Loader";
-import Modal from "@/presentation/components/ui/Modal";
-import Text from "@/presentation/components/ui/Text";
+import Avatar from "@/shared/design-system/Avatar";
+import Button from "@/shared/design-system/Button";
+import ErrorMessage from "@/shared/design-system/ErrorMessage";
+import Loader from "@/shared/design-system/Loader";
+import Modal from "@/shared/design-system/Modal";
+import Text from "@/shared/design-system/Text";
 import { useSession } from "@/presentation/hooks/auth/useSession";
 import { useProjectMembers } from "@/presentation/hooks/member/useProjectMembers";
 import { useRemoveMember } from "@/presentation/hooks/member/useRemoveMember";

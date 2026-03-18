@@ -1,7 +1,7 @@
 import styles from "@/presentation/components/exportImportSettings/ExportImportSettings.module.scss";
-import Button from "@/presentation/components/ui/Button";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import Button from "@/shared/design-system/Button";
+import Text from "@/shared/design-system/Text";
+import Title from "@/shared/design-system/Title";
 
 type ExportSectionProps = {
   title: string;

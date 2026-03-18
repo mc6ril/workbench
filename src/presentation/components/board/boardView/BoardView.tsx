@@ -4,8 +4,8 @@ import React, { useMemo } from "react";
 
 import BoardColumn from "@/presentation/components/board/boardColumn/BoardColumn";
 import type { BoardViewProps } from "@/presentation/components/board/boardView/BoardView.types";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import Text from "@/shared/design-system/Text";
+import Title from "@/shared/design-system/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

@@ -4,10 +4,10 @@ import type { TicketAssignee } from "@/core/domain/schema/ticket.schema";
 
 import AssigneePicker from "@/presentation/components/ticket/assigneePicker/AssigneePicker";
 import styles from "@/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
-import Button from "@/presentation/components/ui/Button";
-import Card from "@/presentation/components/ui/Card";
-import Select from "@/presentation/components/ui/Select";
-import Text from "@/presentation/components/ui/Text";
+import Button from "@/shared/design-system/Button";
+import Card from "@/shared/design-system/Card";
+import Select from "@/shared/design-system/Select";
+import Text from "@/shared/design-system/Text";
 import type { TicketDetailStatusOption } from "@/presentation/hooks/ticket/useTicketDetailController";
 
 import { useTranslation } from "@/shared/i18n";

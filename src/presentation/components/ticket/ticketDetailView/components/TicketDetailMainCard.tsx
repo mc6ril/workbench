@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
 import styles from "@/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
-import Card from "@/presentation/components/ui/Card";
-import Textarea from "@/presentation/components/ui/Textarea";
+import Card from "@/shared/design-system/Card";
+import Textarea from "@/shared/design-system/Textarea";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { useTranslation } from "@/shared/i18n";

@@ -3,8 +3,8 @@
 import React, { useCallback, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-import Button from "@/presentation/components/ui/Button";
-import Input from "@/presentation/components/ui/Input";
+import Button from "@/shared/design-system/Button";
+import Input from "@/shared/design-system/Input";
 import { useProjectToolbarSuggestions } from "@/presentation/hooks/project/useProjectToolbarSuggestions";
 import {
   getProjectViewConfig,

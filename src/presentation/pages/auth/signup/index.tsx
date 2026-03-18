@@ -14,13 +14,13 @@ import type {
 } from "@/core/domain/schema/auth.schema";
 import { SignUpFormSchema } from "@/core/domain/schema/auth.schema";
 
-import Button from "@/presentation/components/ui/Button";
-import Checkbox from "@/presentation/components/ui/Checkbox";
-import Form from "@/presentation/components/ui/Form";
-import Input from "@/presentation/components/ui/Input";
-import PasswordStrengthIndicator from "@/presentation/components/ui/PasswordStrengthIndicator";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import Button from "@/shared/design-system/Button";
+import Checkbox from "@/shared/design-system/Checkbox";
+import Form from "@/shared/design-system/Form";
+import Input from "@/shared/design-system/Input";
+import PasswordStrengthIndicator from "@/shared/design-system/PasswordStrengthIndicator";
+import Text from "@/shared/design-system/Text";
+import Title from "@/shared/design-system/Title";
 import { useSignInWithGoogle } from "@/presentation/hooks/auth/useSignInWithGoogle";
 import { useSignUp } from "@/presentation/hooks/auth/useSignUp";
 

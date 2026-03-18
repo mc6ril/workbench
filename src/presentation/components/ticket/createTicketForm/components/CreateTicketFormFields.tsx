@@ -6,9 +6,9 @@ import {
   buildEpicOptions,
   extractSelectedOptionValues,
 } from "@/presentation/components/ticket/createTicketForm/CreateTicketForm.utils";
-import Input from "@/presentation/components/ui/Input";
-import Select from "@/presentation/components/ui/Select";
-import Textarea from "@/presentation/components/ui/Textarea";
+import Input from "@/shared/design-system/Input";
+import Select from "@/shared/design-system/Select";
+import Textarea from "@/shared/design-system/Textarea";
 
 type CreateTicketFormFieldsProps = {
   title: string;

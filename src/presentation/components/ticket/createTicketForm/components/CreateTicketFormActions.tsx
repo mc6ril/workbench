@@ -1,5 +1,5 @@
 import styles from "@/presentation/components/ticket/createTicketForm/CreateTicketForm.module.scss";
-import Button from "@/presentation/components/ui/Button";
+import Button from "@/shared/design-system/Button";
 
 type CreateTicketFormActionsProps = {
   submitLabel: string;

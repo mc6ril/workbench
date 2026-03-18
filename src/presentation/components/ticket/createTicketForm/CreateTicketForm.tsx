@@ -2,8 +2,8 @@
 
 import React, { type FormEvent, useState } from "react";
 
-import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
-import Form from "@/presentation/components/ui/Form";
+import ErrorMessage from "@/shared/design-system/ErrorMessage";
+import Form from "@/shared/design-system/Form";
 
 import { BUTTON_LABELS } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
