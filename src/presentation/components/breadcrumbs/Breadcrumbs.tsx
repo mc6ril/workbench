@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import { usePathname } from "next/navigation";
 
-import Link from "@/presentation/components/ui/Link";
+import Link from "@/shared/design-system/Link";
 import {
   buildProjectViewHref,
   getProjectViewConfig,

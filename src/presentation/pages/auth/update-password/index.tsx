@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 
-import Button from "@/presentation/components/ui/Button";
-import Form from "@/presentation/components/ui/Form";
-import Input from "@/presentation/components/ui/Input";
-import Loader from "@/presentation/components/ui/Loader";
-import PasswordStrengthIndicator from "@/presentation/components/ui/PasswordStrengthIndicator";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import Button from "@/shared/design-system/Button";
+import Form from "@/shared/design-system/Form";
+import Input from "@/shared/design-system/Input";
+import Loader from "@/shared/design-system/Loader";
+import PasswordStrengthIndicator from "@/shared/design-system/PasswordStrengthIndicator";
+import Text from "@/shared/design-system/Text";
+import Title from "@/shared/design-system/Title";
 import { useUpdatePasswordForm } from "@/presentation/hooks/auth/useUpdatePasswordForm";
 
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";

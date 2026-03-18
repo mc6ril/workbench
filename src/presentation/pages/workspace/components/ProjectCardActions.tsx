@@ -9,12 +9,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ProjectRole } from "@/core/domain/schema/project.schema";
 import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
-import Button from "@/presentation/components/ui/Button";
-import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
-import Input from "@/presentation/components/ui/Input";
-import Modal from "@/presentation/components/ui/Modal";
-import Select from "@/presentation/components/ui/Select";
-import Text from "@/presentation/components/ui/Text";
+import Button from "@/shared/design-system/Button";
+import ErrorMessage from "@/shared/design-system/ErrorMessage";
+import Input from "@/shared/design-system/Input";
+import Modal from "@/shared/design-system/Modal";
+import Select from "@/shared/design-system/Select";
+import Text from "@/shared/design-system/Text";
 import { useInviteMember } from "@/presentation/hooks/invitation/useInviteMember";
 import { useDeleteProject } from "@/presentation/hooks/project/useDeleteProject";
 import { useToastStore } from "@/presentation/stores/useToastStore";

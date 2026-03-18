@@ -3,10 +3,10 @@
 import React, { useMemo } from "react";
 
 import SubtaskItem from "@/presentation/components/ticket/subtaskItem/SubtaskItem";
-import EmptyState from "@/presentation/components/ui/EmptyState";
-import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
-import Loader from "@/presentation/components/ui/Loader";
-import Title from "@/presentation/components/ui/Title";
+import EmptyState from "@/shared/design-system/EmptyState";
+import ErrorMessage from "@/shared/design-system/ErrorMessage";
+import Loader from "@/shared/design-system/Loader";
+import Title from "@/shared/design-system/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

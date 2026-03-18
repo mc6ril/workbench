@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import Stack from "@/presentation/components/ui/Stack";
+import Stack from "@/shared/design-system/Stack";
 
 describe("Stack Component", () => {
   it("should render children", () => {

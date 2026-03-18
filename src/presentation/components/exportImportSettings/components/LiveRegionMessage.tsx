@@ -1,5 +1,5 @@
 import styles from "@/presentation/components/exportImportSettings/ExportImportSettings.module.scss";
-import Text from "@/presentation/components/ui/Text";
+import Text from "@/shared/design-system/Text";
 
 type LiveRegionMessageProps = {
   id: string;

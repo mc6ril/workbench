@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   DEFAULT_LANGUAGE,
   PASSWORD_LIMITS,
-} from "@/core/domain/constants/auth.constants";
+} from "@/shared/auth/auth.constants";
 
 /**
  * Reusable Zod schema for password validation.

@@ -4,7 +4,7 @@ import { type PropsWithChildren, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { ThemeProvider } from "next-themes";
 
-import Toast from "@/presentation/components/ui/Toast";
+import Toast from "@/shared/design-system/Toast";
 import { useLocaleSync } from "@/presentation/hooks/useLocaleSync";
 import { useThemeSync } from "@/presentation/hooks/useThemeSync";
 import ReactQueryProvider from "@/presentation/providers/ReactQueryProvider";

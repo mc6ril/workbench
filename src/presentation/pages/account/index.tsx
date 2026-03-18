@@ -21,14 +21,14 @@ import {
   SubscriptionStatus,
 } from "@/core/domain/schema/subscription.schema";
 
-import Button from "@/presentation/components/ui/Button";
-import Form from "@/presentation/components/ui/Form";
-import Input from "@/presentation/components/ui/Input";
-import Loader from "@/presentation/components/ui/Loader";
-import Modal from "@/presentation/components/ui/Modal";
-import Select from "@/presentation/components/ui/Select";
-import Text from "@/presentation/components/ui/Text";
-import Toggle from "@/presentation/components/ui/Toggle";
+import Button from "@/shared/design-system/Button";
+import Form from "@/shared/design-system/Form";
+import Input from "@/shared/design-system/Input";
+import Loader from "@/shared/design-system/Loader";
+import Modal from "@/shared/design-system/Modal";
+import Select from "@/shared/design-system/Select";
+import Text from "@/shared/design-system/Text";
+import Toggle from "@/shared/design-system/Toggle";
 import { useChangePassword } from "@/presentation/hooks/auth/useChangePassword";
 import { useDeleteUser } from "@/presentation/hooks/auth/useDeleteUser";
 import { useSession } from "@/presentation/hooks/auth/useSession";

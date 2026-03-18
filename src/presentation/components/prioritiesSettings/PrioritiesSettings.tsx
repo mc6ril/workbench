@@ -2,11 +2,11 @@
 
 import React, { useCallback, useMemo } from "react";
 
-import Button from "@/presentation/components/ui/Button";
-import Card from "@/presentation/components/ui/Card";
-import Stack from "@/presentation/components/ui/Stack";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import Button from "@/shared/design-system/Button";
+import Card from "@/shared/design-system/Card";
+import Stack from "@/shared/design-system/Stack";
+import Text from "@/shared/design-system/Text";
+import Title from "@/shared/design-system/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

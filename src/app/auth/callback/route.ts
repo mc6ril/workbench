@@ -3,7 +3,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { exchangeCodeForSession } from "@/core/usecases/auth/exchangeCodeForSession";
 
 import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
-import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 

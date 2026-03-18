@@ -2,7 +2,7 @@
 
 import { Suspense, use } from "react";
 
-import Loader from "@/presentation/components/ui/Loader";
+import Loader from "@/shared/design-system/Loader";
 import BoardPageContent from "@/presentation/pages/board";
 
 const BoardPageRouteContent = ({

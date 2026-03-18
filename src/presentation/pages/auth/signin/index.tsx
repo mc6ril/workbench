@@ -10,11 +10,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { SignInInput } from "@/core/domain/schema/auth.schema";
 import { SignInSchema } from "@/core/domain/schema/auth.schema";
 
-import Button from "@/presentation/components/ui/Button";
-import Form from "@/presentation/components/ui/Form";
-import Input from "@/presentation/components/ui/Input";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import Button from "@/shared/design-system/Button";
+import Form from "@/shared/design-system/Form";
+import Input from "@/shared/design-system/Input";
+import Text from "@/shared/design-system/Text";
+import Title from "@/shared/design-system/Title";
 import { useResendVerification } from "@/presentation/hooks/auth/useResendVerification";
 import { useSignIn } from "@/presentation/hooks/auth/useSignIn";
 import { useSignInWithGoogle } from "@/presentation/hooks/auth/useSignInWithGoogle";

@@ -1,5 +1,5 @@
-import Button from "@/presentation/components/ui/Button";
-import Select from "@/presentation/components/ui/Select";
+import Button from "@/shared/design-system/Button";
+import Select from "@/shared/design-system/Select";
 
 import {
   EPIC_SORT_FIELD_VALUES,

@@ -1,8 +1,8 @@
 import { type ChangeEvent, useCallback } from "react";
 
 import styles from "@/presentation/components/exportImportSettings/ExportImportSettings.module.scss";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import Text from "@/shared/design-system/Text";
+import Title from "@/shared/design-system/Title";
 
 type ImportSectionProps = {
   fileInputId: string;

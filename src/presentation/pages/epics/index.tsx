@@ -3,10 +3,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import CreateEpicForm from "@/presentation/components/epic/createEpicForm/CreateEpicForm";
 import EpicsList from "@/presentation/components/epic/epicsList/EpicsList";
-import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
-import Loader from "@/presentation/components/ui/Loader";
-import Modal from "@/presentation/components/ui/Modal";
-import Text from "@/presentation/components/ui/Text";
+import ErrorMessage from "@/shared/design-system/ErrorMessage";
+import Loader from "@/shared/design-system/Loader";
+import Modal from "@/shared/design-system/Modal";
+import Text from "@/shared/design-system/Text";
 import { useCreateEpic, useEpics } from "@/presentation/hooks/epic";
 import { useEpicQueryParams } from "@/presentation/hooks/epic/useEpicQueryParams";
 import { useProjectPermissions } from "@/presentation/providers/permissions";

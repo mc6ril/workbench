@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { handlePaymentWebhook } from "@/core/usecases/subscription/handlePaymentWebhook";
 
 import { stripePaymentGateway } from "@/infrastructure/stripe/stripePaymentGateway";
-import { createSupabaseAdminClient } from "@/infrastructure/supabase/shared/client-admin";
+import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
 import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
 
 import { API_MESSAGES_STRIPE } from "@/shared/constants";

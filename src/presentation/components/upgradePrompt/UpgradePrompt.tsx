@@ -6,9 +6,9 @@ import { usePathname, useRouter } from "next/navigation";
 import type { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
 import type { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
 
-import Button from "@/presentation/components/ui/Button";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import Button from "@/shared/design-system/Button";
+import Text from "@/shared/design-system/Text";
+import Title from "@/shared/design-system/Title";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES } from "@/shared/constants/routes";

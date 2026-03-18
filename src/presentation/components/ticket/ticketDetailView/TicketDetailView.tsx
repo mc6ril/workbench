@@ -2,10 +2,10 @@
 
 import React, { useMemo } from "react";
 
-import Card from "@/presentation/components/ui/Card";
-import Loader from "@/presentation/components/ui/Loader";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import Card from "@/shared/design-system/Card";
+import Loader from "@/shared/design-system/Loader";
+import Text from "@/shared/design-system/Text";
+import Title from "@/shared/design-system/Title";
 import { useTicketDetailController } from "@/presentation/hooks/ticket";
 
 import { useTranslation } from "@/shared/i18n";

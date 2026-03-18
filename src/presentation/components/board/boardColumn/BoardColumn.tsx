@@ -12,7 +12,7 @@ import { CSS } from "@dnd-kit/utilities";
 
 import type { BoardColumnProps } from "@/presentation/components/board/boardColumn/BoardColumn.types";
 import TicketCard from "@/presentation/components/ticket/ticketCard/TicketCard";
-import Title from "@/presentation/components/ui/Title";
+import Title from "@/shared/design-system/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { BOARD_COLUMN_DROP_PREFIX } from "@/shared/constants/board";

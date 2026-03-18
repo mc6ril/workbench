@@ -1,7 +1,7 @@
 import type { ReactNode, RefObject } from "react";
 
-import styles from "@/presentation/components/ui/Modal/Modal.module.scss";
-import type { ModalSize } from "@/presentation/components/ui/Modal/Modal.types";
+import styles from "@/shared/design-system/Modal/Modal.module.scss";
+import type { ModalSize } from "@/shared/design-system/Modal/Modal.types";
 
 type Props = {
   modalRef: RefObject<HTMLDivElement | null>;

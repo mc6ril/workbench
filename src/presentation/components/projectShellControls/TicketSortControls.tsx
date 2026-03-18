@@ -1,7 +1,7 @@
 import type { TicketSort } from "@/core/domain/schema/ticket.schema";
 
-import Button from "@/presentation/components/ui/Button";
-import Select from "@/presentation/components/ui/Select";
+import Button from "@/shared/design-system/Button";
+import Select from "@/shared/design-system/Select";
 
 import {
   SORT_DIRECTION_VALUES,

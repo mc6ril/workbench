@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import EmptyState from "@/presentation/components/ui/EmptyState";
+import EmptyState from "@/shared/design-system/EmptyState";
 
 // Mock i18n
 jest.mock("@/shared/i18n", () => ({

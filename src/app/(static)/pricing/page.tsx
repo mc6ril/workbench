@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 
-import Loader from "@/presentation/components/ui/Loader";
+import Loader from "@/shared/design-system/Loader";
 import PricingPage from "@/presentation/pages/pricing";
 
 const Pricing = () => {

@@ -1,11 +1,11 @@
 import type { CommentWithAuthor } from "@/core/domain/schema/comment.schema";
 
 import styles from "@/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
-import Button from "@/presentation/components/ui/Button";
-import Card from "@/presentation/components/ui/Card";
-import Text from "@/presentation/components/ui/Text";
-import Textarea from "@/presentation/components/ui/Textarea";
-import Title from "@/presentation/components/ui/Title";
+import Button from "@/shared/design-system/Button";
+import Card from "@/shared/design-system/Card";
+import Text from "@/shared/design-system/Text";
+import Textarea from "@/shared/design-system/Textarea";
+import Title from "@/shared/design-system/Title";
 
 import { useTranslation } from "@/shared/i18n";
 

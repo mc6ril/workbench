@@ -5,11 +5,11 @@ import React, { useMemo } from "react";
 import type { EpicWithProgress } from "@/core/domain/schema/epic.schema";
 
 import EpicCard from "@/presentation/components/epic/epicCard/EpicCard";
-import EmptyState from "@/presentation/components/ui/EmptyState";
-import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
-import Loader from "@/presentation/components/ui/Loader";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import EmptyState from "@/shared/design-system/EmptyState";
+import ErrorMessage from "@/shared/design-system/ErrorMessage";
+import Loader from "@/shared/design-system/Loader";
+import Text from "@/shared/design-system/Text";
+import Title from "@/shared/design-system/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

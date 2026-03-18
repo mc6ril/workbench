@@ -5,7 +5,7 @@ import type { Project } from "@/core/domain/schema/project.schema";
 import { getProject } from "@/core/usecases/project/getProject";
 
 import { createProjectRepository } from "@/infrastructure/supabase/repositories";
-import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
 /**
  * Shared server-side project loader for this route segment.

@@ -2,9 +2,9 @@
 
 import React, { useMemo } from "react";
 
-import Card from "@/presentation/components/ui/Card";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import Card from "@/shared/design-system/Card";
+import Text from "@/shared/design-system/Text";
+import Title from "@/shared/design-system/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

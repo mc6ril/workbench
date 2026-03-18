@@ -8,7 +8,7 @@ import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
 
 import type { PriorityItem } from "@/presentation/components/prioritiesSettings/PrioritiesSettings";
 import type { StatusColumnItem } from "@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
-import Loader from "@/presentation/components/ui/Loader";
+import Loader from "@/shared/design-system/Loader";
 import UpgradePrompt from "@/presentation/components/upgradePrompt/UpgradePrompt";
 import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
 import SettingsLayout from "@/presentation/layouts/settingsLayout/SettingsLayout";

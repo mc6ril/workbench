@@ -12,7 +12,7 @@ import TicketSortControls from "@/presentation/components/projectShellControls/T
 import ProjectToolbar from "@/presentation/components/projectToolbar/ProjectToolbar";
 import SidebarNavigation from "@/presentation/components/sidebarNavigation/SidebarNavigation";
 import SkipLink from "@/presentation/components/skipLink/SkipLink";
-import Modal from "@/presentation/components/ui/Modal";
+import Modal from "@/shared/design-system/Modal";
 import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfiguration";
 import { useEpicQueryParams } from "@/presentation/hooks/epic/useEpicQueryParams";
 import { useEpics } from "@/presentation/hooks/epic/useEpics";

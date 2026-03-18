@@ -3,10 +3,10 @@
 import React, { useCallback, useMemo } from "react";
 
 import EpicProgress from "@/presentation/components/epic/epicProgress/EpicProgress";
-import Button from "@/presentation/components/ui/Button";
-import Card from "@/presentation/components/ui/Card";
-import Text from "@/presentation/components/ui/Text";
-import Title from "@/presentation/components/ui/Title";
+import Button from "@/shared/design-system/Button";
+import Card from "@/shared/design-system/Card";
+import Text from "@/shared/design-system/Text";
+import Title from "@/shared/design-system/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

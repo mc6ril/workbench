@@ -9,7 +9,7 @@ import React, {
   useState,
 } from "react";
 
-import Title from "@/presentation/components/ui/Title";
+import Title from "@/shared/design-system/Title";
 
 import {
   ARIA_ORIENTATION_VALUES,

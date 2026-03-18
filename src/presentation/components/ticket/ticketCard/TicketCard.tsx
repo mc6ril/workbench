@@ -3,8 +3,8 @@
 import React, { useCallback, useMemo } from "react";
 
 import TicketMeta from "@/presentation/components/ticket/ticketShared/TicketMeta";
-import Button from "@/presentation/components/ui/Button";
-import Title from "@/presentation/components/ui/Title";
+import Button from "@/shared/design-system/Button";
+import Title from "@/shared/design-system/Title";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
