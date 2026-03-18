@@ -2,15 +2,15 @@
 
 import React, { useMemo } from "react";
 
-import BoardColumn from "@/domains/project-management/presentation/components/board/boardColumn/BoardColumn";
-import type { BoardViewProps } from "@/domains/project-management/presentation/components/board/boardView/BoardView.types";
+import { getAccessibilityId } from "@/shared/a11y/constants";
 import Text from "@/shared/design-system/Text";
 import Title from "@/shared/design-system/Title";
-
-import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./BoardView.module.scss";
+
+import BoardColumn from "@/domains/project-management/presentation/components/board/boardColumn/BoardColumn";
+import type { BoardViewProps } from "@/domains/project-management/presentation/components/board/boardView/BoardView.types";
 
 const BoardView = ({
   columns,

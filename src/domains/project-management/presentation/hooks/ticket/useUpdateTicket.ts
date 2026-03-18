@@ -5,7 +5,6 @@ import type { UpdateTicketInput } from "@/domains/project-management/core/domain
 import { updateTicket } from "@/domains/project-management/core/usecases/ticket/updateTicket";
 
 import { ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 type UpdateTicketVariables = {

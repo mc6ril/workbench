@@ -4,8 +4,9 @@ import React from "react";
 
 import type { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
 
-import UpgradePrompt from "@/domains/project-management/presentation/components/upgradePrompt/UpgradePrompt";
 import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
+
+import UpgradePrompt from "@/domains/project-management/presentation/components/upgradePrompt/UpgradePrompt";
 
 type Props = {
   feature: PlanFeature;

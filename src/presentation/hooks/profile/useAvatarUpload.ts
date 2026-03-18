@@ -4,7 +4,6 @@ import { removeAvatar } from "@/domains/project-management/core/usecases/profile
 import { uploadAvatar } from "@/domains/project-management/core/usecases/profile/uploadAvatar";
 
 import { userProfileRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**

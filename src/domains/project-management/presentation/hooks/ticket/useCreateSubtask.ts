@@ -5,7 +5,6 @@ import type { CreateSubtaskInput } from "@/domains/project-management/core/domai
 import { createSubtask } from "@/domains/project-management/core/usecases/ticket/createSubtask";
 
 import { ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**

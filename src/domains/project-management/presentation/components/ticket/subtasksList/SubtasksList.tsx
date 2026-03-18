@@ -2,16 +2,16 @@
 
 import React, { useMemo } from "react";
 
-import SubtaskItem from "@/domains/project-management/presentation/components/ticket/subtaskItem/SubtaskItem";
+import { getAccessibilityId } from "@/shared/a11y/constants";
 import EmptyState from "@/shared/design-system/EmptyState";
 import ErrorMessage from "@/shared/design-system/ErrorMessage";
 import Loader from "@/shared/design-system/Loader";
 import Title from "@/shared/design-system/Title";
-
-import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./SubtasksList.module.scss";
+
+import SubtaskItem from "@/domains/project-management/presentation/components/ticket/subtaskItem/SubtaskItem";
 
 export type SubtaskViewModel = {
   id: string;

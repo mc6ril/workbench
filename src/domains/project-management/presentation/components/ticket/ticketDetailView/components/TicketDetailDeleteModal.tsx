@@ -1,9 +1,9 @@
-import styles from "@/domains/project-management/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 import Button from "@/shared/design-system/Button";
 import Modal from "@/shared/design-system/Modal";
 import Text from "@/shared/design-system/Text";
-
 import { useTranslation } from "@/shared/i18n";
+
+import styles from "@/domains/project-management/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 
 type Props = {
   isOpen: boolean;

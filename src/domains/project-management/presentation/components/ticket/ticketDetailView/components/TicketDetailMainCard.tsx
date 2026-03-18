@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 
-import styles from "@/domains/project-management/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
+import { getAccessibilityId } from "@/shared/a11y";
 import Card from "@/shared/design-system/Card";
 import Textarea from "@/shared/design-system/Textarea";
-
-import { getAccessibilityId } from "@/shared/a11y";
 import { useTranslation } from "@/shared/i18n";
+
+import styles from "@/domains/project-management/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 
 type Props = {
   title: string;

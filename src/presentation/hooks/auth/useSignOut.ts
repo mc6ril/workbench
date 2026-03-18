@@ -3,11 +3,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { signOutUser } from "@/domains/project-management/core/usecases/auth/signOutUser";
 
-import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
-import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
-
 import { PAGE_ROUTES } from "@/shared/constants/routes";
+
+import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for signing out the current user.

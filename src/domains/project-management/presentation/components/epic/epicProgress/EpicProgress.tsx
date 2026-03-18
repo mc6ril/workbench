@@ -2,10 +2,9 @@
 
 import React from "react";
 
-import Text from "@/shared/design-system/Text";
-
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { ARIA_ROLES } from "@/shared/a11y/constants";
+import Text from "@/shared/design-system/Text";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./EpicProgress.module.scss";

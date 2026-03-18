@@ -1,8 +1,9 @@
 import type { TicketAssignee } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import styles from "@/domains/project-management/presentation/components/ticket/assigneePicker/AssigneePicker.module.scss";
 import Avatar from "@/shared/design-system/Avatar";
 import Button from "@/shared/design-system/Button";
+
+import styles from "@/domains/project-management/presentation/components/ticket/assigneePicker/AssigneePicker.module.scss";
 
 type AssigneePickerCurrentProps = {
   assignees: TicketAssignee[];

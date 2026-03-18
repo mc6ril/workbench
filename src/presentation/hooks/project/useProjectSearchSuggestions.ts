@@ -1,9 +1,5 @@
 import { useMemo } from "react";
 
-import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
-import { useTickets } from "@/domains/project-management/presentation/hooks/ticket/useTickets";
-import type { ProjectViewKey } from "@/domains/project-management/presentation/navigation/projectViews.config";
-
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { filterEpicsBySearch } from "@/shared/utils/epicUtils";
 import { buildProjectRoute } from "@/shared/utils/routes";
@@ -13,6 +9,10 @@ import {
 } from "@/shared/utils/ticketUtils";
 
 import { useProject } from "./useProject";
+
+import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
+import { useTickets } from "@/domains/project-management/presentation/hooks/ticket/useTickets";
+import type { ProjectViewKey } from "@/domains/project-management/presentation/navigation/projectViews.config";
 
 export type ProjectSearchSuggestion = {
   id: string;

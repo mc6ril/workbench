@@ -22,23 +22,9 @@ import { computeFeatureLockState } from "@/domains/project-management/core/useca
 import { getTicketAssigneesByProjectId } from "@/domains/project-management/core/usecases/ticket/getTicketAssigneesByProjectId";
 import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
 
-import {
-  boardRepository,
-  epicRepository,
-  projectRepository,
-  ticketRepository,
-} from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { useSession } from "@/presentation/hooks/auth/useSession";
 import { useSignOut } from "@/presentation/hooks/auth/useSignOut";
-import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
-import {
-  buildProjectViewHref,
-  getProjectViewConfigsForSidebar,
-} from "@/domains/project-management/presentation/navigation/projectViews.config";
-import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
-import { useSortStore } from "@/domains/project-management/presentation/stores/useSortStore";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
@@ -55,6 +41,20 @@ import type {
   SidebarNavigationProps,
 } from "./SidebarNavigation.types";
 import { omitParentIdFilter } from "./SidebarNavigation.utils";
+
+import {
+  boardRepository,
+  epicRepository,
+  projectRepository,
+  ticketRepository,
+} from "@/domains/project-management/infrastructure/supabase/repositories";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
+import {
+  buildProjectViewHref,
+  getProjectViewConfigsForSidebar,
+} from "@/domains/project-management/presentation/navigation/projectViews.config";
+import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
+import { useSortStore } from "@/domains/project-management/presentation/stores/useSortStore";
 
 const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const pathname = usePathname();

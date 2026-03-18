@@ -2,11 +2,10 @@
 
 import React, { useMemo } from "react";
 
+import { getAccessibilityId } from "@/shared/a11y/constants";
 import Card from "@/shared/design-system/Card";
 import Text from "@/shared/design-system/Text";
 import Title from "@/shared/design-system/Title";
-
-import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
 import ExportSection from "./components/ExportSection";

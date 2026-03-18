@@ -5,9 +5,6 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import Button from "@/shared/design-system/Button";
-import Text from "@/shared/design-system/Text";
-
 import { getAccessibilityId } from "@/shared/a11y";
 import {
   FEATURE_KEYS,
@@ -19,6 +16,8 @@ import {
   VALUE_KEYS,
 } from "@/shared/constants/landing";
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
+import Button from "@/shared/design-system/Button";
+import Text from "@/shared/design-system/Text";
 import { useTranslation } from "@/shared/i18n";
 import type { FeatureKey } from "@/shared/types/landing";
 import { buildFeaturePreviewContent, isFeatureKey } from "@/shared/utils";

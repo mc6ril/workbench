@@ -1,12 +1,12 @@
+import { getAccessibilityId } from "@/shared/a11y/constants";
+import Button from "@/shared/design-system/Button";
+import Input from "@/shared/design-system/Input";
+
 import styles from "@/domains/project-management/presentation/components/prioritiesSettings/PrioritiesSettings.module.scss";
 import type {
   MoveDirection,
   PriorityItem,
 } from "@/domains/project-management/presentation/components/prioritiesSettings/PrioritiesSettings.types";
-import Button from "@/shared/design-system/Button";
-import Input from "@/shared/design-system/Input";
-
-import { getAccessibilityId } from "@/shared/a11y/constants";
 
 type PriorityRowProps = {
   priority: PriorityItem;

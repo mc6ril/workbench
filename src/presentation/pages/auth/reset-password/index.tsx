@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 
+import { useResetPasswordForm } from "@/presentation/hooks/auth/useResetPasswordForm";
+
+import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/Button";
 import Form from "@/shared/design-system/Form";
 import Input from "@/shared/design-system/Input";
 import Text from "@/shared/design-system/Text";
 import Title from "@/shared/design-system/Title";
-import { useResetPasswordForm } from "@/presentation/hooks/auth/useResetPasswordForm";
-
-import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";

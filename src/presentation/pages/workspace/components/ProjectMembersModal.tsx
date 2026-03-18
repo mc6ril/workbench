@@ -5,18 +5,18 @@ import { useCallback, useState } from "react";
 import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
 
+import { useSession } from "@/presentation/hooks/auth/useSession";
+import { useProjectMembers } from "@/presentation/hooks/member/useProjectMembers";
+import { useRemoveMember } from "@/presentation/hooks/member/useRemoveMember";
+import { useUpdateMemberRole } from "@/presentation/hooks/member/useUpdateMemberRole";
+
 import Avatar from "@/shared/design-system/Avatar";
 import Button from "@/shared/design-system/Button";
 import ErrorMessage from "@/shared/design-system/ErrorMessage";
 import Loader from "@/shared/design-system/Loader";
 import Modal from "@/shared/design-system/Modal";
 import Text from "@/shared/design-system/Text";
-import { useSession } from "@/presentation/hooks/auth/useSession";
-import { useProjectMembers } from "@/presentation/hooks/member/useProjectMembers";
-import { useRemoveMember } from "@/presentation/hooks/member/useRemoveMember";
-import { useUpdateMemberRole } from "@/presentation/hooks/member/useUpdateMemberRole";
-import { useToastStore } from "@/presentation/stores/useToastStore";
-
+import { useToastStore } from "@/shared/design-system/Toast/useToastStore";
 import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 

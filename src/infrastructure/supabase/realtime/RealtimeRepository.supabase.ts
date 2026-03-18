@@ -1,8 +1,3 @@
-import { mapEpicRowToDomain } from "@/domains/project-management/infrastructure/supabase/epic/EpicMapper.supabase";
-import { mapLabelRowToDomain } from "@/domains/project-management/infrastructure/supabase/label/LabelMapper.supabase";
-import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
-import { mapSprintRowToDomain } from "@/domains/project-management/infrastructure/supabase/sprint/SprintMapper.supabase";
-import { mapTicketRowToDomain } from "@/domains/project-management/infrastructure/supabase/ticket/TicketMapper.supabase";
 import type {
   EpicRow,
   LabelRow,
@@ -10,7 +5,13 @@ import type {
   TicketRow,
 } from "@/infrastructure/supabase/types";
 
+import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
+
 import type { RealtimeRepository } from "@/domains/project-management/core/ports/realtimeRepository";
+import { mapEpicRowToDomain } from "@/domains/project-management/infrastructure/supabase/epic/EpicMapper.supabase";
+import { mapLabelRowToDomain } from "@/domains/project-management/infrastructure/supabase/label/LabelMapper.supabase";
+import { mapSprintRowToDomain } from "@/domains/project-management/infrastructure/supabase/sprint/SprintMapper.supabase";
+import { mapTicketRowToDomain } from "@/domains/project-management/infrastructure/supabase/ticket/TicketMapper.supabase";
 
 type BrowserSupabaseClient = ReturnType<typeof createSupabaseBrowserClient>;
 type SupabaseChannel = ReturnType<BrowserSupabaseClient["channel"]>;

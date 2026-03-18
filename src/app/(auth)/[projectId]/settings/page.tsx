@@ -6,14 +6,15 @@ import dynamic from "next/dynamic";
 import { getDefaultBoardConfiguration } from "@/domains/project-management/core/domain/rules/board.rules";
 import { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
 
+import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
+
+import Loader from "@/shared/design-system/Loader";
+import { useTranslation } from "@/shared/i18n";
+
 import type { PriorityItem } from "@/domains/project-management/presentation/components/prioritiesSettings/PrioritiesSettings";
 import type { StatusColumnItem } from "@/domains/project-management/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
-import Loader from "@/shared/design-system/Loader";
 import UpgradePrompt from "@/domains/project-management/presentation/components/upgradePrompt/UpgradePrompt";
-import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
 import SettingsLayout from "@/domains/project-management/presentation/layouts/settingsLayout/SettingsLayout";
-
-import { useTranslation } from "@/shared/i18n";
 
 const ProjectSettings = dynamic(
   () => import("@/domains/project-management/presentation/components/projectSettings/ProjectSettings"),

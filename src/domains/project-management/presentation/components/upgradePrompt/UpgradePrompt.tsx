@@ -6,12 +6,11 @@ import { usePathname, useRouter } from "next/navigation";
 import type { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
 import type { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
+import { getAccessibilityId } from "@/shared/a11y";
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/Button";
 import Text from "@/shared/design-system/Text";
 import Title from "@/shared/design-system/Title";
-
-import { getAccessibilityId } from "@/shared/a11y";
-import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./UpgradePrompt.module.scss";

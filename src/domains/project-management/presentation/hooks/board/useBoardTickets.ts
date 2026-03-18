@@ -4,10 +4,10 @@ import { useMemo } from "react";
 
 import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import { useTicketAssigneesByProjectId } from "@/domains/project-management/presentation/hooks/ticket/useTicketAssigneesByProjectId";
-
 import type { BoardTicketViewModel } from "@/shared/types/board";
 import { buildTicketCode } from "@/shared/utils/ticketUtils";
+
+import { useTicketAssigneesByProjectId } from "@/domains/project-management/presentation/hooks/ticket/useTicketAssigneesByProjectId";
 
 type UseBoardTicketsInput = {
   projectId: string;

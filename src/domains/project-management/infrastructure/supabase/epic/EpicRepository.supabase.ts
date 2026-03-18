@@ -12,12 +12,12 @@ import type {
 import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
-import { mapTicketRowsToDomain } from "@/domains/project-management/infrastructure/supabase/ticket/TicketMapper.supabase";
 import type { EpicRow, TicketRow } from "@/infrastructure/supabase/types";
 
 import { mapEpicRowsToDomain, mapEpicRowToDomain } from "./EpicMapper.supabase";
 
 import type { EpicRepository } from "@/domains/project-management/core/ports/epicRepository";
+import { mapTicketRowsToDomain } from "@/domains/project-management/infrastructure/supabase/ticket/TicketMapper.supabase";
 
 /**
  * Create an EpicRepository implementation using the provided Supabase client.

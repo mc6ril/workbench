@@ -30,15 +30,15 @@ import {
   getTicketLocation,
 } from "@/domains/project-management/core/usecases/board/boardDnD";
 
-import { useMoveAndReorderTicket } from "@/domains/project-management/presentation/hooks/ticket/useMoveAndReorderTicket";
-import { useReorderTicket } from "@/domains/project-management/presentation/hooks/ticket/useReorderTicket";
-
 import type {
   BoardColumnConfig,
   BoardTicketViewModel,
 } from "@/shared/types/board";
 
 import type { BoardColumnTickets } from "./types";
+
+import { useMoveAndReorderTicket } from "@/domains/project-management/presentation/hooks/ticket/useMoveAndReorderTicket";
+import { useReorderTicket } from "@/domains/project-management/presentation/hooks/ticket/useReorderTicket";
 
 const areIdArraysEqual = (first: string[], second: string[]): boolean => {
   if (first.length !== second.length) {

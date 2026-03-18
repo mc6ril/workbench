@@ -1,13 +1,13 @@
+import { getAccessibilityId } from "@/shared/a11y/constants";
+import Button from "@/shared/design-system/Button";
+import Checkbox from "@/shared/design-system/Checkbox";
+import Input from "@/shared/design-system/Input";
+
 import styles from "@/domains/project-management/presentation/components/statusesColumnsSettings/StatusesColumnsSettings.module.scss";
 import type {
   MoveDirection,
   StatusColumnItem,
 } from "@/domains/project-management/presentation/components/statusesColumnsSettings/StatusesColumnsSettings.types";
-import Button from "@/shared/design-system/Button";
-import Checkbox from "@/shared/design-system/Checkbox";
-import Input from "@/shared/design-system/Input";
-
-import { getAccessibilityId } from "@/shared/a11y/constants";
 
 type StatusColumnRowProps = {
   column: StatusColumnItem;

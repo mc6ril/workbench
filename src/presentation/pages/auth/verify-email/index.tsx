@@ -3,13 +3,13 @@
 import { Suspense } from "react";
 import Link from "next/link";
 
+import { useVerifyEmailFlow } from "@/presentation/hooks/auth/useVerifyEmailFlow";
+
+import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import ErrorMessage from "@/shared/design-system/ErrorMessage";
 import Loader from "@/shared/design-system/Loader";
 import Text from "@/shared/design-system/Text";
 import Title from "@/shared/design-system/Title";
-import { useVerifyEmailFlow } from "@/presentation/hooks/auth/useVerifyEmailFlow";
-
-import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";

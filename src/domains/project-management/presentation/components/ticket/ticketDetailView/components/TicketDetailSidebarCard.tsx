@@ -2,15 +2,15 @@ import type { Label } from "@/domains/project-management/core/domain/schema/labe
 import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
 import type { TicketAssignee } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import AssigneePicker from "@/domains/project-management/presentation/components/ticket/assigneePicker/AssigneePicker";
-import styles from "@/domains/project-management/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 import Button from "@/shared/design-system/Button";
 import Card from "@/shared/design-system/Card";
 import Select from "@/shared/design-system/Select";
 import Text from "@/shared/design-system/Text";
-import type { TicketDetailStatusOption } from "@/domains/project-management/presentation/hooks/ticket/useTicketDetailController";
-
 import { useTranslation } from "@/shared/i18n";
+
+import AssigneePicker from "@/domains/project-management/presentation/components/ticket/assigneePicker/AssigneePicker";
+import styles from "@/domains/project-management/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
+import type { TicketDetailStatusOption } from "@/domains/project-management/presentation/hooks/ticket/useTicketDetailController";
 
 type SelectOption = {
   value: string;

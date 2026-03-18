@@ -5,7 +5,6 @@ import type { UpdatePasswordInput } from "@/domains/project-management/core/doma
 import { updatePassword } from "@/domains/project-management/core/usecases/auth/updatePassword";
 
 import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**

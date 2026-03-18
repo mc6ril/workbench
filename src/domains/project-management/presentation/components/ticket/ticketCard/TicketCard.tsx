@@ -2,15 +2,15 @@
 
 import React, { useCallback, useMemo } from "react";
 
-import TicketMeta from "@/domains/project-management/presentation/components/ticket/ticketShared/TicketMeta";
+import { getAccessibilityId } from "@/shared/a11y/constants";
 import Button from "@/shared/design-system/Button";
 import Title from "@/shared/design-system/Title";
-
-import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 import { buildTicketAriaLabel } from "@/shared/utils/ticketUtils";
 
 import styles from "./TicketCard.module.scss";
+
+import TicketMeta from "@/domains/project-management/presentation/components/ticket/ticketShared/TicketMeta";
 
 export type TicketCardProps = {
   id: string;

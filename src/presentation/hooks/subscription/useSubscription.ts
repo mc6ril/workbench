@@ -8,9 +8,9 @@ import {
 
 import { getCurrentUserSubscription } from "@/domains/project-management/core/usecases/subscription/getCurrentUserSubscription";
 
-import { subscriptionRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { useSession } from "@/presentation/hooks/auth/useSession";
+
+import { subscriptionRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**

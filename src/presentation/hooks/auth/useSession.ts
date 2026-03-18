@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getCurrentSession } from "@/domains/project-management/core/usecases/auth/getCurrentSession";
 
 import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**

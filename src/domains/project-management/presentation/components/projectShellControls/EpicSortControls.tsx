@@ -1,10 +1,9 @@
-import Button from "@/shared/design-system/Button";
-import Select from "@/shared/design-system/Select";
-
 import {
   EPIC_SORT_FIELD_VALUES,
   SORT_DIRECTION_VALUES,
 } from "@/shared/constants/filterSort";
+import Button from "@/shared/design-system/Button";
+import Select from "@/shared/design-system/Select";
 import { useTranslation } from "@/shared/i18n";
 import type { EpicSortField, SortDirection } from "@/shared/types";
 

@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteEpic } from "@/domains/project-management/core/usecases/epic/deleteEpic";
 
 import { epicRepository, ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 type DeleteEpicVariables = {

@@ -1,7 +1,6 @@
+import { EPIC_PROGRESS_FILTER_VALUES } from "@/shared/constants/filterSort";
 import Button from "@/shared/design-system/Button";
 import Select from "@/shared/design-system/Select";
-
-import { EPIC_PROGRESS_FILTER_VALUES } from "@/shared/constants/filterSort";
 import { useTranslation } from "@/shared/i18n";
 import type { EpicProgressFilter } from "@/shared/types";
 

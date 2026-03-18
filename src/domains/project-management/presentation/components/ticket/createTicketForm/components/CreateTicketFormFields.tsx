@@ -1,14 +1,15 @@
 import { type ChangeEvent, useMemo } from "react";
 
+import Input from "@/shared/design-system/Input";
+import Select from "@/shared/design-system/Select";
+import Textarea from "@/shared/design-system/Textarea";
+
 import styles from "@/domains/project-management/presentation/components/ticket/createTicketForm/CreateTicketForm.module.scss";
 import type { Option } from "@/domains/project-management/presentation/components/ticket/createTicketForm/CreateTicketForm.types";
 import {
   buildEpicOptions,
   extractSelectedOptionValues,
 } from "@/domains/project-management/presentation/components/ticket/createTicketForm/CreateTicketForm.utils";
-import Input from "@/shared/design-system/Input";
-import Select from "@/shared/design-system/Select";
-import Textarea from "@/shared/design-system/Textarea";
 
 type CreateTicketFormFieldsProps = {
   title: string;

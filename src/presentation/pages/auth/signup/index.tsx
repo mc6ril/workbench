@@ -14,6 +14,10 @@ import type {
 } from "@/domains/project-management/core/domain/schema/auth.schema";
 import { SignUpFormSchema } from "@/domains/project-management/core/domain/schema/auth.schema";
 
+import { useSignInWithGoogle } from "@/presentation/hooks/auth/useSignInWithGoogle";
+import { useSignUp } from "@/presentation/hooks/auth/useSignUp";
+
+import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/Button";
 import Checkbox from "@/shared/design-system/Checkbox";
 import Form from "@/shared/design-system/Form";
@@ -21,10 +25,6 @@ import Input from "@/shared/design-system/Input";
 import PasswordStrengthIndicator from "@/shared/design-system/PasswordStrengthIndicator";
 import Text from "@/shared/design-system/Text";
 import Title from "@/shared/design-system/Title";
-import { useSignInWithGoogle } from "@/presentation/hooks/auth/useSignInWithGoogle";
-import { useSignUp } from "@/presentation/hooks/auth/useSignUp";
-
-import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";

@@ -5,7 +5,6 @@ import type { Ticket } from "@/domains/project-management/core/domain/schema/tic
 import { moveTicket } from "@/domains/project-management/core/usecases/ticket/moveTicket";
 
 import { ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 type MoveTicketVariables = {
