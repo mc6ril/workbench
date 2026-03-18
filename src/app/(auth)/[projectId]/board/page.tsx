@@ -3,6 +3,7 @@
 import { Suspense, use } from "react";
 
 import Loader from "@/shared/design-system/Loader";
+
 import BoardPageContent from "@/domains/project-management/presentation/pages/board";
 
 const BoardPageRouteContent = ({

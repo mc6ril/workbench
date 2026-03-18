@@ -9,8 +9,6 @@ import React, {
   useState,
 } from "react";
 
-import Title from "@/shared/design-system/Title";
-
 import {
   ARIA_ORIENTATION_VALUES,
   ARIA_ROLES,
@@ -18,6 +16,7 @@ import {
   getAccessibilityId,
 } from "@/shared/a11y/constants";
 import { handleKeyboardNavigation } from "@/shared/a11y/utilities";
+import Title from "@/shared/design-system/Title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./SettingsLayout.module.scss";

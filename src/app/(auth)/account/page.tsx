@@ -2,8 +2,9 @@
 
 import { Suspense } from "react";
 
-import Loader from "@/shared/design-system/Loader";
 import AccountPage from "@/presentation/pages/account";
+
+import Loader from "@/shared/design-system/Loader";
 
 const AccountRoutePage = () => {
   return (

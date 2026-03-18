@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteProject } from "@/domains/project-management/core/usecases/project/deleteProject";
 
 import { projectRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**

@@ -2,10 +2,9 @@
 
 import React, { useCallback } from "react";
 
-import { useToastStore } from "@/presentation/stores/useToastStore";
-
 import styles from "./Toast.module.scss";
 import ToastItem from "./ToastItem";
+import { useToastStore } from "./useToastStore";
 
 /**
  * Global container that renders all active toasts.

@@ -4,30 +4,14 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import AppFooter from "@/presentation/components/appFooter/AppFooter";
-import Breadcrumbs from "@/domains/project-management/presentation/components/breadcrumbs/Breadcrumbs";
-import EpicFilterControls from "@/domains/project-management/presentation/components/projectShellControls/EpicFilterControls";
-import EpicSortControls from "@/domains/project-management/presentation/components/projectShellControls/EpicSortControls";
-import TicketFilterControls from "@/domains/project-management/presentation/components/projectShellControls/TicketFilterControls";
-import TicketSortControls from "@/domains/project-management/presentation/components/projectShellControls/TicketSortControls";
-import ProjectToolbar from "@/domains/project-management/presentation/components/projectToolbar/ProjectToolbar";
-import SidebarNavigation from "@/domains/project-management/presentation/components/sidebarNavigation/SidebarNavigation";
 import SkipLink from "@/presentation/components/skipLink/SkipLink";
-import Modal from "@/shared/design-system/Modal";
-import { useBoardConfiguration } from "@/domains/project-management/presentation/hooks/board/useBoardConfiguration";
-import { useEpicQueryParams } from "@/domains/project-management/presentation/hooks/epic/useEpicQueryParams";
-import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
 import { useLabels } from "@/presentation/hooks/label";
 import { useProjectSearchSuggestions } from "@/presentation/hooks/project/useProjectSearchSuggestions";
-import { useProjectRealtime } from "@/domains/project-management/presentation/hooks/realtime/useProjectRealtime";
-import { useSprints } from "@/domains/project-management/presentation/hooks/sprint";
 import DashboardShell from "@/presentation/layouts/dashboardShell/DashboardShell";
-import { getProjectViewKeyFromPath } from "@/domains/project-management/presentation/navigation/projectViews.config";
 import {
   ProjectPermissionsProvider,
   useProjectPermissions,
 } from "@/presentation/providers/permissions";
-import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
-import { useSortStore } from "@/domains/project-management/presentation/stores/useSortStore";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import {
@@ -37,8 +21,25 @@ import {
   TICKET_SORT_FIELD_VALUES,
 } from "@/shared/constants/filterSort";
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
+import Modal from "@/shared/design-system/Modal";
 import { useTranslation } from "@/shared/i18n";
 import { buildProjectRoute } from "@/shared/utils/routes";
+
+import Breadcrumbs from "@/domains/project-management/presentation/components/breadcrumbs/Breadcrumbs";
+import EpicFilterControls from "@/domains/project-management/presentation/components/projectShellControls/EpicFilterControls";
+import EpicSortControls from "@/domains/project-management/presentation/components/projectShellControls/EpicSortControls";
+import TicketFilterControls from "@/domains/project-management/presentation/components/projectShellControls/TicketFilterControls";
+import TicketSortControls from "@/domains/project-management/presentation/components/projectShellControls/TicketSortControls";
+import ProjectToolbar from "@/domains/project-management/presentation/components/projectToolbar/ProjectToolbar";
+import SidebarNavigation from "@/domains/project-management/presentation/components/sidebarNavigation/SidebarNavigation";
+import { useBoardConfiguration } from "@/domains/project-management/presentation/hooks/board/useBoardConfiguration";
+import { useEpicQueryParams } from "@/domains/project-management/presentation/hooks/epic/useEpicQueryParams";
+import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
+import { useProjectRealtime } from "@/domains/project-management/presentation/hooks/realtime/useProjectRealtime";
+import { useSprints } from "@/domains/project-management/presentation/hooks/sprint";
+import { getProjectViewKeyFromPath } from "@/domains/project-management/presentation/navigation/projectViews.config";
+import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
+import { useSortStore } from "@/domains/project-management/presentation/stores/useSortStore";
 
 type Props = {
   projectId: string;

@@ -1,9 +1,9 @@
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
-
 import { API_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
+
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for deleting the current user account.

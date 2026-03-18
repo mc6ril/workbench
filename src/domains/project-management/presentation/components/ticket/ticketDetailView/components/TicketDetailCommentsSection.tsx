@@ -1,13 +1,13 @@
 import type { CommentWithAuthor } from "@/domains/project-management/core/domain/schema/comment.schema";
 
-import styles from "@/domains/project-management/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 import Button from "@/shared/design-system/Button";
 import Card from "@/shared/design-system/Card";
 import Text from "@/shared/design-system/Text";
 import Textarea from "@/shared/design-system/Textarea";
 import Title from "@/shared/design-system/Title";
-
 import { useTranslation } from "@/shared/i18n";
+
+import styles from "@/domains/project-management/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 
 type Props = {
   comments: CommentWithAuthor[];

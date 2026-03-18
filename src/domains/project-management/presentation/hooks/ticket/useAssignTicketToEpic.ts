@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { assignTicketToEpic } from "@/domains/project-management/core/usecases/ticket/assignTicketToEpic";
 
 import { epicRepository, ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 type AssignTicketToEpicVariables = {

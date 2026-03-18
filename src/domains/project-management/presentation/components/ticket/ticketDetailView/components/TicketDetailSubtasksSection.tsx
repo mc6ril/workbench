@@ -1,11 +1,11 @@
 import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
+import Button from "@/shared/design-system/Button";
+import { useTranslation } from "@/shared/i18n";
+
 import CreateSubtaskForm from "@/domains/project-management/presentation/components/ticket/createSubtaskForm/CreateSubtaskForm";
 import SubtasksList from "@/domains/project-management/presentation/components/ticket/subtasksList/SubtasksList";
 import styles from "@/domains/project-management/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
-import Button from "@/shared/design-system/Button";
-
-import { useTranslation } from "@/shared/i18n";
 
 type Props = {
   subtasks: Ticket[];

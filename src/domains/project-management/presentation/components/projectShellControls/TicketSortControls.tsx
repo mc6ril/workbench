@@ -1,12 +1,11 @@
 import type { TicketSort } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import Button from "@/shared/design-system/Button";
-import Select from "@/shared/design-system/Select";
-
 import {
   SORT_DIRECTION_VALUES,
   TICKET_SORT_FIELD_VALUES,
 } from "@/shared/constants/filterSort";
+import Button from "@/shared/design-system/Button";
+import Select from "@/shared/design-system/Select";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./ProjectShellControls.module.scss";

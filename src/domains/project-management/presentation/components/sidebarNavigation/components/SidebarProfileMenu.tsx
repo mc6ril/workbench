@@ -1,7 +1,8 @@
 import type { RefObject } from "react";
 import Link from "next/link";
 
-import { UserProfileIcon } from "@/presentation/components/icons";
+import { UserProfileIcon } from "@/shared/design-system/icons";
+
 import styles from "@/domains/project-management/presentation/components/sidebarNavigation/SidebarNavigation.module.scss";
 
 type Props = {

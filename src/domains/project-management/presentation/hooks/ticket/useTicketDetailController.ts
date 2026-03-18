@@ -5,14 +5,12 @@ import { PlanFeature } from "@/domains/project-management/core/domain/rules/plan
 import type { TicketPriority } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import { useSession } from "@/presentation/hooks/auth/useSession";
-import { useBoardConfiguration } from "@/domains/project-management/presentation/hooks/board/useBoardConfiguration";
 import {
   useComments,
   useCreateComment,
   useDeleteComment,
   useUpdateComment,
 } from "@/presentation/hooks/comment";
-import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
 import {
   useAddTicketLabels,
   useLabels,
@@ -20,8 +18,15 @@ import {
   useTicketLabelIds,
 } from "@/presentation/hooks/label";
 import { useProjectMembers } from "@/presentation/hooks/member/useProjectMembers";
-import { useSprints } from "@/domains/project-management/presentation/hooks/sprint";
 import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
+import { useProjectPermissions } from "@/presentation/providers/permissions";
+
+import { PROJECT_VIEWS } from "@/shared/constants/routes";
+import { buildProjectRoute } from "@/shared/utils/routes";
+
+import { useBoardConfiguration } from "@/domains/project-management/presentation/hooks/board/useBoardConfiguration";
+import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
+import { useSprints } from "@/domains/project-management/presentation/hooks/sprint";
 import {
   useAssignTicket,
   useCreateSubtask,
@@ -32,10 +37,6 @@ import {
   useUnassignTicket,
   useUpdateTicket,
 } from "@/domains/project-management/presentation/hooks/ticket";
-import { useProjectPermissions } from "@/presentation/providers/permissions";
-
-import { PROJECT_VIEWS } from "@/shared/constants/routes";
-import { buildProjectRoute } from "@/shared/utils/routes";
 
 type UseTicketDetailControllerParams = {
   projectId: string;

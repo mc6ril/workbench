@@ -6,7 +6,6 @@ import { assignTicket } from "@/domains/project-management/core/usecases/ticket/
 import { unassignTicket } from "@/domains/project-management/core/usecases/ticket/unassignTicket";
 
 import { ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**

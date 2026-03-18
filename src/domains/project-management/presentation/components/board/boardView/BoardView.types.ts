@@ -1,6 +1,6 @@
-import type { BoardColumnProps } from "@/domains/project-management/presentation/components/board/boardColumn/BoardColumn.types";
-
 import type { BoardColumnConfig } from "@/shared/types/board";
+
+import type { BoardColumnProps } from "@/domains/project-management/presentation/components/board/boardColumn/BoardColumn.types";
 
 export type BoardViewProps = {
   columns: BoardColumnConfig[];

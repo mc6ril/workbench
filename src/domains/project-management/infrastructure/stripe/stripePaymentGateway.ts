@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 
 import { getStripeClient } from "@/shared/infrastructure/stripe/stripeClient";
+
 import { mapStripeEventToDomain, STRIPE_PRICE_IDS } from "./StripeMapper";
 
 import type { PaymentGateway, WebhookEvent } from "@/domains/project-management/core/ports/paymentGateway";

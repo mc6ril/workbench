@@ -1,4 +1,5 @@
-import { FilterIcon, SortIcon } from "@/presentation/components/icons";
+import { FilterIcon, SortIcon } from "@/shared/design-system/icons";
+
 import styles from "@/domains/project-management/presentation/components/projectToolbar/ProjectToolbar.module.scss";
 
 type Props = {

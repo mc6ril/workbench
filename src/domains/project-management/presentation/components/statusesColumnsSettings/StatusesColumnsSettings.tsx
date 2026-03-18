@@ -2,13 +2,12 @@
 
 import React, { useCallback, useMemo } from "react";
 
+import { getAccessibilityId } from "@/shared/a11y/constants";
 import Button from "@/shared/design-system/Button";
 import Card from "@/shared/design-system/Card";
 import Stack from "@/shared/design-system/Stack";
 import Text from "@/shared/design-system/Text";
 import Title from "@/shared/design-system/Title";
-
-import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
 import StatusColumnRow from "./components/StatusColumnRow";

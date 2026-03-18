@@ -2,10 +2,9 @@
 
 import React, { type FormEvent, useState } from "react";
 
+import { BUTTON_LABELS } from "@/shared/a11y/constants";
 import ErrorMessage from "@/shared/design-system/ErrorMessage";
 import Form from "@/shared/design-system/Form";
-
-import { BUTTON_LABELS } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
 import CreateTicketFormActions from "./components/CreateTicketFormActions";

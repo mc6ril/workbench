@@ -2,16 +2,16 @@
 
 import React, { useCallback, useMemo } from "react";
 
-import EpicProgress from "@/domains/project-management/presentation/components/epic/epicProgress/EpicProgress";
+import { getAccessibilityId } from "@/shared/a11y/constants";
 import Button from "@/shared/design-system/Button";
 import Card from "@/shared/design-system/Card";
 import Text from "@/shared/design-system/Text";
 import Title from "@/shared/design-system/Title";
-
-import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./EpicCard.module.scss";
+
+import EpicProgress from "@/domains/project-management/presentation/components/epic/epicProgress/EpicProgress";
 
 type Props = {
   id: string;

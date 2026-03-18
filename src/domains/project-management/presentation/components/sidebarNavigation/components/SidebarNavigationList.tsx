@@ -1,9 +1,9 @@
-import { PlusIcon } from "@/presentation/components/icons";
+import { PlusIcon } from "@/shared/design-system/icons";
+import NavigationItem from "@/shared/design-system/NavigationItem";
+import { isActiveHref } from "@/shared/utils";
+
 import styles from "@/domains/project-management/presentation/components/sidebarNavigation/SidebarNavigation.module.scss";
 import type { SidebarItem } from "@/domains/project-management/presentation/components/sidebarNavigation/SidebarNavigation.types";
-import NavigationItem from "@/shared/design-system/NavigationItem";
-
-import { isActiveHref } from "@/shared/utils";
 
 type Props = {
   items: SidebarItem[];

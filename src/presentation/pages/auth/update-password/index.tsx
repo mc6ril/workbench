@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 
+import { useUpdatePasswordForm } from "@/presentation/hooks/auth/useUpdatePasswordForm";
+
+import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/Button";
 import Form from "@/shared/design-system/Form";
 import Input from "@/shared/design-system/Input";
@@ -9,9 +12,6 @@ import Loader from "@/shared/design-system/Loader";
 import PasswordStrengthIndicator from "@/shared/design-system/PasswordStrengthIndicator";
 import Text from "@/shared/design-system/Text";
 import Title from "@/shared/design-system/Title";
-import { useUpdatePasswordForm } from "@/presentation/hooks/auth/useUpdatePasswordForm";
-
-import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";

@@ -5,14 +5,13 @@ import type { UpdateProfileInput } from "@/domains/project-management/core/domai
 import { updateUser } from "@/domains/project-management/core/usecases/auth/updateUser";
 import { updateProfile } from "@/domains/project-management/core/usecases/profile/updateProfile";
 
+import { useSession } from "./useSession";
+
 import {
   authRepository,
   userProfileRepository,
 } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
-
-import { useSession } from "./useSession";
 
 /**
  * Hook for updating user profile (display name) and optionally email.

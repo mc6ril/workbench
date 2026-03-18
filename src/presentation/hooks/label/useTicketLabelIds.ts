@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getTicketLabelIds } from "@/domains/project-management/core/usecases/label";
 
 import { labelRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**

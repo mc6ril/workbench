@@ -4,11 +4,11 @@ import { type PropsWithChildren, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { ThemeProvider } from "next-themes";
 
-import Toast from "@/shared/design-system/Toast";
 import { useLocaleSync } from "@/presentation/hooks/useLocaleSync";
 import { useThemeSync } from "@/presentation/hooks/useThemeSync";
 import ReactQueryProvider from "@/presentation/providers/ReactQueryProvider";
 
+import Toast from "@/shared/design-system/Toast";
 import { registerLocaleGetter } from "@/shared/i18n/config";
 import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
 import { markNavigationSettled } from "@/shared/observability";

@@ -5,7 +5,6 @@ import type { UpdateEpicInput } from "@/domains/project-management/core/domain/s
 import { updateEpic } from "@/domains/project-management/core/usecases/epic/updateEpic";
 
 import { epicRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 type UpdateEpicVariables = {

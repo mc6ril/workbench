@@ -9,7 +9,6 @@ import type {
 import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
 
 import { ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 const hasParentIdFilter = (

@@ -3,18 +3,18 @@
 import React, { useMemo } from "react";
 import { usePathname } from "next/navigation";
 
+import { getAccessibilityId } from "@/shared/a11y/constants";
+import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import Link from "@/shared/design-system/Link";
+import { useTranslation } from "@/shared/i18n";
+
+import styles from "./Breadcrumbs.module.scss";
+
 import {
   buildProjectViewHref,
   getProjectViewConfig,
   getProjectViewKeyFromPath,
 } from "@/domains/project-management/presentation/navigation/projectViews.config";
-
-import { getAccessibilityId } from "@/shared/a11y/constants";
-import { PROJECT_VIEWS } from "@/shared/constants/routes";
-import { useTranslation } from "@/shared/i18n";
-
-import styles from "./Breadcrumbs.module.scss";
 
 type Props = {
   projectId: string;

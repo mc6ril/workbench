@@ -2,9 +2,8 @@
 
 import React from "react";
 
-import { ErrorIcon } from "@/presentation/components/icons";
-
 import { getAccessibilityId } from "@/shared/a11y/constants";
+import { ErrorIcon } from "@/shared/design-system/icons";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./ErrorMessage.module.scss";

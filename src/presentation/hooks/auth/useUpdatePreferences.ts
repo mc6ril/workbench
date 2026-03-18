@@ -5,11 +5,10 @@ import { DEFAULT_USER_PREFERENCES } from "@/domains/project-management/core/doma
 
 import { updatePreferences } from "@/domains/project-management/core/usecases/profile/updatePreferences";
 
-import { userProfileRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
-import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
-
 import { useSession } from "./useSession";
+
+import { userProfileRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for updating user preferences (theme, notifications, language).

@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeMember } from "@/domains/project-management/core/usecases/member/removeMember";
 
 import { memberRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 type RemoveMemberVariables = {

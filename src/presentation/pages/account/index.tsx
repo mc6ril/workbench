@@ -21,14 +21,6 @@ import {
   SubscriptionStatus,
 } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
-import Button from "@/shared/design-system/Button";
-import Form from "@/shared/design-system/Form";
-import Input from "@/shared/design-system/Input";
-import Loader from "@/shared/design-system/Loader";
-import Modal from "@/shared/design-system/Modal";
-import Select from "@/shared/design-system/Select";
-import Text from "@/shared/design-system/Text";
-import Toggle from "@/shared/design-system/Toggle";
 import { useChangePassword } from "@/presentation/hooks/auth/useChangePassword";
 import { useDeleteUser } from "@/presentation/hooks/auth/useDeleteUser";
 import { useSession } from "@/presentation/hooks/auth/useSession";
@@ -36,10 +28,18 @@ import { useSignOut } from "@/presentation/hooks/auth/useSignOut";
 import { useUpdatePreferences } from "@/presentation/hooks/auth/useUpdatePreferences";
 import { useUpdateProfile } from "@/presentation/hooks/auth/useUpdateProfile";
 import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
-import { useToastStore } from "@/presentation/stores/useToastStore";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
+import Button from "@/shared/design-system/Button";
+import Form from "@/shared/design-system/Form";
+import Input from "@/shared/design-system/Input";
+import Loader from "@/shared/design-system/Loader";
+import Modal from "@/shared/design-system/Modal";
+import Select from "@/shared/design-system/Select";
+import Text from "@/shared/design-system/Text";
+import { useToastStore } from "@/shared/design-system/Toast/useToastStore";
+import Toggle from "@/shared/design-system/Toggle";
 import {
   getIntlLocale,
   supportedLocaleOptions,

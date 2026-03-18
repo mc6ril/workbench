@@ -1,18 +1,13 @@
 import { useCallback, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import CreateEpicForm from "@/domains/project-management/presentation/components/epic/createEpicForm/CreateEpicForm";
-import EpicsList from "@/domains/project-management/presentation/components/epic/epicsList/EpicsList";
+import { useProjectPermissions } from "@/presentation/providers/permissions";
+
+import { getAccessibilityId } from "@/shared/a11y";
 import ErrorMessage from "@/shared/design-system/ErrorMessage";
 import Loader from "@/shared/design-system/Loader";
 import Modal from "@/shared/design-system/Modal";
 import Text from "@/shared/design-system/Text";
-import { useCreateEpic, useEpics } from "@/domains/project-management/presentation/hooks/epic";
-import { useEpicQueryParams } from "@/domains/project-management/presentation/hooks/epic/useEpicQueryParams";
-import { useProjectPermissions } from "@/presentation/providers/permissions";
-import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
-
-import { getAccessibilityId } from "@/shared/a11y";
 import { useTranslation } from "@/shared/i18n";
 import {
   filterEpicsByProgress,
@@ -21,6 +16,12 @@ import {
 } from "@/shared/utils/epicUtils";
 
 import styles from "./styles.module.scss";
+
+import CreateEpicForm from "@/domains/project-management/presentation/components/epic/createEpicForm/CreateEpicForm";
+import EpicsList from "@/domains/project-management/presentation/components/epic/epicsList/EpicsList";
+import { useCreateEpic, useEpics } from "@/domains/project-management/presentation/hooks/epic";
+import { useEpicQueryParams } from "@/domains/project-management/presentation/hooks/epic/useEpicQueryParams";
+import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
 
 type Props = {
   projectId: string;

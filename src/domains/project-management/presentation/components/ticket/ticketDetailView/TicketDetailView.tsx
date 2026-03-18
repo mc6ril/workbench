@@ -6,8 +6,6 @@ import Card from "@/shared/design-system/Card";
 import Loader from "@/shared/design-system/Loader";
 import Text from "@/shared/design-system/Text";
 import Title from "@/shared/design-system/Title";
-import { useTicketDetailController } from "@/domains/project-management/presentation/hooks/ticket";
-
 import { useTranslation } from "@/shared/i18n";
 
 import TicketDetailCommentsSection from "./components/TicketDetailCommentsSection";
@@ -21,6 +19,8 @@ import {
   buildPriorityOptions,
   buildSprintOptions,
 } from "./TicketDetailView.utils";
+
+import { useTicketDetailController } from "@/domains/project-management/presentation/hooks/ticket";
 
 type Props = {
   projectId: string;

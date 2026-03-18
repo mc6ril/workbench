@@ -3,14 +3,13 @@
 import React, { useCallback, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
-import { useModalAccessibility } from "@/presentation/hooks/modal/useModalAccessibility";
-
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
 import ModalDialog from "./components/ModalDialog";
 import styles from "./Modal.module.scss";
 import type { ModalProps } from "./Modal.types";
+import { useModalAccessibility } from "./useModalAccessibility";
 
 const subscribeToHydration = (): (() => void) => {
   return () => {};
@@ -52,7 +51,8 @@ const Modal = ({
 
   const modalId = getAccessibilityId("modal");
   const titleId = getAccessibilityId("modal-title");
-  const descriptionId = ariaDescribedBy ?? getAccessibilityId("modal-description");
+  const descriptionId =
+    ariaDescribedBy ?? getAccessibilityId("modal-description");
 
   useModalAccessibility({ isOpen, modalRef, onClose });
 

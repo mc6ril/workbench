@@ -3,7 +3,6 @@ import type { TicketPriority } from "@/domains/project-management/core/domain/sc
 import Button from "@/shared/design-system/Button";
 import Select from "@/shared/design-system/Select";
 import Text from "@/shared/design-system/Text";
-
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./ProjectShellControls.module.scss";

@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteTicket } from "@/domains/project-management/core/usecases/ticket/deleteTicket";
 
 import { ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 type DeleteTicketVariables = {

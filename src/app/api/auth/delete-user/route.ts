@@ -3,12 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { deleteUser } from "@/domains/project-management/core/usecases/auth/deleteUser";
 
 import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
+
+import { API_MESSAGES_AUTH } from "@/shared/constants";
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
-
-import { API_MESSAGES_AUTH } from "@/shared/constants";
 import { createLoggerFactory } from "@/shared/observability";
 
 const logger = createLoggerFactory().forScope("API.DeleteUser");

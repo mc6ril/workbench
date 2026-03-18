@@ -10,16 +10,16 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import type { BoardColumnProps } from "@/domains/project-management/presentation/components/board/boardColumn/BoardColumn.types";
-import TicketCard from "@/domains/project-management/presentation/components/ticket/ticketCard/TicketCard";
-import Title from "@/shared/design-system/Title";
-
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { BOARD_COLUMN_DROP_PREFIX } from "@/shared/constants/board";
+import Title from "@/shared/design-system/Title";
 import { useTranslation } from "@/shared/i18n";
 import type { BoardTicketViewModel } from "@/shared/types/board";
 
 import styles from "./BoardColumn.module.scss";
+
+import type { BoardColumnProps } from "@/domains/project-management/presentation/components/board/boardColumn/BoardColumn.types";
+import TicketCard from "@/domains/project-management/presentation/components/ticket/ticketCard/TicketCard";
 
 const SORTABLE_TRANSITION = Object.freeze({
   duration: 160,

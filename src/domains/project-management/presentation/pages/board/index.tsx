@@ -8,30 +8,15 @@ import { PlanFeature } from "@/domains/project-management/core/domain/rules/plan
 
 import { addLabelsToTicket } from "@/domains/project-management/core/usecases/label";
 
-import { labelRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-
-import BoardView from "@/domains/project-management/presentation/components/board/boardView/BoardView";
-import CreateTicketForm from "@/domains/project-management/presentation/components/ticket/createTicketForm/CreateTicketForm";
-import TicketCard from "@/domains/project-management/presentation/components/ticket/ticketCard/TicketCard";
-import TicketDetailView from "@/domains/project-management/presentation/components/ticket/ticketDetailView/TicketDetailView";
-import Loader from "@/shared/design-system/Loader";
-import Modal from "@/shared/design-system/Modal";
-import Text from "@/shared/design-system/Text";
-import { useBoardColumns } from "@/domains/project-management/presentation/hooks/board/useBoardColumns";
-import { useBoardConfiguration } from "@/domains/project-management/presentation/hooks/board/useBoardConfiguration";
-import { useBoardDnD } from "@/domains/project-management/presentation/hooks/board/useBoardDnD";
-import { useBoardTickets } from "@/domains/project-management/presentation/hooks/board/useBoardTickets";
-import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
 import { useLabels } from "@/presentation/hooks/label";
 import { useProject } from "@/presentation/hooks/project";
 import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
-import { useCreateTicket } from "@/domains/project-management/presentation/hooks/ticket/useCreateTicket";
-import { useTickets } from "@/domains/project-management/presentation/hooks/ticket/useTickets";
 import { useProjectPermissions } from "@/presentation/providers/permissions";
-import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
-import { useSortStore } from "@/domains/project-management/presentation/stores/useSortStore";
 
 import { getAccessibilityId } from "@/shared/a11y";
+import Loader from "@/shared/design-system/Loader";
+import Modal from "@/shared/design-system/Modal";
+import Text from "@/shared/design-system/Text";
 import { useTranslation } from "@/shared/i18n";
 import type { BoardColumnConfig } from "@/shared/types/board";
 import {
@@ -40,6 +25,21 @@ import {
 } from "@/shared/utils/ticketUtils";
 
 import styles from "./styles.module.scss";
+
+import { labelRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
+import BoardView from "@/domains/project-management/presentation/components/board/boardView/BoardView";
+import CreateTicketForm from "@/domains/project-management/presentation/components/ticket/createTicketForm/CreateTicketForm";
+import TicketCard from "@/domains/project-management/presentation/components/ticket/ticketCard/TicketCard";
+import TicketDetailView from "@/domains/project-management/presentation/components/ticket/ticketDetailView/TicketDetailView";
+import { useBoardColumns } from "@/domains/project-management/presentation/hooks/board/useBoardColumns";
+import { useBoardConfiguration } from "@/domains/project-management/presentation/hooks/board/useBoardConfiguration";
+import { useBoardDnD } from "@/domains/project-management/presentation/hooks/board/useBoardDnD";
+import { useBoardTickets } from "@/domains/project-management/presentation/hooks/board/useBoardTickets";
+import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
+import { useCreateTicket } from "@/domains/project-management/presentation/hooks/ticket/useCreateTicket";
+import { useTickets } from "@/domains/project-management/presentation/hooks/ticket/useTickets";
+import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
+import { useSortStore } from "@/domains/project-management/presentation/stores/useSortStore";
 
 const BoardLayout = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
