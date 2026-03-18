@@ -1,56 +1,43 @@
 ````mermaid
 sequenceDiagram
-participant User as 👤 Utilisateur
-participant Page as 📄 page.tsx<br/>(Presentation)
-participant FormSchema as 📋 UpdatePasswordFormSchema<br/>(Domain)
-participant DomainSchema as 🔒 UpdatePasswordSchema<br/>(Domain)
-participant Hook as 🪝 useUpdatePassword<br/>(Presentation)
-participant Usecase as ⚙️ updatePassword<br/>(Usecase)
-participant Port as 📝 AuthRepository<br/>(Port)
-participant Infra as 🏗️ AuthRepository.supabase<br/>(Infrastructure)
+participant User as 👤 User
+participant Route as 📄 src/app/auth/update-password/page.tsx<br/>(Routing)
+participant AuthFlow as 🔐 Shared Auth Flow<br/>(src/shared/auth)
+participant Validation as 📋 Password Validation<br/>(shared auth/schema utilities)
+participant SessionUtils as 🧭 Session Utilities<br/>(src/shared/auth)
+participant Infra as 🏗️ Shared Supabase Auth Adapter<br/>(src/shared/infrastructure/supabase)
 participant Supabase as ☁️ Supabase
 
-    User->>Page: Accède à /auth/update-password?token=xxx&email=yyy
+    User->>Route: Open /auth/update-password?token=xxx&email=yyy
+    Route->>AuthFlow: Compose update-password screen
 
-    Note over Page: 1. Initialisation du formulaire
-    Page->>FormSchema: useForm avec UpdatePasswordFormSchema
-    FormSchema-->>Page: Validation schema pour {password, confirmPassword}
+    Note over AuthFlow: 1. Initialize form state and auth flow context
+    AuthFlow->>Validation: Validate password + confirmPassword
+    Validation-->>AuthFlow: Valid or validation errors
 
-    Note over Page: 2. Utilisateur remplit le formulaire
-    User->>Page: Saisit password + confirmPassword
-    Page->>FormSchema: Validation en temps réel (onBlur)
-    FormSchema-->>Page: ✅ Validation OK ou ❌ Erreurs
+    Note over AuthFlow: 2. User submits new password
+    User->>AuthFlow: Submit form
+    AuthFlow->>Validation: Validate payload again before mutation
+    Validation-->>AuthFlow: Validated input
 
-    Note over Page: 3. Soumission du formulaire
-    User->>Page: Clique sur "Submit"
-    Page->>Page: onSubmit() appelé
+    Note over AuthFlow: 3. Shared auth flow executes password update
+    AuthFlow->>SessionUtils: Build authenticated password-reset request
+    SessionUtils-->>AuthFlow: Normalized auth payload
 
-    Note over Page: 4. Transformation des données
-    Page->>Page: Construit UpdatePasswordInput:<br/>{password, token, email}
+    Note over AuthFlow: 4. Shared infrastructure handles provider call
+    AuthFlow->>Infra: updatePassword(payload)
+    Infra->>Supabase: client.auth.updateUser({ password })
+    Supabase-->>Infra: Session / auth response
+    Infra-->>AuthFlow: Auth result
 
-    Note over Page: 5. Validation domaine (double validation)
-    Page->>DomainSchema: UpdatePasswordSchema.parse(updatePasswordInput)
-    DomainSchema-->>Page: ✅ Validation OK ou ❌ Erreur
-
-    Note over Page: 6. Appel du hook React Query
-    Page->>Hook: mutate(updatePasswordInput)
-    Hook->>Usecase: updatePassword(repository, input)
-
-    Note over Usecase: 7. Validation dans le usecase
-    Usecase->>DomainSchema: UpdatePasswordSchema.parse(input)
-    DomainSchema-->>Usecase: ✅ validatedInput
-
-    Note over Usecase: 8. Appel du repository (via port)
-    Usecase->>Port: repository.updatePassword(validatedInput)
-    Note over Port: Contrat défini ici:<br/>updatePassword(input: UpdatePasswordInput)
-
-    Port->>Infra: Implémentation Supabase
-    Infra->>Supabase: client.auth.updateUser({password})
-    Supabase-->>Infra: ✅ Session créée
-    Infra-->>Port: AuthResult {session}
-    Port-->>Usecase: AuthResult
-    Usecase-->>Hook: AuthResult
-    Hook-->>Page: Mutation success avec session
-    Page->>User: Redirection vers /workspace
-```
+    Note over AuthFlow: 5. Route redirects after success
+    AuthFlow-->>Route: Password updated
+    Route->>User: Redirect to /workspace
 ````
+
+# Notes
+
+- In the new architecture, auth is treated as a **shared cross-cutting capability**, not as part of the `project-management` domain.
+- `src/app/` keeps the route entrypoint.
+- Shared auth/session logic lives in `src/shared/auth/`.
+- Shared Supabase auth clients and adapters live in `src/shared/infrastructure/supabase/`.

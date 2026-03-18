@@ -92,11 +92,11 @@ This document lists the official documentation for key third-party libraries use
 
 ## Architecture Patterns
 
-### Clean Architecture
+### Modular Domain Architecture
 
-- **Project Structure**: Following Clean Architecture principles with Domain, Usecases, Infrastructure, and Presentation layers
-- **Dependency Direction**: Domain → Usecases → Infrastructure → Presentation
-- **Repository Pattern**: Using ports (interfaces) and adapters (implementations)
+- **Project Structure**: `src/app/` for routing, `src/domains/<domain>/` for business modules, `src/shared/` for cross-cutting concerns
+- **Within a domain**: `core/domain + ports + usecases`, then `infrastructure`, then `presentation`
+- **Repository Pattern**: ports are owned by the domain, implementations live in the domain infrastructure, shared clients live in `src/shared/infrastructure/*`
 
 ## Accessibility
 

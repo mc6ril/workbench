@@ -49,7 +49,7 @@ Create a comprehensive test plan for a feature using the **QA & Test Coach** age
    - List A11y violations with file:line references and fixes
 
 5. **Integration Test Strategy**
-   - Identify integration points: React Query → usecases → repositories → Supabase
+   - Identify integration points: domain hooks/queries → domain usecases → domain repositories → shared Supabase clients
    - Define integration test scenarios for data flow
    - Test Zustand state transitions and selector outputs
    - Verify React Query cache behavior and error handling
@@ -99,7 +99,7 @@ Create a comprehensive test plan for a feature using the **QA & Test Coach** age
 
 ### Integration Test Strategy
 
-- [ ] Integration points identified (React Query → usecases → repositories → Supabase)
+- [ ] Integration points identified (domain hooks/queries → domain usecases → domain repositories → shared Supabase clients)
 - [ ] Data flow test scenarios defined
 - [ ] Zustand state transitions tested
 - [ ] React Query cache behavior verified

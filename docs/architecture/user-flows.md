@@ -1,6 +1,26 @@
 # User Flows Architecture
 
-This document describes the end-to-end user flows and routing architecture of the application.
+This document describes routing, guards, and route composition in the modular domain architecture.
+
+## Routing Principle
+
+`src/app/` remains the Next.js routing layer.
+
+Route files should:
+
+- define the URL structure
+- apply route-level guards
+- compose pages or layouts from domain modules
+
+Domain-specific page logic belongs in:
+
+- `src/domains/project-management/presentation/pages/`
+- `src/domains/project-management/presentation/layouts/`
+
+Shared auth/session concerns belong in:
+
+- `src/shared/auth/`
+- `src/shared/infrastructure/supabase/`
 
 ## End-to-End User Flow
 
@@ -18,127 +38,98 @@ stateDiagram-v2
    Workspace --> ProjectBoard: select project
    CreateProject --> ProjectBoard: project created
 
-   ProjectBoard --> ProjectBoard: navigate
    ProjectBoard --> ProjectEpics: navigate
    ProjectBoard --> ProjectSettings: navigate
-
-   ProjectBoard --> ProjectBoard: navigate
    ProjectEpics --> ProjectBoard: navigate
    ProjectSettings --> ProjectBoard: navigate
 ```
 
-## Route & Layout Guard Flow
-
-The application uses a layered guard system to protect routes and ensure proper authentication and authorization:
+## Route & Guard Flow
 
 ```mermaid
 flowchart TD
-   REQ[Request] --> MIDDLEWARE{Middleware<br/>Optional Routing Optimization}
-   MIDDLEWARE -->|Public Route| PUBLIC[Public Routes]
-   MIDDLEWARE -->|Protected Route| AUTH_LAYOUT[(auth) Layout]
+   REQ[Request] --> APP[src/app route]
+   APP --> MIDDLEWARE[middleware.ts]
+   MIDDLEWARE --> AUTH_CHECK{Authenticated?}
 
-   PUBLIC --> LANDING_LAYOUT[Landing Layout]
-   LANDING_LAYOUT -->|Session Exists| REDIRECT_WS[Redirect to /workspace]
-   LANDING_LAYOUT -->|No Session| LANDING[/ Landing Page]
-   PUBLIC --> AUTH_PAGES[/auth/* Auth Pages]
+   AUTH_CHECK -->|No| PUBLIC[Public route handling]
+   AUTH_CHECK -->|Yes| PROTECTED[Protected route handling]
 
-   AUTH_LAYOUT -->|No Session| REDIRECT_LANDING[Redirect to /]
-   AUTH_LAYOUT -->|Session OK| CHILD{Child Route}
+   PUBLIC --> LANDING[Landing or auth routes]
+   PROTECTED --> WS_ROUTE[/workspace composition]
+   PROTECTED --> PROJECT_ROUTE[/:projectId/* composition]
 
-   CHILD -->|/workspace| WS_LAYOUT[Workspace Layout]
-   CHILD -->|/:projectId| PROJ_LAYOUT[Project Layout]
-
-   WS_LAYOUT --> WS_PAGE[Workspace Page<br/>Client: useProjects]
-
-   PROJ_LAYOUT -->|getProject = null| REDIRECT_WS[Redirect to /workspace]
-   PROJ_LAYOUT -->|getProject OK| PROJ_CHILD{Project Child}
-
-   PROJ_CHILD -->|/:projectId| REDIRECT_BOARD[Redirect to /:projectId/board]
-   PROJ_CHILD -->|/:projectId/board| BOARD_PAGE[Board Page<br/>Client: useProject(projectId)<br/>useProjectTickets(projectId)]
-   PROJ_CHILD -->|/:projectId/board| BOARD_PAGE[Board Page<br/>Client: useProject(projectId)<br/>useProjectTickets(projectId, filters)]
-   PROJ_CHILD -->|/:projectId/epics| EPICS_PAGE[Epics Page<br/>Client: useProject(projectId)<br/>useProjectEpics(projectId)]
-   PROJ_CHILD -->|/:projectId/settings| SETTINGS_PAGE[Settings Page<br/>Client: useProject(projectId)<br/>useProjectMembers(projectId)]
+   PROJECT_ROUTE --> ACCESS_CHECK{Project access allowed?}
+   ACCESS_CHECK -->|No| REDIRECT_WS[Redirect to /workspace]
+   ACCESS_CHECK -->|Yes| DOMAIN_PAGE[project-management presentation page/layout]
 ```
-
-**Security Architecture:**
-
-- **Middleware** is an optimization layer for UX redirects and route filtering. It is NOT the source of truth for security.
-- **AuthLayout** and **ProjectLayout** (server components) are the primary security guards, checking authentication and access before rendering.
-- **RLS (Row Level Security)** at the database level is the ultimate source of truth for data access control.
-- This layered approach ensures security even if middleware is bypassed or misconfigured.
 
 ## Route Structure
 
 ### Public Routes
 
-- `/` - Landing page (redirects to `/workspace` if authenticated)
-- `/auth/signin` - Sign in page
-- `/auth/signup` - Sign up page
-- `/auth/verify-email` - Email verification page
-- `/auth/reset-password` - Password reset request page
-- `/auth/update-password` - Password update page
+- `/`
+- `/auth/signin`
+- `/auth/signup`
+- `/auth/verify-email`
+- `/auth/reset-password`
+- `/auth/update-password`
 
-### Protected Routes (under `(auth)` route group)
+### Protected Routes
 
-- `/workspace` - Workspace page (list projects, create/access projects)
-- `/:projectId` - Project root (redirects to `/:projectId/board`)
-- `/:projectId/board` - Board view
-- `/:projectId/board` - Board view
-- `/:projectId/epics` - Epics view
-- `/:projectId/settings` - Project settings
+- `/workspace`
+- `/:projectId`
+- `/:projectId/board`
+- `/:projectId/epics`
+- `/:projectId/settings`
 
 ## Layout Responsibilities
 
-### Root Layout (`app/layout.tsx`)
+### Root layout
 
-- Provides global providers (ReactQueryProvider, etc.)
-- No authentication checks
+- Global HTML shell
+- Shared providers and top-level composition
+- No domain business rules
 
-### Landing Layout (`app/layout.tsx` or page-level check)
+### Auth-related route handling
 
-- Checks if user is authenticated
-- If authenticated → redirect to `/workspace`
-- If not authenticated → show landing page
+- Verifies session presence
+- Uses shared auth/session utilities
+- Redirects early when needed
 
-### Auth Layout (`app/(auth)/layout.tsx`)
+### Project route handling
 
-- Server-side authentication guard
-- Uses `getCurrentSession` usecase
-- Redirects to `/` on missing session or error (fail-closed)
-- Does NOT pass data to children
-
-### Workspace Layout (`app/(auth)/workspace/layout.tsx`)
-
-- Optional shell wrapper
-- No data fetching (all data fetched in client page)
-
-### Project Layout (`app/(auth)/[projectId]/layout.tsx`)
-
-- Server-side project access guard
-- Uses `getProject` usecase (respects RLS)
-- Redirects to `/workspace` if no access (returns null)
-- Does NOT pass project data to children
+- Verifies project access
+- Delegates project-specific rendering to `domains/project-management/presentation/pages/` or `layouts/`
+- Keeps routing concerns separate from domain UI logic
 
 ## Data Fetching Strategy
 
-- **Server Layouts**: Only guards, no data fetching
-- **Client Pages**: All data fetching via React Query hooks
-- **Loading States**: `loading.tsx` files for workspace and project segments
+- `src/app/` route files stay thin
+- Domain pages and layouts call domain hooks from `src/domains/project-management/presentation/hooks/`
+- Domain hooks call domain use cases
+- Domain repositories use shared Supabase clients from `src/shared/infrastructure/supabase/`
 
-## React Query Hooks Convention
+## Hook Convention
 
-To avoid generic hooks that become unmanageable, project-specific hooks follow a standardized naming pattern:
+Hooks are scoped by domain instead of living in one global presentation folder.
 
-- `useProject(projectId)` - Fetch project data
-- `useProjectTickets(projectId, filters?)` - Fetch tickets for a project
-- `useProjectEpics(projectId)` - Fetch epics for a project
-- `useProjectMembers(projectId)` - Fetch project members (future)
+Examples:
 
-This convention makes it clear that these hooks are project-scoped and helps prevent generic hooks from growing too large.
+- `useTickets(projectId)`
+- `useCreateTicket()`
+- `useEpics(projectId)`
+- `useBoard(projectId)`
+
+Location:
+
+- `src/domains/project-management/presentation/hooks/`
 
 ## Security Model
 
-1. **Middleware**: Fast cookie-based auth check for protected routes
-2. **Layout Guards**: Server-side verification using usecases
-3. **RLS Policies**: Database-level access control (source of truth)
-4. **Fail-Closed**: Layouts redirect on errors, never render children on failure
+1. `middleware.ts` can optimize routing and early redirects
+2. shared auth/session utilities confirm authentication state
+3. project-access checks confirm route eligibility
+4. database policies remain the final source of truth for data access
+
+The key architectural shift is that routing stays in `src/app/`, while project-management UI composition now lives in the domain module rather than a global `src/presentation/` root.

@@ -86,15 +86,24 @@ This principle drives both navigation and feature placement.
 
 ## 6. Technical Architecture
 
-Workbench keeps a Clean Architecture structure:
-- `core/domain` for business entities and rules
-- `core/usecases` for orchestration
-- `core/ports` for contracts
-- `infrastructure` for Supabase integrations
-- `presentation` for UI and hooks
+Workbench now uses a **modular domain architecture**:
 
-Guiding rule:
-> Domain and usecases remain framework-agnostic.
+- `src/app/` remains the Next.js routing layer
+- `src/domains/project-management/` owns the project-management business module end to end
+- `src/shared/` owns cross-cutting concerns such as design system, i18n, observability, auth, shared infrastructure clients, constants, types, utils, and accessibility
+
+Inside each domain module, responsibilities are still layered:
+
+- `core/domain/` for schemas, rules, and domain constants
+- `core/ports/` for contracts
+- `core/usecases/` for orchestration
+- `infrastructure/` for adapters such as Supabase repositories
+- `presentation/` for domain-specific hooks, stores, pages, layouts, and components
+
+Guiding rules:
+> `src/app/` stays thin and route-focused.
+> Shared code stays cross-cutting.
+> Business rules stay inside domain modules.
 
 ---
 

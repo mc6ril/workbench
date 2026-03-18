@@ -17,7 +17,7 @@ Refactor the selected code to improve its quality while maintaining the same fun
 
 The Architecture-Aware Dev ensures refactoring respects:
 
-- Clean Architecture boundaries (Domain → Usecases → Infrastructure → Presentation)
+- Modular domain architecture boundaries (`src/app`, `src/domains`, `src/shared`, plus domain ownership)
 - Layer separation (no Supabase in UI, no business logic in UI)
 - React Query + Zustand usage (React Query for server state, Zustand for UI state only)
 - SCSS variables from `styles/variables/*` only, no hardcoded values
@@ -61,7 +61,7 @@ The Architecture-Aware Dev ensures refactoring respects:
 
 ### Architecture Compliance
 
-- [ ] Clean Architecture boundaries respected
+- [ ] Modular domain architecture boundaries respected
 - [ ] Layer separation maintained (no Supabase in UI, no business logic in UI)
 - [ ] React Query + Zustand usage verified
 - [ ] SCSS variables used (no hardcoded values)

@@ -1,41 +1,41 @@
 ## Workbench
 
-**Workbench** is a lightweight, personal task and project management tool inspired by Jira, designed to help a single user manage work clearly, progressively, and without cognitive overload.
+**Workbench** is a family-centered daily life management app — a personal life OS that brings together multiple domains (project management, meal planning, vacation planning, budget, and more) under a single workspace, with multi-user collaboration and role-based permissions.
 
 ### Purpose
 
-Workbench is **not** meant to replicate Jira, but to provide:
+Workbench is built around the idea that a household needs a shared space to manage work, plans, and daily life clearly, without cognitive overload.
 
-- A clear board for managing tickets
-- A visual board (Trello-like) for workflow visualization
-- Structured planning via Epics and sub-tasks
-
-All built **incrementally, feature by feature**, where each feature is a complete vertical slice that is usable on its own.
+Each domain is a self-contained "board" experience:
+- **Project management** — tickets, epics, sprints, Kanban board
+- **Meal planning** — recipe database, weekly menus, shopping lists *(coming)*
+- **Vacation planning** — destinations, activities, checklists *(coming)*
+- **Budget** — shared expenses, categories, periods *(coming)*
 
 ### Core Principles
 
-1. **Personal-first**: Single user, no collaboration, no permissions, no accounts (for now)
-2. **Incremental construction**: One feature = one vertical slice, each slice is usable independently
-3. **Clarity over power**: Fewer features, explicit structure, no hidden magic
-4. **Domain-driven**: Clear concepts, stable domain model, UI reflects the domain
-
-### Core Features (MVP Scope)
-
-- **Board**: Create, edit, delete, view, filter, and sort tickets in a flat list
-- **Board**: Custom columns (statuses), drag and drop tickets, reorder within columns, persist position and status
-- **Epics**: Create epics, assign tickets to epics, view epic progress
-- **Sub-tasks**: Create sub-tasks under tickets, view parent/child relationships, track completion
+1. **Family-first**: Multi-user, role-based permissions (`admin`, `member`, `viewer`), collaboration built-in
+2. **Domain-driven**: Each life domain is an isolated module with its own business rules
+3. **Incremental construction**: One domain at a time, each is independently usable
+4. **Clarity over power**: Fewer features, explicit structure, no hidden magic
 
 ### Architecture
 
-Workbench follows **Clean Architecture** principles with clear separation between:
+Workbench now follows a **modular domain architecture**:
 
-- **Domain**: Entities and business rules
-- **Application**: Use cases, commands and queries
-- **Infrastructure**: Database and repositories
-- **UI**: Pages and view models
+- `src/app/` keeps Next.js routing and route composition
+- `src/domains/project-management/` owns project-management business logic, domain use cases, infrastructure adapters, and domain presentation
+- `src/shared/` owns reusable UI, shared infrastructure clients, i18n, auth, observability, constants, types, utils, and accessibility
 
-The domain knows nothing about frameworks, databases, or UI.
+Inside each domain module, responsibilities stay layered:
+
+- **Domain**: schemas, rules, constants
+- **Usecases**: orchestration
+- **Ports**: contracts
+- **Infrastructure**: repositories and mappers
+- **Presentation**: hooks, stores, pages, layouts, components
+
+Business rules stay inside domain modules, not in route files or shared UI primitives.
 
 ### Development Strategy
 
@@ -55,7 +55,7 @@ No feature is started until the previous one is fully done.
 - Run unit tests once: `yarn test`
 - Run unit tests in watch mode: `yarn test:watch`
 
-Tests live under the project root `__tests__/` directory (mirroring the `src/` structure), with shared mocks under `__mocks__/`. This setup is powered by Jest with TypeScript support (`ts-jest`), following the Clean Architecture testing rules described in `docs/plan.md` and `.cursor/docs/testing.md`.
+Tests live under the project root `__tests__/` directory (mirroring the `src/` structure), with shared mocks under `__mocks__/`. This setup is powered by Jest with TypeScript support (`ts-jest`), following the modular domain testing rules described in `.cursor/docs/testing.md`.
 
 ### Success Criteria
 

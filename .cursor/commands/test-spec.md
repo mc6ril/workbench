@@ -107,7 +107,7 @@ The Unit Test Coach outputs:
   });
 
 ### Mocks (external dependencies)
-- Supabase: jest.mock("infrastructure/supabase/productRepositorySupabase")
+- Supabase: mock the shared Supabase client or the owning domain repository test double
 - Network: Mock network requests (no real API calls)
 - Time: Mock timers if needed
 

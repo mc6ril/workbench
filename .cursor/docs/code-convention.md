@@ -150,18 +150,18 @@ export const useFilterStore = create<FilterState>((set) => ({
 
 ### Rules
 
-- **One hook per resource**: `useProducts`, `useStockMovements`, etc.
-- **Explicit and stable queryKey**: `queryKey: ["products"]`
+- **One hook per domain resource or action**: `useTickets`, `useCreateTicket`, etc.
+- **Explicit and stable queryKey**: `queryKey: ["project-management", "tickets"]`
 - ❌ **Never direct Supabase call**: only execution of a usecase
 - ✅ **Always return**: `data`, `isLoading`, `error`
 
 ### Example
 
 ```typescript
-export const useProducts = () => {
+export const useTickets = (projectId: string) => {
   return useQuery({
-    queryKey: ["products"],
-    queryFn: () => listProducts(productRepositorySupabase),
+    queryKey: ["project-management", "tickets", projectId],
+    queryFn: () => listTickets(ticketRepository, { projectId }),
   });
 }
 ```
@@ -172,7 +172,7 @@ export const useProducts = () => {
 
 ### Types
 
-- **Business types** in `core/domain` and used everywhere via imports
+- **Business types** in `src/domains/<domain>/core/domain` and used everywhere via imports
 - ❌ **Prefixes prohibited**: no `IProduct`, `IUser`
 - ✅ **Prefer**: `Product`, `StockMovement`
 
@@ -223,9 +223,9 @@ enum ProductStatus {
 | File                           | Type                      |
 | ------------------------------ | ------------------------- |
 | `ProductTable.tsx`             | Component                 |
-| `useProducts.ts`               | React Query hook          |
-| `useProductFilterStore.ts`     | Zustand store             |
-| `productRepositorySupabase.ts` | Infrastructure repository |
+| `useTickets.ts`                | Domain React Query hook   |
+| `useBoardStore.ts`             | Domain Zustand store      |
+| `ticketRepository.supabase.ts` | Domain infrastructure repository |
 
 ---
 
@@ -239,7 +239,7 @@ enum ProductStatus {
 **UI Tests:**
 
 - ❌ No mandatory UI tests for page components
-- ✅ **Mandatory tests** for reusable components in `presentation/components/ui`
+- ✅ **Mandatory tests** for reusable components in `shared/design-system/ui`
 
 ---
 

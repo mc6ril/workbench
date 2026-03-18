@@ -33,7 +33,7 @@ The Architecture-Aware Dev uses project-specific debugging tools:
    - **Next.js DevTools**: Use browser DevTools for debugging
    - **React Query DevTools**: Inspect React Query cache and queries
    - **Zustand DevTools**: Inspect Zustand state transitions
-   - Trace data flow: UI → React Query hooks → usecases → repositories → Supabase
+   - Trace data flow: route/domain UI → domain hooks → usecases → repositories → shared Supabase clients
    - Identify key variables and states to monitor
    - Recommend breakpoint locations
    - **Never log sensitive data** (passwords, tokens, personal info)
@@ -54,7 +54,7 @@ The Architecture-Aware Dev uses project-specific debugging tools:
 - [ ] Identified the specific problem or error
 - [ ] Understood expected vs actual behavior
 - [ ] Traced execution flow to find root cause
-- [ ] Traced data flow if applicable (UI → React Query hooks → usecases → repositories → Supabase)
+- [ ] Traced data flow if applicable (route/domain UI → domain hooks → usecases → repositories → shared Supabase clients)
 
 ### Debugging Tools
 
@@ -69,7 +69,7 @@ The Architecture-Aware Dev uses project-specific debugging tools:
 - [ ] Proposed potential fixes with explanations
 - [ ] Evaluated trade-offs of different approaches
 - [ ] Provided step-by-step resolution plan
-- [ ] Ensured fixes respect architecture rules (Clean Architecture, layer separation, etc.)
+- [ ] Ensured fixes respect architecture rules (app/domain/shared boundaries, domain ownership, etc.)
 
 ### Prevention
 

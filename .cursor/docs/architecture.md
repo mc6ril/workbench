@@ -1,261 +1,161 @@
-# 🏗️ Clean Architecture
+# Modular Domain Architecture
 
-## 📌 Fundamental Principles
+## Fundamental Principles
 
-This project follows **strict Clean Architecture**.
+This project now follows a **modular domain architecture**.
 
-The goal is to clearly separate responsibilities:
+The application is organized around business domains. Each domain owns its own:
 
-- **Domain** → pure business rules, types and logic without dependencies
-- **Usecases (Application)** → business logic orchestrating repositories
-- **Infrastructure** → data access (Supabase), concrete implementations
-- **Presentation** → Next.js UI, SCSS, state management (Zustand), data fetching (React Query)
+- `core/` for business rules and contracts
+- `infrastructure/` for technical adapters
+- `presentation/` for UI-facing domain code
+
+Cross-cutting concerns live in `src/shared/`.
 
 ### Golden Rule
 
-**No business logic should be in the UI or infrastructure.**
+**Business logic belongs inside a domain module, never in `src/app/`, never in shared UI primitives, and never directly in infrastructure clients.**
 
-### Layer Independence
+## Source Structure
 
-Cursor must respect layer independence:
-
-- The UI **never** calls Supabase directly
-- The UI calls React Query hooks, which execute usecases
-- Usecases use ports to contact the database
-- Ports have multiple possible implementations
-- Concrete implementations (Supabase) are in `infrastructure/`
-
----
-
-## 🧩 Project Structure
-
-```
+```text
 src/
-├── app/                    # Next.js pages (App Router)
-│   ├── layout.tsx
-│   ├── page.tsx
-│   ├── featureA/
-│   │   └── page.tsx
-│   └── featureB/
-│       └── [id]/
-│           └── page.tsx
-│
-├── core/                   # Business core (independent)
-│   ├── domain/            # Business entities + pure rules
-│   ├── usecases/          # Use cases (simple files)
-│   └── ports/             # Repository interfaces
-│
-├── infrastructure/         # Concrete implementations
-│   └── supabase/          # Concrete implementations of ports
-│       ├── client.ts
-│       └── utils/
-│
-├── presentation/           # Presentation layer
-│   ├── components/        # Pure UI components
-│   ├── layouts/
-│   ├── stores/            # Zustand (global UI state)
-│   ├── hooks/             # React Query hooks
-│   └── providers/         # QueryClientProvider, other providers
-│
-├── shared/                # Code shared between layers
-│   └── a11y/              # Accessibility
-│   └── constants/         # Shared constants
-│   └── utils/             # shared utils functions
-│
-└── styles/                # Global styles
-    ├── global.scss
-    ├── variables/
-    ├── components/
-    └── layout/
+  app/                                  # Next.js routing and route composition
+  domains/
+    project-management/
+      core/
+        domain/
+          schema/                       # ticket.schema.ts, board.schema.ts, ...
+          rules/                        # ticket.rules.ts, board.rules.ts, ...
+          constants/
+        ports/                          # ticketRepository.ts, boardRepository.ts, ...
+        usecases/                       # createTicket.ts, listTickets.ts, ...
+      infrastructure/
+        supabase/                       # repositories, mappers, adapters
+      presentation/
+        components/                     # ticket/, board/, epic/, sprint/, ...
+        hooks/                          # useTickets, useCreateTicket, ...
+        stores/                         # useBoardStore, useFilterStore, ...
+        pages/                          # BoardPage, EpicsPage, ...
+        layouts/                        # ProjectShell, SettingsLayout, ...
+        navigation/                     # projectViews.config.ts
+  shared/
+    design-system/
+      ui/                               # Button, Modal, Toast, ...
+    i18n/
+    observability/
+    auth/
+    infrastructure/
+      supabase/                         # client-browser.ts, client-server.ts, client-admin.ts
+      stripe/
+      web/
+    constants/
+    types/
+    utils/
+    a11y/
+  styles/
+  middleware.ts
 ```
 
----
+## Layer Responsibilities
 
-## 🧱 Rules: What Cursor Must Respect
+### 1. `src/app/`
 
-### 1. Domain (`core/domain`)
+- Owns Next.js routing only
+- Composes domain pages and layouts
+- Does not contain business rules
+- Does not call Supabase directly
 
-**Contains:**
+### 2. `src/domains/<domain>/core/domain`
 
-- Business types/interfaces
-- Pure business rules
+- Owns schemas, rules, and domain constants
+- Pure business logic only
+- No React, Next.js, Zustand, React Query, or Supabase imports
 
-**Must never import:**
+### 3. `src/domains/<domain>/core/ports`
 
-- ❌ Supabase
-- ❌ React
-- ❌ Zustand
-- ❌ React Query
-- ❌ Next.js
+- Owns domain contracts
+- Defines repository and gateway interfaces used by use cases
+- No implementation logic
 
-**Pure TypeScript only.**
+### 4. `src/domains/<domain>/core/usecases`
 
----
+- Orchestrates business flows for that domain
+- Depends on the domain's rules, schemas, and ports
+- Returns domain-shaped data
+- Never imports UI frameworks or Supabase clients directly
 
-### 2. Usecases (`core/usecases`)
+### 5. `src/domains/<domain>/infrastructure`
 
-**Characteristics:**
+- Implements ports for one domain
+- Contains Supabase repositories, mappers, and adapters
+- Can consume shared infrastructure clients from `src/shared/infrastructure/*`
+- Must not import another domain's presentation layer
 
-- Each usecase is a pure function orchestrating business logic
-- It takes ports (repositories) as parameters
-- It returns domain data
+### 6. `src/domains/<domain>/presentation`
 
-**Must not know about:**
+- Owns domain-specific UI composition
+- `components/` for domain UI pieces
+- `hooks/` for React Query hooks and UI orchestration
+- `stores/` for domain UI state only
+- `pages/` and `layouts/` for route-level composition reused by `src/app`
+- `navigation/` for domain view configuration
 
-- ❌ Supabase
-- ❌ React
-- ❌ Zustand
+### 7. `src/shared/`
 
-**Structure example:**
+- Holds cross-cutting, reusable building blocks
+- `shared/design-system/ui/` contains reusable UI primitives only
+- `shared/infrastructure/` contains technical clients shared across domains
+- `shared/a11y/`, `shared/i18n/`, `shared/utils/`, `shared/types/` stay domain-agnostic
+- Shared code must not absorb ticket, board, epic, sprint, or other domain-specific business rules
 
-```typescript
-export const listProducts = (repo: ProductRepository) => {
-  return repo.list();
-}
+## Dependency Direction
+
+Within one domain, dependencies should flow like this:
+
+```text
+src/app route
+  -> domains/<domain>/presentation/pages or layouts
+  -> domains/<domain>/presentation/hooks
+  -> domains/<domain>/core/usecases
+  -> domains/<domain>/core/ports
+  -> domains/<domain>/infrastructure/*
+  -> shared/infrastructure/*
+  -> external service
 ```
 
----
+## Cursor Rules
 
-### 3. Ports (`core/ports`)
+### Cursor must
 
-**Role:**
+1. Create new business code inside the correct domain module.
+2. Keep reusable UI in `src/shared/design-system/ui/`.
+3. Keep cross-cutting utilities in `src/shared/`.
+4. Keep `src/app/` thin and route-focused.
+5. Use domain hooks to connect UI to domain use cases.
+6. Use shared infrastructure clients from `src/shared/infrastructure/*` rather than recreating them in each feature.
 
-- Define repository interfaces
-- Example: `ProductRepository`, `StockMovementRepository`
-- These are the contracts that infrastructure must respect
+### Cursor must never
 
----
+1. Recreate a global `src/core/`, `src/presentation/`, or `src/infrastructure/` root.
+2. Put ticket, board, epic, sprint, or project-management logic in `src/shared/`.
+3. Put reusable UI primitives in a domain module when they belong in `src/shared/design-system/ui/`.
+4. Call Supabase directly from `src/app/` routes or domain page components.
+5. Import one domain's infrastructure or presentation code directly into another domain's presentation layer.
 
-### 4. Infrastructure (`infrastructure/`)
+## Example Flow
 
-**Contains:**
-
-- Concrete implementations of ports
-- Supabase
-- Adapters
-- Mappers
-
-**Can import:**
-
-- ✅ Supabase
-- ✅ Fetch
-- ✅ External libraries
-
-**Must never import:**
-
-- ❌ UI
-- ❌ Zustand
-
-**Example:**
-
-```typescript
-export const productRepositorySupabase: ProductRepository = {
-  list: async () => {
-    // ...supabase.from("products")...
-  },
-};
+```text
+src/app/[projectId]/board/page.tsx
+  -> domains/project-management/presentation/pages/BoardPage
+  -> domains/project-management/presentation/hooks/useTickets
+  -> domains/project-management/core/usecases/listTickets
+  -> domains/project-management/core/ports/ticketRepository
+  -> domains/project-management/infrastructure/supabase/ticketRepository.supabase
+  -> shared/infrastructure/supabase/client-browser
+  -> Supabase
 ```
 
----
+## Key Takeaway
 
-### 5. Presentation (UI Next + React)
-
-#### 5.1. Components (`presentation/components`)
-
-**Characteristics:**
-
-- Pure UI components
-- No business logic
-- No Supabase calls
-- Receive ready data via props
-
-#### 5.2. Hooks (`presentation/hooks`)
-
-**Role:**
-
-- React Query hooks
-- Call usecases
-- Provide: `data`, `isLoading`, `error`
-- Do not contain business logic → only orchestrate usecases
-
-**Recommended structure:**
-
-```typescript
-export const useProducts = () => {
-  return useQuery({
-    queryKey: ["products"],
-    queryFn: () => listProducts(productRepositorySupabase),
-  });
-}
-```
-
-#### 5.3. Zustand Stores (`presentation/stores`)
-
-**Contains only UI state:**
-
-- Filters
-- Modals
-- Selected category
-- Drawer state
-
-**Must never contain business logic.**
-
-#### 5.4. Providers (`presentation/providers`)
-
-**Contains:**
-
-- ReactQueryProvider
-- Global app providers
-
----
-
-## ⚡ Modules Used in the Project
-
-- **Next.js** (App Router)
-- **SCSS** (global.scss + SCSS modules if needed)
-- **Supabase** → self-hosted backend (no Node backend)
-- **React Query** (TanStack Query) → data fetching & cache
-- **Zustand** → lightweight global UI state
-- **TypeScript strict**
-- **Clean Architecture** (Core / Infrastructure / Presentation)
-
----
-
-## 🧪 Code Generation Rules for Cursor
-
-### ✔️ Cursor must:
-
-1. Create files in the correct directories according to their role
-2. Respect layers:
-   - A usecase must not import Supabase
-   - A UI component must not call Supabase directly
-   - A Zustand store must not contain business logic
-   - A React Query hook must call a usecase, not directly infrastructure
-3. Create proper types in the domain
-
-### ❌ Cursor must never:
-
-1. Mix UI and business logic
-2. Put Supabase code in `/core/`
-3. Put network calls in React components
-4. Put business logic in Zustand
-5. Call Supabase directly from the UI
-6. Make forbidden cross-layer imports (e.g., infra → app)
-
----
-
-## 📚 Complete Flow Example (reference for Cursor)
-
-```
-UI (Next Page)
-    ↓ calls
-React Query Hook (useProducts)
-    ↓ calls
-Usecase (listProducts)
-    ↓ calls
-Repository (productRepositorySupabase)
-    ↓ calls
-Supabase (infrastructure)
-```
-
-**Always in this direction. Never reversed.**
+The architecture is no longer organized by a single global set of layers. It is now organized by **domains first**, with **layered internals inside each domain**, and **shared cross-cutting services** in `src/shared/`.
