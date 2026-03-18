@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import type { CommentWithAuthor } from "@/core/domain/schema/comment.schema";
 import type {
+  Epic,
   EpicDetail,
   EpicWithProgress,
 } from "@/core/domain/schema/epic.schema";
@@ -12,13 +13,11 @@ import type { Label } from "@/core/domain/schema/label.schema";
 import type { Sprint } from "@/core/domain/schema/sprint.schema";
 import type { Ticket } from "@/core/domain/schema/ticket.schema";
 
-import { mapEpicRowToDomain } from "@/infrastructure/supabase/epic/EpicMapper.supabase";
-import { mapLabelRowToDomain } from "@/infrastructure/supabase/label/LabelMapper.supabase";
-import { createSupabaseBrowserClient } from "@/infrastructure/supabase/shared/client-browser";
-import { mapSprintRowToDomain } from "@/infrastructure/supabase/sprint/SprintMapper.supabase";
-import { mapTicketRowToDomain } from "@/infrastructure/supabase/ticket/TicketMapper.supabase";
+import { getRealtimeRepository } from "@/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
+
+import type { RealtimeRepository } from "@/core/ports/realtimeRepository";
 
 type RealtimeEventType = "INSERT" | "UPDATE" | "DELETE";
 
@@ -119,31 +118,35 @@ const mapRowSafely = <TRow, TDomain>(
 };
 
 const mapTicketFromPayload = (
+  realtimeRepository: RealtimeRepository,
   payload: unknown,
   source: "new" | "old"
 ): Ticket | null => {
-  return mapRowSafely(payload, source, mapTicketRowToDomain);
+  return mapRowSafely(payload, source, realtimeRepository.mapTicketRowToDomain);
 };
 
 const mapEpicFromPayload = (
+  realtimeRepository: RealtimeRepository,
   payload: unknown,
   source: "new" | "old"
-): ReturnType<typeof mapEpicRowToDomain> | null => {
-  return mapRowSafely(payload, source, mapEpicRowToDomain);
+): Epic | null => {
+  return mapRowSafely(payload, source, realtimeRepository.mapEpicRowToDomain);
 };
 
 const mapLabelFromPayload = (
+  realtimeRepository: RealtimeRepository,
   payload: unknown,
   source: "new" | "old"
 ): Label | null => {
-  return mapRowSafely(payload, source, mapLabelRowToDomain);
+  return mapRowSafely(payload, source, realtimeRepository.mapLabelRowToDomain);
 };
 
 const mapSprintFromPayload = (
+  realtimeRepository: RealtimeRepository,
   payload: unknown,
   source: "new" | "old"
 ): Sprint | null => {
-  return mapRowSafely(payload, source, mapSprintRowToDomain);
+  return mapRowSafely(payload, source, realtimeRepository.mapSprintRowToDomain);
 };
 
 const mapCommentRowFromPayload = (
@@ -313,7 +316,7 @@ export const useProjectRealtime = (projectId: string, boardId?: string) => {
       return;
     }
 
-    const supabaseRealtimeClient = createSupabaseBrowserClient();
+    const realtimeRepository = getRealtimeRepository();
     let pendingEpicsInvalidationTimeout: ReturnType<typeof setTimeout> | null =
       null;
 
@@ -403,7 +406,7 @@ export const useProjectRealtime = (projectId: string, boardId?: string) => {
       }
     };
 
-    const patchEpicInCaches = (epic: ReturnType<typeof mapEpicRowToDomain>) => {
+    const patchEpicInCaches = (epic: Epic) => {
       queryClient.setQueryData<EpicWithProgress[]>(
         queryKeys.projects.epicsList(projectId),
         (previous) => {
@@ -541,7 +544,7 @@ export const useProjectRealtime = (projectId: string, boardId?: string) => {
 
     const channelName = `project:${projectId}:realtime`;
 
-    const channelWithTickets = supabaseRealtimeClient.channel(channelName).on(
+    const channelWithTickets = realtimeRepository.createChannel(channelName).on(
       "postgres_changes",
       {
         event: "*",
@@ -552,8 +555,16 @@ export const useProjectRealtime = (projectId: string, boardId?: string) => {
       (payload) => {
         const eventType = extractEventType(payload);
         const ticketId = extractEntityId(payload);
-        const nextTicket = mapTicketFromPayload(payload, "new");
-        const previousTicket = mapTicketFromPayload(payload, "old");
+        const nextTicket = mapTicketFromPayload(
+          realtimeRepository,
+          payload,
+          "new"
+        );
+        const previousTicket = mapTicketFromPayload(
+          realtimeRepository,
+          payload,
+          "old"
+        );
 
         if (eventType === "UPDATE" && ticketId && nextTicket) {
           queryClient.setQueryData(
@@ -643,7 +654,7 @@ export const useProjectRealtime = (projectId: string, boardId?: string) => {
       (payload) => {
         const eventType = extractEventType(payload);
         const epicId = extractEntityId(payload);
-        const nextEpic = mapEpicFromPayload(payload, "new");
+        const nextEpic = mapEpicFromPayload(realtimeRepository, payload, "new");
 
         if (eventType === "UPDATE" && epicId && nextEpic) {
           patchEpicInCaches(nextEpic);
@@ -678,7 +689,11 @@ export const useProjectRealtime = (projectId: string, boardId?: string) => {
       (payload) => {
         const eventType = extractEventType(payload);
         const sprintId = extractEntityId(payload);
-        const nextSprint = mapSprintFromPayload(payload, "new");
+        const nextSprint = mapSprintFromPayload(
+          realtimeRepository,
+          payload,
+          "new"
+        );
 
         if (eventType === "UPDATE" && sprintId && nextSprint) {
           patchSprintInCache(nextSprint);
@@ -708,7 +723,11 @@ export const useProjectRealtime = (projectId: string, boardId?: string) => {
       (payload) => {
         const eventType = extractEventType(payload);
         const labelId = extractEntityId(payload);
-        const nextLabel = mapLabelFromPayload(payload, "new");
+        const nextLabel = mapLabelFromPayload(
+          realtimeRepository,
+          payload,
+          "new"
+        );
 
         if (eventType === "UPDATE" && labelId && nextLabel) {
           patchLabelInCache(nextLabel);
@@ -863,7 +882,7 @@ export const useProjectRealtime = (projectId: string, boardId?: string) => {
       if (pendingEpicsInvalidationTimeout) {
         clearTimeout(pendingEpicsInvalidationTimeout);
       }
-      void supabaseRealtimeClient.removeChannel(channelSubscription);
+      void realtimeRepository.removeChannel(channelSubscription);
     };
   }, [boardId, projectId, queryClient]);
 };

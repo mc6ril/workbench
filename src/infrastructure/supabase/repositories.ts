@@ -13,6 +13,7 @@ import { createInvitationRepository } from "./invitation/InvitationRepository.su
 import { createLabelRepository } from "./label/LabelRepository.supabase";
 import { createMemberRepository } from "./member/MemberRepository.supabase";
 import { createProjectRepository } from "./project/ProjectRepository.supabase";
+import { createRealtimeRepository } from "./realtime/RealtimeRepository.supabase";
 import { createSprintRepository } from "./sprint/SprintRepository.supabase";
 import { createSubscriptionRepository } from "./subscription/SubscriptionRepository.supabase";
 import { createTicketRepository } from "./ticket/TicketRepository.supabase";
@@ -64,6 +65,14 @@ export const subscriptionRepository = createSubscriptionRepository(
   createSupabaseBrowserClient()
 );
 
+/**
+ * Build a realtime repository on demand.
+ * This avoids eager browser-client creation at module evaluation time.
+ */
+export const getRealtimeRepository = () => {
+  return createRealtimeRepository(createSupabaseBrowserClient());
+};
+
 // Factory functions for server contexts (Server Components, Server Actions)
 export { createAuthRepository } from "./auth/AuthRepository.supabase";
 export { createBoardRepository } from "./board/BoardRepository.supabase";
@@ -73,6 +82,7 @@ export { createInvitationRepository } from "./invitation/InvitationRepository.su
 export { createLabelRepository } from "./label/LabelRepository.supabase";
 export { createMemberRepository } from "./member/MemberRepository.supabase";
 export { createProjectRepository } from "./project/ProjectRepository.supabase";
+export { createRealtimeRepository } from "./realtime/RealtimeRepository.supabase";
 export { createSprintRepository } from "./sprint/SprintRepository.supabase";
 export { createSubscriptionRepository } from "./subscription/SubscriptionRepository.supabase";
 export { createTicketRepository } from "./ticket/TicketRepository.supabase";

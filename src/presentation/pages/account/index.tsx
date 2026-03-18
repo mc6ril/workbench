@@ -36,7 +36,6 @@ import { useSignOut } from "@/presentation/hooks/auth/useSignOut";
 import { useUpdatePreferences } from "@/presentation/hooks/auth/useUpdatePreferences";
 import { useUpdateProfile } from "@/presentation/hooks/auth/useUpdateProfile";
 import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
-import { useLocaleStore } from "@/presentation/stores/useLocaleStore";
 import { useToastStore } from "@/presentation/stores/useToastStore";
 
 import { getAccessibilityId } from "@/shared/a11y";
@@ -45,6 +44,7 @@ import {
   getIntlLocale,
   supportedLocaleOptions,
   supportedLocales,
+  useLocaleStore,
   useTranslation,
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";

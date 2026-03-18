@@ -8,9 +8,9 @@ import Toast from "@/presentation/components/ui/Toast";
 import { useLocaleSync } from "@/presentation/hooks/useLocaleSync";
 import { useThemeSync } from "@/presentation/hooks/useThemeSync";
 import ReactQueryProvider from "@/presentation/providers/ReactQueryProvider";
-import { useLocaleStore } from "@/presentation/stores/useLocaleStore";
 
 import { registerLocaleGetter } from "@/shared/i18n/config";
+import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
 import { markNavigationSettled } from "@/shared/observability";
 
 type Props = PropsWithChildren;
