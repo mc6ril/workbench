@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 
-import { isNotFoundError } from "@/core/domain/repositoryError.guards";
+import { isNotFoundError } from "@/domains/project-management/core/domain/repositoryError.guards";
 
-import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
+import { getCurrentSession } from "@/domains/project-management/core/usecases/auth/getCurrentSession";
 
 import { createAuthRepository } from "@/infrastructure/supabase/repositories";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";

@@ -1,10 +1,10 @@
 import {
   createConstraintError,
   createNotFoundError,
-} from "@/core/domain/repositoryError";
-import { type Project,ProjectRole } from "@/core/domain/schema/project.schema";
+} from "@/domains/project-management/core/domain/repositoryError";
+import { type Project,ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
 
-import { addUserToProject } from "@/core/usecases/project/addUserToProject";
+import { addUserToProject } from "@/domains/project-management/core/usecases/project/addUserToProject";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";

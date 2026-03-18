@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-import type { CreateEpicInput } from "@/core/domain/schema/epic.schema";
+import type { CreateEpicInput } from "@/domains/project-management/core/domain/schema/epic.schema";
 
 import Button from "@/shared/design-system/Button";
 import ErrorMessage from "@/shared/design-system/ErrorMessage";

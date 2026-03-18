@@ -11,8 +11,8 @@ import type {
   PasswordResetError,
   SamePasswordError,
   WeakPasswordError,
-} from "@/core/domain/schema/auth.schema";
-import { DEFAULT_USER_PREFERENCES } from "@/core/domain/schema/auth.schema";
+} from "@/domains/project-management/core/domain/schema/auth.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/project-management/core/domain/schema/auth.schema";
 
 import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
 

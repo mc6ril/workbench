@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { resetPasswordForEmail } from "@/core/usecases/auth/resetPasswordForEmail";
+import { resetPasswordForEmail } from "@/domains/project-management/core/usecases/auth/resetPasswordForEmail";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import {

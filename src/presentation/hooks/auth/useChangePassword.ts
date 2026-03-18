@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { updateUser } from "@/core/usecases/auth/updateUser";
+import { updateUser } from "@/domains/project-management/core/usecases/auth/updateUser";
 
 import { authRepository } from "@/infrastructure/supabase/repositories";
 

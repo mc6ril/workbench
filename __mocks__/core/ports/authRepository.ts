@@ -6,7 +6,7 @@ import type {
   SignUpInput,
   UpdatePasswordInput,
   VerifyEmailInput,
-} from "@/core/domain/schema/auth.schema";
+} from "@/domains/project-management/core/domain/schema/auth.schema";
 
 /**
  * Mock type for AuthRepository.

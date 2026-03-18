@@ -1,6 +1,6 @@
-import { createNotFoundError } from "@/core/domain/repositoryError";
+import { createNotFoundError } from "@/domains/project-management/core/domain/repositoryError";
 
-import { deleteProject } from "@/core/usecases/project/deleteProject";
+import { deleteProject } from "@/domains/project-management/core/usecases/project/deleteProject";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { deleteProject } from "@/core/usecases/project/deleteProject";
+import { deleteProject } from "@/domains/project-management/core/usecases/project/deleteProject";
 
 import { projectRepository } from "@/infrastructure/supabase/repositories";
 

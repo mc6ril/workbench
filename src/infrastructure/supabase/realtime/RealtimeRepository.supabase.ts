@@ -10,7 +10,7 @@ import type {
   TicketRow,
 } from "@/infrastructure/supabase/types";
 
-import type { RealtimeRepository } from "@/core/ports/realtimeRepository";
+import type { RealtimeRepository } from "@/domains/project-management/core/ports/realtimeRepository";
 
 type BrowserSupabaseClient = ReturnType<typeof createSupabaseBrowserClient>;
 type SupabaseChannel = ReturnType<BrowserSupabaseClient["channel"]>;

@@ -11,8 +11,8 @@ import type {
   SignInInput,
   SignUpInput,
   WeakPasswordError,
-} from "@/core/domain/schema/auth.schema";
-import { DEFAULT_USER_PREFERENCES } from "@/core/domain/schema/auth.schema";
+} from "@/domains/project-management/core/domain/schema/auth.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/project-management/core/domain/schema/auth.schema";
 
 /**
  * Mock authentication session for testing.

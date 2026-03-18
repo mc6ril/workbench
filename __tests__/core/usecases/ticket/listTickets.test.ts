@@ -1,6 +1,6 @@
-import type { Ticket, TicketFilters, TicketSort } from "@/core/domain/schema/ticket.schema";
+import type { Ticket, TicketFilters, TicketSort } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import { listTickets } from "@/core/usecases/ticket/listTickets";
+import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";

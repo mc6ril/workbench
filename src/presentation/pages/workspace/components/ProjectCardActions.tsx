@@ -6,8 +6,8 @@ import type {
 } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { ProjectRole } from "@/core/domain/schema/project.schema";
-import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
+import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
 import Button from "@/shared/design-system/Button";
 import ErrorMessage from "@/shared/design-system/ErrorMessage";

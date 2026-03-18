@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
+import { getCurrentSession } from "@/domains/project-management/core/usecases/auth/getCurrentSession";
 
 import { authRepository } from "@/infrastructure/supabase/repositories";
 

@@ -1,7 +1,7 @@
 import type {
   TicketFilters,
   TicketSort,
-} from "@/core/domain/schema/ticket.schema";
+} from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 /**
  * Centralized query key factory for React Query.

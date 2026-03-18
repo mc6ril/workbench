@@ -1,6 +1,6 @@
-import type { Epic } from "@/core/domain/schema/epic.schema";
-import type { Sprint } from "@/core/domain/schema/sprint.schema";
-import type { TicketPriority } from "@/core/domain/schema/ticket.schema";
+import type { Epic } from "@/domains/project-management/core/domain/schema/epic.schema";
+import type { Sprint } from "@/domains/project-management/core/domain/schema/sprint.schema";
+import type { TicketPriority } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 type TranslateFn = (key: string) => string;
 

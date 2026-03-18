@@ -1,5 +1,5 @@
-import type { RepositoryErrorUnion } from "@/core/domain/repositoryError";
-import { isRepositoryError } from "@/core/domain/repositoryError.guards";
+import type { RepositoryErrorUnion } from "@/domains/project-management/core/domain/repositoryError";
+import { isRepositoryError } from "@/domains/project-management/core/domain/repositoryError.guards";
 
 import { mapSupabaseAuthError } from "@/infrastructure/supabase/auth/AuthMapper.supabase";
 

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { acceptInvitation } from "@/core/usecases/invitation/acceptInvitation";
+import { acceptInvitation } from "@/domains/project-management/core/usecases/invitation/acceptInvitation";
 
 import { invitationRepository } from "@/infrastructure/supabase/repositories";
 

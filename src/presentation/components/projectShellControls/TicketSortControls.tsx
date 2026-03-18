@@ -1,4 +1,4 @@
-import type { TicketSort } from "@/core/domain/schema/ticket.schema";
+import type { TicketSort } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import Button from "@/shared/design-system/Button";
 import Select from "@/shared/design-system/Select";

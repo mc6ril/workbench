@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { listEpics } from "@/core/usecases/epic/listEpics";
+import { listEpics } from "@/domains/project-management/core/usecases/epic/listEpics";
 
 import {
   boardRepository,

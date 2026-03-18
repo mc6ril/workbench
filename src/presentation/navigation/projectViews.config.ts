@@ -1,4 +1,4 @@
-import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
+import { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 

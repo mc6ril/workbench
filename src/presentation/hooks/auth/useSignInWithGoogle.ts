@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { signInWithGoogle } from "@/core/usecases/auth/signInWithGoogle";
+import { signInWithGoogle } from "@/domains/project-management/core/usecases/auth/signInWithGoogle";
 
 import { authRepository } from "@/infrastructure/supabase/repositories";
 

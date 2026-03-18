@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { deleteComment } from "@/core/usecases/comment";
+import { deleteComment } from "@/domains/project-management/core/usecases/comment";
 
 import { commentRepository } from "@/infrastructure/supabase/repositories";
 

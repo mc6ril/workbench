@@ -3,12 +3,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   createDatabaseError,
   createNotFoundError,
-} from "@/core/domain/repositoryError";
+} from "@/domains/project-management/core/domain/repositoryError";
 import type {
   CreateLabelInput,
   Label,
   UpdateLabelInput,
-} from "@/core/domain/schema/label.schema";
+} from "@/domains/project-management/core/domain/schema/label.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type { LabelRow } from "@/infrastructure/supabase/types";
@@ -18,7 +18,7 @@ import {
   mapLabelRowToDomain,
 } from "./LabelMapper.supabase";
 
-import type { LabelRepository } from "@/core/ports/labelRepository";
+import type { LabelRepository } from "@/domains/project-management/core/ports/labelRepository";
 
 /**
  * Create a LabelRepository implementation using the provided Supabase client.

@@ -1,4 +1,4 @@
-import type { CommentWithAuthor } from "@/core/domain/schema/comment.schema";
+import type { CommentWithAuthor } from "@/domains/project-management/core/domain/schema/comment.schema";
 
 import type { CommentWithAuthorRow } from "@/infrastructure/supabase/types";
 

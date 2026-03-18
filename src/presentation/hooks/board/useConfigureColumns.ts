@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { ConfigureColumnsInput } from "@/core/domain/schema/board.schema";
+import type { ConfigureColumnsInput } from "@/domains/project-management/core/domain/schema/board.schema";
 
-import { configureColumns } from "@/core/usecases/board/configureColumns";
+import { configureColumns } from "@/domains/project-management/core/usecases/board/configureColumns";
 
 import { boardRepository } from "@/infrastructure/supabase/repositories";
 

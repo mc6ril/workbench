@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
-import { createBillingPortalSession } from "@/core/usecases/subscription/createBillingPortalSession";
+import { getCurrentSession } from "@/domains/project-management/core/usecases/auth/getCurrentSession";
+import { createBillingPortalSession } from "@/domains/project-management/core/usecases/subscription/createBillingPortalSession";
 
 import { stripePaymentGateway } from "@/infrastructure/stripe/stripePaymentGateway";
 import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";

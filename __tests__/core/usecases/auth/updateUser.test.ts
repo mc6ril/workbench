@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { updateUser } from "@/core/usecases/auth/updateUser";
+import { updateUser } from "@/domains/project-management/core/usecases/auth/updateUser";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthError } from "../../../../__mocks__/core/domain/authMocks";

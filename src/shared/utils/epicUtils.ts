@@ -1,4 +1,4 @@
-import type { EpicWithProgress } from "@/core/domain/schema/epic.schema";
+import type { EpicWithProgress } from "@/domains/project-management/core/domain/schema/epic.schema";
 
 import type {
   EpicProgressFilter,

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getCurrentProjectRole } from "@/core/usecases/member/getCurrentProjectRole";
+import { getCurrentProjectRole } from "@/domains/project-management/core/usecases/member/getCurrentProjectRole";
 
 import { memberRepository } from "@/infrastructure/supabase/repositories";
 

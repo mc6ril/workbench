@@ -1,6 +1,6 @@
-import type { Label } from "@/core/domain/schema/label.schema";
-import type { ProjectMember } from "@/core/domain/schema/projectMember.schema";
-import type { TicketAssignee } from "@/core/domain/schema/ticket.schema";
+import type { Label } from "@/domains/project-management/core/domain/schema/label.schema";
+import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
+import type { TicketAssignee } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import AssigneePicker from "@/presentation/components/ticket/assigneePicker/AssigneePicker";
 import styles from "@/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";

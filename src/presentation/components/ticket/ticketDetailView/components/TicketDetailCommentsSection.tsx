@@ -1,4 +1,4 @@
-import type { CommentWithAuthor } from "@/core/domain/schema/comment.schema";
+import type { CommentWithAuthor } from "@/domains/project-management/core/domain/schema/comment.schema";
 
 import styles from "@/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 import Button from "@/shared/design-system/Button";

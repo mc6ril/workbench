@@ -3,14 +3,14 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   createDatabaseError,
   createNotFoundError,
-} from "@/core/domain/repositoryError";
+} from "@/domains/project-management/core/domain/repositoryError";
 import type {
   Board,
   Column,
   CreateBoardInput,
   CreateColumnInput,
   UpdateColumnInput,
-} from "@/core/domain/schema/board.schema";
+} from "@/domains/project-management/core/domain/schema/board.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type { BoardRow, ColumnRow } from "@/infrastructure/supabase/types";
@@ -21,7 +21,7 @@ import {
   mapColumnRowToDomain,
 } from "./BoardMapper.supabase";
 
-import type { BoardRepository } from "@/core/ports/boardRepository";
+import type { BoardRepository } from "@/domains/project-management/core/ports/boardRepository";
 
 /**
  * Create a BoardRepository implementation using the provided Supabase client.

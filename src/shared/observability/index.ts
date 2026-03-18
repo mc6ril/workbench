@@ -18,4 +18,4 @@ export type {
   LoggerFactory,
   LogLevel,
   LogMeta,
-} from "@/core/ports/logger";
+} from "@/domains/project-management/core/ports/logger";

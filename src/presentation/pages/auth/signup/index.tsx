@@ -7,12 +7,12 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { getNextUnmetCriterion } from "@/core/domain/passwordStrength";
+import { getNextUnmetCriterion } from "@/domains/project-management/core/domain/passwordStrength";
 import type {
   SignUpFormInput,
   SignUpInput,
-} from "@/core/domain/schema/auth.schema";
-import { SignUpFormSchema } from "@/core/domain/schema/auth.schema";
+} from "@/domains/project-management/core/domain/schema/auth.schema";
+import { SignUpFormSchema } from "@/domains/project-management/core/domain/schema/auth.schema";
 
 import Button from "@/shared/design-system/Button";
 import Checkbox from "@/shared/design-system/Checkbox";

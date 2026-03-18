@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { UpdateProfileInput } from "@/core/domain/schema/userProfile.schema";
+import type { UpdateProfileInput } from "@/domains/project-management/core/domain/schema/userProfile.schema";
 
-import { updateUser } from "@/core/usecases/auth/updateUser";
-import { updateProfile } from "@/core/usecases/profile/updateProfile";
+import { updateUser } from "@/domains/project-management/core/usecases/auth/updateUser";
+import { updateProfile } from "@/domains/project-management/core/usecases/profile/updateProfile";
 
 import {
   authRepository,

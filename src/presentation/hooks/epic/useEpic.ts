@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getEpicDetail } from "@/core/usecases/epic/getEpicDetail";
+import { getEpicDetail } from "@/domains/project-management/core/usecases/epic/getEpicDetail";
 
 import {
   boardRepository,

@@ -1,11 +1,11 @@
 import {
   validateTicket,
   validateTicketParent,
-} from "@/core/domain/rules/ticket.rules";
+} from "@/domains/project-management/core/domain/rules/ticket.rules";
 import type {
   CreateTicketInput,
   Ticket,
-} from "@/core/domain/schema/ticket.schema";
+} from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 describe("Ticket Business Rules", () => {
   const createMockTicket = (overrides?: Partial<Ticket>): Ticket => ({

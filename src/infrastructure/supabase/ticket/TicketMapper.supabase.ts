@@ -1,4 +1,4 @@
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
+import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import type { TicketRow } from "@/infrastructure/supabase/types";
 

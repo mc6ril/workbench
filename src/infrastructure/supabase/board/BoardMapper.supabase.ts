@@ -1,5 +1,5 @@
-import type { Board, Column } from "@/core/domain/schema/board.schema";
-import { ColumnWorkflowStateSchema } from "@/core/domain/schema/board.schema";
+import type { Board, Column } from "@/domains/project-management/core/domain/schema/board.schema";
+import { ColumnWorkflowStateSchema } from "@/domains/project-management/core/domain/schema/board.schema";
 
 import type { BoardRow, ColumnRow } from "@/infrastructure/supabase/types";
 

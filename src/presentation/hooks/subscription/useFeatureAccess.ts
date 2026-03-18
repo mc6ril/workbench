@@ -3,11 +3,11 @@ import { useMemo } from "react";
 import type {
   FeatureAccessResult,
   PlanFeature,
-} from "@/core/domain/rules/planFeatures.rules";
-import { getMinimumPlanForFeature } from "@/core/domain/rules/planFeatures.rules";
-import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
+} from "@/domains/project-management/core/domain/rules/planFeatures.rules";
+import { getMinimumPlanForFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
+import { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
-import { checkFeatureAccess } from "@/core/usecases/subscription/checkFeatureAccess";
+import { checkFeatureAccess } from "@/domains/project-management/core/usecases/subscription/checkFeatureAccess";
 
 import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
 

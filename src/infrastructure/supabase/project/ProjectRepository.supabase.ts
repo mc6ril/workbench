@@ -4,15 +4,15 @@ import {
   createConstraintError,
   createDatabaseError,
   createNotFoundError,
-} from "@/core/domain/repositoryError";
+} from "@/domains/project-management/core/domain/repositoryError";
 import type {
   CreateProjectInput,
   Project,
   ProjectWithRole,
   ProjectWithStats,
   ReclaimableProject,
-} from "@/core/domain/schema/project.schema";
-import { ProjectRole } from "@/core/domain/schema/project.schema";
+} from "@/domains/project-management/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type {
@@ -34,7 +34,7 @@ import {
   mapReclaimableProjectRowToDomain,
 } from "./ProjectMapper.supabase";
 
-import type { ProjectRepository } from "@/core/ports/projectRepository";
+import type { ProjectRepository } from "@/domains/project-management/core/ports/projectRepository";
 
 /**
  * Extract a full project row from an RPC response.

@@ -6,10 +6,10 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { CreateProjectInput } from "@/core/domain/schema/project.schema";
-import { CreateProjectInputSchema } from "@/core/domain/schema/project.schema";
-import { ProjectRole } from "@/core/domain/schema/project.schema";
-import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
+import type { CreateProjectInput } from "@/domains/project-management/core/domain/schema/project.schema";
+import { CreateProjectInputSchema } from "@/domains/project-management/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
 import Badge from "@/shared/design-system/Badge";
 import Button from "@/shared/design-system/Button";

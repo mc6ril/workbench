@@ -1,4 +1,4 @@
-import { createConstraintError } from "@/core/domain/repositoryError";
+import { createConstraintError } from "@/domains/project-management/core/domain/repositoryError";
 
 import {
   handleAuthError,

@@ -4,11 +4,11 @@ import {
   getFeatureLimit,
   getMinimumPlanForFeature,
   PlanFeature,
-} from "@/core/domain/rules/planFeatures.rules";
+} from "@/domains/project-management/core/domain/rules/planFeatures.rules";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
-} from "@/core/domain/schema/subscription.schema";
+} from "@/domains/project-management/core/domain/schema/subscription.schema";
 
 describe("Plan Features Domain Rules", () => {
   describe("canAccessFeature", () => {

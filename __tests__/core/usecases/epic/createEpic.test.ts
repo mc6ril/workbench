@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import type { CreateEpicInput, Epic } from "@/core/domain/schema/epic.schema";
+import type { CreateEpicInput, Epic } from "@/domains/project-management/core/domain/schema/epic.schema";
 
-import { createEpic } from "@/core/usecases/epic/createEpic";
+import { createEpic } from "@/domains/project-management/core/usecases/epic/createEpic";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createEpicRepositoryMock } from "../../../../__mocks__/core/ports/epicRepository";

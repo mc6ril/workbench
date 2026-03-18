@@ -15,8 +15,8 @@ Centralized logging system following Clean Architecture principles with structur
 Usecases receive `loggerFactory` as a parameter:
 
 ```typescript
-import type { LoggerFactory } from "@/core/ports/logger";
-import type { ProjectRepository } from "@/core/ports/projectRepository";
+import type { LoggerFactory } from "@/domains/project-management/core/ports/logger";
+import type { ProjectRepository } from "@/domains/project-management/core/ports/projectRepository";
 
 export async function createProject(
   repo: ProjectRepository,

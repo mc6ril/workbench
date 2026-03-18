@@ -6,8 +6,8 @@ import React, {
   useState,
 } from "react";
 
-import type { ProjectMember } from "@/core/domain/schema/projectMember.schema";
-import type { TicketAssignee } from "@/core/domain/schema/ticket.schema";
+import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
+import type { TicketAssignee } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";

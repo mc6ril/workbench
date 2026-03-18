@@ -1,4 +1,4 @@
-import type { Epic } from "@/core/domain/schema/epic.schema";
+import type { Epic } from "@/domains/project-management/core/domain/schema/epic.schema";
 
 import type { EpicRow } from "@/infrastructure/supabase/types";
 

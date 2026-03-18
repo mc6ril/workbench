@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { deleteSprint } from "@/core/usecases/sprint";
+import { deleteSprint } from "@/domains/project-management/core/usecases/sprint";
 
 import { sprintRepository } from "@/infrastructure/supabase/repositories";
 

@@ -1,4 +1,4 @@
-import type { Sprint } from "@/core/domain/schema/sprint.schema";
+import type { Sprint } from "@/domains/project-management/core/domain/schema/sprint.schema";
 
 import type { SprintRow } from "@/infrastructure/supabase/types";
 

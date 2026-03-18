@@ -4,9 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
-} from "@/core/domain/schema/subscription.schema";
+} from "@/domains/project-management/core/domain/schema/subscription.schema";
 
-import { getCurrentUserSubscription } from "@/core/usecases/subscription/getCurrentUserSubscription";
+import { getCurrentUserSubscription } from "@/domains/project-management/core/usecases/subscription/getCurrentUserSubscription";
 
 import { subscriptionRepository } from "@/infrastructure/supabase/repositories";
 

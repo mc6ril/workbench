@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-import { createNotFoundError } from "@/core/domain/repositoryError";
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
+import { createNotFoundError } from "@/domains/project-management/core/domain/repositoryError";
+import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import { moveAndReorderTicket } from "@/core/usecases/ticket/moveAndReorderTicket";
+import { moveAndReorderTicket } from "@/domains/project-management/core/usecases/ticket/moveAndReorderTicket";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";

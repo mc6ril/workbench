@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   addLabelsToTicket,
   removeLabelsFromTicket,
-} from "@/core/usecases/label";
+} from "@/domains/project-management/core/usecases/label";
 
 import { labelRepository } from "@/infrastructure/supabase/repositories";
 

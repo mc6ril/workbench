@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateSubtaskInput } from "@/core/domain/schema/ticket.schema";
+import type { CreateSubtaskInput } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import { createSubtask } from "@/core/usecases/ticket/createSubtask";
+import { createSubtask } from "@/domains/project-management/core/usecases/ticket/createSubtask";
 
 import { ticketRepository } from "@/infrastructure/supabase/repositories";
 

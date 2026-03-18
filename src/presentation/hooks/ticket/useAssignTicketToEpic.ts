@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { assignTicketToEpic } from "@/core/usecases/ticket/assignTicketToEpic";
+import { assignTicketToEpic } from "@/domains/project-management/core/usecases/ticket/assignTicketToEpic";
 
 import { epicRepository, ticketRepository } from "@/infrastructure/supabase/repositories";
 

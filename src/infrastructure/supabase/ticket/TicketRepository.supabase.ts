@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   createDatabaseError,
   createNotFoundError,
-} from "@/core/domain/repositoryError";
+} from "@/domains/project-management/core/domain/repositoryError";
 import type {
   CreateTicketInput,
   Ticket,
@@ -11,7 +11,7 @@ import type {
   TicketFilters,
   TicketSort,
   UpdateTicketInput,
-} from "@/core/domain/schema/ticket.schema";
+} from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type { TicketRow } from "@/infrastructure/supabase/types";
@@ -21,7 +21,7 @@ import {
   mapTicketRowToDomain,
 } from "./TicketMapper.supabase";
 
-import type { TicketRepository } from "@/core/ports/ticketRepository";
+import type { TicketRepository } from "@/domains/project-management/core/ports/ticketRepository";
 
 type TicketAssigneeRow = {
   ticket_id: string;

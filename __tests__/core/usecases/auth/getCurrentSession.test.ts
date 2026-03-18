@@ -1,6 +1,6 @@
-import type { AuthSession } from "@/core/domain/schema/auth.schema";
+import type { AuthSession } from "@/domains/project-management/core/domain/schema/auth.schema";
 
-import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
+import { getCurrentSession } from "@/domains/project-management/core/usecases/auth/getCurrentSession";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import {

@@ -4,9 +4,9 @@ import { useForm, useWatch } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { getNextUnmetCriterion } from "@/core/domain/passwordStrength";
-import type { UpdatePasswordFormInput } from "@/core/domain/schema/auth.schema";
-import { UpdatePasswordFormSchema } from "@/core/domain/schema/auth.schema";
+import { getNextUnmetCriterion } from "@/domains/project-management/core/domain/passwordStrength";
+import type { UpdatePasswordFormInput } from "@/domains/project-management/core/domain/schema/auth.schema";
+import { UpdatePasswordFormSchema } from "@/domains/project-management/core/domain/schema/auth.schema";
 
 import { useUpdatePassword } from "@/presentation/hooks/auth/useUpdatePassword";
 

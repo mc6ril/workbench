@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateSprintInput } from "@/core/domain/schema/sprint.schema";
+import type { CreateSprintInput } from "@/domains/project-management/core/domain/schema/sprint.schema";
 
-import { createSprint } from "@/core/usecases/sprint";
+import { createSprint } from "@/domains/project-management/core/usecases/sprint";
 
 import { sprintRepository } from "@/infrastructure/supabase/repositories";
 

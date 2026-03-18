@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   PLAN_RANK,
   SubscriptionPlan,
-} from "@/core/domain/schema/subscription.schema";
+} from "@/domains/project-management/core/domain/schema/subscription.schema";
 
 import Button from "@/shared/design-system/Button";
 import Text from "@/shared/design-system/Text";

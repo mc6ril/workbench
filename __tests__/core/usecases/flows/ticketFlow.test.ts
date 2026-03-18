@@ -1,11 +1,11 @@
 import {
   ProjectRole,
   type ProjectWithRole,
-} from "@/core/domain/schema/project.schema";
-import type { Ticket, TicketFilters, TicketSort } from "@/core/domain/schema/ticket.schema";
+} from "@/domains/project-management/core/domain/schema/project.schema";
+import type { Ticket, TicketFilters, TicketSort } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import { listProjects } from "@/core/usecases/project/listProjects";
-import { listTickets } from "@/core/usecases/ticket/listTickets";
+import { listProjects } from "@/domains/project-management/core/usecases/project/listProjects";
+import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";

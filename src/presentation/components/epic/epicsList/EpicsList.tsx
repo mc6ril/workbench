@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 
-import type { EpicWithProgress } from "@/core/domain/schema/epic.schema";
+import type { EpicWithProgress } from "@/domains/project-management/core/domain/schema/epic.schema";
 
 import EpicCard from "@/presentation/components/epic/epicCard/EpicCard";
 import EmptyState from "@/shared/design-system/EmptyState";

@@ -1,8 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { createDatabaseError } from "@/core/domain/repositoryError";
-import type { ProjectRole } from "@/core/domain/schema/project.schema";
-import type { ProjectMember } from "@/core/domain/schema/projectMember.schema";
+import { createDatabaseError } from "@/domains/project-management/core/domain/repositoryError";
+import type { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type {
@@ -14,7 +14,7 @@ import { isProjectRole } from "@/shared/utils/guards";
 
 import { mapMemberRowsToDomain } from "./MemberMapper.supabase";
 
-import type { MemberRepository } from "@/core/ports/memberRepository";
+import type { MemberRepository } from "@/domains/project-management/core/ports/memberRepository";
 
 /**
  * Create a MemberRepository implementation using the provided Supabase client.

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { deleteEpic } from "@/core/usecases/epic/deleteEpic";
+import { deleteEpic } from "@/domains/project-management/core/usecases/epic/deleteEpic";
 
 import { epicRepository, ticketRepository } from "@/infrastructure/supabase/repositories";
 

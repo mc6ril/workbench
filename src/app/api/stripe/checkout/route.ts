@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
+import { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
-import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
-import { createCheckoutSession } from "@/core/usecases/subscription/createCheckoutSession";
+import { getCurrentSession } from "@/domains/project-management/core/usecases/auth/getCurrentSession";
+import { createCheckoutSession } from "@/domains/project-management/core/usecases/subscription/createCheckoutSession";
 
 import { stripePaymentGateway } from "@/infrastructure/stripe/stripePaymentGateway";
 import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";

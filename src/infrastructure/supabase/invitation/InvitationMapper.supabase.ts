@@ -1,9 +1,9 @@
 import type {
   PendingInvitation,
   ProjectInvitation,
-} from "@/core/domain/schema/invitation.schema";
-import { InvitationStatus } from "@/core/domain/schema/invitation.schema";
-import { ProjectRole } from "@/core/domain/schema/project.schema";
+} from "@/domains/project-management/core/domain/schema/invitation.schema";
+import { InvitationStatus } from "@/domains/project-management/core/domain/schema/invitation.schema";
+import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
 
 import type {
   InvitationRow,
