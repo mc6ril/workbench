@@ -4,7 +4,7 @@ import { updateUser } from "@/domains/project-management/core/usecases/auth/upda
 
 import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for changing user password from account settings.

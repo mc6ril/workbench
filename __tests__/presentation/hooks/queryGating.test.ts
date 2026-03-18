@@ -9,9 +9,9 @@ process.env.NEXT_PUBLIC_SUPABASE_URL =
 process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ?? "test-key";
 
-import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfiguration";
+import { useBoardConfiguration } from "@/domains/project-management/presentation/hooks/board/useBoardConfiguration";
 import { useLabels } from "@/presentation/hooks/label/useLabels";
-import { useSprints } from "@/presentation/hooks/sprint/useSprints";
+import { useSprints } from "@/domains/project-management/presentation/hooks/sprint/useSprints";
 
 describe("query hook gating", () => {
   beforeEach(() => {

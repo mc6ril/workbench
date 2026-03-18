@@ -4,7 +4,7 @@ import { declineInvitation } from "@/domains/project-management/core/usecases/in
 
 import { invitationRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for declining a project invitation.

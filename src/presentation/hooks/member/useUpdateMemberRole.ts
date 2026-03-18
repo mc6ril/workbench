@@ -6,7 +6,7 @@ import { updateMemberRole } from "@/domains/project-management/core/usecases/mem
 
 import { memberRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 type UpdateMemberRoleVariables = {
   memberId: string;

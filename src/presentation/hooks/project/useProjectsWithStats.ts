@@ -4,7 +4,7 @@ import { listProjectsWithStats } from "@/domains/project-management/core/usecase
 
 import { projectRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for fetching all projects with statistics for workspace overview.

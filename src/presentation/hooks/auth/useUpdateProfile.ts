@@ -10,7 +10,7 @@ import {
   userProfileRepository,
 } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 import { useSession } from "./useSession";
 

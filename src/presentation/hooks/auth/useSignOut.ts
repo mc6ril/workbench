@@ -5,7 +5,7 @@ import { signOutUser } from "@/domains/project-management/core/usecases/auth/sig
 
 import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 

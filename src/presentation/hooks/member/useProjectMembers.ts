@@ -4,7 +4,7 @@ import { listProjectMembers } from "@/domains/project-management/core/usecases/m
 
 import { memberRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for fetching all members of a project with their profiles.

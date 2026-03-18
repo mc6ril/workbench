@@ -4,7 +4,7 @@ import { listPendingInvitations } from "@/domains/project-management/core/usecas
 
 import { invitationRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for fetching pending invitations for the current user.

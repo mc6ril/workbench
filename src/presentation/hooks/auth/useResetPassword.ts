@@ -6,7 +6,7 @@ import { resetPasswordForEmail } from "@/domains/project-management/core/usecase
 
 import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for requesting a password reset email.
