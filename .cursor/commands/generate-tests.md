@@ -45,7 +45,7 @@ The Unit Test Coach generates test-first specs and scaffolds unit tests for doma
    - Use TypeScript (.test.ts or .test.tsx)
 
 4. **Mock Dependencies**
-   - Mock repositories: `jest.mock("infrastructure/supabase/productRepositorySupabase")`
+   - Mock repositories through domain ports or domain repository test doubles
    - Mock Supabase client (no real database connections)
    - Mock network requests (no real API calls)
    - Use `jest.spyOn()` for partial mocks when needed

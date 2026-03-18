@@ -1,219 +1,127 @@
 ---
 alwaysApply: true
-name: "Clean Architecture — Strict Layer Separation"
-description: "Maintain strict Clean Architecture with clear separation between Domain, Usecases, Infrastructure, and Presentation layers. No business logic in UI or infrastructure."
+name: "Modular Domain Architecture — Strict Boundaries"
+description: "Maintain the domain-first architecture: src/app for routing, src/domains for business modules, src/shared for cross-cutting concerns."
 ---
 
 # Intent
 
-Maintain strict Clean Architecture with clear separation of responsibilities between Domain, Usecases, Infrastructure, and Presentation. No business logic should be in the UI or infrastructure.
+Maintain a **domain-first modular architecture**.
+
+The codebase is organized around domain modules. Each domain owns:
+
+- `core/domain`
+- `core/ports`
+- `core/usecases`
+- `infrastructure`
+- `presentation`
+
+Cross-cutting concerns live in `src/shared/`.
 
 ## CRITICAL RULES - ARCHITECTURE NEVER OPTIONAL
 
-### 1. Layer Separation - STRICT ENFORCEMENT
+### 1. Top-Level Structure
 
--   **ALWAYS** respect layer separation: Domain → Usecases → Infrastructure → Presentation
--   **NEVER** mix responsibilities between layers
--   **ALWAYS** follow unidirectional flow: UI → Hooks → Usecases → Repositories → Supabase
--   **NEVER** reverse the flow (e.g., Infrastructure → Presentation)
+- **ALWAYS** keep routing in `src/app/`
+- **ALWAYS** place business modules in `src/domains/<domain>/`
+- **ALWAYS** place cross-cutting code in `src/shared/`
+- **NEVER** recreate global roots such as `src/core/`, `src/presentation/`, or `src/infrastructure/`
 
-### 2. Domain Layer (core/domain) - PURE TYPESCRIPT ONLY
+### 2. `src/app/` - ROUTING ONLY
 
--   **ALWAYS** place business types/interfaces in `core/domain/`
--   **ALWAYS** place pure business rules in `core/domain/` (e.g., `isLowStock(product)`)
--   **NEVER** import Supabase, React, Zustand, React Query, or Next.js in the domain
--   **NEVER** put infrastructure-dependent logic in the domain
--   **ALWAYS** keep the domain pure TypeScript without external dependencies
+- **ALWAYS** keep `src/app/` focused on route files, route layouts, and route composition
+- **ALWAYS** compose domain pages and layouts from `src/domains/<domain>/presentation/`
+- **NEVER** put ticket, board, epic, sprint, or other domain business rules in `src/app/`
+- **NEVER** call Supabase directly from route files
 
-### 3. Usecases Layer (core/usecases) - BUSINESS LOGIC ORCHESTRATION
+### 3. Domain Core - PURE BUSINESS OWNERSHIP
 
--   **ALWAYS** create pure functions that orchestrate business logic
--   **ALWAYS** pass repositories (ports) as parameters to usecases
--   **ALWAYS** return domain data from usecases
--   **NEVER** import Supabase directly in a usecase
--   **NEVER** import React, Zustand, or Next.js in a usecase
--   **ALWAYS** use ports (interfaces) to access data
+- **ALWAYS** place schemas in `src/domains/<domain>/core/domain/schema/`
+- **ALWAYS** place rules in `src/domains/<domain>/core/domain/rules/`
+- **ALWAYS** place domain constants in `src/domains/<domain>/core/domain/constants/`
+- **ALWAYS** keep domain core free of React, Next.js, Zustand, React Query, and Supabase
+- **NEVER** move domain-specific business rules into `src/shared/`
 
-**Mandatory structure example:**
+### 4. Ports - DOMAIN CONTRACTS
 
-```typescript
-export async function listProducts(repo: ProductRepository) {
-    return repo.list();
-}
-```
+- **ALWAYS** define contracts in `src/domains/<domain>/core/ports/`
+- **ALWAYS** keep ports close to the domain that owns them
+- **NEVER** implement business or infrastructure logic in port files
 
-### 4. Ports Layer (core/ports) - REPOSITORY CONTRACTS
+### 5. Usecases - DOMAIN ORCHESTRATION
 
--   **ALWAYS** define repository interfaces in `core/ports/`
--   **ALWAYS** name ports with the "Repository" suffix (e.g., `ProductRepository`)
--   **NEVER** implement logic in ports, only contracts
--   **ALWAYS** use ports as types in usecases
+- **ALWAYS** place use cases in `src/domains/<domain>/core/usecases/`
+- **ALWAYS** use ports to access persistence or external services
+- **NEVER** import Supabase clients directly in a domain use case
+- **NEVER** import React, Next.js, Zustand, or React Query in a domain use case
 
-### 5. Infrastructure Layer (infrastructure/) - CONCRETE IMPLEMENTATIONS
+### 6. Infrastructure - DOMAIN ADAPTERS
 
--   **ALWAYS** implement ports in `infrastructure/supabase/`
--   **ALWAYS** name implementations with the "Supabase" suffix (e.g., `productRepositorySupabase`)
--   **ALWAYS** implement interfaces defined in `core/ports/`
--   **NEVER** import UI or Zustand in infrastructure
--   **ALWAYS** use Supabase, Fetch, or other external libs only in infrastructure
+- **ALWAYS** place domain-specific repositories and mappers in `src/domains/<domain>/infrastructure/`
+- **ALWAYS** use shared technical clients from `src/shared/infrastructure/*` when needed
+- **NEVER** import another domain's presentation layer into infrastructure
+- **NEVER** put reusable cross-cutting clients inside one domain if they belong in `src/shared/infrastructure/`
 
-**Mandatory structure example:**
+### 7. Presentation - DOMAIN UI COMPOSITION
 
-```typescript
-export const productRepositorySupabase: ProductRepository = {
-    list: async () => {
-        // ...supabase.from("products")...
-    },
-};
-```
+- **ALWAYS** place domain presentation code in `src/domains/<domain>/presentation/`
+- **ALWAYS** keep domain hooks in `presentation/hooks/`
+- **ALWAYS** keep domain stores in `presentation/stores/` for UI state only
+- **ALWAYS** keep route-level page/layout composition in `presentation/pages/` and `presentation/layouts/`
+- **NEVER** put reusable design-system primitives in a domain presentation folder
 
-### 6. Presentation Layer - UI ONLY, NO BUSINESS LOGIC
+### 8. Shared Layer - CROSS-CUTTING ONLY
 
-#### 6.1. Components (presentation/components)
+- **ALWAYS** place reusable UI primitives in `src/shared/design-system/ui/`
+- **ALWAYS** place accessibility helpers in `src/shared/a11y/`
+- **ALWAYS** place shared infra clients in `src/shared/infrastructure/`
+- **ALWAYS** place cross-cutting auth utilities in `src/shared/auth/`
+- **NEVER** place ticket, board, epic, sprint, or project-management business rules in `src/shared/`
 
--   **ALWAYS** create pure UI components without business logic
--   **NEVER** call Supabase directly from a component
--   **NEVER** put business logic in components
--   **ALWAYS** receive ready data via props
--   **ALWAYS** use React Query hooks to fetch data
--   **ALWAYS** place reusable components (Button, Input, Card, etc.) in `presentation/components/ui/`
--   **NEVER** create reusable components elsewhere than in `presentation/components/ui/`
--   **ALWAYS** organize page-specific components in their own folders: `presentation/components/{componentName}/`
--   **ALWAYS** place component files (`.tsx`, `.module.scss`, etc.) in the component folder
--   **NEVER** place component files directly in `presentation/components/` root
+### 9. Dependency Direction
 
-#### 6.2. Hooks (presentation/hooks)
+- **ALWAYS** follow this direction:
+  - `src/app/`
+  - `domains/<domain>/presentation/`
+  - `domains/<domain>/core/usecases/`
+  - `domains/<domain>/core/ports/`
+  - `domains/<domain>/infrastructure/`
+  - `shared/infrastructure/`
+  - external services
+- **NEVER** reverse the direction
+- **NEVER** make one domain presentation layer depend on another domain infrastructure layer directly
 
--   **ALWAYS** create React Query hooks in `presentation/hooks/`
--   **ALWAYS** call usecases from hooks, not directly from infrastructure
--   **ALWAYS** provide `data`, `isLoading`, `error` from hooks
--   **NEVER** put business logic in hooks, only orchestration
--   **ALWAYS** use the following structure:
+## FILE ORGANIZATION - MANDATORY STRUCTURE
 
-```typescript
-export function useProducts() {
-    return useQuery({
-        queryKey: ["products"],
-        queryFn: () => listProducts(productRepositorySupabase),
-    });
-}
-```
-
-#### 6.3. Stores Zustand (presentation/stores)
-
--   **ALWAYS** store only UI state (filters, modals, categories, drawer)
--   **NEVER** put business logic in Zustand stores
--   **NEVER** call Supabase or usecases from stores
--   **ALWAYS** keep stores for UI state only
-
-#### 6.4. Providers (presentation/providers)
-
--   **ALWAYS** create global providers in `presentation/providers/`
--   **ALWAYS** include ReactQueryProvider for React Query
--   **NEVER** put business logic in providers
-
-### 7. Shared Layer (shared/) - SHARED CODE
-
--   **ALWAYS** place shared code between layers in `shared/`
--   **ALWAYS** place accessibility utilities in `shared/a11y/`
--   **ALWAYS** place accessibility constants in `shared/a11y/`
--   **NEVER** put business logic in shared
--   **ALWAYS** keep shared for cross-cutting utilities and constants
--   **ALWAYS** allow importing shared from all layers (domain, usecases, infrastructure, presentation)
-
-### 8. File Organization - MANDATORY STRUCTURE
-
--   **ALWAYS** create files in the correct directories according to their role:
-    -   Business types → `core/domain/`
-    -   Usecases → `core/usecases/`
-    -   Repository interfaces → `core/ports/`
-    -   Supabase implementations → `infrastructure/supabase/`
-    -   Page-specific UI components → `presentation/components/{componentName}/` (each component in its own folder)
-    -   **Reusable components** (Button, Input, Card, etc.) → `presentation/components/ui/`
-    -   React Query hooks → `presentation/hooks/`
-    -   Zustand stores → `presentation/stores/`
-    -   Providers → `presentation/providers/`
-    -   **Accessibility** (utilities, constants) → `shared/a11y/`
-
-### 9. Import Rules - STRICT DEPENDENCY DIRECTION
-
--   **ALWAYS** respect import direction:
-    -   Domain: no external imports (except `shared/` if needed)
-    -   Usecases: import Domain and Ports only (except `shared/` if needed)
-    -   Infrastructure: import Domain and Ports only (except `shared/` if needed)
-    -   Presentation: import Domain, Usecases, and Infrastructure only (except `shared/` if needed)
-    -   Shared: can be imported by all layers
--   **NEVER** make forbidden cross-layer imports (e.g., infrastructure → presentation)
--   **NEVER** import Supabase in `/core/`
--   **NEVER** import React/Next.js in `/core/`
--   **ALWAYS** use `shared/a11y/` for all accessibility utilities and constants
+- Business schemas and rules -> `src/domains/<domain>/core/domain/`
+- Ports -> `src/domains/<domain>/core/ports/`
+- Use cases -> `src/domains/<domain>/core/usecases/`
+- Domain repositories and mappers -> `src/domains/<domain>/infrastructure/`
+- Domain UI components -> `src/domains/<domain>/presentation/components/`
+- Domain hooks -> `src/domains/<domain>/presentation/hooks/`
+- Domain stores -> `src/domains/<domain>/presentation/stores/`
+- Domain pages -> `src/domains/<domain>/presentation/pages/`
+- Domain layouts -> `src/domains/<domain>/presentation/layouts/`
+- Domain navigation config -> `src/domains/<domain>/presentation/navigation/`
+- Reusable UI primitives -> `src/shared/design-system/ui/`
+- Shared infra clients -> `src/shared/infrastructure/`
+- Shared i18n, a11y, auth, observability, constants, types, utils -> `src/shared/*`
 
 ## ARCHITECTURE VIOLATIONS - AUTO-STOP CONDITIONS
 
-### 10. Critical Violations - ALWAYS STOP
+1. **Business logic inside `src/app/`** -> STOP and move it into the owning domain
+2. **New global `src/core/`, `src/presentation/`, or `src/infrastructure/` code** -> STOP and move it into `src/domains/<domain>/`
+3. **Reusable UI primitive inside a domain presentation folder** -> STOP and move it to `src/shared/design-system/ui/`
+4. **Domain-specific rule inside `src/shared/`** -> STOP and move it to the owning domain core
+5. **Supabase call from route or page component** -> STOP and go through domain hooks/use cases/repositories
+6. **Use case importing shared/browser/server client directly** -> STOP and use a domain port
+7. **Cross-domain presentation -> infrastructure coupling** -> STOP and rework the dependency
 
-1. **Import Supabase in core/** → STOP and use a port instead
-2. **Business logic in a component** → STOP and move to a usecase
-3. **Supabase call from UI** → STOP and use a React Query hook
-4. **Business logic in Zustand** → STOP and move to a usecase
-5. **Hook calling infrastructure directly** → STOP and go through a usecase
-6. **Import React/Next.js in core/** → STOP and keep core pure TypeScript
-7. **Import UI in infrastructure** → STOP and respect separation
-8. **Reusable component outside `presentation/components/ui/`** → STOP and move to `presentation/components/ui/`
-9. **Page-specific component files in root `presentation/components/`** → STOP and move to `presentation/components/{componentName}/` folder
+## CHECKLIST
 
-## ARCHITECTURE COMPLIANCE - MANDATORY VERIFICATION
-
-### 11. Code Generation Checklist
-
-Before EVERY code generation:
-
-✅ **Layer Separation**
-
--   File created in the correct directory according to its role?
--   No forbidden cross-layer imports?
--   Flow respected (UI → Hook → Usecase → Repository)?
-
-✅ **Domain Layer**
-
--   Business types in core/domain?
--   No external imports in domain?
--   Pure business rules without dependencies?
-
-✅ **Usecases Layer**
-
--   Usecase takes a repository as parameter?
--   No Supabase/React imports in usecase?
--   Returns domain data?
-
-✅ **Infrastructure Layer**
-
--   Implements a port defined in core/ports?
--   No UI/Zustand imports?
--   Uses Supabase only here?
-
-✅ **Presentation Layer**
-
--   Component without business logic?
--   Reusable components in `presentation/components/ui/`?
--   Page-specific components in their own folders `presentation/components/{componentName}/`?
--   Hook calls a usecase, not directly infrastructure?
--   Zustand store for UI state only?
-
-## DATA FLOW REFERENCE - ALWAYS FOLLOW
-
-```
-UI (Next Page)
-    ↓ calls
-React Query Hook (useProducts)
-    ↓ calls
-Usecase (listProducts)
-    ↓ calls
-Repository (productRepositorySupabase)
-    ↓ calls
-Supabase (infrastructure)
-```
-
-**Always in this direction. Never reversed.**
-
-This ensures strict Clean Architecture compliance and maintainable, testable code with clear separation of concerns.
+- File created in the correct domain or shared location?
+- Route logic kept in `src/app/` only?
+- Shared code truly cross-cutting?
+- Reusable UI placed in `src/shared/design-system/ui/`?
+- Domain hooks/stores/pages/layouts kept inside the owning domain?
+- Infrastructure implemented inside the owning domain and backed by shared clients when needed?

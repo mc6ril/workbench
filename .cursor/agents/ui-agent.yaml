@@ -7,19 +7,19 @@ takesOverExecution: false
 goals:
   - Interpret provided design images (Figma frames, screenshots, or mockups)
   - Generate or refactor UI using Next.js components with SCSS variables from styles/variables/*
-  - Maintain folder structure: app/<route>/page.tsx and presentation/components/
+  - Maintain folder structure: src/app for routes, src/domains/<domain>/presentation for domain UI, and src/shared/design-system/ui for reusable primitives
   - Enforce SCSS variables: colors, spacing, typography from styles/variables/*
   - Ensure responsive layouts and full accessibility using shared/a11y/ utilities
   - Keep UI code presentation-only (no domain/business logic)
 
 instructions:
   - When an image is attached, visually analyze its layout, hierarchy, and intent.
-  - Identify reusable components from presentation/components/ui/ (Button, Input, Card, etc.)
-  - For each element in the design, map to the closest reusable component or propose a new one in presentation/components/ui/
+  - Identify reusable components from shared/design-system/ui/ (Button, Input, Card, etc.)
+  - For each element in the design, map to the closest reusable component or propose a new one in shared/design-system/ui/
   - Use semantic typography variants for text.
   - For all colors, spacing, and typography, use SCSS variables from `styles/variables/*` — no hardcoded values.
   - Build layout and styling using SCSS modules or global SCSS from `styles/`.
-  - Organize visual subparts as local components under `presentation/components/`.
+  - Organize domain-specific visual subparts under `src/domains/<domain>/presentation/components/`.
   - Ensure A11y properties using utilities from `shared/a11y/`; hide decorative elements.
   - Add loading, empty, error, and disabled UI states when applicable.
   - Use Next.js Link component for navigation.
@@ -30,21 +30,22 @@ instructions:
 scope:
   include:
     - "src/app/**/*.{ts,tsx}"
-    - "src/presentation/components/**/*.{ts,tsx}"
+    - "src/domains/**/*.{ts,tsx}"
+    - "src/shared/design-system/ui/**/*.{ts,tsx}"
     - "src/styles/**/*.scss"
   exclude:
     - "node_modules/**"
     - ".cursor/**"
-    - "src/core/**"
-    - "src/infrastructure/**"
+    - "src/domains/**/core/**"
+    - "src/domains/**/infrastructure/**"
 
 playbooks:
   - name: "Generate Page from Design"
     steps:
       - "Analyze attached image (layout, hierarchy, color scheme, component density)"
       - "If working from a PM Agent plan, review plan requirements and acceptance criteria"
-      - "List Next.js components to use for each visual element"
-      - "Scaffold app/<route>/page.tsx and presentation/components/<feature>/"
+      - "List Next.js and shared design-system components to use for each visual element"
+      - "Scaffold src/app route composition plus domain presentation components when needed"
       - "Generate code with Next.js components and SCSS variables (colors, spacing, typography from styles/variables/*)"
       - "Add responsive adjustments"
       - "Inject A11y props using shared/a11y/ utilities (roles, labels, hints, live regions)"
@@ -62,7 +63,7 @@ playbooks:
 prompts:
   design: "Based on the attached image, generate a new Next.js page layout using SCSS variables from styles/variables/*, with responsive styling and accessibility using shared/a11y/ utilities."
   refactor: "Refactor this component to follow SCSS variables from styles/variables/*, extract inline styles, and add missing A11y attributes using shared/a11y/."
-  scaffold: "Create the base page structure (app/<route>/page.tsx and presentation/components/<feature>/) for {feature} based on this design image."
+  scaffold: "Create the base route composition in src/app and the needed domain presentation components for {feature} based on this design image."
   compare: "Compare the attached design with the current implementation and suggest changes to reach full SCSS variables and A11y compliance."
 
 guards:
@@ -78,5 +79,5 @@ guards:
 notes:
   - "This agent can work standalone or from a PM Agent plan. If a plan is provided, follow its structure and requirements."
   - "ALWAYS use SCSS variables from styles/variables/* for all styling. When creating new UI, add missing variables to styles/variables/* if needed."
-  - "Coordinate with Architecture-Aware Dev: UI provides presentation layer (pages/components), Dev handles business logic, React Query hooks, and usecases/repositories integration."
-  - "Distinction: UI Designer creates the visual layer. Architecture-Aware Dev integrates it with React Query hooks, usecases, and business logic."
+  - "Coordinate with Architecture-Aware Dev: UI provides route composition, domain presentation, and shared primitives; Dev handles domain business logic and repositories."
+  - "Distinction: UI Designer creates the visual layer. Architecture-Aware Dev integrates it with domain hooks, use cases, and business logic."

@@ -22,9 +22,9 @@ This document outlines the comprehensive development plan for Workbench, a modul
 | Setup | Dependencies        | Form Dependencies            | Install form handling library (React Hook Form, Zod for validation)                     | Done   |
 | Setup | Dependencies        | Drag & Drop                  | Install drag and drop library (dnd-kit or react-beautiful-dnd)                          | Done   |
 | Setup | Dependencies        | Database Client              | Install Supabase client library and configure connection                                | Done   |
-| Setup | Directory Structure | Clean Architecture Structure | Create directory structure (core/, infrastructure/, presentation/, shared/)             | Done   |
-| Setup | Directory Structure | Domain Structure             | Create domain subdirectories (domain/, usecases/, ports/)                               | Done   |
-| Setup | Directory Structure | Presentation Structure       | Create presentation subdirectories (components/, hooks/, stores/, providers/, layouts/) | Done   |
+| Setup | Directory Structure | Modular Domain Structure     | Create directory structure (`app/`, `domains/`, `shared/`, `styles/`)                   | Done   |
+| Setup | Directory Structure | Domain Module Structure      | Create per-domain subdirectories (`core/`, `infrastructure/`, `presentation/`)          | Done   |
+| Setup | Directory Structure | Domain Presentation Structure| Create presentation subdirectories (`components/`, `hooks/`, `stores/`, `pages/`, `layouts/`, `navigation/`) | Done   |
 | Setup | Directory Structure | Styles Structure             | Create styles directories (variables/, components/, layout/)                            | Done   |
 | Setup | Development Tools   | VS Code Configuration        | Setup .vscode/ settings, extensions recommendations, debug configuration                | Done   |
 | Setup | Development Tools   | Environment Variables        | Setup .env.example, .env.local template, and environment validation                     | Done   |

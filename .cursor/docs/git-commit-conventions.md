@@ -87,7 +87,7 @@ The issue was caused by incorrect offset calculation.
 #### docs - Documentation
 
 ```
-docs(architecture): update Clean Architecture documentation
+docs(architecture): update modular domain architecture documentation
 
 Add examples of proper layer separation and data flow.
 Clarify repository pattern implementation.
@@ -191,13 +191,13 @@ Update your authentication code to use the new GraphQL API.
 ```
 
 ```
-refactor(domain): rename Product type to ProductEntity
+refactor(project-management): rename Ticket type to TicketEntity
 
-Rename Product type to ProductEntity for clarity.
-Align with Clean Architecture naming conventions.
+Rename Ticket type to TicketEntity for clarity.
+Align with modular domain architecture naming conventions.
 
-BREAKING CHANGE: Product type renamed to ProductEntity.
-Update all imports from 'core/domain/product' to use ProductEntity.
+BREAKING CHANGE: Ticket type renamed to TicketEntity.
+Update all imports from 'src/domains/project-management/core/domain/ticket' to use TicketEntity.
 ```
 
 ### Multiple Footer Notes
@@ -291,4 +291,3 @@ While Git hooks for enforcing these conventions are not configured in the MVP (s
 - [Conventional Commits Specification](https://www.conventionalcommits.org/)
 - [Angular Commit Message Guidelines](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#commit)
 - [Semantic Versioning](https://semver.org/)
-

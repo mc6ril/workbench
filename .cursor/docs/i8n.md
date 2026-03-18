@@ -36,7 +36,7 @@ import {
   getActivityQuantityLabelKey,
   getActivityHelperTextKey,
 } from "@/shared/i18n/dynamic";
-import { ActivityType } from "@/core/domain/activity";
+import { ActivityType } from "@/shared/types/activity";
 
 const ActivityForm = () => {
   const t = useTranslation("forms.activity.fields.quantity");

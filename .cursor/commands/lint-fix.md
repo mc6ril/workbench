@@ -19,7 +19,7 @@ The Architecture-Aware Dev ensures linting fixes respect:
 
 - Import order (external → domain → usecases → infrastructure → presentation → shared → styles)
 - TypeScript strict mode compliance
-- Project-specific rules (Clean Architecture, layer separation, SCSS variables, etc.)
+- Project-specific rules (modular domain architecture, shared vs domain placement, SCSS variables, etc.)
 
 ## Steps
 
@@ -30,7 +30,7 @@ The Architecture-Aware Dev ensures linting fixes respect:
    - Missing semicolons or proper indentation
    - Best practice violations
    - Type safety issues (no `any` types)
-   - Architecture rule violations (Clean Architecture, layer separation, etc.)
+   - Architecture rule violations (app/domain/shared boundaries, domain ownership, etc.)
 
 2. **Apply fixes**
    - Fix formatting and style issues

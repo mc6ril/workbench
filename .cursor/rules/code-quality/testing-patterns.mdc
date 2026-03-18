@@ -1,14 +1,20 @@
 ---
 alwaysApply: true
 name: "Testing Patterns — Jest Unit Tests Only"
-description: "Unit tests only for domain/usecases and reusable UI components. No page component tests. All tests in __tests__/ and __mocks__/ directories. TypeScript only."
+description: "Unit tests only for domain core/usecases and shared design-system primitives. No route, page, hook, store, or infrastructure tests by default."
 globs: ["__tests__/**/*", "__mocks__/**/*", "src/**/*.{ts,tsx}"]
 priority: medium
 ---
 
 # Intent
 
-Testing focuses exclusively on business logic (domain, usecases) and reusable UI components with unit tests. Page component tests are forbidden. All test files must be in `__tests__/` and `__mocks__/` directories at project root. All tests must be written in TypeScript.
+Testing focuses on:
+
+- domain rules and schemas
+- domain use cases
+- reusable UI primitives from the shared design system
+
+All tests live in `__tests__/`. All mocks live in `__mocks__/`.
 
 # Rules
 
@@ -16,133 +22,79 @@ Testing focuses exclusively on business logic (domain, usecases) and reusable UI
 
 scope: file.path matches ^(src|**tests**|**mocks**)/.+\.(ts|tsx)$
 
--   **NEVER** create test files in `src/` directory
--   **NEVER** create test files alongside source files (e.g., `src/core/domain/product.test.ts`)
--   **NEVER** use `.test.ts` or `.spec.ts` files in source directories
--   **ALWAYS** place all test files in `__tests__/` directory at project root
--   **ALWAYS** place all mock files in `__mocks__/` directory at project root
--   **ALWAYS** mirror source structure: `__tests__/core/domain/product.test.ts` for `src/core/domain/product.ts`
--   **ALWAYS** use TypeScript (`.test.ts` or `.test.tsx`) for all test files
+- **NEVER** create test files in `src/`
+- **ALWAYS** place tests in `__tests__/`
+- **ALWAYS** place mocks in `__mocks__/`
+- **ALWAYS** mirror the source structure under `__tests__/`
 
-## B) Test Types
+Examples:
 
-scope: file.path matches ^**tests**/.+\.test\.(ts|tsx)$
+- `src/domains/project-management/core/domain/rules/ticket.rules.ts`
+  -> `__tests__/domains/project-management/core/domain/rules/ticket.rules.test.ts`
+- `src/domains/project-management/core/usecases/listTickets.ts`
+  -> `__tests__/domains/project-management/core/usecases/listTickets.test.ts`
+- `src/shared/design-system/ui/Button/index.tsx`
+  -> `__tests__/shared/design-system/ui/Button.test.tsx`
 
--   **ALWAYS** write unit tests for:
-    -   Domain (`__tests__/core/domain/*.test.ts`) - Business rules and pure logic
-    -   Usecases (`__tests__/core/usecases/*.test.ts`) - Business logic orchestration
-    -   Reusable UI components (`__tests__/presentation/components/ui/*.test.tsx`) - UI component tests
--   **NEVER** write tests for:
-    -   Page components (`app/**/*.tsx`) - No page component tests
-    -   Specific UI components (`presentation/components/*.tsx`) - No tests for page-specific components
-    -   Hooks (`presentation/hooks/*.ts`) - Test usecases instead
-    -   Stores (`presentation/stores/*.ts`) - No Zustand store tests
-    -   Infrastructure (`infrastructure/**/*.ts`) - Test through usecases
--   **ALWAYS** test business logic, not presentation implementation details
-
-## C) Testing Framework
+## B) What to Test
 
 scope: file.path matches ^**tests**/.+\.test\.(ts|tsx)$
 
--   **ALWAYS** use Jest as the testing framework
--   **ALWAYS** use TypeScript for all test files
--   **ALWAYS** use `jest.mock()` for module mocks
--   **ALWAYS** use `jest.clearAllMocks()` in `beforeEach()`
--   **ALWAYS** mock all external dependencies (Supabase, network, storage, time)
--   **ALWAYS** use React Testing Library (`@testing-library/react`) for reusable UI component tests only
--   **NEVER** use React Testing Library for page components or business logic tests
--   **NEVER** use Enzyme or other deprecated component testing libraries
--   **ALWAYS** test pure functions and class methods directly for domain/usecases
--   **ALWAYS** test component behavior, not implementation details
+- **ALWAYS** test:
+  - domain core in `src/domains/*/core/domain/`
+  - domain use cases in `src/domains/*/core/usecases/`
+  - reusable UI primitives in `src/shared/design-system/ui/`
+- **NEVER** test by default:
+  - route files in `src/app/`
+  - domain pages and layouts
+  - domain hooks
+  - domain stores
+  - infrastructure adapters
 
-## D) Test Structure
+## C) Framework
 
 scope: file.path matches ^**tests**/.+\.test\.(ts|tsx)$
 
--   **ALWAYS** use `describe()` blocks to group related tests
--   **ALWAYS** use `it()` or `test()` for individual test cases
--   **ALWAYS** use `beforeEach()` and `afterEach()` for setup/teardown
--   **ALWAYS** follow Arrange-Act-Assert pattern
--   **ALWAYS** test success paths, error paths, and edge cases
--   **ALWAYS** test business rules and validation logic
--   **NEVER** test implementation details, only behavior
--   **ALWAYS** use TypeScript types in test files
+- **ALWAYS** use Jest
+- **ALWAYS** use TypeScript
+- **ALWAYS** mock external dependencies
+- **ALWAYS** use React Testing Library only for shared design-system UI primitives
 
-## E) Mocking
+## D) Mocking
 
 scope: file.path matches ^(**tests**|**mocks**)/.+\.(ts|tsx)$
 
--   **ALWAYS** place mock files in `__mocks__/` directory at project root
--   **ALWAYS** use TypeScript for mock files (`.ts` or `.tsx`)
--   **ALWAYS** name mock files to match the module being mocked (e.g., `supabase.ts`)
--   **ALWAYS** use Jest's manual mocks for external dependencies
--   **ALWAYS** mock repositories: `jest.mock("infrastructure/supabase/productRepositorySupabase")`
--   **ALWAYS** mock Supabase client (no real database connections)
--   **ALWAYS** mock network requests (no real API calls)
--   **NEVER** use real external dependencies in tests
--   **NEVER** create inline mocks in test files when a centralized mock exists
--   **ALWAYS** check `__mocks__/` before creating new mocks
--   **ALWAYS** type mocks properly with TypeScript
+- **ALWAYS** prefer mocked ports and test doubles for use cases
+- **ALWAYS** mock Supabase and networked dependencies
+- **NEVER** hit real Supabase from unit tests
+- **NEVER** rely on live timers or network access
 
-## F) Domain Tests
+## E) Domain Tests
 
-scope: file.path matches ^**tests**/core/domain/.+\.test\.ts$
+scope: file.path matches ^**tests**/domains/.+/core/domain/.+\.test\.ts$
 
--   **ALWAYS** test pure business rules and validation logic
--   **ALWAYS** test domain functions without external dependencies
--   **ALWAYS** test edge cases and boundary conditions
--   **NEVER** import React, Next.js, or infrastructure in domain tests
--   **ALWAYS** keep domain tests pure and isolated
+- **ALWAYS** test rules, validation, and pure domain behavior
+- **NEVER** import React, Next.js, or infrastructure into domain tests
 
-## G) Usecase Tests
+## F) Use Case Tests
 
-scope: file.path matches ^**tests**/core/usecases/.+\.test\.ts$
+scope: file.path matches ^**tests**/domains/.+/core/usecases/.+\.test\.ts$
 
--   **ALWAYS** mock repository dependencies
--   **ALWAYS** test usecase orchestration and business flow
--   **ALWAYS** test error handling and edge cases
--   **ALWAYS** verify repository method calls with mocks
--   **NEVER** import React, Next.js, or presentation layer in usecase tests
--   **ALWAYS** test usecases in isolation with mocked repositories
+- **ALWAYS** mock the relevant domain ports
+- **ALWAYS** verify orchestration behavior and edge cases
+- **NEVER** import presentation code into use case tests
 
-## H) Reusable UI Component Tests
+## G) Shared UI Primitive Tests
 
-scope: file.path matches ^**tests**/presentation/components/ui/.+\.test\.tsx$
+scope: file.path matches ^**tests**/shared/design-system/ui/.+\.test\.tsx$
 
--   **ALWAYS** use React Testing Library for component rendering
--   **ALWAYS** test component behavior and user interactions
--   **ALWAYS** test props and their effects on rendering
--   **ALWAYS** test accessibility attributes when applicable
--   **NEVER** test implementation details or internal state
--   **ALWAYS** mock external dependencies (hooks, stores) if needed
-
-## I) Legacy Tests Adaptation
-
-scope: file.path matches ^**tests**/.+\.test\.(ts|tsx)$
-
--   **ALWAYS** adapt legacy tests when implementation changes
--   **NEVER** delete legacy tests without analyzing if they can be adapted
--   **ALWAYS** update test assertions to match new behavior
--   **ALWAYS** update test setup (mocks, data, selectors) for new implementation
--   **ALWAYS** preserve test intent while adapting to new implementation
--   **ALWAYS** add comments explaining significant test changes (e.g., "Note: Amount field NOT displayed for CREATION")
--   **NEVER** leave failing tests that could be adapted to new implementation
--   **ALWAYS** verify that adapted tests still validate the intended functionality
-
-**Examples of legacy test adaptation:**
-
--   Field visibility changes → Update assertions for field presence/absence
--   Validation rule changes → Update expected error messages and validation logic
--   Data transformation changes → Update expected submitted data format
--   User interaction changes → Update event firing and form flow
+- **ALWAYS** test accessible rendering and user interaction
+- **ALWAYS** test behavior, not implementation details
+- **NEVER** add domain-specific business assertions here
 
 # Auto-suggestions
 
--   If test file is in `src/`: **Move to `__tests__/` mirroring source structure**.
--   If test file uses `.js`: **Convert to TypeScript (`.test.ts` or `.test.tsx`)**.
--   If page component test detected: **Remove - no page component tests allowed**.
--   If test alongside source: **Move to `__tests__/` directory**.
--   If domain test imports React/Next.js: **Remove - domain tests must be pure**.
--   If usecase test doesn't mock repository: **Add repository mock**.
--   If UI component test for non-reusable component: **Remove - only test reusable components in `presentation/components/ui/`**.
--   If legacy test fails after implementation change: **Adapt test to match new implementation instead of deleting it**.
+- If a test sits in `src/` -> **Move it to `__tests__/`**
+- If a route or page test appears -> **Remove it unless there is an explicit exception**
+- If a use case test uses real infrastructure -> **Replace with mocked domain ports**
+- If a reusable UI primitive test lives outside `__tests__/shared/design-system/ui/` -> **Move it**
