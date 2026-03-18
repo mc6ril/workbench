@@ -4,7 +4,7 @@ import { listReclaimableProjects } from "@/domains/project-management/core/useca
 
 import { projectRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for fetching orphaned projects reclaimable by the current user.

@@ -4,7 +4,7 @@ import { getCurrentProjectRole } from "@/domains/project-management/core/usecase
 
 import { memberRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for fetching the current authenticated user's role in a project.

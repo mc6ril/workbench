@@ -6,7 +6,7 @@ import { signUpUser } from "@/domains/project-management/core/usecases/auth/sign
 
 import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for signing up a new user.

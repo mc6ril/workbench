@@ -4,7 +4,7 @@ import { listProjects } from "@/domains/project-management/core/usecases/project
 
 import { projectRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for fetching all projects accessible to the current user.

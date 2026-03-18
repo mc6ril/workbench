@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
-import { useEpics } from "@/presentation/hooks/epic/useEpics";
-import { useTickets } from "@/presentation/hooks/ticket/useTickets";
-import type { ProjectViewKey } from "@/presentation/navigation/projectViews.config";
+import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
+import { useTickets } from "@/domains/project-management/presentation/hooks/ticket/useTickets";
+import type { ProjectViewKey } from "@/domains/project-management/presentation/navigation/projectViews.config";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { filterEpicsBySearch } from "@/shared/utils/epicUtils";

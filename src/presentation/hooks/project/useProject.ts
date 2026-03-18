@@ -4,7 +4,7 @@ import { getProject } from "@/domains/project-management/core/usecases/project/g
 
 import { projectRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for fetching a project by ID.

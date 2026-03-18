@@ -11,7 +11,7 @@ import { getCurrentUserSubscription } from "@/domains/project-management/core/us
 import { subscriptionRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { useSession } from "@/presentation/hooks/auth/useSession";
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for fetching the current user's subscription.

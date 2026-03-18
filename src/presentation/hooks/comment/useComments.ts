@@ -4,7 +4,7 @@ import { listComments } from "@/domains/project-management/core/usecases/comment
 
 import { commentRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for fetching comments for a ticket with author profiles.

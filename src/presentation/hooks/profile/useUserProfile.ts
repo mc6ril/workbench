@@ -4,7 +4,7 @@ import { getProfile } from "@/domains/project-management/core/usecases/profile/g
 
 import { userProfileRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for fetching a user profile by ID.

@@ -6,7 +6,7 @@ import { verifyEmail } from "@/domains/project-management/core/usecases/auth/ver
 
 import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for verifying email address using a verification token.

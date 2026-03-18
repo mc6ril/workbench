@@ -4,7 +4,7 @@ import { signInWithGoogle } from "@/domains/project-management/core/usecases/aut
 
 import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for starting Google OAuth sign-in flow.

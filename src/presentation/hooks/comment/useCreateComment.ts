@@ -6,7 +6,7 @@ import { createComment } from "@/domains/project-management/core/usecases/commen
 
 import { commentRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for creating a comment on a ticket.

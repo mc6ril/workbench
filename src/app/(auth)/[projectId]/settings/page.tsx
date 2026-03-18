@@ -6,35 +6,35 @@ import dynamic from "next/dynamic";
 import { getDefaultBoardConfiguration } from "@/domains/project-management/core/domain/rules/board.rules";
 import { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
 
-import type { PriorityItem } from "@/presentation/components/prioritiesSettings/PrioritiesSettings";
-import type { StatusColumnItem } from "@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
+import type { PriorityItem } from "@/domains/project-management/presentation/components/prioritiesSettings/PrioritiesSettings";
+import type { StatusColumnItem } from "@/domains/project-management/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
 import Loader from "@/shared/design-system/Loader";
-import UpgradePrompt from "@/presentation/components/upgradePrompt/UpgradePrompt";
+import UpgradePrompt from "@/domains/project-management/presentation/components/upgradePrompt/UpgradePrompt";
 import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
-import SettingsLayout from "@/presentation/layouts/settingsLayout/SettingsLayout";
+import SettingsLayout from "@/domains/project-management/presentation/layouts/settingsLayout/SettingsLayout";
 
 import { useTranslation } from "@/shared/i18n";
 
 const ProjectSettings = dynamic(
-  () => import("@/presentation/components/projectSettings/ProjectSettings"),
+  () => import("@/domains/project-management/presentation/components/projectSettings/ProjectSettings"),
   { ssr: false }
 );
 
 const StatusesColumnsSettings = dynamic(
   () =>
-    import("@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings"),
+    import("@/domains/project-management/presentation/components/statusesColumnsSettings/StatusesColumnsSettings"),
   { ssr: false }
 );
 
 const PrioritiesSettings = dynamic(
   () =>
-    import("@/presentation/components/prioritiesSettings/PrioritiesSettings"),
+    import("@/domains/project-management/presentation/components/prioritiesSettings/PrioritiesSettings"),
   { ssr: false }
 );
 
 const ExportImportSettings = dynamic(
   () =>
-    import("@/presentation/components/exportImportSettings/ExportImportSettings"),
+    import("@/domains/project-management/presentation/components/exportImportSettings/ExportImportSettings"),
   { ssr: false }
 );
 

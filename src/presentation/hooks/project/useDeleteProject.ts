@@ -4,7 +4,7 @@ import { deleteProject } from "@/domains/project-management/core/usecases/projec
 
 import { projectRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
-import { queryKeys } from "@/presentation/hooks/queryKeys";
+import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 
 /**
  * Hook for deleting a project and refreshing related lists.
