@@ -1,8 +1,8 @@
-import { mapEpicRowToDomain } from "@/infrastructure/supabase/epic/EpicMapper.supabase";
-import { mapLabelRowToDomain } from "@/infrastructure/supabase/label/LabelMapper.supabase";
+import { mapEpicRowToDomain } from "@/domains/project-management/infrastructure/supabase/epic/EpicMapper.supabase";
+import { mapLabelRowToDomain } from "@/domains/project-management/infrastructure/supabase/label/LabelMapper.supabase";
 import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
-import { mapSprintRowToDomain } from "@/infrastructure/supabase/sprint/SprintMapper.supabase";
-import { mapTicketRowToDomain } from "@/infrastructure/supabase/ticket/TicketMapper.supabase";
+import { mapSprintRowToDomain } from "@/domains/project-management/infrastructure/supabase/sprint/SprintMapper.supabase";
+import { mapTicketRowToDomain } from "@/domains/project-management/infrastructure/supabase/ticket/TicketMapper.supabase";
 import type {
   EpicRow,
   LabelRow,

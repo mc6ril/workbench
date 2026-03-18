@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { listComments } from "@/domains/project-management/core/usecases/comment";
 
-import { commentRepository } from "@/infrastructure/supabase/repositories";
+import { commentRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

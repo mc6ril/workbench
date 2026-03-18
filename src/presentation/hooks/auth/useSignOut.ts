@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { signOutUser } from "@/domains/project-management/core/usecases/auth/signOutUser";
 
-import { authRepository } from "@/infrastructure/supabase/repositories";
+import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

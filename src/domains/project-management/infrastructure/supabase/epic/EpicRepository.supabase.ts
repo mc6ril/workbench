@@ -12,7 +12,7 @@ import type {
 import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
-import { mapTicketRowsToDomain } from "@/infrastructure/supabase/ticket/TicketMapper.supabase";
+import { mapTicketRowsToDomain } from "@/domains/project-management/infrastructure/supabase/ticket/TicketMapper.supabase";
 import type { EpicRow, TicketRow } from "@/infrastructure/supabase/types";
 
 import { mapEpicRowsToDomain, mapEpicRowToDomain } from "./EpicMapper.supabase";

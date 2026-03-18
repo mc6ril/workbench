@@ -4,7 +4,7 @@ import type { CreateSprintInput } from "@/domains/project-management/core/domain
 
 import { createSprint } from "@/domains/project-management/core/usecases/sprint";
 
-import { sprintRepository } from "@/infrastructure/supabase/repositories";
+import { sprintRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

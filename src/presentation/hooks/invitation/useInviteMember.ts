@@ -8,7 +8,7 @@ import { inviteToProject } from "@/domains/project-management/core/usecases/invi
 import {
   invitationRepository,
   memberRepository,
-} from "@/infrastructure/supabase/repositories";
+} from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

@@ -5,7 +5,7 @@ import { listEpics } from "@/domains/project-management/core/usecases/epic/listE
 import {
   boardRepository,
   epicRepository,
-} from "@/infrastructure/supabase/repositories";
+} from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { listProjectMembers } from "@/domains/project-management/core/usecases/member/listProjectMembers";
 
-import { memberRepository } from "@/infrastructure/supabase/repositories";
+import { memberRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

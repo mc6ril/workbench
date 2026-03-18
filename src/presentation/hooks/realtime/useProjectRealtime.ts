@@ -13,7 +13,7 @@ import type { Label } from "@/domains/project-management/core/domain/schema/labe
 import type { Sprint } from "@/domains/project-management/core/domain/schema/sprint.schema";
 import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import { getRealtimeRepository } from "@/infrastructure/supabase/repositories";
+import { getRealtimeRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

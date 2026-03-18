@@ -4,7 +4,7 @@ import type { UpdateCommentInput } from "@/domains/project-management/core/domai
 
 import { updateComment } from "@/domains/project-management/core/usecases/comment";
 
-import { commentRepository } from "@/infrastructure/supabase/repositories";
+import { commentRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

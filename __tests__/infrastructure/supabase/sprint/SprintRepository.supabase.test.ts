@@ -1,4 +1,4 @@
-import { countCompletedByDoneStatuses } from "@/infrastructure/supabase/sprint/SprintRepository.supabase";
+import { countCompletedByDoneStatuses } from "@/domains/project-management/infrastructure/supabase/sprint/SprintRepository.supabase";
 
 describe("SprintRepository state-based completion", () => {
   it("counts tickets whose status maps to done workflow columns", () => {

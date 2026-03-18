@@ -4,7 +4,7 @@ import type { SignUpInput } from "@/domains/project-management/core/domain/schem
 
 import { signUpUser } from "@/domains/project-management/core/usecases/auth/signUpUser";
 
-import { authRepository } from "@/infrastructure/supabase/repositories";
+import { authRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

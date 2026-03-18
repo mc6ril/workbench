@@ -4,7 +4,7 @@ import type { CreateLabelInput } from "@/domains/project-management/core/domain/
 
 import { createLabel } from "@/domains/project-management/core/usecases/label";
 
-import { labelRepository } from "@/infrastructure/supabase/repositories";
+import { labelRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 

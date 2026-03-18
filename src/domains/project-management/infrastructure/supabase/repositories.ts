@@ -5,19 +5,19 @@
 
 import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
 
-import { createAuthRepository } from "./auth/AuthRepository.supabase";
+import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
 import { createBoardRepository } from "./board/BoardRepository.supabase";
-import { createCommentRepository } from "./comment/CommentRepository.supabase";
+import { createCommentRepository } from "@/infrastructure/supabase/comment/CommentRepository.supabase";
 import { createEpicRepository } from "./epic/EpicRepository.supabase";
-import { createInvitationRepository } from "./invitation/InvitationRepository.supabase";
+import { createInvitationRepository } from "@/infrastructure/supabase/invitation/InvitationRepository.supabase";
 import { createLabelRepository } from "./label/LabelRepository.supabase";
 import { createMemberRepository } from "./member/MemberRepository.supabase";
 import { createProjectRepository } from "./project/ProjectRepository.supabase";
-import { createRealtimeRepository } from "./realtime/RealtimeRepository.supabase";
+import { createRealtimeRepository } from "@/infrastructure/supabase/realtime/RealtimeRepository.supabase";
 import { createSprintRepository } from "./sprint/SprintRepository.supabase";
-import { createSubscriptionRepository } from "./subscription/SubscriptionRepository.supabase";
+import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
 import { createTicketRepository } from "./ticket/TicketRepository.supabase";
-import { createUserProfileRepository } from "./userProfile/UserProfileRepository.supabase";
+import { createUserProfileRepository } from "@/infrastructure/supabase/userProfile/UserProfileRepository.supabase";
 
 // Browser instances for React Query hooks (Client Components)
 export const authRepository = createAuthRepository(
@@ -74,16 +74,16 @@ export const getRealtimeRepository = () => {
 };
 
 // Factory functions for server contexts (Server Components, Server Actions)
-export { createAuthRepository } from "./auth/AuthRepository.supabase";
+export { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
 export { createBoardRepository } from "./board/BoardRepository.supabase";
-export { createCommentRepository } from "./comment/CommentRepository.supabase";
+export { createCommentRepository } from "@/infrastructure/supabase/comment/CommentRepository.supabase";
 export { createEpicRepository } from "./epic/EpicRepository.supabase";
-export { createInvitationRepository } from "./invitation/InvitationRepository.supabase";
+export { createInvitationRepository } from "@/infrastructure/supabase/invitation/InvitationRepository.supabase";
 export { createLabelRepository } from "./label/LabelRepository.supabase";
 export { createMemberRepository } from "./member/MemberRepository.supabase";
 export { createProjectRepository } from "./project/ProjectRepository.supabase";
-export { createRealtimeRepository } from "./realtime/RealtimeRepository.supabase";
+export { createRealtimeRepository } from "@/infrastructure/supabase/realtime/RealtimeRepository.supabase";
 export { createSprintRepository } from "./sprint/SprintRepository.supabase";
-export { createSubscriptionRepository } from "./subscription/SubscriptionRepository.supabase";
+export { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
 export { createTicketRepository } from "./ticket/TicketRepository.supabase";
-export { createUserProfileRepository } from "./userProfile/UserProfileRepository.supabase";
+export { createUserProfileRepository } from "@/infrastructure/supabase/userProfile/UserProfileRepository.supabase";

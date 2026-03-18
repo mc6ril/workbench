@@ -4,7 +4,7 @@ import type { UpdateTicketInput } from "@/domains/project-management/core/domain
 
 import { updateTicket } from "@/domains/project-management/core/usecases/ticket/updateTicket";
 
-import { ticketRepository } from "@/infrastructure/supabase/repositories";
+import { ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 
