@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { VerifyEmailInput } from "@/core/domain/schema/auth.schema";
+import type { VerifyEmailInput } from "@/domains/project-management/core/domain/schema/auth.schema";
 
-import { verifyEmail } from "@/core/usecases/auth/verifyEmail";
+import { verifyEmail } from "@/domains/project-management/core/usecases/auth/verifyEmail";
 
 import { authRepository } from "@/infrastructure/supabase/repositories";
 

@@ -4,7 +4,7 @@ import type {
   ProjectWithRole,
   ProjectWithStats,
   ReclaimableProject,
-} from "@/core/domain/schema/project.schema";
+} from "@/domains/project-management/core/domain/schema/project.schema";
 
 /**
  * Mock type for ProjectRepository.

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { listLabels } from "@/core/usecases/label";
+import { listLabels } from "@/domains/project-management/core/usecases/label";
 
 import { labelRepository } from "@/infrastructure/supabase/repositories";
 

@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
+import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import { moveTicket } from "@/core/usecases/ticket/moveTicket";
+import { moveTicket } from "@/domains/project-management/core/usecases/ticket/moveTicket";
 
 import { ticketRepository } from "@/infrastructure/supabase/repositories";
 

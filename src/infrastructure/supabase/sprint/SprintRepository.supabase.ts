@@ -3,12 +3,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   createDatabaseError,
   createNotFoundError,
-} from "@/core/domain/repositoryError";
+} from "@/domains/project-management/core/domain/repositoryError";
 import type {
   CreateSprintInput,
   Sprint,
   UpdateSprintInput,
-} from "@/core/domain/schema/sprint.schema";
+} from "@/domains/project-management/core/domain/schema/sprint.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type { SprintRow } from "@/infrastructure/supabase/types";
@@ -18,7 +18,7 @@ import {
   mapSprintRowToDomain,
 } from "./SprintMapper.supabase";
 
-import type { SprintRepository } from "@/core/ports/sprintRepository";
+import type { SprintRepository } from "@/domains/project-management/core/ports/sprintRepository";
 
 export const countCompletedByDoneStatuses = (
   tickets: Array<{ status: string }>,

@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { signOutUser } from "@/core/usecases/auth/signOutUser";
+import { signOutUser } from "@/domains/project-management/core/usecases/auth/signOutUser";
 
 import { authRepository } from "@/infrastructure/supabase/repositories";
 

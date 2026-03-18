@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { useTheme } from "next-themes";
 
-import type { Theme } from "@/core/domain/schema/auth.schema";
-import { ThemeValues } from "@/core/domain/schema/auth.schema";
+import type { Theme } from "@/domains/project-management/core/domain/schema/auth.schema";
+import { ThemeValues } from "@/domains/project-management/core/domain/schema/auth.schema";
 
 import { useSession } from "@/presentation/hooks/auth/useSession";
 

@@ -1,13 +1,13 @@
-import type { AuthResult, AuthSession } from "@/core/domain/schema/auth.schema";
+import type { AuthResult, AuthSession } from "@/domains/project-management/core/domain/schema/auth.schema";
 import {
   ProjectRole,
   type ProjectWithRole,
-} from "@/core/domain/schema/project.schema";
+} from "@/domains/project-management/core/domain/schema/project.schema";
 
-import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
-import { signInUser } from "@/core/usecases/auth/signInUser";
-import { signUpUser } from "@/core/usecases/auth/signUpUser";
-import { listProjects } from "@/core/usecases/project/listProjects";
+import { getCurrentSession } from "@/domains/project-management/core/usecases/auth/getCurrentSession";
+import { signInUser } from "@/domains/project-management/core/usecases/auth/signInUser";
+import { signUpUser } from "@/domains/project-management/core/usecases/auth/signUpUser";
+import { listProjects } from "@/domains/project-management/core/usecases/project/listProjects";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import {

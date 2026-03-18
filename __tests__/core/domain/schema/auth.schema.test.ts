@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   SignUpFormSchema,
   SignUpSchema,
-} from "@/core/domain/schema/auth.schema";
+} from "@/domains/project-management/core/domain/schema/auth.schema";
 
 describe("SignUpSchema", () => {
   const validInput = {

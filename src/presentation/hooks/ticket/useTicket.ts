@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getTicketDetail } from "@/core/usecases/ticket/getTicketDetail";
+import { getTicketDetail } from "@/domains/project-management/core/usecases/ticket/getTicketDetail";
 
 import { ticketRepository } from "@/infrastructure/supabase/repositories";
 

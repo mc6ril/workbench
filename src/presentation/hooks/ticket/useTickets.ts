@@ -4,9 +4,9 @@ import type {
   Ticket,
   TicketFilters,
   TicketSort,
-} from "@/core/domain/schema/ticket.schema";
+} from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import { listTickets } from "@/core/usecases/ticket/listTickets";
+import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
 
 import { ticketRepository } from "@/infrastructure/supabase/repositories";
 

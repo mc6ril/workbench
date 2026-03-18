@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { UpdateCommentInput } from "@/core/domain/schema/comment.schema";
+import type { UpdateCommentInput } from "@/domains/project-management/core/domain/schema/comment.schema";
 
-import { updateComment } from "@/core/usecases/comment";
+import { updateComment } from "@/domains/project-management/core/usecases/comment";
 
 import { commentRepository } from "@/infrastructure/supabase/repositories";
 

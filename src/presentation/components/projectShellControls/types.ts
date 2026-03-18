@@ -2,7 +2,7 @@ import {
   TicketFilters,
   TicketPriority,
   TicketSort,
-} from "@/core/domain/schema/ticket.schema";
+} from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import {
   EpicProgressFilter,

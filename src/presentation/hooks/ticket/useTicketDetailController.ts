@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
-import type { TicketPriority } from "@/core/domain/schema/ticket.schema";
+import { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
+import type { TicketPriority } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import { useSession } from "@/presentation/hooks/auth/useSession";
 import { useBoardConfiguration } from "@/presentation/hooks/board/useBoardConfiguration";

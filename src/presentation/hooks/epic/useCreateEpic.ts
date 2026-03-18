@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateEpicInput } from "@/core/domain/schema/epic.schema";
+import type { CreateEpicInput } from "@/domains/project-management/core/domain/schema/epic.schema";
 
-import { createEpic } from "@/core/usecases/epic/createEpic";
+import { createEpic } from "@/domains/project-management/core/usecases/epic/createEpic";
 
 import { epicRepository } from "@/infrastructure/supabase/repositories";
 

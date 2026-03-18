@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getProfile } from "@/core/usecases/profile/getProfile";
+import { getProfile } from "@/domains/project-management/core/usecases/profile/getProfile";
 
 import { userProfileRepository } from "@/infrastructure/supabase/repositories";
 

@@ -3,8 +3,8 @@
 import { use, useCallback, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 
-import { getDefaultBoardConfiguration } from "@/core/domain/rules/board.rules";
-import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
+import { getDefaultBoardConfiguration } from "@/domains/project-management/core/domain/rules/board.rules";
+import { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
 
 import type { PriorityItem } from "@/presentation/components/prioritiesSettings/PrioritiesSettings";
 import type { StatusColumnItem } from "@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";

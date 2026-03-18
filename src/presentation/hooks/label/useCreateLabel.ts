@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateLabelInput } from "@/core/domain/schema/label.schema";
+import type { CreateLabelInput } from "@/domains/project-management/core/domain/schema/label.schema";
 
-import { createLabel } from "@/core/usecases/label";
+import { createLabel } from "@/domains/project-management/core/usecases/label";
 
 import { labelRepository } from "@/infrastructure/supabase/repositories";
 

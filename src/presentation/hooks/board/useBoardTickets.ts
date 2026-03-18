@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
+import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import { useTicketAssigneesByProjectId } from "@/presentation/hooks/ticket/useTicketAssigneesByProjectId";
 

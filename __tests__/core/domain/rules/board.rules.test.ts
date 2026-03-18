@@ -3,13 +3,13 @@ import {
   validateBoardHasActiveDoneState,
   validateBoardWithColumns,
   validateColumnOrder,
-} from "@/core/domain/rules/board.rules";
+} from "@/domains/project-management/core/domain/rules/board.rules";
 import type {
   Board,
   Column,
   CreateBoardInput,
   CreateColumnInput,
-} from "@/core/domain/schema/board.schema";
+} from "@/domains/project-management/core/domain/schema/board.schema";
 
 describe("Board Business Rules", () => {
   const createMockColumn = (overrides?: Partial<Column>): Column => ({

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { deleteUser } from "@/core/usecases/auth/deleteUser";
+import { deleteUser } from "@/domains/project-management/core/usecases/auth/deleteUser";
 
 import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";

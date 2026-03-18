@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getBoardConfiguration } from "@/core/usecases/board/getBoardConfiguration";
+import { getBoardConfiguration } from "@/domains/project-management/core/usecases/board/getBoardConfiguration";
 
 import { boardRepository } from "@/infrastructure/supabase/repositories";
 

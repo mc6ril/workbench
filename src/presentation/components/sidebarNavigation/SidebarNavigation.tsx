@@ -10,17 +10,17 @@ import React, {
 import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { getEffectivePlan } from "@/core/domain/rules/planFeatures.rules";
-import type { Project } from "@/core/domain/schema/project.schema";
-import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
+import { getEffectivePlan } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
+import type { Project } from "@/domains/project-management/core/domain/schema/project.schema";
+import { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
-import { getBoardConfiguration } from "@/core/usecases/board/getBoardConfiguration";
-import { listEpics } from "@/core/usecases/epic/listEpics";
-import { listProjectsWithStats } from "@/core/usecases/project/listProjectsWithStats";
-import { listReclaimableProjects } from "@/core/usecases/project/listReclaimableProjects";
-import { computeFeatureLockState } from "@/core/usecases/subscription/computeFeatureLockState";
-import { getTicketAssigneesByProjectId } from "@/core/usecases/ticket/getTicketAssigneesByProjectId";
-import { listTickets } from "@/core/usecases/ticket/listTickets";
+import { getBoardConfiguration } from "@/domains/project-management/core/usecases/board/getBoardConfiguration";
+import { listEpics } from "@/domains/project-management/core/usecases/epic/listEpics";
+import { listProjectsWithStats } from "@/domains/project-management/core/usecases/project/listProjectsWithStats";
+import { listReclaimableProjects } from "@/domains/project-management/core/usecases/project/listReclaimableProjects";
+import { computeFeatureLockState } from "@/domains/project-management/core/usecases/subscription/computeFeatureLockState";
+import { getTicketAssigneesByProjectId } from "@/domains/project-management/core/usecases/ticket/getTicketAssigneesByProjectId";
+import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
 
 import {
   boardRepository,

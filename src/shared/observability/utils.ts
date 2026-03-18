@@ -2,7 +2,7 @@
  * Utility functions for logging implementation.
  */
 
-import type { LogMeta } from "@/core/ports/logger";
+import type { LogMeta } from "@/domains/project-management/core/ports/logger";
 
 /**
  * Safely stringifies a value to JSON, handling circular references, BigInt, and functions.

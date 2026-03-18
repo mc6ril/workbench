@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { removeAvatar } from "@/core/usecases/profile/removeAvatar";
-import { uploadAvatar } from "@/core/usecases/profile/uploadAvatar";
+import { removeAvatar } from "@/domains/project-management/core/usecases/profile/removeAvatar";
+import { uploadAvatar } from "@/domains/project-management/core/usecases/profile/uploadAvatar";
 
 import { userProfileRepository } from "@/infrastructure/supabase/repositories";
 

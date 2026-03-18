@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getProject } from "@/core/usecases/project/getProject";
+import { getProject } from "@/domains/project-management/core/usecases/project/getProject";
 
 import { projectRepository } from "@/infrastructure/supabase/repositories";
 

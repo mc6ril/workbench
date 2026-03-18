@@ -2,7 +2,7 @@ import type {
   CreateInvitationInput,
   PendingInvitation,
   ProjectInvitation,
-} from "@/core/domain/schema/invitation.schema";
+} from "@/domains/project-management/core/domain/schema/invitation.schema";
 
 /**
  * Mock type for InvitationRepository.

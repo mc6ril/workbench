@@ -3,21 +3,21 @@
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
-import type { CommentWithAuthor } from "@/core/domain/schema/comment.schema";
+import type { CommentWithAuthor } from "@/domains/project-management/core/domain/schema/comment.schema";
 import type {
   Epic,
   EpicDetail,
   EpicWithProgress,
-} from "@/core/domain/schema/epic.schema";
-import type { Label } from "@/core/domain/schema/label.schema";
-import type { Sprint } from "@/core/domain/schema/sprint.schema";
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
+} from "@/domains/project-management/core/domain/schema/epic.schema";
+import type { Label } from "@/domains/project-management/core/domain/schema/label.schema";
+import type { Sprint } from "@/domains/project-management/core/domain/schema/sprint.schema";
+import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import { getRealtimeRepository } from "@/infrastructure/supabase/repositories";
 
 import { queryKeys } from "@/presentation/hooks/queryKeys";
 
-import type { RealtimeRepository } from "@/core/ports/realtimeRepository";
+import type { RealtimeRepository } from "@/domains/project-management/core/ports/realtimeRepository";
 
 type RealtimeEventType = "INSERT" | "UPDATE" | "DELETE";
 

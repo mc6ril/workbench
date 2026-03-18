@@ -1,4 +1,4 @@
-import type { TicketAssignee } from "@/core/domain/schema/ticket.schema";
+import type { TicketAssignee } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import styles from "@/presentation/components/ticket/assigneePicker/AssigneePicker.module.scss";
 import Avatar from "@/shared/design-system/Avatar";

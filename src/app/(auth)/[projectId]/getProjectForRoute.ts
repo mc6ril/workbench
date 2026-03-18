@@ -1,8 +1,8 @@
 import { cache } from "react";
 
-import type { Project } from "@/core/domain/schema/project.schema";
+import type { Project } from "@/domains/project-management/core/domain/schema/project.schema";
 
-import { getProject } from "@/core/usecases/project/getProject";
+import { getProject } from "@/domains/project-management/core/usecases/project/getProject";
 
 import { createProjectRepository } from "@/infrastructure/supabase/repositories";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";

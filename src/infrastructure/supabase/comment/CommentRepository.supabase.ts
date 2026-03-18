@@ -3,12 +3,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   createDatabaseError,
   createNotFoundError,
-} from "@/core/domain/repositoryError";
+} from "@/domains/project-management/core/domain/repositoryError";
 import type {
   CommentWithAuthor,
   CreateCommentInput,
   UpdateCommentInput,
-} from "@/core/domain/schema/comment.schema";
+} from "@/domains/project-management/core/domain/schema/comment.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type { CommentWithAuthorRow } from "@/infrastructure/supabase/types";
@@ -18,7 +18,7 @@ import {
   mapCommentWithAuthorRowToDomain,
 } from "./CommentMapper.supabase";
 
-import type { CommentRepository } from "@/core/ports/commentRepository";
+import type { CommentRepository } from "@/domains/project-management/core/ports/commentRepository";
 
 /**
  * Create a CommentRepository implementation using the provided Supabase client.

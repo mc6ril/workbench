@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { listSprints } from "@/core/usecases/sprint";
+import { listSprints } from "@/domains/project-management/core/usecases/sprint";
 
 import { sprintRepository } from "@/infrastructure/supabase/repositories";
 

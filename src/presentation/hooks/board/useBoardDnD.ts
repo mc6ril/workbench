@@ -20,15 +20,15 @@ import {
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
+import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import type { BoardTicketIds } from "@/core/usecases/board/boardDnD";
+import type { BoardTicketIds } from "@/domains/project-management/core/usecases/board/boardDnD";
 import {
   buildBoardTicketIds,
   buildNextBoardFromDragOver,
   buildTicketLocationIndex,
   getTicketLocation,
-} from "@/core/usecases/board/boardDnD";
+} from "@/domains/project-management/core/usecases/board/boardDnD";
 
 import { useMoveAndReorderTicket } from "@/presentation/hooks/ticket/useMoveAndReorderTicket";
 import { useReorderTicket } from "@/presentation/hooks/ticket/useReorderTicket";

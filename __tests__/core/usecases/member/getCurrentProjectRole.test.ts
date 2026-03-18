@@ -1,6 +1,6 @@
-import { ProjectRole } from "@/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
 
-import { getCurrentProjectRole } from "@/core/usecases/member/getCurrentProjectRole";
+import { getCurrentProjectRole } from "@/domains/project-management/core/usecases/member/getCurrentProjectRole";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";

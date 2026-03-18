@@ -4,7 +4,7 @@
 
 import type { LogConfig } from "./types";
 
-import type { LogLevel } from "@/core/ports/logger";
+import type { LogLevel } from "@/domains/project-management/core/ports/logger";
 
 /**
  * Valid log levels for whitelist validation.

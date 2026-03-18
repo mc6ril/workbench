@@ -2,8 +2,8 @@ import {
   DEFAULT_USER_PREFERENCES,
   type UserPreferences,
   UserPreferencesSchema,
-} from "@/core/domain/schema/auth.schema";
-import type { UserProfile } from "@/core/domain/schema/userProfile.schema";
+} from "@/domains/project-management/core/domain/schema/auth.schema";
+import type { UserProfile } from "@/domains/project-management/core/domain/schema/userProfile.schema";
 
 import type { UserProfileRow } from "@/infrastructure/supabase/types";
 

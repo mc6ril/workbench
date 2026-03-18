@@ -3,13 +3,13 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   createDatabaseError,
   createNotFoundError,
-} from "@/core/domain/repositoryError";
+} from "@/domains/project-management/core/domain/repositoryError";
 import type {
   CreateEpicRepositoryInput,
   Epic,
   UpdateEpicInput,
-} from "@/core/domain/schema/epic.schema";
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
+} from "@/domains/project-management/core/domain/schema/epic.schema";
+import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import { mapTicketRowsToDomain } from "@/infrastructure/supabase/ticket/TicketMapper.supabase";
@@ -17,7 +17,7 @@ import type { EpicRow, TicketRow } from "@/infrastructure/supabase/types";
 
 import { mapEpicRowsToDomain, mapEpicRowToDomain } from "./EpicMapper.supabase";
 
-import type { EpicRepository } from "@/core/ports/epicRepository";
+import type { EpicRepository } from "@/domains/project-management/core/ports/epicRepository";
 
 /**
  * Create an EpicRepository implementation using the provided Supabase client.

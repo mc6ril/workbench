@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import type { TicketSort } from "@/core/domain/schema/ticket.schema";
+import type { TicketSort } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 type SortState = {
   sort: TicketSort;

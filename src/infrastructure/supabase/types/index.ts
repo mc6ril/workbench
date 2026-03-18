@@ -3,7 +3,7 @@
  * These types match the snake_case column names from Supabase tables.
  */
 
-import type { ProjectRole } from "@/core/domain/schema/project.schema";
+import type { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
 
 export type BoardRow = {
   id: string;

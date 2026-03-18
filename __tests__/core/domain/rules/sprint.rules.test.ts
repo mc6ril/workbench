@@ -2,8 +2,8 @@ import {
   canCompleteSprint,
   canStartSprint,
   isSprintEditable,
-} from "@/core/domain/rules/sprint.rules";
-import type { Sprint } from "@/core/domain/schema/sprint.schema";
+} from "@/domains/project-management/core/domain/rules/sprint.rules";
+import type { Sprint } from "@/domains/project-management/core/domain/schema/sprint.schema";
 
 describe("Sprint Business Rules", () => {
   const createSprint = (status: Sprint["status"]): Sprint => ({

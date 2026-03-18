@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { UpdatePreferencesInput } from "@/core/domain/schema/auth.schema";
-import { DEFAULT_USER_PREFERENCES } from "@/core/domain/schema/auth.schema";
+import type { UpdatePreferencesInput } from "@/domains/project-management/core/domain/schema/auth.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/project-management/core/domain/schema/auth.schema";
 
-import { updatePreferences } from "@/core/usecases/profile/updatePreferences";
+import { updatePreferences } from "@/domains/project-management/core/usecases/profile/updatePreferences";
 
 import { userProfileRepository } from "@/infrastructure/supabase/repositories";
 

@@ -4,9 +4,9 @@ import { useCallback, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 
-import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
+import { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
 
-import { addLabelsToTicket } from "@/core/usecases/label";
+import { addLabelsToTicket } from "@/domains/project-management/core/usecases/label";
 
 import { labelRepository } from "@/infrastructure/supabase/repositories";
 

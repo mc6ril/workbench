@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-import { exchangeCodeForSession } from "@/core/usecases/auth/exchangeCodeForSession";
+import { exchangeCodeForSession } from "@/domains/project-management/core/usecases/auth/exchangeCodeForSession";
 
 import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";

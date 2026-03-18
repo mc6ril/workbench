@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { ProjectRole } from "@/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
 
-import { addUserToProject } from "@/core/usecases/project/addUserToProject";
+import { addUserToProject } from "@/domains/project-management/core/usecases/project/addUserToProject";
 
 import { projectRepository } from "@/infrastructure/supabase/repositories";
 

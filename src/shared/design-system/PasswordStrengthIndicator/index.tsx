@@ -5,7 +5,7 @@ import {
   getPasswordStrengthLevel,
   MAX_STRENGTH_LEVEL,
   PasswordStrength,
-} from "@/core/domain/passwordStrength";
+} from "@/domains/project-management/core/domain/passwordStrength";
 
 import { useTranslation } from "@/shared/i18n";
 

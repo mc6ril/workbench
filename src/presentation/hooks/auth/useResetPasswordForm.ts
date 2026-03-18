@@ -3,8 +3,8 @@ import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { ResetPasswordInput } from "@/core/domain/schema/auth.schema";
-import { ResetPasswordSchema } from "@/core/domain/schema/auth.schema";
+import type { ResetPasswordInput } from "@/domains/project-management/core/domain/schema/auth.schema";
+import { ResetPasswordSchema } from "@/domains/project-management/core/domain/schema/auth.schema";
 
 import { useResetPassword } from "@/presentation/hooks/auth/useResetPassword";
 

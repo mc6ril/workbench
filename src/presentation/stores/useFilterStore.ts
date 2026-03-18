@@ -3,7 +3,7 @@ import { create } from "zustand";
 import type {
   TicketFilters,
   TicketPriority,
-} from "@/core/domain/schema/ticket.schema";
+} from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 type FilterState = {
   /**

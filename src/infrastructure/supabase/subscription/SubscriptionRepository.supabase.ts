@@ -1,17 +1,17 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { createDatabaseError } from "@/core/domain/repositoryError";
+import { createDatabaseError } from "@/domains/project-management/core/domain/repositoryError";
 import type {
   Subscription,
   UpsertSubscriptionInput,
-} from "@/core/domain/schema/subscription.schema";
+} from "@/domains/project-management/core/domain/schema/subscription.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type { SubscriptionRow } from "@/infrastructure/supabase/types";
 
 import { mapSubscriptionRowToDomain } from "./SubscriptionMapper.supabase";
 
-import type { SubscriptionRepository } from "@/core/ports/subscriptionRepository";
+import type { SubscriptionRepository } from "@/domains/project-management/core/ports/subscriptionRepository";
 
 /**
  * Create a SubscriptionRepository using the provided Supabase clients.

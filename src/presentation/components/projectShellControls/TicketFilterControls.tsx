@@ -1,4 +1,4 @@
-import type { TicketPriority } from "@/core/domain/schema/ticket.schema";
+import type { TicketPriority } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import Button from "@/shared/design-system/Button";
 import Select from "@/shared/design-system/Select";

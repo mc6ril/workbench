@@ -10,16 +10,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type {
   ChangePasswordFormInput,
   Theme,
-} from "@/core/domain/schema/auth.schema";
+} from "@/domains/project-management/core/domain/schema/auth.schema";
 import {
   ChangePasswordFormSchema,
   DEFAULT_USER_PREFERENCES,
   ThemeValues,
-} from "@/core/domain/schema/auth.schema";
+} from "@/domains/project-management/core/domain/schema/auth.schema";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
-} from "@/core/domain/schema/subscription.schema";
+} from "@/domains/project-management/core/domain/schema/subscription.schema";
 
 import Button from "@/shared/design-system/Button";
 import Form from "@/shared/design-system/Form";

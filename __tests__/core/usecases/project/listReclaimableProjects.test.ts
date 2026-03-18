@@ -1,6 +1,6 @@
-import type { ReclaimableProject } from "@/core/domain/schema/project.schema";
+import type { ReclaimableProject } from "@/domains/project-management/core/domain/schema/project.schema";
 
-import { listReclaimableProjects } from "@/core/usecases/project/listReclaimableProjects";
+import { listReclaimableProjects } from "@/domains/project-management/core/usecases/project/listReclaimableProjects";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";

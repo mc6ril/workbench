@@ -1,8 +1,8 @@
-import type { Subscription } from "@/core/domain/schema/subscription.schema";
+import type { Subscription } from "@/domains/project-management/core/domain/schema/subscription.schema";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
-} from "@/core/domain/schema/subscription.schema";
+} from "@/domains/project-management/core/domain/schema/subscription.schema";
 
 import type { SubscriptionRow } from "@/infrastructure/supabase/types";
 

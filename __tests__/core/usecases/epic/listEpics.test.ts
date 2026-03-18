@@ -1,8 +1,8 @@
-import type { Board, Column } from "@/core/domain/schema/board.schema";
-import type { Epic } from "@/core/domain/schema/epic.schema";
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
+import type { Board, Column } from "@/domains/project-management/core/domain/schema/board.schema";
+import type { Epic } from "@/domains/project-management/core/domain/schema/epic.schema";
+import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import { listEpics } from "@/core/usecases/epic/listEpics";
+import { listEpics } from "@/domains/project-management/core/usecases/epic/listEpics";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";

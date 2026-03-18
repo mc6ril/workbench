@@ -2,8 +2,8 @@
 
 import { useCallback, useState } from "react";
 
-import { ProjectRole } from "@/core/domain/schema/project.schema";
-import type { ProjectMember } from "@/core/domain/schema/projectMember.schema";
+import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
 
 import Avatar from "@/shared/design-system/Avatar";
 import Button from "@/shared/design-system/Button";

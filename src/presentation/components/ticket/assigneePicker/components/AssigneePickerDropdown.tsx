@@ -1,4 +1,4 @@
-import type { ProjectMember } from "@/core/domain/schema/projectMember.schema";
+import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
 
 import styles from "@/presentation/components/ticket/assigneePicker/AssigneePicker.module.scss";
 import Avatar from "@/shared/design-system/Avatar";

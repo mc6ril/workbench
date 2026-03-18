@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { handlePaymentWebhook } from "@/core/usecases/subscription/handlePaymentWebhook";
+import { handlePaymentWebhook } from "@/domains/project-management/core/usecases/subscription/handlePaymentWebhook";
 
 import { stripePaymentGateway } from "@/infrastructure/stripe/stripePaymentGateway";
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";

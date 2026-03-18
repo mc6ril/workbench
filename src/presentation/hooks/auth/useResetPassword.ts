@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { ResetPasswordInput } from "@/core/domain/schema/auth.schema";
+import type { ResetPasswordInput } from "@/domains/project-management/core/domain/schema/auth.schema";
 
-import { resetPasswordForEmail } from "@/core/usecases/auth/resetPasswordForEmail";
+import { resetPasswordForEmail } from "@/domains/project-management/core/usecases/auth/resetPasswordForEmail";
 
 import { authRepository } from "@/infrastructure/supabase/repositories";
 

@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateInvitationInput } from "@/core/domain/schema/invitation.schema";
-import type { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
+import type { CreateInvitationInput } from "@/domains/project-management/core/domain/schema/invitation.schema";
+import type { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
-import { inviteToProject } from "@/core/usecases/invitation/inviteToProject";
+import { inviteToProject } from "@/domains/project-management/core/usecases/invitation/inviteToProject";
 
 import {
   invitationRepository,

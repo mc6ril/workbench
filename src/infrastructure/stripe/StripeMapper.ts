@@ -1,8 +1,8 @@
 import type Stripe from "stripe";
 
-import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
+import { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
-import type { WebhookEvent } from "@/core/ports/paymentGateway";
+import type { WebhookEvent } from "@/domains/project-management/core/ports/paymentGateway";
 
 /** Maps paid SubscriptionPlan values to their Stripe Price IDs from env. */
 export const STRIPE_PRICE_IDS: Partial<Record<SubscriptionPlan, string>> = {

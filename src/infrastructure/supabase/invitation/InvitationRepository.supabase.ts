@@ -4,7 +4,7 @@ import type {
   CreateInvitationInput,
   PendingInvitation,
   ProjectInvitation,
-} from "@/core/domain/schema/invitation.schema";
+} from "@/domains/project-management/core/domain/schema/invitation.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type {
@@ -17,7 +17,7 @@ import {
   mapPendingInvitationRowToDomain,
 } from "./InvitationMapper.supabase";
 
-import type { InvitationRepository } from "@/core/ports/invitationRepository";
+import type { InvitationRepository } from "@/domains/project-management/core/ports/invitationRepository";
 
 /**
  * Create an InvitationRepository implementation using the provided Supabase client.

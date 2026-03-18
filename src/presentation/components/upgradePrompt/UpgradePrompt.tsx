@@ -3,8 +3,8 @@
 import React, { useCallback, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-import type { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
-import type { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
+import type { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
+import type { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
 import Button from "@/shared/design-system/Button";
 import Text from "@/shared/design-system/Text";

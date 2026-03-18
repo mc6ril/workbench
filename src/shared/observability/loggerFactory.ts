@@ -7,7 +7,7 @@ import { getLogConfig } from "./config";
 import { JsonConsoleLogger } from "./jsonConsoleLogger";
 import { normalizeScope, sanitizeMeta } from "./utils";
 
-import type { Logger, LoggerFactory, LogMeta } from "@/core/ports/logger";
+import type { Logger, LoggerFactory, LogMeta } from "@/domains/project-management/core/ports/logger";
 
 /**
  * Creates a logger factory instance.
