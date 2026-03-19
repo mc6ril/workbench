@@ -4,7 +4,6 @@
  */
 
 import { createCommentRepository } from "@/modules/board/infrastructure/supabase/comment/CommentRepository.supabase";
-import { createInvitationRepository } from "@/domains/project/infrastructure/supabase/invitation/InvitationRepository.supabase";
 import { createRealtimeRepository } from "@/modules/board/infrastructure/supabase/realtime/RealtimeRepository.supabase";
 import { createUserProfileRepository } from "@/domains/auth/infrastructure/supabase/userProfile/UserProfileRepository.supabase";
 
@@ -13,7 +12,6 @@ import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/cl
 import { createBoardRepository } from "./board/BoardRepository.supabase";
 import { createEpicRepository } from "./epic/EpicRepository.supabase";
 import { createLabelRepository } from "./label/LabelRepository.supabase";
-import { createMemberRepository } from "./member/MemberRepository.supabase";
 import { createSprintRepository } from "./sprint/SprintRepository.supabase";
 import { createTicketRepository } from "./ticket/TicketRepository.supabase";
 
@@ -33,13 +31,7 @@ export const sprintRepository = createSprintRepository(
   createSupabaseBrowserClient()
 );
 
-export const invitationRepository = createInvitationRepository(
-  createSupabaseBrowserClient()
-);
 export const labelRepository = createLabelRepository(
-  createSupabaseBrowserClient()
-);
-export const memberRepository = createMemberRepository(
   createSupabaseBrowserClient()
 );
 export const userProfileRepository = createUserProfileRepository(
@@ -58,10 +50,8 @@ export const getRealtimeRepository = () => {
 export { createBoardRepository } from "./board/BoardRepository.supabase";
 export { createEpicRepository } from "./epic/EpicRepository.supabase";
 export { createLabelRepository } from "./label/LabelRepository.supabase";
-export { createMemberRepository } from "./member/MemberRepository.supabase";
 export { createSprintRepository } from "./sprint/SprintRepository.supabase";
 export { createTicketRepository } from "./ticket/TicketRepository.supabase";
 export { createCommentRepository } from "@/modules/board/infrastructure/supabase/comment/CommentRepository.supabase";
-export { createInvitationRepository } from "@/domains/project/infrastructure/supabase/invitation/InvitationRepository.supabase";
 export { createRealtimeRepository } from "@/modules/board/infrastructure/supabase/realtime/RealtimeRepository.supabase";
 export { createUserProfileRepository } from "@/domains/auth/infrastructure/supabase/userProfile/UserProfileRepository.supabase";

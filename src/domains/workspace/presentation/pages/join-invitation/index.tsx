@@ -9,7 +9,7 @@ import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 import { useSession } from "@/domains/auth/presentation/hooks/useSession";
-import { useAcceptInvitation } from "@/domains/project-management/presentation/hooks/invitation/useAcceptInvitation";
+import { useAcceptInvitation } from "@/domains/project/presentation/hooks/invitation/useAcceptInvitation";
 
 const JoinInvitationPage = () => {
   const params = useParams<{ token: string }>();

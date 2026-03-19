@@ -35,7 +35,7 @@ import { useEpics } from "@/domains/project-management/presentation/hooks/epic/u
 import { useLabels } from "@/domains/project-management/presentation/hooks/label";
 import { useCreateTicket } from "@/domains/project-management/presentation/hooks/ticket/useCreateTicket";
 import { useTickets } from "@/domains/project-management/presentation/hooks/ticket/useTickets";
-import { useProjectPermissions } from "@/domains/project-management/presentation/providers/permissions";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
 import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
 import { useSortStore } from "@/domains/project-management/presentation/stores/useSortStore";
 import { useProject } from "@/domains/workspace/presentation/hooks/useProject";

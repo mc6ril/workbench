@@ -1,14 +1,14 @@
 import type { PropsWithChildren } from "react";
 import { renderHook } from "@testing-library/react";
 
-import { useProjectRole } from "@/domains/project-management/presentation/hooks/member/useProjectRole";
+import { useProjectRole } from "@/domains/project/presentation/hooks/member/useProjectRole";
 import {
   ProjectPermissionsProvider,
   useProjectPermissions,
-} from "@/domains/project-management/presentation/providers/permissions";
+} from "@/domains/project/presentation/providers/permissions";
 import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
-jest.mock("@/domains/project-management/presentation/hooks/member/useProjectRole", () => ({
+jest.mock("@/domains/project/presentation/hooks/member/useProjectRole", () => ({
   useProjectRole: jest.fn(),
 }));
 

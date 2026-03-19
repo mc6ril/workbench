@@ -13,11 +13,11 @@ import UpgradePrompt from "@/domains/billing/presentation/components/upgradeProm
 import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
 import type { PriorityItem } from "@/domains/project-management/presentation/components/prioritiesSettings/PrioritiesSettings";
 import type { StatusColumnItem } from "@/domains/project-management/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
-import SettingsLayout from "@/domains/project-management/presentation/layouts/settingsLayout/SettingsLayout";
+import SettingsLayout from "@/domains/project/presentation/layouts/settingsLayout/SettingsLayout";
 
 const ProjectSettings = dynamic(
   () =>
-    import("@/domains/project-management/presentation/components/projectSettings/ProjectSettings"),
+    import("@/domains/project/presentation/components/projectSettings/ProjectSettings"),
   { ssr: false }
 );
 

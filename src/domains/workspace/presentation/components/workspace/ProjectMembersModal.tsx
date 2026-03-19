@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 
-import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
+import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 
 import Avatar from "@/shared/design-system/Avatar";
 import Button from "@/shared/design-system/Button";
@@ -17,9 +17,9 @@ import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import styles from "./ProjectMembersModal.module.scss";
 
 import { useSession } from "@/domains/auth/presentation/hooks/useSession";
-import { useProjectMembers } from "@/domains/project-management/presentation/hooks/member/useProjectMembers";
-import { useRemoveMember } from "@/domains/project-management/presentation/hooks/member/useRemoveMember";
-import { useUpdateMemberRole } from "@/domains/project-management/presentation/hooks/member/useUpdateMemberRole";
+import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
+import { useRemoveMember } from "@/domains/project/presentation/hooks/member/useRemoveMember";
+import { useUpdateMemberRole } from "@/domains/project/presentation/hooks/member/useUpdateMemberRole";
 import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 type ProjectMembersModalProps = {

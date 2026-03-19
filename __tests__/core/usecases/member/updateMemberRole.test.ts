@@ -1,4 +1,4 @@
-import { updateMemberRole } from "@/domains/project-management/core/usecases/member/updateMemberRole";
+import { updateMemberRole } from "@/domains/project/core/usecases/member/updateMemberRole";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";

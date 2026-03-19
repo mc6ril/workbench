@@ -22,7 +22,7 @@ import {
   useEpics,
 } from "@/domains/project-management/presentation/hooks/epic";
 import { useEpicQueryParams } from "@/domains/project-management/presentation/hooks/epic/useEpicQueryParams";
-import { useProjectPermissions } from "@/domains/project-management/presentation/providers/permissions";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
 import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
 
 type Props = {
