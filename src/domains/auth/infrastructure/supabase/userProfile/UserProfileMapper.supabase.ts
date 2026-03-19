@@ -1,6 +1,6 @@
 import type { UserProfile } from "@/domains/project-management/core/domain/schema/userProfile.schema";
 
-import type { UserProfileRow } from "@/infrastructure/supabase/types";
+import type { UserProfileRow } from "@/shared/infrastructure/types";
 
 import { toDate } from "@/shared/utils/guards";
 

@@ -2,7 +2,7 @@ import type {
   ProjectRow,
   ProjectWithStatsRow,
   ReclaimableProjectRow,
-} from "@/infrastructure/supabase/types";
+} from "@/shared/infrastructure/types";
 
 import { toDate } from "@/shared/utils/guards";
 

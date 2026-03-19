@@ -5,8 +5,8 @@ import type {
   UserProfile,
 } from "@/domains/project-management/core/domain/schema/userProfile.schema";
 
-import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
-import type { UserProfileRow } from "@/infrastructure/supabase/types";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { UserProfileRow } from "@/shared/infrastructure/types";
 
 import { APP_LIMITS } from "@/shared/constants/app";
 

@@ -1,7 +1,7 @@
 import type { Board, Column } from "@/domains/project-management/core/domain/schema/board.schema";
 import { ColumnWorkflowStateSchema } from "@/domains/project-management/core/domain/schema/board.schema";
 
-import type { BoardRow, ColumnRow } from "@/infrastructure/supabase/types";
+import type { BoardRow, ColumnRow } from "@/shared/infrastructure/types";
 
 import { toDate } from "@/shared/utils/guards";
 

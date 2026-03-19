@@ -1,6 +1,6 @@
 import type { Sprint } from "@/domains/project-management/core/domain/schema/sprint.schema";
 
-import type { SprintRow } from "@/infrastructure/supabase/types";
+import type { SprintRow } from "@/shared/infrastructure/types";
 
 import { toDate } from "@/shared/utils/guards";
 

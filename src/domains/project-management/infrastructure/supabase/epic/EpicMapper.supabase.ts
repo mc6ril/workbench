@@ -1,6 +1,6 @@
 import type { Epic } from "@/domains/project-management/core/domain/schema/epic.schema";
 
-import type { EpicRow } from "@/infrastructure/supabase/types";
+import type { EpicRow } from "@/shared/infrastructure/types";
 
 import { toDate } from "@/shared/utils/guards";
 

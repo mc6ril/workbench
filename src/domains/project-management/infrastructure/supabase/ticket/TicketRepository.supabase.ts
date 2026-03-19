@@ -13,8 +13,8 @@ import type {
   UpdateTicketInput,
 } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
-import type { TicketRow } from "@/infrastructure/supabase/types";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { TicketRow } from "@/shared/infrastructure/types";
 
 import {
   mapTicketRowsToDomain,

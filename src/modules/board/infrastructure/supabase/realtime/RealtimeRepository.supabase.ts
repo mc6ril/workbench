@@ -3,7 +3,7 @@ import type {
   LabelRow,
   SprintRow,
   TicketRow,
-} from "@/infrastructure/supabase/types";
+} from "@/shared/infrastructure/types";
 
 import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
 

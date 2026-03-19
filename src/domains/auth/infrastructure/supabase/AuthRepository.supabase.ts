@@ -1,8 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { handleAuthError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
-import type { UserProfileRow } from "@/infrastructure/supabase/types";
-import { mapUserProfileRowToDomain } from "@/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
+import { handleAuthError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { UserProfileRow } from "@/shared/infrastructure/types";
+import { mapUserProfileRowToDomain } from "@/domains/auth/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
 
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 

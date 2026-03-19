@@ -1,6 +1,6 @@
 import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import type { TicketRow } from "@/infrastructure/supabase/types";
+import type { TicketRow } from "@/shared/infrastructure/types";
 
 import { toDate } from "@/shared/utils/guards";
 

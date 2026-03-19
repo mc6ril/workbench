@@ -1,4 +1,4 @@
-import { mapSupabaseError } from "@/infrastructure/supabase/shared/errors/repositoryErrorMapper";
+import { mapSupabaseError } from "@/shared/infrastructure/errors/repositoryErrorMapper";
 
 describe("mapSupabaseError custom business cases", () => {
   it("maps LAST_ADMIN_REQUIRED trigger errors to a named constraint", () => {

@@ -3,8 +3,8 @@ import type { ProjectMember } from "@/domains/project-management/core/domain/sch
 import type {
   ProjectMemberRow,
   UserProfileRow,
-} from "@/infrastructure/supabase/types";
-import { mapUserProfileRowToDomain } from "@/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
+} from "@/shared/infrastructure/types";
+import { mapUserProfileRowToDomain } from "@/domains/auth/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
 
 import { toDate } from "@/shared/utils/guards";
 
