@@ -1,24 +1,24 @@
 ---
 alwaysApply: true
 name: "Modular Domain Architecture — Strict Boundaries"
-description: "Maintain the domain-first architecture: src/app for routing, src/domains for business modules, src/shared for cross-cutting concerns."
+description: "Maintain the final domain-first architecture: src/app for routing, src/domains for business modules, src/shared for cross-cutting concerns."
 ---
 
 # Intent
 
-Maintain a **domain-first modular architecture**.
+Maintain the **final modular architecture**.
 
-The codebase is organized around domain modules. Each domain owns:
+Workbench is organized around business domains:
 
-- `core/domain`
-- `core/ports`
-- `core/usecases`
-- `infrastructure`
-- `presentation`
+- `auth`
+- `billing`
+- `workspace`
+- `project-management`
+- future domains such as `recipes`, `vacation`, and `budget`
 
 Cross-cutting concerns live in `src/shared/`.
 
-## CRITICAL RULES - ARCHITECTURE NEVER OPTIONAL
+## CRITICAL RULES
 
 ### 1. Top-Level Structure
 
@@ -29,17 +29,17 @@ Cross-cutting concerns live in `src/shared/`.
 
 ### 2. `src/app/` - ROUTING ONLY
 
-- **ALWAYS** keep `src/app/` focused on route files, route layouts, and route composition
+- **ALWAYS** keep `src/app/` focused on route files, route layouts, and route handlers
 - **ALWAYS** compose domain pages and layouts from `src/domains/<domain>/presentation/`
-- **NEVER** put ticket, board, epic, sprint, or other domain business rules in `src/app/`
-- **NEVER** call Supabase directly from route files
+- **NEVER** put business rules in `src/app/`
+- **NEVER** call Supabase or Stripe directly from route files when a domain flow exists
 
 ### 3. Domain Core - PURE BUSINESS OWNERSHIP
 
 - **ALWAYS** place schemas in `src/domains/<domain>/core/domain/schema/`
 - **ALWAYS** place rules in `src/domains/<domain>/core/domain/rules/`
 - **ALWAYS** place domain constants in `src/domains/<domain>/core/domain/constants/`
-- **ALWAYS** keep domain core free of React, Next.js, Zustand, React Query, and Supabase
+- **ALWAYS** keep domain core free of React, Next.js, Zustand, React Query, Supabase, and Stripe
 - **NEVER** move domain-specific business rules into `src/shared/`
 
 ### 4. Ports - DOMAIN CONTRACTS
@@ -52,12 +52,12 @@ Cross-cutting concerns live in `src/shared/`.
 
 - **ALWAYS** place use cases in `src/domains/<domain>/core/usecases/`
 - **ALWAYS** use ports to access persistence or external services
-- **NEVER** import Supabase clients directly in a domain use case
+- **NEVER** import low-level clients directly in a domain use case
 - **NEVER** import React, Next.js, Zustand, or React Query in a domain use case
 
 ### 6. Infrastructure - DOMAIN ADAPTERS
 
-- **ALWAYS** place domain-specific repositories and mappers in `src/domains/<domain>/infrastructure/`
+- **ALWAYS** place domain-specific repositories, mappers, and gateways in `src/domains/<domain>/infrastructure/`
 - **ALWAYS** use shared technical clients from `src/shared/infrastructure/*` when needed
 - **NEVER** import another domain's presentation layer into infrastructure
 - **NEVER** put reusable cross-cutting clients inside one domain if they belong in `src/shared/infrastructure/`
@@ -68,30 +68,32 @@ Cross-cutting concerns live in `src/shared/`.
 - **ALWAYS** keep domain hooks in `presentation/hooks/`
 - **ALWAYS** keep domain stores in `presentation/stores/` for UI state only
 - **ALWAYS** keep route-level page/layout composition in `presentation/pages/` and `presentation/layouts/`
+- **ALWAYS** keep domain navigation config in `presentation/navigation/` when the domain owns view definitions
 - **NEVER** put reusable design-system primitives in a domain presentation folder
 
 ### 8. Shared Layer - CROSS-CUTTING ONLY
 
-- **ALWAYS** place reusable UI primitives in `src/shared/design-system/ui/`
+- **ALWAYS** place reusable UI primitives in `src/shared/design-system/`
 - **ALWAYS** place accessibility helpers in `src/shared/a11y/`
 - **ALWAYS** place shared infra clients in `src/shared/infrastructure/`
-- **ALWAYS** place cross-cutting auth utilities in `src/shared/auth/`
-- **NEVER** place ticket, board, epic, sprint, or project-management business rules in `src/shared/`
+- **ALWAYS** place generic shared constants, types, and utils in `src/shared/`
+- **NEVER** place auth-, billing-, workspace-, or project-management business rules in `src/shared/`
+- **NEVER** place domain-owned schemas in `src/shared/types/`
 
 ### 9. Dependency Direction
 
 - **ALWAYS** follow this direction:
   - `src/app/`
-  - `domains/<domain>/presentation/`
-  - `domains/<domain>/core/usecases/`
-  - `domains/<domain>/core/ports/`
-  - `domains/<domain>/infrastructure/`
-  - `shared/infrastructure/`
+  - `src/domains/<domain>/presentation/`
+  - `src/domains/<domain>/core/usecases/`
+  - `src/domains/<domain>/core/ports/`
+  - `src/domains/<domain>/infrastructure/`
+  - `src/shared/infrastructure/`
   - external services
 - **NEVER** reverse the direction
-- **NEVER** make one domain presentation layer depend on another domain infrastructure layer directly
+- **NEVER** make one domain presentation layer depend directly on another domain infrastructure layer
 
-## FILE ORGANIZATION - MANDATORY STRUCTURE
+## FILE ORGANIZATION
 
 - Business schemas and rules -> `src/domains/<domain>/core/domain/`
 - Ports -> `src/domains/<domain>/core/ports/`
@@ -103,17 +105,17 @@ Cross-cutting concerns live in `src/shared/`.
 - Domain pages -> `src/domains/<domain>/presentation/pages/`
 - Domain layouts -> `src/domains/<domain>/presentation/layouts/`
 - Domain navigation config -> `src/domains/<domain>/presentation/navigation/`
-- Reusable UI primitives -> `src/shared/design-system/ui/`
+- Reusable UI primitives -> `src/shared/design-system/`
 - Shared infra clients -> `src/shared/infrastructure/`
-- Shared i18n, a11y, auth, observability, constants, types, utils -> `src/shared/*`
+- Shared i18n, observability, a11y, constants, types, utils -> `src/shared/*`
 
-## ARCHITECTURE VIOLATIONS - AUTO-STOP CONDITIONS
+## AUTO-STOP CONDITIONS
 
 1. **Business logic inside `src/app/`** -> STOP and move it into the owning domain
 2. **New global `src/core/`, `src/presentation/`, or `src/infrastructure/` code** -> STOP and move it into `src/domains/<domain>/`
-3. **Reusable UI primitive inside a domain presentation folder** -> STOP and move it to `src/shared/design-system/ui/`
+3. **Reusable UI primitive inside a domain presentation folder** -> STOP and move it to `src/shared/design-system/`
 4. **Domain-specific rule inside `src/shared/`** -> STOP and move it to the owning domain core
-5. **Supabase call from route or page component** -> STOP and go through domain hooks/use cases/repositories
+5. **Supabase or Stripe call from route or page component** -> STOP and go through domain hooks/use cases/repositories
 6. **Use case importing shared/browser/server client directly** -> STOP and use a domain port
 7. **Cross-domain presentation -> infrastructure coupling** -> STOP and rework the dependency
 
@@ -122,6 +124,6 @@ Cross-cutting concerns live in `src/shared/`.
 - File created in the correct domain or shared location?
 - Route logic kept in `src/app/` only?
 - Shared code truly cross-cutting?
-- Reusable UI placed in `src/shared/design-system/ui/`?
+- Reusable UI placed in `src/shared/design-system/`?
 - Domain hooks/stores/pages/layouts kept inside the owning domain?
 - Infrastructure implemented inside the owning domain and backed by shared clients when needed?

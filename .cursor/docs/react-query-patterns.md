@@ -27,16 +27,18 @@ src/app route
 
 ## Hook Location
 
-React Query hooks belong in:
+React Query hooks belong in the domain that owns the server state:
 
-- `src/domains/project-management/presentation/hooks/`
+- `src/domains/<domain>/presentation/hooks/`
 
-Typical examples:
+Current examples:
 
-- `useTickets`
-- `useCreateTicket`
-- `useBoard`
-- `useEpics`
+- `src/domains/project-management/presentation/hooks/ticket/useTickets.ts`
+- `src/domains/project-management/presentation/hooks/ticket/useCreateTicket.ts`
+- `src/domains/project-management/presentation/hooks/board/useBoardConfiguration.ts`
+- `src/domains/project-management/presentation/hooks/epic/useEpics.ts`
+
+Future domains such as `auth`, `billing`, and `workspace` may follow the same pattern whenever they own React Query server state.
 
 ## Query Keys
 
@@ -66,7 +68,7 @@ export const projectManagementQueryKeys = {
 ```typescript
 import { useQuery } from "@tanstack/react-query";
 
-import { listTickets } from "@/domains/project-management/core/usecases/listTickets";
+import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
 import { ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 import { projectManagementQueryKeys } from "./queryKeys";
 
@@ -107,8 +109,9 @@ export const useCreateTicket = () => {
 - Hooks belong to a domain, not to a global `src/presentation/hooks/` folder
 - Hooks call domain use cases
 - Hooks do not call shared Supabase clients directly
-- Shared design-system components in `src/shared/design-system/ui/` do not contain queries or mutations
+- Shared design-system components in `src/shared/design-system/` do not contain queries or mutations
 - `src/app/` routes should compose domain pages or layouts, not host React Query logic
+- Server-only billing webhooks or route handlers are not a replacement for domain-owned client hooks
 
 ## Shared Infrastructure
 
@@ -124,7 +127,7 @@ Domain infrastructure may wrap those clients in repository factories or prewired
 
 Zustand stores remain **UI state only** and belong to the domain presentation layer:
 
-- `src/domains/project-management/presentation/stores/`
+- `src/domains/<domain>/presentation/stores/`
 
 Examples:
 

@@ -148,12 +148,12 @@ export const useFilterStore = create<FilterState>((set) => ({
 **Mandatory structure:**
 
 ```typescript
-export function useProducts() {
+export const useTickets = (projectId: string) => {
     return useQuery({
-        queryKey: ["products"],
-        queryFn: () => listProducts(productRepositorySupabase),
+        queryKey: ["project-management", "tickets", "list", projectId],
+        queryFn: () => listTickets(ticketRepository, { projectId }),
     });
-}
+};
 ```
 
 ### 7. Types & Naming - STRICT CONVENTIONS
@@ -209,13 +209,13 @@ enum ProductStatus {
 -   `ProductTable.tsx` → Component
 -   `useProducts.ts` → React Query hook
 -   `useBoardStore.ts` → Domain presentation store
--   `ticketRepository.supabase.ts` → Domain infrastructure repository
+-   `TicketRepository.supabase.ts` → Domain infrastructure repository
 
 ### 8. Tests - MANDATORY COVERAGE
 
 -   **ALWAYS** write unit tests for `domain` and `usecases`
 -   **NEVER** make UI tests mandatory for page components
--   **ALWAYS** write mandatory tests for reusable components in `shared/design-system/ui`
+-   **ALWAYS** write mandatory tests for reusable components in `shared/design-system`
 
 ### 9. Imports - ORDER AND CLEANLINESS
 
@@ -242,14 +242,14 @@ enum ProductStatus {
 
 ```typescript
 // ✅ Correct - Absolute import
-import Link from "@/shared/design-system/ui/Link";
+import Link from "@/shared/design-system/Link";
 import { useBoardStore } from "@/domains/project-management/presentation/stores/useBoardStore";
-import { listTickets } from "@/domains/project-management/core/usecases/listTickets";
+import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
 
 // ❌ Wrong - Relative import
-import Link from "../../../../src/shared/design-system/ui/Link";
+import Link from "../../../../src/shared/design-system/Link";
 import { useBoardStore } from "../stores/useBoardStore";
-import { listTickets } from "../../core/usecases/listTickets";
+import { listTickets } from "../../core/usecases/ticket/listTickets";
 ```
 
 ```scss

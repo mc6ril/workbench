@@ -1,161 +1,206 @@
-# Modular Domain Architecture
+# Final Modular Architecture
 
-## Fundamental Principles
+## Intent
 
-This project now follows a **modular domain architecture**.
+Workbench follows a **domain-first modular architecture**.
 
-The application is organized around business domains. Each domain owns its own:
-
-- `core/` for business rules and contracts
-- `infrastructure/` for technical adapters
-- `presentation/` for UI-facing domain code
-
+The codebase is organized around business domains first, then layered inside each domain.
+`src/app/` is reserved for Next.js routing and route composition only.
 Cross-cutting concerns live in `src/shared/`.
 
-### Golden Rule
-
-**Business logic belongs inside a domain module, never in `src/app/`, never in shared UI primitives, and never directly in infrastructure clients.**
-
-## Source Structure
+## Target Structure
 
 ```text
 src/
-  app/                                  # Next.js routing and route composition
+  app/                          # Next.js routing only
   domains/
-    project-management/
-      core/
-        domain/
-          schema/                       # ticket.schema.ts, board.schema.ts, ...
-          rules/                        # ticket.rules.ts, board.rules.ts, ...
-          constants/
-        ports/                          # ticketRepository.ts, boardRepository.ts, ...
-        usecases/                       # createTicket.ts, listTickets.ts, ...
-      infrastructure/
-        supabase/                       # repositories, mappers, adapters
-      presentation/
-        components/                     # ticket/, board/, epic/, sprint/, ...
-        hooks/                          # useTickets, useCreateTicket, ...
-        stores/                         # useBoardStore, useFilterStore, ...
-        pages/                          # BoardPage, EpicsPage, ...
-        layouts/                        # ProjectShell, SettingsLayout, ...
-        navigation/                     # projectViews.config.ts
+    auth/                       # sign in/up, OAuth, reset password, email verify
+    billing/                    # Stripe, plans, subscriptions, webhooks
+    workspace/                  # users, invitations, account settings
+    project-management/         # tickets, epics, sprints, board
+    recipes/                    # future
+    vacation/                   # future
+    budget/                     # future
   shared/
-    design-system/
-      ui/                               # Button, Modal, Toast, ...
-    i18n/
-    observability/
-    auth/
+    design-system/              # UI primitives and their shared helpers
+    i18n/                       # translations and i18n hooks
+    observability/              # logger, tracing, performance tracking
     infrastructure/
-      supabase/                         # client-browser.ts, client-server.ts, client-admin.ts
-      stripe/
-      web/
-    constants/
-    types/
-    utils/
-    a11y/
+      supabase/                 # browser/server/admin clients
+      stripe/                   # stripeClient
+      web/                      # rateLimit, CSRF
+    constants/                  # routes, error codes, feature flags
+    types/                      # truly generic types only
+    utils/                      # pure domain-free helpers
+    a11y/                       # accessibility helpers and constants
   styles/
   middleware.ts
 ```
 
-## Layer Responsibilities
+## Domain Ownership
 
-### 1. `src/app/`
+### `src/app/`
 
-- Owns Next.js routing only
-- Composes domain pages and layouts
-- Does not contain business rules
-- Does not call Supabase directly
+- Owns URL structure, route groups, `page.tsx`, `layout.tsx`, route handlers, and route composition.
+- Delegates domain rendering to domain presentation modules.
+- Must stay thin.
 
-### 2. `src/domains/<domain>/core/domain`
+### `src/domains/auth/`
 
-- Owns schemas, rules, and domain constants
-- Pure business logic only
-- No React, Next.js, Zustand, React Query, or Supabase imports
+- Owns authentication flows.
+- Examples: sign in, sign up, OAuth callbacks, password reset, email verification.
 
-### 3. `src/domains/<domain>/core/ports`
+### `src/domains/billing/`
 
-- Owns domain contracts
-- Defines repository and gateway interfaces used by use cases
-- No implementation logic
+- Owns billing and subscription logic.
+- Examples: Stripe checkout, portal, plans, subscription state, webhook handling.
 
-### 4. `src/domains/<domain>/core/usecases`
+### `src/domains/workspace/`
 
-- Orchestrates business flows for that domain
-- Depends on the domain's rules, schemas, and ports
-- Returns domain-shaped data
-- Never imports UI frameworks or Supabase clients directly
+- Owns user/workspace collaboration concerns.
+- Examples: account settings, users, invitations, membership management.
 
-### 5. `src/domains/<domain>/infrastructure`
+### `src/domains/project-management/`
 
-- Implements ports for one domain
-- Contains Supabase repositories, mappers, and adapters
-- Can consume shared infrastructure clients from `src/shared/infrastructure/*`
-- Must not import another domain's presentation layer
+- Owns the Jira-like work management experience.
+- Examples: board, tickets, epics, sprints, project settings.
 
-### 6. `src/domains/<domain>/presentation`
+### Future domains
 
-- Owns domain-specific UI composition
-- `components/` for domain UI pieces
-- `hooks/` for React Query hooks and UI orchestration
-- `stores/` for domain UI state only
-- `pages/` and `layouts/` for route-level composition reused by `src/app`
-- `navigation/` for domain view configuration
+- `recipes/`
+- `vacation/`
+- `budget/`
 
-### 7. `src/shared/`
+The same domain-first structure applies when these modules are implemented.
 
-- Holds cross-cutting, reusable building blocks
-- `shared/design-system/ui/` contains reusable UI primitives only
-- `shared/infrastructure/` contains technical clients shared across domains
-- `shared/a11y/`, `shared/i18n/`, `shared/utils/`, `shared/types/` stay domain-agnostic
-- Shared code must not absorb ticket, board, epic, sprint, or other domain-specific business rules
+## Internal Layering Inside a Domain
+
+Each concrete domain can own some or all of these folders:
+
+```text
+src/domains/<domain>/
+  core/
+    domain/
+      schema/
+      rules/
+      constants/
+    ports/
+    usecases/
+  infrastructure/
+  presentation/
+    components/
+    hooks/
+    stores/
+    pages/
+    layouts/
+    navigation/
+```
+
+### `core/domain`
+
+- Pure business schemas, rules, and constants.
+- No React, Next.js, Zustand, React Query, Supabase, or Stripe imports.
+
+### `core/ports`
+
+- Contracts owned by the domain.
+- Repository and gateway interfaces used by domain use cases.
+
+### `core/usecases`
+
+- Domain orchestration.
+- Depends on domain rules/schemas and ports.
+- Never imports framework or low-level client code directly.
+
+### `infrastructure`
+
+- Adapters owned by the domain.
+- Implements ports using shared technical clients when needed.
+
+### `presentation`
+
+- Domain-facing UI composition.
+- Components, hooks, stores, pages, layouts, navigation config.
+
+## Shared Layer Rules
+
+`src/shared/` is for cross-cutting code only.
+
+### `src/shared/design-system/`
+
+- Reusable UI primitives only.
+- May co-locate internal shared helpers with the primitive when they are still cross-cutting.
+- Examples:
+  - `Button/`
+  - `Modal/` + `useModalAccessibility.ts`
+  - `Toast/` + `useToastStore.ts`
+  - `icons/`
+
+### `src/shared/infrastructure/`
+
+- Technical clients and adapters that are not domain-owned.
+- Browser/server/admin Supabase clients.
+- Shared Stripe client.
+- Shared web concerns like CSRF and rate limiting.
+
+### `src/shared/types/`
+
+- Only truly generic types.
+- Never ticket-, auth-, billing-, workspace-, or board-specific business types.
+
+### `src/shared/utils/`
+
+- Pure helpers with no domain ownership.
+- No embedded business rules.
 
 ## Dependency Direction
 
-Within one domain, dependencies should flow like this:
+The dependency flow should remain:
 
 ```text
-src/app route
-  -> domains/<domain>/presentation/pages or layouts
-  -> domains/<domain>/presentation/hooks
-  -> domains/<domain>/core/usecases
-  -> domains/<domain>/core/ports
-  -> domains/<domain>/infrastructure/*
-  -> shared/infrastructure/*
-  -> external service
+src/app
+  -> src/domains/<domain>/presentation
+  -> src/domains/<domain>/core/usecases
+  -> src/domains/<domain>/core/ports
+  -> src/domains/<domain>/infrastructure
+  -> src/shared/infrastructure
+  -> external services
 ```
 
-## Cursor Rules
+Never reverse that direction.
 
-### Cursor must
+## Hard Rules
 
-1. Create new business code inside the correct domain module.
-2. Keep reusable UI in `src/shared/design-system/ui/`.
-3. Keep cross-cutting utilities in `src/shared/`.
-4. Keep `src/app/` thin and route-focused.
-5. Use domain hooks to connect UI to domain use cases.
-6. Use shared infrastructure clients from `src/shared/infrastructure/*` rather than recreating them in each feature.
+### Always
 
-### Cursor must never
+1. Keep routing in `src/app/` only.
+2. Keep business ownership inside the right domain.
+3. Put reusable primitives in `src/shared/design-system/`.
+4. Keep `src/shared/` domain-agnostic.
+5. Use shared infrastructure clients from `src/shared/infrastructure/*`.
 
-1. Recreate a global `src/core/`, `src/presentation/`, or `src/infrastructure/` root.
-2. Put ticket, board, epic, sprint, or project-management logic in `src/shared/`.
-3. Put reusable UI primitives in a domain module when they belong in `src/shared/design-system/ui/`.
-4. Call Supabase directly from `src/app/` routes or domain page components.
-5. Import one domain's infrastructure or presentation code directly into another domain's presentation layer.
+### Never
 
-## Example Flow
+1. Recreate global roots such as `src/core/`, `src/presentation/`, or `src/infrastructure/`.
+2. Put domain business rules in `src/shared/`.
+3. Import one domain's presentation layer into another domain's infrastructure.
+4. Put Supabase or Stripe client creation inside domain core/use cases.
+5. Treat `src/app/` as a business layer.
+
+## Example
 
 ```text
 src/app/[projectId]/board/page.tsx
-  -> domains/project-management/presentation/pages/BoardPage
-  -> domains/project-management/presentation/hooks/useTickets
-  -> domains/project-management/core/usecases/listTickets
-  -> domains/project-management/core/ports/ticketRepository
-  -> domains/project-management/infrastructure/supabase/ticketRepository.supabase
-  -> shared/infrastructure/supabase/client-browser
+  -> src/domains/project-management/presentation/pages/board/index.tsx
+  -> src/domains/project-management/presentation/hooks/ticket/useTickets.ts
+  -> src/domains/project-management/core/usecases/ticket/listTickets.ts
+  -> src/domains/project-management/core/ports/ticketRepository.ts
+  -> src/domains/project-management/infrastructure/supabase/ticket/TicketRepository.supabase.ts
+  -> src/shared/infrastructure/supabase/client-browser.ts
   -> Supabase
 ```
 
 ## Key Takeaway
 
-The architecture is no longer organized by a single global set of layers. It is now organized by **domains first**, with **layered internals inside each domain**, and **shared cross-cutting services** in `src/shared/`.
+Workbench is no longer documented as a single domain with shared helpers around it.
+It is documented as a **family of domain modules** (`auth`, `billing`, `workspace`, `project-management`, then future domains), all composed from `src/app/`, and all relying on a strict cross-cutting `src/shared/` layer.

@@ -2,27 +2,45 @@
 
 ## Overview
 
-Repositories are now organized **inside the owning domain module**, not in a global `src/infrastructure/` root.
+Repositories belong to the domain that owns the business contract.
 
-For Workbench, project-management repositories live in:
+They are **not** grouped under one monolithic global infrastructure root.
+Instead:
 
-- `src/domains/project-management/infrastructure/supabase/`
+- domain repositories live in `src/domains/<domain>/infrastructure/`
+- shared clients live in `src/shared/infrastructure/`
 
-Shared Supabase clients live in:
+## Final Rule
 
-- `src/shared/infrastructure/supabase/`
+**Domain-owned adapters, shared-owned clients.**
 
-This keeps repository ownership close to the domain contracts they implement, while still centralizing low-level clients and request-context creation in `src/shared/`.
+That means:
 
-## Architecture Decision
+- `auth`, `billing`, `workspace`, and `project-management` own their repository or gateway implementations
+- `shared/infrastructure/supabase/` owns browser/server/admin Supabase clients
+- `shared/infrastructure/stripe/` owns the low-level Stripe client
 
-**Decision**: keep domain-owned repository factories and use shared Supabase clients for browser, server, and admin contexts.
-
-## Structure
+## Target Structure
 
 ```text
 src/
   domains/
+    auth/
+      core/
+        ports/
+      infrastructure/
+        supabase/
+    billing/
+      core/
+        ports/
+      infrastructure/
+        stripe/
+        supabase/
+    workspace/
+      core/
+        ports/
+      infrastructure/
+        supabase/
     project-management/
       core/
         ports/
@@ -32,14 +50,11 @@ src/
       infrastructure/
         supabase/
           ticket/
-            ticketRepository.supabase.ts
-            ticket.mapper.ts
+            TicketRepository.supabase.ts
+            TicketMapper.supabase.ts
           board/
-            boardRepository.supabase.ts
-            board.mapper.ts
-          epic/
-            epicRepository.supabase.ts
-            epic.mapper.ts
+            BoardRepository.supabase.ts
+            BoardMapper.supabase.ts
           repositories.ts
   shared/
     infrastructure/
@@ -47,25 +62,28 @@ src/
         client-browser.ts
         client-server.ts
         client-admin.ts
+      stripe/
+        stripeClient.ts
 ```
 
 ## Responsibilities
 
-### Domain repository files
+### Domain repository or gateway files
 
-- Implement a port from `src/domains/project-management/core/ports/`
+- Implement a port from `src/domains/<domain>/core/ports/`
 - Stay specific to one domain
-- Contain mappings between Supabase rows and domain schema objects
+- Map low-level payloads to domain shapes
+- Can depend on shared clients
 
-### Shared Supabase clients
+### Shared infrastructure clients
 
-- Create the underlying browser, server, or admin client
-- Handle cross-cutting setup such as cookies, headers, or environment wiring
+- Create the low-level client instance
+- Handle cookies, headers, secrets, request scope, and environment wiring
 - Stay domain-agnostic
 
 ## Recommended Pattern
 
-### 1. Factory functions in the domain infrastructure
+### 1. Domain factory in domain infrastructure
 
 ```typescript
 export const createTicketRepository = (
@@ -77,11 +95,11 @@ export const createTicketRepository = (
 });
 ```
 
-### 2. Shared clients in `src/shared/infrastructure/supabase/`
+### 2. Shared client in shared infrastructure
 
 - `client-browser.ts` for client-side hooks
 - `client-server.ts` for request-scoped server usage
-- `client-admin.ts` for privileged back-office or webhooks when needed
+- `client-admin.ts` for privileged operations
 
 ### 3. Domain wiring entrypoint
 
@@ -96,6 +114,7 @@ export const createTicketRepository = (
 
 ```typescript
 import { ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
+import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
 
 export const useTickets = (projectId: string) => {
   return useQuery({
@@ -108,7 +127,7 @@ export const useTickets = (projectId: string) => {
 ### Server-side composition
 
 ```typescript
-import { createTicketRepository } from "@/domains/project-management/infrastructure/supabase/ticket/ticketRepository.supabase";
+import { createTicketRepository } from "@/domains/project-management/infrastructure/supabase/ticket/TicketRepository.supabase";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
 const client = await createSupabaseServerClient();
@@ -119,14 +138,14 @@ const ticketRepository = createTicketRepository(client);
 
 - A repository implementation belongs to the domain that owns the port
 - Shared infrastructure creates clients, not domain repositories
-- Domain presentation hooks should use domain use cases, not raw Supabase clients
+- Domain presentation hooks should use domain use cases, not raw low-level clients
 - `src/app/` should compose routes, not implement repository logic
-- Cross-domain reuse should happen through shared infrastructure or explicit domain contracts, not by scattering repositories in a global folder
+- Cross-domain reuse should happen through shared infrastructure or explicit domain contracts, not through a global repository bucket
 
 ## Benefits
 
-1. Domain ownership is explicit.
-2. Repository contracts and implementations stay close together.
+1. Domain ownership stays explicit.
+2. Contracts and implementations stay close together.
 3. Shared client setup remains centralized.
 4. Adding a new domain does not recreate a monolithic infrastructure root.
 5. The architecture scales naturally from one domain to many.

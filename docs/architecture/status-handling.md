@@ -11,7 +11,7 @@ Domain pages/components
   (src/domains/<domain>/presentation/pages|components)
     ↓ use
 Shared UI primitives
-  (src/shared/design-system/ui)
+  (src/shared/design-system)
 Shared status helpers
   (src/shared/utils/status.ts)
     ↓ fed by
@@ -28,7 +28,7 @@ Domain usecases
 
 Reusable status components belong in:
 
-- `src/shared/design-system/ui/`
+- `src/shared/design-system/`
 
 Examples:
 
@@ -71,11 +71,11 @@ Examples:
 ## Example
 
 ```typescript
-import { EmptyState, ErrorMessage, Loader } from "@/shared/design-system/ui";
-import { useTickets } from "@/domains/project-management/presentation/hooks/useTickets";
+import { EmptyState, ErrorMessage, Loader } from "@/shared/design-system";
+import { useTickets } from "@/domains/project-management/presentation/hooks/ticket/useTickets";
 import { shouldShowEmpty, shouldShowError, shouldShowLoading } from "@/shared/utils/status";
 
-export const BoardPage = ({ projectId }: { projectId: string }) => {
+export const ProjectBoardPage = ({ projectId }: { projectId: string }) => {
   const ticketsQuery = useTickets(projectId);
 
   if (shouldShowLoading(ticketsQuery)) {
@@ -104,7 +104,7 @@ export const BoardPage = ({ projectId }: { projectId: string }) => {
 
 ## Recommended Locations
 
-- Reusable status UI: `src/shared/design-system/ui/`
+- Reusable status UI: `src/shared/design-system/`
 - Status utilities: `src/shared/utils/`
 - Domain fetching hooks: `src/domains/<domain>/presentation/hooks/`
 - Route composition only: `src/app/`

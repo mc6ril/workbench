@@ -31,10 +31,10 @@ Examples:
 
 - `src/domains/project-management/core/domain/rules/ticket.rules.ts`
   -> `__tests__/domains/project-management/core/domain/rules/ticket.rules.test.ts`
-- `src/domains/project-management/core/usecases/listTickets.ts`
-  -> `__tests__/domains/project-management/core/usecases/listTickets.test.ts`
-- `src/shared/design-system/ui/Button/index.tsx`
-  -> `__tests__/shared/design-system/ui/Button.test.tsx`
+- `src/domains/project-management/core/usecases/ticket/listTickets.ts`
+  -> `__tests__/domains/project-management/core/usecases/ticket/listTickets.test.ts`
+- `src/shared/design-system/Button/index.tsx`
+  -> `__tests__/shared/design-system/Button.test.tsx`
 
 ## B) What to Test
 
@@ -43,7 +43,7 @@ scope: file.path matches ^**tests**/.+\.test\.(ts|tsx)$
 - **ALWAYS** test:
   - domain core in `src/domains/*/core/domain/`
   - domain use cases in `src/domains/*/core/usecases/`
-  - reusable UI primitives in `src/shared/design-system/ui/`
+  - reusable UI primitives in `src/shared/design-system/`
 - **NEVER** test by default:
   - route files in `src/app/`
   - domain pages and layouts
@@ -86,7 +86,7 @@ scope: file.path matches ^**tests**/domains/.+/core/usecases/.+\.test\.ts$
 
 ## G) Shared UI Primitive Tests
 
-scope: file.path matches ^**tests**/shared/design-system/ui/.+\.test\.tsx$
+scope: file.path matches ^**tests**/shared/design-system/.+\.test\.tsx$
 
 - **ALWAYS** test accessible rendering and user interaction
 - **ALWAYS** test behavior, not implementation details
@@ -97,4 +97,4 @@ scope: file.path matches ^**tests**/shared/design-system/ui/.+\.test\.tsx$
 - If a test sits in `src/` -> **Move it to `__tests__/`**
 - If a route or page test appears -> **Remove it unless there is an explicit exception**
 - If a use case test uses real infrastructure -> **Replace with mocked domain ports**
-- If a reusable UI primitive test lives outside `__tests__/shared/design-system/ui/` -> **Move it**
+- If a reusable UI primitive test lives outside `__tests__/shared/design-system/` -> **Move it**

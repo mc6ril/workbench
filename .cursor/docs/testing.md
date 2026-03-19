@@ -8,7 +8,7 @@ This guide reflects the modular domain architecture.
 
 - domain rules and schemas inside `src/domains/<domain>/core/domain/`
 - domain use cases inside `src/domains/<domain>/core/usecases/`
-- reusable UI primitives inside `src/shared/design-system/ui/`
+- reusable UI primitives inside `src/shared/design-system/`
 
 ### No
 
@@ -28,11 +28,11 @@ Examples:
 src/domains/project-management/core/domain/rules/ticket.rules.ts
 -> __tests__/domains/project-management/core/domain/rules/ticket.rules.test.ts
 
-src/domains/project-management/core/usecases/listTickets.ts
--> __tests__/domains/project-management/core/usecases/listTickets.test.ts
+src/domains/project-management/core/usecases/ticket/listTickets.ts
+-> __tests__/domains/project-management/core/usecases/ticket/listTickets.test.ts
 
-src/shared/design-system/ui/Button/index.tsx
--> __tests__/shared/design-system/ui/Button.test.tsx
+src/shared/design-system/Button/index.tsx
+-> __tests__/shared/design-system/Button.test.tsx
 ```
 
 Mocks stay in `__mocks__/`.
@@ -57,7 +57,7 @@ describe("canMoveTicketToStatus", () => {
 ## Use Case Test Example
 
 ```typescript
-import { listTickets } from "@/domains/project-management/core/usecases/listTickets";
+import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
 import type { TicketRepository } from "@/domains/project-management/core/ports/ticketRepository";
 
 const ticketRepositoryMock: jest.Mocked<TicketRepository> = {
@@ -87,7 +87,7 @@ describe("listTickets", () => {
 ```typescript
 import { render, screen } from "@testing-library/react";
 
-import Button from "@/shared/design-system/ui/Button";
+import Button from "@/shared/design-system/Button";
 
 describe("Button", () => {
   it("renders its label", () => {
@@ -105,7 +105,7 @@ describe("Button", () => {
 - Mock external dependencies
 - Test behavior, not implementation details
 - Mock repositories or external clients instead of hitting Supabase
-- Keep route composition, domain hooks, and stores out of the unit-test target set
+- Keep route composition, route handlers, domain hooks, and stores out of the default unit-test target set
 
 ## Quick Checklist
 

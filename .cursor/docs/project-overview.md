@@ -86,24 +86,29 @@ This principle drives both navigation and feature placement.
 
 ## 6. Technical Architecture
 
-Workbench now uses a **modular domain architecture**:
+Workbench now targets a **final multi-domain architecture**:
 
-- `src/app/` remains the Next.js routing layer
-- `src/domains/project-management/` owns the project-management business module end to end
-- `src/shared/` owns cross-cutting concerns such as design system, i18n, observability, auth, shared infrastructure clients, constants, types, utils, and accessibility
+- `src/app/` remains the Next.js routing layer only
+- `src/domains/auth/` owns sign in/up, OAuth, reset password, and email verification
+- `src/domains/billing/` owns Stripe, plans, subscriptions, and webhooks
+- `src/domains/workspace/` owns users, invitations, and account settings
+- `src/domains/project-management/` owns tickets, epics, sprints, board flows, and project settings
+- future domains will include `recipes`, `vacation`, and `budget`
+- `src/shared/` owns only cross-cutting concerns: design system, i18n, observability, shared infrastructure, constants, generic types, utils, and accessibility
 
-Inside each domain module, responsibilities are still layered:
+Inside each concrete domain module, responsibilities stay layered:
 
 - `core/domain/` for schemas, rules, and domain constants
 - `core/ports/` for contracts
 - `core/usecases/` for orchestration
-- `infrastructure/` for adapters such as Supabase repositories
-- `presentation/` for domain-specific hooks, stores, pages, layouts, and components
+- `infrastructure/` for adapters such as Supabase repositories or Stripe gateways
+- `presentation/` for domain-specific hooks, stores, pages, layouts, navigation, and components
 
 Guiding rules:
 > `src/app/` stays thin and route-focused.
-> Shared code stays cross-cutting.
-> Business rules stay inside domain modules.
+> Shared code stays cross-cutting and domain-agnostic.
+> Business rules stay inside the owning domain module.
+> `project-management` is the richest current domain, but it is no longer treated as the only top-level business module.
 
 ---
 

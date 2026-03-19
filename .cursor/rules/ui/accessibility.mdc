@@ -111,7 +111,7 @@ Accessibility is never optional. All components must be fully accessible to user
 
 -   **ALWAYS** place accessibility helper functions in `shared/a11y/`
 -   **ALWAYS** place accessibility ID constants in `shared/a11y/`
--   **ALWAYS** create reusable accessible components in `shared/design-system/ui/` (e.g., `AccessibleButton.tsx`, `AccessibleInput.tsx`)
+-   **ALWAYS** create reusable accessible components in `shared/design-system/` (e.g., `AccessibleButton.tsx`, `AccessibleInput.tsx`)
 -   **NEVER** put accessibility logic in domain, usecases, infrastructure, or presentation layers
 -   **ALWAYS** keep accessibility utilities pure and testable
 -   **ALWAYS** import accessibility utilities from `shared/a11y/` in all layers that need them
@@ -172,7 +172,7 @@ Before EVERY component submission:
 -   Accessibility utilities in `shared/a11y/`?
 -   No accessibility logic in domain/usecases/infrastructure/presentation?
 -   Centralized constants from `shared/a11y/` used?
--   Reusable accessible components created in `shared/design-system/ui/`?
+-   Reusable accessible components created in `shared/design-system/`?
 
 ### 15. Mandatory Testing - NEVER SKIP
 

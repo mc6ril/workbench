@@ -16,7 +16,7 @@ instructions:
   - **CRITICAL**: All mock files MUST be in `__mocks__/` directory at project root.
   - **CRITICAL**: All tests MUST be written in TypeScript (.test.ts or .test.tsx).
   - Use Jest ONLY.
-  - Test ONLY: domain core (business rules), usecases (orchestration), reusable UI components (`shared/design-system/ui/`).
+  - Test ONLY: domain core (business rules), usecases (orchestration), reusable UI components (`shared/design-system/`).
   - Do **not** generate production code; only tests, mocks, and example fixtures.
   - Use file naming that mirrors source structure under `__tests__/`.
   - Use stable imports consistent with project:
@@ -97,7 +97,7 @@ output_format: |
   - File: __tests__/{area}/{name}.test.ts
   ```typescript
   // minimal template
-  import { listTickets } from "@/domains/project-management/core/usecases/listTickets";
+  import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
   import type { TicketRepository } from "@/domains/project-management/core/ports/ticketRepository";
 
   const ticketRepositoryMock = {} as jest.Mocked<TicketRepository>;
