@@ -4,21 +4,20 @@ import {
   createDatabaseError,
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
-import type {
-  CreateSprintInput,
-  Sprint,
-  UpdateSprintInput,
-} from "@/modules/board/core/domain/schema/sprint.schema";
-
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
-import type { SprintRow } from "@/shared/infrastructure/types";
 
 import {
   mapSprintRowsToDomain,
   mapSprintRowToDomain,
 } from "./SprintMapper.supabase";
 
+import type {
+  CreateSprintInput,
+  Sprint,
+  UpdateSprintInput,
+} from "@/modules/board/core/domain/schema/sprint.schema";
 import type { SprintRepository } from "@/modules/board/core/ports/sprintRepository";
+import type { SprintRow } from "@/modules/board/infrastructure/supabase/sprint/types";
 
 export const countCompletedByDoneStatuses = (
   tickets: Array<{ status: string }>,

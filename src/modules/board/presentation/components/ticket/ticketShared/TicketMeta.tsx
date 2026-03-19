@@ -2,8 +2,8 @@
 
 import React from "react";
 
-import Avatar from "@/shared/design-system/Avatar";
-import Text from "@/shared/design-system/Text";
+import Avatar from "@/shared/design-system/avatar";
+import Text from "@/shared/design-system/text";
 
 type Props = {
   ticketCode?: string | null;

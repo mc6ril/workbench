@@ -1,10 +1,10 @@
 import { createNotFoundError } from "@/shared/errors/repositoryError";
+
 import {
   type Epic,
   type UpdateEpicInput,
   UpdateEpicInputSchema,
 } from "@/modules/board/core/domain/schema/epic.schema";
-
 import type { EpicRepository } from "@/modules/board/core/ports/epicRepository";
 
 /**

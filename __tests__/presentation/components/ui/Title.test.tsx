@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import Title from "@/shared/design-system/Title";
+import Title from "@/shared/design-system/title";
 
 describe("Title Component", () => {
   it("should render with default h1 variant", () => {

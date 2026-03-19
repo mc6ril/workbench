@@ -4,20 +4,20 @@ import {
   createDatabaseError,
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+
+import { mapEpicRowsToDomain, mapEpicRowToDomain } from "./EpicMapper.supabase";
+
 import type {
   CreateEpicRepositoryInput,
   Epic,
   UpdateEpicInput,
 } from "@/modules/board/core/domain/schema/epic.schema";
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
-
-import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
-import type { EpicRow, TicketRow } from "@/shared/infrastructure/types";
-
-import { mapEpicRowsToDomain, mapEpicRowToDomain } from "./EpicMapper.supabase";
-
 import type { EpicRepository } from "@/modules/board/core/ports/epicRepository";
+import type { EpicRow } from "@/modules/board/infrastructure/supabase/epic/types";
 import { mapTicketRowsToDomain } from "@/modules/board/infrastructure/supabase/ticket/TicketMapper.supabase";
+import type { TicketRow } from "@/modules/board/infrastructure/supabase/ticket/types";
 
 /**
  * Create an EpicRepository implementation using the provided Supabase client.

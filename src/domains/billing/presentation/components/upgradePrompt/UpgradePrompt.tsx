@@ -5,9 +5,9 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
-import Button from "@/shared/design-system/Button";
-import Text from "@/shared/design-system/Text";
-import Title from "@/shared/design-system/Title";
+import Button from "@/shared/design-system/button";
+import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./UpgradePrompt.module.scss";

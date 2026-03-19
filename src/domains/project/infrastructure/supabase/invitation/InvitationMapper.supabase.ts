@@ -1,17 +1,15 @@
+import { toDate } from "@/shared/utils/guards";
+
 import type {
   PendingInvitation,
   ProjectInvitation,
 } from "@/domains/project/core/domain/schema/invitation.schema";
 import { InvitationStatus } from "@/domains/project/core/domain/schema/invitation.schema";
-
+import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import type {
   InvitationRow,
   PendingInvitationRow,
-} from "@/shared/infrastructure/types";
-
-import { toDate } from "@/shared/utils/guards";
-
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
+} from "@/domains/project/infrastructure/supabase/types";
 
 /**
  * Maps a Supabase row to a domain ProjectInvitation.

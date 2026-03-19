@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import Badge from "@/shared/design-system/Badge";
+import Badge from "@/shared/design-system/badge";
 
 describe("Badge Component", () => {
   it("should render label", () => {

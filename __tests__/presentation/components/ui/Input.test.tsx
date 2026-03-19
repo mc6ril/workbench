@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { render, screen } from "@testing-library/react";
 
-import Input from "@/shared/design-system/Input";
+import Input from "@/shared/design-system/input";
 
 // Helper component to test react-hook-form integration
 const TestForm = ({ error }: { error?: string }) => {

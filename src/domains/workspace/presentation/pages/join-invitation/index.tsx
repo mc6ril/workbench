@@ -4,11 +4,11 @@ import { useCallback, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
-import RouteFallbackPage from "@/shared/design-system/RouteFallbackPage";
+import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import { useSession } from "@/shared/session";
 
-import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 import { useAcceptInvitation } from "@/domains/project/presentation/hooks/invitation/useAcceptInvitation";
 
 const JoinInvitationPage = () => {

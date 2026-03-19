@@ -1,4 +1,4 @@
-import Button from "@/shared/design-system/Button";
+import Button from "@/shared/design-system/button";
 
 import styles from "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm.module.scss";
 

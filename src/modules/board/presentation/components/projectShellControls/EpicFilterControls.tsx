@@ -1,12 +1,12 @@
-import type { EpicProgressFilter } from "@/modules/board/core/domain/types";
-
-import { EPIC_PROGRESS_FILTER_VALUES } from "@/shared/constants/filterSort";
-import Button from "@/shared/design-system/Button";
-import Select from "@/shared/design-system/Select";
+import Button from "@/shared/design-system/button";
+import Select from "@/shared/design-system/select";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./ProjectShellControls.module.scss";
 import type { EpicFilterControlsProps } from "./types";
+
+import { EPIC_PROGRESS_FILTER_VALUES } from "@/modules/board/constants/filterSort";
+import type { EpicProgressFilter } from "@/modules/board/core/domain/types";
 
 const EpicFilterControls = ({
   epicProgressFilter,

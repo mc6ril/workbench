@@ -1,17 +1,17 @@
 import { useMemo } from "react";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
-import { filterEpicsBySearch } from "@/shared/utils/epicUtils";
 import { buildProjectRoute } from "@/shared/utils/routes";
+
+import type { ProjectViewKey } from "@/domains/project/presentation/navigation/projectViews.config";
+import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
+import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
+import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
+import { filterEpicsBySearch } from "@/modules/board/utils/epicUtils";
 import {
   buildTicketCode,
   normalizeTicketSearch,
-} from "@/shared/utils/ticketUtils";
-
-import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
-import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
-import type { ProjectViewKey } from "@/domains/project/presentation/navigation/projectViews.config";
-import { useProject } from "@/domains/workspace/presentation/hooks/useProject";
+} from "@/modules/board/utils/ticketUtils";
 
 export type ProjectSearchSuggestion = {
   id: string;
@@ -34,13 +34,9 @@ export const useProjectSearchSuggestions = ({
   const isEpicsView = viewKey === PROJECT_VIEWS.EPICS;
   const searchTerm = searchValue.trim();
 
-  const { data: project } = useProject(projectId, {
-    enabled: isTicketView,
-  });
+  const { data: projectShortCode } = useProjectShortCode(projectId);
 
   const { data: epics = [] } = useEpics(projectId, { enabled: isEpicsView });
-
-  const projectShortCode = project?.shortCode;
   const effectiveSearch = useMemo(() => {
     return normalizeTicketSearch(searchTerm, projectShortCode);
   }, [projectShortCode, searchTerm]);

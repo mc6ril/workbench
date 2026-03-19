@@ -1,5 +1,4 @@
 import type { SprintWithStats } from "@/modules/board/core/domain/schema/sprint.schema";
-
 import type { SprintRepository } from "@/modules/board/core/ports/sprintRepository";
 
 /**

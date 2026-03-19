@@ -1,7 +1,7 @@
-export { default as ErrorIcon } from "./ErrorIcon";
-export { default as EyeIcon } from "./EyeIcon";
-export { default as EyeOffIcon } from "./EyeOffIcon";
-export { default as FilterIcon } from "./FilterIcon";
-export { default as PlusIcon } from "./PlusIcon";
-export { default as SortIcon } from "./SortIcon";
-export { default as UserProfileIcon } from "./UserProfileIcon";
+export { default as ErrorIcon } from "./error_icon";
+export { default as EyeIcon } from "./eye_icon";
+export { default as EyeOffIcon } from "./eye_off_icon";
+export { default as FilterIcon } from "./filter_icon";
+export { default as PlusIcon } from "./plus_icon";
+export { default as SortIcon } from "./sort_icon";
+export { default as UserProfileIcon } from "./user_profile_icon";

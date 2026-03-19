@@ -5,8 +5,7 @@ import { useEffect } from "react";
 import { defaultLocale, supportedLocales } from "@/shared/i18n/config";
 import type { Locale } from "@/shared/i18n/types";
 import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
-
-import { useSession } from "@/domains/auth/presentation/hooks/useSession";
+import { useSession } from "@/shared/session";
 
 /**
  * Syncs the locale store with the user's language preference from the session.

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 
 /**
  * Status of a project invitation through its lifecycle.

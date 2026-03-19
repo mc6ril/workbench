@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import Textarea from "@/shared/design-system/Textarea";
+import Textarea from "@/shared/design-system/textarea";
 
 describe("Textarea Component", () => {
   it("should render textarea with label", () => {

@@ -3,13 +3,13 @@
 import React, { useMemo } from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import Button from "@/shared/design-system/Button";
-import Card from "@/shared/design-system/Card";
-import Input from "@/shared/design-system/Input";
-import Stack from "@/shared/design-system/Stack";
-import Text from "@/shared/design-system/Text";
-import Textarea from "@/shared/design-system/Textarea";
-import Title from "@/shared/design-system/Title";
+import Button from "@/shared/design-system/button";
+import Card from "@/shared/design-system/card";
+import Input from "@/shared/design-system/input";
+import Stack from "@/shared/design-system/stack";
+import Text from "@/shared/design-system/text";
+import Textarea from "@/shared/design-system/textarea";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./ProjectSettings.module.scss";

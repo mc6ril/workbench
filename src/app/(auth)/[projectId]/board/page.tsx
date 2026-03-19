@@ -2,7 +2,7 @@
 
 import { Suspense, use } from "react";
 
-import Loader from "@/shared/design-system/Loader";
+import Loader from "@/shared/design-system/loader";
 
 import BoardPageContent from "@/modules/board/presentation/pages/board";
 

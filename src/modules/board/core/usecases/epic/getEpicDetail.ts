@@ -1,7 +1,7 @@
 import { createNotFoundError } from "@/shared/errors/repositoryError";
+
 import { calculateEpicProgress } from "@/modules/board/core/domain/rules/epic.rules";
 import type { EpicDetail } from "@/modules/board/core/domain/schema/epic.schema";
-
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { EpicRepository } from "@/modules/board/core/ports/epicRepository";
 

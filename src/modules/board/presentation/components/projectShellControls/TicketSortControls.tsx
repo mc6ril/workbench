@@ -1,15 +1,15 @@
-import type { TicketSort } from "@/modules/board/core/domain/schema/ticket.schema";
-
-import {
-  SORT_DIRECTION_VALUES,
-  TICKET_SORT_FIELD_VALUES,
-} from "@/shared/constants/filterSort";
-import Button from "@/shared/design-system/Button";
-import Select from "@/shared/design-system/Select";
+import Button from "@/shared/design-system/button";
+import Select from "@/shared/design-system/select";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./ProjectShellControls.module.scss";
 import type { TicketSortControlsProps } from "./types";
+
+import {
+  SORT_DIRECTION_VALUES,
+  TICKET_SORT_FIELD_VALUES,
+} from "@/modules/board/constants/filterSort";
+import type { TicketSort } from "@/modules/board/core/domain/schema/ticket.schema";
 
 const TicketSortControls = ({
   sort,

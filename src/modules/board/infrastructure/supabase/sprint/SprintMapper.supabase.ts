@@ -1,8 +1,7 @@
-import type { Sprint } from "@/modules/board/core/domain/schema/sprint.schema";
-
-import type { SprintRow } from "@/shared/infrastructure/types";
-
 import { toDate } from "@/shared/utils/guards";
+
+import type { Sprint } from "@/modules/board/core/domain/schema/sprint.schema";
+import type { SprintRow } from "@/modules/board/infrastructure/supabase/sprint/types";
 
 /**
  * Maps a Supabase row to a domain Sprint entity.

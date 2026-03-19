@@ -4,7 +4,6 @@ import {
   createNotFoundError,
   type RepositoryErrorUnion,
 } from "@/shared/errors/repositoryError";
-
 import { isNetworkError } from "@/shared/utils/errorHandling";
 
 /**

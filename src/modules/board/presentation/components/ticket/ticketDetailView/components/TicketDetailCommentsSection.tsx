@@ -1,12 +1,11 @@
-import type { CommentWithAuthor } from "@/modules/board/core/domain/schema/comment.schema";
-
-import Button from "@/shared/design-system/Button";
-import Card from "@/shared/design-system/Card";
-import Text from "@/shared/design-system/Text";
-import Textarea from "@/shared/design-system/Textarea";
-import Title from "@/shared/design-system/Title";
+import Button from "@/shared/design-system/button";
+import Card from "@/shared/design-system/card";
+import Text from "@/shared/design-system/text";
+import Textarea from "@/shared/design-system/textarea";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
+import type { CommentWithAuthor } from "@/modules/board/core/domain/schema/comment.schema";
 import styles from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 
 type Props = {

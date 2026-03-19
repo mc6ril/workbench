@@ -1,5 +1,4 @@
 import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
-
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
 /**

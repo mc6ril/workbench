@@ -1,4 +1,4 @@
-import Text from "@/shared/design-system/Text";
+import Text from "@/shared/design-system/text";
 
 import styles from "@/modules/board/presentation/components/exportImportSettings/ExportImportSettings.module.scss";
 

@@ -3,10 +3,10 @@
 import React, { useMemo } from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import EmptyState from "@/shared/design-system/EmptyState";
-import ErrorMessage from "@/shared/design-system/ErrorMessage";
-import Loader from "@/shared/design-system/Loader";
-import Title from "@/shared/design-system/Title";
+import EmptyState from "@/shared/design-system/empty_state";
+import ErrorMessage from "@/shared/design-system/error_message";
+import Loader from "@/shared/design-system/loader";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./SubtasksList.module.scss";

@@ -75,7 +75,13 @@ Ownership is explicit:
 - `src/domains/workspace/` owns the entry UX to list, create, and join projects
 - `src/domains/project/` owns the project container itself
 - `src/modules/board/` owns the current Trello/Jira-like module
-- `src/shared/` stays cross-cutting and domain-agnostic
+- `src/shared/` stays cross-cutting and domain-agnostic by default
+
+Documented exceptions to that default are listed in `docs/architecture/accepted-exceptions.md`:
+
+- thin shared bridges such as `@/shared/session` and `@/shared/featureAccess`
+- owner-local low-level Supabase row types in each `src/domains/*/infrastructure/supabase/types.ts` and `src/modules/*/infrastructure/supabase/types.ts`
+- public/static app-level pages in `src/presentation/pages/`
 
 ### Development Strategy
 

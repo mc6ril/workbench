@@ -16,7 +16,7 @@ import {
   getAccessibilityId,
 } from "@/shared/a11y/constants";
 import { handleKeyboardNavigation } from "@/shared/a11y/utilities";
-import Title from "@/shared/design-system/Title";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./SettingsLayout.module.scss";

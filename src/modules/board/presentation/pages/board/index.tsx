@@ -4,25 +4,17 @@ import { useCallback, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 
-import type { BoardColumnConfig } from "@/modules/board/core/domain/types/board.types";
-
-import { addLabelsToTicket } from "@/modules/board/core/usecases/label";
-
 import { getAccessibilityId } from "@/shared/a11y";
-import Loader from "@/shared/design-system/Loader";
-import Modal from "@/shared/design-system/Modal";
-import Text from "@/shared/design-system/Text";
+import Loader from "@/shared/design-system/loader";
+import Modal from "@/shared/design-system/modal";
+import Text from "@/shared/design-system/text";
+import { PlanFeature, useFeatureAccess } from "@/shared/featureAccess";
 import { useTranslation } from "@/shared/i18n";
-import {
-  buildTicketCode,
-  normalizeTicketSearch,
-} from "@/shared/utils/ticketUtils";
 
 import styles from "./styles.module.scss";
 
-import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
-import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
-import { labelRepository } from "@/modules/board/infrastructure/supabase/repositories";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
+import type { BoardColumnConfig } from "@/modules/board/core/domain/types/board.types";
 import BoardView from "@/modules/board/presentation/components/board/boardView/BoardView";
 import CreateTicketForm from "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm";
 import TicketCard from "@/modules/board/presentation/components/ticket/ticketCard/TicketCard";
@@ -32,13 +24,16 @@ import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/
 import { useBoardDnD } from "@/modules/board/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/modules/board/presentation/hooks/board/useBoardTickets";
 import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
-import { useLabels } from "@/modules/board/presentation/hooks/label";
+import { useAddTicketLabels, useLabels } from "@/modules/board/presentation/hooks/label";
+import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCreateTicket";
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
-import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
 import { useSortStore } from "@/modules/board/presentation/stores/useSortStore";
-import { useProject } from "@/domains/workspace/presentation/hooks/useProject";
+import {
+  buildTicketCode,
+  normalizeTicketSearch,
+} from "@/modules/board/utils/ticketUtils";
 
 const BoardLayout = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
@@ -56,6 +51,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     isLoading: isPermissionsLoading,
   } = useProjectPermissions();
   const createTicketMutation = useCreateTicket();
+  const addTicketLabelsMutation = useAddTicketLabels();
 
   const updateSearchParam = useCallback(
     (ticketId: string | null) => {
@@ -93,13 +89,13 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     enabled: isCreateTicketModalOpen,
   });
   const { hasAccess: hasEpicsAccess } = useFeatureAccess(PlanFeature.EPICS);
-  const { data: project } = useProject(projectId);
+  const { data: projectShortCode } = useProjectShortCode(projectId);
   const filters = useFilterStore((state) => state.filters);
   const sort = useSortStore((state) => state.sort);
   const search = useFilterStore((state) => state.search);
   const effectiveSearch = useMemo(() => {
-    return normalizeTicketSearch(search, project?.shortCode);
-  }, [project?.shortCode, search]);
+    return normalizeTicketSearch(search, projectShortCode);
+  }, [projectShortCode, search]);
   const { data: tickets = [] } = useTickets(
     projectId,
     filters,
@@ -142,7 +138,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   const { filteredTickets, ticketViewModelById } = useBoardTickets({
     projectId,
     tickets,
-    projectShortCode: project?.shortCode,
+    projectShortCode: projectShortCode,
   });
 
   const {
@@ -178,7 +174,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     }
 
     const humanReadableCode =
-      buildTicketCode(project?.shortCode, selectedTicket.codeNumber) ??
+      buildTicketCode(projectShortCode, selectedTicket.codeNumber) ??
       selectedTicket.codeNumber;
 
     const ticketCode = tTicket("ticketCode", {
@@ -186,7 +182,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     });
 
     return `${ticketCode} ${selectedTicket.title}`;
-  }, [project?.shortCode, selectedTicket, tTicket]);
+  }, [projectShortCode, selectedTicket, tTicket]);
 
   const renderColumnProps = useMemo(() => {
     return (column: BoardColumnConfig) => {
@@ -321,11 +317,10 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
               });
 
               if (values.labelIds && values.labelIds.length > 0) {
-                await addLabelsToTicket(
-                  createdTicket.id,
-                  values.labelIds,
-                  labelRepository
-                );
+                await addTicketLabelsMutation.mutateAsync({
+                  ticketId: createdTicket.id,
+                  labelIds: values.labelIds,
+                });
               }
 
               closeCreateTicketModal();

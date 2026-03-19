@@ -167,7 +167,7 @@ const ticketRepository = createTicketRepository(client);
 - `src/domains/project/` owns project settings, members, invitations, permissions, and enabled-module configuration
 - `src/modules/board/` owns board data such as tickets, epics, sprints, and labels
 - `src/domains/workspace/` may orchestrate create/join flows, but project membership and invitation contracts remain project-owned
-- plan-to-module entitlement decisions must stay explicit between `billing` and `project`, never hidden in `shared/`
+- plan-to-module entitlement decisions remain owned by `billing`; the current codebase allows the thin shared bridge `@/shared/featureAccess` as a documented consumer entrypoint
 
 ## Rules
 
@@ -176,6 +176,17 @@ const ticketRepository = createTicketRepository(client);
 - Presentation hooks should use use cases, not raw low-level clients
 - `src/app/` should compose routes, not implement repository logic
 - Cross-owner reuse should happen through shared infrastructure or explicit contracts, not through a global repository bucket
+
+## Documented Exceptions
+
+Some narrow exceptions to the default owner-boundary rules are intentional in the current codebase.
+
+They are documented in [Accepted Architecture Exceptions](./accepted-exceptions.md).
+
+This currently includes:
+
+- the thin shared bridges `@/shared/session` and `@/shared/featureAccess`
+- owner-local low-level Supabase row types in each owner infrastructure `types.ts`
 
 ## Benefits
 

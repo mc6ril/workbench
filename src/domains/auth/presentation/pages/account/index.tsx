@@ -9,15 +9,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
-import Button from "@/shared/design-system/Button";
-import Form from "@/shared/design-system/Form";
-import Input from "@/shared/design-system/Input";
-import Loader from "@/shared/design-system/Loader";
-import Modal from "@/shared/design-system/Modal";
-import Select from "@/shared/design-system/Select";
-import { useToastStore } from "@/shared/design-system/stores/useToastStore";
-import Text from "@/shared/design-system/Text";
-import Toggle from "@/shared/design-system/Toggle";
+import Button from "@/shared/design-system/button";
+import Form from "@/shared/design-system/form";
+import Input from "@/shared/design-system/input";
+import Loader from "@/shared/design-system/loader";
+import Modal from "@/shared/design-system/modal";
+import Select from "@/shared/design-system/select";
+import Text from "@/shared/design-system/text";
+import Toggle from "@/shared/design-system/toggle";
 import {
   getIntlLocale,
   supportedLocaleOptions,
@@ -27,6 +26,7 @@ import {
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import type { Locale } from "@/shared/i18n/types";
+import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
 
@@ -39,12 +39,12 @@ import {
   DEFAULT_USER_PREFERENCES,
   ThemeValues,
 } from "@/domains/auth/core/domain/schema/auth.schema";
-import { useChangePassword } from "@/domains/auth/presentation/hooks/useChangePassword";
-import { useDeleteUser } from "@/domains/auth/presentation/hooks/useDeleteUser";
-import { useSession } from "@/domains/auth/presentation/hooks/useSession";
-import { useSignOut } from "@/domains/auth/presentation/hooks/useSignOut";
-import { useUpdatePreferences } from "@/domains/auth/presentation/hooks/useUpdatePreferences";
-import { useUpdateProfile } from "@/domains/auth/presentation/hooks/useUpdateProfile";
+import { useChangePassword } from "@/domains/auth/presentation/hooks/password/useChangePassword";
+import { useUpdatePreferences } from "@/domains/auth/presentation/hooks/profile/useUpdatePreferences";
+import { useUpdateProfile } from "@/domains/auth/presentation/hooks/profile/useUpdateProfile";
+import { useSession } from "@/domains/auth/presentation/hooks/session/useSession";
+import { useDeleteUser } from "@/domains/auth/presentation/hooks/user/useDeleteUser";
+import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";
 import {
   SubscriptionPlan,
   SubscriptionStatus,

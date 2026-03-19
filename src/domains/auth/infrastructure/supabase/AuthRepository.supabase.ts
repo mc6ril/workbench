@@ -1,10 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { handleAuthError } from "@/shared/infrastructure/errors/errorHandlers";
-import type { UserProfileRow } from "@/shared/infrastructure/types";
-import { mapUserProfileRowToDomain } from "@/domains/auth/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
-
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
+import { handleAuthError } from "@/shared/infrastructure/errors/errorHandlers";
 
 import type {
   AuthenticationError,
@@ -22,6 +19,8 @@ import type {
 import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
 import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
 import { mapSupabaseSessionToDomain } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
+import type { UserProfileRow } from "@/domains/auth/infrastructure/supabase/userProfile/types";
+import { mapUserProfileRowToDomain } from "@/domains/auth/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
 
 /**
  * Create an AuthRepository implementation using the provided Supabase client.

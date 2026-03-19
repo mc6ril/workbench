@@ -1,6 +1,6 @@
 import { fireEvent,render, screen } from "@testing-library/react";
 
-import Modal from "@/shared/design-system/Modal";
+import Modal from "@/shared/design-system/modal";
 
 // Mock useTranslation
 jest.mock("@/shared/i18n", () => ({

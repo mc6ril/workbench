@@ -3,10 +3,10 @@
 import React, { useCallback, useMemo } from "react";
 
 import { BUTTON_LABELS, getAccessibilityId } from "@/shared/a11y/constants";
-import Button from "@/shared/design-system/Button";
-import Checkbox from "@/shared/design-system/Checkbox";
-import Stack from "@/shared/design-system/Stack";
-import Text from "@/shared/design-system/Text";
+import Button from "@/shared/design-system/button";
+import Checkbox from "@/shared/design-system/checkbox";
+import Stack from "@/shared/design-system/stack";
+import Text from "@/shared/design-system/text";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./SubtaskItem.module.scss";

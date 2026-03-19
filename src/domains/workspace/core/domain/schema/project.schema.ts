@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+
 /**
  * UUID validation regex that accepts any valid UUID format
  * This is more permissive than Zod's .uuid() which may reject certain UUID versions
@@ -42,26 +44,6 @@ export const CreateProjectInputSchema = z.object({
 });
 
 export type CreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
-
-/**
- * Project role values (as stored in project_members table).
- * Defines the possible roles a user can have in a project.
- */
-export enum ProjectRole {
-  ADMIN = "admin",
-  MEMBER = "member",
-  VIEWER = "viewer",
-}
-
-/**
- * Array of all valid project roles.
- * Used for validation and iteration over roles.
- */
-export const PROJECT_ROLES: readonly ProjectRole[] = Object.freeze([
-  ProjectRole.ADMIN,
-  ProjectRole.MEMBER,
-  ProjectRole.VIEWER,
-]);
 
 /**
  * Project with role information for the current user.
@@ -114,3 +96,5 @@ export type ReclaimableProject = {
   shortCode: string;
   orphanedAt: Date;
 };
+
+export { PROJECT_ROLES, ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";

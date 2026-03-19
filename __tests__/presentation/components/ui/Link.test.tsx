@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import Link from "@/shared/design-system/Link";
+import Link from "@/shared/design-system/link";
 
 // Mock Next.js Link
 jest.mock("next/link", () => {

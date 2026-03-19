@@ -1,6 +1,5 @@
 import { calculateEpicProgress } from "@/modules/board/core/domain/rules/epic.rules";
 import type { EpicWithProgress } from "@/modules/board/core/domain/schema/epic.schema";
-
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { EpicRepository } from "@/modules/board/core/ports/epicRepository";
 

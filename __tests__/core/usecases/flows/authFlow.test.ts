@@ -10,10 +10,13 @@ import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authR
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
 
-import type { AuthResult, AuthSession } from "@/domains/auth/core/domain/schema/auth.schema";
+import type {
+  AuthResult,
+  AuthSession,
+} from "@/domains/auth/core/domain/schema/auth.schema";
 import { getCurrentSession } from "@/domains/auth/core/usecases/getCurrentSession";
-import { signInUser } from "@/domains/auth/core/usecases/signInUser";
-import { signUpUser } from "@/domains/auth/core/usecases/signUpUser";
+import { signInUser } from "@/domains/auth/core/usecases/user/signInUser";
+import { signUpUser } from "@/domains/auth/core/usecases/user/signUpUser";
 import {
   ProjectRole,
   type ProjectWithRole,

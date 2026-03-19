@@ -10,17 +10,11 @@ import React, {
 import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { getBoardConfiguration } from "@/modules/board/core/usecases/board/getBoardConfiguration";
-import { listEpics } from "@/modules/board/core/usecases/epic/listEpics";
-import { getTicketAssigneesByProjectId } from "@/modules/board/core/usecases/ticket/getTicketAssigneesByProjectId";
-import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
-
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
-import { markNavigationStart } from "@/shared/observability";
-import { getInitials } from "@/shared/utils";
-import { normalizeTicketSearch } from "@/shared/utils/ticketUtils";
+import { markNavigationStart } from "@/shared/navigationPerf";
+import { useSession } from "@/shared/session";
 
 import SidebarNavigationList from "./components/SidebarNavigationList";
 import SidebarProfileMenu from "./components/SidebarProfileMenu";
@@ -31,29 +25,19 @@ import type {
 } from "./SidebarNavigation.types";
 import { omitParentIdFilter } from "./SidebarNavigation.utils";
 
-import { useSession } from "@/domains/auth/presentation/hooks/useSession";
-import { useSignOut } from "@/domains/auth/presentation/hooks/useSignOut";
-import { getEffectivePlan } from "@/domains/billing/core/domain/rules/planFeatures.rules";
-import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
-import { computeFeatureLockState } from "@/domains/billing/core/usecases/computeFeatureLockState";
-import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
-import {
-  boardRepository,
-  epicRepository,
-  ticketRepository,
-} from "@/modules/board/infrastructure/supabase/repositories";
-import { queryKeys as boardQueryKeys } from "@/modules/board/presentation/hooks/queryKeys";
+import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";
+import { getInitials } from "@/domains/auth/utils/userUtils";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
-import {
-  buildProjectViewHref,
-  getProjectViewConfigsForSidebar,
-} from "@/domains/project/presentation/navigation/projectViews.config";
+import { useSidebarItems } from "@/domains/project/presentation/hooks/useSidebarItems";
+import { usePrefetchWorkspaceProjects } from "@/domains/workspace/presentation/hooks/usePrefetchWorkspaceProjects";
+import { usePrefetchProjectViews } from "@/modules/board/presentation/hooks/project/usePrefetchProjectViews";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
 import { useSortStore } from "@/modules/board/presentation/stores/useSortStore";
-import type { Project } from "@/domains/workspace/core/domain/schema/project.schema";
-import { listProjectsWithStats } from "@/domains/workspace/core/usecases/project/listProjectsWithStats";
-import { listReclaimableProjects } from "@/domains/workspace/core/usecases/project/listReclaimableProjects";
-import { projectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
+import { normalizeTicketSearch } from "@/modules/board/utils/ticketUtils";
+
+type CachedProjectSummary = {
+  shortCode?: string;
+};
 
 const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const pathname = usePathname();
@@ -64,12 +48,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const filters = useFilterStore((state) => state.filters);
   const search = useFilterStore((state) => state.search);
   const sort = useSortStore((state) => state.sort);
-  const { data: session, isLoading: isSessionLoading } = useSession();
-  const {
-    data: subscription,
-    isLoading: isSubscriptionLoading,
-    isFetched: isSubscriptionFetched,
-  } = useSubscription();
+  const { data: session } = useSession();
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileTriggerRef = useRef<HTMLButtonElement>(null);
@@ -78,58 +57,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const navListId = getAccessibilityId("sidebar-navigation-list");
   const profileMenuId = getAccessibilityId("sidebar-profile-menu");
   const profileTriggerId = getAccessibilityId("sidebar-profile-trigger");
-
-  const isEntitlementsReady = useMemo((): boolean => {
-    if (isSessionLoading) {
-      return false;
-    }
-
-    if (!session) {
-      return true;
-    }
-
-    if (isSubscriptionLoading) {
-      return false;
-    }
-
-    return isSubscriptionFetched;
-  }, [isSessionLoading, isSubscriptionFetched, isSubscriptionLoading, session]);
-
-  const effectivePlan = useMemo((): SubscriptionPlan | null => {
-    if (!isEntitlementsReady) {
-      return null;
-    }
-
-    if (!subscription) {
-      return SubscriptionPlan.FREE;
-    }
-
-    return getEffectivePlan(subscription);
-  }, [isEntitlementsReady, subscription]);
-
-  const items: SidebarItem[] = useMemo(() => {
-    const configs = getProjectViewConfigsForSidebar();
-    return configs.flatMap((config) => {
-      const { locked, minimumPlan } =
-        effectivePlan === null
-          ? { locked: false, minimumPlan: undefined }
-          : computeFeatureLockState(config.requiredFeature, effectivePlan);
-
-      if (config.key === PROJECT_VIEWS.SETTINGS && locked) {
-        return [];
-      }
-
-      const item: SidebarItem = {
-        key: config.key,
-        href: buildProjectViewHref(projectId, config.key),
-        label: t(`items.${config.sidebarLabelKey}`),
-        exactOnly: false,
-        locked,
-        planBadge: minimumPlan ? t(`locked.badge.${minimumPlan}`) : undefined,
-      };
-      return [item];
-    });
-  }, [projectId, t, effectivePlan]);
+  const items = useSidebarItems(projectId);
 
   const handleLockedClick = useCallback(() => {
     const from = encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE);
@@ -152,47 +80,18 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   }, [filters]);
 
   const effectiveSearch = useMemo(() => {
-    const project = queryClient.getQueryData<Project>(
+    const project = queryClient.getQueryData<CachedProjectSummary>(
       queryKeys.projects.detail(projectId)
     );
     return normalizeTicketSearch(search, project?.shortCode);
   }, [projectId, queryClient, search]);
-
-  const prefetchTicketViews = useCallback(() => {
-    void queryClient.prefetchQuery({
-      queryKey: boardQueryKeys.projects.boardConfiguration(projectId),
-      queryFn: () => getBoardConfiguration(boardRepository, projectId),
-    });
-
-    void queryClient.prefetchQuery({
-      queryKey: boardQueryKeys.projects.ticketsList(
-        projectId,
-        projectWideFilters,
-        sort,
-        effectiveSearch
-      ),
-      queryFn: () =>
-        listTickets(
-          ticketRepository,
-          projectId,
-          projectWideFilters,
-          sort,
-          effectiveSearch
-        ),
-    });
-
-    void queryClient.prefetchQuery({
-      queryKey: boardQueryKeys.tickets.assigneesByProjectId(projectId),
-      queryFn: () => getTicketAssigneesByProjectId(ticketRepository, projectId),
-    });
-  }, [effectiveSearch, projectId, projectWideFilters, queryClient, sort]);
-
-  const prefetchEpicsView = useCallback(() => {
-    void queryClient.prefetchQuery({
-      queryKey: boardQueryKeys.projects.epicsList(projectId),
-      queryFn: () => listEpics(epicRepository, boardRepository, projectId),
-    });
-  }, [projectId, queryClient]);
+  const { prefetchBoardView, prefetchEpicsView } = usePrefetchProjectViews({
+    projectId,
+    filters: projectWideFilters,
+    sort,
+    search: effectiveSearch,
+  });
+  const prefetchWorkspaceProjects = usePrefetchWorkspaceProjects();
 
   const prefetchProjectView = useCallback(
     (item: SidebarItem) => {
@@ -203,7 +102,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
       void router.prefetch(item.href);
 
       if (item.key === PROJECT_VIEWS.BOARD) {
-        prefetchTicketViews();
+        prefetchBoardView();
         return;
       }
 
@@ -211,25 +110,13 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
         prefetchEpicsView();
       }
     },
-    [prefetchEpicsView, prefetchTicketViews, router]
+    [prefetchBoardView, prefetchEpicsView, router]
   );
 
   const prefetchWorkspace = useCallback(() => {
     void router.prefetch(PAGE_ROUTES.WORKSPACE);
-
-    if (!session?.userId) {
-      return;
-    }
-
-    void queryClient.prefetchQuery({
-      queryKey: queryKeys.projects.withStats(),
-      queryFn: () => listProjectsWithStats(projectRepository),
-    });
-    void queryClient.prefetchQuery({
-      queryKey: queryKeys.projects.reclaimable(),
-      queryFn: () => listReclaimableProjects(projectRepository),
-    });
-  }, [queryClient, router, session?.userId]);
+    prefetchWorkspaceProjects(session?.userId);
+  }, [prefetchWorkspaceProjects, router, session?.userId]);
 
   const handleProfileTriggerClick = useCallback(() => {
     setProfileMenuOpen((prev) => {

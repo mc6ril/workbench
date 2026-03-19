@@ -1,13 +1,12 @@
-import type { Label } from "@/modules/board/core/domain/schema/label.schema";
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
-
-import Button from "@/shared/design-system/Button";
-import Card from "@/shared/design-system/Card";
-import Select from "@/shared/design-system/Select";
-import Text from "@/shared/design-system/Text";
+import Button from "@/shared/design-system/button";
+import Card from "@/shared/design-system/card";
+import Select from "@/shared/design-system/select";
+import Text from "@/shared/design-system/text";
 import { useTranslation } from "@/shared/i18n";
 
+import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
+import type { Label } from "@/modules/board/core/domain/schema/label.schema";
+import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
 import AssigneePicker from "@/modules/board/presentation/components/ticket/assigneePicker/AssigneePicker";
 import styles from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 import type { TicketDetailStatusOption } from "@/modules/board/presentation/hooks/ticket/useTicketDetailController";

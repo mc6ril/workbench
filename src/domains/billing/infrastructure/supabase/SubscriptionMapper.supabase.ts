@@ -1,10 +1,9 @@
-import type { SubscriptionRow } from "@/shared/infrastructure/types";
-
 import type { Subscription } from "@/domains/billing/core/domain/schema/subscription.schema";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
 } from "@/domains/billing/core/domain/schema/subscription.schema";
+import type { SubscriptionRow } from "@/domains/billing/infrastructure/supabase/types";
 
 /**
  * Maps a Supabase subscription row to a domain Subscription entity.

@@ -179,7 +179,8 @@ export const DEFAULT_USER_PREFERENCES: UserPreferences = {
  * Input for partial preference updates.
  * Only the fields provided will be merged with existing preferences.
  */
-export type UpdatePreferencesInput = Partial<UserPreferences>;
+export const UpdatePreferencesInputSchema = UserPreferencesSchema.partial();
+export type UpdatePreferencesInput = z.infer<typeof UpdatePreferencesInputSchema>;
 
 /**
  * Authentication session data.
@@ -187,23 +188,27 @@ export type UpdatePreferencesInput = Partial<UserPreferences>;
  * displayName and preferences come from the user_profiles table (single source of truth).
  * isSuperuser comes from Supabase app_metadata.is_superuser (server-controlled, not user-editable).
  */
-export type AuthSession = {
-  userId: string;
-  email: string;
-  displayName: string | null;
-  preferences: UserPreferences;
-  accessToken: string;
-  isSuperuser: boolean;
-};
+export const AuthSessionSchema = z.object({
+  userId: z.string().uuid(),
+  email: z.string().email(),
+  displayName: z.string().nullable(),
+  preferences: UserPreferencesSchema,
+  accessToken: z.string().min(1),
+  isSuperuser: z.boolean(),
+});
+
+export type AuthSession = z.infer<typeof AuthSessionSchema>;
 
 /**
  * Authentication result for signup/signin operations.
  * When email verification is required, session will be null and requiresEmailVerification will be true.
  */
-export type AuthResult = {
-  session: AuthSession | null;
-  requiresEmailVerification?: boolean;
-};
+export const AuthResultSchema = z.object({
+  session: AuthSessionSchema.nullable(),
+  requiresEmailVerification: z.boolean().optional(),
+});
+
+export type AuthResult = z.infer<typeof AuthResultSchema>;
 
 /**
  * Zod schema for password reset request input.

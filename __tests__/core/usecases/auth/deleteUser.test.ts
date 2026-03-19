@@ -3,7 +3,7 @@ import { createAuthError } from "../../../../__mocks__/core/domain/authMocks";
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
 
-import { deleteUser } from "@/domains/auth/core/usecases/deleteUser";
+import { deleteUser } from "@/domains/auth/core/usecases/user/deleteUser";
 
 describe("deleteUser", () => {
   it("should delete user successfully", async () => {

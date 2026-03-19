@@ -1,6 +1,6 @@
-import Button from "@/shared/design-system/Button";
-import Text from "@/shared/design-system/Text";
-import Title from "@/shared/design-system/Title";
+import Button from "@/shared/design-system/button";
+import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 
 import styles from "@/modules/board/presentation/components/exportImportSettings/ExportImportSettings.module.scss";
 

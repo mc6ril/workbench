@@ -1,14 +1,14 @@
 import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
-
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
+import { PlanFeature, useFeatureAccess } from "@/shared/featureAccess";
+import { useSession } from "@/shared/session";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
-import { useSession } from "@/domains/auth/presentation/hooks/useSession";
-import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
-import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
+import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
+import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import {
   useComments,
@@ -23,7 +23,6 @@ import {
   useRemoveTicketLabels,
   useTicketLabelIds,
 } from "@/modules/board/presentation/hooks/label";
-import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useSprints } from "@/modules/board/presentation/hooks/sprint";
 import {
   useAssignTicket,
@@ -35,7 +34,6 @@ import {
   useUnassignTicket,
   useUpdateTicket,
 } from "@/modules/board/presentation/hooks/ticket";
-import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
 
 type UseTicketDetailControllerParams = {
   projectId: string;

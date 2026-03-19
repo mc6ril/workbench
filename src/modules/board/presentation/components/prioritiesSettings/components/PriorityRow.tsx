@@ -1,6 +1,6 @@
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import Button from "@/shared/design-system/Button";
-import Input from "@/shared/design-system/Input";
+import Button from "@/shared/design-system/button";
+import Input from "@/shared/design-system/input";
 
 import styles from "@/modules/board/presentation/components/prioritiesSettings/PrioritiesSettings.module.scss";
 import type {

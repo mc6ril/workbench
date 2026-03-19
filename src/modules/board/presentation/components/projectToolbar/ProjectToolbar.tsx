@@ -4,8 +4,8 @@ import React, { useCallback, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import Button from "@/shared/design-system/Button";
-import Input from "@/shared/design-system/Input";
+import Button from "@/shared/design-system/button";
+import Input from "@/shared/design-system/input";
 import { useTranslation } from "@/shared/i18n";
 
 import ProjectToolbarSuggestions from "./components/ProjectToolbarSuggestions";
@@ -13,11 +13,11 @@ import ProjectToolbarTools from "./components/ProjectToolbarTools";
 import styles from "./ProjectToolbar.module.scss";
 import type { ProjectToolbarProps } from "./ProjectToolbar.types";
 
-import { useProjectToolbarSuggestions } from "@/modules/board/presentation/hooks/project/useProjectToolbarSuggestions";
 import {
   getProjectViewConfig,
   getProjectViewKeyFromPath,
 } from "@/domains/project/presentation/navigation/projectViews.config";
+import { useProjectToolbarSuggestions } from "@/modules/board/presentation/hooks/project/useProjectToolbarSuggestions";
 
 const ProjectToolbar = ({
   projectId,

@@ -3,15 +3,14 @@ import {
   GetTicketByCodeInputSchema,
   type Ticket,
 } from "@/modules/board/core/domain/schema/ticket.schema";
-
+import type { ProjectLookupRepository } from "@/modules/board/core/ports/projectLookupRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
-import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**
  * Get a ticket by its project short code and code number.
  * Validates input, resolves the project, then fetches the ticket.
  *
- * @param projectRepository - Project repository
+ * @param projectLookupRepository - Minimal project lookup (short code → id)
  * @param ticketRepository - Ticket repository
  * @param input - Project short code and ticket code number
  * @returns Ticket or null if not found
@@ -19,7 +18,7 @@ import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRe
  * @throws DatabaseError if database operation fails
  */
 export const getTicketByCode = async (
-  projectRepository: ProjectRepository,
+  projectLookupRepository: ProjectLookupRepository,
   ticketRepository: TicketRepository,
   input: GetTicketByCodeInput
 ): Promise<Ticket | null> => {
@@ -27,11 +26,11 @@ export const getTicketByCode = async (
 
   const shortCode = validatedInput.projectShortCode.trim().toUpperCase();
 
-  const project = await projectRepository.findByShortCode(shortCode);
+  const projectId = await projectLookupRepository.findIdByShortCode(shortCode);
 
-  if (!project) {
+  if (!projectId) {
     return null;
   }
 
-  return ticketRepository.findByCode(project.id, validatedInput.codeNumber);
+  return ticketRepository.findByCode(projectId, validatedInput.codeNumber);
 };

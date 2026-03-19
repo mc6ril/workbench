@@ -1,7 +1,7 @@
 import { createDomainRuleError } from "@/shared/errors/domainRuleError";
+
 import { canCompleteSprint } from "@/modules/board/core/domain/rules/sprint.rules";
 import type { Sprint } from "@/modules/board/core/domain/schema/sprint.schema";
-
 import type { SprintRepository } from "@/modules/board/core/ports/sprintRepository";
 
 /**

@@ -4,21 +4,20 @@ import {
   createDatabaseError,
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
-import type {
-  CommentWithAuthor,
-  CreateCommentInput,
-  UpdateCommentInput,
-} from "@/modules/board/core/domain/schema/comment.schema";
-
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
-import type { CommentWithAuthorRow } from "@/shared/infrastructure/types";
 
 import {
   mapCommentWithAuthorRowsToDomain,
   mapCommentWithAuthorRowToDomain,
 } from "./CommentMapper.supabase";
 
+import type {
+  CommentWithAuthor,
+  CreateCommentInput,
+  UpdateCommentInput,
+} from "@/modules/board/core/domain/schema/comment.schema";
 import type { CommentRepository } from "@/modules/board/core/ports/commentRepository";
+import type { CommentWithAuthorRow } from "@/modules/board/infrastructure/supabase/comment/types";
 
 /**
  * Create a CommentRepository implementation using the provided Supabase client.

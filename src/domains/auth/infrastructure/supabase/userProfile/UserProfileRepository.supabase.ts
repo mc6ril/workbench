@@ -1,14 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type {
-  UpdateProfileInput,
-  UserProfile,
-} from "@/domains/auth/core/domain/schema/userProfile.schema";
-
-import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
-import type { UserProfileRow } from "@/shared/infrastructure/types";
-
 import { APP_LIMITS } from "@/shared/constants/app";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 
 import {
   mapUserProfileRowsToDomain,
@@ -16,7 +9,12 @@ import {
 } from "./UserProfileMapper.supabase";
 
 import type { UserPreferences } from "@/domains/auth/core/domain/schema/auth.schema";
+import type {
+  UpdateProfileInput,
+  UserProfile,
+} from "@/domains/auth/core/domain/schema/userProfile.schema";
 import type { UserProfileRepository } from "@/domains/auth/core/ports/userProfileRepository";
+import type { UserProfileRow } from "@/domains/auth/infrastructure/supabase/userProfile/types";
 
 /**
  * Extracts the file extension from a MIME type.

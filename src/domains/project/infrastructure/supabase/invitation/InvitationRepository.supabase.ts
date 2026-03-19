@@ -1,23 +1,22 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type {
-  CreateInvitationInput,
-  PendingInvitation,
-  ProjectInvitation,
-} from "@/domains/project/core/domain/schema/invitation.schema";
-
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
-import type {
-  InvitationRow,
-  PendingInvitationRow,
-} from "@/shared/infrastructure/types";
 
 import {
   mapInvitationRowToDomain,
   mapPendingInvitationRowToDomain,
 } from "./InvitationMapper.supabase";
 
+import type {
+  CreateInvitationInput,
+  PendingInvitation,
+  ProjectInvitation,
+} from "@/domains/project/core/domain/schema/invitation.schema";
 import type { InvitationRepository } from "@/domains/project/core/ports/invitationRepository";
+import type {
+  InvitationRow,
+  PendingInvitationRow,
+} from "@/domains/project/infrastructure/supabase/types";
 
 /**
  * Create an InvitationRepository implementation using the provided Supabase client.

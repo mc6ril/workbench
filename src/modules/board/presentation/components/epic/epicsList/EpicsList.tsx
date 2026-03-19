@@ -2,18 +2,17 @@
 
 import React, { useMemo } from "react";
 
-import type { EpicWithProgress } from "@/modules/board/core/domain/schema/epic.schema";
-
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import EmptyState from "@/shared/design-system/EmptyState";
-import ErrorMessage from "@/shared/design-system/ErrorMessage";
-import Loader from "@/shared/design-system/Loader";
-import Text from "@/shared/design-system/Text";
-import Title from "@/shared/design-system/Title";
+import EmptyState from "@/shared/design-system/empty_state";
+import ErrorMessage from "@/shared/design-system/error_message";
+import Loader from "@/shared/design-system/loader";
+import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./EpicsList.module.scss";
 
+import type { EpicWithProgress } from "@/modules/board/core/domain/schema/epic.schema";
 import EpicCard from "@/modules/board/presentation/components/epic/epicCard/EpicCard";
 
 type Props = {

@@ -1,7 +1,7 @@
-import { removeMember } from "@/domains/project/core/usecases/member/removeMember";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";
+
+import { removeMember } from "@/domains/project/core/usecases/member/removeMember";
 
 describe("removeMember", () => {
   const memberId = "456e7890-e89b-12d3-a456-426614174001";

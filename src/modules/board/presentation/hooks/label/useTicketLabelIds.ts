@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { getTicketLabelIds } from "@/modules/board/core/usecases/label";
-
 import { labelRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 

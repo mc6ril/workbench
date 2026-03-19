@@ -8,36 +8,36 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
-import Badge from "@/shared/design-system/Badge";
-import Button from "@/shared/design-system/Button";
-import ErrorMessage from "@/shared/design-system/ErrorMessage";
-import Form from "@/shared/design-system/Form";
-import Input from "@/shared/design-system/Input";
-import Link from "@/shared/design-system/Link";
-import Loader from "@/shared/design-system/Loader";
-import Modal from "@/shared/design-system/Modal";
-import Text from "@/shared/design-system/Text";
+import Badge from "@/shared/design-system/badge";
+import Button from "@/shared/design-system/button";
+import ErrorMessage from "@/shared/design-system/error_message";
+import Form from "@/shared/design-system/form";
+import Input from "@/shared/design-system/input";
+import Link from "@/shared/design-system/link";
+import Loader from "@/shared/design-system/loader";
+import Modal from "@/shared/design-system/modal";
+import Text from "@/shared/design-system/text";
 import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import { markNavigationStart } from "@/shared/observability";
-import { getWorkspaceEmoji } from "@/shared/utils";
+import { markNavigationStart } from "@/shared/navigationPerf";
+import { useSession } from "@/shared/session";
 import { shouldShowLoading } from "@/shared/utils/queryStatus";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
 import styles from "./styles.module.scss";
 
-import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 import type { CreateProjectInput } from "@/domains/workspace/core/domain/schema/project.schema";
 import { CreateProjectInputSchema } from "@/domains/workspace/core/domain/schema/project.schema";
 import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
-import ProjectCardActions from "@/domains/workspace/presentation/components/workspace/ProjectCardActions";
+import ProjectCardActions from "@/domains/workspace/presentation/components/workspace/projectCard/ProjectCardActions";
 import { useAddUserToProject } from "@/domains/workspace/presentation/hooks/useAddUserToProject";
 import { useCreateProject } from "@/domains/workspace/presentation/hooks/useCreateProject";
 import { useLastActivitySubtitle } from "@/domains/workspace/presentation/hooks/useLastActivitySubtitle";
 import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
 import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
+import { getWorkspaceEmoji } from "@/domains/workspace/utils/workspaceUtils";
 
 type CreateProjectFormData = CreateProjectInput;
 

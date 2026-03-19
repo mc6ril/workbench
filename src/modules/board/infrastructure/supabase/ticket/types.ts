@@ -1,0 +1,18 @@
+export type TicketRow = {
+  id: string;
+  project_id: string;
+  title: string;
+  description: string | null;
+  status: string;
+  position: number;
+  code_number: number;
+  epic_id: string | null;
+  parent_id: string | null;
+  sprint_id: string | null;
+  priority: string | null;
+  due_date: string | null;
+  story_points: number | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};

@@ -3,9 +3,10 @@
 import { useEffect } from "react";
 import { useTheme } from "next-themes";
 
+import { useSession } from "@/shared/session";
+
 import type { Theme } from "@/domains/auth/core/domain/schema/auth.schema";
 import { ThemeValues } from "@/domains/auth/core/domain/schema/auth.schema";
-import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 
 /**
  * Syncs the user's persisted theme preference (from Supabase session)

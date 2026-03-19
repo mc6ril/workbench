@@ -5,9 +5,7 @@ import type {
   TicketFilters,
   TicketSort,
 } from "@/modules/board/core/domain/schema/ticket.schema";
-
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
-
 import { ticketRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 

@@ -1,9 +1,3 @@
-import type {
-  ProjectRow,
-  ProjectWithStatsRow,
-  ReclaimableProjectRow,
-} from "@/shared/infrastructure/types";
-
 import { toDate } from "@/shared/utils/guards";
 
 import type {
@@ -13,6 +7,11 @@ import type {
   ProjectWithStats,
   ReclaimableProject,
 } from "@/domains/workspace/core/domain/schema/project.schema";
+import type {
+  ProjectRow,
+  ProjectWithStatsRow,
+  ReclaimableProjectRow,
+} from "@/domains/workspace/infrastructure/supabase/types";
 
 /**
  * Maps a Supabase row to a domain Project entity.

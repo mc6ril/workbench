@@ -1,5 +1,5 @@
 import { PlusIcon } from "@/shared/design-system/icons";
-import NavigationItem from "@/shared/design-system/NavigationItem";
+import NavigationItem from "@/shared/design-system/navigation_item";
 import { isActiveHref } from "@/shared/utils";
 
 import styles from "@/domains/project/presentation/components/sidebarNavigation/SidebarNavigation.module.scss";

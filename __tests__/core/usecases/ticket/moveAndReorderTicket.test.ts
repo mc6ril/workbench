@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 import { createNotFoundError } from "@/shared/errors/repositoryError";
-import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
-
-import { moveAndReorderTicket } from "@/modules/board/core/usecases/ticket/moveAndReorderTicket";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
+
+import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
+import { moveAndReorderTicket } from "@/modules/board/core/usecases/ticket/moveAndReorderTicket";
 
 describe("moveAndReorderTicket", () => {
   const ticketId = "123e4567-e89b-12d3-a456-426614174000";

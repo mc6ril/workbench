@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import Container from "@/shared/design-system/Container";
+import Container from "@/shared/design-system/container";
 
 describe("Container Component", () => {
   it("should render children", () => {

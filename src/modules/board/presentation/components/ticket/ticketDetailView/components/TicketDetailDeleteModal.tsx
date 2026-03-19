@@ -1,6 +1,6 @@
-import Button from "@/shared/design-system/Button";
-import Modal from "@/shared/design-system/Modal";
-import Text from "@/shared/design-system/Text";
+import Button from "@/shared/design-system/button";
+import Modal from "@/shared/design-system/modal";
+import Text from "@/shared/design-system/text";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";

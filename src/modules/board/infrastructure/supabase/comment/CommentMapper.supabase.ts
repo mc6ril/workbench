@@ -1,8 +1,7 @@
-import type { CommentWithAuthor } from "@/modules/board/core/domain/schema/comment.schema";
-
-import type { CommentWithAuthorRow } from "@/shared/infrastructure/types";
-
 import { toDate } from "@/shared/utils/guards";
+
+import type { CommentWithAuthor } from "@/modules/board/core/domain/schema/comment.schema";
+import type { CommentWithAuthorRow } from "@/modules/board/infrastructure/supabase/comment/types";
 
 /**
  * Maps a Supabase RPC row (with author profile) to a domain CommentWithAuthor entity.

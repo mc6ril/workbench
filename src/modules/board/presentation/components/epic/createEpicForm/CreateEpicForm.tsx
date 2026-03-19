@@ -2,17 +2,17 @@
 
 import React, { useState } from "react";
 
-import type { CreateEpicInput } from "@/modules/board/core/domain/schema/epic.schema";
-
 import { BUTTON_LABELS } from "@/shared/a11y/constants";
-import Button from "@/shared/design-system/Button";
-import ErrorMessage from "@/shared/design-system/ErrorMessage";
-import Form from "@/shared/design-system/Form";
-import Input from "@/shared/design-system/Input";
-import Textarea from "@/shared/design-system/Textarea";
+import Button from "@/shared/design-system/button";
+import ErrorMessage from "@/shared/design-system/error_message";
+import Form from "@/shared/design-system/form";
+import Input from "@/shared/design-system/input";
+import Textarea from "@/shared/design-system/textarea";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./CreateEpicForm.module.scss";
+
+import type { CreateEpicInput } from "@/modules/board/core/domain/schema/epic.schema";
 
 type Props = {
   projectId: string;

@@ -1,8 +1,8 @@
 import { type ChangeEvent, useMemo } from "react";
 
-import Input from "@/shared/design-system/Input";
-import Select from "@/shared/design-system/Select";
-import Textarea from "@/shared/design-system/Textarea";
+import Input from "@/shared/design-system/input";
+import Select from "@/shared/design-system/select";
+import Textarea from "@/shared/design-system/textarea";
 
 import styles from "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm.module.scss";
 import type { Option } from "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm.types";

@@ -28,6 +28,7 @@ const queryKeysObject = {
     withStats: () => ["projects", "with-stats"] as const,
     reclaimable: () => ["projects", "reclaimable"] as const,
     detail: (id: string) => ["projects", id] as const,
+    shortCode: (id: string) => ["projects", id, "short-code"] as const,
     currentRole: (projectId: string) =>
       ["projects", projectId, "permissions", "role"] as const,
     ticketsRoot: (projectId: string) =>

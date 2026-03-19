@@ -20,12 +20,13 @@ import {
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
+import type { BoardColumnTickets } from "./types";
+
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 import type {
   BoardColumnConfig,
   BoardTicketViewModel,
 } from "@/modules/board/core/domain/types/board.types";
-
 import type { BoardTicketIds } from "@/modules/board/core/usecases/board/boardDnD";
 import {
   buildBoardTicketIds,
@@ -33,9 +34,6 @@ import {
   buildTicketLocationIndex,
   getTicketLocation,
 } from "@/modules/board/core/usecases/board/boardDnD";
-
-import type { BoardColumnTickets } from "./types";
-
 import { useMoveAndReorderTicket } from "@/modules/board/presentation/hooks/ticket/useMoveAndReorderTicket";
 import { useReorderTicket } from "@/modules/board/presentation/hooks/ticket/useReorderTicket";
 

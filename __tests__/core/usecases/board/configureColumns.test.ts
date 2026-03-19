@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
+
 import type {
   Board,
   Column,
@@ -7,11 +10,7 @@ import type {
   CreateColumnInput,
   UpdateColumnInput,
 } from "@/modules/board/core/domain/schema/board.schema";
-
 import { configureColumns } from "@/modules/board/core/usecases/board/configureColumns";
-
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
-import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
 
 describe("configureColumns", () => {
   const projectId = "123e4567-e89b-12d3-a456-426614174000";

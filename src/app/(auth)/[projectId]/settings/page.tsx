@@ -3,17 +3,16 @@
 import { use, useCallback, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 
-import { getDefaultBoardConfiguration } from "@/modules/board/core/domain/rules/board.rules";
-
-import Loader from "@/shared/design-system/Loader";
+import Loader from "@/shared/design-system/loader";
 import { useTranslation } from "@/shared/i18n";
 
 import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
 import UpgradePrompt from "@/domains/billing/presentation/components/upgradePrompt/UpgradePrompt";
 import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
+import SettingsLayout from "@/domains/project/presentation/layouts/settingsLayout/SettingsLayout";
+import { getDefaultBoardConfiguration } from "@/modules/board/core/domain/rules/board.rules";
 import type { PriorityItem } from "@/modules/board/presentation/components/prioritiesSettings/PrioritiesSettings";
 import type { StatusColumnItem } from "@/modules/board/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
-import SettingsLayout from "@/domains/project/presentation/layouts/settingsLayout/SettingsLayout";
 
 const ProjectSettings = dynamic(
   () =>

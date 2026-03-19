@@ -28,6 +28,10 @@ Shared cross-cutting pieces still belong in:
 - `src/shared/a11y/`
 - `src/shared/observability/`
 
+Public/static pages that do not belong to a stable business owner may also live in `src/presentation/pages/`.
+
+This is a documented exception for app-level public surfaces such as landing and legal. See [Accepted Architecture Exceptions](./accepted-exceptions.md).
+
 ## End-to-End Product Flow
 
 ```mermaid

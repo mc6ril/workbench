@@ -1,7 +1,7 @@
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import Button from "@/shared/design-system/Button";
-import Checkbox from "@/shared/design-system/Checkbox";
-import Input from "@/shared/design-system/Input";
+import Button from "@/shared/design-system/button";
+import Checkbox from "@/shared/design-system/checkbox";
+import Input from "@/shared/design-system/input";
 
 import styles from "@/modules/board/presentation/components/statusesColumnsSettings/StatusesColumnsSettings.module.scss";
 import type {

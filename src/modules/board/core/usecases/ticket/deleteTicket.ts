@@ -1,7 +1,7 @@
 import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 import { createNotFoundError } from "@/shared/errors/repositoryError";
-import { TicketIdInputSchema } from "@/modules/board/core/domain/schema/ticket.schema";
 
+import { TicketIdInputSchema } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
 /**

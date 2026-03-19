@@ -1,6 +1,6 @@
 import { fireEvent,render, screen } from "@testing-library/react";
 
-import Card from "@/shared/design-system/Card";
+import Card from "@/shared/design-system/card";
 
 describe("Card Component", () => {
   it("should render children", () => {

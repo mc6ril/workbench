@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { useSession } from "@/domains/auth/presentation/hooks/useSession";
+import { useSession } from "@/shared/session";
+
 import {
   SubscriptionPlan,
   SubscriptionStatus,

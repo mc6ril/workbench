@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { listPendingInvitations } from "@/domains/project/core/usecases/invitation/listPendingInvitations";
-
 import { invitationRepository } from "@/domains/project/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 

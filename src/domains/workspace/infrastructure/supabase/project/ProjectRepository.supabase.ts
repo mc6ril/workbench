@@ -5,14 +5,7 @@ import {
   createDatabaseError,
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
-
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
-import type {
-  ProjectRow,
-  ProjectWithStatsRow,
-  ReclaimableProjectRow,
-} from "@/shared/infrastructure/types";
-
 import {
   isNonEmptyString,
   isObject,
@@ -35,6 +28,11 @@ import type {
 } from "@/domains/workspace/core/domain/schema/project.schema";
 import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
+import type {
+  ProjectRow,
+  ProjectWithStatsRow,
+  ReclaimableProjectRow,
+} from "@/domains/workspace/infrastructure/supabase/types";
 
 /**
  * Extract a full project row from an RPC response.

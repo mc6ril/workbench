@@ -2,7 +2,7 @@
 
 import { Suspense, use } from "react";
 
-import Loader from "@/shared/design-system/Loader";
+import Loader from "@/shared/design-system/loader";
 
 import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
 import FeatureGate from "@/domains/billing/presentation/layouts/featureGate/FeatureGate";

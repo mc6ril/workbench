@@ -1,7 +1,7 @@
 "use client";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
-import RouteFallbackPage from "@/shared/design-system/RouteFallbackPage";
+import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
 import { useTranslation } from "@/shared/i18n";
 
 const NotFoundPage = () => {

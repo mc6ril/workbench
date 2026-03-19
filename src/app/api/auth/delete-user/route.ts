@@ -7,7 +7,7 @@ import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
 import { createLoggerFactory } from "@/shared/observability";
 
-import { deleteUser } from "@/domains/auth/core/usecases/deleteUser";
+import { deleteUser } from "@/domains/auth/core/usecases/user/deleteUser";
 import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("API.DeleteUser");

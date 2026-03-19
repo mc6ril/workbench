@@ -1,5 +1,4 @@
 import type { ProjectInvitation } from "@/domains/project/core/domain/schema/invitation.schema";
-
 import type { InvitationRepository } from "@/domains/project/core/ports/invitationRepository";
 
 /**

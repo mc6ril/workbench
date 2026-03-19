@@ -4,16 +4,7 @@ import {
   createDatabaseError,
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
-import type {
-  Board,
-  Column,
-  CreateBoardInput,
-  CreateColumnInput,
-  UpdateColumnInput,
-} from "@/modules/board/core/domain/schema/board.schema";
-
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
-import type { BoardRow, ColumnRow } from "@/shared/infrastructure/types";
 
 import {
   mapBoardRowToDomain,
@@ -21,7 +12,18 @@ import {
   mapColumnRowToDomain,
 } from "./BoardMapper.supabase";
 
+import type {
+  Board,
+  Column,
+  CreateBoardInput,
+  CreateColumnInput,
+  UpdateColumnInput,
+} from "@/modules/board/core/domain/schema/board.schema";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
+import type {
+  BoardRow,
+  ColumnRow,
+} from "@/modules/board/infrastructure/supabase/board/types";
 
 /**
  * Create a BoardRepository implementation using the provided Supabase client.

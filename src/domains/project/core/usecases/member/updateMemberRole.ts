@@ -1,7 +1,6 @@
 import { UpdateMemberRoleInputSchema } from "@/domains/project/core/domain/schema/projectMember.schema";
-
+import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 /**
  * Update a project member's role.

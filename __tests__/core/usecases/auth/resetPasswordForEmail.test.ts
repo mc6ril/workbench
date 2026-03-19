@@ -8,7 +8,7 @@ import {
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
 
-import { resetPasswordForEmail } from "@/domains/auth/core/usecases/resetPasswordForEmail";
+import { resetPasswordForEmail } from "@/domains/auth/core/usecases/password/resetPasswordForEmail";
 
 describe("resetPasswordForEmail", () => {
   const validInput = validResetPasswordInput;

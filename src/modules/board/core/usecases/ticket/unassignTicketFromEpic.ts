@@ -1,9 +1,9 @@
 import { createNotFoundError } from "@/shared/errors/repositoryError";
+
 import {
   type Ticket,
   UnassignTicketFromEpicInputSchema,
 } from "@/modules/board/core/domain/schema/ticket.schema";
-
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
 /**

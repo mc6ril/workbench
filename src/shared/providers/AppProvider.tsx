@@ -4,10 +4,10 @@ import { type PropsWithChildren, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { ThemeProvider } from "next-themes";
 
-import Toast from "@/shared/design-system/Toast";
+import Toast from "@/shared/design-system/toast";
 import { registerLocaleGetter } from "@/shared/i18n/config";
 import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
-import { markNavigationSettled } from "@/shared/observability";
+import { markNavigationSettled } from "@/shared/navigationPerf";
 import { useLocaleSync } from "@/shared/utils/hooks/useLocaleSync";
 import { useThemeSync } from "@/shared/utils/hooks/useThemeSync";
 

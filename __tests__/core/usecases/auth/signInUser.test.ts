@@ -10,7 +10,7 @@ import {
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
 
 import type { AuthResult } from "@/domains/auth/core/domain/schema/auth.schema";
-import { signInUser } from "@/domains/auth/core/usecases/signInUser";
+import { signInUser } from "@/domains/auth/core/usecases/user/signInUser";
 
 describe("signInUser", () => {
   const validInput = validSignInInput;

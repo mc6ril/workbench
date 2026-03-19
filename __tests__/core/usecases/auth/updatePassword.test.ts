@@ -14,7 +14,7 @@ import type {
   AuthResult,
   UpdatePasswordInput,
 } from "@/domains/auth/core/domain/schema/auth.schema";
-import { updatePassword } from "@/domains/auth/core/usecases/updatePassword";
+import { updatePassword } from "@/domains/auth/core/usecases/password/updatePassword";
 
 describe("updatePassword", () => {
   const validInput = validUpdatePasswordInput;

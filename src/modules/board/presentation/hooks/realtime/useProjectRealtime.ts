@@ -12,7 +12,6 @@ import type {
 import type { Label } from "@/modules/board/core/domain/schema/label.schema";
 import type { Sprint } from "@/modules/board/core/domain/schema/sprint.schema";
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
-
 import type { RealtimeRepository } from "@/modules/board/core/ports/realtimeRepository";
 import { getRealtimeRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";

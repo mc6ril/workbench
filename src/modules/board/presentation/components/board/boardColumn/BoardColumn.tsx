@@ -10,15 +10,14 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import type { BoardTicketViewModel } from "@/modules/board/core/domain/types/board.types";
-
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { BOARD_COLUMN_DROP_PREFIX } from "@/shared/constants/board";
-import Title from "@/shared/design-system/Title";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./BoardColumn.module.scss";
 
+import { BOARD_COLUMN_DROP_PREFIX } from "@/modules/board/constants/board";
+import type { BoardTicketViewModel } from "@/modules/board/core/domain/types/board.types";
 import type { BoardColumnProps } from "@/modules/board/presentation/components/board/boardColumn/BoardColumn.types";
 import TicketCard from "@/modules/board/presentation/components/ticket/ticketCard/TicketCard";
 

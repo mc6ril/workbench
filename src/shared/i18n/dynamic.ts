@@ -1,6 +1,6 @@
 import type { TranslationFunction } from "./types";
 
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 
 /**
  * Translation keys for project roles.

@@ -1,5 +1,10 @@
+import { z } from "zod";
+
 import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
-import { GetProjectInputSchema } from "@/domains/workspace/core/domain/schema/project.schema";
+
+const GetCurrentProjectRoleInputSchema = z.object({
+  projectId: z.string().uuid("Project ID must be a valid UUID"),
+});
 
 /**
  * Get current authenticated user's role for a project.
@@ -9,6 +14,6 @@ export const getCurrentProjectRole = async (
   repository: MemberRepository,
   projectId: string
 ) => {
-  GetProjectInputSchema.parse({ id: projectId });
+  GetCurrentProjectRoleInputSchema.parse({ projectId });
   return repository.getCurrentRole(projectId);
 };

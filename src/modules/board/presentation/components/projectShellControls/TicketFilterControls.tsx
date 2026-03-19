@@ -1,12 +1,12 @@
-import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
-
-import Button from "@/shared/design-system/Button";
-import Select from "@/shared/design-system/Select";
-import Text from "@/shared/design-system/Text";
+import Button from "@/shared/design-system/button";
+import Select from "@/shared/design-system/select";
+import Text from "@/shared/design-system/text";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./ProjectShellControls.module.scss";
 import type { TicketFilterControlsProps } from "./types";
+
+import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
 
 const TicketFilterControls = ({
   filters,

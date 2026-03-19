@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
-import Link from "@/shared/design-system/Link";
+import Link from "@/shared/design-system/link";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./Breadcrumbs.module.scss";

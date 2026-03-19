@@ -3,18 +3,18 @@
 import Link from "next/link";
 
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
-import Button from "@/shared/design-system/Button";
-import Form from "@/shared/design-system/Form";
-import Input from "@/shared/design-system/Input";
-import Loader from "@/shared/design-system/Loader";
-import Text from "@/shared/design-system/Text";
-import Title from "@/shared/design-system/Title";
+import Button from "@/shared/design-system/button";
+import Form from "@/shared/design-system/form";
+import Input from "@/shared/design-system/input";
+import Loader from "@/shared/design-system/loader";
+import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
 
 import PasswordStrengthIndicator from "@/domains/auth/presentation/components/PasswordStrengthIndicator";
-import { useUpdatePasswordForm } from "@/domains/auth/presentation/hooks/useUpdatePasswordForm";
+import { useUpdatePasswordForm } from "@/domains/auth/presentation/hooks/password/useUpdatePasswordForm";
 
 const UpdatePasswordPage = () => {
   const t = useTranslation("pages.updatePassword");
