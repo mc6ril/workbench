@@ -7,11 +7,11 @@ import type {
 
 import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
 
-import type { RealtimeRepository } from "@/domains/project-management/core/ports/realtimeRepository";
-import { mapEpicRowToDomain } from "@/domains/project-management/infrastructure/supabase/epic/EpicMapper.supabase";
-import { mapLabelRowToDomain } from "@/domains/project-management/infrastructure/supabase/label/LabelMapper.supabase";
-import { mapSprintRowToDomain } from "@/domains/project-management/infrastructure/supabase/sprint/SprintMapper.supabase";
-import { mapTicketRowToDomain } from "@/domains/project-management/infrastructure/supabase/ticket/TicketMapper.supabase";
+import type { RealtimeRepository } from "@/modules/board/core/ports/realtimeRepository";
+import { mapEpicRowToDomain } from "@/modules/board/infrastructure/supabase/epic/EpicMapper.supabase";
+import { mapLabelRowToDomain } from "@/modules/board/infrastructure/supabase/label/LabelMapper.supabase";
+import { mapSprintRowToDomain } from "@/modules/board/infrastructure/supabase/sprint/SprintMapper.supabase";
+import { mapTicketRowToDomain } from "@/modules/board/infrastructure/supabase/ticket/TicketMapper.supabase";
 
 type BrowserSupabaseClient = ReturnType<typeof createSupabaseBrowserClient>;
 type SupabaseChannel = ReturnType<BrowserSupabaseClient["channel"]>;

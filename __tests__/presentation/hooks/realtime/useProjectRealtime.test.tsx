@@ -4,8 +4,8 @@ import { renderHook } from "@testing-library/react";
 
 import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
 
-import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
-import { useProjectRealtime } from "@/domains/project-management/presentation/hooks/realtime/useProjectRealtime";
+import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
+import { useProjectRealtime } from "@/modules/board/presentation/hooks/realtime/useProjectRealtime";
 
 jest.mock("@/shared/infrastructure/supabase/client-browser", () => ({
   createSupabaseBrowserClient: jest.fn(),

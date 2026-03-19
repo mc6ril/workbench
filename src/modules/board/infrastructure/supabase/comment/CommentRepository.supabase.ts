@@ -8,7 +8,7 @@ import type {
   CommentWithAuthor,
   CreateCommentInput,
   UpdateCommentInput,
-} from "@/domains/project-management/core/domain/schema/comment.schema";
+} from "@/modules/board/core/domain/schema/comment.schema";
 
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 import type { CommentWithAuthorRow } from "@/shared/infrastructure/types";
@@ -18,7 +18,7 @@ import {
   mapCommentWithAuthorRowToDomain,
 } from "./CommentMapper.supabase";
 
-import type { CommentRepository } from "@/domains/project-management/core/ports/commentRepository";
+import type { CommentRepository } from "@/modules/board/core/ports/commentRepository";
 
 /**
  * Create a CommentRepository implementation using the provided Supabase client.

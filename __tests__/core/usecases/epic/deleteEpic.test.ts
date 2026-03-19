@@ -1,7 +1,7 @@
-import type { Epic } from "@/domains/project-management/core/domain/schema/epic.schema";
-import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
+import type { Epic } from "@/modules/board/core/domain/schema/epic.schema";
+import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 
-import { deleteEpic } from "@/domains/project-management/core/usecases/epic/deleteEpic";
+import { deleteEpic } from "@/modules/board/core/usecases/epic/deleteEpic";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createEpicRepositoryMock } from "../../../../__mocks__/core/ports/epicRepository";

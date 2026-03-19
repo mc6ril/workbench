@@ -3,7 +3,7 @@
 import { use, useCallback, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 
-import { getDefaultBoardConfiguration } from "@/domains/project-management/core/domain/rules/board.rules";
+import { getDefaultBoardConfiguration } from "@/modules/board/core/domain/rules/board.rules";
 
 import Loader from "@/shared/design-system/Loader";
 import { useTranslation } from "@/shared/i18n";
@@ -11,8 +11,8 @@ import { useTranslation } from "@/shared/i18n";
 import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
 import UpgradePrompt from "@/domains/billing/presentation/components/upgradePrompt/UpgradePrompt";
 import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
-import type { PriorityItem } from "@/domains/project-management/presentation/components/prioritiesSettings/PrioritiesSettings";
-import type { StatusColumnItem } from "@/domains/project-management/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
+import type { PriorityItem } from "@/modules/board/presentation/components/prioritiesSettings/PrioritiesSettings";
+import type { StatusColumnItem } from "@/modules/board/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
 import SettingsLayout from "@/domains/project/presentation/layouts/settingsLayout/SettingsLayout";
 
 const ProjectSettings = dynamic(
@@ -23,19 +23,19 @@ const ProjectSettings = dynamic(
 
 const StatusesColumnsSettings = dynamic(
   () =>
-    import("@/domains/project-management/presentation/components/statusesColumnsSettings/StatusesColumnsSettings"),
+    import("@/modules/board/presentation/components/statusesColumnsSettings/StatusesColumnsSettings"),
   { ssr: false }
 );
 
 const PrioritiesSettings = dynamic(
   () =>
-    import("@/domains/project-management/presentation/components/prioritiesSettings/PrioritiesSettings"),
+    import("@/modules/board/presentation/components/prioritiesSettings/PrioritiesSettings"),
   { ssr: false }
 );
 
 const ExportImportSettings = dynamic(
   () =>
-    import("@/domains/project-management/presentation/components/exportImportSettings/ExportImportSettings"),
+    import("@/modules/board/presentation/components/exportImportSettings/ExportImportSettings"),
   { ssr: false }
 );
 

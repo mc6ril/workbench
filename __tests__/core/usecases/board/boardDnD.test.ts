@@ -1,11 +1,11 @@
-import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
-import type { BoardColumnConfig } from "@/domains/project-management/core/domain/types/board.types";
+import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { BoardColumnConfig } from "@/modules/board/core/domain/types/board.types";
 
 import {
   buildBoardTicketIds,
   buildNextBoardFromDragOver,
   buildTicketLocationIndex,
-} from "@/domains/project-management/core/usecases/board/boardDnD";
+} from "@/modules/board/core/usecases/board/boardDnD";
 
 import { BOARD_COLUMN_DROP_PREFIX } from "@/shared/constants/board";
 

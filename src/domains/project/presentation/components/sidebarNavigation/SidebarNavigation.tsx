@@ -10,10 +10,10 @@ import React, {
 import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { getBoardConfiguration } from "@/domains/project-management/core/usecases/board/getBoardConfiguration";
-import { listEpics } from "@/domains/project-management/core/usecases/epic/listEpics";
-import { getTicketAssigneesByProjectId } from "@/domains/project-management/core/usecases/ticket/getTicketAssigneesByProjectId";
-import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
+import { getBoardConfiguration } from "@/modules/board/core/usecases/board/getBoardConfiguration";
+import { listEpics } from "@/modules/board/core/usecases/epic/listEpics";
+import { getTicketAssigneesByProjectId } from "@/modules/board/core/usecases/ticket/getTicketAssigneesByProjectId";
+import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
@@ -41,15 +41,15 @@ import {
   boardRepository,
   epicRepository,
   ticketRepository,
-} from "@/domains/project-management/infrastructure/supabase/repositories";
-import { queryKeys as boardQueryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
+} from "@/modules/board/infrastructure/supabase/repositories";
+import { queryKeys as boardQueryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import {
   buildProjectViewHref,
   getProjectViewConfigsForSidebar,
 } from "@/domains/project/presentation/navigation/projectViews.config";
-import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
-import { useSortStore } from "@/domains/project-management/presentation/stores/useSortStore";
+import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
+import { useSortStore } from "@/modules/board/presentation/stores/useSortStore";
 import type { Project } from "@/domains/workspace/core/domain/schema/project.schema";
 import { listProjectsWithStats } from "@/domains/workspace/core/usecases/project/listProjectsWithStats";
 import { listReclaimableProjects } from "@/domains/workspace/core/usecases/project/listReclaimableProjects";

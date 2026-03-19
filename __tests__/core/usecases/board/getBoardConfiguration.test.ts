@@ -3,9 +3,9 @@ import type {
   BoardConfiguration,
   Column,
   CreateColumnInput,
-} from "@/domains/project-management/core/domain/schema/board.schema";
+} from "@/modules/board/core/domain/schema/board.schema";
 
-import { getBoardConfiguration } from "@/domains/project-management/core/usecases/board/getBoardConfiguration";
+import { getBoardConfiguration } from "@/modules/board/core/usecases/board/getBoardConfiguration";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";

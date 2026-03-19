@@ -18,27 +18,27 @@ import SkipLink from "@/shared/design-system/SkipLink";
 import { useTranslation } from "@/shared/i18n";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
-import Breadcrumbs from "@/domains/project-management/presentation/components/breadcrumbs/Breadcrumbs";
-import EpicFilterControls from "@/domains/project-management/presentation/components/projectShellControls/EpicFilterControls";
-import EpicSortControls from "@/domains/project-management/presentation/components/projectShellControls/EpicSortControls";
-import TicketFilterControls from "@/domains/project-management/presentation/components/projectShellControls/TicketFilterControls";
-import TicketSortControls from "@/domains/project-management/presentation/components/projectShellControls/TicketSortControls";
-import ProjectToolbar from "@/domains/project-management/presentation/components/projectToolbar/ProjectToolbar";
+import Breadcrumbs from "@/modules/board/presentation/components/breadcrumbs/Breadcrumbs";
+import EpicFilterControls from "@/modules/board/presentation/components/projectShellControls/EpicFilterControls";
+import EpicSortControls from "@/modules/board/presentation/components/projectShellControls/EpicSortControls";
+import TicketFilterControls from "@/modules/board/presentation/components/projectShellControls/TicketFilterControls";
+import TicketSortControls from "@/modules/board/presentation/components/projectShellControls/TicketSortControls";
+import ProjectToolbar from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar";
 import SidebarNavigation from "@/domains/project/presentation/components/sidebarNavigation/SidebarNavigation";
-import { useBoardConfiguration } from "@/domains/project-management/presentation/hooks/board/useBoardConfiguration";
-import { useEpicQueryParams } from "@/domains/project-management/presentation/hooks/epic/useEpicQueryParams";
-import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
-import { useLabels } from "@/domains/project-management/presentation/hooks/label";
-import { useProjectSearchSuggestions } from "@/domains/project-management/presentation/hooks/project/useProjectSearchSuggestions";
-import { useProjectRealtime } from "@/domains/project-management/presentation/hooks/realtime/useProjectRealtime";
-import { useSprints } from "@/domains/project-management/presentation/hooks/sprint";
+import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
+import { useEpicQueryParams } from "@/modules/board/presentation/hooks/epic/useEpicQueryParams";
+import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
+import { useLabels } from "@/modules/board/presentation/hooks/label";
+import { useProjectSearchSuggestions } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
+import { useProjectRealtime } from "@/modules/board/presentation/hooks/realtime/useProjectRealtime";
+import { useSprints } from "@/modules/board/presentation/hooks/sprint";
 import { getProjectViewKeyFromPath } from "@/domains/project/presentation/navigation/projectViews.config";
 import {
   ProjectPermissionsProvider,
   useProjectPermissions,
 } from "@/domains/project/presentation/providers/permissions";
-import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
-import { useSortStore } from "@/domains/project-management/presentation/stores/useSortStore";
+import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
+import { useSortStore } from "@/modules/board/presentation/stores/useSortStore";
 
 type Props = {
   projectId: string;

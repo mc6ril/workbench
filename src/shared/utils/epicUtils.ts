@@ -1,8 +1,8 @@
-import type { EpicWithProgress } from "@/domains/project-management/core/domain/schema/epic.schema";
+import type { EpicWithProgress } from "@/modules/board/core/domain/schema/epic.schema";
 import type {
   EpicProgressFilter,
   EpicSortField,
-} from "@/domains/project-management/core/domain/types";
+} from "@/modules/board/core/domain/types";
 
 import type { SortDirection } from "@/shared/types";
 

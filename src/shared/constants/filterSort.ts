@@ -1,7 +1,7 @@
 import {
   SortDirectionSchema,
   TicketSortFieldSchema,
-} from "@/domains/project-management/core/domain/schema/ticket.schema";
+} from "@/modules/board/core/domain/schema/ticket.schema";
 
 const ticketSortFields = TicketSortFieldSchema.enum;
 const sortDirections = SortDirectionSchema.enum;

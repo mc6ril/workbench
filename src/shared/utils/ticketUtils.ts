@@ -1,4 +1,4 @@
-import type { BuildTicketAriaLabelParams } from "@/domains/project-management/core/domain/types";
+import type { BuildTicketAriaLabelParams } from "@/modules/board/core/domain/types";
 
 /**
  * Builds a human-readable ticket code from project short code and ticket number.

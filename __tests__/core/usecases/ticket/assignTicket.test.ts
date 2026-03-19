@@ -1,7 +1,7 @@
-import { assignTicket } from "@/domains/project-management/core/usecases/ticket/assignTicket";
-import { unassignTicket } from "@/domains/project-management/core/usecases/ticket/unassignTicket";
+import { assignTicket } from "@/modules/board/core/usecases/ticket/assignTicket";
+import { unassignTicket } from "@/modules/board/core/usecases/ticket/unassignTicket";
 
-import type { TicketRepository } from "@/domains/project-management/core/ports/ticketRepository";
+import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
 const createTicketRepositoryMock = (
   overrides: Partial<TicketRepository> = {}
