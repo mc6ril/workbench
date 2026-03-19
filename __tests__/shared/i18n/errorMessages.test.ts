@@ -1,4 +1,4 @@
-import { createConstraintError } from "@/domains/project-management/core/domain/repositoryError";
+import { createConstraintError } from "@/shared/errors/repositoryError";
 
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 

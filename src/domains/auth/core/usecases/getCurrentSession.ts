@@ -1,4 +1,4 @@
-import { createNotFoundError } from "@/domains/project-management/core/domain/repositoryError";
+import { createNotFoundError } from "@/shared/errors/repositoryError";
 
 import type { AuthSession } from "@/domains/auth/core/domain/schema/auth.schema";
 import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";

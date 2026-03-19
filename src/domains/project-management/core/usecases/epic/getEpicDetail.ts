@@ -1,4 +1,4 @@
-import { createNotFoundError } from "@/domains/project-management/core/domain/repositoryError";
+import { createNotFoundError } from "@/shared/errors/repositoryError";
 import { calculateEpicProgress } from "@/domains/project-management/core/domain/rules/epic.rules";
 import type { EpicDetail } from "@/domains/project-management/core/domain/schema/epic.schema";
 

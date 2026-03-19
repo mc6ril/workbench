@@ -1,4 +1,4 @@
-import { createDomainRuleError } from "@/domains/project-management/core/domain/domainRuleError";
+import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 import { validateBoardWithColumns } from "@/domains/project-management/core/domain/rules/board.rules";
 import type { BoardConfiguration } from "@/domains/project-management/core/domain/schema/board.schema";
 import {

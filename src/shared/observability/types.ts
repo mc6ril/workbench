@@ -2,7 +2,7 @@
  * Internal types for structured logging implementation.
  */
 
-import type { LogError, LogLevel, LogMeta } from "@/domains/project-management/core/ports/logger";
+import type { LogError, LogLevel, LogMeta } from "@/shared/observability/logger.port";
 
 /**
  * Structured log format for JSON output.

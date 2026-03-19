@@ -4,7 +4,7 @@ import {
   createConstraintError,
   createDatabaseError,
   createNotFoundError,
-} from "@/domains/project-management/core/domain/repositoryError";
+} from "@/shared/errors/repositoryError";
 
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 import type {

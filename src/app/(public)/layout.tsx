@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { isNotFoundError } from "@/domains/project-management/core/domain/repositoryError.guards";
+import { isNotFoundError } from "@/shared/errors/repositoryError.guards";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";

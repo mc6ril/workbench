@@ -1,4 +1,4 @@
-import { createDomainRuleError } from "@/domains/project-management/core/domain/domainRuleError";
+import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 import { canStartSprint } from "@/domains/project-management/core/domain/rules/sprint.rules";
 import type { Sprint } from "@/domains/project-management/core/domain/schema/sprint.schema";
 
