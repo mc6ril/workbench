@@ -4,7 +4,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
 import type { TicketPriority } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import { useSession } from "@/presentation/hooks/auth/useSession";
+import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 import {
   useComments,
   useCreateComment,

@@ -3,7 +3,7 @@ import {
   evaluatePasswordCriteria,
   getNextUnmetCriterion,
   PasswordStrength,
-} from "@/domains/project-management/core/domain/passwordStrength";
+} from "@/domains/auth/core/domain/passwordStrength";
 
 describe("evaluatePasswordCriteria", () => {
   it("should return all false for empty string", () => {

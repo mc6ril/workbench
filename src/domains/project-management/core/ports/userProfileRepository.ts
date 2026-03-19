@@ -1,4 +1,4 @@
-import type { UserPreferences } from "@/domains/project-management/core/domain/schema/auth.schema";
+import type { UserPreferences } from "@/domains/auth/core/domain/schema/auth.schema";
 import type {
   UpdateProfileInput,
   UserProfile,

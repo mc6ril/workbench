@@ -1,9 +1,9 @@
-import { DEFAULT_USER_PREFERENCES } from "@/domains/project-management/core/domain/schema/auth.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
 
 import {
   mapSupabaseAuthError,
   mapSupabaseSessionToDomain,
-} from "@/infrastructure/supabase/auth/AuthMapper.supabase";
+} from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthError } from "../../../../__mocks__/core/domain/authMocks";

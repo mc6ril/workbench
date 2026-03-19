@@ -1,5 +1,5 @@
 import { getFeatureLimit } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
-import { DEFAULT_USER_PREFERENCES } from "@/domains/project-management/core/domain/schema/auth.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
 import {
   type CreateInvitationInput,
   InvitationStatus,

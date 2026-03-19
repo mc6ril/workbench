@@ -11,7 +11,7 @@ import { CreateProjectInputSchema } from "@/domains/project-management/core/doma
 import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
 import { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
-import { useSession } from "@/presentation/hooks/auth/useSession";
+import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 import { useAddUserToProject } from "@/presentation/hooks/project/useAddUserToProject";
 import { useCreateProject } from "@/presentation/hooks/project/useCreateProject";
 import { useLastActivitySubtitle } from "@/presentation/hooks/project/useLastActivitySubtitle";

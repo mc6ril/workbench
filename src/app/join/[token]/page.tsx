@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import RouteFallbackPage from "@/presentation/components/feedback/RouteFallbackPage";
-import { useSession } from "@/presentation/hooks/auth/useSession";
+import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 import { useAcceptInvitation } from "@/presentation/hooks/invitation/useAcceptInvitation";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";

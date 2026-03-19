@@ -1,4 +1,4 @@
-import { deleteUser } from "@/domains/project-management/core/usecases/auth/deleteUser";
+import { deleteUser } from "@/domains/auth/core/usecases/deleteUser";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthError } from "../../../../__mocks__/core/domain/authMocks";
