@@ -1,9 +1,8 @@
+import type { BoardRow, ColumnRow } from "@/shared/infrastructure/types";
+import { toDate } from "@/shared/utils/guards";
+
 import type { Board, Column } from "@/modules/board/core/domain/schema/board.schema";
 import { ColumnWorkflowStateSchema } from "@/modules/board/core/domain/schema/board.schema";
-
-import type { BoardRow, ColumnRow } from "@/shared/infrastructure/types";
-
-import { toDate } from "@/shared/utils/guards";
 
 /**
  * Maps a Supabase row to a domain Board entity.

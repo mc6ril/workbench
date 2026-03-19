@@ -2,9 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { removeAvatar } from "@/domains/auth/core/usecases/profile/removeAvatar";
 import { uploadAvatar } from "@/domains/auth/core/usecases/profile/uploadAvatar";
-
-import { queryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
 import { userProfileRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { queryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
 
 /**
  * Hook for uploading a user avatar.

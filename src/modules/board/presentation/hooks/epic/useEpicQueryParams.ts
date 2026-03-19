@@ -1,17 +1,17 @@
 import { useMemo } from "react";
 import type { ReadonlyURLSearchParams } from "next/navigation";
 
-import type {
-  EpicProgressFilter,
-  EpicSortField,
-} from "@/modules/board/core/domain/types";
+import type { SortDirection } from "@/shared/types";
 
 import {
   EPIC_PROGRESS_FILTER_VALUES,
   EPIC_SORT_FIELD_VALUES,
   SORT_DIRECTION_VALUES,
-} from "@/shared/constants/filterSort";
-import type { SortDirection } from "@/shared/types";
+} from "@/modules/board/constants/filterSort";
+import type {
+  EpicProgressFilter,
+  EpicSortField,
+} from "@/modules/board/core/domain/types";
 
 const parseEpicProgressFilter = (value: string | null): EpicProgressFilter => {
   if (

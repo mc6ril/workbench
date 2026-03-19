@@ -13,11 +13,11 @@ import ProjectToolbarTools from "./components/ProjectToolbarTools";
 import styles from "./ProjectToolbar.module.scss";
 import type { ProjectToolbarProps } from "./ProjectToolbar.types";
 
-import { useProjectToolbarSuggestions } from "@/modules/board/presentation/hooks/project/useProjectToolbarSuggestions";
 import {
   getProjectViewConfig,
   getProjectViewKeyFromPath,
 } from "@/domains/project/presentation/navigation/projectViews.config";
+import { useProjectToolbarSuggestions } from "@/modules/board/presentation/hooks/project/useProjectToolbarSuggestions";
 
 const ProjectToolbar = ({
   projectId,

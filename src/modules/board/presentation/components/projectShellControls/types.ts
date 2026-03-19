@@ -1,3 +1,5 @@
+import type { SortDirection } from "@/shared/types";
+
 import {
   TicketFilters,
   TicketPriority,
@@ -7,8 +9,6 @@ import {
   EpicProgressFilter,
   EpicSortField,
 } from "@/modules/board/core/domain/types";
-
-import type { SortDirection } from "@/shared/types";
 
 type Option = {
   value: string;

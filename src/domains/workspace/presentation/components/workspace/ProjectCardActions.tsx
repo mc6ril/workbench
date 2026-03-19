@@ -15,13 +15,13 @@ import { useToastStore } from "@/shared/design-system/stores/useToastStore";
 import Text from "@/shared/design-system/Text";
 import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import { buildInvitationRoute } from "@/shared/utils/invitationUtils";
 
 import styles from "./ProjectCardActions.module.scss";
 import ProjectMembersModal from "./ProjectMembersModal";
 
 import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
 import { useInviteMember } from "@/domains/project/presentation/hooks/invitation/useInviteMember";
+import { buildInvitationRoute } from "@/domains/project/utils/invitationUtils";
 import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import { useDeleteProject } from "@/domains/workspace/presentation/hooks/useDeleteProject";
 

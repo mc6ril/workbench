@@ -4,24 +4,20 @@ import { useCallback, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 
-import type { BoardColumnConfig } from "@/modules/board/core/domain/types/board.types";
-
-import { addLabelsToTicket } from "@/modules/board/core/usecases/label";
-
 import { getAccessibilityId } from "@/shared/a11y";
 import Loader from "@/shared/design-system/Loader";
 import Modal from "@/shared/design-system/Modal";
 import Text from "@/shared/design-system/Text";
 import { useTranslation } from "@/shared/i18n";
-import {
-  buildTicketCode,
-  normalizeTicketSearch,
-} from "@/shared/utils/ticketUtils";
 
 import styles from "./styles.module.scss";
 
 import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
 import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
+import { useProject } from "@/domains/workspace/presentation/hooks/useProject";
+import type { BoardColumnConfig } from "@/modules/board/core/domain/types/board.types";
+import { addLabelsToTicket } from "@/modules/board/core/usecases/label";
 import { labelRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import BoardView from "@/modules/board/presentation/components/board/boardView/BoardView";
 import CreateTicketForm from "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm";
@@ -35,10 +31,12 @@ import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
 import { useLabels } from "@/modules/board/presentation/hooks/label";
 import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCreateTicket";
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
-import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
 import { useSortStore } from "@/modules/board/presentation/stores/useSortStore";
-import { useProject } from "@/domains/workspace/presentation/hooks/useProject";
+import {
+  buildTicketCode,
+  normalizeTicketSearch,
+} from "@/modules/board/utils/ticketUtils";
 
 const BoardLayout = ({ projectId }: { projectId: string }) => {
   const router = useRouter();

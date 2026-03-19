@@ -1,8 +1,7 @@
-import type { Epic } from "@/modules/board/core/domain/schema/epic.schema";
-
 import type { EpicRow } from "@/shared/infrastructure/types";
-
 import { toDate } from "@/shared/utils/guards";
+
+import type { Epic } from "@/modules/board/core/domain/schema/epic.schema";
 
 /**
  * Maps a Supabase row to a domain Epic entity.

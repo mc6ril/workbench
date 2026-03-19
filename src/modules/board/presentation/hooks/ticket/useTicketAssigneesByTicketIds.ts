@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
-
 import { getTicketAssigneesByTicketIds } from "@/modules/board/core/usecases/ticket/getTicketAssigneesByTicketIds";
-
 import { ticketRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 

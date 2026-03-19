@@ -1,14 +1,13 @@
 import { z } from "zod";
 
+// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+import { createEpicRepositoryMock } from "../../../../__mocks__/core/ports/epicRepository";
+
 import type {
   Epic,
   UpdateEpicInput,
 } from "@/modules/board/core/domain/schema/epic.schema";
-
 import { updateEpic } from "@/modules/board/core/usecases/epic/updateEpic";
-
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
-import { createEpicRepositoryMock } from "../../../../__mocks__/core/ports/epicRepository";
 
 describe("updateEpic", () => {
   const epicId = "123e4567-e89b-12d3-a456-426614174000";

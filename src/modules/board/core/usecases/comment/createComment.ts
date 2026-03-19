@@ -3,7 +3,6 @@ import type {
   CreateCommentInput,
 } from "@/modules/board/core/domain/schema/comment.schema";
 import { CreateCommentInputSchema } from "@/modules/board/core/domain/schema/comment.schema";
-
 import type { CommentRepository } from "@/modules/board/core/ports/commentRepository";
 
 /**

@@ -5,14 +5,12 @@ import {
   createDatabaseError,
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
-
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 import type {
   ProjectRow,
   ProjectWithStatsRow,
   ReclaimableProjectRow,
 } from "@/shared/infrastructure/types";
-
 import {
   isNonEmptyString,
   isObject,

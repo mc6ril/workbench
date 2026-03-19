@@ -4,8 +4,6 @@ import { useCallback, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y";
-import type { PlanKey } from "@/shared/constants";
-import { FAQ_KEYS, FEATURE_ROWS, PLAN_KEYS } from "@/shared/constants";
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/Button";
 import { useToastStore } from "@/shared/design-system/stores/useToastStore";
@@ -15,6 +13,12 @@ import { useTranslation } from "@/shared/i18n";
 import styles from "./styles.module.scss";
 
 import { useSession } from "@/domains/auth/presentation/hooks/useSession";
+import type { PlanKey } from "@/domains/billing/constants/pricing";
+import {
+  FAQ_KEYS,
+  FEATURE_ROWS,
+  PLAN_KEYS,
+} from "@/domains/billing/constants/pricing";
 import {
   PLAN_RANK,
   SubscriptionPlan,

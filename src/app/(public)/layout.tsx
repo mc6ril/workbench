@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { isNotFoundError } from "@/shared/errors/repositoryError.guards";
-
 import { PAGE_ROUTES } from "@/shared/constants/routes";
+import { isNotFoundError } from "@/shared/errors/repositoryError.guards";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { createLoggerFactory } from "@/shared/observability";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";

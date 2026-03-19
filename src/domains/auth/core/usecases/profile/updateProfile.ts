@@ -2,7 +2,6 @@ import {
   type UpdateProfileInput,
   UpdateProfileInputSchema,
 } from "@/domains/auth/core/domain/schema/userProfile.schema";
-
 import type { UserProfileRepository } from "@/domains/auth/core/ports/userProfileRepository";
 
 /**

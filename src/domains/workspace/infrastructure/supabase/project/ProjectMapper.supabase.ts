@@ -3,7 +3,6 @@ import type {
   ProjectWithStatsRow,
   ReclaimableProjectRow,
 } from "@/shared/infrastructure/types";
-
 import { toDate } from "@/shared/utils/guards";
 
 import type {

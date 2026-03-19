@@ -4,12 +4,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import {
-  EPIC_PROGRESS_FILTER_VALUES,
-  EPIC_SORT_FIELD_VALUES,
-  SORT_DIRECTION_VALUES,
-  TICKET_SORT_FIELD_VALUES,
-} from "@/shared/constants/filterSort";
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import AppFooter from "@/shared/design-system/AppFooter";
 import DashboardShell from "@/shared/design-system/DashboardShell";
@@ -18,13 +12,24 @@ import SkipLink from "@/shared/design-system/SkipLink";
 import { useTranslation } from "@/shared/i18n";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
+import SidebarNavigation from "@/domains/project/presentation/components/sidebarNavigation/SidebarNavigation";
+import { getProjectViewKeyFromPath } from "@/domains/project/presentation/navigation/projectViews.config";
+import {
+  ProjectPermissionsProvider,
+  useProjectPermissions,
+} from "@/domains/project/presentation/providers/permissions";
+import {
+  EPIC_PROGRESS_FILTER_VALUES,
+  EPIC_SORT_FIELD_VALUES,
+  SORT_DIRECTION_VALUES,
+  TICKET_SORT_FIELD_VALUES,
+} from "@/modules/board/constants/filterSort";
 import Breadcrumbs from "@/modules/board/presentation/components/breadcrumbs/Breadcrumbs";
 import EpicFilterControls from "@/modules/board/presentation/components/projectShellControls/EpicFilterControls";
 import EpicSortControls from "@/modules/board/presentation/components/projectShellControls/EpicSortControls";
 import TicketFilterControls from "@/modules/board/presentation/components/projectShellControls/TicketFilterControls";
 import TicketSortControls from "@/modules/board/presentation/components/projectShellControls/TicketSortControls";
 import ProjectToolbar from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar";
-import SidebarNavigation from "@/domains/project/presentation/components/sidebarNavigation/SidebarNavigation";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { useEpicQueryParams } from "@/modules/board/presentation/hooks/epic/useEpicQueryParams";
 import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
@@ -32,11 +37,6 @@ import { useLabels } from "@/modules/board/presentation/hooks/label";
 import { useProjectSearchSuggestions } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
 import { useProjectRealtime } from "@/modules/board/presentation/hooks/realtime/useProjectRealtime";
 import { useSprints } from "@/modules/board/presentation/hooks/sprint";
-import { getProjectViewKeyFromPath } from "@/domains/project/presentation/navigation/projectViews.config";
-import {
-  ProjectPermissionsProvider,
-  useProjectPermissions,
-} from "@/domains/project/presentation/providers/permissions";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
 import { useSortStore } from "@/modules/board/presentation/stores/useSortStore";
 

@@ -7,14 +7,10 @@ import Loader from "@/shared/design-system/Loader";
 import Modal from "@/shared/design-system/Modal";
 import Text from "@/shared/design-system/Text";
 import { useTranslation } from "@/shared/i18n";
-import {
-  filterEpicsByProgress,
-  filterEpicsBySearch,
-  sortEpics,
-} from "@/shared/utils/epicUtils";
 
 import styles from "./styles.module.scss";
 
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
 import CreateEpicForm from "@/modules/board/presentation/components/epic/createEpicForm/CreateEpicForm";
 import EpicsList from "@/modules/board/presentation/components/epic/epicsList/EpicsList";
 import {
@@ -22,8 +18,12 @@ import {
   useEpics,
 } from "@/modules/board/presentation/hooks/epic";
 import { useEpicQueryParams } from "@/modules/board/presentation/hooks/epic/useEpicQueryParams";
-import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
+import {
+  filterEpicsByProgress,
+  filterEpicsBySearch,
+  sortEpics,
+} from "@/modules/board/utils/epicUtils";
 
 type Props = {
   projectId: string;

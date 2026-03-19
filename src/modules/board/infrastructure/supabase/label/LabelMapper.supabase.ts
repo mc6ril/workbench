@@ -1,8 +1,7 @@
-import type { Label } from "@/modules/board/core/domain/schema/label.schema";
-
 import type { LabelRow } from "@/shared/infrastructure/types";
-
 import { toDate } from "@/shared/utils/guards";
+
+import type { Label } from "@/modules/board/core/domain/schema/label.schema";
 
 /**
  * Maps a Supabase row to a domain Label entity.

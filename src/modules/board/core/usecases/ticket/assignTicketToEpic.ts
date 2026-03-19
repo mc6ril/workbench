@@ -1,11 +1,11 @@
 import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 import { createNotFoundError } from "@/shared/errors/repositoryError";
+
 import { validateEpicTicketAssignment } from "@/modules/board/core/domain/rules/epic.rules";
 import {
   AssignTicketToEpicInputSchema,
   type Ticket,
 } from "@/modules/board/core/domain/schema/ticket.schema";
-
 import type { EpicRepository } from "@/modules/board/core/ports/epicRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 

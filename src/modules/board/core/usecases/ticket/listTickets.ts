@@ -4,7 +4,6 @@ import type {
   TicketSort,
 } from "@/modules/board/core/domain/schema/ticket.schema";
 import { TicketSortSchema } from "@/modules/board/core/domain/schema/ticket.schema";
-
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
 /**

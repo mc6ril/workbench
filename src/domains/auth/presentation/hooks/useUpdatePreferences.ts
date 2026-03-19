@@ -1,13 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { updatePreferences } from "@/domains/auth/core/usecases/profile/updatePreferences";
-
 import { useSession } from "./useSession";
 
 import type { UpdatePreferencesInput } from "@/domains/auth/core/domain/schema/auth.schema";
 import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
-import { queryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
+import { updatePreferences } from "@/domains/auth/core/usecases/profile/updatePreferences";
 import { userProfileRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { queryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
 
 /**
  * Hook for updating user preferences (theme, notifications, language).

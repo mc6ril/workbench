@@ -4,12 +4,6 @@ import {
   createDatabaseError,
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
-import type {
-  CreateLabelInput,
-  Label,
-  UpdateLabelInput,
-} from "@/modules/board/core/domain/schema/label.schema";
-
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 import type { LabelRow } from "@/shared/infrastructure/types";
 
@@ -18,6 +12,11 @@ import {
   mapLabelRowToDomain,
 } from "./LabelMapper.supabase";
 
+import type {
+  CreateLabelInput,
+  Label,
+  UpdateLabelInput,
+} from "@/modules/board/core/domain/schema/label.schema";
 import type { LabelRepository } from "@/modules/board/core/ports/labelRepository";
 
 /**

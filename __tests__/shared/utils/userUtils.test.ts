@@ -1,4 +1,4 @@
-import { getInitials } from "@/shared/utils/userUtils";
+import { getInitials } from "@/domains/auth/utils/userUtils";
 
 describe("getInitials", () => {
   it("should return two initials from a two-word name", () => {

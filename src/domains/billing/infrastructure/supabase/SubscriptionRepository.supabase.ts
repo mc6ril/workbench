@@ -1,7 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { createDatabaseError } from "@/shared/errors/repositoryError";
-
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 import type { SubscriptionRow } from "@/shared/infrastructure/types";
 

@@ -22,10 +22,6 @@ export type { PaginationLimits, PasswordLimits, StorageKey } from "./app.types";
 export type { LegalSection } from "./legal";
 export { GDPR_RIGHTS_KEYS, LEGAL_SECTIONS } from "./legal";
 
-// Re-export pricing page constants
-export type { FeatureRow, PlanKey } from "./pricing";
-export { FAQ_KEYS, FEATURE_ROWS, PLAN_KEYS } from "./pricing";
-
 // Re-export landing page constants
 export {
   FEATURE_KEYS,
@@ -44,6 +40,3 @@ export {
   API_MESSAGES_COMMON,
   API_MESSAGES_STRIPE,
 } from "./apiMessages";
-
-// Re-export board UI constants
-export { BOARD_COLUMN_DROP_PREFIX } from "./board";

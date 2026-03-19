@@ -2,9 +2,9 @@ import React, { useMemo } from "react";
 import Image from "next/image";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { getInitials } from "@/shared/utils";
 
 import styles from "./Avatar.module.scss";
+import { getAvatarInitials } from "./getAvatarInitials";
 
 type AvatarSize = "sm" | "md" | "lg" | "xl";
 
@@ -33,7 +33,7 @@ type Props = {
  * Supports multiple sizes and proper accessibility attributes.
  */
 const Avatar = ({ src, name, size = "md", "aria-label": ariaLabel }: Props) => {
-  const initials = useMemo(() => getInitials(name), [name]);
+  const initials = useMemo(() => getAvatarInitials(name), [name]);
   const avatarId = getAccessibilityId(`avatar-${name ?? "unknown"}`);
   const displayLabel = ariaLabel ?? name ?? "User avatar";
   const sizePx = AVATAR_SIZE_PX[size];

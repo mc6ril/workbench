@@ -4,15 +4,6 @@ import {
   createDatabaseError,
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
-import type {
-  CreateTicketInput,
-  Ticket,
-  TicketAssignee,
-  TicketFilters,
-  TicketSort,
-  UpdateTicketInput,
-} from "@/modules/board/core/domain/schema/ticket.schema";
-
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 import type { TicketRow } from "@/shared/infrastructure/types";
 
@@ -21,6 +12,14 @@ import {
   mapTicketRowToDomain,
 } from "./TicketMapper.supabase";
 
+import type {
+  CreateTicketInput,
+  Ticket,
+  TicketAssignee,
+  TicketFilters,
+  TicketSort,
+  UpdateTicketInput,
+} from "@/modules/board/core/domain/schema/ticket.schema";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
 type TicketAssigneeRow = {

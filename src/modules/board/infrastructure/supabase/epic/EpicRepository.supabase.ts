@@ -4,18 +4,17 @@ import {
   createDatabaseError,
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { EpicRow, TicketRow } from "@/shared/infrastructure/types";
+
+import { mapEpicRowsToDomain, mapEpicRowToDomain } from "./EpicMapper.supabase";
+
 import type {
   CreateEpicRepositoryInput,
   Epic,
   UpdateEpicInput,
 } from "@/modules/board/core/domain/schema/epic.schema";
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
-
-import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
-import type { EpicRow, TicketRow } from "@/shared/infrastructure/types";
-
-import { mapEpicRowsToDomain, mapEpicRowToDomain } from "./EpicMapper.supabase";
-
 import type { EpicRepository } from "@/modules/board/core/ports/epicRepository";
 import { mapTicketRowsToDomain } from "@/modules/board/infrastructure/supabase/ticket/TicketMapper.supabase";
 

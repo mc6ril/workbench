@@ -1,9 +1,8 @@
+import type { UserPreferences } from "@/domains/auth/core/domain/schema/auth.schema";
 import type {
   UpdateProfileInput,
   UserProfile,
 } from "@/domains/auth/core/domain/schema/userProfile.schema";
-
-import type { UserPreferences } from "@/domains/auth/core/domain/schema/auth.schema";
 
 /**
  * Repository contract for UserProfile operations.

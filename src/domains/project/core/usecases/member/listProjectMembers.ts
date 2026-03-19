@@ -1,5 +1,4 @@
 import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-
 import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
 
 /**

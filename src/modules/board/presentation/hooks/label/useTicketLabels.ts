@@ -4,7 +4,6 @@ import {
   addLabelsToTicket,
   removeLabelsFromTicket,
 } from "@/modules/board/core/usecases/label";
-
 import { labelRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 

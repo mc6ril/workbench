@@ -1,7 +1,4 @@
-import type { UserProfile } from "@/domains/auth/core/domain/schema/userProfile.schema";
-
 import type { UserProfileRow } from "@/shared/infrastructure/types";
-
 import { toDate } from "@/shared/utils/guards";
 
 import {
@@ -9,6 +6,7 @@ import {
   type UserPreferences,
   UserPreferencesSchema,
 } from "@/domains/auth/core/domain/schema/auth.schema";
+import type { UserProfile } from "@/domains/auth/core/domain/schema/userProfile.schema";
 
 /**
  * Parses the jsonb preferences column into a validated UserPreferences object.

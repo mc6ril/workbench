@@ -3,11 +3,11 @@
  * Creates scoped loggers following the LoggerFactory port interface.
  */
 
+import type { Logger, LoggerFactory, LogMeta } from "@/shared/observability/logger.port";
+
 import { getLogConfig } from "./config";
 import { JsonConsoleLogger } from "./jsonConsoleLogger";
 import { normalizeScope, sanitizeMeta } from "./utils";
-
-import type { Logger, LoggerFactory, LogMeta } from "@/shared/observability/logger.port";
 
 /**
  * Creates a logger factory instance.

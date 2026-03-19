@@ -2,8 +2,6 @@
 
 import { useCallback, useState } from "react";
 
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-
 import Avatar from "@/shared/design-system/Avatar";
 import Button from "@/shared/design-system/Button";
 import ErrorMessage from "@/shared/design-system/ErrorMessage";
@@ -17,6 +15,7 @@ import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import styles from "./ProjectMembersModal.module.scss";
 
 import { useSession } from "@/domains/auth/presentation/hooks/useSession";
+import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useRemoveMember } from "@/domains/project/presentation/hooks/member/useRemoveMember";
 import { useUpdateMemberRole } from "@/domains/project/presentation/hooks/member/useUpdateMemberRole";

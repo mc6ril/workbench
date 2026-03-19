@@ -1,12 +1,12 @@
 import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 import { createNotFoundError } from "@/shared/errors/repositoryError";
+
 import { validateTicket } from "@/modules/board/core/domain/rules/ticket.rules";
 import {
   type Ticket,
   type UpdateTicketInput,
   UpdateTicketInputSchema,
 } from "@/modules/board/core/domain/schema/ticket.schema";
-
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
 /**

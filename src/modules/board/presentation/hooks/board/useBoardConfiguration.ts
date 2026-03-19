@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { getBoardConfiguration } from "@/modules/board/core/usecases/board/getBoardConfiguration";
-
 import { boardRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 

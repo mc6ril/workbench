@@ -1,18 +1,16 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { createDatabaseError } from "@/shared/errors/repositoryError";
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 import type {
   ProjectMemberRow,
   UserProfileRow,
 } from "@/shared/infrastructure/types";
-
 import { isProjectRole } from "@/shared/utils/guards";
 
 import { mapMemberRowsToDomain } from "./MemberMapper.supabase";
 
+import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
 import type { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 

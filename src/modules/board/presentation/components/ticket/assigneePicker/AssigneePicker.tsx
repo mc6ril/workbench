@@ -6,15 +6,15 @@ import React, {
   useState,
 } from "react";
 
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
-
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./AssigneePicker.module.scss";
 import AssigneePickerCurrent from "./components/AssigneePickerCurrent";
 import AssigneePickerDropdown from "./components/AssigneePickerDropdown";
+
+import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
+import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
 
 type Props = {
   /** All members of the project (available for assignment) */

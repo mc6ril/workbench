@@ -1,8 +1,7 @@
-import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
-
 import Avatar from "@/shared/design-system/Avatar";
 import Button from "@/shared/design-system/Button";
 
+import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
 import styles from "@/modules/board/presentation/components/ticket/assigneePicker/AssigneePicker.module.scss";
 
 type AssigneePickerCurrentProps = {

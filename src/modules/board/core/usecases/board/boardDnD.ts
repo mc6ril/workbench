@@ -1,7 +1,6 @@
+import { BOARD_COLUMN_DROP_PREFIX } from "@/modules/board/constants/board";
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { BoardColumnConfig } from "@/modules/board/core/domain/types/board.types";
-
-import { BOARD_COLUMN_DROP_PREFIX } from "@/shared/constants/board";
 
 export type BoardTicketIds = Record<string, string[]>;
 

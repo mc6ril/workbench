@@ -1,11 +1,10 @@
+import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
 import type {
   EpicRow,
   LabelRow,
   SprintRow,
   TicketRow,
 } from "@/shared/infrastructure/types";
-
-import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
 
 import type { RealtimeRepository } from "@/modules/board/core/ports/realtimeRepository";
 import { mapEpicRowToDomain } from "@/modules/board/infrastructure/supabase/epic/EpicMapper.supabase";

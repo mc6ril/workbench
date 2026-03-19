@@ -2,8 +2,6 @@
 
 import React, { useState } from "react";
 
-import type { CreateEpicInput } from "@/modules/board/core/domain/schema/epic.schema";
-
 import { BUTTON_LABELS } from "@/shared/a11y/constants";
 import Button from "@/shared/design-system/Button";
 import ErrorMessage from "@/shared/design-system/ErrorMessage";
@@ -13,6 +11,8 @@ import Textarea from "@/shared/design-system/Textarea";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./CreateEpicForm.module.scss";
+
+import type { CreateEpicInput } from "@/modules/board/core/domain/schema/epic.schema";
 
 type Props = {
   projectId: string;

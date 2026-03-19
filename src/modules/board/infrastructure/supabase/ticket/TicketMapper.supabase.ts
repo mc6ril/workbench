@@ -1,8 +1,7 @@
-import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
-
 import type { TicketRow } from "@/shared/infrastructure/types";
-
 import { toDate } from "@/shared/utils/guards";
+
+import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 
 /**
  * Maps a Supabase row to a domain Ticket entity.

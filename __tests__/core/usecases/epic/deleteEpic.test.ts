@@ -1,12 +1,11 @@
-import type { Epic } from "@/modules/board/core/domain/schema/epic.schema";
-import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
-
-import { deleteEpic } from "@/modules/board/core/usecases/epic/deleteEpic";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createEpicRepositoryMock } from "../../../../__mocks__/core/ports/epicRepository";
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
+
+import type { Epic } from "@/modules/board/core/domain/schema/epic.schema";
+import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
+import { deleteEpic } from "@/modules/board/core/usecases/epic/deleteEpic";
 
 describe("deleteEpic", () => {
   const epicId = "123e4567-e89b-12d3-a456-426614174000";

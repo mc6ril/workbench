@@ -2,9 +2,9 @@
  * Logging configuration based on environment.
  */
 
-import type { LogConfig } from "./types";
-
 import type { LogLevel } from "@/shared/observability/logger.port";
+
+import type { LogConfig } from "./types";
 
 /**
  * Valid log levels for whitelist validation.

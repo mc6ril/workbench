@@ -1,11 +1,11 @@
 import { createDomainRuleError } from "@/shared/errors/domainRuleError";
+
 import { validateBoardWithColumns } from "@/modules/board/core/domain/rules/board.rules";
 import type { BoardConfiguration } from "@/modules/board/core/domain/schema/board.schema";
 import {
   type ConfigureColumnsInput,
   ConfigureColumnsInputSchema,
 } from "@/modules/board/core/domain/schema/board.schema";
-
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 
 /**

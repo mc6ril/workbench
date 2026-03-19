@@ -20,7 +20,6 @@ import Text from "@/shared/design-system/Text";
 import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { markNavigationStart } from "@/shared/observability";
-import { getWorkspaceEmoji } from "@/shared/utils";
 import { shouldShowLoading } from "@/shared/utils/queryStatus";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
@@ -38,6 +37,7 @@ import { useCreateProject } from "@/domains/workspace/presentation/hooks/useCrea
 import { useLastActivitySubtitle } from "@/domains/workspace/presentation/hooks/useLastActivitySubtitle";
 import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
 import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
+import { getWorkspaceEmoji } from "@/domains/workspace/utils/workspaceUtils";
 
 type CreateProjectFormData = CreateProjectInput;
 

@@ -3,9 +3,6 @@
  * Provides browser instances for React Query hooks and factory functions for server contexts.
  */
 
-import { createCommentRepository } from "@/modules/board/infrastructure/supabase/comment/CommentRepository.supabase";
-import { createRealtimeRepository } from "@/modules/board/infrastructure/supabase/realtime/RealtimeRepository.supabase";
-
 import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
 
 import { createBoardRepository } from "./board/BoardRepository.supabase";
@@ -13,6 +10,9 @@ import { createEpicRepository } from "./epic/EpicRepository.supabase";
 import { createLabelRepository } from "./label/LabelRepository.supabase";
 import { createSprintRepository } from "./sprint/SprintRepository.supabase";
 import { createTicketRepository } from "./ticket/TicketRepository.supabase";
+
+import { createCommentRepository } from "@/modules/board/infrastructure/supabase/comment/CommentRepository.supabase";
+import { createRealtimeRepository } from "@/modules/board/infrastructure/supabase/realtime/RealtimeRepository.supabase";
 
 export const ticketRepository = createTicketRepository(
   createSupabaseBrowserClient()

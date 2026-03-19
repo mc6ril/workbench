@@ -1,6 +1,5 @@
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 import { ReorderTicketInputSchema } from "@/modules/board/core/domain/schema/ticket.schema";
-
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
 /**

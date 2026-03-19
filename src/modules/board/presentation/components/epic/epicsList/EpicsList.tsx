@@ -2,8 +2,6 @@
 
 import React, { useMemo } from "react";
 
-import type { EpicWithProgress } from "@/modules/board/core/domain/schema/epic.schema";
-
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import EmptyState from "@/shared/design-system/EmptyState";
 import ErrorMessage from "@/shared/design-system/ErrorMessage";
@@ -14,6 +12,7 @@ import { useTranslation } from "@/shared/i18n";
 
 import styles from "./EpicsList.module.scss";
 
+import type { EpicWithProgress } from "@/modules/board/core/domain/schema/epic.schema";
 import EpicCard from "@/modules/board/presentation/components/epic/epicCard/EpicCard";
 
 type Props = {

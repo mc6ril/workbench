@@ -1,11 +1,10 @@
 import { z } from "zod";
 
-import type { CreateEpicInput, Epic } from "@/modules/board/core/domain/schema/epic.schema";
-
-import { createEpic } from "@/modules/board/core/usecases/epic/createEpic";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createEpicRepositoryMock } from "../../../../__mocks__/core/ports/epicRepository";
+
+import type { CreateEpicInput, Epic } from "@/modules/board/core/domain/schema/epic.schema";
+import { createEpic } from "@/modules/board/core/usecases/epic/createEpic";
 
 describe("createEpic", () => {
   const projectId = "123e4567-e89b-12d3-a456-426614174000";

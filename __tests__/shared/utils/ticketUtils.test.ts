@@ -2,7 +2,7 @@ import {
   buildTicketAriaLabel,
   buildTicketCode,
   normalizeTicketSearch,
-} from "@/shared/utils/ticketUtils";
+} from "@/modules/board/utils/ticketUtils";
 
 describe("buildTicketCode", () => {
   it("returns uppercase code with number", () => {

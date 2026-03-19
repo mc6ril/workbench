@@ -1,8 +1,7 @@
-import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
-
 import Button from "@/shared/design-system/Button";
 import { useTranslation } from "@/shared/i18n";
 
+import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 import CreateSubtaskForm from "@/modules/board/presentation/components/ticket/createSubtaskForm/CreateSubtaskForm";
 import SubtasksList from "@/modules/board/presentation/components/ticket/subtasksList/SubtasksList";
 import styles from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";

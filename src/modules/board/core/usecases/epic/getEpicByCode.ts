@@ -1,11 +1,10 @@
+import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 import {
   type Epic,
   type GetEpicByCodeInput,
   GetEpicByCodeInputSchema,
 } from "@/modules/board/core/domain/schema/epic.schema";
-
 import type { EpicRepository } from "@/modules/board/core/ports/epicRepository";
-import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**
  * Get an epic by its project short code and code number.

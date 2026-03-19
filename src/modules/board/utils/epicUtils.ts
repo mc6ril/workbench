@@ -1,10 +1,10 @@
+import type { SortDirection } from "@/shared/types";
+
 import type { EpicWithProgress } from "@/modules/board/core/domain/schema/epic.schema";
 import type {
   EpicProgressFilter,
   EpicSortField,
 } from "@/modules/board/core/domain/types";
-
-import type { SortDirection } from "@/shared/types";
 
 export const filterEpicsBySearch = (
   epics: EpicWithProgress[],

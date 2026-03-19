@@ -1,9 +1,3 @@
-import type { EpicSortField } from "@/modules/board/core/domain/types";
-
-import {
-  EPIC_SORT_FIELD_VALUES,
-  SORT_DIRECTION_VALUES,
-} from "@/shared/constants/filterSort";
 import Button from "@/shared/design-system/Button";
 import Select from "@/shared/design-system/Select";
 import { useTranslation } from "@/shared/i18n";
@@ -11,6 +5,12 @@ import type { SortDirection } from "@/shared/types";
 
 import styles from "./ProjectShellControls.module.scss";
 import type { EpicSortControlsProps } from "./types";
+
+import {
+  EPIC_SORT_FIELD_VALUES,
+  SORT_DIRECTION_VALUES,
+} from "@/modules/board/constants/filterSort";
+import type { EpicSortField } from "@/modules/board/core/domain/types";
 
 const EpicSortControls = ({
   epicSortField,
