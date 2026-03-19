@@ -3,38 +3,38 @@
 import { use, useCallback, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 
-import { getDefaultBoardConfiguration } from "@/core/domain/rules/board.rules";
-import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
-
-import type { PriorityItem } from "@/presentation/components/prioritiesSettings/PrioritiesSettings";
-import type { StatusColumnItem } from "@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
-import Loader from "@/presentation/components/ui/Loader";
-import UpgradePrompt from "@/presentation/components/upgradePrompt/UpgradePrompt";
-import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
-import SettingsLayout from "@/presentation/layouts/settingsLayout/SettingsLayout";
-
+import Loader from "@/shared/design-system/loader";
 import { useTranslation } from "@/shared/i18n";
 
+import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
+import UpgradePrompt from "@/domains/billing/presentation/components/upgradePrompt/UpgradePrompt";
+import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
+import SettingsLayout from "@/domains/project/presentation/layouts/settingsLayout/SettingsLayout";
+import { getDefaultBoardConfiguration } from "@/modules/board/core/domain/rules/board.rules";
+import type { PriorityItem } from "@/modules/board/presentation/components/prioritiesSettings/PrioritiesSettings";
+import type { StatusColumnItem } from "@/modules/board/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
+
 const ProjectSettings = dynamic(
-  () => import("@/presentation/components/projectSettings/ProjectSettings"),
+  () =>
+    import("@/domains/project/presentation/components/projectSettings/ProjectSettings"),
   { ssr: false }
 );
 
 const StatusesColumnsSettings = dynamic(
   () =>
-    import("@/presentation/components/statusesColumnsSettings/StatusesColumnsSettings"),
+    import("@/modules/board/presentation/components/statusesColumnsSettings/StatusesColumnsSettings"),
   { ssr: false }
 );
 
 const PrioritiesSettings = dynamic(
   () =>
-    import("@/presentation/components/prioritiesSettings/PrioritiesSettings"),
+    import("@/modules/board/presentation/components/prioritiesSettings/PrioritiesSettings"),
   { ssr: false }
 );
 
 const ExportImportSettings = dynamic(
   () =>
-    import("@/presentation/components/exportImportSettings/ExportImportSettings"),
+    import("@/modules/board/presentation/components/exportImportSettings/ExportImportSettings"),
   { ssr: false }
 );
 
@@ -50,13 +50,12 @@ const SettingsPage = ({
   );
 
   const [activeTabId, setActiveTabId] = useState<string>("project");
-  const [statusColumns, setStatusColumns] = useState<StatusColumnItem[]>(
-    () =>
-      getDefaultBoardConfiguration(projectId).columns.map((column, index) => ({
-        id: `${column.state}-${index}`,
-        name: column.name,
-        isEnabled: column.visible ?? true,
-      }))
+  const [statusColumns, setStatusColumns] = useState<StatusColumnItem[]>(() =>
+    getDefaultBoardConfiguration(projectId).columns.map((column, index) => ({
+      id: `${column.state}-${index}`,
+      name: column.name,
+      isEnabled: column.visible ?? true,
+    }))
   );
 
   const tabs = useMemo(

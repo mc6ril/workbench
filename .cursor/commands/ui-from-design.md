@@ -27,12 +27,12 @@ The UI Designer:
 
 1. **Analyze Design Image**
    - Visually analyze layout, hierarchy, and intent
-   - Identify reusable components from presentation/components/ui/
+   - Identify reusable components from `shared/design-system/`
    - Map design elements to components (Button, Input, Card, etc.)
 
 2. **Scaffold File Structure**
-   - Create `app/<route>/page.tsx` (Next.js page)
-   - Create `presentation/components/<feature>/` directory for local components
+   - Create `src/app/<route>/page.tsx` route composition
+   - Create owner-specific components under `src/domains/<domain>/presentation/components/` or `src/modules/<module>/presentation/components/`
    - Create SCSS files using variables from `styles/variables/*`
 
 3. **Generate Code**
@@ -63,8 +63,8 @@ The UI Designer:
 ### Design Analysis
 
 - [ ] Design image analyzed (layout, hierarchy, components)
-- [ ] Reusable components identified from presentation/components/ui/
-- [ ] File structure planned (app/<route>/page.tsx, presentation/components/)
+- [ ] Reusable components identified from `shared/design-system/`
+- [ ] File structure planned (`src/app` route composition + domain presentation components)
 
 ### Code Generation
 
@@ -99,7 +99,7 @@ The UI Designer:
 - **SCSS variables only**: Always use SCSS variables from styles/variables/\*, add missing variables if needed
 - **Accessibility first**: All components must be fully accessible (WCAG 2.1 AA) using shared/a11y/ utilities
 - **Responsive**: Support responsive layouts using CSS media queries
-- **Coordinate with Dev**: UI Designer creates presentation layer, Architecture-Aware Dev handles business logic and React Query hooks
+- **Coordinate with Dev**: UI Designer creates route composition, shared UI, and domain presentation; Architecture-Aware Dev handles domain business logic and domain hooks
 
 ## Example Workflow
 
@@ -108,4 +108,4 @@ The UI Designer:
 3. UI Designer generates code with Next.js components and SCSS variables
 4. UI Designer ensures accessibility using shared/a11y/ utilities
 5. UI Designer ensures responsive design
-6. Architecture-Aware Dev integrates with React Query hooks and business logic
+6. Architecture-Aware Dev integrates with domain hooks and business logic

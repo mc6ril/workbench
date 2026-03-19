@@ -3,10 +3,9 @@
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
-import Text from "@/presentation/components/ui/Text";
-
 import { getAccessibilityId } from "@/shared/a11y";
 import { GDPR_RIGHTS_KEYS, LEGAL_SECTIONS } from "@/shared/constants";
+import Text from "@/shared/design-system/text";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";

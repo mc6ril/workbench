@@ -1,8 +1,38 @@
 # User Flows Architecture
 
-This document describes the end-to-end user flows and routing architecture of the application.
+This document describes routing, guards, and route composition in the final domain + module architecture.
 
-## End-to-End User Flow
+## Routing Principle
+
+`src/app/` remains the Next.js routing layer only.
+
+Route files should:
+
+- define URL structure
+- apply route-level guards
+- compose pages, layouts, or flows from the owning domain or module
+
+## Ownership Map
+
+- `src/domains/auth/presentation/` -> auth screens and account-facing flows
+- `src/domains/workspace/presentation/` -> workspace dashboard and create/join project entry UX
+- `src/domains/project/presentation/` -> project shell, project settings, members, invitations, enabled-module management
+- `src/modules/board/presentation/` -> board, epics, and board-specific screens
+- `src/domains/billing/` -> checkout, portal, plans, subscriptions, billing webhooks
+
+Shared cross-cutting pieces still belong in:
+
+- `src/shared/design-system/`
+- `src/shared/infrastructure/`
+- `src/shared/i18n/`
+- `src/shared/a11y/`
+- `src/shared/observability/`
+
+Public/static pages that do not belong to a stable business owner may also live in `src/presentation/pages/`.
+
+This is a documented exception for app-level public surfaces such as landing and legal. See [Accepted Architecture Exceptions](./accepted-exceptions.md).
+
+## End-to-End Product Flow
 
 ```mermaid
 stateDiagram-v2
@@ -14,131 +44,123 @@ stateDiagram-v2
    SignUp --> VerifyEmail: signup success
    VerifyEmail --> Workspace: email verified
 
-   Workspace --> CreateProject: no projects
-   Workspace --> ProjectBoard: select project
-   CreateProject --> ProjectBoard: project created
+   Workspace --> Account: account settings
+   Workspace --> ProjectBoard: create or open project
 
-   ProjectBoard --> ProjectBoard: navigate
-   ProjectBoard --> ProjectEpics: navigate
    ProjectBoard --> ProjectSettings: navigate
-
-   ProjectBoard --> ProjectBoard: navigate
-   ProjectEpics --> ProjectBoard: navigate
+   ProjectBoard --> BillingPortal: upgrade or manage plan
    ProjectSettings --> ProjectBoard: navigate
 ```
 
-## Route & Layout Guard Flow
-
-The application uses a layered guard system to protect routes and ensure proper authentication and authorization:
+## Route & Guard Flow
 
 ```mermaid
 flowchart TD
-   REQ[Request] --> MIDDLEWARE{Middleware<br/>Optional Routing Optimization}
-   MIDDLEWARE -->|Public Route| PUBLIC[Public Routes]
-   MIDDLEWARE -->|Protected Route| AUTH_LAYOUT[(auth) Layout]
+   REQ[Request] --> APP[src/app route]
+   APP --> MIDDLEWARE[middleware.ts]
+   MIDDLEWARE --> AUTH_CHECK{Authenticated?}
 
-   PUBLIC --> LANDING_LAYOUT[Landing Layout]
-   LANDING_LAYOUT -->|Session Exists| REDIRECT_WS[Redirect to /workspace]
-   LANDING_LAYOUT -->|No Session| LANDING[/ Landing Page]
-   PUBLIC --> AUTH_PAGES[/auth/* Auth Pages]
+   AUTH_CHECK -->|No| PUBLIC[Public route handling]
+   AUTH_CHECK -->|Yes| PROTECTED[Protected route handling]
 
-   AUTH_LAYOUT -->|No Session| REDIRECT_LANDING[Redirect to /]
-   AUTH_LAYOUT -->|Session OK| CHILD{Child Route}
+   PUBLIC --> AUTH_DOMAIN[auth route composition]
+   PROTECTED --> WORKSPACE_ROUTE[/workspace composition]
+   PROTECTED --> ACCOUNT_ROUTE[/account composition]
+   PROTECTED --> PROJECT_ROUTE[/:projectId/* composition]
+   PROTECTED --> BILLING_ROUTE[/api/stripe/* composition]
 
-   CHILD -->|/workspace| WS_LAYOUT[Workspace Layout]
-   CHILD -->|/:projectId| PROJ_LAYOUT[Project Layout]
-
-   WS_LAYOUT --> WS_PAGE[Workspace Page<br/>Client: useProjects]
-
-   PROJ_LAYOUT -->|getProject = null| REDIRECT_WS[Redirect to /workspace]
-   PROJ_LAYOUT -->|getProject OK| PROJ_CHILD{Project Child}
-
-   PROJ_CHILD -->|/:projectId| REDIRECT_BOARD[Redirect to /:projectId/board]
-   PROJ_CHILD -->|/:projectId/board| BOARD_PAGE[Board Page<br/>Client: useProject(projectId)<br/>useProjectTickets(projectId)]
-   PROJ_CHILD -->|/:projectId/board| BOARD_PAGE[Board Page<br/>Client: useProject(projectId)<br/>useProjectTickets(projectId, filters)]
-   PROJ_CHILD -->|/:projectId/epics| EPICS_PAGE[Epics Page<br/>Client: useProject(projectId)<br/>useProjectEpics(projectId)]
-   PROJ_CHILD -->|/:projectId/settings| SETTINGS_PAGE[Settings Page<br/>Client: useProject(projectId)<br/>useProjectMembers(projectId)]
+   WORKSPACE_ROUTE --> WORKSPACE_DOMAIN[workspace presentation]
+   ACCOUNT_ROUTE --> AUTH_ACCOUNT[auth account presentation]
+   PROJECT_ROUTE --> ACCESS_CHECK{Project access allowed?}
+   ACCESS_CHECK -->|No| REDIRECT_WS[Redirect to /workspace]
+   ACCESS_CHECK -->|Yes| PROJECT_SHELL[project shell]
+   PROJECT_SHELL --> MODULE_ROUTE{Active route}
+   MODULE_ROUTE --> BOARD_MODULE[board presentation]
+   MODULE_ROUTE --> PROJECT_SETTINGS[project settings presentation]
+   BILLING_ROUTE --> BILLING_DOMAIN[billing flow]
 ```
-
-**Security Architecture:**
-
-- **Middleware** is an optimization layer for UX redirects and route filtering. It is NOT the source of truth for security.
-- **AuthLayout** and **ProjectLayout** (server components) are the primary security guards, checking authentication and access before rendering.
-- **RLS (Row Level Security)** at the database level is the ultimate source of truth for data access control.
-- This layered approach ensures security even if middleware is bypassed or misconfigured.
 
 ## Route Structure
 
 ### Public Routes
 
-- `/` - Landing page (redirects to `/workspace` if authenticated)
-- `/auth/signin` - Sign in page
-- `/auth/signup` - Sign up page
-- `/auth/verify-email` - Email verification page
-- `/auth/reset-password` - Password reset request page
-- `/auth/update-password` - Password update page
+- `/`
+- `/auth/signin`
+- `/auth/signup`
+- `/auth/callback`
+- `/auth/verify-email`
+- `/auth/reset-password`
+- `/auth/update-password`
+- `/join/[token]`
 
-### Protected Routes (under `(auth)` route group)
+### Protected Routes
 
-- `/workspace` - Workspace page (list projects, create/access projects)
-- `/:projectId` - Project root (redirects to `/:projectId/board`)
-- `/:projectId/board` - Board view
-- `/:projectId/board` - Board view
-- `/:projectId/epics` - Epics view
-- `/:projectId/settings` - Project settings
+- `/workspace`
+- `/account`
+- `/:projectId`
+- `/:projectId/board`
+- `/:projectId/epics`
+- `/:projectId/settings`
+
+### Billing/API Routes
+
+- `/api/stripe/checkout`
+- `/api/stripe/portal`
+- `/api/stripe/webhook`
 
 ## Layout Responsibilities
 
-### Root Layout (`app/layout.tsx`)
+### Root layout
 
-- Provides global providers (ReactQueryProvider, etc.)
-- No authentication checks
+- Global HTML shell
+- Shared providers
+- No business rules
 
-### Landing Layout (`app/layout.tsx` or page-level check)
+### Auth route handling
 
-- Checks if user is authenticated
-- If authenticated → redirect to `/workspace`
-- If not authenticated → show landing page
+- Verifies session presence when needed
+- Delegates screen composition to the auth domain
 
-### Auth Layout (`app/(auth)/layout.tsx`)
+### Workspace route handling
 
-- Server-side authentication guard
-- Uses `getCurrentSession` usecase
-- Redirects to `/` on missing session or error (fail-closed)
-- Does NOT pass data to children
+- Delegates list/create/join project UX to the workspace domain
 
-### Workspace Layout (`app/(auth)/workspace/layout.tsx`)
+### Account route handling
 
-- Optional shell wrapper
-- No data fetching (all data fetched in client page)
+- Delegates account settings UI to the auth domain
 
-### Project Layout (`app/(auth)/[projectId]/layout.tsx`)
+### Project route handling
 
-- Server-side project access guard
-- Uses `getProject` usecase (respects RLS)
-- Redirects to `/workspace` if no access (returns null)
-- Does NOT pass project data to children
+- Verifies project access
+- Delegates the shell and governance UI to `domains/project/presentation/`
+- Delegates project-scoped capability screens to `modules/*/presentation/`
+
+### Billing route handling
+
+- Delegates checkout, portal, and webhook orchestration to the billing domain
 
 ## Data Fetching Strategy
 
-- **Server Layouts**: Only guards, no data fetching
-- **Client Pages**: All data fetching via React Query hooks
-- **Loading States**: `loading.tsx` files for workspace and project segments
-
-## React Query Hooks Convention
-
-To avoid generic hooks that become unmanageable, project-specific hooks follow a standardized naming pattern:
-
-- `useProject(projectId)` - Fetch project data
-- `useProjectTickets(projectId, filters?)` - Fetch tickets for a project
-- `useProjectEpics(projectId)` - Fetch epics for a project
-- `useProjectMembers(projectId)` - Fetch project members (future)
-
-This convention makes it clear that these hooks are project-scoped and helps prevent generic hooks from growing too large.
+- `src/app/` route files stay thin
+- Domain and module pages/layouts call hooks from their own `presentation/hooks/`
+- Hooks call use cases
+- Repositories and gateways use shared infra clients from `src/shared/infrastructure/`
 
 ## Security Model
 
-1. **Middleware**: Fast cookie-based auth check for protected routes
-2. **Layout Guards**: Server-side verification using usecases
-3. **RLS Policies**: Database-level access control (source of truth)
-4. **Fail-Closed**: Layouts redirect on errors, never render children on failure
+1. `middleware.ts` can optimize routing and early redirects
+2. auth/session concerns are owned by the auth domain and supported by shared infra clients
+3. workspace confirms that the user can enter project selection/create/join flows
+4. project access checks confirm route eligibility inside a given project
+5. database and provider policies remain the final source of truth
+
+## Key Takeaway
+
+Routing stays in `src/app/`, but route-specific rendering is delegated to the correct owner:
+
+- auth routes -> `src/domains/auth/`
+- workspace routes -> `src/domains/workspace/`
+- account routes -> `src/domains/auth/`
+- project container routes -> `src/domains/project/`
+- project module routes -> `src/modules/<module>/`
+- billing flows -> `src/domains/billing/`

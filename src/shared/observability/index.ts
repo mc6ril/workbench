@@ -3,19 +3,10 @@
  */
 
 export { createLoggerFactory } from "./loggerFactory";
-export {
-  createInstrumentedSupabaseFetch,
-  getNavigationPerfSnapshot,
-  isNavigationPerfEnabled,
-  markNavigationSettled,
-  markNavigationStart,
-  recordFullPageLoaderShown,
-  resetNavigationPerfMetrics,
-} from "./navigationPerf";
 export type {
   LogError,
   Logger,
   LoggerFactory,
   LogLevel,
   LogMeta,
-} from "@/core/ports/logger";
+} from "@/shared/observability/logger.port";

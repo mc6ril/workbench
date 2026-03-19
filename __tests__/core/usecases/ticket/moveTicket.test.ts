@@ -1,11 +1,10 @@
 import { z } from "zod";
 
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
-
-import { moveTicket } from "@/core/usecases/ticket/moveTicket";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
+
+import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
+import { moveTicket } from "@/modules/board/core/usecases/ticket/moveTicket";
 
 describe("moveTicket", () => {
   const ticketId = "123e4567-e89b-12d3-a456-426614174000";

@@ -1,13 +1,12 @@
 import { redirect } from "next/navigation";
 
-import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
-
-import { createAuthRepository } from "@/infrastructure/supabase/repositories";
-import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
-
 import { PAGE_ROUTES } from "@/shared/constants/routes";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { createLoggerFactory } from "@/shared/observability";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
+
+import { getCurrentSession } from "@/domains/auth/core/usecases/getCurrentSession";
+import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("AuthLayout");
 

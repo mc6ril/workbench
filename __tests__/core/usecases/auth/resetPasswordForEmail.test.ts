@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import { resetPasswordForEmail } from "@/core/usecases/auth/resetPasswordForEmail";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import {
   createAuthError,
@@ -9,6 +7,8 @@ import {
 } from "../../../../__mocks__/core/domain/authMocks";
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
+
+import { resetPasswordForEmail } from "@/domains/auth/core/usecases/password/resetPasswordForEmail";
 
 describe("resetPasswordForEmail", () => {
   const validInput = validResetPasswordInput;

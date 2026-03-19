@@ -1,12 +1,11 @@
+// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+
 import {
   ProjectRole,
   type ProjectWithRole,
-} from "@/core/domain/schema/project.schema";
-
-import { listProjects } from "@/core/usecases/project/listProjects";
-
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+} from "@/domains/workspace/core/domain/schema/project.schema";
+import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 
 describe("listProjects", () => {
   const mockProjectWithRole1: ProjectWithRole = {

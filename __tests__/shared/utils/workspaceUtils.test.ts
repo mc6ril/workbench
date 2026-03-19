@@ -1,4 +1,4 @@
-import { getWorkspaceEmoji } from "@/shared/utils/workspaceUtils";
+import { getWorkspaceEmoji } from "@/domains/workspace/utils/workspaceUtils";
 
 describe("getWorkspaceEmoji", () => {
   it("should return first emoji for index 0", () => {

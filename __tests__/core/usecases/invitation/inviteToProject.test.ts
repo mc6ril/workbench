@@ -1,20 +1,19 @@
-import { getFeatureLimit } from "@/core/domain/rules/planFeatures.rules";
-import { DEFAULT_USER_PREFERENCES } from "@/core/domain/schema/auth.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
+import { getFeatureLimit } from "@/domains/billing/core/domain/rules/planFeatures.rules";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
 import {
   type CreateInvitationInput,
   InvitationStatus,
   type ProjectInvitation,
-} from "@/core/domain/schema/invitation.schema";
-import { ProjectRole } from "@/core/domain/schema/project.schema";
-import type { ProjectMember } from "@/core/domain/schema/projectMember.schema";
-import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
+} from "@/domains/project/core/domain/schema/invitation.schema";
+import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
+import { inviteToProject } from "@/domains/project/core/usecases/invitation/inviteToProject";
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
-import { inviteToProject } from "@/core/usecases/invitation/inviteToProject";
-
-jest.mock("@/core/domain/rules/planFeatures.rules", () => ({
-  ...jest.requireActual("@/core/domain/rules/planFeatures.rules"),
+jest.mock("@/domains/billing/core/domain/rules/planFeatures.rules", () => ({
+  ...jest.requireActual("@/domains/billing/core/domain/rules/planFeatures.rules"),
   getFeatureLimit: jest.fn(
-    jest.requireActual("@/core/domain/rules/planFeatures.rules").getFeatureLimit
+    jest.requireActual("@/domains/billing/core/domain/rules/planFeatures.rules").getFeatureLimit
   ),
 }));
 

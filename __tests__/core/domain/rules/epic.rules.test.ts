@@ -2,10 +2,10 @@ import {
   calculateEpicProgress,
   validateEpicTicketAssignment,
   validateEpicWithTickets,
-} from "@/core/domain/rules/epic.rules";
-import type { Column } from "@/core/domain/schema/board.schema";
-import type { CreateEpicInput, Epic } from "@/core/domain/schema/epic.schema";
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
+} from "@/modules/board/core/domain/rules/epic.rules";
+import type { Column } from "@/modules/board/core/domain/schema/board.schema";
+import type { CreateEpicInput, Epic } from "@/modules/board/core/domain/schema/epic.schema";
+import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 
 describe("Epic Business Rules", () => {
   const createMockEpic = (overrides?: Partial<Epic>): Epic => ({

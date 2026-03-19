@@ -1,5 +1,4 @@
-import { createConstraintError } from "@/core/domain/repositoryError";
-
+import { createConstraintError } from "@/shared/errors/repositoryError";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 const createTranslator = (messages: Record<string, string>) => {

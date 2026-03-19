@@ -1,19 +1,19 @@
 import {
   createConstraintError,
   createNotFoundError,
-} from "@/core/domain/repositoryError";
+} from "@/shared/errors/repositoryError";
+
+// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+
 import {
   type Project,
   ProjectRole,
   type ProjectWithRole,
-} from "@/core/domain/schema/project.schema";
-
-import { addUserToProject } from "@/core/usecases/project/addUserToProject";
-import { getProject } from "@/core/usecases/project/getProject";
-import { listProjects } from "@/core/usecases/project/listProjects";
-
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+} from "@/domains/workspace/core/domain/schema/project.schema";
+import { addUserToProject } from "@/domains/workspace/core/usecases/project/addUserToProject";
+import { getProject } from "@/domains/workspace/core/usecases/project/getProject";
+import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 
 describe("Project Flow Tests", () => {
   const projectId = "123e4567-e89b-12d3-a456-426614174000";

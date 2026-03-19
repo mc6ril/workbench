@@ -1,6 +1,6 @@
 "use client";
 
-import UpdatePasswordPage from "@/presentation/pages/auth/update-password";
+import UpdatePasswordPage from "@/domains/auth/presentation/pages/update-password";
 
 const UpdatePassword = () => {
   return <UpdatePasswordPage />;

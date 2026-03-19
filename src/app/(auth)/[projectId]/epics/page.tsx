@@ -2,11 +2,11 @@
 
 import { Suspense, use } from "react";
 
-import { PlanFeature } from "@/core/domain/rules/planFeatures.rules";
+import Loader from "@/shared/design-system/loader";
 
-import Loader from "@/presentation/components/ui/Loader";
-import FeatureGate from "@/presentation/layouts/featureGate/FeatureGate";
-import EpicsLayout from "@/presentation/pages/epics";
+import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
+import FeatureGate from "@/domains/billing/presentation/layouts/featureGate/FeatureGate";
+import EpicsLayout from "@/modules/board/presentation/pages/epics";
 
 const EpicsPageRouteContent = ({
   params,

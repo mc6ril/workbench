@@ -1,12 +1,12 @@
 name: "Jira Ticket Generator"
-description: "Generates well-structured Jira tickets from feature ideas, aligned with Clean Architecture and project conventions."
+description: "Generates well-structured Jira tickets from feature ideas, aligned with the domain + module architecture and project conventions."
 tags: ["pm", "jira", "ticket", "planning", "documentation"]
 takesOverExecution: false
 
 goals:
   - "Transform feature ideas into CONCISE Jira tickets (target: < 50 lines)"
   - "Include only essential sections: title, description (1-2 sentences), 3-5 AC, technical layers, DoD"
-  - "Align tickets with Clean Architecture (Domain → Usecases → Infrastructure → Presentation)"
+  - "Align tickets with the domain + module architecture (app, owner core, owner infrastructure, owner presentation, shared)"
   - "NO code examples, NO detailed explanations, NO repetition"
   - "Suggest appropriate labels, priority, and estimation"
   - "Identify only key files impacted (not exhaustive list)"
@@ -19,7 +19,7 @@ instructions:
   - "Limit Acceptance Criteria to 3-5 items (most important only)"
   - "List only key files impacted (not exhaustive list)"
   - "NO code examples, NO detailed explanations, NO repetition"
-  - "Ensure the ticket aligns with Clean Architecture principles"
+  - "Ensure the ticket aligns with the domain + module architecture principles"
   - "Generate a Git branch name (format: feat/{projectKey}-{number}-{short-description})"
 
 scope:
@@ -34,7 +34,7 @@ playbooks:
   - name: "Generate Ticket from Idea"
     steps:
       - "Analyze the feature idea and extract key requirements"
-      - "Identify which Clean Architecture layers will be impacted (Domain, Usecases, Infrastructure, Presentation)"
+      - "Identify which architectural areas will be impacted (routing, domain core, domain infrastructure, domain presentation, shared)"
       - "Generate ticket title (concise, action-oriented)"
       - "Write detailed description with context and business value"
       - "Define user story format (As a... I want... So that...)"
@@ -61,7 +61,7 @@ prompts:
     - Brief description (1-2 sentences)
     - User Story (one line)
     - 3-5 testable Acceptance Criteria
-    - Technical layers impacted (Domain/Usecases/Infrastructure/Presentation)
+    - Technical areas impacted (Routing/Domain Core/Domain Infrastructure/Domain Presentation/Shared)
     - Essential DoD items
     - Key files impacted
 
@@ -70,7 +70,7 @@ prompts:
     Refine this Jira ticket draft:
     {ticket_draft}
 
-    Improve clarity, completeness, and alignment with Clean Architecture.
+    Improve clarity, completeness, and alignment with the domain + module architecture.
   estimate: |
     Provide estimation for this ticket:
     {ticket_description}
@@ -102,14 +102,15 @@ output_format: |
 
   ## Technical Considerations
 
-  - Domain: [types/rules if any]
-  - Usecases: [functions if any]
-  - Infrastructure: [repositories if any]
-  - Presentation: [components/hooks if any]
+  - Routing: [src/app impact if any]
+  - Domain Core: [schemas/rules/ports/usecases if any]
+  - Domain Infrastructure: [repositories/mappers if any]
+  - Domain Presentation: [hooks/stores/pages/layouts/components if any]
+  - Shared: [design-system, shared infra, i18n, a11y, auth if any]
 
   ## Definition of Done
 
-  - [ ] Code follows Clean Architecture
+  - [ ] Code follows the domain + module architecture
   - [ ] Unit tests passing
   - [ ] SCSS variables used
   - [ ] A11y compliant (WCAG 2.1 AA)
@@ -127,7 +128,7 @@ guards:
   - "NO code examples or detailed explanations"
   - "NO repetition of information"
   - "List only key files (3-5 max), not exhaustive"
-  - "Always identify Clean Architecture layers impacted (brief)"
+  - "Always identify the impacted architectural areas briefly"
   - "Always generate a Git branch name (format: feat/{projectKey}-{number}-{short-description})"
   - "Branch name must be in kebab-case, lowercase, no special characters, max 50 characters"
 

@@ -1,21 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { SubscriptionPlan } from "@/core/domain/schema/subscription.schema";
-
-import { getCurrentSession } from "@/core/usecases/auth/getCurrentSession";
-import { createCheckoutSession } from "@/core/usecases/subscription/createCheckoutSession";
-
-import { stripePaymentGateway } from "@/infrastructure/stripe/stripePaymentGateway";
-import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
-import { createSupabaseAdminClient } from "@/infrastructure/supabase/shared/client-admin";
-import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
-import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
-import { withRateLimit } from "@/infrastructure/web/rateLimit";
-import { verifyCsrfOrigin } from "@/infrastructure/web/security/csrf";
-
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
+import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
+import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
 import { createLoggerFactory } from "@/shared/observability";
+
+import { getCurrentSession } from "@/domains/auth/core/usecases/getCurrentSession";
+import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+import { createCheckoutSession } from "@/domains/billing/core/usecases/createCheckoutSession";
+import { stripePaymentGateway } from "@/domains/billing/infrastructure/stripe/stripePaymentGateway";
+import { createSubscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("API.Checkout");
 

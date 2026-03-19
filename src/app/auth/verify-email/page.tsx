@@ -1,6 +1,6 @@
 "use client";
 
-import VerifyEmailPage from "@/presentation/pages/auth/verify-email";
+import VerifyEmailPage from "@/domains/auth/presentation/pages/verify-email";
 
 const VerifyEmail = () => {
   return <VerifyEmailPage />;

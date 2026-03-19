@@ -1,261 +1,231 @@
-# 🏗️ Clean Architecture
+# Final Domain + Module Architecture
 
-## 📌 Fundamental Principles
+## Intent
 
-This project follows **strict Clean Architecture**.
+Workbench follows a **domain + module architecture**.
 
-The goal is to clearly separate responsibilities:
+The product is split between:
 
-- **Domain** → pure business rules, types and logic without dependencies
-- **Usecases (Application)** → business logic orchestrating repositories
-- **Infrastructure** → data access (Supabase), concrete implementations
-- **Presentation** → Next.js UI, SCSS, state management (Zustand), data fetching (React Query)
+- **domains**: stable business capabilities that exist outside a specific project module
+- **modules**: pluggable project-scoped capabilities enabled inside a project
+- **shared**: cross-cutting technical and UI assets
 
-### Golden Rule
+`src/app/` remains the Next.js routing and composition layer only.
 
-**No business logic should be in the UI or infrastructure.**
+## Target Structure
 
-### Layer Independence
-
-Cursor must respect layer independence:
-
-- The UI **never** calls Supabase directly
-- The UI calls React Query hooks, which execute usecases
-- Usecases use ports to contact the database
-- Ports have multiple possible implementations
-- Concrete implementations (Supabase) are in `infrastructure/`
-
----
-
-## 🧩 Project Structure
-
-```
+```text
 src/
-├── app/                    # Next.js pages (App Router)
-│   ├── layout.tsx
-│   ├── page.tsx
-│   ├── featureA/
-│   │   └── page.tsx
-│   └── featureB/
-│       └── [id]/
-│           └── page.tsx
-│
-├── core/                   # Business core (independent)
-│   ├── domain/            # Business entities + pure rules
-│   ├── usecases/          # Use cases (simple files)
-│   └── ports/             # Repository interfaces
-│
-├── infrastructure/         # Concrete implementations
-│   └── supabase/          # Concrete implementations of ports
-│       ├── client.ts
-│       └── utils/
-│
-├── presentation/           # Presentation layer
-│   ├── components/        # Pure UI components
-│   ├── layouts/
-│   ├── stores/            # Zustand (global UI state)
-│   ├── hooks/             # React Query hooks
-│   └── providers/         # QueryClientProvider, other providers
-│
-├── shared/                # Code shared between layers
-│   └── a11y/              # Accessibility
-│   └── constants/         # Shared constants
-│   └── utils/             # shared utils functions
-│
-└── styles/                # Global styles
-    ├── global.scss
-    ├── variables/
-    ├── components/
-    └── layout/
+  app/                          # Next.js routing only
+  domains/
+    auth/                       # account lifecycle: sign in/up, verify email, reset password, update profile, delete account
+    billing/                    # plans, subscriptions, Stripe checkout/portal/webhooks
+    workspace/                  # workspace dashboard: list/create/join projects
+    project/                    # project container: settings, members, invitations, enabled modules
+  modules/
+    board/                      # tickets, epics, sprints, labels, board views
+    recipes/                    # future project module
+    vacation/                   # future project module
+    budget/                     # future project module
+  shared/
+    design-system/              # UI primitives and shared UI helpers
+    i18n/                       # translations and i18n hooks
+    observability/              # logging, tracing, performance tracking
+    infrastructure/
+      supabase/                 # browser/server/admin clients
+      stripe/                   # stripeClient
+      web/                      # rateLimit, CSRF
+    constants/                  # routes, error codes, feature flags
+    types/                      # truly generic types only
+    utils/                      # pure domain-free helpers
+    a11y/                       # accessibility helpers and constants
+  styles/
+  middleware.ts
 ```
 
----
+## Ownership Model
 
-## 🧱 Rules: What Cursor Must Respect
+### `src/app/`
 
-### 1. Domain (`core/domain`)
+- Owns URL structure, route groups, `page.tsx`, `layout.tsx`, route handlers, and top-level composition.
+- Must stay thin.
+- Delegates rendering to domains or modules.
 
-**Contains:**
+### `src/domains/auth/`
 
-- Business types/interfaces
-- Pure business rules
+- Owns account lifecycle and identity flows.
+- Examples: sign in, sign up, OAuth callback, password reset, email verification, account preferences, delete account.
 
-**Must never import:**
+### `src/domains/billing/`
 
-- ❌ Supabase
-- ❌ React
-- ❌ Zustand
-- ❌ React Query
-- ❌ Next.js
+- Owns plans, subscriptions, entitlements, Stripe checkout, portal, and webhooks.
 
-**Pure TypeScript only.**
+### `src/domains/workspace/`
 
----
+- Owns the workspace entry experience.
+- Examples: list projects, create a project, join a project, choose where to go next.
 
-### 2. Usecases (`core/usecases`)
+### `src/domains/project/`
 
-**Characteristics:**
+- Owns the **project container**.
+- Examples: project settings, members, invitations, roles, project access, enabled modules.
+- This is the place where the product decides which modules are active inside a project.
 
-- Each usecase is a pure function orchestrating business logic
-- It takes ports (repositories) as parameters
-- It returns domain data
+### `src/modules/board/`
 
-**Must not know about:**
+- Owns the current Trello/Jira-like project module.
+- Examples: tickets, epics, sprints, labels, board views, board-specific hooks and repositories.
 
-- ❌ Supabase
-- ❌ React
-- ❌ Zustand
+### Future modules
 
-**Structure example:**
+- `src/modules/recipes/`
+- `src/modules/vacation/`
+- `src/modules/budget/`
 
-```typescript
-export const listProducts = (repo: ProductRepository) => {
-  return repo.list();
-}
+Their UI shape may differ completely (board, timeline, calendar, list, mixed), but the ownership rule stays the same: if it is a project-scoped capability, it belongs to a module.
+
+## Internal Layering Inside a Domain or Module
+
+Each domain or module can own some or all of these folders:
+
+```text
+src/domains/<domain>/
+src/modules/<module>/
+  core/
+    domain/
+      schema/
+      rules/
+      constants/
+    ports/
+    usecases/
+  infrastructure/
+  presentation/
+    components/
+    hooks/
+    stores/
+    pages/
+    layouts/
+    navigation/
+    providers/
 ```
 
----
+### `core/domain`
 
-### 3. Ports (`core/ports`)
+- Pure business schemas, rules, and constants.
+- No React, Next.js, Zustand, React Query, Supabase, or Stripe imports.
 
-**Role:**
+### `core/ports`
 
-- Define repository interfaces
-- Example: `ProductRepository`, `StockMovementRepository`
-- These are the contracts that infrastructure must respect
+- Contracts owned by the domain or module.
+- Repository and gateway interfaces used by use cases.
 
----
+### `core/usecases`
 
-### 4. Infrastructure (`infrastructure/`)
+- Orchestration and business flows.
+- Depends on domain/module rules, schemas, and ports.
+- Never imports framework or low-level client code directly.
 
-**Contains:**
+### `infrastructure`
 
-- Concrete implementations of ports
-- Supabase
-- Adapters
-- Mappers
+- Adapters owned by the domain or module.
+- Implements ports using shared technical clients when needed.
 
-**Can import:**
+### `presentation`
 
-- ✅ Supabase
-- ✅ Fetch
-- ✅ External libraries
+- Route-level and UI-level composition owned by the domain or module.
+- Components, hooks, stores, pages, layouts, navigation, and providers.
 
-**Must never import:**
+## Shared Layer Rules
 
-- ❌ UI
-- ❌ Zustand
+`src/shared/` is for cross-cutting code only.
 
-**Example:**
+### `src/shared/design-system/`
 
-```typescript
-export const productRepositorySupabase: ProductRepository = {
-  list: async () => {
-    // ...supabase.from("products")...
-  },
-};
+- Reusable UI primitives only.
+- May co-locate internal shared helpers with the primitive when still cross-cutting.
+- Never embed project, auth, billing, or board business rules.
+
+### `src/shared/infrastructure/`
+
+- Technical clients and adapters that are not business-owned.
+- Browser/server/admin Supabase clients.
+- Low-level Stripe client.
+- Shared web concerns like CSRF and rate limiting.
+
+### `src/shared/types/`
+
+- Only truly generic types.
+- Never project-, board-, auth-, billing-, or workspace-specific business types.
+
+### `src/shared/utils/`
+
+- Pure helpers with no business ownership.
+- No embedded rules about plans, members, tickets, invitations, or modules.
+
+## Dependency Direction
+
+The dependency flow should remain:
+
+```text
+src/app
+  -> src/domains/<domain>/presentation OR src/modules/<module>/presentation
+  -> core/usecases
+  -> core/ports
+  -> infrastructure
+  -> src/shared/infrastructure
+  -> external services
 ```
 
----
+Additional rule:
 
-### 5. Presentation (UI Next + React)
+- `src/domains/project/` may compose project-scoped module UI
+- modules may consume project context or permissions from the project domain when necessary
+- the project domain must not own module-specific business rules
 
-#### 5.1. Components (`presentation/components`)
+## Hard Rules
 
-**Characteristics:**
+### Always
 
-- Pure UI components
-- No business logic
-- No Supabase calls
-- Receive ready data via props
+1. Keep routing in `src/app/` only.
+2. Keep account lifecycle in `src/domains/auth/`.
+3. Keep workspace entry flows in `src/domains/workspace/`.
+4. Keep project container logic in `src/domains/project/`.
+5. Keep project-scoped capabilities in `src/modules/<module>/`.
+6. Put reusable primitives in `src/shared/design-system/`.
+7. Keep `src/shared/` domain- and module-agnostic.
+8. Use shared infrastructure clients from `src/shared/infrastructure/*`.
 
-#### 5.2. Hooks (`presentation/hooks`)
+### Never
 
-**Role:**
+1. Recreate global roots such as `src/core/`, `src/presentation/`, or `src/infrastructure/`.
+2. Put board or project business rules in `src/shared/`.
+3. Put project container logic inside a module.
+4. Put module-specific business logic inside `src/domains/project/`.
+5. Put Supabase or Stripe client creation inside core/use cases.
+6. Treat `src/app/` as a business layer.
 
-- React Query hooks
-- Call usecases
-- Provide: `data`, `isLoading`, `error`
-- Do not contain business logic → only orchestrate usecases
+## Concrete Example
 
-**Recommended structure:**
+```text
+src/app/(auth)/[projectId]/layout.tsx
+  -> src/domains/project/presentation/layouts/projectShell/ProjectShell.tsx
 
-```typescript
-export const useProducts = () => {
-  return useQuery({
-    queryKey: ["products"],
-    queryFn: () => listProducts(productRepositorySupabase),
-  });
-}
+src/app/(auth)/[projectId]/board/page.tsx
+  -> src/modules/board/presentation/pages/board/index.tsx
+  -> src/modules/board/presentation/hooks/ticket/useTickets.ts
+  -> src/modules/board/core/usecases/ticket/listTickets.ts
+  -> src/modules/board/core/ports/ticketRepository.ts
+  -> src/modules/board/infrastructure/supabase/ticket/TicketRepository.supabase.ts
+  -> src/shared/infrastructure/supabase/client-browser.ts
+  -> Supabase
 ```
 
-#### 5.3. Zustand Stores (`presentation/stores`)
+## Key Takeaway
 
-**Contains only UI state:**
+Workbench is no longer documented as a flat set of top-level business domains only.
 
-- Filters
-- Modals
-- Selected category
-- Drawer state
+It is documented as:
 
-**Must never contain business logic.**
-
-#### 5.4. Providers (`presentation/providers`)
-
-**Contains:**
-
-- ReactQueryProvider
-- Global app providers
-
----
-
-## ⚡ Modules Used in the Project
-
-- **Next.js** (App Router)
-- **SCSS** (global.scss + SCSS modules if needed)
-- **Supabase** → self-hosted backend (no Node backend)
-- **React Query** (TanStack Query) → data fetching & cache
-- **Zustand** → lightweight global UI state
-- **TypeScript strict**
-- **Clean Architecture** (Core / Infrastructure / Presentation)
-
----
-
-## 🧪 Code Generation Rules for Cursor
-
-### ✔️ Cursor must:
-
-1. Create files in the correct directories according to their role
-2. Respect layers:
-   - A usecase must not import Supabase
-   - A UI component must not call Supabase directly
-   - A Zustand store must not contain business logic
-   - A React Query hook must call a usecase, not directly infrastructure
-3. Create proper types in the domain
-
-### ❌ Cursor must never:
-
-1. Mix UI and business logic
-2. Put Supabase code in `/core/`
-3. Put network calls in React components
-4. Put business logic in Zustand
-5. Call Supabase directly from the UI
-6. Make forbidden cross-layer imports (e.g., infra → app)
-
----
-
-## 📚 Complete Flow Example (reference for Cursor)
-
-```
-UI (Next Page)
-    ↓ calls
-React Query Hook (useProducts)
-    ↓ calls
-Usecase (listProducts)
-    ↓ calls
-Repository (productRepositorySupabase)
-    ↓ calls
-Supabase (infrastructure)
-```
-
-**Always in this direction. Never reversed.**
+- **domains** for stable business capabilities (`auth`, `billing`, `workspace`, `project`)
+- **modules** for project-scoped pluggable capabilities (`board`, then `recipes`, `vacation`, `budget`)
+- **shared** for strict cross-cutting code only

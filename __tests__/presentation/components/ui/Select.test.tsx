@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import Select from "@/presentation/components/ui/Select";
+import Select from "@/shared/design-system/select";
 
 const mockOptions = [
   { value: "option1", label: "Option 1" },

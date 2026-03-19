@@ -1,11 +1,10 @@
 import { z } from "zod";
 
-import type { Project } from "@/core/domain/schema/project.schema";
-
-import { getProject } from "@/core/usecases/project/getProject";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+
+import type { Project } from "@/domains/workspace/core/domain/schema/project.schema";
+import { getProject } from "@/domains/workspace/core/usecases/project/getProject";
 
 describe("getProject", () => {
   const mockProject: Project = {

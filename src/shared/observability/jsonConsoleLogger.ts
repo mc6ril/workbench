@@ -3,14 +3,13 @@
  * Pure implementation with no React dependencies.
  */
 
+import type { LogError, Logger, LogLevel, LogMeta } from "@/shared/observability/logger.port";
 import { isArray, isPlainObject } from "@/shared/utils";
 
 import { shouldLog } from "./config";
 import type { LogConfig, StructuredLog } from "./types";
 import { joinScope, safeJsonStringify } from "./utils";
 import { sanitizeMeta } from "./utils";
-
-import type { LogError, Logger, LogLevel, LogMeta } from "@/core/ports/logger";
 
 /**
  * Keys that should be redacted from logs (case-insensitive).

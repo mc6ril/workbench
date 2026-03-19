@@ -1,7 +1,7 @@
 ---
 alwaysApply: true
 name: "Lean Documentation & Contextual Comments"
-description: "Keep documentation meaningful and minimal. Document where it adds business value, following Clean Architecture layers."
+description: "Keep documentation meaningful and minimal. Document where it adds business value in the domain + module architecture."
 globs: ["src/**/*.{ts,tsx}"]
 priority: medium
 ---
@@ -12,19 +12,19 @@ Less is more. Documentation should clarify business meaning and non-obvious beha
 
 ## Where Documentation is Required
 
-### 2. Domain Layer (`core/domain/*`) — MANDATORY
+### 2. Domain / Module Layer (`src/domains/*/core/domain/*` or `src/modules/*/core/domain/*`) — MANDATORY
 
 -   Document types, entities, value objects, and enums.
 -   Explain domain meaning and rules.
 -   Keep it short but meaningful.
 
-### 3. Ports (`core/ports/*`) — MANDATORY
+### 3. Ports (`src/domains/*/core/ports/*` or `src/modules/*/core/ports/*`) — MANDATORY
 
 -   Document behavior contracts: what implementations MUST guarantee.
 -   Document expected errors, side-effects, and invariants.
 -   Note input/output constraints and any ordering requirements.
 
-### 4. Usecases (`core/usecases/*`) — RECOMMENDED
+### 4. Usecases (`src/domains/*/core/usecases/*` or `src/modules/*/core/usecases/*`) — RECOMMENDED
 
 -   Briefly explain the business flow.
 -   Document validation rules and orchestration decisions (e.g., “store checked before calling repo”).
@@ -39,7 +39,7 @@ Document only when:
 -   Error handling or retries require justification
 -   Config has a strong reason (e.g., `detectSessionInUrl: false`)
 
-### 6. Presentation (`presentation/*`) — MINIMAL
+### 6. Presentation (`src/domains/*/presentation/*` or `src/modules/*/presentation/*`) — MINIMAL
 
 -   Only document hooks or components with real business behavior.
 -   No need to document simple UI components unless complex.
@@ -73,7 +73,7 @@ Document error strategy only where meaningful:
 -   Retrying logic? → yes.
 -   Swallowing event errors? → yes (and why).
 
-## Clean Architecture Compliance
+## Architecture Compliance
 
 ### 9. Architecture Clarity
 

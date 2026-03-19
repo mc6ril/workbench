@@ -5,7 +5,7 @@ import type {
   TicketFilters,
   TicketSort,
   UpdateTicketInput,
-} from "@/core/domain/schema/ticket.schema";
+} from "@/modules/board/core/domain/schema/ticket.schema";
 
 /**
  * Mock type for TicketRepository.

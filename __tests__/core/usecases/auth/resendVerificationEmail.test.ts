@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import { resendVerificationEmail } from "@/core/usecases/auth/resendVerificationEmail";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import {
   createAuthError,
@@ -9,6 +7,8 @@ import {
 } from "../../../../__mocks__/core/domain/authMocks";
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
+
+import { resendVerificationEmail } from "@/domains/auth/core/usecases/resendVerificationEmail";
 
 describe("resendVerificationEmail", () => {
   it("should resend verification email successfully", async () => {

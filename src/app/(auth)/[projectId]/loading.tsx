@@ -1,7 +1,6 @@
 "use client";
 
-import RouteFallbackPage from "@/presentation/components/feedback/RouteFallbackPage";
-
+import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
 import { useTranslation } from "@/shared/i18n";
 
 /**

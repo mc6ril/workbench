@@ -1,5 +1,5 @@
-import type { ProjectRole } from "@/core/domain/schema/project.schema";
-import type { ProjectMember } from "@/core/domain/schema/projectMember.schema";
+import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
+import type { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 /**
  * Mock type for MemberRepository.

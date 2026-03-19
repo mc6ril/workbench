@@ -1,11 +1,11 @@
 import { z } from "zod";
 
-import { updateUser } from "@/core/usecases/auth/updateUser";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthError } from "../../../../__mocks__/core/domain/authMocks";
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
+
+import { updateUser } from "@/domains/auth/core/usecases/user/updateUser";
 
 describe("updateUser", () => {
   it("should update user with email only", async () => {
@@ -84,8 +84,7 @@ describe("updateUser", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "UPDATE_USER_NO_FIELDS",
-        debugMessage:
-          "At least one field (email or password) must be provided",
+        debugMessage: "At least one field (email or password) must be provided",
       });
     }
     expect(repository.updateUser).not.toHaveBeenCalled();

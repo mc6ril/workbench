@@ -17,20 +17,20 @@ Analyze the current file for linting issues using the **Architecture-Aware Dev**
 
 The Architecture-Aware Dev ensures linting fixes respect:
 
-- Import order (external → domain → usecases → infrastructure → presentation → shared → styles)
+- Import order (external → domain/module → usecases → infrastructure → presentation → shared → styles)
 - TypeScript strict mode compliance
-- Project-specific rules (Clean Architecture, layer separation, SCSS variables, etc.)
+- Project-specific rules (domain + module architecture, shared vs owner placement, SCSS variables, etc.)
 
 ## Steps
 
 1. **Identify linting issues**
    - Code formatting and style consistency
-   - **Import order**: external → domain → usecases → infrastructure → presentation → shared → styles
+   - **Import order**: external → domain/module → usecases → infrastructure → presentation → shared → styles
    - Unused imports and variables
    - Missing semicolons or proper indentation
    - Best practice violations
    - Type safety issues (no `any` types)
-   - Architecture rule violations (Clean Architecture, layer separation, etc.)
+   - Architecture rule violations (app/domain/module/shared boundaries, owner ownership, etc.)
 
 2. **Apply fixes**
    - Fix formatting and style issues

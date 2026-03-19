@@ -2,8 +2,9 @@
 
 import { Suspense } from "react";
 
-import Loader from "@/presentation/components/ui/Loader";
-import PricingPage from "@/presentation/pages/pricing";
+import Loader from "@/shared/design-system/loader";
+
+import PricingPage from "@/domains/billing/presentation/pages/pricing";
 
 const Pricing = () => {
   return (

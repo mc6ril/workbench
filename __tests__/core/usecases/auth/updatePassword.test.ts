@@ -1,12 +1,5 @@
 import { z } from "zod";
 
-import type {
-  AuthResult,
-  UpdatePasswordInput,
-} from "@/core/domain/schema/auth.schema";
-
-import { updatePassword } from "@/core/usecases/auth/updatePassword";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import {
   createAuthError,
@@ -16,6 +9,12 @@ import {
 } from "../../../../__mocks__/core/domain/authMocks";
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
+
+import type {
+  AuthResult,
+  UpdatePasswordInput,
+} from "@/domains/auth/core/domain/schema/auth.schema";
+import { updatePassword } from "@/domains/auth/core/usecases/password/updatePassword";
 
 describe("updatePassword", () => {
   const validInput = validUpdatePasswordInput;

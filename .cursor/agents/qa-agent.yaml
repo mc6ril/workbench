@@ -52,7 +52,7 @@ playbooks:
       - "List A11y violations with file:line references and fixes."
   - name: "Integration Test Strategy"
     steps:
-      - "Identify integration points: React Query → usecases → repositories → Supabase."
+      - "Identify integration points: domain hooks/queries -> usecases -> repositories -> shared Supabase clients."
       - "Define integration test scenarios for data flow."
       - "Test Zustand state transitions and selector outputs."
       - "Verify React Query cache behavior and error handling."
@@ -81,7 +81,7 @@ prompts:
     List violations with file:line references and fixes.
   integration: |
     Create an integration test strategy for {feature}.
-    Focus on: React Query → usecases → repositories → Supabase pipeline.
+    Focus on: domain hooks/queries -> usecases -> repositories -> shared Supabase clients pipeline.
     Verify state transitions and data flow.
 
 output_format: |

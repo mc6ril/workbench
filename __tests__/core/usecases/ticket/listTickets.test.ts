@@ -1,9 +1,8 @@
-import type { Ticket, TicketFilters, TicketSort } from "@/core/domain/schema/ticket.schema";
-
-import { listTickets } from "@/core/usecases/ticket/listTickets";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
+
+import type { Ticket, TicketFilters, TicketSort } from "@/modules/board/core/domain/schema/ticket.schema";
+import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 
 describe("listTickets", () => {
   const projectId = "123e4567-e89b-12d3-a456-426614174000";

@@ -128,8 +128,8 @@ const eslintConfig = defineConfig([
       "sort-imports": "off",
       // Configure import ordering to match project conventions:
       // 1. External libraries (React, Zustand, React Query…)
-      // 2. Types / domain (@/core/domain)
-      // 3. Usecases (@/core/usecases)
+      // 2. Types / domain (@/domains/project-management/core/domain)
+      // 3. Usecases (@/domains/project-management/core/usecases)
       // 4. Infrastructure (@/infrastructure)
       // 5. Presentation (@/presentation)
       // 6. Styles (@/styles)
@@ -140,10 +140,10 @@ const eslintConfig = defineConfig([
           groups: [
             // External libraries (React, Next.js, etc.)
             ["^react", "^next", "^@?\\w"],
-            // Domain types (@/core/domain)
-            ["^@/core/domain"],
-            // Usecases (@/core/usecases)
-            ["^@/core/usecases"],
+            // Domain types (@/domains/project-management/core/domain)
+            ["^@/domains/project-management/core/domain"],
+            // Usecases (@/domains/project-management/core/usecases)
+            ["^@/domains/project-management/core/usecases"],
             // Infrastructure (@/infrastructure)
             ["^@/infrastructure"],
             // Presentation (@/presentation)

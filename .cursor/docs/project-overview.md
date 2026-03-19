@@ -86,15 +86,31 @@ This principle drives both navigation and feature placement.
 
 ## 6. Technical Architecture
 
-Workbench keeps a Clean Architecture structure:
-- `core/domain` for business entities and rules
-- `core/usecases` for orchestration
-- `core/ports` for contracts
-- `infrastructure` for Supabase integrations
-- `presentation` for UI and hooks
+Workbench now targets a **final domain + module architecture**:
 
-Guiding rule:
-> Domain and usecases remain framework-agnostic.
+- `src/app/` remains the Next.js routing layer only
+- `src/domains/auth/` owns account lifecycle: sign in/up, OAuth, reset password, email verification, preferences, delete account
+- `src/domains/billing/` owns plans, subscriptions, entitlements, and Stripe webhooks
+- `src/domains/workspace/` owns the entry UX to list, create, and join projects
+- `src/domains/project/` owns the project container: project settings, members, invitations, permissions, and enabled modules
+- `src/modules/board/` owns the current free module: tickets, epics, sprints, labels, board flows
+- future project modules will include `recipes`, `vacation`, and `budget`
+- `src/shared/` owns only cross-cutting concerns: design system, i18n, observability, shared infrastructure, constants, generic types, utils, and accessibility
+
+Inside each concrete domain or module, responsibilities stay layered:
+
+- `core/domain/` for schemas, rules, and business constants
+- `core/ports/` for contracts
+- `core/usecases/` for orchestration
+- `infrastructure/` for adapters such as Supabase repositories or Stripe gateways
+- `presentation/` for hooks, stores, pages, layouts, navigation, and components
+
+Guiding rules:
+> `src/app/` stays thin and route-focused.
+> Shared code stays cross-cutting and owner-agnostic.
+> Project container logic stays in `domains/project`.
+> Project-scoped capabilities stay in `modules/*`.
+> The current board experience is the first module, not the permanent shape of every future capability.
 
 ---
 

@@ -1,13 +1,12 @@
-import type { Board, Column } from "@/core/domain/schema/board.schema";
-import type { Epic } from "@/core/domain/schema/epic.schema";
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
-
-import { getEpicDetail } from "@/core/usecases/epic/getEpicDetail";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createEpicRepositoryMock } from "../../../../__mocks__/core/ports/epicRepository";
+
+import type { Board, Column } from "@/modules/board/core/domain/schema/board.schema";
+import type { Epic } from "@/modules/board/core/domain/schema/epic.schema";
+import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
+import { getEpicDetail } from "@/modules/board/core/usecases/epic/getEpicDetail";
 
 describe("getEpicDetail", () => {
   const epicId = "123e4567-e89b-12d3-a456-426614174000";

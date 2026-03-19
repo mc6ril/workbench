@@ -1,0 +1,34 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { deleteTicket } from "@/modules/board/core/usecases/ticket/deleteTicket";
+import { ticketRepository } from "@/modules/board/infrastructure/supabase/repositories";
+import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
+
+type DeleteTicketVariables = {
+  projectId: string;
+  ticketId: string;
+};
+
+/**
+ * Hook for deleting a ticket.
+ * Invalidates project ticket and epic caches on success.
+ *
+ * Note: `projectId` is required for reliable invalidation without extra fetches.
+ */
+export const useDeleteTicket = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ ticketId }: DeleteTicketVariables) =>
+      deleteTicket(ticketRepository, ticketId),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.ticketsRoot(variables.projectId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.epicsRoot(variables.projectId),
+      });
+    },
+  });
+};
+

@@ -2,8 +2,9 @@
 
 import { Suspense } from "react";
 
-import Loader from "@/presentation/components/ui/Loader";
 import LandingPage from "@/presentation/pages/landing";
+
+import Loader from "@/shared/design-system/loader";
 
 const Landing = () => {
   return (

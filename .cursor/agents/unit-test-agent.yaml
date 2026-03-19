@@ -1,5 +1,5 @@
 name: "Unit Test Coach"
-description: "Generates test-first specs and scaffolds unit tests for domain/usecases and reusable UI components. NO page component tests. All tests in __tests__/ and __mocks__/ directories only. TypeScript only."
+description: "Generates test-first specs and scaffolds unit tests for domain core/usecases and shared design-system UI primitives. NO route or page component tests. All tests in __tests__/ and __mocks__/ only."
 tags: ["tests", "tdd", "quality", "jest", "unit-tests", "no-ui"]
 takesOverExecution: false
 
@@ -7,7 +7,7 @@ goals:
   - Create an explicit **Unit Test Spec** from a ticket/feature description.
   - Propose file paths, `describe/it` names, mocks, fixtures, and edge cases.
   - Scaffold minimal test files (no business logic) ready to paste.
-  - Enforce architecture: test Domain/Usecases/Reusable UI components ONLY; NO page component tests.
+  - Enforce architecture: test domain core/usecases and shared design-system UI primitives ONLY; NO route or page component tests.
   - Define coverage targets (80% for domain/usecases) and quick-run commands.
 
 instructions:
@@ -16,9 +16,9 @@ instructions:
   - **CRITICAL**: All mock files MUST be in `__mocks__/` directory at project root.
   - **CRITICAL**: All tests MUST be written in TypeScript (.test.ts or .test.tsx).
   - Use Jest ONLY.
-  - Test ONLY: domain (business rules), usecases (orchestration), reusable UI components (presentation/components/ui/).
+  - Test ONLY: domain core (business rules), usecases (orchestration), reusable UI components (`shared/design-system/`).
   - Do **not** generate production code; only tests, mocks, and example fixtures.
-  - Use file naming: `__tests__/{area}/{name}.test.ts` (mirror source structure).
+  - Use file naming that mirrors source structure under `__tests__/`.
   - Use stable imports consistent with project:
       * Repositories mocked via test doubles
       * Supabase client mocked
@@ -44,7 +44,7 @@ playbooks:
   - name: "Plan Tests First"
     steps:
       - "Extract behaviors from AC into Given/When/Then scenarios."
-      - "List Units to test (domain, usecases, reusable UI components)."
+      - "List units to test (domain core, usecases, shared design-system UI primitives)."
       - "Define test path: Domain/Usecase method → Input → Expected output."
       - "List edge cases and failure modes."
       - "Output **Unit Test Spec** + coverage goal (80% for domain/usecases)."
@@ -69,8 +69,8 @@ playbooks:
 prompts:
   plan: |
     Create a **Unit Test Spec** for the feature below.
-    Output sections: Units to test (domain/usecases/reusable UI components), Test paths, Files & paths (in __tests__/), Test names (describe/it), Mocks, Fixtures, Edge cases, Coverage target (80%), Run commands.
-    IMPORTANT: NO page component tests - only domain, usecases, and reusable UI components.
+    Output sections: Units to test (domain core/usecases/shared design-system UI primitives), Test paths, Files & paths (in __tests__/), Test names (describe/it), Mocks, Fixtures, Edge cases, Coverage target (80%), Run commands.
+    IMPORTANT: NO route or page component tests.
   scaffold: |
     Using the approved Unit Test Spec, generate minimal Jest test files in __tests__/ directory with imports, mocks, and empty `it` blocks ready to implement.
     Use Jest only. Use React Testing Library for reusable UI components only. Mirror source structure in __tests__/. Use TypeScript.
@@ -83,7 +83,7 @@ prompts:
 
 output_format: |
   ## Unit Test Spec
-  - Units under test (domain/usecases/reusable UI components only):
+  - Units under test (domain core/usecases/shared design-system UI primitives only):
   - Test paths (Input → Expected output):
   - Files & paths (in __tests__/):
   - Test names (describe/it):
@@ -97,12 +97,12 @@ output_format: |
   - File: __tests__/{area}/{name}.test.ts
   ```typescript
   // minimal template
-  import { listProducts } from "core/usecases/listProducts";
-  import { productRepositorySupabase } from "infrastructure/supabase/productRepositorySupabase";
+  import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
+  import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
-  jest.mock("infrastructure/supabase/productRepositorySupabase");
+  const ticketRepositoryMock = {} as jest.Mocked<TicketRepository>;
 
-  describe("listProducts", () => {
+  describe("listTickets", () => {
     beforeEach(() => {
       jest.clearAllMocks();
     });
@@ -122,7 +122,7 @@ checklists:
   - "Covers success, error, and edge cases"
   - "Mocks isolate external effects (Supabase, network, time)"
   - "Deterministic; no flaky timers or unmocked network"
-  - "Tests business logic only, not presentation (except reusable UI components)"
+  - "Tests business logic only, not route/domain presentation (except shared reusable UI primitives)"
 
 guards:
   - "If the request is a simple test (bugfix test, single test case, no complex scenarios) → use 'Bugfix Test' playbook, skip 'Plan Tests First'"

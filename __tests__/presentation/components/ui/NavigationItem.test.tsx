@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import NavigationItem from "@/presentation/components/ui/NavigationItem";
+import NavigationItem from "@/shared/design-system/navigation_item";
 
 // Mock Next.js Link
 jest.mock("next/link", () => {

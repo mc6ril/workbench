@@ -1,56 +1,49 @@
 ````mermaid
 sequenceDiagram
-participant User as 👤 Utilisateur
-participant Page as 📄 page.tsx<br/>(Presentation)
-participant FormSchema as 📋 UpdatePasswordFormSchema<br/>(Domain)
-participant DomainSchema as 🔒 UpdatePasswordSchema<br/>(Domain)
-participant Hook as 🪝 useUpdatePassword<br/>(Presentation)
-participant Usecase as ⚙️ updatePassword<br/>(Usecase)
-participant Port as 📝 AuthRepository<br/>(Port)
-participant Infra as 🏗️ AuthRepository.supabase<br/>(Infrastructure)
+participant User as 👤 User
+participant Route as 📄 src/app/auth/update-password/page.tsx<br/>(routing only)
+participant AuthPage as 🔐 domains/auth/presentation/pages/update-password<br/>(screen composition)
+participant AuthHook as 🪝 domains/auth/presentation/hooks/useUpdatePassword.ts
+participant Validation as 📋 domains/auth/core/domain/schema/
+participant Usecase as ⚙️ domains/auth/core/usecases/updatePassword.ts
+participant AuthRepo as 🗂️ domains/auth/infrastructure/supabase/AuthRepository.supabase.ts
+participant Client as 🏗️ src/shared/infrastructure/supabase/client-browser.ts
 participant Supabase as ☁️ Supabase
 
-    User->>Page: Accède à /auth/update-password?token=xxx&email=yyy
+    User->>Route: Open /auth/update-password?token=xxx&email=yyy
+    Route->>AuthPage: Compose update-password page
 
-    Note over Page: 1. Initialisation du formulaire
-    Page->>FormSchema: useForm avec UpdatePasswordFormSchema
-    FormSchema-->>Page: Validation schema pour {password, confirmPassword}
+    Note over AuthPage: 1. Initialize page and form state
+    AuthPage->>Validation: Validate password + confirmPassword
+    Validation-->>AuthPage: Valid or validation errors
 
-    Note over Page: 2. Utilisateur remplit le formulaire
-    User->>Page: Saisit password + confirmPassword
-    Page->>FormSchema: Validation en temps réel (onBlur)
-    FormSchema-->>Page: ✅ Validation OK ou ❌ Erreurs
+    Note over AuthPage: 2. User submits new password
+    User->>AuthPage: Submit form
+    AuthPage->>AuthHook: mutate(payload)
+    AuthHook->>Usecase: updatePassword(authRepository, payload)
 
-    Note over Page: 3. Soumission du formulaire
-    User->>Page: Clique sur "Submit"
-    Page->>Page: onSubmit() appelé
+    Note over Usecase: 3. Domain use case orchestrates the auth flow
+    Usecase->>Validation: Validate payload again
+    Validation-->>Usecase: Validated input
+    Usecase->>AuthRepo: updatePassword(payload)
 
-    Note over Page: 4. Transformation des données
-    Page->>Page: Construit UpdatePasswordInput:<br/>{password, token, email}
+    Note over AuthRepo: 4. Domain infrastructure uses shared technical client
+    AuthRepo->>Client: get browser auth client
+    Client-->>AuthRepo: Supabase client
+    AuthRepo->>Supabase: client.auth.updateUser({ password })
+    Supabase-->>AuthRepo: Session / auth response
+    AuthRepo-->>Usecase: Auth result
+    Usecase-->>AuthHook: Success
+    AuthHook-->>AuthPage: Success state
 
-    Note over Page: 5. Validation domaine (double validation)
-    Page->>DomainSchema: UpdatePasswordSchema.parse(updatePasswordInput)
-    DomainSchema-->>Page: ✅ Validation OK ou ❌ Erreur
-
-    Note over Page: 6. Appel du hook React Query
-    Page->>Hook: mutate(updatePasswordInput)
-    Hook->>Usecase: updatePassword(repository, input)
-
-    Note over Usecase: 7. Validation dans le usecase
-    Usecase->>DomainSchema: UpdatePasswordSchema.parse(input)
-    DomainSchema-->>Usecase: ✅ validatedInput
-
-    Note over Usecase: 8. Appel du repository (via port)
-    Usecase->>Port: repository.updatePassword(validatedInput)
-    Note over Port: Contrat défini ici:<br/>updatePassword(input: UpdatePasswordInput)
-
-    Port->>Infra: Implémentation Supabase
-    Infra->>Supabase: client.auth.updateUser({password})
-    Supabase-->>Infra: ✅ Session créée
-    Infra-->>Port: AuthResult {session}
-    Port-->>Usecase: AuthResult
-    Usecase-->>Hook: AuthResult
-    Hook-->>Page: Mutation success avec session
-    Page->>User: Redirection vers /workspace
-```
+    Note over AuthPage: 5. Auth domain handles UX and handoff
+    AuthPage-->>Route: Password updated
+    Route->>User: Redirect to /workspace
 ````
+
+# Notes
+
+- In the final architecture, auth is a **first-class domain** in `src/domains/auth/`.
+- `src/app/` keeps the route entrypoint and composition only.
+- Shared infrastructure in `src/shared/infrastructure/supabase/` provides technical clients, not auth business flows.
+- Password reset validation, orchestration, and provider adaptation belong to the auth domain.

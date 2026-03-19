@@ -19,7 +19,7 @@ Review code or implementation plans for architecture rule compliance using the *
 
 The Architecture Guardian performs a read-only review checking:
 
-- Clean Architecture boundaries (Domain → Usecases → Infrastructure → Presentation)
+- Domain + module architecture boundaries (`src/app`, `src/domains`, `src/modules`, `src/shared`, plus owner ownership)
 - Layer separation (no Supabase in UI, no business logic in UI)
 - React Query + Zustand usage (React Query for server state, Zustand for UI state only)
 - SCSS variables usage (no hardcoded values)
@@ -33,16 +33,16 @@ The Architecture Guardian performs a read-only review checking:
    - Identify scope of changes
 
 2. **Check Architecture Rules**
-   - **Clean Architecture**: Verify layer separation and boundaries
-   - **Domain**: Verify pure TypeScript, no external dependencies
-   - **Usecases**: Verify orchestration using repositories (ports)
-   - **Infrastructure**: Verify Supabase implementations only
-   - **Presentation**: Verify no business logic, React Query hooks, Zustand stores
+   - **Architecture**: Verify app/domain/module/shared boundaries and owner ownership
+   - **Domain Core**: Verify pure TypeScript, no external dependencies
+   - **Usecases**: Verify orchestration using domain repositories (ports)
+   - **Infrastructure**: Verify domain repositories use shared clients and Supabase appropriately
+   - **Domain Presentation**: Verify no business logic, domain hooks, domain stores
    - **SCSS Variables**: Verify no hardcoded values
    - **Accessibility**: Verify shared/a11y/ utilities usage
 
 3. **List Violations**
-   - Group violations by category (Domain, Usecases, Infrastructure, Presentation, SCSS, A11y)
+   - Group violations by category (Routing, Domain Core, Infrastructure, Domain Presentation, Shared, SCSS, A11y)
    - For each violation: file path, line number, rule violated, minimal fix
 
 4. **Propose Fixes**
@@ -52,14 +52,14 @@ The Architecture Guardian performs a read-only review checking:
 
 ## Architecture Review Checklist
 
-### Clean Architecture / Layer Separation
+### Modular Domain Architecture / Boundaries
 
 - [ ] No Supabase calls in UI
 - [ ] No business logic in UI components
-- [ ] Domain layer is pure TypeScript
-- [ ] Usecases use repositories (ports)
-- [ ] Infrastructure implements ports only
-- [ ] Presentation uses React Query hooks and Zustand stores
+- [ ] Domain core is pure TypeScript
+- [ ] Usecases use domain repositories (ports)
+- [ ] Infrastructure implements ports and shared-client adapters only
+- [ ] Domain presentation uses domain hooks and stores
 
 ### SCSS Variables
 
@@ -70,7 +70,7 @@ The Architecture Guardian performs a read-only review checking:
 ### Supabase Usage
 
 - [ ] Supabase only in infrastructure layer
-- [ ] UI uses React Query hooks → usecases → repositories
+- [ ] Route/domain UI uses domain hooks → usecases → repositories → shared infrastructure clients
 
 ### Accessibility
 

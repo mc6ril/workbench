@@ -1,67 +1,115 @@
 ## Workbench
 
-**Workbench** is a lightweight, personal task and project management tool inspired by Jira, designed to help a single user manage work clearly, progressively, and without cognitive overload.
+**Workbench** is a family-centered daily life OS.
+
+It brings together stable business domains and project-scoped pluggable modules under a single product surface, with multi-user collaboration, role-based permissions, and progressive subscription-based capabilities.
 
 ### Purpose
 
-Workbench is **not** meant to replicate Jira, but to provide:
+Workbench is built around a simple idea:
 
-- A clear board for managing tickets
-- A visual board (Trello-like) for workflow visualization
-- Structured planning via Epics and sub-tasks
+- a household needs a shared workspace to create or join projects
+- each project is a container with members, settings, permissions, and enabled modules
+- each enabled module provides one concrete way of working inside that project
 
-All built **incrementally, feature by feature**, where each feature is a complete vertical slice that is usable on its own.
+Current module:
+- **Board** — tickets, epics, sprints, Kanban / Jira-like workflow
+
+Future modules:
+- **Recipes** — meal planning, recipe base, shopping support
+- **Vacation** — trip planning, timeline or board-like planning
+- **Budget** — shared expenses, categories, periods
 
 ### Core Principles
 
-1. **Personal-first**: Single user, no collaboration, no permissions, no accounts (for now)
-2. **Incremental construction**: One feature = one vertical slice, each slice is usable independently
-3. **Clarity over power**: Fewer features, explicit structure, no hidden magic
-4. **Domain-driven**: Clear concepts, stable domain model, UI reflects the domain
-
-### Core Features (MVP Scope)
-
-- **Board**: Create, edit, delete, view, filter, and sort tickets in a flat list
-- **Board**: Custom columns (statuses), drag and drop tickets, reorder within columns, persist position and status
-- **Epics**: Create epics, assign tickets to epics, view epic progress
-- **Sub-tasks**: Create sub-tasks under tickets, view parent/child relationships, track completion
+1. **Family-first**: collaboration, permissions, and shared ownership are built in
+2. **Container + modules**: a project is the container; business capabilities inside it are pluggable modules
+3. **Clear ownership**: domains own cross-project capabilities, modules own project-scoped workflows
+4. **Incremental construction**: one module at a time, without locking the future architecture too early
+5. **Clarity over power**: explicit structure, predictable behavior, low cognitive load
 
 ### Architecture
 
-Workbench follows **Clean Architecture** principles with clear separation between:
+Workbench follows a **domain + module architecture**:
 
-- **Domain**: Entities and business rules
-- **Application**: Use cases, commands and queries
-- **Infrastructure**: Database and repositories
-- **UI**: Pages and view models
+```text
+src/
+  app/                          # Next.js routing only
+  domains/
+    auth/                       # account lifecycle: sign in/up, reset password, verify email, profile, delete account
+    billing/                    # plans, subscriptions, Stripe checkout/portal/webhooks
+    workspace/                  # workspace dashboard: list/create/join projects
+    project/                    # project container: settings, members, invitations, enabled modules
+  modules/
+    board/                      # tickets, epics, sprints, labels, board views
+    recipes/                    # future project module
+    vacation/                   # future project module
+    budget/                     # future project module
+  shared/
+    design-system/              # reusable UI primitives
+    i18n/                       # translations and hooks
+    observability/              # logger and performance tracking
+    infrastructure/
+      supabase/                 # browser/server/admin clients
+      stripe/                   # stripeClient
+      web/                      # rate limit and CSRF
+    constants/                  # routes, error codes, feature flags
+    types/                      # truly generic types only
+    utils/                      # pure helpers with no business ownership
+    a11y/                       # accessibility helpers
+  styles/
+  middleware.ts
+```
 
-The domain knows nothing about frameworks, databases, or UI.
+Inside both domains and modules, responsibilities stay layered:
+
+- **core/domain**: schemas, rules, constants
+- **core/ports**: contracts
+- **core/usecases**: orchestration
+- **infrastructure**: repositories, mappers, gateways
+- **presentation**: components, hooks, stores, pages, layouts, navigation
+
+Ownership is explicit:
+
+- `src/app/` stays route-only
+- `src/domains/workspace/` owns the entry UX to list, create, and join projects
+- `src/domains/project/` owns the project container itself
+- `src/modules/board/` owns the current Trello/Jira-like module
+- `src/shared/` stays cross-cutting and domain-agnostic by default
+
+Documented exceptions to that default are listed in `docs/architecture/accepted-exceptions.md`:
+
+- thin shared bridges such as `@/shared/session` and `@/shared/featureAccess`
+- owner-local low-level Supabase row types in each `src/domains/*/infrastructure/supabase/types.ts` and `src/modules/*/infrastructure/supabase/types.ts`
+- public/static app-level pages in `src/presentation/pages/`
 
 ### Development Strategy
 
-Each feature is implemented as a complete vertical slice (UI + use case + domain logic + persistence). Features are built in order:
+Each feature is implemented as a complete vertical slice (UI + use case + domain logic + persistence).
 
-1. Project setup and health check
-2. Board (ticket CRUD)
-3. Board columns configuration
-4. Drag and drop workflow
-5. Epics
-6. Sub-tasks
+Current build order stays pragmatic:
 
-No feature is started until the previous one is fully done.
+1. Authentication and workspace entry flows
+2. Project container and access model
+3. Board module (ticket CRUD)
+4. Board columns configuration
+5. Drag and drop workflow
+6. Epics
+7. Sub-tasks
+8. Future modules (`recipes`, `vacation`, `budget`)
 
 ### Testing
 
 - Run unit tests once: `yarn test`
 - Run unit tests in watch mode: `yarn test:watch`
 
-Tests live under the project root `__tests__/` directory (mirroring the `src/` structure), with shared mocks under `__mocks__/`. This setup is powered by Jest with TypeScript support (`ts-jest`), following the Clean Architecture testing rules described in `docs/plan.md` and `.cursor/docs/testing.md`.
+Tests live under the project root `__tests__/` directory (mirroring the `src/` structure), with shared mocks under `__mocks__/`. This setup is powered by Jest with TypeScript support (`ts-jest`), following the architecture-aware testing rules described in `.cursor/docs/testing.md`.
 
 ### Success Criteria
 
 Workbench is successful if:
 
-- It replaces ad-hoc notes and mental tracking
-- Managing tasks feels calm and predictable
-- The system remains understandable after months away
-- Every feature has a clear reason to exist
+- it replaces ad-hoc notes and mental tracking
+- projects stay understandable even as new modules are added
+- module boundaries remain explicit and easy to evolve
+- the system stays calm, predictable, and easy to resume after time away

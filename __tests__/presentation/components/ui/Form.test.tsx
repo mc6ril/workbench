@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import Form from "@/presentation/components/ui/Form";
+import Form from "@/shared/design-system/form";
 
 describe("Form Component", () => {
   it("should render form with children", () => {

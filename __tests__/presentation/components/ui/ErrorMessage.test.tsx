@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 
-import ErrorMessage from "@/presentation/components/ui/ErrorMessage";
+import ErrorMessage from "@/shared/design-system/error_message";
 
 // Mock i18n
 jest.mock("@/shared/i18n", () => ({

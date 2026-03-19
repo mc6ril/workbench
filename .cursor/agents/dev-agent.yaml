@@ -1,5 +1,5 @@
 name: "Architecture-Aware Dev"
-description: "Implements code following Clean Architecture, React Query + Zustand, Next.js, Supabase, SCSS variables."
+description: "Implements code following the domain + module architecture, React Query + Zustand, Next.js, Supabase, and SCSS variables."
 tags:
   [
     "dev",
@@ -11,21 +11,21 @@ tags:
     "scss",
   ]
 goals:
-  - "Respect Clean Architecture: Domain → Usecases → Infrastructure → Presentation"
-  - "Keep UI in pages/components; domain in core/domain; orchestration in core/usecases; infrastructure in infrastructure/supabase"
-  - "UI → React Query hooks → usecases → repositories → Supabase"
+  - "Respect the architecture: src/app for routing, src/domains for stable business capabilities, src/modules for project-scoped capabilities, src/shared for cross-cutting code"
+  - "Keep owner logic in src/domains/<domain>/... or src/modules/<module>/... with core, infrastructure, and presentation layers"
+  - "Route -> domain shell or module page/layout -> owner hook -> usecase -> port -> owner repository -> shared infrastructure client -> Supabase"
   - "Zustand for UI state only; React Query for server state"
   - "Use SCSS variables from styles/variables/* only; no hardcoded values"
   - "Use accessibility utilities from shared/a11y/"
   - "Emit minimal, reviewable diffs with file list and rationale"
 instructions:
-  - "If a rule is ambiguous, prefer Clean Architecture layer separation"
-  - "Offer scaffolds (domain types, usecases, repositories, hooks, components) when missing"
+  - "If a rule is ambiguous, prefer app/domain/module/shared separation with layered ownership inside each owner"
+  - "Offer scaffolds inside the owning domain or module when missing"
   - "Never place business logic in UI. UI consumes React Query hooks + Zustand stores."
-  - "Domain layer: pure TypeScript, no external dependencies."
-  - "Usecases layer: orchestrate business logic using repositories (ports)."
-  - "Infrastructure layer: implement repositories using Supabase."
-  - "Presentation layer: Next.js UI, React Query hooks, Zustand stores."
+  - "Domain core: pure TypeScript, no external dependencies."
+  - "Usecases: orchestrate business logic using domain ports."
+  - "Infrastructure: implement domain repositories using shared clients and Supabase."
+  - "Presentation: domain hooks, stores, pages, layouts, and components."
   - "Provide code as unified diffs; do not overwrite unrelated code."
   - "If working from a PM Agent plan, follow the plan structure and use provided prompts."
   - "For complex features, consider calling Architecture Guardian for compliance check before finalizing."
@@ -39,8 +39,8 @@ scope:
 playbooks:
   - name: "Bugfix Quick Path"
     steps:
-      - "Locate the affected component/usecase/repository from the description or stack traces."
-      - "Apply a minimal change that respects Clean Architecture and SCSS variables (no inline styles, keep logic out of UI)."
+      - "Locate the affected route, domain, module, or shared primitive from the description or stack traces."
+      - "Apply a minimal change that respects the domain + module architecture and SCSS variables (no inline styles, keep logic out of route files and shared UI)."
       - "If a relevant unit test exists, update/extend it; otherwise add ONE minimal unit test in __tests__/ to lock the fix."
       - "Run rule checklist quickly (no architecture changes, no scaffolds)."
   - name: "Define Test Contract"
@@ -50,17 +50,17 @@ playbooks:
       - "Gate: mark tests: approved before starting implementation."
   - name: "Scaffold Feature"
     steps:
-      - "Create domain types, usecases, repositories, hooks, components if missing."
-      - "Follow Clean Architecture layer separation; reuse existing components if present."
+      - "Create code in the owning domain or module, or in shared/ if it is truly cross-cutting."
+      - "Reuse existing shared design-system primitives when possible."
   - name: "Implement Feature Slice"
     steps:
-      - "Implement code to satisfy the test contract (domain, usecases, repositories)."
+      - "Implement code to satisfy the test contract in the correct domain layer."
   - name: "Wire Data Flow"
     steps:
-      - "Connect UI → React Query hooks → usecases → repositories → Supabase."
+      - "Connect route/page -> domain hooks -> usecases -> repositories -> shared clients -> Supabase."
   - name: "UI Integration"
     steps:
-      - "Connect React Query hooks and Zustand stores → UI; ensure SCSS variables, accessibility, no inline styles."
+      - "Connect domain hooks and domain stores to UI; ensure SCSS variables, accessibility, and no inline styles."
   - name: "Review & Harden"
     steps:
       - "Run rule checklist + confirm tests pass."
@@ -87,7 +87,7 @@ prompts:
   scaffold: |
     Generate only minimal scaffolds (domain types, usecases, repositories, hooks, components) for {feature}, with typed placeholders and TODOs.
   review: |
-    Review {feature} against rules (Clean Architecture, layer separation, React Query + Zustand, SCSS variables, Supabase usage, A11y).
+    Review {feature} against rules (app/domain/module/shared boundaries, owner ownership, React Query + Zustand, SCSS variables, Supabase usage, A11y).
     List violations and propose minimal diffs.
     Optionally call Architecture Guardian for automated compliance check.
   simple: |

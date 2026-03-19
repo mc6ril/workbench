@@ -1,4 +1,4 @@
-import { mapSupabaseError } from "@/infrastructure/supabase/shared/errors/repositoryErrorMapper";
+import { mapSupabaseError } from "@/shared/infrastructure/errors/repositoryErrorMapper";
 
 describe("mapSupabaseError", () => {
   it("should map Supabase PGRST116 error to NotFoundError", () => {

@@ -2,8 +2,9 @@
 
 import { Suspense } from "react";
 
-import Loader from "@/presentation/components/ui/Loader";
-import SignupPage from "@/presentation/pages/auth/signup";
+import Loader from "@/shared/design-system/loader";
+
+import SignupPage from "@/domains/auth/presentation/pages/signup";
 
 const Signup = () => {
   return (

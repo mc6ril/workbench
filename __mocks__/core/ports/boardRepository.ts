@@ -4,7 +4,7 @@ import type {
   CreateBoardInput,
   CreateColumnInput,
   UpdateColumnInput,
-} from "@/core/domain/schema/board.schema";
+} from "@/modules/board/core/domain/schema/board.schema";
 
 /**
  * Mock type for BoardRepository.

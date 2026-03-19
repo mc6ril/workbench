@@ -1,165 +1,104 @@
 ---
 alwaysApply: true
 name: "Architecture — Component & File Structure"
-description: "Consistent component structure, file organization, and UI patterns following Clean Architecture principles."
-globs: ["src/presentation/components/**/*.{ts,tsx}", "src/app/**/*.{ts,tsx}"]
+description: "Consistent file organization for the domain + module architecture."
+globs: ["src/app/**/*.{ts,tsx}", "src/domains/**/*.{ts,tsx}", "src/modules/**/*.{ts,tsx}", "src/shared/design-system/**/*.{ts,tsx}"]
 priority: medium
 ---
 
 # Intent
 
-Maintain consistent component structure, file organization, and UI patterns for maintainability and clarity, following Clean Architecture principles.
+Maintain consistent component structure and file placement in the domain + module architecture.
 
 # Rules
 
 ## A) File Structure
 
--   ✅ File organization:
-    -   `/src/app/` - Next.js pages (App Router)
-    -   `/src/core/domain/` - Business domain types and pure logic
-    -   `/src/core/usecases/` - Business usecases
-    -   `/src/core/ports/` - Repository interfaces
-    -   `/src/infrastructure/supabase/` - Supabase implementations
-    -   `/src/presentation/components/` - UI components (page-specific)
-    -   `/src/presentation/components/ui/` - Reusable UI components (Button, Input, Card, etc.)
-    -   `/src/presentation/hooks/` - React Query hooks
-    -   `/src/presentation/stores/` - Zustand stores (UI state only)
-    -   `/src/presentation/providers/` - React providers
-    -   `/src/presentation/layouts/` - Layout components
-    -   `/src/shared/a11y/` - Accessibility utilities and constants
-    -   `/src/styles/` - Global SCSS styles and variables
+- ✅ `/src/app/` -> Next.js routes and route layouts only
+- ✅ `/src/domains/<domain>/core/` -> business schemas, rules, ports, use cases
+- ✅ `/src/domains/<domain>/infrastructure/` -> domain adapters, repositories, mappers
+- ✅ `/src/domains/<domain>/presentation/components/` -> domain-specific UI pieces
+- ✅ `/src/domains/<domain>/presentation/hooks/` -> domain React Query hooks
+- ✅ `/src/domains/<domain>/presentation/stores/` -> domain UI state
+- ✅ `/src/domains/<domain>/presentation/pages/` -> domain route-level pages
+- ✅ `/src/domains/<domain>/presentation/layouts/` -> domain route-level layouts
+- ✅ `/src/domains/<domain>/presentation/navigation/` -> domain navigation config
+- ✅ `/src/modules/<module>/core/` -> module schemas, rules, ports, use cases
+- ✅ `/src/modules/<module>/infrastructure/` -> module adapters, repositories, mappers
+- ✅ `/src/modules/<module>/presentation/*` -> module-specific UI, hooks, stores, pages, layouts, navigation
+- ✅ `/src/shared/design-system/` -> reusable UI primitives
+- ✅ `/src/shared/a11y/` -> reusable accessibility utilities
+- ✅ `/src/styles/` -> global styles and variables
 
-## B) Page Components (Next.js App Router)
+## B) Route Files (`src/app`)
 
 scope: file.path matches ^src/app/.+\.(ts|tsx)$
 
--   ✅ **ALWAYS** use Next.js App Router structure
--   ✅ **ALWAYS** use `page.tsx` for route pages
--   ✅ **ALWAYS** use `layout.tsx` for route layouts
--   ✅ **ALWAYS** fetch data using React Query hooks from `presentation/hooks/`
--   ✅ **NEVER** call Supabase directly from pages
--   ✅ **NEVER** put business logic in pages
--   ❌ **NEVER** create page components without proper data fetching hooks
+- ✅ **ALWAYS** keep route files focused on route composition
+- ✅ **ALWAYS** use `page.tsx` and `layout.tsx` conventions
+- ✅ **ALWAYS** delegate route UI to domain pages or layouts when the route is domain-specific
+- ❌ **NEVER** put domain business rules in route files
+- ❌ **NEVER** call Supabase directly from route files
 
-## C) Reusable UI Components
+## C) Reusable UI Primitives (`src/shared/design-system`)
 
-scope: file.path matches ^src/presentation/components/ui/.+\.(ts|tsx)$
+scope: file.path matches ^src/shared/design-system/.+\.(ts|tsx)$
 
--   ✅ **ALWAYS** place reusable components (Button, Input, Card, etc.) in `presentation/components/ui/`
--   ✅ **ALWAYS** use arrow function with export default format
--   ✅ **ALWAYS** define props with `type` (not `interface`)
--   ✅ **ALWAYS** use `React.memo` for expensive components with stable props
--   ✅ **ALWAYS** use `useCallback` for event handlers passed as props
--   ✅ **ALWAYS** use `useMemo` for expensive calculations
--   ✅ **ALWAYS** import accessibility utilities from `shared/a11y/`
--   ❌ **NEVER** create reusable components outside `presentation/components/ui/`
--   ❌ **NEVER** put business logic in reusable components
--   ❌ **NEVER** call hooks (React Query) directly in reusable components
+- ✅ **ALWAYS** place reusable primitives here
+- ✅ **ALWAYS** keep them domain-agnostic
+- ✅ **ALWAYS** reuse `src/shared/a11y/` utilities where needed
+- ❌ **NEVER** embed ticket, board, epic, sprint, or other domain logic here
+- ❌ **NEVER** fetch data directly in reusable UI primitives
 
-**Structure obligatoire :**
+## D) Domain-Specific Components
 
-```typescript
-type Props = {
-    label: string;
-    onClick: () => void;
-};
+scope: file.path matches ^src/(domains|modules)/.+/presentation/components/.+\.(ts|tsx)$
 
-const Button = ({ label, onClick }: Props) => {
-    // ...
-};
+- ✅ **ALWAYS** place owner-specific UI in the owning domain or module
+- ✅ **ALWAYS** organize a component in its own folder when it has styles or helpers
+- ✅ **ALWAYS** receive ready data via props or domain hooks
+- ❌ **NEVER** move shared primitives here when they belong in `src/shared/design-system/`
+- ❌ **NEVER** call Supabase directly from components
 
-export default Button;
-```
+## E) Domain Hooks
 
-## D) Page-Specific Components
+scope: file.path matches ^src/(domains|modules)/.+/presentation/hooks/.+\.(ts|tsx)$
 
-scope: file.path matches ^src/presentation/components/.+\.(ts|tsx)$
+- ✅ **ALWAYS** place React Query hooks inside the owning domain or module
+- ✅ **ALWAYS** call domain use cases from hooks
+- ❌ **NEVER** call shared infrastructure clients directly when a domain repository exists
+- ❌ **NEVER** treat hooks as a replacement for domain rules or use cases
 
--   ✅ **ALWAYS** place page-specific components in `presentation/components/`
--   ✅ **ALWAYS** organize each component in its own folder: `presentation/components/{componentName}/`
--   ✅ **ALWAYS** place component files in the component folder:
-    -   `{componentName}.tsx` - Component file
-    -   `{componentName}.module.scss` - Component styles
-    -   Other related files (types, utils, etc.) in the same folder
--   ✅ **ALWAYS** use arrow function with export default format
--   ✅ **ALWAYS** define props with `type` (not `interface`)
--   ✅ **ALWAYS** receive data via props (from pages using hooks)
--   ✅ **NEVER** call React Query hooks directly in page-specific components
--   ✅ **NEVER** put business logic in components
--   ❌ **NEVER** call Supabase directly
--   ❌ **NEVER** place component files directly in `presentation/components/` root (use component folders)
+## F) Domain Stores
 
-**Structure obligatoire :**
+scope: file.path matches ^src/(domains|modules)/.+/presentation/stores/.+\.(ts|tsx)$
 
-```
-presentation/components/
-├── dashboardHeader/
-│   ├── DashboardHeader.tsx
-│   └── DashboardHeader.module.scss
-├── dashboardNavbar/
-│   ├── DashboardNavbar.tsx
-│   └── DashboardNavbar.module.scss
-└── skipLink/
-    ├── SkipLink.tsx
-    └── SkipLink.module.scss
-```
+- ✅ **ALWAYS** keep stores for UI state only
+- ✅ **ALWAYS** scope stores to the owning domain or module
+- ❌ **NEVER** place business rules in stores
+- ❌ **NEVER** call Supabase directly from stores
 
-## E) Component Patterns
+## G) Domain Pages and Layouts
 
-scope: file.path matches ^src/(presentation/components|app)/.+\.(ts|tsx)$
+scope: file.path matches ^src/(domains|modules)/.+/presentation/(pages|layouts)/.+\.(ts|tsx)$
 
--   ✅ **ALWAYS** use arrow function with export default
--   ✅ **ALWAYS** define component props with `type` (not `interface`)
--   ✅ **ALWAYS** use `React.memo` for expensive components with stable props
--   ✅ **ALWAYS** use `useCallback` for event handlers passed as props
--   ✅ **ALWAYS** use `useMemo` for expensive calculations
--   ✅ **ALWAYS** keep JSX minimal (no network calls, no business logic, no heavy calculations)
--   ❌ **NEVER** use classes ES6
--   ❌ **NEVER** use `export function` for components
--   ❌ **NEVER** create inline functions in render methods
+- ✅ **ALWAYS** place route-level domain composition here
+- ✅ **ALWAYS** use semantic HTML structure
+- ✅ **ALWAYS** compose shared design-system primitives and domain hooks
+- ❌ **NEVER** put reusable design-system primitives here
 
-## F) Styling Organization
+## H) Styling
 
-scope: file.path matches ^src/(presentation/components|app)/.+\.(ts|tsx)$
+scope: file.path matches ^src/(app|domains|modules|shared/design-system)/.+\.(ts|tsx)$
 
--   ✅ **ALWAYS** use SCSS modules or global SCSS from `styles/`
--   ✅ **ALWAYS** use variables from `styles/variables/*` for all values
--   ✅ **ALWAYS** place component-specific SCSS in the component folder: `{componentName}/{componentName}.module.scss`
--   ✅ **ALWAYS** create component-specific SCSS in `styles/components/` only for global/shared component styles
--   ✅ **ALWAYS** use kebab-case for CSS class names
--   ✅ **ALWAYS** use BEM methodology (`__` for elements, `--` for modifiers)
--   ❌ **NEVER** use inline styles
--   ❌ **NEVER** hardcode colors, spacing, or sizes (use variables)
--   ❌ **NEVER** use `!important`
-
-## G) Modal Components
-
-scope: file.path matches ^src/presentation/components/.+[Mm]odal.+\.(ts|tsx)$
-
--   ✅ **ALWAYS** manage modal visibility via Zustand stores for global modals
--   ✅ **ALWAYS** use proper accessibility attributes (`role="dialog"`, `aria-modal="true"`)
--   ✅ **ALWAYS** implement focus management (trap focus, return focus on close)
--   ✅ **ALWAYS** use `forwardRef` for imperative APIs if needed
--   ❌ **NEVER** use local state for modals that affect multiple pages
--   ❌ **NEVER** create modals without proper accessibility
-
-## H) Layout Components
-
-scope: file.path matches ^src/presentation/layouts/.+\.(ts|tsx)$
-
--   ✅ **ALWAYS** place layout components in `presentation/layouts/`
--   ✅ **ALWAYS** use semantic HTML elements (`<header>`, `<nav>`, `<main>`, `<footer>`)
--   ✅ **ALWAYS** provide proper accessibility structure
--   ✅ **ALWAYS** use Next.js layout patterns when applicable
+- ✅ **ALWAYS** use SCSS modules or shared global styles from `src/styles/`
+- ✅ **ALWAYS** use variables from `src/styles/variables/*`
+- ❌ **NEVER** hardcode colors, spacing, or sizing values
+- ❌ **NEVER** use inline styles by default
 
 # Auto-suggestions
 
--   If component has inline styles: **Move to SCSS file in component folder**.
--   If page-specific component files in root `presentation/components/`: **Move to `presentation/components/{componentName}/` folder**.
--   If reusable component outside `presentation/components/ui/`: **Move to `presentation/components/ui/`**.
--   If component calls Supabase directly: **Use React Query hook from `presentation/hooks/`**.
--   If component props use `interface`: **Change to `type`**.
--   If hardcoded values used: **Replace with variables from `styles/variables/*`**.
--   If component uses `export function`: **Change to arrow function with export default**.
--   If modal uses local state but affects multiple pages: **Move to Zustand store**.
--   If component missing accessibility: **Add accessibility attributes using `shared/a11y/` utilities**.
+- If reusable UI is inside a domain -> **Move to `src/shared/design-system/`**
+- If route file contains business logic -> **Move logic into the owning domain or module**
+- If hook is global and owner-specific -> **Move it to `src/domains/<domain>/presentation/hooks/` or `src/modules/<module>/presentation/hooks/`**
+- If store contains business logic -> **Move logic into a domain use case or rule**

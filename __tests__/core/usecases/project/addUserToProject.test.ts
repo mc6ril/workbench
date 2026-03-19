@@ -1,13 +1,13 @@
 import {
   createConstraintError,
   createNotFoundError,
-} from "@/core/domain/repositoryError";
-import { type Project,ProjectRole } from "@/core/domain/schema/project.schema";
-
-import { addUserToProject } from "@/core/usecases/project/addUserToProject";
+} from "@/shared/errors/repositoryError";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+
+import { type Project,ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
+import { addUserToProject } from "@/domains/workspace/core/usecases/project/addUserToProject";
 
 describe("addUserToProject", () => {
   const projectId = "123e4567-e89b-12d3-a456-426614174000";

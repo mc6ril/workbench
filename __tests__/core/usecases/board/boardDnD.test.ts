@@ -1,13 +1,11 @@
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
-
+import { BOARD_COLUMN_DROP_PREFIX } from "@/modules/board/constants/board";
+import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { BoardColumnConfig } from "@/modules/board/core/domain/types/board.types";
 import {
   buildBoardTicketIds,
   buildNextBoardFromDragOver,
   buildTicketLocationIndex,
-} from "@/core/usecases/board/boardDnD";
-
-import { BOARD_COLUMN_DROP_PREFIX } from "@/shared/constants/board";
-import type { BoardColumnConfig } from "@/shared/types/board";
+} from "@/modules/board/core/usecases/board/boardDnD";
 
 describe("boardDnD usecase helpers", () => {
   const columns: BoardColumnConfig[] = [

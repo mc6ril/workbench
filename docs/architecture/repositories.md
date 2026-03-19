@@ -2,132 +2,196 @@
 
 ## Overview
 
-The repository layer follows the **Factory Pattern** to support both browser and server contexts in Next.js, while maintaining Clean Architecture principles.
+Repositories belong to the **owner of the business contract**.
 
-## Architecture Decision
+That owner can be:
 
-**Decision**: Keep both factory functions and pre-configured instances.
+- a **domain** in `src/domains/`
+- or a **module** in `src/modules/`
 
-**Approach**:
+They are **not** grouped under one monolithic global infrastructure root.
 
-- **Factory functions** for server contexts (Server Components, Server Actions, Middleware)
-- **Pre-configured instances** for browser contexts (React Query hooks in Client Components)
+Instead:
 
-## Justification
+- domain or module repositories live in their own `infrastructure/`
+- shared technical clients live in `src/shared/infrastructure/`
 
-### Why Both Approaches?
+## Final Rule
 
-1. **Next.js Context Requirements**:
-   - **Server-side**: Requires creating Supabase clients with cookie handling per request (`createSupabaseServerClient()`)
-   - **Browser-side**: Can use a singleton browser client (`createSupabaseBrowserClient()`)
+**Owner-owned adapters, shared-owned clients.**
 
-2. **Performance**:
-   - Server contexts need fresh clients per request (cookies change)
-   - Browser contexts can reuse a singleton instance
+That means:
 
-3. **Type Safety**:
-   - Both approaches use the same factory functions, ensuring type consistency
-   - Same repository interface (`AuthRepository`, `ProjectRepository`, etc.)
+- `auth`, `billing`, `workspace`, and `project` own their repository or gateway implementations
+- `board` owns its own repositories and mappers
+- `shared/infrastructure/supabase/` owns browser/server/admin Supabase clients
+- `shared/infrastructure/stripe/` owns the low-level Stripe client
 
-4. **Maintainability**:
-   - Single source of truth: factory functions define the implementation
-   - Centralized wiring in `repositories.ts` prevents duplication
-   - Easy to add new repositories following the same pattern
+## Target Structure
 
-## Implementation
-
-### Structure
-
+```text
+src/
+  domains/
+    auth/
+      core/
+        ports/
+      infrastructure/
+        supabase/
+    billing/
+      core/
+        ports/
+      infrastructure/
+        stripe/
+        supabase/
+    workspace/
+      core/
+        ports/
+      infrastructure/
+        supabase/
+    project/
+      core/
+        ports/
+          projectRepository.ts
+          invitationRepository.ts
+          memberRepository.ts
+          moduleRegistry.ts
+      infrastructure/
+        supabase/
+          project/
+          invitation/
+          member/
+          repositories.ts
+  modules/
+    board/
+      core/
+        ports/
+          ticketRepository.ts
+          boardRepository.ts
+          epicRepository.ts
+          sprintRepository.ts
+          labelRepository.ts
+      infrastructure/
+        supabase/
+          ticket/
+            TicketRepository.supabase.ts
+            TicketMapper.supabase.ts
+          board/
+            BoardRepository.supabase.ts
+            BoardMapper.supabase.ts
+          repositories.ts
+  shared/
+    infrastructure/
+      supabase/
+        client-browser.ts
+        client-server.ts
+        client-admin.ts
+      stripe/
+        stripeClient.ts
 ```
-infrastructure/supabase/
-├── auth/
-│   ├── AuthRepository.supabase.ts    # Factory function
-│   └── AuthMapper.supabase.ts
-├── project/
-│   ├── ProjectRepository.supabase.ts # Factory function
-│   └── ProjectMapper.supabase.ts
-├── ticket/
-│   ├── TicketRepository.supabase.ts  # Factory function
-│   └── TicketMapper.supabase.ts
-├── shared/
-│   ├── client-browser.ts              # Browser client factory
-│   ├── client-server.ts              # Server client factory
-│   └── repositoryErrorMapper.ts
-├── types/                            # Row types
-└── repositories.ts                   # Centralized wiring
-```
 
-### Factory Functions
+## Responsibilities
 
-Each repository exports a factory function that takes a Supabase client:
+### Domain or module repository / gateway files
+
+- Implement a port from the owning `core/ports/`
+- Stay specific to one owner
+- Map low-level payloads to business shapes
+- Can depend on shared technical clients
+
+### Shared infrastructure clients
+
+- Create the low-level client instance
+- Handle cookies, headers, secrets, request scope, and environment wiring
+- Stay business-agnostic
+
+## Recommended Pattern
+
+### 1. Owner factory in owner infrastructure
 
 ```typescript
-export const createAuthRepository = (
+export const createTicketRepository = (
   client: SupabaseClient
-): AuthRepository => ({
-  // Implementation
+): TicketRepository => ({
+  listByProject: async (projectId) => {
+    // Supabase implementation
+  },
 });
 ```
 
-### Centralized Wiring
+### 2. Shared client in shared infrastructure
 
-`repositories.ts` provides both:
+- `client-browser.ts` for client-side hooks
+- `client-server.ts` for request-scoped server usage
+- `client-admin.ts` for privileged operations
 
-1. **Browser instances** (for React Query hooks):
+### 3. Owner wiring entrypoint
 
-```typescript
-export const authRepository = createAuthRepository(
-  createSupabaseBrowserClient()
-);
-```
+Examples:
 
-2. **Factory functions** (for server contexts):
+- `src/domains/project/infrastructure/supabase/repositories.ts`
+- `src/modules/board/infrastructure/supabase/repositories.ts`
 
-```typescript
-export { createAuthRepository } from "./auth/AuthRepository.supabase";
-```
+These files can expose:
+
+- browser-ready instances for presentation hooks
+- factory helpers for server-side composition
 
 ## Usage Patterns
 
-### Server-Side (Layouts, Server Actions)
+### Browser-side board hook
 
 ```typescript
-import { createAuthRepository } from "@/infrastructure/supabase/repositories";
-import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
+import { ticketRepository } from "@/modules/board/infrastructure/supabase/repositories";
+import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 
-const supabaseClient = await createSupabaseServerClient();
-const authRepository = createAuthRepository(supabaseClient);
-```
-
-### Browser-Side (React Query Hooks)
-
-```typescript
-import { authRepository } from "@/infrastructure/supabase/repositories";
-
-export const useSession = () => {
+export const useTickets = (projectId: string) => {
   return useQuery({
-    queryKey: queryKeys.auth.session(),
-    queryFn: () => getCurrentSession(authRepository),
+    queryKey: ["board", "tickets", projectId],
+    queryFn: () => listTickets(ticketRepository, { projectId }),
   });
 };
 ```
 
+### Server-side composition
+
+```typescript
+import { createTicketRepository } from "@/modules/board/infrastructure/supabase/ticket/TicketRepository.supabase";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+
+const client = await createSupabaseServerClient();
+const ticketRepository = createTicketRepository(client);
+```
+
+## Special Ownership Rules
+
+- `src/domains/project/` owns project settings, members, invitations, permissions, and enabled-module configuration
+- `src/modules/board/` owns board data such as tickets, epics, sprints, and labels
+- `src/domains/workspace/` may orchestrate create/join flows, but project membership and invitation contracts remain project-owned
+- plan-to-module entitlement decisions remain owned by `billing`; the current codebase allows the thin shared bridge `@/shared/featureAccess` as a documented consumer entrypoint
+
+## Rules
+
+- A repository implementation belongs to the owner that defines the port
+- Shared infrastructure creates clients, not business repositories
+- Presentation hooks should use use cases, not raw low-level clients
+- `src/app/` should compose routes, not implement repository logic
+- Cross-owner reuse should happen through shared infrastructure or explicit contracts, not through a global repository bucket
+
+## Documented Exceptions
+
+Some narrow exceptions to the default owner-boundary rules are intentional in the current codebase.
+
+They are documented in [Accepted Architecture Exceptions](./accepted-exceptions.md).
+
+This currently includes:
+
+- the thin shared bridges `@/shared/session` and `@/shared/featureAccess`
+- owner-local low-level Supabase row types in each owner infrastructure `types.ts`
+
 ## Benefits
 
-1. **Flexibility**: Support both server and browser contexts seamlessly
-2. **Type Safety**: Same interfaces, same types
-3. **Testability**: Easy to inject mock clients in tests
-4. **Maintainability**: Single implementation, multiple usage patterns
-5. **Performance**: Optimized for each context (singleton vs per-request)
-
-## Impact on Codebase
-
-- ✅ All repositories follow the same pattern
-- ✅ No duplication between factory and direct implementations
-- ✅ Centralized wiring prevents factory proliferation
-- ✅ Easy to add new repositories following the same structure
-- ✅ Type-safe across all contexts
-
-## Future Considerations
-
-If we need to support additional contexts (e.g., Edge Runtime, Workers), the factory pattern makes it easy to add new client factories without changing repository implementations.
+1. Owner boundaries stay explicit.
+2. Project container rules stay separate from project modules.
+3. Shared client setup remains centralized.
+4. New modules can be added without distorting existing domains.
+5. The architecture scales naturally from one project module to many.

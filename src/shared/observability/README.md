@@ -2,11 +2,13 @@
 
 Centralized logging system following Clean Architecture principles with structured JSON logging, scoped loggers, and error handling.
 
+Navigation performance instrumentation lives in `shared/navigationPerf/` and is intentionally separate from this logger package.
+
 ## Architecture
 
-- **Port**: `core/ports/logger.ts` - Pure TypeScript interfaces (no dependencies)
+- **Port**: `shared/observability/logger.port.ts` - Pure TypeScript interfaces (no dependencies)
 - **Implementation**: `shared/observability/` - JSON console logger (no React dependencies)
-- **Composition Root**: `configs/logger.ts` - Singleton loggerFactory instance
+- **Composition Root**: `shared/observability/` - Logger factory and implementations
 
 ## Usage
 
@@ -15,8 +17,8 @@ Centralized logging system following Clean Architecture principles with structur
 Usecases receive `loggerFactory` as a parameter:
 
 ```typescript
-import type { LoggerFactory } from "@/core/ports/logger";
-import type { ProjectRepository } from "@/core/ports/projectRepository";
+import type { LoggerFactory } from "@/shared/observability/logger.port";
+import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 export async function createProject(
   repo: ProjectRepository,
@@ -43,7 +45,9 @@ export async function createProject(
 Use `loggerFactory.forScope()` to create loggers for specific features or screens:
 
 ```typescript
-import { loggerFactory } from "@/configs/logger";
+import { createLoggerFactory } from "@/shared/observability";
+
+const loggerFactory = createLoggerFactory();
 
 const logger = loggerFactory.forScope("workspace");
 logger.info("Loading workspace");
@@ -201,8 +205,8 @@ If `meta.error` is an `Error` instance:
 
 ## Clean Architecture Compliance
 
-- **Port** (`core/ports/logger.ts`): No dependencies, pure interfaces
+- **Port** (`shared/observability/logger.port.ts`): No dependencies, pure interfaces
 - **Implementation** (`shared/observability/`): Implements port, no React imports
-- **Composition Root** (`configs/logger.ts`): Creates singleton, used for DI
+- **Composition Root**: Callers create a factory with `createLoggerFactory()` and inject/use scoped loggers
 - **Usecases**: Receive `loggerFactory` as parameter (dependency injection)
 - **No direct imports**: Usecases don't import singleton directly

@@ -1,9 +1,8 @@
-import type { Ticket } from "@/core/domain/schema/ticket.schema";
-
-import { getTicketDetail } from "@/core/usecases/ticket/getTicketDetail";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
+
+import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
+import { getTicketDetail } from "@/modules/board/core/usecases/ticket/getTicketDetail";
 
 describe("getTicketDetail", () => {
   const ticketId = "123e4567-e89b-12d3-a456-426614174000";

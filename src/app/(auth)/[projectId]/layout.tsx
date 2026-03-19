@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
 
-import ProjectShell from "@/presentation/layouts/projectShell/ProjectShell";
-
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { createLoggerFactory } from "@/shared/observability";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
 import { getProjectForRoute } from "./getProjectForRoute";
+
+import ProjectShell from "@/domains/project/presentation/layouts/projectShell/ProjectShell";
 
 const logger = createLoggerFactory().forScope("ProjectLayout");
 

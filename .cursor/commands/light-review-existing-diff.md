@@ -17,7 +17,7 @@ Perform a quick quality pass on current diffs using the **Architecture Guardian*
 
 The Architecture Guardian performs a lightweight compliance check focusing on:
 
-- Clean Architecture boundaries
+- Modular domain architecture boundaries
 - Layer separation
 - React Query + Zustand usage
 - SCSS variables usage
@@ -31,7 +31,7 @@ The Architecture Guardian performs a lightweight compliance check focusing on:
    - Skim side-by-side diffs focusing on new or modified files
    - Note files or modules with large or complex edits
 2. **Assess architecture compliance**
-   - Check Clean Architecture boundaries (Domain → Usecases → Infrastructure → Presentation)
+   - Check domain + module architecture boundaries (`src/app`, `src/domains`, `src/modules`, `src/shared`, plus owner ownership)
    - Verify layer separation (no Supabase in UI, no business logic in UI)
    - Check React Query + Zustand usage (React Query for server state, Zustand for UI state only)
    - Verify SCSS variables usage (no hardcoded values)
@@ -53,7 +53,7 @@ The Architecture Guardian performs a lightweight compliance check focusing on:
 
 ### Architecture Compliance
 
-- [ ] Clean Architecture boundaries verified
+- [ ] Modular domain architecture boundaries verified
 - [ ] Layer separation maintained (no Supabase in UI, no business logic in UI)
 - [ ] React Query + Zustand usage verified
 - [ ] SCSS variables usage verified (no hardcoded values)

@@ -52,7 +52,7 @@ This command implements a sub-ticket from a planning document using the **Archit
    - Understand technical requirements
 
 2. **Implement following Architecture-Aware Dev playbooks**:
-   - Follow Clean Architecture principles
+   - Follow the domain + module architecture principles
    - Implement all Acceptance Criteria
    - Run TypeScript compilation check
    - Fix linting errors
@@ -95,7 +95,7 @@ Before marking DoD as complete, verify:
 - [ ] TypeScript compilation succeeds (no errors)
 - [ ] All tests pass (if applicable)
 - [ ] No linting errors
-- [ ] Code follows Clean Architecture principles
+- [ ] Code follows the domain + module architecture principles
 - [ ] JSDoc documentation updated (if applicable)
 - [ ] Migration files created and tested (if applicable)
 

@@ -1,9 +1,8 @@
-import { ProjectRole } from "@/core/domain/schema/project.schema";
-
-import { getCurrentProjectRole } from "@/core/usecases/member/getCurrentProjectRole";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";
+
+import { getCurrentProjectRole } from "@/domains/project/core/usecases/member/getCurrentProjectRole";
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 describe("getCurrentProjectRole", () => {
   const projectId = "123e4567-e89b-12d3-a456-426614174000";

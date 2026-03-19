@@ -1,11 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-import { exchangeCodeForSession } from "@/core/usecases/auth/exchangeCodeForSession";
-
-import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
-import { createSupabaseServerClient } from "@/infrastructure/supabase/shared/client-server";
-
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+
+import { exchangeCodeForSession } from "@/domains/auth/core/usecases/exchangeCodeForSession";
+import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
 
 /**
  * Auth callback route handler for Supabase PKCE flow.
