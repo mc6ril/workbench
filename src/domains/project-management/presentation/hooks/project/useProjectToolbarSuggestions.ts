@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { ProjectSearchSuggestion } from "@/presentation/hooks/project/useProjectSearchSuggestions";
+import type { ProjectSearchSuggestion } from "@/domains/project-management/presentation/hooks/project/useProjectSearchSuggestions";
 
 type UseProjectToolbarSuggestionsParams = {
   searchValue: string;

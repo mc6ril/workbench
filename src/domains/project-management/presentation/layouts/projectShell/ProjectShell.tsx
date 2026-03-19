@@ -3,15 +3,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import AppFooter from "@/presentation/components/appFooter/AppFooter";
-import SkipLink from "@/presentation/components/skipLink/SkipLink";
-import { useLabels } from "@/presentation/hooks/label";
-import { useProjectSearchSuggestions } from "@/presentation/hooks/project/useProjectSearchSuggestions";
-import DashboardShell from "@/presentation/layouts/dashboardShell/DashboardShell";
+import AppFooter from "@/shared/design-system/AppFooter";
+import DashboardShell from "@/shared/design-system/DashboardShell";
+import SkipLink from "@/shared/design-system/SkipLink";
 import {
   ProjectPermissionsProvider,
   useProjectPermissions,
-} from "@/presentation/providers/permissions";
+} from "@/domains/project-management/presentation/providers/permissions";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import {
@@ -35,6 +33,8 @@ import SidebarNavigation from "@/domains/project-management/presentation/compone
 import { useBoardConfiguration } from "@/domains/project-management/presentation/hooks/board/useBoardConfiguration";
 import { useEpicQueryParams } from "@/domains/project-management/presentation/hooks/epic/useEpicQueryParams";
 import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
+import { useLabels } from "@/domains/project-management/presentation/hooks/label";
+import { useProjectSearchSuggestions } from "@/domains/project-management/presentation/hooks/project/useProjectSearchSuggestions";
 import { useProjectRealtime } from "@/domains/project-management/presentation/hooks/realtime/useProjectRealtime";
 import { useSprints } from "@/domains/project-management/presentation/hooks/sprint";
 import { getProjectViewKeyFromPath } from "@/domains/project-management/presentation/navigation/projectViews.config";

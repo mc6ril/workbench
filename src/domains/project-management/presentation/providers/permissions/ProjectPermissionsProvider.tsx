@@ -7,9 +7,9 @@ import {
   useMemo,
 } from "react";
 
-import { useProjectRole } from "@/presentation/hooks/member/useProjectRole";
-import { resolveProjectPermissions } from "@/presentation/providers/permissions/resolveProjectPermissions";
-import type { ProjectPermissions } from "@/presentation/providers/permissions/types";
+import { useProjectRole } from "@/domains/project-management/presentation/hooks/member/useProjectRole";
+import { resolveProjectPermissions } from "@/domains/project-management/presentation/providers/permissions/resolveProjectPermissions";
+import type { ProjectPermissions } from "@/domains/project-management/presentation/providers/permissions/types";
 
 type ProjectPermissionsProviderProps = PropsWithChildren<{
   projectId: string;

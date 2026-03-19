@@ -3,13 +3,13 @@ import { renderHook } from "@testing-library/react";
 
 import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
-import { useProjectRole } from "@/presentation/hooks/member/useProjectRole";
+import { useProjectRole } from "@/domains/project-management/presentation/hooks/member/useProjectRole";
 import {
   ProjectPermissionsProvider,
   useProjectPermissions,
-} from "@/presentation/providers/permissions";
+} from "@/domains/project-management/presentation/providers/permissions";
 
-jest.mock("@/presentation/hooks/member/useProjectRole", () => ({
+jest.mock("@/domains/project-management/presentation/hooks/member/useProjectRole", () => ({
   useProjectRole: jest.fn(),
 }));
 

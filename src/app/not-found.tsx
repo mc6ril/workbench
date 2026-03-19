@@ -1,6 +1,6 @@
 "use client";
 
-import RouteFallbackPage from "@/presentation/components/feedback/RouteFallbackPage";
+import RouteFallbackPage from "@/shared/design-system/RouteFallbackPage";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
