@@ -49,6 +49,7 @@ import {
   SubscriptionPlan,
   SubscriptionStatus,
 } from "@/domains/billing/core/domain/schema/subscription.schema";
+import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 
 const LANGUAGE_SELECT_OPTIONS = supportedLocaleOptions.map((locale) => ({
@@ -67,6 +68,7 @@ const AccountPage = () => {
   const updatePreferencesMutation = useUpdatePreferences();
   const deleteUserMutation = useDeleteUser();
   const signOutMutation = useSignOut();
+  const { data: isBillingVisible } = useBillingVisibility();
   const { data: subscription, isLoading: isSubscriptionLoading } =
     useSubscription();
   const t = useTranslation("pages.account");
@@ -534,110 +536,115 @@ const AccountPage = () => {
         </section>
 
         {/* Subscription */}
-        <section
-          className={styles["account-section"]}
-          aria-labelledby={getAccessibilityId("account-subscription-title")}
-        >
-          <div className={styles["section-header"]}>
-            <div className={styles["section-header__icon"]} aria-hidden="true">
-              {t("subscription.icon")}
-            </div>
-            <div>
-              <h2
-                id={getAccessibilityId("account-subscription-title")}
-                className={styles["section-title"]}
+        {isBillingVisible && (
+          <section
+            className={styles["account-section"]}
+            aria-labelledby={getAccessibilityId("account-subscription-title")}
+          >
+            <div className={styles["section-header"]}>
+              <div
+                className={styles["section-header__icon"]}
+                aria-hidden="true"
               >
-                {t("subscription.title")}
-              </h2>
-              <p className={styles["section-description"]}>
-                {t("subscription.description")}
-              </p>
-            </div>
-          </div>
-
-          <div className={styles["section-content"]}>
-            {isSubscriptionLoading ? (
-              <Loader variant="inline" />
-            ) : subscription?.isSuperuser ? (
-              <div className={styles["subscription-info"]}>
-                <span
-                  className={`${styles["plan-badge"]} ${styles["plan-badge--superuser"]}`}
+                {t("subscription.icon")}
+              </div>
+              <div>
+                <h2
+                  id={getAccessibilityId("account-subscription-title")}
+                  className={styles["section-title"]}
                 >
-                  {t("subscription.superuser.badge")}
-                </span>
-                <p className={styles["subscription-description"]}>
-                  {t("subscription.superuser.description")}
+                  {t("subscription.title")}
+                </h2>
+                <p className={styles["section-description"]}>
+                  {t("subscription.description")}
                 </p>
               </div>
-            ) : (
-              <div className={styles["subscription-info"]}>
-                <div className={styles["subscription-details"]}>
-                  <div className={styles["subscription-plan"]}>
-                    <span className={styles["subscription-plan__label"]}>
-                      {t("subscription.currentPlan")}
-                    </span>
-                    <span
-                      className={`${styles["plan-badge"]} ${styles[`plan-badge--${subscription?.plan ?? SubscriptionPlan.FREE}`]}`}
-                    >
-                      {t(
-                        `subscription.planLabels.${subscription?.plan ?? SubscriptionPlan.FREE}`
-                      )}
-                    </span>
-                  </div>
+            </div>
 
-                  <div className={styles["subscription-status"]}>
-                    <span
-                      className={`${styles["status-indicator"]} ${styles[`status-indicator--${subscription?.status ?? SubscriptionStatus.ACTIVE}`]}`}
-                    >
-                      {t(
-                        `subscription.statusLabels.${subscription?.status ?? SubscriptionStatus.ACTIVE}`
-                      )}
-                    </span>
-                  </div>
-
-                  {subscription?.currentPeriodEnd &&
-                    subscription.plan !== SubscriptionPlan.FREE && (
-                      <p className={styles["subscription-period"]}>
-                        {t("subscription.periodEnd").replace(
-                          "{date}",
-                          new Date(
-                            subscription.currentPeriodEnd
-                          ).toLocaleDateString(getIntlLocale())
+            <div className={styles["section-content"]}>
+              {isSubscriptionLoading ? (
+                <Loader variant="inline" />
+              ) : subscription?.isSuperuser ? (
+                <div className={styles["subscription-info"]}>
+                  <span
+                    className={`${styles["plan-badge"]} ${styles["plan-badge--superuser"]}`}
+                  >
+                    {t("subscription.superuser.badge")}
+                  </span>
+                  <p className={styles["subscription-description"]}>
+                    {t("subscription.superuser.description")}
+                  </p>
+                </div>
+              ) : (
+                <div className={styles["subscription-info"]}>
+                  <div className={styles["subscription-details"]}>
+                    <div className={styles["subscription-plan"]}>
+                      <span className={styles["subscription-plan__label"]}>
+                        {t("subscription.currentPlan")}
+                      </span>
+                      <span
+                        className={`${styles["plan-badge"]} ${styles[`plan-badge--${subscription?.plan ?? SubscriptionPlan.FREE}`]}`}
+                      >
+                        {t(
+                          `subscription.planLabels.${subscription?.plan ?? SubscriptionPlan.FREE}`
                         )}
+                      </span>
+                    </div>
+
+                    <div className={styles["subscription-status"]}>
+                      <span
+                        className={`${styles["status-indicator"]} ${styles[`status-indicator--${subscription?.status ?? SubscriptionStatus.ACTIVE}`]}`}
+                      >
+                        {t(
+                          `subscription.statusLabels.${subscription?.status ?? SubscriptionStatus.ACTIVE}`
+                        )}
+                      </span>
+                    </div>
+
+                    {subscription?.currentPeriodEnd &&
+                      subscription.plan !== SubscriptionPlan.FREE && (
+                        <p className={styles["subscription-period"]}>
+                          {t("subscription.periodEnd").replace(
+                            "{date}",
+                            new Date(
+                              subscription.currentPeriodEnd
+                            ).toLocaleDateString(getIntlLocale())
+                          )}
+                        </p>
+                      )}
+
+                    {subscription?.cancelAtPeriodEnd && (
+                      <p
+                        className={styles["subscription-warning"]}
+                        role="alert"
+                        aria-live="polite"
+                      >
+                        {t("subscription.cancelAtPeriodEnd")}
                       </p>
                     )}
+                  </div>
 
-                  {subscription?.cancelAtPeriodEnd && (
-                    <p
-                      className={styles["subscription-warning"]}
-                      role="alert"
-                      aria-live="polite"
-                    >
-                      {t("subscription.cancelAtPeriodEnd")}
-                    </p>
-                  )}
-                </div>
-
-                <div className={styles["subscription-actions"]}>
-                  {subscription?.plan !== SubscriptionPlan.FREE && (
+                  <div className={styles["subscription-actions"]}>
+                    {subscription?.plan !== SubscriptionPlan.FREE && (
+                      <Button
+                        label={t("subscription.manageButton")}
+                        variant="secondary"
+                        onClick={handleManageSubscription}
+                        disabled={isManagingSubscription}
+                        aria-label={t("subscription.manageButtonAriaLabel")}
+                      />
+                    )}
                     <Button
-                      label={t("subscription.manageButton")}
-                      variant="secondary"
-                      onClick={handleManageSubscription}
-                      disabled={isManagingSubscription}
-                      aria-label={t("subscription.manageButtonAriaLabel")}
+                      label={t("subscription.changePlanButton")}
+                      onClick={() => router.push(PAGE_ROUTES.PRICING)}
+                      aria-label={t("subscription.changePlanButtonAriaLabel")}
                     />
-                  )}
-                  <Button
-                    label={t("subscription.changePlanButton")}
-                    onClick={() => router.push(PAGE_ROUTES.PRICING)}
-                    aria-label={t("subscription.changePlanButtonAriaLabel")}
-                  />
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        </section>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Sign Out */}
         <section

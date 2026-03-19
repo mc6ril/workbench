@@ -14,6 +14,7 @@ import styles from "./UpgradePrompt.module.scss";
 
 import type { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
 import type { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 
 type Props = {
   feature: PlanFeature;
@@ -28,6 +29,7 @@ const UpgradePrompt = ({ feature, minimumPlan }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const t = useTranslation("pages.upgrade");
+  const { data: isBillingVisible } = useBillingVisibility();
   const headingId = useMemo(
     () => getAccessibilityId("upgrade-prompt-title"),
     []
@@ -73,12 +75,14 @@ const UpgradePrompt = ({ feature, minimumPlan }: Props) => {
           </span>
         </div>
 
-        <Button
-          label={t("ctaLabel")}
-          variant="primary"
-          onClick={handleViewPlans}
-          aria-label={t("ctaAriaLabel")}
-        />
+        {isBillingVisible && (
+          <Button
+            label={t("ctaLabel")}
+            variant="primary"
+            onClick={handleViewPlans}
+            aria-label={t("ctaAriaLabel")}
+          />
+        )}
       </div>
     </section>
   );

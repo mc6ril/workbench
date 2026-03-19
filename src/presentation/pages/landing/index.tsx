@@ -24,6 +24,8 @@ import { buildFeaturePreviewContent, isFeatureKey } from "@/shared/utils";
 
 import styles from "./styles.module.scss";
 
+import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
+
 const LandingPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -36,6 +38,7 @@ const LandingPageContent = () => {
   const tTrust = useTranslation("pages.landing.trust");
   const tCta = useTranslation("pages.landing.cta");
   const tFooter = useTranslation("pages.landing.footer");
+  const { data: isBillingVisible } = useBillingVisibility();
   const [selectedFeatureKey, setSelectedFeatureKey] = useState<FeatureKey>(
     "board"
   );
@@ -461,12 +464,14 @@ const LandingPageContent = () => {
           <Link href={PAGE_ROUTES.LEGAL} className={styles["landing-footer__link"]}>
             {tFooter("legal")}
           </Link>
-          <Link
-            href={PAGE_ROUTES.PRICING}
-            className={styles["landing-footer__link"]}
-          >
-            {tFooter("pricing")}
-          </Link>
+          {isBillingVisible && (
+            <Link
+              href={PAGE_ROUTES.PRICING}
+              className={styles["landing-footer__link"]}
+            >
+              {tFooter("pricing")}
+            </Link>
+          )}
         </nav>
       </footer>
     </main>

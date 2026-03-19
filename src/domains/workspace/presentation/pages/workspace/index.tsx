@@ -27,6 +27,7 @@ import { buildProjectRoute } from "@/shared/utils/routes";
 import styles from "./styles.module.scss";
 
 import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 import type { CreateProjectInput } from "@/domains/workspace/core/domain/schema/project.schema";
 import { CreateProjectInputSchema } from "@/domains/workspace/core/domain/schema/project.schema";
@@ -75,6 +76,7 @@ const WorkspacePage = () => {
   const addUserToProjectMutation = useAddUserToProject();
   const createProjectMutation = useCreateProject();
   const { data: reclaimableProjects } = useReclaimableProjects(!!session);
+  const { data: isBillingVisible } = useBillingVisibility();
   const { data: subscription, isLoading: isSubscriptionLoading } =
     useSubscription();
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -490,13 +492,15 @@ const WorkspacePage = () => {
           >
             {t("footer.legal")}
           </Link>
-          <Link
-            href={PAGE_ROUTES.PRICING}
-            className={styles["workspace-footer__link"]}
-            ariaLabel={t("footer.subscriptions")}
-          >
-            {t("footer.subscriptions")}
-          </Link>
+          {isBillingVisible && (
+            <Link
+              href={PAGE_ROUTES.PRICING}
+              className={styles["workspace-footer__link"]}
+              ariaLabel={t("footer.subscriptions")}
+            >
+              {t("footer.subscriptions")}
+            </Link>
+          )}
         </nav>
       </footer>
 

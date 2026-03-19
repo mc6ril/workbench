@@ -7,6 +7,7 @@ import { useSession } from "@/shared/session";
 import { getEffectivePlan } from "@/domains/billing/core/domain/rules/planFeatures.rules";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
 import { computeFeatureLockState } from "@/domains/billing/core/usecases/computeFeatureLockState";
+import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 import type { SidebarItem } from "@/domains/project/presentation/components/sidebarNavigation/SidebarNavigation.types";
 import {
@@ -22,6 +23,7 @@ export const useSidebarItems = (projectId: string): SidebarItem[] => {
     isLoading: isSubscriptionLoading,
     isFetched: isSubscriptionFetched,
   } = useSubscription();
+  const { data: isBillingVisible } = useBillingVisibility();
 
   const isEntitlementsReady = useMemo((): boolean => {
     if (isSessionLoading) {
@@ -64,6 +66,10 @@ export const useSidebarItems = (projectId: string): SidebarItem[] => {
         return [];
       }
 
+      if (!isBillingVisible && locked) {
+        return [];
+      }
+
       return [
         {
           key: config.key,
@@ -77,5 +83,5 @@ export const useSidebarItems = (projectId: string): SidebarItem[] => {
         },
       ];
     });
-  }, [effectivePlan, projectId, t]);
+  }, [effectivePlan, isBillingVisible, projectId, t]);
 };
