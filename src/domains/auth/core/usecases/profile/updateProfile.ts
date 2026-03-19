@@ -1,9 +1,9 @@
 import {
   type UpdateProfileInput,
   UpdateProfileInputSchema,
-} from "@/domains/project-management/core/domain/schema/userProfile.schema";
+} from "@/domains/auth/core/domain/schema/userProfile.schema";
 
-import type { UserProfileRepository } from "@/domains/project-management/core/ports/userProfileRepository";
+import type { UserProfileRepository } from "@/domains/auth/core/ports/userProfileRepository";
 
 /**
  * Update the current user's profile (display name).

@@ -5,7 +5,6 @@
 
 import { createCommentRepository } from "@/modules/board/infrastructure/supabase/comment/CommentRepository.supabase";
 import { createRealtimeRepository } from "@/modules/board/infrastructure/supabase/realtime/RealtimeRepository.supabase";
-import { createUserProfileRepository } from "@/domains/auth/infrastructure/supabase/userProfile/UserProfileRepository.supabase";
 
 import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
 
@@ -34,9 +33,6 @@ export const sprintRepository = createSprintRepository(
 export const labelRepository = createLabelRepository(
   createSupabaseBrowserClient()
 );
-export const userProfileRepository = createUserProfileRepository(
-  createSupabaseBrowserClient()
-);
 
 /**
  * Build a realtime repository on demand.
@@ -54,4 +50,3 @@ export { createSprintRepository } from "./sprint/SprintRepository.supabase";
 export { createTicketRepository } from "./ticket/TicketRepository.supabase";
 export { createCommentRepository } from "@/modules/board/infrastructure/supabase/comment/CommentRepository.supabase";
 export { createRealtimeRepository } from "@/modules/board/infrastructure/supabase/realtime/RealtimeRepository.supabase";
-export { createUserProfileRepository } from "@/domains/auth/infrastructure/supabase/userProfile/UserProfileRepository.supabase";
