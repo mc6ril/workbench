@@ -3,9 +3,9 @@ import { z } from "zod";
 import type {
   Epic,
   UpdateEpicInput,
-} from "@/domains/project-management/core/domain/schema/epic.schema";
+} from "@/modules/board/core/domain/schema/epic.schema";
 
-import { updateEpic } from "@/domains/project-management/core/usecases/epic/updateEpic";
+import { updateEpic } from "@/modules/board/core/usecases/epic/updateEpic";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createEpicRepositoryMock } from "../../../../__mocks__/core/ports/epicRepository";

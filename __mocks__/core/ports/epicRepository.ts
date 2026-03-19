@@ -2,8 +2,8 @@ import type {
   CreateEpicInput,
   Epic,
   UpdateEpicInput,
-} from "@/domains/project-management/core/domain/schema/epic.schema";
-import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
+} from "@/modules/board/core/domain/schema/epic.schema";
+import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 
 /**
  * Mock type for EpicRepository.
