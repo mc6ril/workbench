@@ -1,28 +1,33 @@
 # User Flows Architecture
 
-This document describes routing, guards, and route composition in the modular domain architecture.
+This document describes routing, guards, and route composition in the final modular architecture.
 
 ## Routing Principle
 
-`src/app/` remains the Next.js routing layer.
+`src/app/` remains the Next.js routing layer only.
 
 Route files should:
 
-- define the URL structure
+- define URL structure
 - apply route-level guards
-- compose pages or layouts from domain modules
+- compose pages, layouts, or flows from the owning domain
 
-Domain-specific page logic belongs in:
+## Domain Composition Map
 
-- `src/domains/project-management/presentation/pages/`
-- `src/domains/project-management/presentation/layouts/`
+- `src/domains/auth/presentation/` -> auth screens and auth route composition
+- `src/domains/workspace/presentation/` -> workspace and account-facing flows
+- `src/domains/project-management/presentation/` -> board, epics, project settings
+- `src/domains/billing/` -> checkout, portal, plans, subscriptions, billing webhooks
 
-Shared auth/session concerns belong in:
+Shared cross-cutting pieces still belong in:
 
-- `src/shared/auth/`
-- `src/shared/infrastructure/supabase/`
+- `src/shared/design-system/`
+- `src/shared/infrastructure/`
+- `src/shared/i18n/`
+- `src/shared/a11y/`
+- `src/shared/observability/`
 
-## End-to-End User Flow
+## End-to-End Product Flow
 
 ```mermaid
 stateDiagram-v2
@@ -34,12 +39,12 @@ stateDiagram-v2
    SignUp --> VerifyEmail: signup success
    VerifyEmail --> Workspace: email verified
 
-   Workspace --> CreateProject: no projects
+   Workspace --> Account: account settings
    Workspace --> ProjectBoard: select project
-   CreateProject --> ProjectBoard: project created
 
    ProjectBoard --> ProjectEpics: navigate
    ProjectBoard --> ProjectSettings: navigate
+   ProjectBoard --> BillingPortal: upgrade or manage plan
    ProjectEpics --> ProjectBoard: navigate
    ProjectSettings --> ProjectBoard: navigate
 ```
@@ -55,13 +60,16 @@ flowchart TD
    AUTH_CHECK -->|No| PUBLIC[Public route handling]
    AUTH_CHECK -->|Yes| PROTECTED[Protected route handling]
 
-   PUBLIC --> LANDING[Landing or auth routes]
+   PUBLIC --> AUTH_DOMAIN[auth domain composition]
    PROTECTED --> WS_ROUTE[/workspace composition]
    PROTECTED --> PROJECT_ROUTE[/:projectId/* composition]
+   PROTECTED --> BILLING_ROUTE[/api/stripe/* composition]
 
+   WS_ROUTE --> WS_DOMAIN[workspace domain presentation]
    PROJECT_ROUTE --> ACCESS_CHECK{Project access allowed?}
    ACCESS_CHECK -->|No| REDIRECT_WS[Redirect to /workspace]
-   ACCESS_CHECK -->|Yes| DOMAIN_PAGE[project-management presentation page/layout]
+   ACCESS_CHECK -->|Yes| PM_DOMAIN[project-management presentation]
+   BILLING_ROUTE --> BILLING_DOMAIN[billing domain flow]
 ```
 
 ## Route Structure
@@ -71,65 +79,72 @@ flowchart TD
 - `/`
 - `/auth/signin`
 - `/auth/signup`
+- `/auth/callback`
 - `/auth/verify-email`
 - `/auth/reset-password`
 - `/auth/update-password`
+- `/join/[token]`
 
 ### Protected Routes
 
 - `/workspace`
+- `/account`
 - `/:projectId`
 - `/:projectId/board`
 - `/:projectId/epics`
 - `/:projectId/settings`
+
+### Billing/API Routes
+
+- `/api/stripe/checkout`
+- `/api/stripe/portal`
+- `/api/stripe/webhook`
 
 ## Layout Responsibilities
 
 ### Root layout
 
 - Global HTML shell
-- Shared providers and top-level composition
+- Shared providers
 - No domain business rules
 
-### Auth-related route handling
+### Auth route handling
 
 - Verifies session presence
-- Uses shared auth/session utilities
-- Redirects early when needed
+- Delegates screen composition to the auth domain
+
+### Workspace route handling
+
+- Delegates user/workspace UI to the workspace domain
 
 ### Project route handling
 
 - Verifies project access
-- Delegates project-specific rendering to `domains/project-management/presentation/pages/` or `layouts/`
-- Keeps routing concerns separate from domain UI logic
+- Delegates rendering to `domains/project-management/presentation/pages/` or `layouts/`
+
+### Billing route handling
+
+- Delegates checkout, portal, and webhook orchestration to the billing domain
 
 ## Data Fetching Strategy
 
 - `src/app/` route files stay thin
-- Domain pages and layouts call domain hooks from `src/domains/project-management/presentation/hooks/`
+- Domain pages and layouts call domain hooks from `src/domains/<domain>/presentation/hooks/`
 - Domain hooks call domain use cases
-- Domain repositories use shared Supabase clients from `src/shared/infrastructure/supabase/`
-
-## Hook Convention
-
-Hooks are scoped by domain instead of living in one global presentation folder.
-
-Examples:
-
-- `useTickets(projectId)`
-- `useCreateTicket()`
-- `useEpics(projectId)`
-- `useBoard(projectId)`
-
-Location:
-
-- `src/domains/project-management/presentation/hooks/`
+- Domain repositories and gateways use shared infra clients from `src/shared/infrastructure/`
 
 ## Security Model
 
 1. `middleware.ts` can optimize routing and early redirects
-2. shared auth/session utilities confirm authentication state
-3. project-access checks confirm route eligibility
-4. database policies remain the final source of truth for data access
+2. auth/session concerns are owned by the auth domain and supported by shared infra clients
+3. workspace and project-access checks confirm route eligibility
+4. database and provider policies remain the final source of truth
 
-The key architectural shift is that routing stays in `src/app/`, while project-management UI composition now lives in the domain module rather than a global `src/presentation/` root.
+## Key Takeaway
+
+Routing stays in `src/app/`, but route-specific rendering is delegated to the owning domain:
+
+- auth routes -> `src/domains/auth/`
+- workspace/account routes -> `src/domains/workspace/`
+- project routes -> `src/domains/project-management/`
+- billing flows -> `src/domains/billing/`

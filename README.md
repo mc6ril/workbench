@@ -21,21 +21,44 @@ Each domain is a self-contained "board" experience:
 
 ### Architecture
 
-Workbench now follows a **modular domain architecture**:
+Workbench follows a **final domain-first modular architecture**:
 
-- `src/app/` keeps Next.js routing and route composition
-- `src/domains/project-management/` owns project-management business logic, domain use cases, infrastructure adapters, and domain presentation
-- `src/shared/` owns reusable UI, shared infrastructure clients, i18n, auth, observability, constants, types, utils, and accessibility
+```text
+src/
+  app/                          # Next.js routing only
+  domains/
+    auth/                       # sign in/up, OAuth, reset password, email verify
+    billing/                    # Stripe, plans, subscriptions, webhooks
+    workspace/                  # users, invitations, account settings
+    project-management/         # tickets, epics, sprints, board
+    recipes/                    # future
+    vacation/                   # future
+    budget/                     # future
+  shared/
+    design-system/              # reusable UI primitives
+    i18n/                       # translations and hooks
+    observability/              # logger and performance tracking
+    infrastructure/
+      supabase/                 # browser/server/admin clients
+      stripe/                   # stripeClient
+      web/                      # rate limit and CSRF
+    constants/                  # routes, error codes, feature flags
+    types/                      # truly generic types only
+    utils/                      # pure helpers with no domain ownership
+    a11y/                       # accessibility helpers
+  styles/
+  middleware.ts
+```
 
-Inside each domain module, responsibilities stay layered:
+Inside each concrete domain module, responsibilities stay layered:
 
-- **Domain**: schemas, rules, constants
-- **Usecases**: orchestration
-- **Ports**: contracts
-- **Infrastructure**: repositories and mappers
-- **Presentation**: hooks, stores, pages, layouts, components
+- **core/domain**: schemas, rules, constants
+- **core/ports**: contracts
+- **core/usecases**: orchestration
+- **infrastructure**: repositories, mappers, gateways
+- **presentation**: components, hooks, stores, pages, layouts, navigation
 
-Business rules stay inside domain modules, not in route files or shared UI primitives.
+`src/app/` stays route-only, domains own business logic, and `src/shared/` stays cross-cutting. This lets the current `project-management` module evolve without dictating the shape of future domains.
 
 ### Development Strategy
 

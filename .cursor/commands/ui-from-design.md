@@ -27,7 +27,7 @@ The UI Designer:
 
 1. **Analyze Design Image**
    - Visually analyze layout, hierarchy, and intent
-   - Identify reusable components from `shared/design-system/ui/`
+   - Identify reusable components from `shared/design-system/`
    - Map design elements to components (Button, Input, Card, etc.)
 
 2. **Scaffold File Structure**
@@ -63,7 +63,7 @@ The UI Designer:
 ### Design Analysis
 
 - [ ] Design image analyzed (layout, hierarchy, components)
-- [ ] Reusable components identified from `shared/design-system/ui/`
+- [ ] Reusable components identified from `shared/design-system/`
 - [ ] File structure planned (`src/app` route composition + domain presentation components)
 
 ### Code Generation

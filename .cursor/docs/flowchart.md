@@ -1,26 +1,38 @@
 # Architecture Flowcharts
 
-This document contains Mermaid diagrams representing the current routing model and the new modular domain architecture.
+This document contains Mermaid diagrams representing the final routing model and the final multi-domain architecture.
 
 ## 1. Global Sitemap
 
 ```mermaid
 flowchart TD
-   R[ROOT /] --> L[Landing Page]
-   R --> AUTH[Auth Pages]
+   R[ROOT /] --> LANDING[/]
+   R --> AUTH[Auth routes]
    AUTH --> SIGNIN[/auth/signin]
    AUTH --> SIGNUP[/auth/signup]
    AUTH --> VERIFY[/auth/verify-email]
    AUTH --> RESET[/auth/reset-password]
    AUTH --> UPDATE[/auth/update-password]
+   AUTH --> CALLBACK[/auth/callback]
 
-   R --> PROTECTED[(auth) Route Group]
+   R --> STATIC[Static routes]
+   STATIC --> PRICING[/pricing]
+   STATIC --> LEGAL[/legal]
+
+   R --> JOIN[/join/:token]
+   R --> PROTECTED[(auth) route group]
    PROTECTED --> WS[/workspace]
+   PROTECTED --> ACCOUNT[/account]
    PROTECTED --> PROJ[/:projectId]
 
    PROJ --> BOARD[/:projectId/board]
    PROJ --> EPICS[/:projectId/epics]
    PROJ --> SETTINGS[/:projectId/settings]
+
+   R --> API[API routes]
+   API --> CHECKOUT[/api/stripe/checkout]
+   API --> PORTAL[/api/stripe/portal]
+   API --> WEBHOOK[/api/stripe/webhook]
 ```
 
 ## 2. End-to-End Product Flow
@@ -36,12 +48,13 @@ stateDiagram-v2
    SignUp --> VerifyEmail: signup success
    VerifyEmail --> Workspace: email verified
 
-   Workspace --> CreateProject: no projects
+   Workspace --> Account: account settings
    Workspace --> ProjectBoard: select project
-   CreateProject --> ProjectBoard: project created
+   Workspace --> BillingPortal: manage plan
 
    ProjectBoard --> ProjectEpics: navigate
    ProjectBoard --> ProjectSettings: navigate
+   ProjectBoard --> BillingPortal: upgrade
    ProjectEpics --> ProjectBoard: navigate
    ProjectSettings --> ProjectBoard: navigate
 ```
@@ -51,65 +64,72 @@ stateDiagram-v2
 ```mermaid
 flowchart TD
    REQ[Request] --> APP[src/app/* route]
-   APP --> AUTH_GUARDS[Shared auth/session checks]
-   AUTH_GUARDS --> ROUTE{Route type}
+   APP --> MIDDLEWARE[middleware.ts]
+   MIDDLEWARE --> ROUTE{Route family}
 
-   ROUTE -->|/workspace| WS_PAGE[Workspace route composition]
-   ROUTE -->|/:projectId/board| BOARD_ROUTE[Board route composition]
-   ROUTE -->|/:projectId/epics| EPICS_ROUTE[Epics route composition]
-   ROUTE -->|/:projectId/settings| SETTINGS_ROUTE[Settings route composition]
+   ROUTE -->|public auth| AUTH_ROUTE[Auth route composition]
+   ROUTE -->|workspace/account| WS_ROUTE[Workspace route composition]
+   ROUTE -->|project| PROJECT_ROUTE[Project route composition]
+   ROUTE -->|billing api| BILLING_ROUTE[Billing route composition]
 
-   BOARD_ROUTE --> BOARD_PAGE[domains/project-management/presentation/pages/BoardPage]
-   EPICS_ROUTE --> EPICS_PAGE[domains/project-management/presentation/pages/EpicsPage]
-   SETTINGS_ROUTE --> SETTINGS_LAYOUT[domains/project-management/presentation/layouts/SettingsLayout]
+   AUTH_ROUTE --> AUTH_PAGE[domains/auth/presentation/...]
+   WS_ROUTE --> WS_PAGE[domains/workspace/presentation/...]
+   PROJECT_ROUTE --> PM_LAYOUT[domains/project-management/presentation/layouts/projectShell/ProjectShell.tsx]
+   BILLING_ROUTE --> BILLING_FLOW[domains/billing/...]
 
-   BOARD_PAGE --> BOARD_HOOKS[project-management presentation hooks]
-   EPICS_PAGE --> EPIC_HOOKS[project-management presentation hooks]
-   SETTINGS_LAYOUT --> SETTINGS_HOOKS[project-management presentation hooks]
+   PM_LAYOUT --> PM_PAGES[domains/project-management/presentation/pages/...]
+   PM_PAGES --> PM_HOOKS[project-management presentation hooks]
+   AUTH_PAGE --> AUTH_HOOKS[auth presentation hooks]
+   WS_PAGE --> WS_HOOKS[workspace presentation hooks]
 ```
 
-## 4. Modular Domain Architecture Map
+## 4. Final Domain Architecture Map
 
 ```mermaid
 flowchart LR
    subgraph APP[src/app]
-      APP1[Route files]
-      APP2[Route layouts]
+      APP1[route files]
+      APP2[route layouts]
+      APP3[route handlers]
    end
 
-   subgraph PM[domains/project-management]
-      subgraph PM_PRE[presentation]
-         PM_PRE_1[pages]
-         PM_PRE_2[layouts]
-         PM_PRE_3[components]
-         PM_PRE_4[hooks]
-         PM_PRE_5[stores]
-         PM_PRE_6[navigation]
+   subgraph DOMAINS[src/domains]
+      subgraph AUTH[auth]
+         AUTH_PRE[presentation]
+         AUTH_CORE[core]
+         AUTH_INFRA[infrastructure]
       end
 
-      subgraph PM_CORE[core]
-         PM_CORE_1[domain/schema]
-         PM_CORE_2[domain/rules]
-         PM_CORE_3[domain/constants]
-         PM_CORE_4[ports]
-         PM_CORE_5[usecases]
+      subgraph BILLING[billing]
+         BILLING_PRE[presentation]
+         BILLING_CORE[core]
+         BILLING_INFRA[infrastructure]
       end
 
-      subgraph PM_INFRA[infrastructure]
-         PM_INFRA_1[supabase repositories]
-         PM_INFRA_2[mappers]
+      subgraph WORKSPACE[workspace]
+         WORKSPACE_PRE[presentation]
+         WORKSPACE_CORE[core]
+         WORKSPACE_INFRA[infrastructure]
+      end
+
+      subgraph PM[project-management]
+         PM_PRE[presentation]
+         PM_CORE[core]
+         PM_INFRA[infrastructure]
       end
    end
 
    subgraph SHARED[src/shared]
-      SHARED_1[design-system/ui]
+      SHARED_1[design-system]
       SHARED_2[i18n]
       SHARED_3[observability]
-      SHARED_4[auth]
-      SHARED_5[infrastructure/supabase]
-      SHARED_6[infrastructure/stripe]
-      SHARED_7[infrastructure/web]
-      SHARED_8[constants types utils a11y]
+      SHARED_4[infrastructure/supabase]
+      SHARED_5[infrastructure/stripe]
+      SHARED_6[infrastructure/web]
+      SHARED_7[constants]
+      SHARED_8[types]
+      SHARED_9[utils]
+      SHARED_10[a11y]
    end
 
    subgraph EXT[External Services]
@@ -118,33 +138,41 @@ flowchart LR
       EXT3[Web APIs]
    end
 
-   APP1 --> PM_PRE_1
-   APP2 --> PM_PRE_2
-   PM_PRE_1 --> PM_PRE_4
-   PM_PRE_2 --> PM_PRE_4
-   PM_PRE_3 --> SHARED_1
-   PM_PRE_4 --> PM_CORE_5
-   PM_PRE_5 --> PM_PRE_1
-   PM_CORE_5 --> PM_CORE_4
-   PM_INFRA_1 --> SHARED_5
-   PM_INFRA_1 --> PM_CORE_4
-   PM_INFRA_2 --> PM_CORE_1
-   SHARED_5 --> EXT1
-   SHARED_6 --> EXT2
-   SHARED_7 --> EXT3
+   APP1 --> AUTH_PRE
+   APP1 --> WORKSPACE_PRE
+   APP1 --> PM_PRE
+   APP3 --> BILLING_INFRA
+
+   AUTH_PRE --> AUTH_CORE
+   AUTH_INFRA --> SHARED_4
+
+   BILLING_PRE --> BILLING_CORE
+   BILLING_INFRA --> SHARED_5
+   BILLING_INFRA --> SHARED_4
+
+   WORKSPACE_PRE --> WORKSPACE_CORE
+   WORKSPACE_INFRA --> SHARED_4
+
+   PM_PRE --> PM_CORE
+   PM_PRE --> SHARED_1
+   PM_INFRA --> SHARED_4
+
+   SHARED_4 --> EXT1
+   SHARED_5 --> EXT2
+   SHARED_6 --> EXT3
 ```
 
 ## 5. Data Flow Reference
 
 ```mermaid
 flowchart TD
-   ROUTE[src/app/[projectId]/board/page.tsx]
-   PAGE[domains/project-management/presentation/pages/BoardPage]
-   HOOK[domains/project-management/presentation/hooks/useTickets]
-   USECASE[domains/project-management/core/usecases/listTickets]
-   PORT[domains/project-management/core/ports/ticketRepository]
-   REPO[domains/project-management/infrastructure/supabase/ticketRepository.supabase]
-   CLIENT[shared/infrastructure/supabase/client-browser]
+   ROUTE[src/app/(auth)/[projectId]/board/page.tsx]
+   PAGE[domains/project-management/presentation/pages/board/index.tsx]
+   HOOK[domains/project-management/presentation/hooks/ticket/useTickets.ts]
+   USECASE[domains/project-management/core/usecases/ticket/listTickets.ts]
+   PORT[domains/project-management/core/ports/ticketRepository.ts]
+   REPO[domains/project-management/infrastructure/supabase/ticket/TicketRepository.supabase.ts]
+   CLIENT[shared/infrastructure/supabase/client-browser.ts]
    DB[Supabase]
 
    ROUTE --> PAGE

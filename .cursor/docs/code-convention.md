@@ -163,7 +163,7 @@ export const useTickets = (projectId: string) => {
     queryKey: ["project-management", "tickets", projectId],
     queryFn: () => listTickets(ticketRepository, { projectId }),
   });
-}
+};
 ```
 
 ---
@@ -225,7 +225,7 @@ enum ProductStatus {
 | `ProductTable.tsx`             | Component                 |
 | `useTickets.ts`                | Domain React Query hook   |
 | `useBoardStore.ts`             | Domain Zustand store      |
-| `ticketRepository.supabase.ts` | Domain infrastructure repository |
+| `TicketRepository.supabase.ts` | Domain infrastructure repository |
 
 ---
 
@@ -239,7 +239,7 @@ enum ProductStatus {
 **UI Tests:**
 
 - ❌ No mandatory UI tests for page components
-- ✅ **Mandatory tests** for reusable components in `shared/design-system/ui`
+- ✅ **Mandatory tests** for reusable components in `shared/design-system`
 
 ---
 
