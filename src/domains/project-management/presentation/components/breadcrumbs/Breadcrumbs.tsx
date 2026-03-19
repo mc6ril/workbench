@@ -14,7 +14,7 @@ import {
   buildProjectViewHref,
   getProjectViewConfig,
   getProjectViewKeyFromPath,
-} from "@/domains/project-management/presentation/navigation/projectViews.config";
+} from "@/domains/project/presentation/navigation/projectViews.config";
 
 type Props = {
   projectId: string;

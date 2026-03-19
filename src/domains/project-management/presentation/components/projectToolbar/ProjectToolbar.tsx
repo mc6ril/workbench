@@ -17,7 +17,7 @@ import { useProjectToolbarSuggestions } from "@/domains/project-management/prese
 import {
   getProjectViewConfig,
   getProjectViewKeyFromPath,
-} from "@/domains/project-management/presentation/navigation/projectViews.config";
+} from "@/domains/project/presentation/navigation/projectViews.config";
 
 const ProjectToolbar = ({
   projectId,

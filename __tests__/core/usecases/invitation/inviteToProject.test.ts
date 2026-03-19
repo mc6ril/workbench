@@ -2,10 +2,10 @@ import {
   type CreateInvitationInput,
   InvitationStatus,
   type ProjectInvitation,
-} from "@/domains/project-management/core/domain/schema/invitation.schema";
-import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
+} from "@/domains/project/core/domain/schema/invitation.schema";
+import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 
-import { inviteToProject } from "@/domains/project-management/core/usecases/invitation/inviteToProject";
+import { inviteToProject } from "@/domains/project/core/usecases/invitation/inviteToProject";
 
 import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
 import { getFeatureLimit } from "@/domains/billing/core/domain/rules/planFeatures.rules";

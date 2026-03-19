@@ -21,7 +21,7 @@ import styles from "./ProjectCardActions.module.scss";
 import ProjectMembersModal from "./ProjectMembersModal";
 
 import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
-import { useInviteMember } from "@/domains/project-management/presentation/hooks/invitation/useInviteMember";
+import { useInviteMember } from "@/domains/project/presentation/hooks/invitation/useInviteMember";
 import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import { useDeleteProject } from "@/domains/workspace/presentation/hooks/useDeleteProject";
 

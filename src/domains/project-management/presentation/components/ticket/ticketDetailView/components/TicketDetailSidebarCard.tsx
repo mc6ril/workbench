@@ -1,5 +1,5 @@
 import type { Label } from "@/domains/project-management/core/domain/schema/label.schema";
-import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
+import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import type { TicketAssignee } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import Button from "@/shared/design-system/Button";

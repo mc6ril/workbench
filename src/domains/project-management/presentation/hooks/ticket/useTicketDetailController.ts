@@ -23,7 +23,7 @@ import {
   useRemoveTicketLabels,
   useTicketLabelIds,
 } from "@/domains/project-management/presentation/hooks/label";
-import { useProjectMembers } from "@/domains/project-management/presentation/hooks/member/useProjectMembers";
+import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useSprints } from "@/domains/project-management/presentation/hooks/sprint";
 import {
   useAssignTicket,
@@ -35,7 +35,7 @@ import {
   useUnassignTicket,
   useUpdateTicket,
 } from "@/domains/project-management/presentation/hooks/ticket";
-import { useProjectPermissions } from "@/domains/project-management/presentation/providers/permissions";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
 
 type UseTicketDetailControllerParams = {
   projectId: string;
