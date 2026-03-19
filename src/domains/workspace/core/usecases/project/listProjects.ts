@@ -1,6 +1,6 @@
-import type { ProjectWithRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import type { ProjectWithRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
-import type { ProjectRepository } from "@/domains/project-management/core/ports/projectRepository";
+import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**
  * List all projects accessible to the current user with their roles.

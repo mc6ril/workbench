@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { listProjects } from "@/domains/project-management/core/usecases/project/listProjects";
+import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 
-import { projectRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
+import { projectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
+import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
 /**
  * Hook for fetching all projects accessible to the current user.

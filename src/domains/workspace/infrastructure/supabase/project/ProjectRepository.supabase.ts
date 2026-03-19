@@ -11,8 +11,8 @@ import type {
   ProjectWithRole,
   ProjectWithStats,
   ReclaimableProject,
-} from "@/domains/project-management/core/domain/schema/project.schema";
-import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+} from "@/domains/workspace/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type {
@@ -34,7 +34,7 @@ import {
   mapReclaimableProjectRowToDomain,
 } from "./ProjectMapper.supabase";
 
-import type { ProjectRepository } from "@/domains/project-management/core/ports/projectRepository";
+import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**
  * Extract a full project row from an RPC response.

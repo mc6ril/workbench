@@ -1,6 +1,6 @@
 import { createNotFoundError } from "@/domains/project-management/core/domain/repositoryError";
 
-import type { ProjectRepository } from "@/domains/project-management/core/ports/projectRepository";
+import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**
  * Delete a project by its identifier.

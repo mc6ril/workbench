@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateProjectInput } from "@/domains/project-management/core/domain/schema/project.schema";
+import type { CreateProjectInput } from "@/domains/workspace/core/domain/schema/project.schema";
 
-import { createProject } from "@/domains/project-management/core/usecases/project/createProject";
+import { createProject } from "@/domains/workspace/core/usecases/project/createProject";
 
-import { projectRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
+import { projectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
+import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
 /**
  * Hook for creating a new project.

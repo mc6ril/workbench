@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { listProjectsWithStats } from "@/domains/project-management/core/usecases/project/listProjectsWithStats";
+import { listProjectsWithStats } from "@/domains/workspace/core/usecases/project/listProjectsWithStats";
 
-import { projectRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
+import { projectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
+import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
 /**
  * Hook for fetching all projects with statistics for workspace overview.

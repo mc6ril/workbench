@@ -11,13 +11,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { getEffectivePlan } from "@/domains/billing/core/domain/rules/planFeatures.rules";
-import type { Project } from "@/domains/project-management/core/domain/schema/project.schema";
+import type { Project } from "@/domains/workspace/core/domain/schema/project.schema";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
 
 import { getBoardConfiguration } from "@/domains/project-management/core/usecases/board/getBoardConfiguration";
 import { listEpics } from "@/domains/project-management/core/usecases/epic/listEpics";
-import { listProjectsWithStats } from "@/domains/project-management/core/usecases/project/listProjectsWithStats";
-import { listReclaimableProjects } from "@/domains/project-management/core/usecases/project/listReclaimableProjects";
+import { listProjectsWithStats } from "@/domains/workspace/core/usecases/project/listProjectsWithStats";
+import { listReclaimableProjects } from "@/domains/workspace/core/usecases/project/listReclaimableProjects";
 import { computeFeatureLockState } from "@/domains/billing/core/usecases/computeFeatureLockState";
 import { getTicketAssigneesByProjectId } from "@/domains/project-management/core/usecases/ticket/getTicketAssigneesByProjectId";
 import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
@@ -45,9 +45,9 @@ import { omitParentIdFilter } from "./SidebarNavigation.utils";
 import {
   boardRepository,
   epicRepository,
-  projectRepository,
   ticketRepository,
 } from "@/domains/project-management/infrastructure/supabase/repositories";
+import { projectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 import {
   buildProjectViewHref,

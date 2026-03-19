@@ -1,4 +1,4 @@
-import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 import type { ProjectPermissionFlags } from "@/presentation/providers/permissions/types";
 

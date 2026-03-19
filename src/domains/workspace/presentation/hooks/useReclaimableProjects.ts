@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { listReclaimableProjects } from "@/domains/project-management/core/usecases/project/listReclaimableProjects";
+import { listReclaimableProjects } from "@/domains/workspace/core/usecases/project/listReclaimableProjects";
 
-import { projectRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
+import { projectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
+import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
 /**
  * Hook for fetching orphaned projects reclaimable by the current user.

@@ -1,9 +1,9 @@
 import {
   ProjectRole,
   type ProjectWithRole,
-} from "@/domains/project-management/core/domain/schema/project.schema";
+} from "@/domains/workspace/core/domain/schema/project.schema";
 
-import { listProjects } from "@/domains/project-management/core/usecases/project/listProjects";
+import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";

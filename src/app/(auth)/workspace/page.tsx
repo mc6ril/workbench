@@ -1,6 +1,6 @@
 "use client";
 
-import WorkspacePage from "@/presentation/pages/workspace";
+import WorkspacePage from "@/domains/workspace/presentation/pages/workspace";
 
 const WorkspaceRoutePage = () => {
   return <WorkspacePage />;

@@ -6,11 +6,11 @@ import type {
 } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
 
 import { useInviteMember } from "@/presentation/hooks/invitation/useInviteMember";
-import { useDeleteProject } from "@/presentation/hooks/project/useDeleteProject";
+import { useDeleteProject } from "@/domains/workspace/presentation/hooks/useDeleteProject";
 
 import Button from "@/shared/design-system/Button";
 import ErrorMessage from "@/shared/design-system/ErrorMessage";

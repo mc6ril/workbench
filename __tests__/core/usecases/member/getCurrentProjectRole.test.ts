@@ -1,4 +1,4 @@
-import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 import { getCurrentProjectRole } from "@/domains/project-management/core/usecases/member/getCurrentProjectRole";
 

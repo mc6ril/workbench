@@ -2,9 +2,9 @@ import { createNotFoundError } from "@/domains/project-management/core/domain/re
 import {
   GetProjectInputSchema,
   type Project,
-} from "@/domains/project-management/core/domain/schema/project.schema";
+} from "@/domains/workspace/core/domain/schema/project.schema";
 
-import type { ProjectRepository } from "@/domains/project-management/core/ports/projectRepository";
+import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**
  * Get a project by ID.

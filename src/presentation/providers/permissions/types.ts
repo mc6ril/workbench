@@ -1,4 +1,4 @@
-import type { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import type { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 export type ProjectPermissionFlags = {
   // Used by project settings/edit actions.

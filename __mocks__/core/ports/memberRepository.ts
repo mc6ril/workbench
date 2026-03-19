@@ -1,4 +1,4 @@
-import type { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import type { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
 
 /**

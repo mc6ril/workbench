@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
-import { addUserToProject } from "@/domains/project-management/core/usecases/project/addUserToProject";
+import { addUserToProject } from "@/domains/workspace/core/usecases/project/addUserToProject";
 
-import { projectRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
+import { projectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
+import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
 /**
  * Hook for adding the current user to a project.
