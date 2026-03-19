@@ -1,7 +1,7 @@
 import {
   PROJECT_ROLES,
   ProjectRole,
-} from "@/domains/project-management/core/domain/schema/project.schema";
+} from "@/domains/workspace/core/domain/schema/project.schema";
 
 /**
  * Type guards and validation utilities.

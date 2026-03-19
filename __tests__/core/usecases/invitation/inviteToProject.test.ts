@@ -5,7 +5,7 @@ import {
   InvitationStatus,
   type ProjectInvitation,
 } from "@/domains/project-management/core/domain/schema/invitation.schema";
-import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
 

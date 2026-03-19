@@ -1,12 +1,11 @@
 import { cache } from "react";
 
-import type { Project } from "@/domains/project-management/core/domain/schema/project.schema";
+import type { Project } from "@/domains/workspace/core/domain/schema/project.schema";
 
-import { getProject } from "@/domains/project-management/core/usecases/project/getProject";
+import { getProject } from "@/domains/workspace/core/usecases/project/getProject";
+import { createProjectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
 
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
-
-import { createProjectRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 /**
  * Shared server-side project loader for this route segment.

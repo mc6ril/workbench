@@ -5,7 +5,7 @@ import type {
   ProjectWithRole,
   ProjectWithStats,
   ReclaimableProject,
-} from "@/domains/project-management/core/domain/schema/project.schema";
+} from "@/domains/workspace/core/domain/schema/project.schema";
 
 /**
  * Repository contract for Project operations.

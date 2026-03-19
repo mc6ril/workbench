@@ -1,6 +1,6 @@
-import type { ReclaimableProject } from "@/domains/project-management/core/domain/schema/project.schema";
+import type { ReclaimableProject } from "@/domains/workspace/core/domain/schema/project.schema";
 
-import type { ProjectRepository } from "@/domains/project-management/core/ports/projectRepository";
+import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**
  * List orphaned projects that the current user can reclaim.

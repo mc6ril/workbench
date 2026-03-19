@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { createDatabaseError } from "@/domains/project-management/core/domain/repositoryError";
-import type { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import type { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";

@@ -5,7 +5,7 @@ import {
 } from "@/domains/project-management/core/domain/schema/epic.schema";
 
 import type { EpicRepository } from "@/domains/project-management/core/ports/epicRepository";
-import type { ProjectRepository } from "@/domains/project-management/core/ports/projectRepository";
+import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**
  * Get an epic by its project short code and code number.

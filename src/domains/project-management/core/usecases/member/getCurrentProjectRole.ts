@@ -1,4 +1,4 @@
-import { GetProjectInputSchema } from "@/domains/project-management/core/domain/schema/project.schema";
+import { GetProjectInputSchema } from "@/domains/workspace/core/domain/schema/project.schema";
 
 import type { MemberRepository } from "@/domains/project-management/core/ports/memberRepository";
 

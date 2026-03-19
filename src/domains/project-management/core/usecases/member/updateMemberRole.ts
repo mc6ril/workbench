@@ -1,4 +1,4 @@
-import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import { UpdateMemberRoleInputSchema } from "@/domains/project-management/core/domain/schema/projectMember.schema";
 
 import type { MemberRepository } from "@/domains/project-management/core/ports/memberRepository";

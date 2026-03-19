@@ -6,15 +6,15 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { CreateProjectInput } from "@/domains/project-management/core/domain/schema/project.schema";
-import { CreateProjectInputSchema } from "@/domains/project-management/core/domain/schema/project.schema";
-import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
+import type { CreateProjectInput } from "@/domains/workspace/core/domain/schema/project.schema";
+import { CreateProjectInputSchema } from "@/domains/workspace/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
-import { useAddUserToProject } from "@/presentation/hooks/project/useAddUserToProject";
-import { useCreateProject } from "@/presentation/hooks/project/useCreateProject";
-import { useLastActivitySubtitle } from "@/presentation/hooks/project/useLastActivitySubtitle";
-import { useProjectsWithStats } from "@/presentation/hooks/project/useProjectsWithStats";
-import { useReclaimableProjects } from "@/presentation/hooks/project/useReclaimableProjects";
+import { useAddUserToProject } from "@/domains/workspace/presentation/hooks/useAddUserToProject";
+import { useCreateProject } from "@/domains/workspace/presentation/hooks/useCreateProject";
+import { useLastActivitySubtitle } from "@/domains/workspace/presentation/hooks/useLastActivitySubtitle";
+import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
+import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
 import { shouldShowLoading } from "@/presentation/utils/queryStatus";
 
 import { getAccessibilityId } from "@/shared/a11y";
@@ -34,7 +34,7 @@ import { markNavigationStart } from "@/shared/observability";
 import { getWorkspaceEmoji } from "@/shared/utils";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
-import ProjectCardActions from "./components/ProjectCardActions";
+import ProjectCardActions from "@/domains/workspace/presentation/components/workspace/ProjectCardActions";
 import styles from "./styles.module.scss";
 
 import { useSession } from "@/domains/auth/presentation/hooks/useSession";
