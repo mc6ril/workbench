@@ -2,9 +2,6 @@
 
 import Link from "next/link";
 
-import PasswordStrengthIndicator from "@/domains/auth/presentation/components/PasswordStrengthIndicator";
-import { useUpdatePasswordForm } from "@/domains/auth/presentation/hooks/useUpdatePasswordForm";
-
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/Button";
 import Form from "@/shared/design-system/Form";
@@ -15,6 +12,9 @@ import Title from "@/shared/design-system/Title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
+
+import PasswordStrengthIndicator from "@/domains/auth/presentation/components/PasswordStrengthIndicator";
+import { useUpdatePasswordForm } from "@/domains/auth/presentation/hooks/useUpdatePasswordForm";
 
 const UpdatePasswordPage = () => {
   const t = useTranslation("pages.updatePassword");

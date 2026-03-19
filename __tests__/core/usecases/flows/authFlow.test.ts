@@ -1,14 +1,3 @@
-import type { AuthResult, AuthSession } from "@/domains/auth/core/domain/schema/auth.schema";
-import {
-  ProjectRole,
-  type ProjectWithRole,
-} from "@/domains/workspace/core/domain/schema/project.schema";
-
-import { getCurrentSession } from "@/domains/auth/core/usecases/getCurrentSession";
-import { signInUser } from "@/domains/auth/core/usecases/signInUser";
-import { signUpUser } from "@/domains/auth/core/usecases/signUpUser";
-import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import {
   createAuthError,
@@ -20,6 +9,16 @@ import {
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+
+import type { AuthResult, AuthSession } from "@/domains/auth/core/domain/schema/auth.schema";
+import { getCurrentSession } from "@/domains/auth/core/usecases/getCurrentSession";
+import { signInUser } from "@/domains/auth/core/usecases/signInUser";
+import { signUpUser } from "@/domains/auth/core/usecases/signUpUser";
+import {
+  ProjectRole,
+  type ProjectWithRole,
+} from "@/domains/workspace/core/domain/schema/project.schema";
+import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 
 describe("Auth Flow Tests", () => {
   // Mock user credentials as specified in requirements

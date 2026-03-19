@@ -5,14 +5,6 @@ import {
   createDatabaseError,
   createNotFoundError,
 } from "@/domains/project-management/core/domain/repositoryError";
-import type {
-  CreateProjectInput,
-  Project,
-  ProjectWithRole,
-  ProjectWithStats,
-  ReclaimableProject,
-} from "@/domains/workspace/core/domain/schema/project.schema";
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
 import type {
@@ -34,6 +26,14 @@ import {
   mapReclaimableProjectRowToDomain,
 } from "./ProjectMapper.supabase";
 
+import type {
+  CreateProjectInput,
+  Project,
+  ProjectWithRole,
+  ProjectWithStats,
+  ReclaimableProject,
+} from "@/domains/workspace/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**

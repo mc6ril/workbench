@@ -7,13 +7,6 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { SignInInput } from "@/domains/auth/core/domain/schema/auth.schema";
-import { SignInSchema } from "@/domains/auth/core/domain/schema/auth.schema";
-
-import { useResendVerification } from "@/domains/auth/presentation/hooks/useResendVerification";
-import { useSignIn } from "@/domains/auth/presentation/hooks/useSignIn";
-import { useSignInWithGoogle } from "@/domains/auth/presentation/hooks/useSignInWithGoogle";
-
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/Button";
 import Form from "@/shared/design-system/Form";
@@ -25,6 +18,12 @@ import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
 import styles from "./styles.module.scss";
+
+import type { SignInInput } from "@/domains/auth/core/domain/schema/auth.schema";
+import { SignInSchema } from "@/domains/auth/core/domain/schema/auth.schema";
+import { useResendVerification } from "@/domains/auth/presentation/hooks/useResendVerification";
+import { useSignIn } from "@/domains/auth/presentation/hooks/useSignIn";
+import { useSignInWithGoogle } from "@/domains/auth/presentation/hooks/useSignInWithGoogle";
 
 type FormData = SignInInput;
 

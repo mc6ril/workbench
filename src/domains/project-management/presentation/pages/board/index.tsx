@@ -4,17 +4,15 @@ import { useCallback, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 
+import type { BoardColumnConfig } from "@/domains/project-management/core/domain/types/board.types";
+
 import { addLabelsToTicket } from "@/domains/project-management/core/usecases/label";
-import { useProject } from "@/domains/workspace/presentation/hooks/useProject";
-import { useLabels } from "@/domains/project-management/presentation/hooks/label";
-import { useProjectPermissions } from "@/domains/project-management/presentation/providers/permissions";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import Loader from "@/shared/design-system/Loader";
 import Modal from "@/shared/design-system/Modal";
 import Text from "@/shared/design-system/Text";
 import { useTranslation } from "@/shared/i18n";
-import type { BoardColumnConfig } from "@/domains/project-management/core/domain/types/board.types";
 import {
   buildTicketCode,
   normalizeTicketSearch,
@@ -34,10 +32,13 @@ import { useBoardConfiguration } from "@/domains/project-management/presentation
 import { useBoardDnD } from "@/domains/project-management/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/domains/project-management/presentation/hooks/board/useBoardTickets";
 import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
+import { useLabels } from "@/domains/project-management/presentation/hooks/label";
 import { useCreateTicket } from "@/domains/project-management/presentation/hooks/ticket/useCreateTicket";
 import { useTickets } from "@/domains/project-management/presentation/hooks/ticket/useTickets";
+import { useProjectPermissions } from "@/domains/project-management/presentation/providers/permissions";
 import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
 import { useSortStore } from "@/domains/project-management/presentation/stores/useSortStore";
+import { useProject } from "@/domains/workspace/presentation/hooks/useProject";
 
 const BoardLayout = ({ projectId }: { projectId: string }) => {
   const router = useRouter();

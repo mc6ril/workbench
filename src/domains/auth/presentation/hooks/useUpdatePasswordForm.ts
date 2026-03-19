@@ -4,16 +4,15 @@ import { useForm, useWatch } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { getNextUnmetCriterion } from "@/domains/auth/core/domain/passwordStrength";
-import type { UpdatePasswordFormInput } from "@/domains/auth/core/domain/schema/auth.schema";
-import { UpdatePasswordFormSchema } from "@/domains/auth/core/domain/schema/auth.schema";
-
-import { useUpdatePassword } from "@/domains/auth/presentation/hooks/useUpdatePassword";
-
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
+
+import { getNextUnmetCriterion } from "@/domains/auth/core/domain/passwordStrength";
+import type { UpdatePasswordFormInput } from "@/domains/auth/core/domain/schema/auth.schema";
+import { UpdatePasswordFormSchema } from "@/domains/auth/core/domain/schema/auth.schema";
+import { useUpdatePassword } from "@/domains/auth/presentation/hooks/useUpdatePassword";
 
 /**
  * Encapsulates all form, validation, mutation, error handling,

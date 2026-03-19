@@ -1,15 +1,15 @@
 import React, { useMemo } from "react";
 
+import { useTranslation } from "@/shared/i18n";
+
+import styles from "./PasswordStrengthIndicator.module.scss";
+
 import {
   calculatePasswordStrength,
   getPasswordStrengthLevel,
   MAX_STRENGTH_LEVEL,
   PasswordStrength,
 } from "@/domains/auth/core/domain/passwordStrength";
-
-import { useTranslation } from "@/shared/i18n";
-
-import styles from "./PasswordStrengthIndicator.module.scss";
 
 type Props = {
   password: string;

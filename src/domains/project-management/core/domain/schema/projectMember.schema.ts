@@ -1,7 +1,8 @@
 import { z } from "zod";
 
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import { UserProfileSchema } from "@/domains/project-management/core/domain/schema/userProfile.schema";
+
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 /**
  * Zod schema for ProjectMember entity.

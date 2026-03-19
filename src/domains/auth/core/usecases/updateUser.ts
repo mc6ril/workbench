@@ -1,9 +1,9 @@
 import { createDomainRuleError } from "@/domains/project-management/core/domain/domainRuleError";
+
 import {
   type UpdateUserInput,
   UpdateUserSchema,
 } from "@/domains/auth/core/domain/schema/auth.schema";
-
 import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
 
 /**

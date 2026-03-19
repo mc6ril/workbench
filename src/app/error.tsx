@@ -2,9 +2,8 @@
 
 import { useEffect } from "react";
 
-import RouteFallbackPage from "@/shared/design-system/RouteFallbackPage";
-
 import { PAGE_ROUTES } from "@/shared/constants/routes";
+import RouteFallbackPage from "@/shared/design-system/RouteFallbackPage";
 import { useTranslation } from "@/shared/i18n";
 
 type Props = {

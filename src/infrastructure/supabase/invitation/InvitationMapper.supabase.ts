@@ -3,7 +3,6 @@ import type {
   ProjectInvitation,
 } from "@/domains/project-management/core/domain/schema/invitation.schema";
 import { InvitationStatus } from "@/domains/project-management/core/domain/schema/invitation.schema";
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 import type {
   InvitationRow,
@@ -11,6 +10,8 @@ import type {
 } from "@/infrastructure/supabase/types";
 
 import { toDate } from "@/shared/utils/guards";
+
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 /**
  * Maps a Supabase row to a domain ProjectInvitation.

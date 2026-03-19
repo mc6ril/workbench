@@ -1,5 +1,4 @@
 import type { ProjectWithStats } from "@/domains/workspace/core/domain/schema/project.schema";
-
 import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**

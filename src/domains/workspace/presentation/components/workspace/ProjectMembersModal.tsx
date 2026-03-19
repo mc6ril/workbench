@@ -2,25 +2,25 @@
 
 import { useCallback, useState } from "react";
 
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
-
-import { useSession } from "@/domains/auth/presentation/hooks/useSession";
-import { useProjectMembers } from "@/domains/project-management/presentation/hooks/member/useProjectMembers";
-import { useRemoveMember } from "@/domains/project-management/presentation/hooks/member/useRemoveMember";
-import { useUpdateMemberRole } from "@/domains/project-management/presentation/hooks/member/useUpdateMemberRole";
 
 import Avatar from "@/shared/design-system/Avatar";
 import Button from "@/shared/design-system/Button";
 import ErrorMessage from "@/shared/design-system/ErrorMessage";
 import Loader from "@/shared/design-system/Loader";
 import Modal from "@/shared/design-system/Modal";
-import Text from "@/shared/design-system/Text";
 import { useToastStore } from "@/shared/design-system/stores/useToastStore";
+import Text from "@/shared/design-system/Text";
 import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 import styles from "./ProjectMembersModal.module.scss";
+
+import { useSession } from "@/domains/auth/presentation/hooks/useSession";
+import { useProjectMembers } from "@/domains/project-management/presentation/hooks/member/useProjectMembers";
+import { useRemoveMember } from "@/domains/project-management/presentation/hooks/member/useRemoveMember";
+import { useUpdateMemberRole } from "@/domains/project-management/presentation/hooks/member/useUpdateMemberRole";
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 type ProjectMembersModalProps = {
   isOpen: boolean;

@@ -1,6 +1,5 @@
-import { GetProjectInputSchema } from "@/domains/workspace/core/domain/schema/project.schema";
-
 import type { MemberRepository } from "@/domains/project-management/core/ports/memberRepository";
+import { GetProjectInputSchema } from "@/domains/workspace/core/domain/schema/project.schema";
 
 /**
  * Get current authenticated user's role for a project.

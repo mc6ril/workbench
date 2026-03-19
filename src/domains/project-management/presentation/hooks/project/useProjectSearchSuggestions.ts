@@ -8,11 +8,10 @@ import {
   normalizeTicketSearch,
 } from "@/shared/utils/ticketUtils";
 
-import { useProject } from "@/domains/workspace/presentation/hooks/useProject";
-
 import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
 import { useTickets } from "@/domains/project-management/presentation/hooks/ticket/useTickets";
 import type { ProjectViewKey } from "@/domains/project-management/presentation/navigation/projectViews.config";
+import { useProject } from "@/domains/workspace/presentation/hooks/useProject";
 
 export type ProjectSearchSuggestion = {
   id: string;

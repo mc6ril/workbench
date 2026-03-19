@@ -7,17 +7,6 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { getNextUnmetCriterion } from "@/domains/auth/core/domain/passwordStrength";
-import type {
-  SignUpFormInput,
-  SignUpInput,
-} from "@/domains/auth/core/domain/schema/auth.schema";
-import { SignUpFormSchema } from "@/domains/auth/core/domain/schema/auth.schema";
-import PasswordStrengthIndicator from "@/domains/auth/presentation/components/PasswordStrengthIndicator";
-
-import { useSignInWithGoogle } from "@/domains/auth/presentation/hooks/useSignInWithGoogle";
-import { useSignUp } from "@/domains/auth/presentation/hooks/useSignUp";
-
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/Button";
 import Checkbox from "@/shared/design-system/Checkbox";
@@ -30,6 +19,16 @@ import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
 import styles from "./styles.module.scss";
+
+import { getNextUnmetCriterion } from "@/domains/auth/core/domain/passwordStrength";
+import type {
+  SignUpFormInput,
+  SignUpInput,
+} from "@/domains/auth/core/domain/schema/auth.schema";
+import { SignUpFormSchema } from "@/domains/auth/core/domain/schema/auth.schema";
+import PasswordStrengthIndicator from "@/domains/auth/presentation/components/PasswordStrengthIndicator";
+import { useSignInWithGoogle } from "@/domains/auth/presentation/hooks/useSignInWithGoogle";
+import { useSignUp } from "@/domains/auth/presentation/hooks/useSignUp";
 
 const SignupPage = () => {
   const router = useRouter();

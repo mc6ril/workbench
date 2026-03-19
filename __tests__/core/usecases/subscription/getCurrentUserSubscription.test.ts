@@ -4,10 +4,8 @@ import {
   SubscriptionStatus,
   type UpsertSubscriptionInput,
 } from "@/domains/billing/core/domain/schema/subscription.schema";
-
-import { getCurrentUserSubscription } from "@/domains/billing/core/usecases/getCurrentUserSubscription";
-
 import type { SubscriptionRepository } from "@/domains/billing/core/ports/subscriptionRepository";
+import { getCurrentUserSubscription } from "@/domains/billing/core/usecases/getCurrentUserSubscription";
 
 const createSubscriptionRepositoryMock = (
   overrides: Partial<SubscriptionRepository> = {}

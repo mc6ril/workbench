@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 import { ThemeProvider } from "next-themes";
 
 import Toast from "@/shared/design-system/Toast";
-import { useLocaleSync } from "@/shared/utils/hooks/useLocaleSync";
-import { useThemeSync } from "@/shared/utils/hooks/useThemeSync";
 import { registerLocaleGetter } from "@/shared/i18n/config";
 import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
 import { markNavigationSettled } from "@/shared/observability";
+import { useLocaleSync } from "@/shared/utils/hooks/useLocaleSync";
+import { useThemeSync } from "@/shared/utils/hooks/useThemeSync";
 
 import ReactQueryProvider from "./ReactQueryProvider";
 

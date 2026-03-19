@@ -1,13 +1,13 @@
 import type { RepositoryErrorUnion } from "@/domains/project-management/core/domain/repositoryError";
 import { isRepositoryError } from "@/domains/project-management/core/domain/repositoryError.guards";
 
-import { mapSupabaseAuthError } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
-
 import { AUTH_ERROR_CODES } from "@/shared/constants/errorCodes";
 import { createLoggerFactory } from "@/shared/observability";
 import { hasErrorCode } from "@/shared/utils/guards";
 
 import { mapSupabaseError } from "./repositoryErrorMapper";
+
+import { mapSupabaseAuthError } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
 
 const loggerFactory = createLoggerFactory();
 const logger = loggerFactory.forScope("infrastructure.repository-errors");

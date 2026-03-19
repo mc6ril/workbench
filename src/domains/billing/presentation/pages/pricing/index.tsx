@@ -8,8 +8,8 @@ import type { PlanKey } from "@/shared/constants";
 import { FAQ_KEYS, FEATURE_ROWS, PLAN_KEYS } from "@/shared/constants";
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/Button";
-import Text from "@/shared/design-system/Text";
 import { useToastStore } from "@/shared/design-system/stores/useToastStore";
+import Text from "@/shared/design-system/Text";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";

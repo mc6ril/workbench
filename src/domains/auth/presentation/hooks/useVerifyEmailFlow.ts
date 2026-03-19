@@ -1,11 +1,11 @@
 import { useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { useVerifyEmail } from "@/domains/auth/presentation/hooks/useVerifyEmail";
-
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+
+import { useVerifyEmail } from "@/domains/auth/presentation/hooks/useVerifyEmail";
 
 /**
  * Encapsulates the full email verification orchestration:

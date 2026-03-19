@@ -1,10 +1,3 @@
-import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
-
-import {
-  mapSupabaseAuthError,
-  mapSupabaseSessionToDomain,
-} from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
-
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthError } from "../../../../__mocks__/core/domain/authMocks";
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
@@ -12,6 +5,12 @@ import {
   createSupabaseAuthError,
   createSupabaseSessionMock,
 } from "../../../../__mocks__/infrastructure/supabase/authMocks";
+
+import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
+import {
+  mapSupabaseAuthError,
+  mapSupabaseSessionToDomain,
+} from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
 
 describe("AuthMapper.supabase", () => {
   describe("mapSupabaseSessionToDomain", () => {

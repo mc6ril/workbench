@@ -1,6 +1,5 @@
-import type { ProjectSearchSuggestion } from "@/domains/project-management/presentation/hooks/project/useProjectSearchSuggestions";
-
 import styles from "@/domains/project-management/presentation/components/projectToolbar/ProjectToolbar.module.scss";
+import type { ProjectSearchSuggestion } from "@/domains/project-management/presentation/hooks/project/useProjectSearchSuggestions";
 
 type Props = {
   suggestionsId: string;

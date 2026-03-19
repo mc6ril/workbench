@@ -2,18 +2,18 @@ import {
   createConstraintError,
   createNotFoundError,
 } from "@/domains/project-management/core/domain/repositoryError";
+
+// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+
 import {
   type Project,
   ProjectRole,
   type ProjectWithRole,
 } from "@/domains/workspace/core/domain/schema/project.schema";
-
 import { addUserToProject } from "@/domains/workspace/core/usecases/project/addUserToProject";
 import { getProject } from "@/domains/workspace/core/usecases/project/getProject";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
-
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
 
 describe("Project Flow Tests", () => {
   const projectId = "123e4567-e89b-12d3-a456-426614174000";

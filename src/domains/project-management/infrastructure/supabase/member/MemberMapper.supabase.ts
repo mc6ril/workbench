@@ -1,4 +1,3 @@
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
 
 import type {
@@ -8,6 +7,8 @@ import type {
 import { mapUserProfileRowToDomain } from "@/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
 
 import { toDate } from "@/shared/utils/guards";
+
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 /**
  * Maps project member and user profile rows to a domain ProjectMember.

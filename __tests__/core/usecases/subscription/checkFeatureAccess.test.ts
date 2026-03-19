@@ -4,7 +4,6 @@ import {
   SubscriptionPlan,
   SubscriptionStatus,
 } from "@/domains/billing/core/domain/schema/subscription.schema";
-
 import { checkFeatureAccess } from "@/domains/billing/core/usecases/checkFeatureAccess";
 
 describe("checkFeatureAccess", () => {

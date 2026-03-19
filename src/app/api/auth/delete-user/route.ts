@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { deleteUser } from "@/domains/auth/core/usecases/deleteUser";
-
-import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
-
 import { API_MESSAGES_AUTH } from "@/shared/constants";
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
 import { createLoggerFactory } from "@/shared/observability";
+
+import { deleteUser } from "@/domains/auth/core/usecases/deleteUser";
+import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("API.DeleteUser");
 

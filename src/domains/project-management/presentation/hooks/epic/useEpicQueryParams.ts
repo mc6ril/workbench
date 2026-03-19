@@ -1,15 +1,16 @@
 import { useMemo } from "react";
 import type { ReadonlyURLSearchParams } from "next/navigation";
 
+import type {
+  EpicProgressFilter,
+  EpicSortField,
+} from "@/domains/project-management/core/domain/types";
+
 import {
   EPIC_PROGRESS_FILTER_VALUES,
   EPIC_SORT_FIELD_VALUES,
   SORT_DIRECTION_VALUES,
 } from "@/shared/constants/filterSort";
-import type {
-  EpicProgressFilter,
-  EpicSortField,
-} from "@/domains/project-management/core/domain/types";
 import type { SortDirection } from "@/shared/types";
 
 const parseEpicProgressFilter = (value: string | null): EpicProgressFilter => {

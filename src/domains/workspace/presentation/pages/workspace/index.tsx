@@ -6,17 +6,6 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { CreateProjectInput } from "@/domains/workspace/core/domain/schema/project.schema";
-import { CreateProjectInputSchema } from "@/domains/workspace/core/domain/schema/project.schema";
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
-
-import { useAddUserToProject } from "@/domains/workspace/presentation/hooks/useAddUserToProject";
-import { useCreateProject } from "@/domains/workspace/presentation/hooks/useCreateProject";
-import { useLastActivitySubtitle } from "@/domains/workspace/presentation/hooks/useLastActivitySubtitle";
-import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
-import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
-import { shouldShowLoading } from "@/shared/utils/queryStatus";
-
 import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
 import Badge from "@/shared/design-system/Badge";
@@ -32,14 +21,23 @@ import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { markNavigationStart } from "@/shared/observability";
 import { getWorkspaceEmoji } from "@/shared/utils";
+import { shouldShowLoading } from "@/shared/utils/queryStatus";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
-import ProjectCardActions from "@/domains/workspace/presentation/components/workspace/ProjectCardActions";
 import styles from "./styles.module.scss";
 
 import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
+import type { CreateProjectInput } from "@/domains/workspace/core/domain/schema/project.schema";
+import { CreateProjectInputSchema } from "@/domains/workspace/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
+import ProjectCardActions from "@/domains/workspace/presentation/components/workspace/ProjectCardActions";
+import { useAddUserToProject } from "@/domains/workspace/presentation/hooks/useAddUserToProject";
+import { useCreateProject } from "@/domains/workspace/presentation/hooks/useCreateProject";
+import { useLastActivitySubtitle } from "@/domains/workspace/presentation/hooks/useLastActivitySubtitle";
+import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
+import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
 
 type CreateProjectFormData = CreateProjectInput;
 

@@ -4,8 +4,8 @@ import {
   type Ticket,
 } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 import type { TicketRepository } from "@/domains/project-management/core/ports/ticketRepository";
+import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**
  * Get a ticket by its project short code and code number.

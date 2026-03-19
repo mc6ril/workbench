@@ -2,14 +2,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import type { UpdateProfileInput } from "@/domains/project-management/core/domain/schema/userProfile.schema";
 
-import { updateUser } from "@/domains/auth/core/usecases/updateUser";
 import { updateProfile } from "@/domains/project-management/core/usecases/profile/updateProfile";
 
 import { useSession } from "./useSession";
 
+import { updateUser } from "@/domains/auth/core/usecases/updateUser";
 import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
-import { userProfileRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
+import { userProfileRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 
 /**
  * Hook for updating user profile (display name) and optionally email.

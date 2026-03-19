@@ -1,5 +1,6 @@
-import type { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
+
+import type { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 /**
  * Repository contract for project member operations.

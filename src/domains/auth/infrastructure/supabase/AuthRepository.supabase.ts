@@ -1,5 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import { handleAuthError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
+import type { UserProfileRow } from "@/infrastructure/supabase/types";
+import { mapUserProfileRowToDomain } from "@/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
+
+import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
+
 import type {
   AuthenticationError,
   AuthResult,
@@ -14,15 +20,8 @@ import type {
   VerifyEmailInput,
 } from "@/domains/auth/core/domain/schema/auth.schema";
 import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
-
-import { mapSupabaseSessionToDomain } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
-import { handleAuthError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
-import type { UserProfileRow } from "@/infrastructure/supabase/types";
-import { mapUserProfileRowToDomain } from "@/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
-
-import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
-
 import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
+import { mapSupabaseSessionToDomain } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
 
 /**
  * Create an AuthRepository implementation using the provided Supabase client.

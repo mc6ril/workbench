@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-import { useSession } from "@/domains/auth/presentation/hooks/useSession";
-import { useAcceptInvitation } from "@/domains/project-management/presentation/hooks/invitation/useAcceptInvitation";
-
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/RouteFallbackPage";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+
+import { useSession } from "@/domains/auth/presentation/hooks/useSession";
+import { useAcceptInvitation } from "@/domains/project-management/presentation/hooks/invitation/useAcceptInvitation";
 
 const JoinInvitationPage = () => {
   const params = useParams<{ token: string }>();

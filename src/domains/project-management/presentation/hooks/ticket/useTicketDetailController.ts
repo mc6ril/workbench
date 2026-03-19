@@ -3,21 +3,6 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import type { TicketPriority } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import {
-  useComments,
-  useCreateComment,
-  useDeleteComment,
-  useUpdateComment,
-} from "@/domains/project-management/presentation/hooks/comment";
-import {
-  useAddTicketLabels,
-  useLabels,
-  useRemoveTicketLabels,
-  useTicketLabelIds,
-} from "@/domains/project-management/presentation/hooks/label";
-import { useProjectMembers } from "@/domains/project-management/presentation/hooks/member/useProjectMembers";
-import { useProjectPermissions } from "@/domains/project-management/presentation/providers/permissions";
-
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
@@ -25,7 +10,20 @@ import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
 import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
 import { useBoardConfiguration } from "@/domains/project-management/presentation/hooks/board/useBoardConfiguration";
+import {
+  useComments,
+  useCreateComment,
+  useDeleteComment,
+  useUpdateComment,
+} from "@/domains/project-management/presentation/hooks/comment";
 import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
+import {
+  useAddTicketLabels,
+  useLabels,
+  useRemoveTicketLabels,
+  useTicketLabelIds,
+} from "@/domains/project-management/presentation/hooks/label";
+import { useProjectMembers } from "@/domains/project-management/presentation/hooks/member/useProjectMembers";
 import { useSprints } from "@/domains/project-management/presentation/hooks/sprint";
 import {
   useAssignTicket,
@@ -37,6 +35,7 @@ import {
   useUnassignTicket,
   useUpdateTicket,
 } from "@/domains/project-management/presentation/hooks/ticket";
+import { useProjectPermissions } from "@/domains/project-management/presentation/providers/permissions";
 
 type UseTicketDetailControllerParams = {
   projectId: string;

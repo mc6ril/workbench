@@ -15,8 +15,8 @@ import Input from "@/shared/design-system/Input";
 import Loader from "@/shared/design-system/Loader";
 import Modal from "@/shared/design-system/Modal";
 import Select from "@/shared/design-system/Select";
-import Text from "@/shared/design-system/Text";
 import { useToastStore } from "@/shared/design-system/stores/useToastStore";
+import Text from "@/shared/design-system/Text";
 import Toggle from "@/shared/design-system/Toggle";
 import {
   getIntlLocale,

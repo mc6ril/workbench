@@ -1,8 +1,9 @@
+import type { EpicSortField } from "@/domains/project-management/core/domain/types";
+
 import {
   EPIC_SORT_FIELD_VALUES,
   SORT_DIRECTION_VALUES,
 } from "@/shared/constants/filterSort";
-import type { EpicSortField } from "@/domains/project-management/core/domain/types";
 import Button from "@/shared/design-system/Button";
 import Select from "@/shared/design-system/Select";
 import { useTranslation } from "@/shared/i18n";

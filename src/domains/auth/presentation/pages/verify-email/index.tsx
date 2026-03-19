@@ -3,8 +3,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
 
-import { useVerifyEmailFlow } from "@/domains/auth/presentation/hooks/useVerifyEmailFlow";
-
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import ErrorMessage from "@/shared/design-system/ErrorMessage";
 import Loader from "@/shared/design-system/Loader";
@@ -13,6 +11,8 @@ import Title from "@/shared/design-system/Title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
+
+import { useVerifyEmailFlow } from "@/domains/auth/presentation/hooks/useVerifyEmailFlow";
 
 const VerifyEmailContent = () => {
   const t = useTranslation("pages.verifyEmail");

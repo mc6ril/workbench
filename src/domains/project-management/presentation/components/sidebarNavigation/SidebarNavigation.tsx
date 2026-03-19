@@ -10,21 +10,10 @@ import React, {
 import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { getEffectivePlan } from "@/domains/billing/core/domain/rules/planFeatures.rules";
-import type { Project } from "@/domains/workspace/core/domain/schema/project.schema";
-import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
-
 import { getBoardConfiguration } from "@/domains/project-management/core/usecases/board/getBoardConfiguration";
 import { listEpics } from "@/domains/project-management/core/usecases/epic/listEpics";
-import { listProjectsWithStats } from "@/domains/workspace/core/usecases/project/listProjectsWithStats";
-import { listReclaimableProjects } from "@/domains/workspace/core/usecases/project/listReclaimableProjects";
-import { computeFeatureLockState } from "@/domains/billing/core/usecases/computeFeatureLockState";
 import { getTicketAssigneesByProjectId } from "@/domains/project-management/core/usecases/ticket/getTicketAssigneesByProjectId";
 import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
-
-import { useSession } from "@/domains/auth/presentation/hooks/useSession";
-import { useSignOut } from "@/domains/auth/presentation/hooks/useSignOut";
-import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
@@ -42,12 +31,17 @@ import type {
 } from "./SidebarNavigation.types";
 import { omitParentIdFilter } from "./SidebarNavigation.utils";
 
+import { useSession } from "@/domains/auth/presentation/hooks/useSession";
+import { useSignOut } from "@/domains/auth/presentation/hooks/useSignOut";
+import { getEffectivePlan } from "@/domains/billing/core/domain/rules/planFeatures.rules";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+import { computeFeatureLockState } from "@/domains/billing/core/usecases/computeFeatureLockState";
+import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 import {
   boardRepository,
   epicRepository,
   ticketRepository,
 } from "@/domains/project-management/infrastructure/supabase/repositories";
-import { projectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/project-management/presentation/hooks/queryKeys";
 import {
   buildProjectViewHref,
@@ -55,6 +49,10 @@ import {
 } from "@/domains/project-management/presentation/navigation/projectViews.config";
 import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
 import { useSortStore } from "@/domains/project-management/presentation/stores/useSortStore";
+import type { Project } from "@/domains/workspace/core/domain/schema/project.schema";
+import { listProjectsWithStats } from "@/domains/workspace/core/usecases/project/listProjectsWithStats";
+import { listReclaimableProjects } from "@/domains/workspace/core/usecases/project/listReclaimableProjects";
+import { projectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
 
 const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const pathname = usePathname();

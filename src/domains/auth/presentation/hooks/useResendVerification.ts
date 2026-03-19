@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { resendVerificationEmail } from "@/domains/auth/core/usecases/resendVerificationEmail";
-
 import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
 

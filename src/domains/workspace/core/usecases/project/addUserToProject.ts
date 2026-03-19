@@ -3,7 +3,6 @@ import {
   type Project,
   ProjectRole,
 } from "@/domains/workspace/core/domain/schema/project.schema";
-
 import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**

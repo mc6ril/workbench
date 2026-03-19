@@ -3,14 +3,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import AppFooter from "@/shared/design-system/AppFooter";
-import DashboardShell from "@/shared/design-system/DashboardShell";
-import SkipLink from "@/shared/design-system/SkipLink";
-import {
-  ProjectPermissionsProvider,
-  useProjectPermissions,
-} from "@/domains/project-management/presentation/providers/permissions";
-
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import {
   EPIC_PROGRESS_FILTER_VALUES,
@@ -19,7 +11,10 @@ import {
   TICKET_SORT_FIELD_VALUES,
 } from "@/shared/constants/filterSort";
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
+import AppFooter from "@/shared/design-system/AppFooter";
+import DashboardShell from "@/shared/design-system/DashboardShell";
 import Modal from "@/shared/design-system/Modal";
+import SkipLink from "@/shared/design-system/SkipLink";
 import { useTranslation } from "@/shared/i18n";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
@@ -38,6 +33,10 @@ import { useProjectSearchSuggestions } from "@/domains/project-management/presen
 import { useProjectRealtime } from "@/domains/project-management/presentation/hooks/realtime/useProjectRealtime";
 import { useSprints } from "@/domains/project-management/presentation/hooks/sprint";
 import { getProjectViewKeyFromPath } from "@/domains/project-management/presentation/navigation/projectViews.config";
+import {
+  ProjectPermissionsProvider,
+  useProjectPermissions,
+} from "@/domains/project-management/presentation/providers/permissions";
 import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
 import { useSortStore } from "@/domains/project-management/presentation/stores/useSortStore";
 

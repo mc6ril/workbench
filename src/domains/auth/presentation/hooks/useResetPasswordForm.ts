@@ -3,14 +3,13 @@ import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type { ResetPasswordInput } from "@/domains/auth/core/domain/schema/auth.schema";
-import { ResetPasswordSchema } from "@/domains/auth/core/domain/schema/auth.schema";
-
-import { useResetPassword } from "@/domains/auth/presentation/hooks/useResetPassword";
-
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
+
+import type { ResetPasswordInput } from "@/domains/auth/core/domain/schema/auth.schema";
+import { ResetPasswordSchema } from "@/domains/auth/core/domain/schema/auth.schema";
+import { useResetPassword } from "@/domains/auth/presentation/hooks/useResetPassword";
 
 /**
  * Encapsulates form, validation, mutation, and error handling logic

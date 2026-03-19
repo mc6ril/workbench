@@ -5,7 +5,6 @@ import { useTheme } from "next-themes";
 
 import type { Theme } from "@/domains/auth/core/domain/schema/auth.schema";
 import { ThemeValues } from "@/domains/auth/core/domain/schema/auth.schema";
-
 import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 
 /**

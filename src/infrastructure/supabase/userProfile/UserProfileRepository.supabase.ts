@@ -1,6 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { UserPreferences } from "@/domains/auth/core/domain/schema/auth.schema";
 import type {
   UpdateProfileInput,
   UserProfile,
@@ -16,6 +15,7 @@ import {
   mapUserProfileRowToDomain,
 } from "./UserProfileMapper.supabase";
 
+import type { UserPreferences } from "@/domains/auth/core/domain/schema/auth.schema";
 import type { UserProfileRepository } from "@/domains/project-management/core/ports/userProfileRepository";
 
 /**

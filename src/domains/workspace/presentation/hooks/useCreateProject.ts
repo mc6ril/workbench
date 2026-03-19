@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import type { CreateProjectInput } from "@/domains/workspace/core/domain/schema/project.schema";
-
 import { createProject } from "@/domains/workspace/core/usecases/project/createProject";
-
 import { projectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 

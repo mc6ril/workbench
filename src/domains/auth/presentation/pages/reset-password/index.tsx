@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 
-import { useResetPasswordForm } from "@/domains/auth/presentation/hooks/useResetPasswordForm";
-
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/Button";
 import Form from "@/shared/design-system/Form";
@@ -13,6 +11,8 @@ import Title from "@/shared/design-system/Title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
+
+import { useResetPasswordForm } from "@/domains/auth/presentation/hooks/useResetPasswordForm";
 
 const ResetPasswordPage = () => {
   const t = useTranslation("pages.resetPassword");

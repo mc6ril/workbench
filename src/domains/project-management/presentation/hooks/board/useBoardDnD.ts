@@ -21,6 +21,10 @@ import {
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
 import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
+import type {
+  BoardColumnConfig,
+  BoardTicketViewModel,
+} from "@/domains/project-management/core/domain/types/board.types";
 
 import type { BoardTicketIds } from "@/domains/project-management/core/usecases/board/boardDnD";
 import {
@@ -29,11 +33,6 @@ import {
   buildTicketLocationIndex,
   getTicketLocation,
 } from "@/domains/project-management/core/usecases/board/boardDnD";
-
-import type {
-  BoardColumnConfig,
-  BoardTicketViewModel,
-} from "@/domains/project-management/core/domain/types/board.types";
 
 import type { BoardColumnTickets } from "./types";
 

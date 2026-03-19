@@ -1,5 +1,7 @@
 import type { Session } from "@supabase/supabase-js";
 
+import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
+
 import type {
   AuthenticationFailure,
   AuthSession,
@@ -13,8 +15,6 @@ import type {
   WeakPasswordError,
 } from "@/domains/auth/core/domain/schema/auth.schema";
 import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
-
-import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
 
 /**
  * Extracts the super user flag from Supabase app_metadata.
