@@ -1,13 +1,13 @@
 # Testing Guide
 
-This guide reflects the modular domain architecture.
+This guide reflects the domain + module architecture.
 
 ## What We Test
 
 ### Yes
 
-- domain rules and schemas inside `src/domains/<domain>/core/domain/`
-- domain use cases inside `src/domains/<domain>/core/usecases/`
+- domain or module rules and schemas inside `src/domains/<domain>/core/domain/` or `src/modules/<module>/core/domain/`
+- domain or module use cases inside `src/domains/<domain>/core/usecases/` or `src/modules/<module>/core/usecases/`
 - reusable UI primitives inside `src/shared/design-system/`
 
 ### No
@@ -25,11 +25,11 @@ Tests stay in `__tests__/` at the project root and mirror the source structure.
 Examples:
 
 ```text
-src/domains/project-management/core/domain/rules/ticket.rules.ts
--> __tests__/domains/project-management/core/domain/rules/ticket.rules.test.ts
+src/modules/board/core/domain/rules/ticket.rules.ts
+-> __tests__/modules/board/core/domain/rules/ticket.rules.test.ts
 
-src/domains/project-management/core/usecases/ticket/listTickets.ts
--> __tests__/domains/project-management/core/usecases/ticket/listTickets.test.ts
+src/modules/board/core/usecases/ticket/listTickets.ts
+-> __tests__/modules/board/core/usecases/ticket/listTickets.test.ts
 
 src/shared/design-system/Button/index.tsx
 -> __tests__/shared/design-system/Button.test.tsx
@@ -40,7 +40,7 @@ Mocks stay in `__mocks__/`.
 ## Domain Test Example
 
 ```typescript
-import { canMoveTicketToStatus } from "@/domains/project-management/core/domain/rules/ticket.rules";
+import { canMoveTicketToStatus } from "@/modules/board/core/domain/rules/ticket.rules";
 
 describe("canMoveTicketToStatus", () => {
   it("returns true when the move respects the board rules", () => {
@@ -57,8 +57,8 @@ describe("canMoveTicketToStatus", () => {
 ## Use Case Test Example
 
 ```typescript
-import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
-import type { TicketRepository } from "@/domains/project-management/core/ports/ticketRepository";
+import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
+import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
 const ticketRepositoryMock: jest.Mocked<TicketRepository> = {
   listByProject: jest.fn(),

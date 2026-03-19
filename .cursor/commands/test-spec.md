@@ -107,7 +107,7 @@ The Unit Test Coach outputs:
   });
 
 ### Mocks (external dependencies)
-- Supabase: mock the shared Supabase client or the owning domain repository test double
+- Supabase: mock the shared Supabase client or the owning domain/module repository test double
 - Network: Mock network requests (no real API calls)
 - Time: Mock timers if needed
 

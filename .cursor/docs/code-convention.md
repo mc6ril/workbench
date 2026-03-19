@@ -150,8 +150,8 @@ export const useFilterStore = create<FilterState>((set) => ({
 
 ### Rules
 
-- **One hook per domain resource or action**: `useTickets`, `useCreateTicket`, etc.
-- **Explicit and stable queryKey**: `queryKey: ["project-management", "tickets"]`
+- **One hook per owner resource or action**: `useTickets`, `useCreateTicket`, etc.
+- **Explicit and stable queryKey**: `queryKey: ["board", "tickets"]`
 - ❌ **Never direct Supabase call**: only execution of a usecase
 - ✅ **Always return**: `data`, `isLoading`, `error`
 
@@ -160,7 +160,7 @@ export const useFilterStore = create<FilterState>((set) => ({
 ```typescript
 export const useTickets = (projectId: string) => {
   return useQuery({
-    queryKey: ["project-management", "tickets", projectId],
+    queryKey: ["board", "tickets", projectId],
     queryFn: () => listTickets(ticketRepository, { projectId }),
   });
 };
@@ -172,7 +172,7 @@ export const useTickets = (projectId: string) => {
 
 ### Types
 
-- **Business types** in `src/domains/<domain>/core/domain` and used everywhere via imports
+- **Business types** in `src/domains/<domain>/core/domain` or `src/modules/<module>/core/domain` and used everywhere via imports
 - ❌ **Prefixes prohibited**: no `IProduct`, `IUser`
 - ✅ **Prefer**: `Product`, `StockMovement`
 

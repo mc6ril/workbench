@@ -69,7 +69,7 @@ The Architecture-Aware Dev uses project-specific debugging tools:
 - [ ] Proposed potential fixes with explanations
 - [ ] Evaluated trade-offs of different approaches
 - [ ] Provided step-by-step resolution plan
-- [ ] Ensured fixes respect architecture rules (app/domain/shared boundaries, domain ownership, etc.)
+- [ ] Ensured fixes respect architecture rules (app/domain/module/shared boundaries, owner ownership, etc.)
 
 ### Prevention
 

@@ -31,7 +31,7 @@ The Architecture Guardian performs a lightweight compliance check focusing on:
    - Skim side-by-side diffs focusing on new or modified files
    - Note files or modules with large or complex edits
 2. **Assess architecture compliance**
-   - Check modular domain architecture boundaries (`src/app`, `src/domains`, `src/shared`, plus domain ownership)
+   - Check domain + module architecture boundaries (`src/app`, `src/domains`, `src/modules`, `src/shared`, plus owner ownership)
    - Verify layer separation (no Supabase in UI, no business logic in UI)
    - Check React Query + Zustand usage (React Query for server state, Zustand for UI state only)
    - Verify SCSS variables usage (no hardcoded values)

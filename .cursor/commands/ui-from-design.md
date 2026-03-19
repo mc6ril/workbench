@@ -32,7 +32,7 @@ The UI Designer:
 
 2. **Scaffold File Structure**
    - Create `src/app/<route>/page.tsx` route composition
-   - Create domain-specific components under `src/domains/<domain>/presentation/components/`
+   - Create owner-specific components under `src/domains/<domain>/presentation/components/` or `src/modules/<module>/presentation/components/`
    - Create SCSS files using variables from `styles/variables/*`
 
 3. **Generate Code**

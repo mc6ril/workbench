@@ -19,7 +19,7 @@ Review code or implementation plans for architecture rule compliance using the *
 
 The Architecture Guardian performs a read-only review checking:
 
-- Modular domain architecture boundaries (`src/app`, `src/domains`, `src/shared`, plus domain ownership)
+- Domain + module architecture boundaries (`src/app`, `src/domains`, `src/modules`, `src/shared`, plus owner ownership)
 - Layer separation (no Supabase in UI, no business logic in UI)
 - React Query + Zustand usage (React Query for server state, Zustand for UI state only)
 - SCSS variables usage (no hardcoded values)
@@ -33,7 +33,7 @@ The Architecture Guardian performs a read-only review checking:
    - Identify scope of changes
 
 2. **Check Architecture Rules**
-   - **Architecture**: Verify app/domain/shared boundaries and domain ownership
+   - **Architecture**: Verify app/domain/module/shared boundaries and owner ownership
    - **Domain Core**: Verify pure TypeScript, no external dependencies
    - **Usecases**: Verify orchestration using domain repositories (ports)
    - **Infrastructure**: Verify domain repositories use shared clients and Supabase appropriately

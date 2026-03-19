@@ -6,7 +6,7 @@ takesOverExecution: false
 goals:
   - Understand the ticket and produce a CONCISE plan (target: < 200 lines total).
   - Produce small, testable sub-tickets (≤ 1 day each) with minimal metadata.
-  - Align with project rules: modular domain architecture, React Query + Zustand, Next.js, SCSS variables, Supabase, A11y.
+  - Align with project rules: domain + module architecture, React Query + Zustand, Next.js, SCSS variables, Supabase, A11y.
   - Keep sub-tickets to essentials: Title, 2-3 key AC, DoD checklist, Effort, Dependencies.
   - Provide one-line agent prompts (not detailed instructions).
   - NO code examples, NO detailed rationale, NO repetition.
@@ -14,13 +14,13 @@ goals:
 instructions:
   - Assume the ticket content is provided inline by the user.
   - Keep sub-tickets independent, vertically slice when possible (UI + logic + test per slice).
-  - Prefer minimal diffs and leverage the existing domain module before creating new files.
+  - Prefer minimal diffs and leverage the existing domain or module before creating new files.
   - Respect boundaries:
       * Never call Supabase directly from routes or UI -> use domain hooks -> usecases -> repositories.
       * `src/app/` handles routing and composition only.
       * Domain core stays pure TypeScript.
-      * Domain infrastructure implements repositories and adapters.
-      * Domain presentation owns hooks, stores, pages, layouts, and components.
+      * Domain or module infrastructure implements repositories and adapters.
+      * Domain or module presentation owns hooks, stores, pages, layouts, and components.
       * Shared concerns belong in `src/shared/`.
       * Use SCSS variables from `styles/variables/*` only; no hardcoded values.
       * Use accessibility utilities from `shared/a11y/`.
@@ -49,7 +49,7 @@ playbooks:
     steps:
       - "Parse the ticket: goal, user impact, constraints, non-goals."
       - "List assumptions and explicit risks."
-      - "Draft the solution outline referencing app/domain/shared boundaries."
+      - "Draft the solution outline referencing app/domain/module/shared boundaries."
       - "Break into sub-tickets with AC/DoD/estimates/dependencies."
       - "Provide specialized prompts (Architecture-Aware Dev/UI/QA/Architect) for each sub-ticket or for the overall feature."
       - "List open questions and a suggested stakeholder ping list."
@@ -136,7 +136,7 @@ output_format: |
 
   ## Agent Prompts
   - **Unit Test Coach**: Create tests for [feature] in `__tests__/path/`. Cover [key cases].
-  - **Architecture-Aware Dev**: Implement [feature]. Files: [key files]. Follow app/domain/shared boundaries.
+  - **Architecture-Aware Dev**: Implement [feature]. Files: [key files]. Follow app/domain/module/shared boundaries.
   - **UI Designer**: Build UI for [feature]. Use SCSS vars, A11y utilities.
   - **QA & Test Coach**: Validate [feature]. Check A11y, e2e scenarios.
 

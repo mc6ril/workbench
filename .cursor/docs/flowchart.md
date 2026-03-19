@@ -1,6 +1,6 @@
 # Architecture Flowcharts
 
-This document contains Mermaid diagrams representing the final routing model and the final multi-domain architecture.
+This document contains Mermaid diagrams representing the final routing model and the final domain + module architecture.
 
 ## 1. Global Sitemap
 
@@ -48,14 +48,12 @@ stateDiagram-v2
    SignUp --> VerifyEmail: signup success
    VerifyEmail --> Workspace: email verified
 
-   Workspace --> Account: account settings
-   Workspace --> ProjectBoard: select project
+   Workspace --> Account: manage account
+   Workspace --> ProjectBoard: create or open project
    Workspace --> BillingPortal: manage plan
 
-   ProjectBoard --> ProjectEpics: navigate
    ProjectBoard --> ProjectSettings: navigate
    ProjectBoard --> BillingPortal: upgrade
-   ProjectEpics --> ProjectBoard: navigate
    ProjectSettings --> ProjectBoard: navigate
 ```
 
@@ -68,22 +66,20 @@ flowchart TD
    MIDDLEWARE --> ROUTE{Route family}
 
    ROUTE -->|public auth| AUTH_ROUTE[Auth route composition]
-   ROUTE -->|workspace/account| WS_ROUTE[Workspace route composition]
-   ROUTE -->|project| PROJECT_ROUTE[Project route composition]
+   ROUTE -->|workspace| WS_ROUTE[Workspace route composition]
+   ROUTE -->|account| ACCOUNT_ROUTE[Auth account composition]
+   ROUTE -->|project shell| PROJECT_ROUTE[Project route composition]
    ROUTE -->|billing api| BILLING_ROUTE[Billing route composition]
 
    AUTH_ROUTE --> AUTH_PAGE[domains/auth/presentation/...]
    WS_ROUTE --> WS_PAGE[domains/workspace/presentation/...]
-   PROJECT_ROUTE --> PM_LAYOUT[domains/project-management/presentation/layouts/projectShell/ProjectShell.tsx]
+   ACCOUNT_ROUTE --> ACCOUNT_PAGE[domains/auth/presentation/pages/account/...]
+   PROJECT_ROUTE --> PROJECT_SHELL[domains/project/presentation/layouts/projectShell/...]
+   PROJECT_SHELL --> BOARD_PAGE[modules/board/presentation/pages/...]
    BILLING_ROUTE --> BILLING_FLOW[domains/billing/...]
-
-   PM_LAYOUT --> PM_PAGES[domains/project-management/presentation/pages/...]
-   PM_PAGES --> PM_HOOKS[project-management presentation hooks]
-   AUTH_PAGE --> AUTH_HOOKS[auth presentation hooks]
-   WS_PAGE --> WS_HOOKS[workspace presentation hooks]
 ```
 
-## 4. Final Domain Architecture Map
+## 4. Final Architecture Map
 
 ```mermaid
 flowchart LR
@@ -112,11 +108,23 @@ flowchart LR
          WORKSPACE_INFRA[infrastructure]
       end
 
-      subgraph PM[project-management]
-         PM_PRE[presentation]
-         PM_CORE[core]
-         PM_INFRA[infrastructure]
+      subgraph PROJECT[project]
+         PROJECT_PRE[presentation]
+         PROJECT_CORE[core]
+         PROJECT_INFRA[infrastructure]
       end
+   end
+
+   subgraph MODULES[src/modules]
+      subgraph BOARD[board]
+         BOARD_PRE[presentation]
+         BOARD_CORE[core]
+         BOARD_INFRA[infrastructure]
+      end
+
+      RECIPES[recipes future]
+      VACATION[vacation future]
+      BUDGET[budget future]
    end
 
    subgraph SHARED[src/shared]
@@ -140,7 +148,8 @@ flowchart LR
 
    APP1 --> AUTH_PRE
    APP1 --> WORKSPACE_PRE
-   APP1 --> PM_PRE
+   APP1 --> PROJECT_PRE
+   PROJECT_PRE --> BOARD_PRE
    APP3 --> BILLING_INFRA
 
    AUTH_PRE --> AUTH_CORE
@@ -153,9 +162,12 @@ flowchart LR
    WORKSPACE_PRE --> WORKSPACE_CORE
    WORKSPACE_INFRA --> SHARED_4
 
-   PM_PRE --> PM_CORE
-   PM_PRE --> SHARED_1
-   PM_INFRA --> SHARED_4
+   PROJECT_PRE --> PROJECT_CORE
+   PROJECT_INFRA --> SHARED_4
+
+   BOARD_PRE --> BOARD_CORE
+   BOARD_PRE --> SHARED_1
+   BOARD_INFRA --> SHARED_4
 
    SHARED_4 --> EXT1
    SHARED_5 --> EXT2
@@ -167,15 +179,17 @@ flowchart LR
 ```mermaid
 flowchart TD
    ROUTE[src/app/(auth)/[projectId]/board/page.tsx]
-   PAGE[domains/project-management/presentation/pages/board/index.tsx]
-   HOOK[domains/project-management/presentation/hooks/ticket/useTickets.ts]
-   USECASE[domains/project-management/core/usecases/ticket/listTickets.ts]
-   PORT[domains/project-management/core/ports/ticketRepository.ts]
-   REPO[domains/project-management/infrastructure/supabase/ticket/TicketRepository.supabase.ts]
+   SHELL[domains/project/presentation/layouts/projectShell/ProjectShell.tsx]
+   PAGE[modules/board/presentation/pages/board/index.tsx]
+   HOOK[modules/board/presentation/hooks/ticket/useTickets.ts]
+   USECASE[modules/board/core/usecases/ticket/listTickets.ts]
+   PORT[modules/board/core/ports/ticketRepository.ts]
+   REPO[modules/board/infrastructure/supabase/ticket/TicketRepository.supabase.ts]
    CLIENT[shared/infrastructure/supabase/client-browser.ts]
    DB[Supabase]
 
-   ROUTE --> PAGE
+   ROUTE --> SHELL
+   SHELL --> PAGE
    PAGE --> HOOK
    HOOK --> USECASE
    USECASE --> PORT
@@ -184,4 +198,4 @@ flowchart TD
    CLIENT --> DB
 ```
 
-The routing layer composes domain pages. Domain presentation calls domain use cases. Domain infrastructure relies on shared infrastructure clients.
+The routing layer composes domain shells and module pages. Domains own the container. Modules own project-scoped business flows. Infrastructure relies on shared technical clients.

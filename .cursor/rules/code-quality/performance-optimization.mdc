@@ -14,7 +14,7 @@ Optimize Next.js performance and prevent memory leaks through proper memoization
 
 ## A) Component Memoization
 
-scope: file.path matches ^src/(domains/.+/presentation/(components|pages|layouts)|shared/design-system|app)/.+\.(ts|tsx)$
+scope: file.path matches ^src/((domains|modules)/.+/presentation/(components|pages|layouts)|shared/design-system|app)/.+\.(ts|tsx)$
 
 -   **ALWAYS** use `React.memo` for expensive components that receive stable props
 -   **ALWAYS** use `useMemo` for expensive calculations and derived values
@@ -25,7 +25,7 @@ scope: file.path matches ^src/(domains/.+/presentation/(components|pages|layouts
 
 ## B) Re-render Prevention
 
-scope: file.path matches ^src/(domains/.+/presentation/(components|pages|layouts)|shared/design-system|app)/.+\.(ts|tsx)$
+scope: file.path matches ^src/((domains|modules)/.+/presentation/(components|pages|layouts)|shared/design-system|app)/.+\.(ts|tsx)$
 
 -   **ALWAYS** avoid unnecessary re-renders by memoizing props and callbacks
 -   **ALWAYS** use React Query selectors to select only needed data from queries
@@ -36,7 +36,7 @@ scope: file.path matches ^src/(domains/.+/presentation/(components|pages|layouts
 
 ## C) React Query Optimization
 
-scope: file.path matches ^src/domains/.+/presentation/hooks/.+\.(ts|tsx)$
+scope: file.path matches ^src/(domains|modules)/.+/presentation/hooks/.+\.(ts|tsx)$
 
 -   **ALWAYS** use stable queryKeys to prevent unnecessary refetches
 -   **ALWAYS** use `select` option to transform data only when needed
@@ -48,7 +48,7 @@ scope: file.path matches ^src/domains/.+/presentation/hooks/.+\.(ts|tsx)$
 
 ## D) Event Listener Management
 
-scope: file.path matches ^src/(domains/.+/presentation/(components|pages|layouts)|shared/design-system|app)/.+\.(ts|tsx)$
+scope: file.path matches ^src/((domains|modules)/.+/presentation/(components|pages|layouts)|shared/design-system|app)/.+\.(ts|tsx)$
 
 -   **ALWAYS** remove event listeners in cleanup functions (`useEffect` return)
 -   **ALWAYS** use `useEffect` cleanup functions for listener registration/removal
@@ -57,7 +57,7 @@ scope: file.path matches ^src/(domains/.+/presentation/(components|pages|layouts
 
 ## E) Image and Asset Optimization
 
-scope: file.path matches ^src/(domains/.+/presentation/(components|pages|layouts)|shared/design-system|app)/.+\.(ts|tsx)$
+scope: file.path matches ^src/((domains|modules)/.+/presentation/(components|pages|layouts)|shared/design-system|app)/.+\.(ts|tsx)$
 
 -   **ALWAYS** use Next.js `Image` component for optimized image loading
 -   **ALWAYS** use appropriate image loading strategies (lazy loading for large lists)
@@ -87,9 +87,9 @@ scope: file.path matches ^src/app/.+\.(ts|tsx)$
 
 ## H) Zustand Store Optimization
 
-scope: file.path matches ^src/domains/.+/presentation/stores/.+\.(ts|tsx)$
+scope: file.path matches ^src/(domains|modules)/.+/presentation/stores/.+\.(ts|tsx)$
 
--   **ALWAYS** split stores by domain module and UI concern to prevent unnecessary re-renders
+-   **ALWAYS** split stores by owner and UI concern to prevent unnecessary re-renders
 -   **ALWAYS** use selectors to subscribe only to needed state slices
 -   **NEVER** store large objects or arrays in Zustand stores
 -   **ALWAYS** use shallow equality checks when comparing state

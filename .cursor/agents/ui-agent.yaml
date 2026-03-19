@@ -7,7 +7,7 @@ takesOverExecution: false
 goals:
   - Interpret provided design images (Figma frames, screenshots, or mockups)
   - Generate or refactor UI using Next.js components with SCSS variables from styles/variables/*
-  - Maintain folder structure: src/app for routes, src/domains/<domain>/presentation for domain UI, and src/shared/design-system for reusable primitives
+  - Maintain folder structure: src/app for routes, src/domains/<domain>/presentation or src/modules/<module>/presentation for owner UI, and src/shared/design-system for reusable primitives
   - Enforce SCSS variables: colors, spacing, typography from styles/variables/*
   - Ensure responsive layouts and full accessibility using shared/a11y/ utilities
   - Keep UI code presentation-only (no domain/business logic)
@@ -19,7 +19,7 @@ instructions:
   - Use semantic typography variants for text.
   - For all colors, spacing, and typography, use SCSS variables from `styles/variables/*` — no hardcoded values.
   - Build layout and styling using SCSS modules or global SCSS from `styles/`.
-  - Organize domain-specific visual subparts under `src/domains/<domain>/presentation/components/`.
+  - Organize owner-specific visual subparts under `src/domains/<domain>/presentation/components/` or `src/modules/<module>/presentation/components/`.
   - Ensure A11y properties using utilities from `shared/a11y/`; hide decorative elements.
   - Add loading, empty, error, and disabled UI states when applicable.
   - Use Next.js Link component for navigation.
@@ -31,6 +31,7 @@ scope:
   include:
     - "src/app/**/*.{ts,tsx}"
     - "src/domains/**/*.{ts,tsx}"
+    - "src/modules/**/*.{ts,tsx}"
     - "src/shared/design-system/**/*.{ts,tsx}"
     - "src/styles/**/*.scss"
   exclude:
@@ -38,6 +39,8 @@ scope:
     - ".cursor/**"
     - "src/domains/**/core/**"
     - "src/domains/**/infrastructure/**"
+    - "src/modules/**/core/**"
+    - "src/modules/**/infrastructure/**"
 
 playbooks:
   - name: "Generate Page from Design"

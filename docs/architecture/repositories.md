@@ -2,21 +2,28 @@
 
 ## Overview
 
-Repositories belong to the domain that owns the business contract.
+Repositories belong to the **owner of the business contract**.
+
+That owner can be:
+
+- a **domain** in `src/domains/`
+- or a **module** in `src/modules/`
 
 They are **not** grouped under one monolithic global infrastructure root.
+
 Instead:
 
-- domain repositories live in `src/domains/<domain>/infrastructure/`
-- shared clients live in `src/shared/infrastructure/`
+- domain or module repositories live in their own `infrastructure/`
+- shared technical clients live in `src/shared/infrastructure/`
 
 ## Final Rule
 
-**Domain-owned adapters, shared-owned clients.**
+**Owner-owned adapters, shared-owned clients.**
 
 That means:
 
-- `auth`, `billing`, `workspace`, and `project-management` own their repository or gateway implementations
+- `auth`, `billing`, `workspace`, and `project` own their repository or gateway implementations
+- `board` owns its own repositories and mappers
 - `shared/infrastructure/supabase/` owns browser/server/admin Supabase clients
 - `shared/infrastructure/stripe/` owns the low-level Stripe client
 
@@ -41,12 +48,28 @@ src/
         ports/
       infrastructure/
         supabase/
-    project-management/
+    project/
+      core/
+        ports/
+          projectRepository.ts
+          invitationRepository.ts
+          memberRepository.ts
+          moduleRegistry.ts
+      infrastructure/
+        supabase/
+          project/
+          invitation/
+          member/
+          repositories.ts
+  modules/
+    board/
       core/
         ports/
           ticketRepository.ts
           boardRepository.ts
           epicRepository.ts
+          sprintRepository.ts
+          labelRepository.ts
       infrastructure/
         supabase/
           ticket/
@@ -68,22 +91,22 @@ src/
 
 ## Responsibilities
 
-### Domain repository or gateway files
+### Domain or module repository / gateway files
 
-- Implement a port from `src/domains/<domain>/core/ports/`
-- Stay specific to one domain
-- Map low-level payloads to domain shapes
-- Can depend on shared clients
+- Implement a port from the owning `core/ports/`
+- Stay specific to one owner
+- Map low-level payloads to business shapes
+- Can depend on shared technical clients
 
 ### Shared infrastructure clients
 
 - Create the low-level client instance
 - Handle cookies, headers, secrets, request scope, and environment wiring
-- Stay domain-agnostic
+- Stay business-agnostic
 
 ## Recommended Pattern
 
-### 1. Domain factory in domain infrastructure
+### 1. Owner factory in owner infrastructure
 
 ```typescript
 export const createTicketRepository = (
@@ -101,24 +124,29 @@ export const createTicketRepository = (
 - `client-server.ts` for request-scoped server usage
 - `client-admin.ts` for privileged operations
 
-### 3. Domain wiring entrypoint
+### 3. Owner wiring entrypoint
 
-`src/domains/project-management/infrastructure/supabase/repositories.ts` can expose:
+Examples:
 
-- browser-ready instances for domain presentation hooks
+- `src/domains/project/infrastructure/supabase/repositories.ts`
+- `src/modules/board/infrastructure/supabase/repositories.ts`
+
+These files can expose:
+
+- browser-ready instances for presentation hooks
 - factory helpers for server-side composition
 
 ## Usage Patterns
 
-### Browser-side domain hook
+### Browser-side board hook
 
 ```typescript
-import { ticketRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
-import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
+import { ticketRepository } from "@/modules/board/infrastructure/supabase/repositories";
+import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 
 export const useTickets = (projectId: string) => {
   return useQuery({
-    queryKey: ["project-management", "tickets", projectId],
+    queryKey: ["board", "tickets", projectId],
     queryFn: () => listTickets(ticketRepository, { projectId }),
   });
 };
@@ -127,25 +155,32 @@ export const useTickets = (projectId: string) => {
 ### Server-side composition
 
 ```typescript
-import { createTicketRepository } from "@/domains/project-management/infrastructure/supabase/ticket/TicketRepository.supabase";
+import { createTicketRepository } from "@/modules/board/infrastructure/supabase/ticket/TicketRepository.supabase";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
 const client = await createSupabaseServerClient();
 const ticketRepository = createTicketRepository(client);
 ```
 
+## Special Ownership Rules
+
+- `src/domains/project/` owns project settings, members, invitations, permissions, and enabled-module configuration
+- `src/modules/board/` owns board data such as tickets, epics, sprints, and labels
+- `src/domains/workspace/` may orchestrate create/join flows, but project membership and invitation contracts remain project-owned
+- plan-to-module entitlement decisions must stay explicit between `billing` and `project`, never hidden in `shared/`
+
 ## Rules
 
-- A repository implementation belongs to the domain that owns the port
-- Shared infrastructure creates clients, not domain repositories
-- Domain presentation hooks should use domain use cases, not raw low-level clients
+- A repository implementation belongs to the owner that defines the port
+- Shared infrastructure creates clients, not business repositories
+- Presentation hooks should use use cases, not raw low-level clients
 - `src/app/` should compose routes, not implement repository logic
-- Cross-domain reuse should happen through shared infrastructure or explicit domain contracts, not through a global repository bucket
+- Cross-owner reuse should happen through shared infrastructure or explicit contracts, not through a global repository bucket
 
 ## Benefits
 
-1. Domain ownership stays explicit.
-2. Contracts and implementations stay close together.
+1. Owner boundaries stay explicit.
+2. Project container rules stay separate from project modules.
 3. Shared client setup remains centralized.
-4. Adding a new domain does not recreate a monolithic infrastructure root.
-5. The architecture scales naturally from one domain to many.
+4. New modules can be added without distorting existing domains.
+5. The architecture scales naturally from one project module to many.

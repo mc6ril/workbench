@@ -59,7 +59,7 @@ Execute the full test suite and systematically fix any failures using the **Unit
 - [ ] Test code issues fixed using Unit Test Coach
 - [ ] Implementation issues fixed using Architecture-Aware Dev
 - [ ] Root causes resolved
-- [ ] Architecture compliance maintained (app/domain/shared boundaries, domain ownership, etc.)
+- [ ] Architecture compliance maintained (app/domain/module/shared boundaries, owner ownership, etc.)
 
 ### Verification
 

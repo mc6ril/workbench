@@ -29,10 +29,10 @@ scope: file.path matches ^(src|**tests**|**mocks**)/.+\.(ts|tsx)$
 
 Examples:
 
-- `src/domains/project-management/core/domain/rules/ticket.rules.ts`
-  -> `__tests__/domains/project-management/core/domain/rules/ticket.rules.test.ts`
-- `src/domains/project-management/core/usecases/ticket/listTickets.ts`
-  -> `__tests__/domains/project-management/core/usecases/ticket/listTickets.test.ts`
+- `src/modules/board/core/domain/rules/ticket.rules.ts`
+  -> `__tests__/modules/board/core/domain/rules/ticket.rules.test.ts`
+- `src/modules/board/core/usecases/ticket/listTickets.ts`
+  -> `__tests__/modules/board/core/usecases/ticket/listTickets.test.ts`
 - `src/shared/design-system/Button/index.tsx`
   -> `__tests__/shared/design-system/Button.test.tsx`
 
@@ -41,8 +41,8 @@ Examples:
 scope: file.path matches ^**tests**/.+\.test\.(ts|tsx)$
 
 - **ALWAYS** test:
-  - domain core in `src/domains/*/core/domain/`
-  - domain use cases in `src/domains/*/core/usecases/`
+  - owner core in `src/domains/*/core/domain/` or `src/modules/*/core/domain/`
+  - owner use cases in `src/domains/*/core/usecases/` or `src/modules/*/core/usecases/`
   - reusable UI primitives in `src/shared/design-system/`
 - **NEVER** test by default:
   - route files in `src/app/`

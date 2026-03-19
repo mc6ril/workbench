@@ -70,4 +70,4 @@ The Architecture-Aware Dev ensures optimizations respect architecture rules and 
 - [ ] Provided optimized code with explanations
 - [ ] Included performance impact estimates
 - [ ] Considered trade-offs between performance and maintainability
-- [ ] Maintained architecture compliance (app/domain/shared boundaries, domain ownership, etc.)
+- [ ] Maintained architecture compliance (app/domain/module/shared boundaries, owner ownership, etc.)

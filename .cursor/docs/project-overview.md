@@ -86,29 +86,31 @@ This principle drives both navigation and feature placement.
 
 ## 6. Technical Architecture
 
-Workbench now targets a **final multi-domain architecture**:
+Workbench now targets a **final domain + module architecture**:
 
 - `src/app/` remains the Next.js routing layer only
-- `src/domains/auth/` owns sign in/up, OAuth, reset password, and email verification
-- `src/domains/billing/` owns Stripe, plans, subscriptions, and webhooks
-- `src/domains/workspace/` owns users, invitations, and account settings
-- `src/domains/project-management/` owns tickets, epics, sprints, board flows, and project settings
-- future domains will include `recipes`, `vacation`, and `budget`
+- `src/domains/auth/` owns account lifecycle: sign in/up, OAuth, reset password, email verification, preferences, delete account
+- `src/domains/billing/` owns plans, subscriptions, entitlements, and Stripe webhooks
+- `src/domains/workspace/` owns the entry UX to list, create, and join projects
+- `src/domains/project/` owns the project container: project settings, members, invitations, permissions, and enabled modules
+- `src/modules/board/` owns the current free module: tickets, epics, sprints, labels, board flows
+- future project modules will include `recipes`, `vacation`, and `budget`
 - `src/shared/` owns only cross-cutting concerns: design system, i18n, observability, shared infrastructure, constants, generic types, utils, and accessibility
 
-Inside each concrete domain module, responsibilities stay layered:
+Inside each concrete domain or module, responsibilities stay layered:
 
-- `core/domain/` for schemas, rules, and domain constants
+- `core/domain/` for schemas, rules, and business constants
 - `core/ports/` for contracts
 - `core/usecases/` for orchestration
 - `infrastructure/` for adapters such as Supabase repositories or Stripe gateways
-- `presentation/` for domain-specific hooks, stores, pages, layouts, navigation, and components
+- `presentation/` for hooks, stores, pages, layouts, navigation, and components
 
 Guiding rules:
 > `src/app/` stays thin and route-focused.
-> Shared code stays cross-cutting and domain-agnostic.
-> Business rules stay inside the owning domain module.
-> `project-management` is the richest current domain, but it is no longer treated as the only top-level business module.
+> Shared code stays cross-cutting and owner-agnostic.
+> Project container logic stays in `domains/project`.
+> Project-scoped capabilities stay in `modules/*`.
+> The current board experience is the first module, not the permanent shape of every future capability.
 
 ---
 

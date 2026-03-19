@@ -124,7 +124,7 @@ export default ProductList;
 
 ### 5. Zustand Stores - UI STATE ONLY
 
--   **ALWAYS** create one store per UI state concern inside the owning domain module (filters, modals, selection, theme, etc.)
+-   **ALWAYS** create one store per UI state concern inside the owning domain or module (filters, modals, selection, theme, etc.)
 -   **NEVER** put side effects in stores
 -   **NEVER** create direct link with Supabase, React Query, or business logic
 -   **ALWAYS** name stores: `useXxxStore.ts`
@@ -140,7 +140,7 @@ export const useFilterStore = create<FilterState>((set) => ({
 
 ### 6. React Query Hooks - DATA FETCHING PATTERNS
 
--   **ALWAYS** create hooks inside the owning domain module for each resource or action: `useTickets`, `useCreateTicket`, etc.
+-   **ALWAYS** create hooks inside the owning domain or module for each resource or action: `useTickets`, `useCreateTicket`, etc.
 -   **ALWAYS** use explicit and stable queryKey: `queryKey: ["products"]`
 -   **NEVER** make direct Supabase call - only execute a usecase
 -   **ALWAYS** return: `data`, `isLoading`, `error`
@@ -150,7 +150,7 @@ export const useFilterStore = create<FilterState>((set) => ({
 ```typescript
 export const useTickets = (projectId: string) => {
     return useQuery({
-        queryKey: ["project-management", "tickets", "list", projectId],
+        queryKey: ["board", "tickets", "list", projectId],
         queryFn: () => listTickets(ticketRepository, { projectId }),
     });
 };
@@ -160,7 +160,7 @@ export const useTickets = (projectId: string) => {
 
 #### Types
 
--   **ALWAYS** place business types in `src/domains/<domain>/core/domain` and use them everywhere via imports
+-   **ALWAYS** place business types in `src/domains/<domain>/core/domain` or `src/modules/<module>/core/domain` and use them everywhere via imports
 -   **NEVER** use prefixes (no `IProduct`, `IUser`)
 -   **ALWAYS** prefer: `Product`, `StockMovement`
 
@@ -243,8 +243,8 @@ enum ProductStatus {
 ```typescript
 // ✅ Correct - Absolute import
 import Link from "@/shared/design-system/Link";
-import { useBoardStore } from "@/domains/project-management/presentation/stores/useBoardStore";
-import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
+import { useBoardStore } from "@/modules/board/presentation/stores/useBoardStore";
+import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 
 // ❌ Wrong - Relative import
 import Link from "../../../../src/shared/design-system/Link";
@@ -300,7 +300,7 @@ import { listTickets } from "../../core/usecases/ticket/listTickets";
 
 ## Zod Placement Rules
 
--   **ALWAYS** place all Zod schemas inside `src/domains/<domain>/core/domain/schema/`
+-   **ALWAYS** place all Zod schemas inside `src/domains/<domain>/core/domain/schema/` or `src/modules/<module>/core/domain/schema/`
 -   **NEVER** create Zod schemas in components, hooks, or presentation layer
 -   **ALWAYS** group schemas by domain (Product, Activity, StockMovement…)
 

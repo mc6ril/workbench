@@ -1,12 +1,16 @@
-# Final Modular Architecture
+# Final Domain + Module Architecture
 
 ## Intent
 
-Workbench follows a **domain-first modular architecture**.
+Workbench follows a **domain + module architecture**.
 
-The codebase is organized around business domains first, then layered inside each domain.
-`src/app/` is reserved for Next.js routing and route composition only.
-Cross-cutting concerns live in `src/shared/`.
+The product is split between:
+
+- **domains**: stable business capabilities that exist outside a specific project module
+- **modules**: pluggable project-scoped capabilities enabled inside a project
+- **shared**: cross-cutting technical and UI assets
+
+`src/app/` remains the Next.js routing and composition layer only.
 
 ## Target Structure
 
@@ -14,17 +18,19 @@ Cross-cutting concerns live in `src/shared/`.
 src/
   app/                          # Next.js routing only
   domains/
-    auth/                       # sign in/up, OAuth, reset password, email verify
-    billing/                    # Stripe, plans, subscriptions, webhooks
-    workspace/                  # users, invitations, account settings
-    project-management/         # tickets, epics, sprints, board
-    recipes/                    # future
-    vacation/                   # future
-    budget/                     # future
+    auth/                       # account lifecycle: sign in/up, verify email, reset password, update profile, delete account
+    billing/                    # plans, subscriptions, Stripe checkout/portal/webhooks
+    workspace/                  # workspace dashboard: list/create/join projects
+    project/                    # project container: settings, members, invitations, enabled modules
+  modules/
+    board/                      # tickets, epics, sprints, labels, board views
+    recipes/                    # future project module
+    vacation/                   # future project module
+    budget/                     # future project module
   shared/
-    design-system/              # UI primitives and their shared helpers
+    design-system/              # UI primitives and shared UI helpers
     i18n/                       # translations and i18n hooks
-    observability/              # logger, tracing, performance tracking
+    observability/              # logging, tracing, performance tracking
     infrastructure/
       supabase/                 # browser/server/admin clients
       stripe/                   # stripeClient
@@ -37,48 +43,54 @@ src/
   middleware.ts
 ```
 
-## Domain Ownership
+## Ownership Model
 
 ### `src/app/`
 
-- Owns URL structure, route groups, `page.tsx`, `layout.tsx`, route handlers, and route composition.
-- Delegates domain rendering to domain presentation modules.
+- Owns URL structure, route groups, `page.tsx`, `layout.tsx`, route handlers, and top-level composition.
 - Must stay thin.
+- Delegates rendering to domains or modules.
 
 ### `src/domains/auth/`
 
-- Owns authentication flows.
-- Examples: sign in, sign up, OAuth callbacks, password reset, email verification.
+- Owns account lifecycle and identity flows.
+- Examples: sign in, sign up, OAuth callback, password reset, email verification, account preferences, delete account.
 
 ### `src/domains/billing/`
 
-- Owns billing and subscription logic.
-- Examples: Stripe checkout, portal, plans, subscription state, webhook handling.
+- Owns plans, subscriptions, entitlements, Stripe checkout, portal, and webhooks.
 
 ### `src/domains/workspace/`
 
-- Owns user/workspace collaboration concerns.
-- Examples: account settings, users, invitations, membership management.
+- Owns the workspace entry experience.
+- Examples: list projects, create a project, join a project, choose where to go next.
 
-### `src/domains/project-management/`
+### `src/domains/project/`
 
-- Owns the Jira-like work management experience.
-- Examples: board, tickets, epics, sprints, project settings.
+- Owns the **project container**.
+- Examples: project settings, members, invitations, roles, project access, enabled modules.
+- This is the place where the product decides which modules are active inside a project.
 
-### Future domains
+### `src/modules/board/`
 
-- `recipes/`
-- `vacation/`
-- `budget/`
+- Owns the current Trello/Jira-like project module.
+- Examples: tickets, epics, sprints, labels, board views, board-specific hooks and repositories.
 
-The same domain-first structure applies when these modules are implemented.
+### Future modules
 
-## Internal Layering Inside a Domain
+- `src/modules/recipes/`
+- `src/modules/vacation/`
+- `src/modules/budget/`
 
-Each concrete domain can own some or all of these folders:
+Their UI shape may differ completely (board, timeline, calendar, list, mixed), but the ownership rule stays the same: if it is a project-scoped capability, it belongs to a module.
+
+## Internal Layering Inside a Domain or Module
+
+Each domain or module can own some or all of these folders:
 
 ```text
 src/domains/<domain>/
+src/modules/<module>/
   core/
     domain/
       schema/
@@ -94,6 +106,7 @@ src/domains/<domain>/
     pages/
     layouts/
     navigation/
+    providers/
 ```
 
 ### `core/domain`
@@ -103,24 +116,24 @@ src/domains/<domain>/
 
 ### `core/ports`
 
-- Contracts owned by the domain.
-- Repository and gateway interfaces used by domain use cases.
+- Contracts owned by the domain or module.
+- Repository and gateway interfaces used by use cases.
 
 ### `core/usecases`
 
-- Domain orchestration.
-- Depends on domain rules/schemas and ports.
+- Orchestration and business flows.
+- Depends on domain/module rules, schemas, and ports.
 - Never imports framework or low-level client code directly.
 
 ### `infrastructure`
 
-- Adapters owned by the domain.
+- Adapters owned by the domain or module.
 - Implements ports using shared technical clients when needed.
 
 ### `presentation`
 
-- Domain-facing UI composition.
-- Components, hooks, stores, pages, layouts, navigation config.
+- Route-level and UI-level composition owned by the domain or module.
+- Components, hooks, stores, pages, layouts, navigation, and providers.
 
 ## Shared Layer Rules
 
@@ -129,29 +142,25 @@ src/domains/<domain>/
 ### `src/shared/design-system/`
 
 - Reusable UI primitives only.
-- May co-locate internal shared helpers with the primitive when they are still cross-cutting.
-- Examples:
-  - `Button/`
-  - `Modal/` + `useModalAccessibility.ts`
-  - `Toast/` + `useToastStore.ts`
-  - `icons/`
+- May co-locate internal shared helpers with the primitive when still cross-cutting.
+- Never embed project, auth, billing, or board business rules.
 
 ### `src/shared/infrastructure/`
 
-- Technical clients and adapters that are not domain-owned.
+- Technical clients and adapters that are not business-owned.
 - Browser/server/admin Supabase clients.
-- Shared Stripe client.
+- Low-level Stripe client.
 - Shared web concerns like CSRF and rate limiting.
 
 ### `src/shared/types/`
 
 - Only truly generic types.
-- Never ticket-, auth-, billing-, workspace-, or board-specific business types.
+- Never project-, board-, auth-, billing-, or workspace-specific business types.
 
 ### `src/shared/utils/`
 
-- Pure helpers with no domain ownership.
-- No embedded business rules.
+- Pure helpers with no business ownership.
+- No embedded rules about plans, members, tickets, invitations, or modules.
 
 ## Dependency Direction
 
@@ -159,48 +168,64 @@ The dependency flow should remain:
 
 ```text
 src/app
-  -> src/domains/<domain>/presentation
-  -> src/domains/<domain>/core/usecases
-  -> src/domains/<domain>/core/ports
-  -> src/domains/<domain>/infrastructure
+  -> src/domains/<domain>/presentation OR src/modules/<module>/presentation
+  -> core/usecases
+  -> core/ports
+  -> infrastructure
   -> src/shared/infrastructure
   -> external services
 ```
 
-Never reverse that direction.
+Additional rule:
+
+- `src/domains/project/` may compose project-scoped module UI
+- modules may consume project context or permissions from the project domain when necessary
+- the project domain must not own module-specific business rules
 
 ## Hard Rules
 
 ### Always
 
 1. Keep routing in `src/app/` only.
-2. Keep business ownership inside the right domain.
-3. Put reusable primitives in `src/shared/design-system/`.
-4. Keep `src/shared/` domain-agnostic.
-5. Use shared infrastructure clients from `src/shared/infrastructure/*`.
+2. Keep account lifecycle in `src/domains/auth/`.
+3. Keep workspace entry flows in `src/domains/workspace/`.
+4. Keep project container logic in `src/domains/project/`.
+5. Keep project-scoped capabilities in `src/modules/<module>/`.
+6. Put reusable primitives in `src/shared/design-system/`.
+7. Keep `src/shared/` domain- and module-agnostic.
+8. Use shared infrastructure clients from `src/shared/infrastructure/*`.
 
 ### Never
 
 1. Recreate global roots such as `src/core/`, `src/presentation/`, or `src/infrastructure/`.
-2. Put domain business rules in `src/shared/`.
-3. Import one domain's presentation layer into another domain's infrastructure.
-4. Put Supabase or Stripe client creation inside domain core/use cases.
-5. Treat `src/app/` as a business layer.
+2. Put board or project business rules in `src/shared/`.
+3. Put project container logic inside a module.
+4. Put module-specific business logic inside `src/domains/project/`.
+5. Put Supabase or Stripe client creation inside core/use cases.
+6. Treat `src/app/` as a business layer.
 
-## Example
+## Concrete Example
 
 ```text
-src/app/[projectId]/board/page.tsx
-  -> src/domains/project-management/presentation/pages/board/index.tsx
-  -> src/domains/project-management/presentation/hooks/ticket/useTickets.ts
-  -> src/domains/project-management/core/usecases/ticket/listTickets.ts
-  -> src/domains/project-management/core/ports/ticketRepository.ts
-  -> src/domains/project-management/infrastructure/supabase/ticket/TicketRepository.supabase.ts
+src/app/(auth)/[projectId]/layout.tsx
+  -> src/domains/project/presentation/layouts/projectShell/ProjectShell.tsx
+
+src/app/(auth)/[projectId]/board/page.tsx
+  -> src/modules/board/presentation/pages/board/index.tsx
+  -> src/modules/board/presentation/hooks/ticket/useTickets.ts
+  -> src/modules/board/core/usecases/ticket/listTickets.ts
+  -> src/modules/board/core/ports/ticketRepository.ts
+  -> src/modules/board/infrastructure/supabase/ticket/TicketRepository.supabase.ts
   -> src/shared/infrastructure/supabase/client-browser.ts
   -> Supabase
 ```
 
 ## Key Takeaway
 
-Workbench is no longer documented as a single domain with shared helpers around it.
-It is documented as a **family of domain modules** (`auth`, `billing`, `workspace`, `project-management`, then future domains), all composed from `src/app/`, and all relying on a strict cross-cutting `src/shared/` layer.
+Workbench is no longer documented as a flat set of top-level business domains only.
+
+It is documented as:
+
+- **domains** for stable business capabilities (`auth`, `billing`, `workspace`, `project`)
+- **modules** for project-scoped pluggable capabilities (`board`, then `recipes`, `vacation`, `budget`)
+- **shared** for strict cross-cutting code only

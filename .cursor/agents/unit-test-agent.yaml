@@ -97,8 +97,8 @@ output_format: |
   - File: __tests__/{area}/{name}.test.ts
   ```typescript
   // minimal template
-  import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
-  import type { TicketRepository } from "@/domains/project-management/core/ports/ticketRepository";
+  import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
+  import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
   const ticketRepositoryMock = {} as jest.Mocked<TicketRepository>;
 

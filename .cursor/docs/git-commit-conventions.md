@@ -87,7 +87,7 @@ The issue was caused by incorrect offset calculation.
 #### docs - Documentation
 
 ```
-docs(architecture): update modular domain architecture documentation
+docs(architecture): update domain and module architecture documentation
 
 Add examples of proper layer separation and data flow.
 Clarify repository pattern implementation.
@@ -191,13 +191,13 @@ Update your authentication code to use the new GraphQL API.
 ```
 
 ```
-refactor(project-management): rename Ticket type to TicketEntity
+refactor(board): rename Ticket type to TicketEntity
 
 Rename Ticket type to TicketEntity for clarity.
-Align with modular domain architecture naming conventions.
+Align with domain and module architecture naming conventions.
 
 BREAKING CHANGE: Ticket type renamed to TicketEntity.
-Update all imports from 'src/domains/project-management/core/domain/ticket' to use TicketEntity.
+Update all imports from 'src/modules/board/core/domain/ticket' to use TicketEntity.
 ```
 
 ### Multiple Footer Notes

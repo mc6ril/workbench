@@ -1,14 +1,14 @@
 ---
 alwaysApply: true
 name: "Architecture — Component & File Structure"
-description: "Consistent file organization for the modular domain architecture."
-globs: ["src/app/**/*.{ts,tsx}", "src/domains/**/*.{ts,tsx}", "src/shared/design-system/**/*.{ts,tsx}"]
+description: "Consistent file organization for the domain + module architecture."
+globs: ["src/app/**/*.{ts,tsx}", "src/domains/**/*.{ts,tsx}", "src/modules/**/*.{ts,tsx}", "src/shared/design-system/**/*.{ts,tsx}"]
 priority: medium
 ---
 
 # Intent
 
-Maintain consistent component structure and file placement in the domain-first architecture.
+Maintain consistent component structure and file placement in the domain + module architecture.
 
 # Rules
 
@@ -23,6 +23,9 @@ Maintain consistent component structure and file placement in the domain-first a
 - ✅ `/src/domains/<domain>/presentation/pages/` -> domain route-level pages
 - ✅ `/src/domains/<domain>/presentation/layouts/` -> domain route-level layouts
 - ✅ `/src/domains/<domain>/presentation/navigation/` -> domain navigation config
+- ✅ `/src/modules/<module>/core/` -> module schemas, rules, ports, use cases
+- ✅ `/src/modules/<module>/infrastructure/` -> module adapters, repositories, mappers
+- ✅ `/src/modules/<module>/presentation/*` -> module-specific UI, hooks, stores, pages, layouts, navigation
 - ✅ `/src/shared/design-system/` -> reusable UI primitives
 - ✅ `/src/shared/a11y/` -> reusable accessibility utilities
 - ✅ `/src/styles/` -> global styles and variables
@@ -49,9 +52,9 @@ scope: file.path matches ^src/shared/design-system/.+\.(ts|tsx)$
 
 ## D) Domain-Specific Components
 
-scope: file.path matches ^src/domains/.+/presentation/components/.+\.(ts|tsx)$
+scope: file.path matches ^src/(domains|modules)/.+/presentation/components/.+\.(ts|tsx)$
 
-- ✅ **ALWAYS** place domain-specific UI in the owning domain
+- ✅ **ALWAYS** place owner-specific UI in the owning domain or module
 - ✅ **ALWAYS** organize a component in its own folder when it has styles or helpers
 - ✅ **ALWAYS** receive ready data via props or domain hooks
 - ❌ **NEVER** move shared primitives here when they belong in `src/shared/design-system/`
@@ -59,25 +62,25 @@ scope: file.path matches ^src/domains/.+/presentation/components/.+\.(ts|tsx)$
 
 ## E) Domain Hooks
 
-scope: file.path matches ^src/domains/.+/presentation/hooks/.+\.(ts|tsx)$
+scope: file.path matches ^src/(domains|modules)/.+/presentation/hooks/.+\.(ts|tsx)$
 
-- ✅ **ALWAYS** place React Query hooks inside the owning domain
+- ✅ **ALWAYS** place React Query hooks inside the owning domain or module
 - ✅ **ALWAYS** call domain use cases from hooks
 - ❌ **NEVER** call shared infrastructure clients directly when a domain repository exists
 - ❌ **NEVER** treat hooks as a replacement for domain rules or use cases
 
 ## F) Domain Stores
 
-scope: file.path matches ^src/domains/.+/presentation/stores/.+\.(ts|tsx)$
+scope: file.path matches ^src/(domains|modules)/.+/presentation/stores/.+\.(ts|tsx)$
 
 - ✅ **ALWAYS** keep stores for UI state only
-- ✅ **ALWAYS** scope stores to the owning domain
+- ✅ **ALWAYS** scope stores to the owning domain or module
 - ❌ **NEVER** place business rules in stores
 - ❌ **NEVER** call Supabase directly from stores
 
 ## G) Domain Pages and Layouts
 
-scope: file.path matches ^src/domains/.+/presentation/(pages|layouts)/.+\.(ts|tsx)$
+scope: file.path matches ^src/(domains|modules)/.+/presentation/(pages|layouts)/.+\.(ts|tsx)$
 
 - ✅ **ALWAYS** place route-level domain composition here
 - ✅ **ALWAYS** use semantic HTML structure
@@ -86,7 +89,7 @@ scope: file.path matches ^src/domains/.+/presentation/(pages|layouts)/.+\.(ts|ts
 
 ## H) Styling
 
-scope: file.path matches ^src/(app|domains|shared/design-system)/.+\.(ts|tsx)$
+scope: file.path matches ^src/(app|domains|modules|shared/design-system)/.+\.(ts|tsx)$
 
 - ✅ **ALWAYS** use SCSS modules or shared global styles from `src/styles/`
 - ✅ **ALWAYS** use variables from `src/styles/variables/*`
@@ -96,6 +99,6 @@ scope: file.path matches ^src/(app|domains|shared/design-system)/.+\.(ts|tsx)$
 # Auto-suggestions
 
 - If reusable UI is inside a domain -> **Move to `src/shared/design-system/`**
-- If route file contains business logic -> **Move logic into the owning domain module**
-- If hook is global and domain-specific -> **Move it to `src/domains/<domain>/presentation/hooks/`**
+- If route file contains business logic -> **Move logic into the owning domain or module**
+- If hook is global and owner-specific -> **Move it to `src/domains/<domain>/presentation/hooks/` or `src/modules/<module>/presentation/hooks/`**
 - If store contains business logic -> **Move logic into a domain use case or rule**

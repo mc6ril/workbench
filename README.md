@@ -1,39 +1,50 @@
 ## Workbench
 
-**Workbench** is a family-centered daily life management app — a personal life OS that brings together multiple domains (project management, meal planning, vacation planning, budget, and more) under a single workspace, with multi-user collaboration and role-based permissions.
+**Workbench** is a family-centered daily life OS.
+
+It brings together stable business domains and project-scoped pluggable modules under a single product surface, with multi-user collaboration, role-based permissions, and progressive subscription-based capabilities.
 
 ### Purpose
 
-Workbench is built around the idea that a household needs a shared space to manage work, plans, and daily life clearly, without cognitive overload.
+Workbench is built around a simple idea:
 
-Each domain is a self-contained "board" experience:
-- **Project management** — tickets, epics, sprints, Kanban board
-- **Meal planning** — recipe database, weekly menus, shopping lists *(coming)*
-- **Vacation planning** — destinations, activities, checklists *(coming)*
-- **Budget** — shared expenses, categories, periods *(coming)*
+- a household needs a shared workspace to create or join projects
+- each project is a container with members, settings, permissions, and enabled modules
+- each enabled module provides one concrete way of working inside that project
+
+Current module:
+- **Board** — tickets, epics, sprints, Kanban / Jira-like workflow
+
+Future modules:
+- **Recipes** — meal planning, recipe base, shopping support
+- **Vacation** — trip planning, timeline or board-like planning
+- **Budget** — shared expenses, categories, periods
 
 ### Core Principles
 
-1. **Family-first**: Multi-user, role-based permissions (`admin`, `member`, `viewer`), collaboration built-in
-2. **Domain-driven**: Each life domain is an isolated module with its own business rules
-3. **Incremental construction**: One domain at a time, each is independently usable
-4. **Clarity over power**: Fewer features, explicit structure, no hidden magic
+1. **Family-first**: collaboration, permissions, and shared ownership are built in
+2. **Container + modules**: a project is the container; business capabilities inside it are pluggable modules
+3. **Clear ownership**: domains own cross-project capabilities, modules own project-scoped workflows
+4. **Incremental construction**: one module at a time, without locking the future architecture too early
+5. **Clarity over power**: explicit structure, predictable behavior, low cognitive load
 
 ### Architecture
 
-Workbench follows a **final domain-first modular architecture**:
+Workbench follows a **domain + module architecture**:
 
 ```text
 src/
   app/                          # Next.js routing only
   domains/
-    auth/                       # sign in/up, OAuth, reset password, email verify
-    billing/                    # Stripe, plans, subscriptions, webhooks
-    workspace/                  # users, invitations, account settings
-    project-management/         # tickets, epics, sprints, board
-    recipes/                    # future
-    vacation/                   # future
-    budget/                     # future
+    auth/                       # account lifecycle: sign in/up, reset password, verify email, profile, delete account
+    billing/                    # plans, subscriptions, Stripe checkout/portal/webhooks
+    workspace/                  # workspace dashboard: list/create/join projects
+    project/                    # project container: settings, members, invitations, enabled modules
+  modules/
+    board/                      # tickets, epics, sprints, labels, board views
+    recipes/                    # future project module
+    vacation/                   # future project module
+    budget/                     # future project module
   shared/
     design-system/              # reusable UI primitives
     i18n/                       # translations and hooks
@@ -44,13 +55,13 @@ src/
       web/                      # rate limit and CSRF
     constants/                  # routes, error codes, feature flags
     types/                      # truly generic types only
-    utils/                      # pure helpers with no domain ownership
+    utils/                      # pure helpers with no business ownership
     a11y/                       # accessibility helpers
   styles/
   middleware.ts
 ```
 
-Inside each concrete domain module, responsibilities stay layered:
+Inside both domains and modules, responsibilities stay layered:
 
 - **core/domain**: schemas, rules, constants
 - **core/ports**: contracts
@@ -58,33 +69,41 @@ Inside each concrete domain module, responsibilities stay layered:
 - **infrastructure**: repositories, mappers, gateways
 - **presentation**: components, hooks, stores, pages, layouts, navigation
 
-`src/app/` stays route-only, domains own business logic, and `src/shared/` stays cross-cutting. This lets the current `project-management` module evolve without dictating the shape of future domains.
+Ownership is explicit:
+
+- `src/app/` stays route-only
+- `src/domains/workspace/` owns the entry UX to list, create, and join projects
+- `src/domains/project/` owns the project container itself
+- `src/modules/board/` owns the current Trello/Jira-like module
+- `src/shared/` stays cross-cutting and domain-agnostic
 
 ### Development Strategy
 
-Each feature is implemented as a complete vertical slice (UI + use case + domain logic + persistence). Features are built in order:
+Each feature is implemented as a complete vertical slice (UI + use case + domain logic + persistence).
 
-1. Project setup and health check
-2. Board (ticket CRUD)
-3. Board columns configuration
-4. Drag and drop workflow
-5. Epics
-6. Sub-tasks
+Current build order stays pragmatic:
 
-No feature is started until the previous one is fully done.
+1. Authentication and workspace entry flows
+2. Project container and access model
+3. Board module (ticket CRUD)
+4. Board columns configuration
+5. Drag and drop workflow
+6. Epics
+7. Sub-tasks
+8. Future modules (`recipes`, `vacation`, `budget`)
 
 ### Testing
 
 - Run unit tests once: `yarn test`
 - Run unit tests in watch mode: `yarn test:watch`
 
-Tests live under the project root `__tests__/` directory (mirroring the `src/` structure), with shared mocks under `__mocks__/`. This setup is powered by Jest with TypeScript support (`ts-jest`), following the modular domain testing rules described in `.cursor/docs/testing.md`.
+Tests live under the project root `__tests__/` directory (mirroring the `src/` structure), with shared mocks under `__mocks__/`. This setup is powered by Jest with TypeScript support (`ts-jest`), following the architecture-aware testing rules described in `.cursor/docs/testing.md`.
 
 ### Success Criteria
 
 Workbench is successful if:
 
-- It replaces ad-hoc notes and mental tracking
-- Managing tasks feels calm and predictable
-- The system remains understandable after months away
-- Every feature has a clear reason to exist
+- it replaces ad-hoc notes and mental tracking
+- projects stay understandable even as new modules are added
+- module boundaries remain explicit and easy to evolve
+- the system stays calm, predictable, and easy to resume after time away

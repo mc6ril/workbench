@@ -15,7 +15,7 @@ Perform a thorough code review that verifies functionality, maintainability, and
 
 **Use**:
 
-- **@Architecture Guardian**: For architecture compliance review (app/domain/shared boundaries, domain ownership, React Query + Zustand, SCSS variables, Supabase usage, A11y)
+- **@Architecture Guardian**: For architecture compliance review (app/domain/module/shared boundaries, owner ownership, React Query + Zustand, SCSS variables, Supabase usage, A11y)
 - **@QA & Test Coach**: For quality assurance review (test plans, e2e scenarios, A11y checks)
 
 **Note**: For security-specific reviews, use the **Security Agent** instead.
@@ -28,7 +28,7 @@ Perform a thorough code review that verifies functionality, maintainability, and
    - Note any assumptions or questions to clarify with the author
 
 2. **Architecture Compliance** (Use @Architecture Guardian)
-   - Check modular domain architecture boundaries (`src/app`, `src/domains`, `src/shared`, plus domain ownership)
+   - Check domain + module architecture boundaries (`src/app`, `src/domains`, `src/modules`, `src/shared`, plus owner ownership)
    - Verify layer separation (no Supabase in UI, no business logic in UI)
    - Check React Query + Zustand usage (React Query for server state, Zustand for UI state only)
    - Verify SCSS variables usage (no hardcoded values)

@@ -8,7 +8,7 @@ priority: medium
 
 # Intent
 
-Accessibility is never optional. All components must be fully accessible to users with disabilities, ensuring WCAG 2.1 AA compliance and usability for all users including those using screen readers, voice control, or other assistive technologies. Accessibility management is centralized following the modular domain architecture.
+Accessibility is never optional. All components must be fully accessible to users with disabilities, ensuring WCAG 2.1 AA compliance and usability for all users including those using screen readers, voice control, or other assistive technologies. Accessibility management is centralized following the domain + module architecture.
 
 ## CRITICAL RULES - ACCESSIBILITY NEVER OPTIONAL
 
@@ -183,7 +183,7 @@ Before EVERY component submission:
 -   **ALWAYS** test with browser accessibility tools (axe DevTools, WAVE)
 -   **NEVER** release features without accessibility verification
 
-This ensures WCAG 2.1 AA compliance and usability for all users including those with disabilities, while maintaining the modular domain architecture.
+This ensures WCAG 2.1 AA compliance and usability for all users including those with disabilities, while maintaining the domain + module architecture.
 
 # Auto-suggestions
 

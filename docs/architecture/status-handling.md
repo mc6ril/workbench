@@ -2,24 +2,27 @@
 
 ## Overview
 
-Loading, error, and empty states are handled through **shared primitives** plus **domain hooks**.
+Loading, error, and empty states are handled through **shared primitives** plus **owner hooks**.
 
 The architectural split is:
 
 ```text
-Domain pages/components
-  (src/domains/<domain>/presentation/pages|components)
+Domain or module pages/components
+  (src/domains/<domain>/presentation/pages|components
+   or src/modules/<module>/presentation/pages|components)
     ↓ use
 Shared UI primitives
   (src/shared/design-system)
 Shared status helpers
-  (src/shared/utils/status.ts)
+  (src/shared/utils/queryStatus.ts)
     ↓ fed by
-Domain hooks
-  (src/domains/<domain>/presentation/hooks)
+Owner hooks
+  (src/domains/<domain>/presentation/hooks
+   or src/modules/<module>/presentation/hooks)
     ↓ call
-Domain usecases
-  (src/domains/<domain>/core/usecases)
+Owner usecases
+  (src/domains/<domain>/core/usecases
+   or src/modules/<module>/core/usecases)
 ```
 
 ## Responsibilities
@@ -46,7 +49,7 @@ These components:
 
 Status helper functions belong in:
 
-- `src/shared/utils/status.ts`
+- `src/shared/utils/queryStatus.ts`
 
 They normalize React Query results into a consistent set of flags such as:
 
@@ -56,11 +59,11 @@ They normalize React Query results into a consistent set of flags such as:
 - `isEmpty`
 - `isAnyLoading`
 
-### Domain hooks
+### Owner hooks
 
-Hooks belong in the domain that owns the data:
+Hooks belong in the owner that owns the data:
 
-- `src/domains/project-management/presentation/hooks/`
+- `src/modules/board/presentation/hooks/`
 
 Examples:
 
@@ -72,8 +75,8 @@ Examples:
 
 ```typescript
 import { EmptyState, ErrorMessage, Loader } from "@/shared/design-system";
-import { useTickets } from "@/domains/project-management/presentation/hooks/ticket/useTickets";
-import { shouldShowEmpty, shouldShowError, shouldShowLoading } from "@/shared/utils/status";
+import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
+import { shouldShowEmpty, shouldShowError, shouldShowLoading } from "@/shared/utils/queryStatus";
 
 export const ProjectBoardPage = ({ projectId }: { projectId: string }) => {
   const ticketsQuery = useTickets(projectId);
@@ -96,7 +99,7 @@ export const ProjectBoardPage = ({ projectId }: { projectId: string }) => {
 
 ## Rules
 
-- Domain pages and components use domain hooks
+- Domain and module pages/components use owner hooks
 - Shared UI primitives stay reusable and domain-agnostic
 - Shared status helpers stay pure and cross-cutting
 - No status-specific business logic belongs in `src/app/`
@@ -106,5 +109,5 @@ export const ProjectBoardPage = ({ projectId }: { projectId: string }) => {
 
 - Reusable status UI: `src/shared/design-system/`
 - Status utilities: `src/shared/utils/`
-- Domain fetching hooks: `src/domains/<domain>/presentation/hooks/`
+- Owner fetching hooks: `src/domains/<domain>/presentation/hooks/` or `src/modules/<module>/presentation/hooks/`
 - Route composition only: `src/app/`

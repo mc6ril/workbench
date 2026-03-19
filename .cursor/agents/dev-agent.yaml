@@ -1,5 +1,5 @@
 name: "Architecture-Aware Dev"
-description: "Implements code following the modular domain architecture, React Query + Zustand, Next.js, Supabase, and SCSS variables."
+description: "Implements code following the domain + module architecture, React Query + Zustand, Next.js, Supabase, and SCSS variables."
 tags:
   [
     "dev",
@@ -11,16 +11,16 @@ tags:
     "scss",
   ]
 goals:
-  - "Respect the modular domain architecture: src/app for routing, src/domains for business modules, src/shared for cross-cutting code"
-  - "Keep domain logic in src/domains/<domain>/core, domain infrastructure in src/domains/<domain>/infrastructure, and domain UI in src/domains/<domain>/presentation"
-  - "Route -> domain page/layout -> domain hook -> usecase -> port -> domain repository -> shared infrastructure client -> Supabase"
+  - "Respect the architecture: src/app for routing, src/domains for stable business capabilities, src/modules for project-scoped capabilities, src/shared for cross-cutting code"
+  - "Keep owner logic in src/domains/<domain>/... or src/modules/<module>/... with core, infrastructure, and presentation layers"
+  - "Route -> domain shell or module page/layout -> owner hook -> usecase -> port -> owner repository -> shared infrastructure client -> Supabase"
   - "Zustand for UI state only; React Query for server state"
   - "Use SCSS variables from styles/variables/* only; no hardcoded values"
   - "Use accessibility utilities from shared/a11y/"
   - "Emit minimal, reviewable diffs with file list and rationale"
 instructions:
-  - "If a rule is ambiguous, prefer app/domain/shared separation with layered ownership inside each domain"
-  - "Offer scaffolds inside the owning domain module when missing"
+  - "If a rule is ambiguous, prefer app/domain/module/shared separation with layered ownership inside each owner"
+  - "Offer scaffolds inside the owning domain or module when missing"
   - "Never place business logic in UI. UI consumes React Query hooks + Zustand stores."
   - "Domain core: pure TypeScript, no external dependencies."
   - "Usecases: orchestrate business logic using domain ports."
@@ -39,8 +39,8 @@ scope:
 playbooks:
   - name: "Bugfix Quick Path"
     steps:
-      - "Locate the affected route/domain module/shared primitive from the description or stack traces."
-      - "Apply a minimal change that respects the modular domain architecture and SCSS variables (no inline styles, keep logic out of route files and shared UI)."
+      - "Locate the affected route, domain, module, or shared primitive from the description or stack traces."
+      - "Apply a minimal change that respects the domain + module architecture and SCSS variables (no inline styles, keep logic out of route files and shared UI)."
       - "If a relevant unit test exists, update/extend it; otherwise add ONE minimal unit test in __tests__/ to lock the fix."
       - "Run rule checklist quickly (no architecture changes, no scaffolds)."
   - name: "Define Test Contract"
@@ -50,7 +50,7 @@ playbooks:
       - "Gate: mark tests: approved before starting implementation."
   - name: "Scaffold Feature"
     steps:
-      - "Create code in the owning domain module or in shared/ if it is truly cross-cutting."
+      - "Create code in the owning domain or module, or in shared/ if it is truly cross-cutting."
       - "Reuse existing shared design-system primitives when possible."
   - name: "Implement Feature Slice"
     steps:
@@ -87,7 +87,7 @@ prompts:
   scaffold: |
     Generate only minimal scaffolds (domain types, usecases, repositories, hooks, components) for {feature}, with typed placeholders and TODOs.
   review: |
-    Review {feature} against rules (app/domain/shared boundaries, domain ownership, React Query + Zustand, SCSS variables, Supabase usage, A11y).
+    Review {feature} against rules (app/domain/module/shared boundaries, owner ownership, React Query + Zustand, SCSS variables, Supabase usage, A11y).
     List violations and propose minimal diffs.
     Optionally call Architecture Guardian for automated compliance check.
   simple: |
