@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { deleteUser } from "@/domains/project-management/core/usecases/auth/deleteUser";
+import { deleteUser } from "@/domains/auth/core/usecases/deleteUser";
 
-import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
+import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
 
 import { API_MESSAGES_AUTH } from "@/shared/constants";
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";

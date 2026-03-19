@@ -2,7 +2,7 @@ import {
   type UpdatePreferencesInput,
   type UserPreferences,
   UserPreferencesSchema,
-} from "@/domains/project-management/core/domain/schema/auth.schema";
+} from "@/domains/auth/core/domain/schema/auth.schema";
 
 import type { UserProfileRepository } from "@/domains/project-management/core/ports/userProfileRepository";
 

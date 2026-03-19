@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { useSession } from "@/presentation/hooks/auth/useSession";
+import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 
 import { defaultLocale, supportedLocales } from "@/shared/i18n/config";
 import type { Locale } from "@/shared/i18n/types";

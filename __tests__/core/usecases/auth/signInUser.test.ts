@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import type { AuthResult } from "@/domains/project-management/core/domain/schema/auth.schema";
+import type { AuthResult } from "@/domains/auth/core/domain/schema/auth.schema";
 
-import { signInUser } from "@/domains/project-management/core/usecases/auth/signInUser";
+import { signInUser } from "@/domains/auth/core/usecases/signInUser";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import {

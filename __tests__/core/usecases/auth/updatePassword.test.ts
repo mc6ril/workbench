@@ -3,9 +3,9 @@ import { z } from "zod";
 import type {
   AuthResult,
   UpdatePasswordInput,
-} from "@/domains/project-management/core/domain/schema/auth.schema";
+} from "@/domains/auth/core/domain/schema/auth.schema";
 
-import { updatePassword } from "@/domains/project-management/core/usecases/auth/updatePassword";
+import { updatePassword } from "@/domains/auth/core/usecases/updatePassword";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import {

@@ -10,23 +10,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type {
   ChangePasswordFormInput,
   Theme,
-} from "@/domains/project-management/core/domain/schema/auth.schema";
+} from "@/domains/auth/core/domain/schema/auth.schema";
 import {
   ChangePasswordFormSchema,
   DEFAULT_USER_PREFERENCES,
   ThemeValues,
-} from "@/domains/project-management/core/domain/schema/auth.schema";
+} from "@/domains/auth/core/domain/schema/auth.schema";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
 } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
-import { useChangePassword } from "@/presentation/hooks/auth/useChangePassword";
-import { useDeleteUser } from "@/presentation/hooks/auth/useDeleteUser";
-import { useSession } from "@/presentation/hooks/auth/useSession";
-import { useSignOut } from "@/presentation/hooks/auth/useSignOut";
-import { useUpdatePreferences } from "@/presentation/hooks/auth/useUpdatePreferences";
-import { useUpdateProfile } from "@/presentation/hooks/auth/useUpdateProfile";
+import { useChangePassword } from "@/domains/auth/presentation/hooks/useChangePassword";
+import { useDeleteUser } from "@/domains/auth/presentation/hooks/useDeleteUser";
+import { useSession } from "@/domains/auth/presentation/hooks/useSession";
+import { useSignOut } from "@/domains/auth/presentation/hooks/useSignOut";
+import { useUpdatePreferences } from "@/domains/auth/presentation/hooks/useUpdatePreferences";
+import { useUpdateProfile } from "@/domains/auth/presentation/hooks/useUpdateProfile";
 import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
 
 import { getAccessibilityId } from "@/shared/a11y";

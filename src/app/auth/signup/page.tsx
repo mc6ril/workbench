@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 
-import SignupPage from "@/presentation/pages/auth/signup";
+import SignupPage from "@/domains/auth/presentation/pages/signup";
 
 import Loader from "@/shared/design-system/Loader";
 

@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
 import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
 
-import { useSession } from "@/presentation/hooks/auth/useSession";
+import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 import { useProjectMembers } from "@/presentation/hooks/member/useProjectMembers";
 import { useRemoveMember } from "@/presentation/hooks/member/useRemoveMember";
 import { useUpdateMemberRole } from "@/presentation/hooks/member/useUpdateMemberRole";

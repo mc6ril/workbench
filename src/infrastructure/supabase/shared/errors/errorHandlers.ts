@@ -1,7 +1,7 @@
 import type { RepositoryErrorUnion } from "@/domains/project-management/core/domain/repositoryError";
 import { isRepositoryError } from "@/domains/project-management/core/domain/repositoryError.guards";
 
-import { mapSupabaseAuthError } from "@/infrastructure/supabase/auth/AuthMapper.supabase";
+import { mapSupabaseAuthError } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
 
 import { AUTH_ERROR_CODES } from "@/shared/constants/errorCodes";
 import { createLoggerFactory } from "@/shared/observability";

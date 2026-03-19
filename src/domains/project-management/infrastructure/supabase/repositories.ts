@@ -3,7 +3,6 @@
  * Provides browser instances for React Query hooks and factory functions for server contexts.
  */
 
-import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
 import { createCommentRepository } from "@/infrastructure/supabase/comment/CommentRepository.supabase";
 import { createInvitationRepository } from "@/infrastructure/supabase/invitation/InvitationRepository.supabase";
 import { createRealtimeRepository } from "@/infrastructure/supabase/realtime/RealtimeRepository.supabase";
@@ -20,10 +19,6 @@ import { createProjectRepository } from "./project/ProjectRepository.supabase";
 import { createSprintRepository } from "./sprint/SprintRepository.supabase";
 import { createTicketRepository } from "./ticket/TicketRepository.supabase";
 
-// Browser instances for React Query hooks (Client Components)
-export const authRepository = createAuthRepository(
-  createSupabaseBrowserClient()
-);
 export const projectRepository = createProjectRepository(
   createSupabaseBrowserClient()
 );
@@ -82,7 +77,6 @@ export { createMemberRepository } from "./member/MemberRepository.supabase";
 export { createProjectRepository } from "./project/ProjectRepository.supabase";
 export { createSprintRepository } from "./sprint/SprintRepository.supabase";
 export { createTicketRepository } from "./ticket/TicketRepository.supabase";
-export { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
 export { createCommentRepository } from "@/infrastructure/supabase/comment/CommentRepository.supabase";
 export { createInvitationRepository } from "@/infrastructure/supabase/invitation/InvitationRepository.supabase";
 export { createRealtimeRepository } from "@/infrastructure/supabase/realtime/RealtimeRepository.supabase";

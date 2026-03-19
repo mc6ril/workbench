@@ -22,8 +22,8 @@ import { computeFeatureLockState } from "@/domains/project-management/core/useca
 import { getTicketAssigneesByProjectId } from "@/domains/project-management/core/usecases/ticket/getTicketAssigneesByProjectId";
 import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
 
-import { useSession } from "@/presentation/hooks/auth/useSession";
-import { useSignOut } from "@/presentation/hooks/auth/useSignOut";
+import { useSession } from "@/domains/auth/presentation/hooks/useSession";
+import { useSignOut } from "@/domains/auth/presentation/hooks/useSignOut";
 import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";

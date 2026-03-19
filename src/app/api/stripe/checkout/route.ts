@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
-import { getCurrentSession } from "@/domains/project-management/core/usecases/auth/getCurrentSession";
+import { getCurrentSession } from "@/domains/auth/core/usecases/getCurrentSession";
 import { createCheckoutSession } from "@/domains/project-management/core/usecases/subscription/createCheckoutSession";
 
-import { createAuthRepository } from "@/infrastructure/supabase/auth/AuthRepository.supabase";
+import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
 import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
 
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";

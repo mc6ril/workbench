@@ -8,7 +8,7 @@ import {
   SubscriptionPlan,
 } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
-import { useSession } from "@/presentation/hooks/auth/useSession";
+import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
 
 import { getAccessibilityId } from "@/shared/a11y";
