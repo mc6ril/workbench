@@ -1,6 +1,6 @@
-import type { UserProfile } from "@/domains/project-management/core/domain/schema/userProfile.schema";
+import type { UserProfile } from "@/domains/auth/core/domain/schema/userProfile.schema";
 
-import type { UserProfileRepository } from "@/domains/project-management/core/ports/userProfileRepository";
+import type { UserProfileRepository } from "@/domains/auth/core/ports/userProfileRepository";
 
 /**
  * Get a user profile by ID.

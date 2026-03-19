@@ -1,4 +1,4 @@
-import type { UserProfile } from "@/domains/project-management/core/domain/schema/userProfile.schema";
+import type { UserProfile } from "@/domains/auth/core/domain/schema/userProfile.schema";
 
 import type { UserProfileRow } from "@/shared/infrastructure/types";
 

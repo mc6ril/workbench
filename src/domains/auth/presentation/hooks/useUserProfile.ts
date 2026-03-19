@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getProfile } from "@/domains/project-management/core/usecases/profile/getProfile";
+import { getProfile } from "@/domains/auth/core/usecases/profile/getProfile";
 
 import { queryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
-import { userProfileRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
+import { userProfileRepository } from "@/domains/auth/infrastructure/supabase/repositories";
 
 /**
  * Hook for fetching a user profile by ID.
