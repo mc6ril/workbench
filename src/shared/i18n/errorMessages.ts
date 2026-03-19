@@ -1,7 +1,7 @@
-import { isDomainRuleError } from "@/domains/project-management/core/domain/domainRuleError.guards";
-import type { ConstraintError } from "@/domains/project-management/core/domain/repositoryError";
-import type { NotFoundError } from "@/domains/project-management/core/domain/repositoryError";
-import { isRepositoryError } from "@/domains/project-management/core/domain/repositoryError.guards";
+import { isDomainRuleError } from "@/shared/errors/domainRuleError.guards";
+import type { ConstraintError } from "@/shared/errors/repositoryError";
+import type { NotFoundError } from "@/shared/errors/repositoryError";
+import { isRepositoryError } from "@/shared/errors/repositoryError.guards";
 
 /**
  * Gets a user-facing error message from an error object.

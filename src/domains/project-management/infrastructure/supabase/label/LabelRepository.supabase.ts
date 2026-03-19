@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   createDatabaseError,
   createNotFoundError,
-} from "@/domains/project-management/core/domain/repositoryError";
+} from "@/shared/errors/repositoryError";
 import type {
   CreateLabelInput,
   Label,

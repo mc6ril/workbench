@@ -3,7 +3,7 @@ import {
   createDatabaseError,
   createNotFoundError,
   type RepositoryErrorUnion,
-} from "@/domains/project-management/core/domain/repositoryError";
+} from "@/shared/errors/repositoryError";
 
 import { isNetworkError } from "@/shared/utils/errorHandling";
 

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createNotFoundError } from "@/domains/project-management/core/domain/repositoryError";
+import { createNotFoundError } from "@/shared/errors/repositoryError";
 import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 import { moveAndReorderTicket } from "@/domains/project-management/core/usecases/ticket/moveAndReorderTicket";

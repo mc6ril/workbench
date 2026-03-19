@@ -1,5 +1,5 @@
-import { createDomainRuleError } from "@/domains/project-management/core/domain/domainRuleError";
-import { createNotFoundError } from "@/domains/project-management/core/domain/repositoryError";
+import { createDomainRuleError } from "@/shared/errors/domainRuleError";
+import { createNotFoundError } from "@/shared/errors/repositoryError";
 import { validateTicket } from "@/domains/project-management/core/domain/rules/ticket.rules";
 import {
   type CreateSubtaskInput,

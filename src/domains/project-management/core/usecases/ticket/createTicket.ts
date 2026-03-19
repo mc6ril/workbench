@@ -1,4 +1,4 @@
-import { createDomainRuleError } from "@/domains/project-management/core/domain/domainRuleError";
+import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 import { validateTicket } from "@/domains/project-management/core/domain/rules/ticket.rules";
 import {
   type CreateTicketInput,

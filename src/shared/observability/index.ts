@@ -18,4 +18,4 @@ export type {
   LoggerFactory,
   LogLevel,
   LogMeta,
-} from "@/domains/project-management/core/ports/logger";
+} from "@/shared/observability/logger.port";

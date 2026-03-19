@@ -1,5 +1,5 @@
-import type { RepositoryErrorUnion } from "@/domains/project-management/core/domain/repositoryError";
-import { isRepositoryError } from "@/domains/project-management/core/domain/repositoryError.guards";
+import type { RepositoryErrorUnion } from "@/shared/errors/repositoryError";
+import { isRepositoryError } from "@/shared/errors/repositoryError.guards";
 
 import { AUTH_ERROR_CODES } from "@/shared/constants/errorCodes";
 import { createLoggerFactory } from "@/shared/observability";

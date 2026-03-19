@@ -1,4 +1,4 @@
-import { createNotFoundError } from "@/domains/project-management/core/domain/repositoryError";
+import { createNotFoundError } from "@/shared/errors/repositoryError";
 import {
   type Epic,
   type UpdateEpicInput,
