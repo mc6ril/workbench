@@ -5,10 +5,9 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 
 import { addLabelsToTicket } from "@/domains/project-management/core/usecases/label";
-
-import { useLabels } from "@/presentation/hooks/label";
-import { useProject } from "@/presentation/hooks/project";
-import { useProjectPermissions } from "@/presentation/providers/permissions";
+import { useProject } from "@/domains/workspace/presentation/hooks/useProject";
+import { useLabels } from "@/domains/project-management/presentation/hooks/label";
+import { useProjectPermissions } from "@/domains/project-management/presentation/providers/permissions";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import Loader from "@/shared/design-system/Loader";

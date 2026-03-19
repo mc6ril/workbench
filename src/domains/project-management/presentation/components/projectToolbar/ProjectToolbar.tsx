@@ -3,12 +3,12 @@
 import React, { useCallback, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-import { useProjectToolbarSuggestions } from "@/presentation/hooks/project/useProjectToolbarSuggestions";
-
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import Button from "@/shared/design-system/Button";
 import Input from "@/shared/design-system/Input";
 import { useTranslation } from "@/shared/i18n";
+
+import { useProjectToolbarSuggestions } from "@/domains/project-management/presentation/hooks/project/useProjectToolbarSuggestions";
 
 import ProjectToolbarSuggestions from "./components/ProjectToolbarSuggestions";
 import ProjectToolbarTools from "./components/ProjectToolbarTools";

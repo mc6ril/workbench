@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import { useProjectPermissions } from "@/presentation/providers/permissions";
+import { useProjectPermissions } from "@/domains/project-management/presentation/providers/permissions";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import ErrorMessage from "@/shared/design-system/ErrorMessage";

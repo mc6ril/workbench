@@ -1,4 +1,4 @@
-import type { ProjectSearchSuggestion } from "@/presentation/hooks/project/useProjectSearchSuggestions";
+import type { ProjectSearchSuggestion } from "@/domains/project-management/presentation/hooks/project/useProjectSearchSuggestions";
 
 import styles from "@/domains/project-management/presentation/components/projectToolbar/ProjectToolbar.module.scss";
 

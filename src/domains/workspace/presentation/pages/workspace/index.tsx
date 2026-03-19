@@ -15,7 +15,7 @@ import { useCreateProject } from "@/domains/workspace/presentation/hooks/useCrea
 import { useLastActivitySubtitle } from "@/domains/workspace/presentation/hooks/useLastActivitySubtitle";
 import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
 import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
-import { shouldShowLoading } from "@/presentation/utils/queryStatus";
+import { shouldShowLoading } from "@/shared/utils/queryStatus";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";

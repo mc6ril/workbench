@@ -10,7 +10,7 @@ import {
   shouldShowEmpty,
   shouldShowError,
   shouldShowLoading,
-} from "@/presentation/utils/queryStatus";
+} from "@/shared/utils/queryStatus";
 
 describe("status utilities", () => {
   describe("isQueryLoading", () => {

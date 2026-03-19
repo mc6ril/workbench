@@ -8,15 +8,15 @@ import {
   useCreateComment,
   useDeleteComment,
   useUpdateComment,
-} from "@/presentation/hooks/comment";
+} from "@/domains/project-management/presentation/hooks/comment";
 import {
   useAddTicketLabels,
   useLabels,
   useRemoveTicketLabels,
   useTicketLabelIds,
-} from "@/presentation/hooks/label";
-import { useProjectMembers } from "@/presentation/hooks/member/useProjectMembers";
-import { useProjectPermissions } from "@/presentation/providers/permissions";
+} from "@/domains/project-management/presentation/hooks/label";
+import { useProjectMembers } from "@/domains/project-management/presentation/hooks/member/useProjectMembers";
+import { useProjectPermissions } from "@/domains/project-management/presentation/providers/permissions";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { buildProjectRoute } from "@/shared/utils/routes";

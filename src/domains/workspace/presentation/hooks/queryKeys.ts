@@ -3,6 +3,7 @@ const queryKeysObject = {
     all: () => ["projects"] as const,
     withStats: () => ["projects", "with-stats"] as const,
     reclaimable: () => ["projects", "reclaimable"] as const,
+    detail: (id: string) => ["projects", id] as const,
   },
 } as const;
 

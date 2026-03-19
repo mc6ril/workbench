@@ -1,6 +1,5 @@
 import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
-
-import type { ProjectPermissionFlags } from "@/presentation/providers/permissions/types";
+import type { ProjectPermissionFlags } from "./types";
 
 const canEdit = (role: ProjectRole | null): boolean => {
   return role === ProjectRole.ADMIN || role === ProjectRole.MEMBER;

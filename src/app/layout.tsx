@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Geist, Geist_Mono } from "next/font/google";
 
-import AppProvider from "@/presentation/providers/AppProvider";
+import AppProvider from "@/shared/providers/AppProvider";
 
 import type { TranslationMessages } from "@/shared/i18n";
 import { defaultLocale, getTranslationValue } from "@/shared/i18n";

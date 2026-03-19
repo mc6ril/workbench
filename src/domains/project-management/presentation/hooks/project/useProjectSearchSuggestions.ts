@@ -8,7 +8,7 @@ import {
   normalizeTicketSearch,
 } from "@/shared/utils/ticketUtils";
 
-import { useProject } from "./useProject";
+import { useProject } from "@/domains/workspace/presentation/hooks/useProject";
 
 import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
 import { useTickets } from "@/domains/project-management/presentation/hooks/ticket/useTickets";
