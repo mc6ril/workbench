@@ -11,8 +11,8 @@ import type {
 } from "@/domains/project-management/core/domain/schema/epic.schema";
 import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
-import type { EpicRow, TicketRow } from "@/infrastructure/supabase/types";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { EpicRow, TicketRow } from "@/shared/infrastructure/types";
 
 import { mapEpicRowsToDomain, mapEpicRowToDomain } from "./EpicMapper.supabase";
 

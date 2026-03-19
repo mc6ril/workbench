@@ -7,7 +7,7 @@ import { InvitationStatus } from "@/domains/project-management/core/domain/schem
 import type {
   InvitationRow,
   PendingInvitationRow,
-} from "@/infrastructure/supabase/types";
+} from "@/shared/infrastructure/types";
 
 import { toDate } from "@/shared/utils/guards";
 

@@ -3,11 +3,11 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createDatabaseError } from "@/domains/project-management/core/domain/repositoryError";
 import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
 
-import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 import type {
   ProjectMemberRow,
   UserProfileRow,
-} from "@/infrastructure/supabase/types";
+} from "@/shared/infrastructure/types";
 
 import { isProjectRole } from "@/shared/utils/guards";
 

@@ -2,8 +2,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { createDatabaseError } from "@/domains/project-management/core/domain/repositoryError";
 
-import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
-import type { SubscriptionRow } from "@/infrastructure/supabase/types";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { SubscriptionRow } from "@/shared/infrastructure/types";
 
 import { mapSubscriptionRowToDomain } from "./SubscriptionMapper.supabase";
 

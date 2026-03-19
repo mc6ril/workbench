@@ -6,11 +6,11 @@ import type {
   ProjectInvitation,
 } from "@/domains/project-management/core/domain/schema/invitation.schema";
 
-import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 import type {
   InvitationRow,
   PendingInvitationRow,
-} from "@/infrastructure/supabase/types";
+} from "@/shared/infrastructure/types";
 
 import {
   mapInvitationRowToDomain,

@@ -6,12 +6,12 @@ import {
   createNotFoundError,
 } from "@/domains/project-management/core/domain/repositoryError";
 
-import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 import type {
   ProjectRow,
   ProjectWithStatsRow,
   ReclaimableProjectRow,
-} from "@/infrastructure/supabase/types";
+} from "@/shared/infrastructure/types";
 
 import {
   isNonEmptyString,

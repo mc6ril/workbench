@@ -1,6 +1,6 @@
 import type { Label } from "@/domains/project-management/core/domain/schema/label.schema";
 
-import type { LabelRow } from "@/infrastructure/supabase/types";
+import type { LabelRow } from "@/shared/infrastructure/types";
 
 import { toDate } from "@/shared/utils/guards";
 

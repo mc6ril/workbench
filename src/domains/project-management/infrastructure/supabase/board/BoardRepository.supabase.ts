@@ -12,8 +12,8 @@ import type {
   UpdateColumnInput,
 } from "@/domains/project-management/core/domain/schema/board.schema";
 
-import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
-import type { BoardRow, ColumnRow } from "@/infrastructure/supabase/types";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { BoardRow, ColumnRow } from "@/shared/infrastructure/types";
 
 import {
   mapBoardRowToDomain,

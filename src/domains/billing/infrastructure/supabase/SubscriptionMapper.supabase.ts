@@ -1,4 +1,4 @@
-import type { SubscriptionRow } from "@/infrastructure/supabase/types";
+import type { SubscriptionRow } from "@/shared/infrastructure/types";
 
 import type { Subscription } from "@/domains/billing/core/domain/schema/subscription.schema";
 import {

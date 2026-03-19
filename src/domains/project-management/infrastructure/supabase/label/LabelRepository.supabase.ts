@@ -10,8 +10,8 @@ import type {
   UpdateLabelInput,
 } from "@/domains/project-management/core/domain/schema/label.schema";
 
-import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
-import type { LabelRow } from "@/infrastructure/supabase/types";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { LabelRow } from "@/shared/infrastructure/types";
 
 import {
   mapLabelRowsToDomain,

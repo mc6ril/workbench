@@ -10,8 +10,8 @@ import type {
   UpdateSprintInput,
 } from "@/domains/project-management/core/domain/schema/sprint.schema";
 
-import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
-import type { SprintRow } from "@/infrastructure/supabase/types";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { SprintRow } from "@/shared/infrastructure/types";
 
 import {
   mapSprintRowsToDomain,

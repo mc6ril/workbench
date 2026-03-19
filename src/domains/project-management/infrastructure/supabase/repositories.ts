@@ -3,10 +3,10 @@
  * Provides browser instances for React Query hooks and factory functions for server contexts.
  */
 
-import { createCommentRepository } from "@/infrastructure/supabase/comment/CommentRepository.supabase";
-import { createInvitationRepository } from "@/infrastructure/supabase/invitation/InvitationRepository.supabase";
-import { createRealtimeRepository } from "@/infrastructure/supabase/realtime/RealtimeRepository.supabase";
-import { createUserProfileRepository } from "@/infrastructure/supabase/userProfile/UserProfileRepository.supabase";
+import { createCommentRepository } from "@/modules/board/infrastructure/supabase/comment/CommentRepository.supabase";
+import { createInvitationRepository } from "@/domains/project/infrastructure/supabase/invitation/InvitationRepository.supabase";
+import { createRealtimeRepository } from "@/modules/board/infrastructure/supabase/realtime/RealtimeRepository.supabase";
+import { createUserProfileRepository } from "@/domains/auth/infrastructure/supabase/userProfile/UserProfileRepository.supabase";
 
 import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
 
@@ -61,7 +61,7 @@ export { createLabelRepository } from "./label/LabelRepository.supabase";
 export { createMemberRepository } from "./member/MemberRepository.supabase";
 export { createSprintRepository } from "./sprint/SprintRepository.supabase";
 export { createTicketRepository } from "./ticket/TicketRepository.supabase";
-export { createCommentRepository } from "@/infrastructure/supabase/comment/CommentRepository.supabase";
-export { createInvitationRepository } from "@/infrastructure/supabase/invitation/InvitationRepository.supabase";
-export { createRealtimeRepository } from "@/infrastructure/supabase/realtime/RealtimeRepository.supabase";
-export { createUserProfileRepository } from "@/infrastructure/supabase/userProfile/UserProfileRepository.supabase";
+export { createCommentRepository } from "@/modules/board/infrastructure/supabase/comment/CommentRepository.supabase";
+export { createInvitationRepository } from "@/domains/project/infrastructure/supabase/invitation/InvitationRepository.supabase";
+export { createRealtimeRepository } from "@/modules/board/infrastructure/supabase/realtime/RealtimeRepository.supabase";
+export { createUserProfileRepository } from "@/domains/auth/infrastructure/supabase/userProfile/UserProfileRepository.supabase";

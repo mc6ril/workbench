@@ -10,8 +10,8 @@ import type {
   UpdateCommentInput,
 } from "@/domains/project-management/core/domain/schema/comment.schema";
 
-import { handleRepositoryError } from "@/infrastructure/supabase/shared/errors/errorHandlers";
-import type { CommentWithAuthorRow } from "@/infrastructure/supabase/types";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { CommentWithAuthorRow } from "@/shared/infrastructure/types";
 
 import {
   mapCommentWithAuthorRowsToDomain,
