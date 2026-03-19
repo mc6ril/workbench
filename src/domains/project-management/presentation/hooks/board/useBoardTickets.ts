@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import type { BoardTicketViewModel } from "@/shared/types/board";
+import type { BoardTicketViewModel } from "@/domains/project-management/core/domain/types/board.types";
 import { buildTicketCode } from "@/shared/utils/ticketUtils";
 
 import { useTicketAssigneesByProjectId } from "@/domains/project-management/presentation/hooks/ticket/useTicketAssigneesByProjectId";

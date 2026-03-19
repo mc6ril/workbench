@@ -2,10 +2,11 @@ import {
   EPIC_SORT_FIELD_VALUES,
   SORT_DIRECTION_VALUES,
 } from "@/shared/constants/filterSort";
+import type { EpicSortField } from "@/domains/project-management/core/domain/types";
 import Button from "@/shared/design-system/Button";
 import Select from "@/shared/design-system/Select";
 import { useTranslation } from "@/shared/i18n";
-import type { EpicSortField, SortDirection } from "@/shared/types";
+import type { SortDirection } from "@/shared/types";
 
 import styles from "./ProjectShellControls.module.scss";
 import type { EpicSortControlsProps } from "./types";

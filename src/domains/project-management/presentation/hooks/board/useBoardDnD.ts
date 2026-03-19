@@ -33,7 +33,7 @@ import {
 import type {
   BoardColumnConfig,
   BoardTicketViewModel,
-} from "@/shared/types/board";
+} from "@/domains/project-management/core/domain/types/board.types";
 
 import type { BoardColumnTickets } from "./types";
 

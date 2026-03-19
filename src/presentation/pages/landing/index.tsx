@@ -19,7 +19,7 @@ import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/Button";
 import Text from "@/shared/design-system/Text";
 import { useTranslation } from "@/shared/i18n";
-import type { FeatureKey } from "@/shared/types/landing";
+import type { FeatureKey } from "@/shared/constants/landing.types";
 import { buildFeaturePreviewContent, isFeatureKey } from "@/shared/utils";
 
 import styles from "./styles.module.scss";

@@ -1,8 +1,8 @@
 import { EPIC_PROGRESS_FILTER_VALUES } from "@/shared/constants/filterSort";
+import type { EpicProgressFilter } from "@/domains/project-management/core/domain/types";
 import Button from "@/shared/design-system/Button";
 import Select from "@/shared/design-system/Select";
 import { useTranslation } from "@/shared/i18n";
-import type { EpicProgressFilter } from "@/shared/types";
 
 import styles from "./ProjectShellControls.module.scss";
 import type { EpicFilterControlsProps } from "./types";

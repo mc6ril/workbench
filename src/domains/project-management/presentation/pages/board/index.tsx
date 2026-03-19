@@ -15,7 +15,7 @@ import Loader from "@/shared/design-system/Loader";
 import Modal from "@/shared/design-system/Modal";
 import Text from "@/shared/design-system/Text";
 import { useTranslation } from "@/shared/i18n";
-import type { BoardColumnConfig } from "@/shared/types/board";
+import type { BoardColumnConfig } from "@/domains/project-management/core/domain/types/board.types";
 import {
   buildTicketCode,
   normalizeTicketSearch,
