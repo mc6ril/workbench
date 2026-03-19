@@ -4,20 +4,20 @@ import { use, useCallback, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 
 import { getDefaultBoardConfiguration } from "@/domains/project-management/core/domain/rules/board.rules";
-import { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
-
-import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
 
 import Loader from "@/shared/design-system/Loader";
 import { useTranslation } from "@/shared/i18n";
 
+import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
+import UpgradePrompt from "@/domains/billing/presentation/components/upgradePrompt/UpgradePrompt";
+import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
 import type { PriorityItem } from "@/domains/project-management/presentation/components/prioritiesSettings/PrioritiesSettings";
 import type { StatusColumnItem } from "@/domains/project-management/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
-import UpgradePrompt from "@/domains/project-management/presentation/components/upgradePrompt/UpgradePrompt";
 import SettingsLayout from "@/domains/project-management/presentation/layouts/settingsLayout/SettingsLayout";
 
 const ProjectSettings = dynamic(
-  () => import("@/domains/project-management/presentation/components/projectSettings/ProjectSettings"),
+  () =>
+    import("@/domains/project-management/presentation/components/projectSettings/ProjectSettings"),
   { ssr: false }
 );
 
@@ -51,13 +51,12 @@ const SettingsPage = ({
   );
 
   const [activeTabId, setActiveTabId] = useState<string>("project");
-  const [statusColumns, setStatusColumns] = useState<StatusColumnItem[]>(
-    () =>
-      getDefaultBoardConfiguration(projectId).columns.map((column, index) => ({
-        id: `${column.state}-${index}`,
-        name: column.name,
-        isEnabled: column.visible ?? true,
-      }))
+  const [statusColumns, setStatusColumns] = useState<StatusColumnItem[]>(() =>
+    getDefaultBoardConfiguration(projectId).columns.map((column, index) => ({
+      id: `${column.state}-${index}`,
+      name: column.name,
+      isEnabled: column.visible ?? true,
+    }))
   );
 
   const tabs = useMemo(

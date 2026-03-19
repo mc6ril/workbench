@@ -1,11 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getCurrentSession } from "@/domains/auth/core/usecases/getCurrentSession";
-import { createBillingPortalSession } from "@/domains/project-management/core/usecases/subscription/createBillingPortalSession";
-
-import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
-import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
-
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
@@ -13,7 +7,11 @@ import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
 import { createLoggerFactory } from "@/shared/observability";
 
-import { stripePaymentGateway } from "@/domains/project-management/infrastructure/stripe/stripePaymentGateway";
+import { getCurrentSession } from "@/domains/auth/core/usecases/getCurrentSession";
+import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { createBillingPortalSession } from "@/domains/billing/core/usecases/createBillingPortalSession";
+import { stripePaymentGateway } from "@/domains/billing/infrastructure/stripe/stripePaymentGateway";
+import { createSubscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("API.Portal");
 

@@ -10,21 +10,21 @@ import React, {
 import { usePathname, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { getEffectivePlan } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
+import { getEffectivePlan } from "@/domains/billing/core/domain/rules/planFeatures.rules";
 import type { Project } from "@/domains/project-management/core/domain/schema/project.schema";
-import { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
 
 import { getBoardConfiguration } from "@/domains/project-management/core/usecases/board/getBoardConfiguration";
 import { listEpics } from "@/domains/project-management/core/usecases/epic/listEpics";
 import { listProjectsWithStats } from "@/domains/project-management/core/usecases/project/listProjectsWithStats";
 import { listReclaimableProjects } from "@/domains/project-management/core/usecases/project/listReclaimableProjects";
-import { computeFeatureLockState } from "@/domains/project-management/core/usecases/subscription/computeFeatureLockState";
+import { computeFeatureLockState } from "@/domains/billing/core/usecases/computeFeatureLockState";
 import { getTicketAssigneesByProjectId } from "@/domains/project-management/core/usecases/ticket/getTicketAssigneesByProjectId";
 import { listTickets } from "@/domains/project-management/core/usecases/ticket/listTickets";
 
 import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 import { useSignOut } from "@/domains/auth/presentation/hooks/useSignOut";
-import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
+import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";

@@ -1,13 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
-
-import { getCurrentSession } from "@/domains/auth/core/usecases/getCurrentSession";
-import { createCheckoutSession } from "@/domains/project-management/core/usecases/subscription/createCheckoutSession";
-
-import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
-import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
-
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
@@ -16,7 +8,12 @@ import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
 import { createLoggerFactory } from "@/shared/observability";
 
-import { stripePaymentGateway } from "@/domains/project-management/infrastructure/stripe/stripePaymentGateway";
+import { getCurrentSession } from "@/domains/auth/core/usecases/getCurrentSession";
+import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+import { createCheckoutSession } from "@/domains/billing/core/usecases/createCheckoutSession";
+import { stripePaymentGateway } from "@/domains/billing/infrastructure/stripe/stripePaymentGateway";
+import { createSubscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("API.Checkout");
 

@@ -4,13 +4,10 @@ import { useCallback, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 
-import { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
-
 import { addLabelsToTicket } from "@/domains/project-management/core/usecases/label";
 
 import { useLabels } from "@/presentation/hooks/label";
 import { useProject } from "@/presentation/hooks/project";
-import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
 import { useProjectPermissions } from "@/presentation/providers/permissions";
 
 import { getAccessibilityId } from "@/shared/a11y";
@@ -26,6 +23,8 @@ import {
 
 import styles from "./styles.module.scss";
 
+import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
+import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
 import { labelRepository } from "@/domains/project-management/infrastructure/supabase/repositories";
 import BoardView from "@/domains/project-management/presentation/components/board/boardView/BoardView";
 import CreateTicketForm from "@/domains/project-management/presentation/components/ticket/createTicketForm/CreateTicketForm";

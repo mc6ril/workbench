@@ -9,9 +9,7 @@ import type {
  * Type guard to check if an error is a RepositoryError.
  * Validates that the error has a code property and matches repository error structure.
  */
-export const isRepositoryError = (
-  error: unknown
-): error is RepositoryError => {
+export const isRepositoryError = (error: unknown): error is RepositoryError => {
   if (!error || typeof error !== "object") {
     return false;
   }
@@ -49,9 +47,7 @@ export const isNotFoundError = (error: unknown): error is NotFoundError => {
 /**
  * Type guard to check if an error is a ConstraintError.
  */
-export const isConstraintError = (
-  error: unknown
-): error is ConstraintError => {
+export const isConstraintError = (error: unknown): error is ConstraintError => {
   return (
     isRepositoryError(error) &&
     error.code === "CONSTRAINT_VIOLATION" &&
@@ -64,8 +60,5 @@ export const isConstraintError = (
  * Type guard to check if an error is a DatabaseError.
  */
 export const isDatabaseError = (error: unknown): error is DatabaseError => {
-  return (
-    isRepositoryError(error) &&
-    error.code === "DATABASE_ERROR"
-  );
+  return isRepositoryError(error) && error.code === "DATABASE_ERROR";
 };

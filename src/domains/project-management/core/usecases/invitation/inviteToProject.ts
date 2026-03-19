@@ -1,15 +1,15 @@
 import { createDomainRuleError } from "@/domains/project-management/core/domain/domainRuleError";
 import {
-  getFeatureLimit,
-  PlanFeature,
-} from "@/domains/project-management/core/domain/rules/planFeatures.rules";
-import {
   type CreateInvitationInput,
   CreateInvitationInputSchema,
   type ProjectInvitation,
 } from "@/domains/project-management/core/domain/schema/invitation.schema";
-import type { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
+import {
+  getFeatureLimit,
+  PlanFeature,
+} from "@/domains/billing/core/domain/rules/planFeatures.rules";
+import type { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
 import type { InvitationRepository } from "@/domains/project-management/core/ports/invitationRepository";
 import type { MemberRepository } from "@/domains/project-management/core/ports/memberRepository";
 

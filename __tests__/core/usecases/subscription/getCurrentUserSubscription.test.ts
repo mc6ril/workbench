@@ -1,13 +1,13 @@
-import type { Subscription } from "@/domains/project-management/core/domain/schema/subscription.schema";
+import type { Subscription } from "@/domains/billing/core/domain/schema/subscription.schema";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
   type UpsertSubscriptionInput,
-} from "@/domains/project-management/core/domain/schema/subscription.schema";
+} from "@/domains/billing/core/domain/schema/subscription.schema";
 
-import { getCurrentUserSubscription } from "@/domains/project-management/core/usecases/subscription/getCurrentUserSubscription";
+import { getCurrentUserSubscription } from "@/domains/billing/core/usecases/getCurrentUserSubscription";
 
-import type { SubscriptionRepository } from "@/domains/project-management/core/ports/subscriptionRepository";
+import type { SubscriptionRepository } from "@/domains/billing/core/ports/subscriptionRepository";
 
 const createSubscriptionRepositoryMock = (
   overrides: Partial<SubscriptionRepository> = {}

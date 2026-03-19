@@ -68,7 +68,9 @@
 
 .board-column__sortable-card {
   cursor: grab;
-  transition: transform $transition-base, opacity $transition-base;
+  transition:
+    transform $transition-base,
+    opacity $transition-base;
   transform: translateZ(0);
 
   &:active {
