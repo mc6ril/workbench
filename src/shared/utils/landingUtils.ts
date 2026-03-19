@@ -7,7 +7,7 @@ import type {
   FeatureKey,
   FeaturePreviewContent,
   PreviewColumnKey,
-} from "@/shared/types/landing";
+} from "@/shared/constants/landing.types";
 
 export const isFeatureKey = (value: string): value is FeatureKey => {
   return FEATURE_KEYS.includes(value as FeatureKey);

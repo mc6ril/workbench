@@ -1,4 +1,4 @@
-import type { BoardColumnConfig } from "@/shared/types/board";
+import type { BoardColumnConfig } from "@/domains/project-management/core/domain/types/board.types";
 
 import type { BoardColumnProps } from "@/domains/project-management/presentation/components/board/boardColumn/BoardColumn.types";
 

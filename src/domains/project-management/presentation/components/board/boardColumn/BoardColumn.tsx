@@ -14,7 +14,7 @@ import { getAccessibilityId } from "@/shared/a11y/constants";
 import { BOARD_COLUMN_DROP_PREFIX } from "@/shared/constants/board";
 import Title from "@/shared/design-system/Title";
 import { useTranslation } from "@/shared/i18n";
-import type { BoardTicketViewModel } from "@/shared/types/board";
+import type { BoardTicketViewModel } from "@/domains/project-management/core/domain/types/board.types";
 
 import styles from "./BoardColumn.module.scss";
 

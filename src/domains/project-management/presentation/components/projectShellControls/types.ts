@@ -3,12 +3,11 @@ import {
   TicketPriority,
   TicketSort,
 } from "@/domains/project-management/core/domain/schema/ticket.schema";
-
 import {
   EpicProgressFilter,
   EpicSortField,
-  SortDirection,
-} from "@/shared/types";
+} from "@/domains/project-management/core/domain/types";
+import type { SortDirection } from "@/shared/types";
 
 type Option = {
   value: string;
