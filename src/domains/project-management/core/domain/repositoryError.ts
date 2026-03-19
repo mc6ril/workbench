@@ -45,7 +45,10 @@ export type DatabaseError = RepositoryError & {
 /**
  * Union type of all repository error types.
  */
-export type RepositoryErrorUnion = NotFoundError | ConstraintError | DatabaseError;
+export type RepositoryErrorUnion =
+  | NotFoundError
+  | ConstraintError
+  | DatabaseError;
 
 /**
  * Error factory functions.

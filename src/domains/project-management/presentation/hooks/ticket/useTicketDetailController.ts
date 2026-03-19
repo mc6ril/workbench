@@ -1,10 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
 import type { TicketPriority } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
-import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 import {
   useComments,
   useCreateComment,
@@ -18,12 +16,14 @@ import {
   useTicketLabelIds,
 } from "@/presentation/hooks/label";
 import { useProjectMembers } from "@/presentation/hooks/member/useProjectMembers";
-import { useFeatureAccess } from "@/presentation/hooks/subscription/useFeatureAccess";
 import { useProjectPermissions } from "@/presentation/providers/permissions";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
+import { useSession } from "@/domains/auth/presentation/hooks/useSession";
+import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
+import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
 import { useBoardConfiguration } from "@/domains/project-management/presentation/hooks/board/useBoardConfiguration";
 import { useEpics } from "@/domains/project-management/presentation/hooks/epic/useEpics";
 import { useSprints } from "@/domains/project-management/presentation/hooks/sprint";

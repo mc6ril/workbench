@@ -1,11 +1,11 @@
-import { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
-import type { Subscription } from "@/domains/project-management/core/domain/schema/subscription.schema";
+import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
+import type { Subscription } from "@/domains/billing/core/domain/schema/subscription.schema";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
-} from "@/domains/project-management/core/domain/schema/subscription.schema";
+} from "@/domains/billing/core/domain/schema/subscription.schema";
 
-import { checkFeatureAccess } from "@/domains/project-management/core/usecases/subscription/checkFeatureAccess";
+import { checkFeatureAccess } from "@/domains/billing/core/usecases/checkFeatureAccess";
 
 describe("checkFeatureAccess", () => {
   const createMockSubscription = (

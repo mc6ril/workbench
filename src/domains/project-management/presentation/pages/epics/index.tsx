@@ -19,7 +19,10 @@ import styles from "./styles.module.scss";
 
 import CreateEpicForm from "@/domains/project-management/presentation/components/epic/createEpicForm/CreateEpicForm";
 import EpicsList from "@/domains/project-management/presentation/components/epic/epicsList/EpicsList";
-import { useCreateEpic, useEpics } from "@/domains/project-management/presentation/hooks/epic";
+import {
+  useCreateEpic,
+  useEpics,
+} from "@/domains/project-management/presentation/hooks/epic";
 import { useEpicQueryParams } from "@/domains/project-management/presentation/hooks/epic/useEpicQueryParams";
 import { useFilterStore } from "@/domains/project-management/presentation/stores/useFilterStore";
 

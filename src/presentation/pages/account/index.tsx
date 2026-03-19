@@ -7,28 +7,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type {
-  ChangePasswordFormInput,
-  Theme,
-} from "@/domains/auth/core/domain/schema/auth.schema";
-import {
-  ChangePasswordFormSchema,
-  DEFAULT_USER_PREFERENCES,
-  ThemeValues,
-} from "@/domains/auth/core/domain/schema/auth.schema";
-import {
-  SubscriptionPlan,
-  SubscriptionStatus,
-} from "@/domains/project-management/core/domain/schema/subscription.schema";
-
-import { useChangePassword } from "@/domains/auth/presentation/hooks/useChangePassword";
-import { useDeleteUser } from "@/domains/auth/presentation/hooks/useDeleteUser";
-import { useSession } from "@/domains/auth/presentation/hooks/useSession";
-import { useSignOut } from "@/domains/auth/presentation/hooks/useSignOut";
-import { useUpdatePreferences } from "@/domains/auth/presentation/hooks/useUpdatePreferences";
-import { useUpdateProfile } from "@/domains/auth/presentation/hooks/useUpdateProfile";
-import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
-
 import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/Button";
@@ -51,6 +29,27 @@ import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import type { Locale } from "@/shared/i18n/types";
 
 import styles from "./styles.module.scss";
+
+import type {
+  ChangePasswordFormInput,
+  Theme,
+} from "@/domains/auth/core/domain/schema/auth.schema";
+import {
+  ChangePasswordFormSchema,
+  DEFAULT_USER_PREFERENCES,
+  ThemeValues,
+} from "@/domains/auth/core/domain/schema/auth.schema";
+import { useChangePassword } from "@/domains/auth/presentation/hooks/useChangePassword";
+import { useDeleteUser } from "@/domains/auth/presentation/hooks/useDeleteUser";
+import { useSession } from "@/domains/auth/presentation/hooks/useSession";
+import { useSignOut } from "@/domains/auth/presentation/hooks/useSignOut";
+import { useUpdatePreferences } from "@/domains/auth/presentation/hooks/useUpdatePreferences";
+import { useUpdateProfile } from "@/domains/auth/presentation/hooks/useUpdateProfile";
+import {
+  SubscriptionPlan,
+  SubscriptionStatus,
+} from "@/domains/billing/core/domain/schema/subscription.schema";
+import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 
 const LANGUAGE_SELECT_OPTIONS = supportedLocaleOptions.map((locale) => ({
   value: locale.code,
@@ -77,7 +76,10 @@ const AccountPage = () => {
   const checkoutHandled = useRef(false);
 
   useEffect(() => {
-    if (searchParams.get("checkout") === "success" && !checkoutHandled.current) {
+    if (
+      searchParams.get("checkout") === "success" &&
+      !checkoutHandled.current
+    ) {
       checkoutHandled.current = true;
       addToast({
         message: tStripe("checkoutSuccess"),
@@ -99,8 +101,7 @@ const AccountPage = () => {
   const emailNotifications =
     session?.preferences.emailNotifications ??
     DEFAULT_USER_PREFERENCES.emailNotifications;
-  const theme =
-    session?.preferences.theme ?? DEFAULT_USER_PREFERENCES.theme;
+  const theme = session?.preferences.theme ?? DEFAULT_USER_PREFERENCES.theme;
   const language =
     session?.preferences.language ?? DEFAULT_USER_PREFERENCES.language;
 

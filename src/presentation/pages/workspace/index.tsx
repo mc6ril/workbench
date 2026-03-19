@@ -9,15 +9,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { CreateProjectInput } from "@/domains/project-management/core/domain/schema/project.schema";
 import { CreateProjectInputSchema } from "@/domains/project-management/core/domain/schema/project.schema";
 import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
-import { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
 
-import { useSession } from "@/domains/auth/presentation/hooks/useSession";
 import { useAddUserToProject } from "@/presentation/hooks/project/useAddUserToProject";
 import { useCreateProject } from "@/presentation/hooks/project/useCreateProject";
 import { useLastActivitySubtitle } from "@/presentation/hooks/project/useLastActivitySubtitle";
 import { useProjectsWithStats } from "@/presentation/hooks/project/useProjectsWithStats";
 import { useReclaimableProjects } from "@/presentation/hooks/project/useReclaimableProjects";
-import { useSubscription } from "@/presentation/hooks/subscription/useSubscription";
 import { shouldShowLoading } from "@/presentation/utils/queryStatus";
 
 import { getAccessibilityId } from "@/shared/a11y";
@@ -39,6 +36,10 @@ import { buildProjectRoute } from "@/shared/utils/routes";
 
 import ProjectCardActions from "./components/ProjectCardActions";
 import styles from "./styles.module.scss";
+
+import { useSession } from "@/domains/auth/presentation/hooks/useSession";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 
 type CreateProjectFormData = CreateProjectInput;
 

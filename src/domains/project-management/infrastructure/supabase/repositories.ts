@@ -6,7 +6,6 @@
 import { createCommentRepository } from "@/infrastructure/supabase/comment/CommentRepository.supabase";
 import { createInvitationRepository } from "@/infrastructure/supabase/invitation/InvitationRepository.supabase";
 import { createRealtimeRepository } from "@/infrastructure/supabase/realtime/RealtimeRepository.supabase";
-import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
 import { createUserProfileRepository } from "@/infrastructure/supabase/userProfile/UserProfileRepository.supabase";
 
 import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
@@ -52,16 +51,6 @@ export const userProfileRepository = createUserProfileRepository(
 );
 
 /**
- * Browser-side subscription repository (read-only via RLS).
- * Uses the browser client for reads. Admin client is not available in browser context,
- * so writes must go through API routes that use server-side factories.
- */
-export const subscriptionRepository = createSubscriptionRepository(
-  createSupabaseBrowserClient(),
-  createSupabaseBrowserClient()
-);
-
-/**
  * Build a realtime repository on demand.
  * This avoids eager browser-client creation at module evaluation time.
  */
@@ -80,5 +69,4 @@ export { createTicketRepository } from "./ticket/TicketRepository.supabase";
 export { createCommentRepository } from "@/infrastructure/supabase/comment/CommentRepository.supabase";
 export { createInvitationRepository } from "@/infrastructure/supabase/invitation/InvitationRepository.supabase";
 export { createRealtimeRepository } from "@/infrastructure/supabase/realtime/RealtimeRepository.supabase";
-export { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
 export { createUserProfileRepository } from "@/infrastructure/supabase/userProfile/UserProfileRepository.supabase";

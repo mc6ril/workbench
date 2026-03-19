@@ -1,6 +1,6 @@
-import { PlanFeature } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
-
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
+
+import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
 
 /** Project view keys available in the project shell. */
 export const PROJECT_VIEW_KEYS = Object.freeze([

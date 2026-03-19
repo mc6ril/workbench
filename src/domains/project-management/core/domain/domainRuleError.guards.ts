@@ -4,9 +4,7 @@ import type { DomainRuleError } from "./domainRuleError";
  * Type guard to check if an error is a DomainRuleError.
  * Validates that the error has a code property and matches domain rule error structure.
  */
-export const isDomainRuleError = (
-  error: unknown
-): error is DomainRuleError => {
+export const isDomainRuleError = (error: unknown): error is DomainRuleError => {
   if (!error || typeof error !== "object") {
     return false;
   }

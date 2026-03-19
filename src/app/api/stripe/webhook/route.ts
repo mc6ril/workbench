@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { handlePaymentWebhook } from "@/domains/project-management/core/usecases/subscription/handlePaymentWebhook";
-
-import { createSubscriptionRepository } from "@/infrastructure/supabase/subscription/SubscriptionRepository.supabase";
-
 import { API_MESSAGES_STRIPE } from "@/shared/constants";
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
 import { createLoggerFactory } from "@/shared/observability";
 
-import { stripePaymentGateway } from "@/domains/project-management/infrastructure/stripe/stripePaymentGateway";
+import { handlePaymentWebhook } from "@/domains/billing/core/usecases/handlePaymentWebhook";
+import { stripePaymentGateway } from "@/domains/billing/infrastructure/stripe/stripePaymentGateway";
+import { createSubscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("API.Webhook");
 

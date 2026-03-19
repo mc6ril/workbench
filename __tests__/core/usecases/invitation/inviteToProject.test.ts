@@ -1,4 +1,4 @@
-import { getFeatureLimit } from "@/domains/project-management/core/domain/rules/planFeatures.rules";
+import { getFeatureLimit } from "@/domains/billing/core/domain/rules/planFeatures.rules";
 import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
 import {
   type CreateInvitationInput,
@@ -7,14 +7,14 @@ import {
 } from "@/domains/project-management/core/domain/schema/invitation.schema";
 import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project-management/core/domain/schema/projectMember.schema";
-import { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
 
 import { inviteToProject } from "@/domains/project-management/core/usecases/invitation/inviteToProject";
 
-jest.mock("@/domains/project-management/core/domain/rules/planFeatures.rules", () => ({
-  ...jest.requireActual("@/domains/project-management/core/domain/rules/planFeatures.rules"),
+jest.mock("@/domains/billing/core/domain/rules/planFeatures.rules", () => ({
+  ...jest.requireActual("@/domains/billing/core/domain/rules/planFeatures.rules"),
   getFeatureLimit: jest.fn(
-    jest.requireActual("@/domains/project-management/core/domain/rules/planFeatures.rules").getFeatureLimit
+    jest.requireActual("@/domains/billing/core/domain/rules/planFeatures.rules").getFeatureLimit
   ),
 }));
 

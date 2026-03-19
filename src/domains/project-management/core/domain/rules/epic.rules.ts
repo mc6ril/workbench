@@ -1,5 +1,8 @@
 import type { Column } from "@/domains/project-management/core/domain/schema/board.schema";
-import type { CreateEpicInput, Epic } from "@/domains/project-management/core/domain/schema/epic.schema";
+import type {
+  CreateEpicInput,
+  Epic,
+} from "@/domains/project-management/core/domain/schema/epic.schema";
 import type { Ticket } from "@/domains/project-management/core/domain/schema/ticket.schema";
 
 /**

@@ -7,7 +7,7 @@ import type {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ProjectRole } from "@/domains/project-management/core/domain/schema/project.schema";
-import { SubscriptionPlan } from "@/domains/project-management/core/domain/schema/subscription.schema";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
 
 import { useInviteMember } from "@/presentation/hooks/invitation/useInviteMember";
 import { useDeleteProject } from "@/presentation/hooks/project/useDeleteProject";
