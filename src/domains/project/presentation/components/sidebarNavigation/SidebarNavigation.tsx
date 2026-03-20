@@ -120,13 +120,9 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
 
   const handleProfileTriggerClick = useCallback(() => {
     setProfileMenuOpen((prev) => {
-      const next = !prev;
-      if (next) {
-        prefetchWorkspace();
-      }
-      return next;
+      return !prev;
     });
-  }, [prefetchWorkspace]);
+  }, []);
 
   const closeProfileMenu = useCallback(() => {
     setProfileMenuOpen(false);

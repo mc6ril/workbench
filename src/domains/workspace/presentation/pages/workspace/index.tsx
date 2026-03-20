@@ -65,17 +65,21 @@ const stripWorkspaceEmojiPrefix = (value: string): string => {
 
 const WorkspacePage = () => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const {
+    data: session,
+    isLoading: isSessionLoading,
+    isFetching: isSessionFetching,
+  } = useSession();
   const {
     data: projects,
     isLoading: isLoadingProjects,
     isFetching: isFetchingProjects,
     error: projectsError,
     refetch: refetchProjects,
-  } = useProjectsWithStats(!!session);
+  } = useProjectsWithStats();
   const addUserToProjectMutation = useAddUserToProject();
   const createProjectMutation = useCreateProject();
-  const { data: reclaimableProjects } = useReclaimableProjects(!!session);
+  const { data: reclaimableProjects } = useReclaimableProjects();
   const { data: isBillingVisible } = useBillingVisibility();
   const { data: subscription, isLoading: isSubscriptionLoading } =
     useSubscription();
@@ -207,10 +211,13 @@ const WorkspacePage = () => {
   }, [selectedEmoji]);
 
   const showInitialLoader =
-    shouldShowLoading({
+    isSessionLoading ||
+    (isSessionFetching && !session?.displayName) ||
+    (shouldShowLoading({
       isLoading: isLoadingProjects,
       isFetching: isFetchingProjects,
-    }) && projects === undefined;
+    }) &&
+      projects === undefined);
 
   if (showInitialLoader) {
     return (

@@ -1,10 +1,12 @@
 import { createBrowserClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { createInstrumentedSupabaseFetch } from "@/shared/navigationPerf";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
+let browserClientSingleton: SupabaseClient | null = null;
 
 /** Validate required env vars; throw with helpful message on missing. */
 const validateEnvironmentVariables = (): void => {
@@ -39,6 +41,10 @@ const validateEnvironmentVariables = (): void => {
  * @returns Supabase client configured for browser usage
  */
 export const createSupabaseBrowserClient = () => {
+  if (browserClientSingleton) {
+    return browserClientSingleton;
+  }
+
   validateEnvironmentVariables();
 
   const baseFetch =
@@ -49,12 +55,31 @@ export const createSupabaseBrowserClient = () => {
         : null;
 
   if (!baseFetch) {
-    return createBrowserClient(SUPABASE_URL!, SUPABASE_PUBLISHABLE_KEY!);
+    browserClientSingleton = createBrowserClient(
+      SUPABASE_URL!,
+      SUPABASE_PUBLISHABLE_KEY!
+    );
+    return browserClientSingleton;
   }
 
-  return createBrowserClient(SUPABASE_URL!, SUPABASE_PUBLISHABLE_KEY!, {
-    global: {
-      fetch: createInstrumentedSupabaseFetch(baseFetch),
-    },
-  });
+  browserClientSingleton = createBrowserClient(
+    SUPABASE_URL!,
+    SUPABASE_PUBLISHABLE_KEY!,
+    {
+      global: {
+        fetch: createInstrumentedSupabaseFetch(baseFetch),
+      },
+    }
+  );
+
+  return browserClientSingleton;
+};
+
+/**
+ * Test helper to reset singleton between isolated test runs.
+ */
+export const resetSupabaseBrowserClientForTests = (): void => {
+  if (process.env.NODE_ENV === "test") {
+    browserClientSingleton = null;
+  }
 };

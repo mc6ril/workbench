@@ -86,6 +86,7 @@ const SidebarProfileMenu = ({
         >
           <Link
             href={workspaceHref}
+            prefetch={false}
             role="menuitem"
             className={styles["sidebar-navigation__profile-menu-item"]}
             onMouseEnter={onWorkspacePrefetch}
@@ -96,6 +97,7 @@ const SidebarProfileMenu = ({
           </Link>
           <Link
             href={accountHref}
+            prefetch={false}
             role="menuitem"
             className={styles["sidebar-navigation__profile-menu-item"]}
             onClick={onAccountLinkClick}

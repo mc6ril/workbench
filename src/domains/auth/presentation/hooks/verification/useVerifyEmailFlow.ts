@@ -1,10 +1,13 @@
 import { useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
+import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { queryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
 import { useVerifyEmail } from "@/domains/auth/presentation/hooks/verification/useVerifyEmail";
 import {
   getVerifyEmailRedirectErrorCode,
@@ -29,6 +32,21 @@ export const useVerifyEmailFlow = () => {
       locationHash
     );
   }, [locationHash, searchParamsValue]);
+  const hasVerificationAttempt =
+    !!parsedParams.input || !!parsedParams.redirectError;
+  const recoverySessionQuery = useQuery({
+    queryKey: [
+      ...queryKeys.auth.session(),
+      "verify-email-recovery",
+      searchParamsValue,
+      locationHash ?? "",
+    ],
+    queryFn: () => authRepository.getSession(),
+    enabled: hasVerificationAttempt,
+    retry: false,
+  });
+  const hasRecoveredSession =
+    hasVerificationAttempt && !!recoverySessionQuery.data;
 
   useEffect(() => {
     if (
@@ -42,28 +60,44 @@ export const useVerifyEmailFlow = () => {
   }, [parsedParams.input, verifyEmailMutation]);
 
   useEffect(() => {
-    if (verifyEmailMutation.isSuccess && verifyEmailMutation.data?.session) {
+    if (
+      hasRecoveredSession ||
+      (verifyEmailMutation.isSuccess && verifyEmailMutation.data?.session)
+    ) {
       router.push(PAGE_ROUTES.WORKSPACE);
     }
-  }, [verifyEmailMutation.isSuccess, verifyEmailMutation.data, router]);
+  }, [
+    hasRecoveredSession,
+    verifyEmailMutation.isSuccess,
+    verifyEmailMutation.data,
+    router,
+  ]);
 
   const redirectErrorCode = getVerifyEmailRedirectErrorCode(
     parsedParams.redirectError
   );
-  const errorMessage = parsedParams.redirectError
-    ? redirectErrorCode
-      ? getErrorMessage({ code: redirectErrorCode }, tErrors)
-      : tErrors("auth.EMAIL_VERIFICATION_ERROR")
-    : verifyEmailMutation.error
-      ? getErrorMessage(verifyEmailMutation.error as { code?: string }, tErrors)
-      : undefined;
+  const errorMessage = hasRecoveredSession
+    ? undefined
+    : parsedParams.redirectError
+      ? redirectErrorCode
+        ? getErrorMessage({ code: redirectErrorCode }, tErrors)
+        : tErrors("auth.EMAIL_VERIFICATION_ERROR")
+      : verifyEmailMutation.error
+        ? getErrorMessage(
+            verifyEmailMutation.error as { code?: string },
+            tErrors
+          )
+        : undefined;
 
   return {
     isMissingToken: parsedParams.isMissingToken,
-    isPending: verifyEmailMutation.isPending,
+    isPending: verifyEmailMutation.isPending || recoverySessionQuery.isPending,
     isSuccess:
-      verifyEmailMutation.isSuccess && !!verifyEmailMutation.data?.session,
-    isError: !!parsedParams.redirectError || verifyEmailMutation.isError,
+      hasRecoveredSession ||
+      (verifyEmailMutation.isSuccess && !!verifyEmailMutation.data?.session),
+    isError:
+      !hasRecoveredSession &&
+      (!!parsedParams.redirectError || verifyEmailMutation.isError),
     errorMessage,
   };
 };

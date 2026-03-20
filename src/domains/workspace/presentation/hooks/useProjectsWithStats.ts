@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { useSession } from "@/shared/session";
+
 import { listProjectsWithStats } from "@/domains/workspace/core/usecases/project/listProjectsWithStats";
 import { projectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
@@ -13,9 +15,11 @@ import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
  * @returns React Query hook result with projects array including stats
  */
 export const useProjectsWithStats = (enabled = true) => {
+  const { data: session, isLoading: isSessionLoading } = useSession();
+
   return useQuery({
     queryKey: queryKeys.projects.withStats(),
     queryFn: () => listProjectsWithStats(projectRepository),
-    enabled,
+    enabled: enabled && !isSessionLoading && !!session?.userId,
   });
 };

@@ -20,6 +20,9 @@ export const useCreateProject = () => {
     onSuccess: () => {
       // Invalidate projects list to refresh the UI after project creation
       queryClient.invalidateQueries({ queryKey: queryKeys.projects.all() });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.withStats(),
+      });
     },
   });
 };

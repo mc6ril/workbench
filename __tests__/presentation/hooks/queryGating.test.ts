@@ -1,7 +1,12 @@
 const useQueryMock = jest.fn();
+const useSessionMock = jest.fn();
 
 jest.mock("@tanstack/react-query", () => ({
   useQuery: (...args: unknown[]) => useQueryMock(...args),
+}));
+
+jest.mock("@/shared/session", () => ({
+  useSession: (...args: unknown[]) => useSessionMock(...args),
 }));
 
 process.env.NEXT_PUBLIC_SUPABASE_URL =
@@ -9,6 +14,9 @@ process.env.NEXT_PUBLIC_SUPABASE_URL =
 process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ?? "test-key";
 
+import { useProjects } from "@/domains/workspace/presentation/hooks/useProjects";
+import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
+import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { useLabels } from "@/modules/board/presentation/hooks/label/useLabels";
 import { useSprints } from "@/modules/board/presentation/hooks/sprint/useSprints";
@@ -16,11 +24,16 @@ import { useSprints } from "@/modules/board/presentation/hooks/sprint/useSprints
 describe("query hook gating", () => {
   beforeEach(() => {
     useQueryMock.mockReset();
+    useSessionMock.mockReset();
     useQueryMock.mockReturnValue({
       data: undefined,
       isLoading: false,
       isFetching: false,
       error: null,
+    });
+    useSessionMock.mockReturnValue({
+      data: { userId: "user-1" },
+      isLoading: false,
     });
   });
 
@@ -75,6 +88,86 @@ describe("query hook gating", () => {
       3,
       expect.objectContaining({
         enabled: true,
+      })
+    );
+  });
+
+  it("disables workspace queries while the session is still loading", () => {
+    useSessionMock.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+    });
+
+    useProjects();
+    useProjectsWithStats();
+    useReclaimableProjects();
+
+    expect(useQueryMock).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        enabled: false,
+      })
+    );
+    expect(useQueryMock).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        enabled: false,
+      })
+    );
+    expect(useQueryMock).toHaveBeenNthCalledWith(
+      3,
+      expect.objectContaining({
+        enabled: false,
+      })
+    );
+  });
+
+  it("keeps workspace queries enabled once the authenticated session is ready", () => {
+    useProjects();
+    useProjectsWithStats();
+    useReclaimableProjects();
+
+    expect(useQueryMock).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        enabled: true,
+      })
+    );
+    expect(useQueryMock).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        enabled: true,
+      })
+    );
+    expect(useQueryMock).toHaveBeenNthCalledWith(
+      3,
+      expect.objectContaining({
+        enabled: true,
+      })
+    );
+  });
+
+  it("respects an explicit disabled flag for workspace queries", () => {
+    useProjects(false);
+    useProjectsWithStats(false);
+    useReclaimableProjects(false);
+
+    expect(useQueryMock).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        enabled: false,
+      })
+    );
+    expect(useQueryMock).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        enabled: false,
+      })
+    );
+    expect(useQueryMock).toHaveBeenNthCalledWith(
+      3,
+      expect.objectContaining({
+        enabled: false,
       })
     );
   });

@@ -91,6 +91,16 @@ const fetchProjectById = async (
   return mapProjectRowToDomain(projectRow as ProjectRow);
 };
 
+const mapProjectWithRoleToStats = (
+  project: ProjectWithRole
+): ProjectWithStats => ({
+  ...project,
+  memberCount: 0,
+  ticketCount: 0,
+  inProgressCount: 0,
+  completedCount: 0,
+});
+
 /**
  * Create a ProjectRepository implementation using the provided Supabase client.
  * This allows using different clients (browser/server) based on context.
@@ -206,17 +216,23 @@ export const createProjectRepository = (
     try {
       const { data, error } = await client.rpc("get_projects_with_stats");
 
-      if (error) {
-        return handleRepositoryError(error, "Project");
+      if (!error && Array.isArray(data) && data.length > 0) {
+        return data.map((row) =>
+          mapProjectWithStatsRowToDomain(row as ProjectWithStatsRow)
+        );
       }
 
-      if (!data || !Array.isArray(data)) {
+      // Fallback path:
+      // In production, some sessions can observe an empty stats RPC result while
+      // still having project access. To avoid an empty workspace, fallback to
+      // the regular project listing and provide zeroed statistics.
+      const hasAccess = await this.hasProjectAccess();
+      if (!hasAccess) {
         return [];
       }
 
-      return data.map((row) =>
-        mapProjectWithStatsRowToDomain(row as ProjectWithStatsRow)
-      );
+      const projects = await this.list();
+      return projects.map(mapProjectWithRoleToStats);
     } catch (error) {
       return handleRepositoryError(error, "Project");
     }

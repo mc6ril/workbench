@@ -24,6 +24,9 @@ export const useAddUserToProject = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.projects.all() });
       queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.withStats(),
+      });
+      queryClient.invalidateQueries({
         queryKey: queryKeys.projects.reclaimable(),
       });
     },

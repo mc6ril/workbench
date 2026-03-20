@@ -471,28 +471,25 @@ export const createAuthRepository = (
       const hasLegacyToken = !!input.token && input.token.trim() !== "";
 
       if (hasCode) {
-        const { data, error } = await client.auth.exchangeCodeForSession(
-          input.code!
-        );
+        const {
+          data: { session },
+          error,
+        } = await client.auth.getSession();
 
         if (error) {
           return handleAuthError(error);
         }
 
-        if (!data.session || !data.user) {
+        if (!session) {
           const error: EmailVerificationError = {
             code: "EMAIL_VERIFICATION_ERROR",
             debugMessage:
-              "No session or user returned from email verification code exchange",
+              "No session returned after PKCE email verification",
           };
           return handleAuthError(error);
         }
 
-        return mapVerifiedSessionToAuthResult(
-          client,
-          data.session,
-          data.user.email || ""
-        );
+        return mapVerifiedSessionToAuthResult(client, session, session.user.email);
       }
 
       if (hasTokenHash) {
