@@ -100,12 +100,31 @@ const AccountPage = () => {
   const name = nameDraft ?? session?.displayName ?? "";
   const { setTheme } = useTheme();
 
-  const emailNotifications =
+  const sessionEmailNotifications =
     session?.preferences.emailNotifications ??
     DEFAULT_USER_PREFERENCES.emailNotifications;
-  const theme = session?.preferences.theme ?? DEFAULT_USER_PREFERENCES.theme;
-  const language =
+  const sessionTheme =
+    session?.preferences.theme ?? DEFAULT_USER_PREFERENCES.theme;
+  const sessionLanguage =
     session?.preferences.language ?? DEFAULT_USER_PREFERENCES.language;
+  const [emailNotifications, setEmailNotifications] = useState<boolean>(
+    sessionEmailNotifications
+  );
+  const [themePreference, setThemePreference] = useState<Theme>(sessionTheme);
+  const [languagePreference, setLanguagePreference] =
+    useState<string>(sessionLanguage);
+
+  useEffect(() => {
+    setEmailNotifications(sessionEmailNotifications);
+  }, [sessionEmailNotifications]);
+
+  useEffect(() => {
+    setThemePreference(sessionTheme);
+  }, [sessionTheme]);
+
+  useEffect(() => {
+    setLanguagePreference(sessionLanguage);
+  }, [sessionLanguage]);
 
   const profileErrorMessage = useMemo(
     () =>
@@ -222,6 +241,7 @@ const AccountPage = () => {
 
   const handleEmailNotificationsChange = useCallback(
     (checked: boolean) => {
+      setEmailNotifications(checked);
       updatePreferencesMutation.mutate({ emailNotifications: checked });
     },
     [updatePreferencesMutation]
@@ -230,8 +250,10 @@ const AccountPage = () => {
   const handleThemeChange = useCallback(
     (value: string) => {
       if ((ThemeValues as readonly string[]).includes(value)) {
-        setTheme(value);
-        updatePreferencesMutation.mutate({ theme: value as Theme });
+        const nextTheme = value as Theme;
+        setThemePreference(nextTheme);
+        setTheme(nextTheme);
+        updatePreferencesMutation.mutate({ theme: nextTheme });
       }
     },
     [updatePreferencesMutation, setTheme]
@@ -242,7 +264,11 @@ const AccountPage = () => {
   const handleLanguageChange = useCallback(
     (value: string) => {
       if (supportedLocales.includes(value as Locale)) {
-        setLocale(value as Locale);
+        const nextLocale = value as Locale;
+        setLanguagePreference(nextLocale);
+        setLocale(nextLocale);
+      } else {
+        setLanguagePreference(value);
       }
       updatePreferencesMutation.mutate({ language: value });
     },
@@ -509,7 +535,7 @@ const AccountPage = () => {
                   value: key,
                   label: t(`preferences.theme.options.${key}`),
                 }))}
-                value={theme}
+                value={themePreference}
                 onChange={(e) => handleThemeChange(e.target.value)}
                 aria-label={t("preferences.theme.label")}
               />
@@ -527,7 +553,7 @@ const AccountPage = () => {
               <Select
                 label=""
                 options={LANGUAGE_SELECT_OPTIONS}
-                value={language}
+                value={languagePreference}
                 onChange={(e) => handleLanguageChange(e.target.value)}
                 aria-label={t("preferences.language.label")}
               />

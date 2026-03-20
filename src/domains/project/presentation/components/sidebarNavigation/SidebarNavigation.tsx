@@ -64,9 +64,11 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
     router.push(`${PAGE_ROUTES.PRICING}?from=${from}`);
   }, [router, pathname]);
 
-  const displayName =
-    session?.displayName ?? session?.email ?? t("profile.userFallbackName");
-  const initials = getInitials(session?.displayName ?? session?.email);
+  const displayNameValue = session?.displayName?.trim();
+  const emailValue = session?.email?.trim();
+  const profileIdentity = displayNameValue || emailValue;
+  const displayName = profileIdentity ?? t("profile.userFallbackName");
+  const initials = getInitials(profileIdentity);
   const lockedAriaLabelTemplate = t("locked.ariaLabel");
   const workspaceHref = PAGE_ROUTES.WORKSPACE;
   const accountHref = `${PAGE_ROUTES.ACCOUNT}?from=${encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE)}`;
