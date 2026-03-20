@@ -9,7 +9,7 @@ import {
   mapUserProfileRowToDomain,
 } from "./UserProfileMapper.supabase";
 
-import type { UserPreferences } from "@/domains/auth/core/domain/schema/auth.schema";
+import type { UserPreferences } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
 import type {
   UpdateProfileInput,
   UserProfile,

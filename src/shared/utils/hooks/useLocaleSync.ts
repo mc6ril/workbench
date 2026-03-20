@@ -5,28 +5,28 @@ import { useEffect } from "react";
 import { defaultLocale, supportedLocales } from "@/shared/i18n/config";
 import type { Locale } from "@/shared/i18n/types";
 import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
-import { useSession } from "@/shared/session";
+import { useCurrentUserProfile } from "@/shared/profile";
 
 /**
  * Syncs the locale store with the user's language preference from the session.
  * Should be mounted once at the app root (e.g. in AppProvider).
  */
 export const useLocaleSync = (): void => {
-  const { data: session } = useSession();
+  const { data: profile } = useCurrentUserProfile();
   const setLocale = useLocaleStore((s) => s.setLocale);
 
-  const sessionLanguage = session?.preferences?.language;
+  const profileLanguage = profile?.preferences?.language;
 
   useEffect(() => {
-    if (!sessionLanguage) {
+    if (!profileLanguage) {
       return;
     }
 
-    const isSupported = supportedLocales.includes(sessionLanguage as Locale);
+    const isSupported = supportedLocales.includes(profileLanguage as Locale);
     const nextLocale: Locale = isSupported
-      ? (sessionLanguage as Locale)
+      ? (profileLanguage as Locale)
       : defaultLocale;
 
     setLocale(nextLocale);
-  }, [sessionLanguage, setLocale]);
+  }, [profileLanguage, setLocale]);
 };

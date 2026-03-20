@@ -12,7 +12,7 @@ import type {
   SignUpInput,
   WeakPasswordError,
 } from "@/domains/auth/core/domain/schema/auth.schema";
-import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
 
 /**
  * Mock authentication session for testing.

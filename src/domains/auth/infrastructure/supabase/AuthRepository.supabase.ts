@@ -16,11 +16,11 @@ import type {
   UpdatePasswordInput,
   VerifyEmailInput,
 } from "@/domains/auth/core/domain/schema/auth.schema";
-import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
 import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
 import { mapSupabaseSessionToDomain } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
-import type { UserProfileRow } from "@/domains/auth/infrastructure/supabase/userProfile/types";
-import { mapUserProfileRowToDomain } from "@/domains/auth/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
+import type { UserProfileRow } from "@/domains/profile/infrastructure/supabase/userProfile/types";
+import { mapUserProfileRowToDomain } from "@/domains/profile/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
 
 /**
  * Create an AuthRepository implementation using the provided Supabase client.

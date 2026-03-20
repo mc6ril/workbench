@@ -32,13 +32,8 @@ import styles from "./styles.module.scss";
 
 import type {
   ChangePasswordFormInput,
-  Theme,
 } from "@/domains/auth/core/domain/schema/auth.schema";
-import {
-  ChangePasswordFormSchema,
-  DEFAULT_USER_PREFERENCES,
-  ThemeValues,
-} from "@/domains/auth/core/domain/schema/auth.schema";
+import { ChangePasswordFormSchema } from "@/domains/auth/core/domain/schema/auth.schema";
 import { useChangePassword } from "@/domains/auth/presentation/hooks/password/useChangePassword";
 import { useSession } from "@/domains/auth/presentation/hooks/session/useSession";
 import { useDeleteUser } from "@/domains/auth/presentation/hooks/user/useDeleteUser";
@@ -49,6 +44,11 @@ import {
 } from "@/domains/billing/core/domain/schema/subscription.schema";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
+import {
+  DEFAULT_USER_PREFERENCES,
+  type Theme,
+  ThemeValues,
+} from "@/domains/profile/core/domain/schema/profilePreferences.schema";
 import AvatarUpload from "@/domains/profile/presentation/components/avatarUpload/AvatarUpload";
 import {
   useRemoveAvatar,

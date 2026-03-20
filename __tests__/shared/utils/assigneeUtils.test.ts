@@ -1,4 +1,4 @@
-import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
 import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import { resolveAssigneeIdentity } from "@/modules/board/utils/assigneeUtils";
 

@@ -6,11 +6,11 @@ import {
   createSupabaseSessionMock,
 } from "../../../../__mocks__/infrastructure/supabase/authMocks";
 
-import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
 import {
   mapSupabaseAuthError,
   mapSupabaseSessionToDomain,
 } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
 
 describe("AuthMapper.supabase", () => {
   describe("mapSupabaseSessionToDomain", () => {

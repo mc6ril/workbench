@@ -1,11 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { UpdatePreferencesInput } from "@/domains/auth/core/domain/schema/auth.schema";
-import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
+import { useSession } from "@/shared/session";
+
 import { queryKeys as authQueryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
-import { useSession } from "@/domains/auth/presentation/hooks/session/useSession";
+import {
+  DEFAULT_USER_PREFERENCES,
+  type UpdatePreferencesInput,
+} from "@/domains/profile/core/domain/schema/profilePreferences.schema";
 import { updatePreferences } from "@/domains/profile/core/usecases/updatePreferences";
 import { userProfileRepository } from "@/domains/profile/infrastructure/supabase/repositories";
+import { useCurrentUserProfile } from "@/domains/profile/presentation/hooks/profile/useCurrentUserProfile";
 import { queryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
 
 /**
@@ -14,11 +18,12 @@ import { queryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
 export const useUpdatePreferences = () => {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
+  const { data: profile } = useCurrentUserProfile();
 
   return useMutation({
     mutationFn: (input: UpdatePreferencesInput) => {
       const currentPreferences =
-        session?.preferences ?? DEFAULT_USER_PREFERENCES;
+        profile?.preferences ?? DEFAULT_USER_PREFERENCES;
 
       return updatePreferences(
         userProfileRepository,

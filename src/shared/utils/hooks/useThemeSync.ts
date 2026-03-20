@@ -3,10 +3,12 @@
 import { useEffect } from "react";
 import { useTheme } from "next-themes";
 
-import { useSession } from "@/shared/session";
+import { useCurrentUserProfile } from "@/shared/profile";
 
-import type { Theme } from "@/domains/auth/core/domain/schema/auth.schema";
-import { ThemeValues } from "@/domains/auth/core/domain/schema/auth.schema";
+import {
+  type Theme,
+  ThemeValues,
+} from "@/domains/profile/core/domain/schema/profilePreferences.schema";
 
 /**
  * Syncs the user's persisted theme preference (from Supabase session)
@@ -14,19 +16,19 @@ import { ThemeValues } from "@/domains/auth/core/domain/schema/auth.schema";
  * Should be mounted once at the app root (e.g. in AppProvider).
  */
 export const useThemeSync = (): void => {
-  const { data: session } = useSession();
+  const { data: profile } = useCurrentUserProfile();
   const { setTheme } = useTheme();
 
-  const sessionTheme = session?.preferences?.theme;
+  const profileTheme = profile?.preferences?.theme;
 
   useEffect(() => {
-    if (!sessionTheme) {
+    if (!profileTheme) {
       return;
     }
 
-    const isValid = (ThemeValues as readonly string[]).includes(sessionTheme);
-    const nextTheme: Theme = isValid ? (sessionTheme as Theme) : "system";
+    const isValid = (ThemeValues as readonly string[]).includes(profileTheme);
+    const nextTheme: Theme = isValid ? (profileTheme as Theme) : "system";
 
     setTheme(nextTheme);
-  }, [sessionTheme, setTheme]);
+  }, [profileTheme, setTheme]);
 };

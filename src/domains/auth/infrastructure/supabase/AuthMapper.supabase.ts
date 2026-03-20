@@ -14,7 +14,7 @@ import type {
   SamePasswordError,
   WeakPasswordError,
 } from "@/domains/auth/core/domain/schema/auth.schema";
-import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
 
 /**
  * Extracts the super user flag from Supabase app_metadata.

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { UserPreferencesSchema } from "@/domains/auth/core/domain/schema/auth.schema";
+import { UserPreferencesSchema } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
 
 /**
  * Zod schema for UserProfile entity.
