@@ -1512,11 +1512,12 @@
       "remove": "Remove",
       "removeAriaLabel": "Remove profile picture",
       "selectFile": "Select an image file",
-      "hint": "JPEG, PNG, or WebP. 2 MB max.",
+      "hint": "JPEG, PNG, or WebP.",
       "uploadSuccess": "Profile picture updated",
       "removeSuccess": "Profile picture removed",
-      "errorTooLarge": "File is too large (2 MB max)",
-      "errorInvalidType": "Unsupported format. Use JPEG, PNG, or WebP"
+      "errorTooLarge": "File is too large to process",
+      "errorInvalidType": "Unsupported format. Use JPEG, PNG, or WebP",
+      "errorProcessing": "The image could not be prepared. Try another file."
     }
   }
 }

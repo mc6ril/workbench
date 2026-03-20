@@ -43,6 +43,7 @@ export const mapSupabaseSessionToDomain = (
     userId: session.user.id,
     email: userEmail,
     displayName: null,
+    avatarUrl: null,
     preferences: { ...DEFAULT_USER_PREFERENCES },
     accessToken: session.access_token,
     isSuperuser: extractSuperuserFlag(session.user.app_metadata),

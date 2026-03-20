@@ -112,6 +112,7 @@ const AssigneePicker = ({
       aria-label={t("ariaLabel")}
     >
       <AssigneePickerCurrent
+        members={members}
         assignees={assignees}
         noAssigneeLabel={t("noAssignee")}
         assignLabel={t("assign")}

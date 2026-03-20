@@ -1,0 +1,58 @@
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/breakpoints" as *;
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+
+.avatar-upload {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-xl;
+  padding-bottom: $spacing-2xl;
+  margin-bottom: $spacing-2xl;
+  border-bottom: $border-width solid $color-border-subtle;
+}
+
+.avatar-upload__identity {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  min-width: 0;
+}
+
+.avatar-upload__copy {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+  min-width: 0;
+}
+
+.avatar-upload__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+}
+
+.avatar-upload__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: $breakpoint-md) {
+  .avatar-upload {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .avatar-upload__actions {
+    justify-content: flex-start;
+  }
+}

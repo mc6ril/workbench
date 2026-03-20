@@ -1512,11 +1512,12 @@
       "remove": "Eliminar",
       "removeAriaLabel": "Eliminar la foto de perfil",
       "selectFile": "Seleccionar un archivo de imagen",
-      "hint": "JPEG, PNG o WebP. 2 MB máximo.",
+      "hint": "JPEG, PNG o WebP.",
       "uploadSuccess": "Foto de perfil actualizada",
       "removeSuccess": "Foto de perfil eliminada",
-      "errorTooLarge": "El archivo es demasiado grande (2 MB máximo)",
-      "errorInvalidType": "Formato no soportado. Usa JPEG, PNG o WebP"
+      "errorTooLarge": "El archivo es demasiado grande para procesarlo",
+      "errorInvalidType": "Formato no soportado. Usa JPEG, PNG o WebP",
+      "errorProcessing": "No se pudo preparar la imagen. Prueba con otro archivo."
     }
   }
 }

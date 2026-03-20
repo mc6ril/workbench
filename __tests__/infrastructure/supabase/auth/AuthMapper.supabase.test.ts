@@ -27,6 +27,7 @@ describe("AuthMapper.supabase", () => {
         userId: "user-123",
         email: "test@example.com",
         displayName: null,
+        avatarUrl: null,
         preferences: DEFAULT_USER_PREFERENCES,
         accessToken: "test-access-token",
         isSuperuser: false,
@@ -49,6 +50,7 @@ describe("AuthMapper.supabase", () => {
       expect(result.email).toBe("different@example.com");
       expect(result.userId).toBe("user-123");
       expect(result.displayName).toBeNull();
+      expect(result.avatarUrl).toBeNull();
       expect(result.preferences).toEqual(DEFAULT_USER_PREFERENCES);
       expect(result.accessToken).toBe("test-access-token");
     });
@@ -70,6 +72,7 @@ describe("AuthMapper.supabase", () => {
 
       // Assert
       expect(result.displayName).toBeNull();
+      expect(result.avatarUrl).toBeNull();
     });
 
     it("should return default preferences (profile enrichment happens separately)", () => {

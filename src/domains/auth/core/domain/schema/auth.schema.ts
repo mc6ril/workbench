@@ -194,6 +194,7 @@ export const AuthSessionSchema = z.object({
   userId: z.string().uuid(),
   email: z.string().email(),
   displayName: z.string().nullable(),
+  avatarUrl: z.string().nullable(),
   preferences: UserPreferencesSchema,
   accessToken: z.string().min(1),
   isSuperuser: z.boolean(),

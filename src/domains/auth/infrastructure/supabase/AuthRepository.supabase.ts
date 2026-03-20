@@ -53,6 +53,7 @@ const enrichSessionWithProfile = async (
   return {
     ...session,
     displayName: profile.displayName,
+    avatarUrl: profile.avatarUrl,
     preferences: profile.preferences,
   };
 };
@@ -309,6 +310,7 @@ export const createAuthRepository = (
           userId: user.id,
           email: userEmail!,
           displayName: null,
+          avatarUrl: null,
           preferences: { ...DEFAULT_USER_PREFERENCES },
           accessToken: "",
           isSuperuser: user.app_metadata?.is_superuser === true,

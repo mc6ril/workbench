@@ -26,7 +26,6 @@ import type {
 import { omitParentIdFilter } from "./SidebarNavigation.utils";
 
 import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";
-import { getInitials } from "@/domains/auth/utils/userUtils";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import { useSidebarItems } from "@/domains/project/presentation/hooks/useSidebarItems";
 import { usePrefetchWorkspaceProjects } from "@/domains/workspace/presentation/hooks/usePrefetchWorkspaceProjects";
@@ -68,7 +67,6 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const emailValue = session?.email?.trim();
   const profileIdentity = displayNameValue || emailValue;
   const displayName = profileIdentity ?? t("profile.userFallbackName");
-  const initials = getInitials(profileIdentity);
   const lockedAriaLabelTemplate = t("locked.ariaLabel");
   const workspaceHref = PAGE_ROUTES.WORKSPACE;
   const accountHref = `${PAGE_ROUTES.ACCOUNT}?from=${encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE)}`;
@@ -213,7 +211,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
         profileMenuId={profileMenuId}
         profileMenuOpen={profileMenuOpen}
         displayName={displayName}
-        initials={initials}
+        avatarUrl={session?.avatarUrl}
         profileAriaLabel={t("profile.ariaLabel")}
         workspaceHref={workspaceHref}
         workspaceLabel={t("profile.backToWorkspace")}

@@ -84,6 +84,19 @@
   border: $border-width solid $color-border-subtle;
 }
 
+.ticket-detail__comment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-sm;
+}
+
+.ticket-detail__comment-author {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
 .ticket-detail__comment-actions {
   display: flex;
   flex-wrap: wrap;

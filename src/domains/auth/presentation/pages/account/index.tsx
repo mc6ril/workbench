@@ -40,8 +40,6 @@ import {
   ThemeValues,
 } from "@/domains/auth/core/domain/schema/auth.schema";
 import { useChangePassword } from "@/domains/auth/presentation/hooks/password/useChangePassword";
-import { useUpdatePreferences } from "@/domains/auth/presentation/hooks/profile/useUpdatePreferences";
-import { useUpdateProfile } from "@/domains/auth/presentation/hooks/profile/useUpdateProfile";
 import { useSession } from "@/domains/auth/presentation/hooks/session/useSession";
 import { useDeleteUser } from "@/domains/auth/presentation/hooks/user/useDeleteUser";
 import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";
@@ -51,6 +49,13 @@ import {
 } from "@/domains/billing/core/domain/schema/subscription.schema";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
+import AvatarUpload from "@/domains/profile/presentation/components/avatarUpload/AvatarUpload";
+import {
+  useRemoveAvatar,
+  useUploadAvatar,
+} from "@/domains/profile/presentation/hooks/profile/useAvatarUpload";
+import { useUpdatePreferences } from "@/domains/profile/presentation/hooks/profile/useUpdatePreferences";
+import { useUpdateProfile } from "@/domains/profile/presentation/hooks/profile/useUpdateProfile";
 
 const LANGUAGE_SELECT_OPTIONS = supportedLocaleOptions.map((locale) => ({
   value: locale.code,
@@ -65,6 +70,8 @@ const AccountPage = () => {
   const { data: session, isLoading: isSessionLoading } = useSession();
   const updateProfileMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
+  const uploadAvatarMutation = useUploadAvatar();
+  const removeAvatarMutation = useRemoveAvatar();
   const updatePreferencesMutation = useUpdatePreferences();
   const deleteUserMutation = useDeleteUser();
   const signOutMutation = useSignOut();
@@ -74,6 +81,7 @@ const AccountPage = () => {
   const t = useTranslation("pages.account");
   const tErrors = useTranslation("errors");
   const tStripe = useTranslation("errors.stripe");
+  const tAvatar = useTranslation("ui.avatarUpload");
   const addToast = useToastStore((s) => s.addToast);
   const checkoutHandled = useRef(false);
 
@@ -172,6 +180,91 @@ const AccountPage = () => {
   const handleProfileSave = useCallback(async () => {
     await updateProfileMutation.mutateAsync({ displayName: name, email });
   }, [updateProfileMutation, name, email]);
+
+  const getAvatarErrorMessage = useCallback(
+    (error: unknown) => {
+      if (
+        error instanceof Error &&
+        error.message.includes("Avatar file is too large to process")
+      ) {
+        return tAvatar("errorTooLarge");
+      }
+
+      if (
+        error instanceof Error &&
+        error.message.includes("Avatar must be a JPEG, PNG, or WebP image")
+      ) {
+        return tAvatar("errorInvalidType");
+      }
+
+      if (
+        error instanceof Error &&
+        error.message.includes("Avatar image could not be processed")
+      ) {
+        return tAvatar("errorProcessing");
+      }
+
+      return getErrorMessage(error as { code?: string }, tErrors);
+    },
+    [tAvatar, tErrors]
+  );
+
+  const handleAvatarFileSelect = useCallback(
+    async (file: File) => {
+      if (!session?.userId) {
+        return;
+      }
+
+      try {
+        await uploadAvatarMutation.mutateAsync({ userId: session.userId, file });
+        addToast({
+          message: tAvatar("uploadSuccess"),
+          variant: "success",
+          duration: 4000,
+        });
+      } catch (error) {
+        addToast({
+          message: getAvatarErrorMessage(error),
+          variant: "error",
+          duration: 6000,
+        });
+      }
+    },
+    [
+      addToast,
+      getAvatarErrorMessage,
+      session?.userId,
+      tAvatar,
+      uploadAvatarMutation,
+    ]
+  );
+
+  const handleAvatarRemove = useCallback(async () => {
+    if (!session?.userId) {
+      return;
+    }
+
+    try {
+      await removeAvatarMutation.mutateAsync(session.userId);
+      addToast({
+        message: tAvatar("removeSuccess"),
+        variant: "success",
+        duration: 4000,
+      });
+    } catch (error) {
+      addToast({
+        message: getAvatarErrorMessage(error),
+        variant: "error",
+        duration: 6000,
+      });
+    }
+  }, [
+    addToast,
+    getAvatarErrorMessage,
+    removeAvatarMutation,
+    session?.userId,
+    tAvatar,
+  ]);
 
   const onPasswordSubmit: SubmitHandler<ChangePasswordFormInput> = useCallback(
     async (data) => {
@@ -330,6 +423,20 @@ const AccountPage = () => {
           </div>
 
           <div className={styles["section-content"]}>
+            <AvatarUpload
+              avatarUrl={session?.avatarUrl}
+              name={name || email}
+              disabled={!session?.userId}
+              isUploading={uploadAvatarMutation.isPending}
+              isRemoving={removeAvatarMutation.isPending}
+              onFileSelect={(file) => {
+                void handleAvatarFileSelect(file);
+              }}
+              onRemove={() => {
+                void handleAvatarRemove();
+              }}
+            />
+
             {updateProfileMutation.isSuccess && (
               <div
                 className={styles["success-message"]}
