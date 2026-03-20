@@ -7,10 +7,10 @@ import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
 
 /**
  * Verify email address using a verification token.
- * Validates input and verifies the email token.
+ * Validates input and verifies the email link payload.
  *
  * @param repository - Auth repository
- * @param input - Email verification input (email, token)
+ * @param input - Email verification input
  * @returns Authentication result with session (user is auto-logged in after verification)
  * @throws InvalidTokenError if token is invalid or expired
  * @throws EmailVerificationError for other verification errors

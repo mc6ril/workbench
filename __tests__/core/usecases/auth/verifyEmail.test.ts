@@ -9,7 +9,6 @@ import {
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
 
-import type { AuthResult } from "@/domains/auth/core/domain/schema/auth.schema";
 import { verifyEmail } from "@/domains/auth/core/usecases/verifyEmail";
 
 describe("verifyEmail", () => {
@@ -17,12 +16,8 @@ describe("verifyEmail", () => {
 
   it("should verify email with valid token", async () => {
     // Arrange
-    const repository = createAuthRepositoryMock({
-      verifyEmail: jest.fn<
-        Promise<AuthResult>,
-        [{ email?: string; token: string }]
-      >(async () => mockAuthResult),
-    });
+    const repository = createAuthRepositoryMock();
+    repository.verifyEmail.mockResolvedValue(mockAuthResult);
 
     // Act
     const result = await verifyEmail(repository, validInput);
@@ -39,12 +34,8 @@ describe("verifyEmail", () => {
       email: "",
       token: "valid-verification-token",
     };
-    const repository = createAuthRepositoryMock({
-      verifyEmail: jest.fn<
-        Promise<AuthResult>,
-        [{ email?: string; token: string }]
-      >(async () => mockAuthResult),
-    });
+    const repository = createAuthRepositoryMock();
+    repository.verifyEmail.mockResolvedValue(mockAuthResult);
 
     // Act
     const result = await verifyEmail(repository, inputWithEmptyEmail);
@@ -60,12 +51,8 @@ describe("verifyEmail", () => {
     const inputWithoutEmail = {
       token: "valid-verification-token",
     };
-    const repository = createAuthRepositoryMock({
-      verifyEmail: jest.fn<
-        Promise<AuthResult>,
-        [{ email?: string; token: string }]
-      >(async () => mockAuthResult),
-    });
+    const repository = createAuthRepositoryMock();
+    repository.verifyEmail.mockResolvedValue(mockAuthResult);
 
     // Act
     const result = await verifyEmail(repository, inputWithoutEmail);
@@ -73,6 +60,35 @@ describe("verifyEmail", () => {
     // Assert
     expect(repository.verifyEmail).toHaveBeenCalledTimes(1);
     expect(repository.verifyEmail).toHaveBeenCalledWith(inputWithoutEmail);
+    expect(result).toEqual(mockAuthResult);
+  });
+
+  it("should verify email with a PKCE code", async () => {
+    const inputWithCode = {
+      code: "pkce-code",
+    };
+    const repository = createAuthRepositoryMock();
+    repository.verifyEmail.mockResolvedValue(mockAuthResult);
+
+    const result = await verifyEmail(repository, inputWithCode);
+
+    expect(repository.verifyEmail).toHaveBeenCalledTimes(1);
+    expect(repository.verifyEmail).toHaveBeenCalledWith(inputWithCode);
+    expect(result).toEqual(mockAuthResult);
+  });
+
+  it("should verify email with a token hash", async () => {
+    const inputWithTokenHash = {
+      tokenHash: "token-hash",
+      type: "signup" as const,
+    };
+    const repository = createAuthRepositoryMock();
+    repository.verifyEmail.mockResolvedValue(mockAuthResult);
+
+    const result = await verifyEmail(repository, inputWithTokenHash);
+
+    expect(repository.verifyEmail).toHaveBeenCalledTimes(1);
+    expect(repository.verifyEmail).toHaveBeenCalledWith(inputWithTokenHash);
     expect(result).toEqual(mockAuthResult);
   });
 
@@ -106,16 +122,19 @@ describe("verifyEmail", () => {
     expect(repository.verifyEmail).not.toHaveBeenCalled();
   });
 
+  it("should throw ZodError when no verification payload is provided", async () => {
+    const repository = createAuthRepositoryMock();
+
+    await expect(verifyEmail(repository, {})).rejects.toThrow(z.ZodError);
+    expect(repository.verifyEmail).not.toHaveBeenCalled();
+  });
+
   it("should propagate invalid token error from repository", async () => {
     // Arrange
     const repositoryError = createAuthError.invalidToken();
-    const repository = createAuthRepositoryMock({
-      verifyEmail: jest.fn<
-        Promise<AuthResult>,
-        [{ email?: string; token: string }]
-      >(async () => {
-        throw repositoryError;
-      }),
+    const repository = createAuthRepositoryMock();
+    repository.verifyEmail.mockImplementation(async () => {
+      throw repositoryError;
     });
 
     // Act & Assert
@@ -134,13 +153,9 @@ describe("verifyEmail", () => {
   it("should propagate email verification error from repository", async () => {
     // Arrange
     const repositoryError = createAuthError.emailVerification();
-    const repository = createAuthRepositoryMock({
-      verifyEmail: jest.fn<
-        Promise<AuthResult>,
-        [{ email?: string; token: string }]
-      >(async () => {
-        throw repositoryError;
-      }),
+    const repository = createAuthRepositoryMock();
+    repository.verifyEmail.mockImplementation(async () => {
+      throw repositoryError;
     });
 
     // Act & Assert
@@ -161,13 +176,9 @@ describe("verifyEmail", () => {
     const repositoryError = createAuthError.authentication(
       "Verify email failed"
     );
-    const repository = createAuthRepositoryMock({
-      verifyEmail: jest.fn<
-        Promise<AuthResult>,
-        [{ email?: string; token: string }]
-      >(async () => {
-        throw repositoryError;
-      }),
+    const repository = createAuthRepositoryMock();
+    repository.verifyEmail.mockImplementation(async () => {
+      throw repositoryError;
     });
 
     // Act & Assert

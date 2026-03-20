@@ -72,8 +72,8 @@ export type AuthRepository = {
   updatePassword(input: UpdatePasswordInput): Promise<AuthResult>;
 
   /**
-   * Verify email address using a verification token.
-   * @param input - Email verification input (email, token)
+   * Verify email address using a legacy token, token hash, or PKCE code.
+   * @param input - Email verification input
    * @returns Authentication result with session (user is auto-logged in after verification)
    * @throws InvalidTokenError if token is invalid or expired
    * @throws EmailVerificationError for other verification errors

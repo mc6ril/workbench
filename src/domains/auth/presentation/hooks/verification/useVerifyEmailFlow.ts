@@ -6,6 +6,10 @@ import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 import { useVerifyEmail } from "@/domains/auth/presentation/hooks/verification/useVerifyEmail";
+import {
+  getVerifyEmailRedirectErrorCode,
+  parseVerifyEmailParams,
+} from "@/domains/auth/presentation/utils/verifyEmail";
 
 /**
  * Encapsulates the full email verification orchestration.
@@ -15,41 +19,27 @@ export const useVerifyEmailFlow = () => {
   const searchParams = useSearchParams();
   const verifyEmailMutation = useVerifyEmail();
   const tErrors = useTranslation("errors");
+  const searchParamsValue = searchParams.toString();
+  const locationHash =
+    typeof window !== "undefined" ? window.location.hash : undefined;
 
-  const { token, email, isValid } = useMemo(() => {
-    const tokenParam = searchParams.get("token");
-    const codeParam = searchParams.get("code");
-    const typeParam = searchParams.get("type");
-    const emailParam = searchParams.get("email");
-
-    const actualToken = tokenParam || codeParam;
-
-    const isValidTokenFormat =
-      typeParam === "email" && actualToken && emailParam;
-    const isValidCodeFormat =
-      codeParam !== null && (typeParam === null || typeParam === "email");
-
-    return {
-      token: actualToken,
-      email: emailParam || null,
-      isValid: isValidTokenFormat || isValidCodeFormat,
-    };
-  }, [searchParams]);
+  const parsedParams = useMemo(() => {
+    return parseVerifyEmailParams(
+      new URLSearchParams(searchParamsValue),
+      locationHash
+    );
+  }, [locationHash, searchParamsValue]);
 
   useEffect(() => {
     if (
-      isValid &&
-      token &&
+      parsedParams.input &&
       !verifyEmailMutation.isPending &&
       !verifyEmailMutation.isSuccess &&
       !verifyEmailMutation.isError
     ) {
-      verifyEmailMutation.mutate({
-        email: email || "",
-        token,
-      });
+      verifyEmailMutation.mutate(parsedParams.input);
     }
-  }, [isValid, token, email, verifyEmailMutation]);
+  }, [parsedParams.input, verifyEmailMutation]);
 
   useEffect(() => {
     if (verifyEmailMutation.isSuccess && verifyEmailMutation.data?.session) {
@@ -57,16 +47,23 @@ export const useVerifyEmailFlow = () => {
     }
   }, [verifyEmailMutation.isSuccess, verifyEmailMutation.data, router]);
 
-  const errorMessage = verifyEmailMutation.error
-    ? getErrorMessage(verifyEmailMutation.error as { code?: string }, tErrors)
-    : undefined;
+  const redirectErrorCode = getVerifyEmailRedirectErrorCode(
+    parsedParams.redirectError
+  );
+  const errorMessage = parsedParams.redirectError
+    ? redirectErrorCode
+      ? getErrorMessage({ code: redirectErrorCode }, tErrors)
+      : tErrors("auth.EMAIL_VERIFICATION_ERROR")
+    : verifyEmailMutation.error
+      ? getErrorMessage(verifyEmailMutation.error as { code?: string }, tErrors)
+      : undefined;
 
   return {
-    isMissingToken: !token,
+    isMissingToken: parsedParams.isMissingToken,
     isPending: verifyEmailMutation.isPending,
     isSuccess:
       verifyEmailMutation.isSuccess && !!verifyEmailMutation.data?.session,
-    isError: verifyEmailMutation.isError,
+    isError: !!parsedParams.redirectError || verifyEmailMutation.isError,
     errorMessage,
   };
 };

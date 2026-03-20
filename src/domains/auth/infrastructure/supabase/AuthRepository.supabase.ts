@@ -1,4 +1,4 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Session, SupabaseClient } from "@supabase/supabase-js";
 
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { handleAuthError } from "@/shared/infrastructure/errors/errorHandlers";
@@ -74,6 +74,21 @@ const redirectToOAuthUrl = (url: string): void => {
   window.location.assign(url);
 };
 
+const mapVerifiedSessionToAuthResult = async (
+  client: SupabaseClient,
+  session: Session,
+  fallbackEmail?: string
+): Promise<AuthResult> => {
+  const userEmail = session.user.email || fallbackEmail || "";
+  const baseSession = mapSupabaseSessionToDomain(session, userEmail);
+  const enrichedSession = await enrichSessionWithProfile(client, baseSession);
+
+  return {
+    session: enrichedSession,
+    requiresEmailVerification: false,
+  };
+};
+
 export const createAuthRepository = (
   client: SupabaseClient,
   adminClient?: SupabaseClient
@@ -88,11 +103,29 @@ export const createAuthRepository = (
         metadata.terms_accepted_at = input.termsAcceptedAt;
       }
 
+      const baseOrigin =
+        typeof window !== "undefined" ? window.location.origin : "";
+      const emailRedirectTo = baseOrigin
+        ? `${baseOrigin}${AUTH_PAGE_ROUTES.VERIFY_EMAIL}`
+        : undefined;
+      const signUpOptions: {
+        data?: Record<string, unknown>;
+        emailRedirectTo?: string;
+      } = {};
+
+      if (Object.keys(metadata).length > 0) {
+        signUpOptions.data = metadata;
+      }
+
+      if (emailRedirectTo) {
+        signUpOptions.emailRedirectTo = emailRedirectTo;
+      }
+
       const { data, error } = await client.auth.signUp({
         email: input.email,
         password: input.password,
         options:
-          Object.keys(metadata).length > 0 ? { data: metadata } : undefined,
+          Object.keys(signUpOptions).length > 0 ? signUpOptions : undefined,
       });
 
       if (error) {
@@ -432,63 +465,83 @@ export const createAuthRepository = (
 
   async verifyEmail(input: VerifyEmailInput): Promise<AuthResult> {
     try {
-      // If email is not provided, Supabase redirects with only a code.
-      // The Supabase client automatically exchanges the code for a session
-      // during initialization — no artificial delay needed.
-      if (!input.email || input.email.trim() === "") {
-        const { data: sessionData, error: sessionError } =
-          await client.auth.getSession();
+      const verificationType = input.type ?? "email";
+      const hasCode = !!input.code && input.code.trim() !== "";
+      const hasTokenHash = !!input.tokenHash && input.tokenHash.trim() !== "";
+      const hasLegacyToken = !!input.token && input.token.trim() !== "";
 
-        if (sessionError) {
-          return handleAuthError(sessionError);
+      if (hasCode) {
+        const { data, error } = await client.auth.exchangeCodeForSession(
+          input.code!
+        );
+
+        if (error) {
+          return handleAuthError(error);
         }
 
-        // If we have a session, verify the user's email confirmation
-        if (sessionData.session) {
-          const {
-            data: { user },
-            error: userError,
-          } = await client.auth.getUser();
-
-          if (userError) {
-            return handleAuthError(userError);
-          }
-
-          if (user) {
-            const userEmail = user.email || "";
-            const baseSession = mapSupabaseSessionToDomain(
-              sessionData.session,
-              userEmail
-            );
-            const session = await enrichSessionWithProfile(client, baseSession);
-            return { session, requiresEmailVerification: false };
-          }
+        if (!data.session || !data.user) {
+          const error: EmailVerificationError = {
+            code: "EMAIL_VERIFICATION_ERROR",
+            debugMessage:
+              "No session or user returned from email verification code exchange",
+          };
+          return handleAuthError(error);
         }
 
-        // If no session, the code is invalid or expired
+        return mapVerifiedSessionToAuthResult(
+          client,
+          data.session,
+          data.user.email || ""
+        );
+      }
+
+      if (hasTokenHash) {
+        const { data, error } = await client.auth.verifyOtp({
+          token_hash: input.tokenHash!,
+          type: verificationType,
+        });
+
+        if (error) {
+          handleAuthError(error);
+        }
+
+        if (!data.session || !data.user) {
+          const error: EmailVerificationError = {
+            code: "EMAIL_VERIFICATION_ERROR",
+            debugMessage:
+              "No session or user returned from email verification token hash",
+          };
+          handleAuthError(error);
+        }
+
+        return mapVerifiedSessionToAuthResult(
+          client,
+          data.session!,
+          data.user!.email || input.email || ""
+        );
+      }
+
+      if (!hasLegacyToken) {
         const error: EmailVerificationError = {
           code: "EMAIL_VERIFICATION_ERROR",
           debugMessage:
-            "Unable to verify email. The verification code may be invalid or expired. Please request a new verification email.",
+            "Missing verification token, token hash, or code for email verification",
         };
         return handleAuthError(error);
       }
 
-      // Standard verification with email and token
-      // TypeScript: input.email is guaranteed to be non-empty after the check above
-      if (!input.email) {
+      if (!input.email || input.email.trim() === "") {
         const error: EmailVerificationError = {
           code: "EMAIL_VERIFICATION_ERROR",
-          debugMessage: "Email is required for email verification",
+          debugMessage: "Email is required for legacy email verification",
         };
-        handleAuthError(error);
+        return handleAuthError(error);
       }
 
-      // TypeScript: input.email is guaranteed to be non-empty after the check above
       const { data, error } = await client.auth.verifyOtp({
         email: input.email!,
-        token: input.token,
-        type: "email",
+        token: input.token!,
+        type: verificationType,
       });
 
       if (error) {
@@ -503,11 +556,11 @@ export const createAuthRepository = (
         handleAuthError(error);
       }
 
-      const userEmail = data.user!.email || input.email! || "";
-      const baseSession = mapSupabaseSessionToDomain(data.session!, userEmail);
-      const session = await enrichSessionWithProfile(client, baseSession);
-
-      return { session, requiresEmailVerification: false };
+      return mapVerifiedSessionToAuthResult(
+        client,
+        data.session!,
+        data.user!.email || input.email! || ""
+      );
     } catch (error) {
       return handleAuthError(error);
     }

@@ -180,7 +180,9 @@ export const DEFAULT_USER_PREFERENCES: UserPreferences = {
  * Only the fields provided will be merged with existing preferences.
  */
 export const UpdatePreferencesInputSchema = UserPreferencesSchema.partial();
-export type UpdatePreferencesInput = z.infer<typeof UpdatePreferencesInputSchema>;
+export type UpdatePreferencesInput = z.infer<
+  typeof UpdatePreferencesInputSchema
+>;
 
 /**
  * Authentication session data.
@@ -271,19 +273,33 @@ export type UpdatePasswordFormInput = z.infer<typeof UpdatePasswordFormSchema>;
 
 /**
  * Zod schema for email verification input.
- * Validates email format and token presence.
- * Email is optional when using code format (external systems may redirect with code only).
- * Accepts valid email string, empty string, or undefined.
+ * Supports legacy email+token links, PKCE code redirects, and token-hash links.
  */
-export const VerifyEmailSchema = z.object({
-  email: z
-    .union([
-      z.string().email({ message: "Invalid email format" }),
-      z.literal(""),
-    ])
-    .optional(), // Allow empty string or undefined for code-only format
-  token: z.string().min(1, "Token is required"),
-});
+export const VerifyEmailLinkTypeSchema = z.enum(["email", "signup"]);
+export type VerifyEmailLinkType = z.infer<typeof VerifyEmailLinkTypeSchema>;
+
+export const VerifyEmailSchema = z
+  .object({
+    email: z
+      .union([
+        z.string().email({ message: "Invalid email format" }),
+        z.literal(""),
+      ])
+      .optional(),
+    token: z.string().min(1, "Token is required").optional(),
+    tokenHash: z.string().min(1, "Token hash is required").optional(),
+    code: z.string().min(1, "Code is required").optional(),
+    type: VerifyEmailLinkTypeSchema.optional(),
+  })
+  .refine(
+    (input) => {
+      return Boolean(input.token || input.tokenHash || input.code);
+    },
+    {
+      message: "A verification token, token hash, or code is required",
+      path: ["token"],
+    }
+  );
 
 /**
  * Email verification input type.
