@@ -106,7 +106,8 @@
       "oauth": {
         "divider": "or",
         "googleButton": "Continue with Google",
-        "googleButtonAriaLabel": "Sign in with Google"
+        "googleButtonAriaLabel": "Sign in with Google",
+        "unsupportedBrowser": "Google sign-in must be opened in a regular browser tab. Please open this page in Chrome, Safari, or Firefox and try again."
       },
       "footer": "Already have an account?",
       "footerLink": "Sign in",
@@ -226,7 +227,8 @@
       "oauth": {
         "divider": "or",
         "googleButton": "Continue with Google",
-        "googleButtonAriaLabel": "Sign in with Google"
+        "googleButtonAriaLabel": "Sign in with Google",
+        "unsupportedBrowser": "Google sign-in must be opened in a regular browser tab. Please open this page in Chrome, Safari, or Firefox and try again."
       },
       "forgotPassword": "Forgot password?",
       "footer": "Don't have an account?",

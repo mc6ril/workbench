@@ -24,6 +24,7 @@ import { SignInSchema } from "@/domains/auth/core/domain/schema/auth.schema";
 import { useSignIn } from "@/domains/auth/presentation/hooks/user/useSignIn";
 import { useSignInWithGoogle } from "@/domains/auth/presentation/hooks/user/useSignInWithGoogle";
 import { useResendVerification } from "@/domains/auth/presentation/hooks/verification/useResendVerification";
+import { isUnsupportedGoogleOAuthContext } from "@/domains/auth/presentation/utils/googleOAuth";
 
 type FormData = SignInInput;
 
@@ -56,6 +57,7 @@ const SigninPage = () => {
     handleSubmit,
     formState: { errors },
     setError,
+    clearErrors,
     getValues,
   } = useForm<FormData>({
     resolver: zodResolver(SignInSchema),
@@ -110,6 +112,18 @@ const SigninPage = () => {
   }, [resendVerificationMutation.isSuccess, setError, t]);
 
   useEffect(() => {
+    if (signInWithGoogleMutation.error) {
+      setError("root", {
+        type: "server",
+        message: getErrorMessage(
+          signInWithGoogleMutation.error as { code?: string },
+          tErrors
+        ),
+      });
+    }
+  }, [signInWithGoogleMutation.error, setError, tErrors]);
+
+  useEffect(() => {
     if (signInMutation.isSuccess && signInMutation.data) {
       router.push(redirectPath);
     }
@@ -130,8 +144,18 @@ const SigninPage = () => {
   }, [getValues, resendVerificationMutation]);
 
   const handleGoogleSignIn = useCallback(() => {
+    clearErrors("root");
+
+    if (isUnsupportedGoogleOAuthContext()) {
+      setError("root", {
+        type: "manual",
+        message: t("oauth.unsupportedBrowser"),
+      });
+      return;
+    }
+
     signInWithGoogleMutation.mutate(redirectPath);
-  }, [redirectPath, signInWithGoogleMutation]);
+  }, [clearErrors, redirectPath, setError, signInWithGoogleMutation, t]);
 
   const isEmailVerificationError =
     isUnverifiedRedirect ||

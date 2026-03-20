@@ -29,6 +29,7 @@ import { SignUpFormSchema } from "@/domains/auth/core/domain/schema/auth.schema"
 import PasswordStrengthIndicator from "@/domains/auth/presentation/components/PasswordStrengthIndicator";
 import { useSignInWithGoogle } from "@/domains/auth/presentation/hooks/user/useSignInWithGoogle";
 import { useSignUp } from "@/domains/auth/presentation/hooks/user/useSignUp";
+import { isUnsupportedGoogleOAuthContext } from "@/domains/auth/presentation/utils/googleOAuth";
 
 const SignupPage = () => {
   const router = useRouter();
@@ -56,6 +57,7 @@ const SignupPage = () => {
     handleSubmit,
     formState: { errors },
     setError,
+    clearErrors,
     control,
   } = useForm<SignUpFormInput>({
     resolver: zodResolver(SignUpFormSchema),
@@ -115,6 +117,18 @@ const SignupPage = () => {
     }
   }, [redirectPath, signUpMutation.isSuccess, signUpMutation.data, router]);
 
+  useEffect(() => {
+    if (signInWithGoogleMutation.error) {
+      setError("root", {
+        type: "server",
+        message: getErrorMessage(
+          signInWithGoogleMutation.error as { code?: string },
+          tErrors
+        ),
+      });
+    }
+  }, [signInWithGoogleMutation.error, setError, tErrors]);
+
   const onSubmit: SubmitHandler<SignUpFormInput> = useCallback(
     (data) => {
       const signUpInput: SignUpInput = {
@@ -129,8 +143,18 @@ const SignupPage = () => {
   );
 
   const handleGoogleSignIn = useCallback(() => {
+    clearErrors("root");
+
+    if (isUnsupportedGoogleOAuthContext()) {
+      setError("root", {
+        type: "manual",
+        message: t("oauth.unsupportedBrowser"),
+      });
+      return;
+    }
+
     signInWithGoogleMutation.mutate(redirectPath);
-  }, [redirectPath, signInWithGoogleMutation]);
+  }, [clearErrors, redirectPath, setError, signInWithGoogleMutation, t]);
 
   if (
     signUpMutation.isSuccess &&
@@ -229,7 +253,10 @@ const SignupPage = () => {
               )}
             />
             <Text variant="small" className={styles["signup-terms__label"]}>
-              <Link href={PAGE_ROUTES.LEGAL} className={styles["signup-terms__link"]}>
+              <Link
+                href={PAGE_ROUTES.LEGAL}
+                className={styles["signup-terms__link"]}
+              >
                 {tFields("acceptedTerms.linkLabel")}
               </Link>
             </Text>

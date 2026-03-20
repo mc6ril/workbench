@@ -57,6 +57,23 @@ const enrichSessionWithProfile = async (
   };
 };
 
+const redirectToOAuthUrl = (url: string): void => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    if (window.top && window.top !== window.self) {
+      window.top.location.assign(url);
+      return;
+    }
+  } catch {
+    // Ignore frame access issues and fall back to the current window.
+  }
+
+  window.location.assign(url);
+};
+
 export const createAuthRepository = (
   client: SupabaseClient,
   adminClient?: SupabaseClient
@@ -174,16 +191,29 @@ export const createAuthRepository = (
           : PAGE_ROUTES.WORKSPACE;
       const redirectTo = `${baseOrigin}${AUTH_PAGE_ROUTES.CALLBACK}?next=${encodeURIComponent(safeNext)}`;
 
-      const { error } = await client.auth.signInWithOAuth({
+      const { data, error } = await client.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo,
+          skipBrowserRedirect: true,
         },
       });
 
       if (error) {
         handleAuthError(error);
       }
+
+      const oauthUrl = data?.url ?? "";
+
+      if (!oauthUrl) {
+        const error: AuthenticationError = {
+          code: "AUTHENTICATION_ERROR",
+          debugMessage: "No OAuth URL returned from Supabase Google signin",
+        };
+        return handleAuthError(error);
+      }
+
+      redirectToOAuthUrl(oauthUrl);
     } catch (error) {
       handleAuthError(error);
     }

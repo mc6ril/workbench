@@ -106,7 +106,8 @@
       "oauth": {
         "divider": "ou",
         "googleButton": "Continuer avec Google",
-        "googleButtonAriaLabel": "Se connecter avec Google"
+        "googleButtonAriaLabel": "Se connecter avec Google",
+        "unsupportedBrowser": "La connexion Google doit être ouverte dans un onglet de navigateur classique. Ouvrez cette page dans Chrome, Safari ou Firefox puis réessayez."
       },
       "footer": "Vous avez déjà un compte ?",
       "footerLink": "Se connecter",
@@ -226,7 +227,8 @@
       "oauth": {
         "divider": "ou",
         "googleButton": "Continuer avec Google",
-        "googleButtonAriaLabel": "Se connecter avec Google"
+        "googleButtonAriaLabel": "Se connecter avec Google",
+        "unsupportedBrowser": "La connexion Google doit être ouverte dans un onglet de navigateur classique. Ouvrez cette page dans Chrome, Safari ou Firefox puis réessayez."
       },
       "forgotPassword": "Mot de passe oublié ?",
       "footer": "Vous n'avez pas de compte ?",

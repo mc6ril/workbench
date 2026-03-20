@@ -106,7 +106,8 @@
       "oauth": {
         "divider": "o",
         "googleButton": "Continuar con Google",
-        "googleButtonAriaLabel": "Iniciar sesión con Google"
+        "googleButtonAriaLabel": "Iniciar sesión con Google",
+        "unsupportedBrowser": "El inicio de sesión con Google debe abrirse en una pestaña normal del navegador. Abre esta página en Chrome, Safari o Firefox y vuelve a intentarlo."
       },
       "footer": "¿Ya tienes una cuenta?",
       "footerLink": "Iniciar sesión",
@@ -226,7 +227,8 @@
       "oauth": {
         "divider": "o",
         "googleButton": "Continuar con Google",
-        "googleButtonAriaLabel": "Iniciar sesión con Google"
+        "googleButtonAriaLabel": "Iniciar sesión con Google",
+        "unsupportedBrowser": "El inicio de sesión con Google debe abrirse en una pestaña normal del navegador. Abre esta página en Chrome, Safari o Firefox y vuelve a intentarlo."
       },
       "forgotPassword": "¿Olvidaste tu contraseña?",
       "footer": "¿No tienes cuenta?",
