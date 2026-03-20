@@ -960,7 +960,8 @@
         },
         "changeButton": "Cambiar contraseña",
         "changeButtonAriaLabel": "Cambiar contraseña",
-        "changingButton": "Cambiando..."
+        "changingButton": "Cambiando...",
+        "oauthNotice": "Esta cuenta usa inicio de sesión OAuth. La actualización de contraseña no está disponible desde Workbench."
       },
       "preferences": {
         "title": "Preferencias",
@@ -1460,7 +1461,8 @@
       "EMAIL_VERIFICATION_ERROR": "Se ha producido un error al verificar el email",
       "PASSWORD_RESET_ERROR": "Se ha producido un error al restablecer la contraseña",
       "INVALID_TOKEN": "El enlace no es válido o ha caducado. Solicita uno nuevo",
-      "SAME_PASSWORD": "La nueva contraseña debe ser diferente de la actual"
+      "SAME_PASSWORD": "La nueva contraseña debe ser diferente de la actual",
+      "PASSWORD_UPDATE_NOT_ALLOWED": "Esta cuenta usa un proveedor de acceso externo. La actualización de contraseña no está disponible."
     },
     "repository": {
       "NOT_FOUND": "Recurso no encontrado",

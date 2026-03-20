@@ -1,5 +1,6 @@
-import type { Session, SupabaseClient } from "@supabase/supabase-js";
+import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
 
+import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { handleAuthError } from "@/shared/infrastructure/errors/errorHandlers";
 
@@ -10,17 +11,16 @@ import type {
   EmailAlreadyExistsError,
   EmailVerificationError,
   InvalidTokenError,
+  PasswordUpdateNotAllowedError,
   ResetPasswordInput,
   SignInInput,
   SignUpInput,
   UpdatePasswordInput,
   VerifyEmailInput,
-} from "@/domains/auth/core/domain/schema/auth.schema";
+} from "@/domains/auth/core/domain/auth.schema";
 import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
 import { mapSupabaseSessionToDomain } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
-import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
-import type { UserProfileRow } from "@/domains/profile/infrastructure/supabase/userProfile/types";
-import { mapUserProfileRowToDomain } from "@/domains/profile/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
+import { canUpdatePasswordFromAppMetadata } from "@/domains/auth/infrastructure/supabase/authProviderCapabilities";
 
 /**
  * Create an AuthRepository implementation using the provided Supabase client.
@@ -31,33 +31,6 @@ import { mapUserProfileRowToDomain } from "@/domains/profile/infrastructure/supa
  *                      Must be provided for server-side contexts that need admin operations.
  * @returns AuthRepository implementation
  */
-/**
- * Fetches profile data from user_profiles and enriches an AuthSession.
- * Falls back to defaults if the profile is not yet available (e.g. during signup race).
- */
-const enrichSessionWithProfile = async (
-  client: SupabaseClient,
-  session: AuthSession
-): Promise<AuthSession> => {
-  const { data } = await client
-    .from("user_profiles")
-    .select("*")
-    .eq("id", session.userId)
-    .maybeSingle();
-
-  if (!data) {
-    return session;
-  }
-
-  const profile = mapUserProfileRowToDomain(data as UserProfileRow);
-  return {
-    ...session,
-    displayName: profile.displayName,
-    avatarUrl: profile.avatarUrl,
-    preferences: profile.preferences,
-  };
-};
-
 const redirectToOAuthUrl = (url: string): void => {
   if (typeof window === "undefined") {
     return;
@@ -75,25 +48,70 @@ const redirectToOAuthUrl = (url: string): void => {
   window.location.assign(url);
 };
 
-const mapVerifiedSessionToAuthResult = async (
-  client: SupabaseClient,
+const mapVerifiedSessionToAuthResult = (
   session: Session,
   fallbackEmail?: string
-): Promise<AuthResult> => {
+): AuthResult => {
   const userEmail = session.user.email || fallbackEmail || "";
-  const baseSession = mapSupabaseSessionToDomain(session, userEmail);
-  const enrichedSession = await enrichSessionWithProfile(client, baseSession);
 
   return {
-    session: enrichedSession,
+    session: mapSupabaseSessionToDomain(session, userEmail),
     requiresEmailVerification: false,
   };
+};
+
+const createPasswordUpdateNotAllowedError =
+  (): PasswordUpdateNotAllowedError => ({
+    code: AUTH_ERROR_CODE.PASSWORD_UPDATE_NOT_ALLOWED,
+    debugMessage:
+      "Password updates are not available for OAuth-only accounts",
+  });
+
+const createPasswordUpdateAuthRequiredError = (): AuthenticationError => ({
+  code: "AUTHENTICATION_ERROR",
+  debugMessage: "User must be authenticated to update password",
+});
+
+const isAuthSessionMissingError = (error: unknown): boolean => {
+  return (
+    !!error &&
+    typeof error === "object" &&
+    "name" in error &&
+    error.name === "AuthSessionMissingError" &&
+    "message" in error &&
+    error.message === "Auth session missing!"
+  );
 };
 
 export const createAuthRepository = (
   client: SupabaseClient,
   adminClient?: SupabaseClient
 ): AuthRepository => ({
+  async canUpdatePassword(): Promise<boolean> {
+    try {
+      const {
+        data: { user },
+        error,
+      } = await client.auth.getUser();
+
+      if (error) {
+        if (isAuthSessionMissingError(error)) {
+          return false;
+        }
+
+        handleAuthError(error);
+      }
+
+      if (!user) {
+        return false;
+      }
+
+      return canUpdatePasswordFromAppMetadata(user.app_metadata);
+    } catch (error) {
+      return handleAuthError(error);
+    }
+  },
+
   async signUp(input: SignUpInput): Promise<AuthResult> {
     try {
       const metadata: Record<string, unknown> = {};
@@ -174,9 +192,7 @@ export const createAuthRepository = (
         data.session!,
         data.user!.email || input.email
       );
-      const session = await enrichSessionWithProfile(client, baseSession);
-
-      return { session, requiresEmailVerification: false };
+      return { session: baseSession, requiresEmailVerification: false };
     } catch (error) {
       return handleAuthError(error);
     }
@@ -205,9 +221,7 @@ export const createAuthRepository = (
         data.session!,
         data.user!.email || input.email
       );
-      const session = await enrichSessionWithProfile(client, baseSession);
-
-      return { session, requiresEmailVerification: false };
+      return { session: baseSession, requiresEmailVerification: false };
     } catch (error) {
       return handleAuthError(error);
     }
@@ -277,15 +291,7 @@ export const createAuthRepository = (
         } = await client.auth.getUser();
 
         if (error) {
-          const isAuthSessionMissingError =
-            error &&
-            typeof error === "object" &&
-            "name" in error &&
-            error.name === "AuthSessionMissingError" &&
-            "message" in error &&
-            error.message === "Auth session missing!";
-
-          if (isAuthSessionMissingError) {
+          if (isAuthSessionMissingError(error)) {
             return null;
           }
 
@@ -306,17 +312,12 @@ export const createAuthRepository = (
         }
 
         // Server-side flow has no direct session token available from getUser().
-        const baseSession: AuthSession = {
+        return {
           userId: user.id,
           email: userEmail!,
-          displayName: null,
-          avatarUrl: null,
-          preferences: { ...DEFAULT_USER_PREFERENCES },
           accessToken: "",
           isSuperuser: user.app_metadata?.is_superuser === true,
         };
-
-        return enrichSessionWithProfile(client, baseSession);
       } else {
         const {
           data: { session },
@@ -341,7 +342,7 @@ export const createAuthRepository = (
         }
 
         const baseSession = mapSupabaseSessionToDomain(session, userEmail!);
-        return enrichSessionWithProfile(client, baseSession);
+        return baseSession;
       }
     } catch (error) {
       return handleAuthError(error);
@@ -369,6 +370,16 @@ export const createAuthRepository = (
 
   async updatePassword(input: UpdatePasswordInput): Promise<AuthResult> {
     try {
+      const ensurePasswordUpdateAllowed = (user: User | null | undefined) => {
+        if (!user) {
+          handleAuthError(createPasswordUpdateAuthRequiredError());
+        }
+
+        if (!canUpdatePasswordFromAppMetadata(user!.app_metadata)) {
+          handleAuthError(createPasswordUpdateNotAllowedError());
+        }
+      };
+
       // PKCE flow: session was established by the auth callback route.
       // Legacy token flow: verify OTP first then update.
       const hasToken = input.token && input.token.trim() !== "";
@@ -395,6 +406,8 @@ export const createAuthRepository = (
           handleAuthError(error);
         }
 
+        ensurePasswordUpdateAllowed(verifyData.user);
+
         const { error: updateError } = await client.auth.updateUser({
           password: input.password,
         });
@@ -408,8 +421,7 @@ export const createAuthRepository = (
           verifyData.session!,
           userEmail
         );
-        const session = await enrichSessionWithProfile(client, baseSession);
-        return { session, requiresEmailVerification: false };
+        return { session: baseSession, requiresEmailVerification: false };
       }
 
       // PKCE flow: session already exists from auth callback code exchange
@@ -428,6 +440,8 @@ export const createAuthRepository = (
         };
         return handleAuthError(error);
       }
+
+      ensurePasswordUpdateAllowed(sessionData.session.user);
 
       const { error: updateError } = await client.auth.updateUser({
         password: input.password,
@@ -458,8 +472,7 @@ export const createAuthRepository = (
         sessionData.session,
         user.email || ""
       );
-      const session = await enrichSessionWithProfile(client, baseSession);
-      return { session, requiresEmailVerification: false };
+      return { session: baseSession, requiresEmailVerification: false };
     } catch (error) {
       return handleAuthError(error);
     }
@@ -485,13 +498,12 @@ export const createAuthRepository = (
         if (!session) {
           const error: EmailVerificationError = {
             code: "EMAIL_VERIFICATION_ERROR",
-            debugMessage:
-              "No session returned after PKCE email verification",
+            debugMessage: "No session returned after PKCE email verification",
           };
           return handleAuthError(error);
         }
 
-        return mapVerifiedSessionToAuthResult(client, session, session.user.email);
+        return mapVerifiedSessionToAuthResult(session, session.user.email);
       }
 
       if (hasTokenHash) {
@@ -514,7 +526,6 @@ export const createAuthRepository = (
         }
 
         return mapVerifiedSessionToAuthResult(
-          client,
           data.session!,
           data.user!.email || input.email || ""
         );
@@ -556,7 +567,6 @@ export const createAuthRepository = (
       }
 
       return mapVerifiedSessionToAuthResult(
-        client,
         data.session!,
         data.user!.email || input.email! || ""
       );
@@ -596,6 +606,23 @@ export const createAuthRepository = (
       }
 
       if (input.password) {
+        const {
+          data: { user },
+          error: userError,
+        } = await client.auth.getUser();
+
+        if (userError) {
+          handleAuthError(userError);
+        }
+
+        if (!user) {
+          handleAuthError(createPasswordUpdateAuthRequiredError());
+        }
+
+        if (!canUpdatePasswordFromAppMetadata(user!.app_metadata)) {
+          handleAuthError(createPasswordUpdateNotAllowedError());
+        }
+
         updateData.password = input.password;
       }
 

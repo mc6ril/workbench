@@ -28,13 +28,15 @@ export const useUpdateProfile = () => {
         await updateUser(authRepository, { email: input.email });
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: authQueryKeys.auth.session(),
-      });
-      queryClient.invalidateQueries({
-        queryKey: authQueryKeys.auth.user(),
-      });
+    onSuccess: (_data, variables) => {
+      if (variables.email) {
+        queryClient.invalidateQueries({
+          queryKey: authQueryKeys.auth.session(),
+        });
+        queryClient.invalidateQueries({
+          queryKey: authQueryKeys.auth.user(),
+        });
+      }
       if (session) {
         queryClient.invalidateQueries({
           queryKey: queryKeys.userProfiles.detail(session.userId),

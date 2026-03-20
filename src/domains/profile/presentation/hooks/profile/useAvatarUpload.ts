@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { queryKeys as authQueryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
 import { removeAvatar } from "@/domains/profile/core/usecases/removeAvatar";
 import { uploadAvatar } from "@/domains/profile/core/usecases/uploadAvatar";
 import { userProfileRepository } from "@/domains/profile/infrastructure/supabase/repositories";
@@ -21,9 +20,6 @@ export const useUploadAvatar = () => {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.userProfiles.detail(variables.userId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: authQueryKeys.auth.session(),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.userProfiles.root(),
@@ -52,9 +48,6 @@ export const useRemoveAvatar = () => {
     onSuccess: (_data, userId) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.userProfiles.detail(userId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: authQueryKeys.auth.session(),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.userProfiles.root(),

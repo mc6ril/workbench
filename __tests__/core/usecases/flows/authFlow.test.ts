@@ -13,7 +13,7 @@ import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/pr
 import type {
   AuthResult,
   AuthSession,
-} from "@/domains/auth/core/domain/schema/auth.schema";
+} from "@/domains/auth/core/domain/auth.schema";
 import { getCurrentSession } from "@/domains/auth/core/usecases/getCurrentSession";
 import { signInUser } from "@/domains/auth/core/usecases/user/signInUser";
 import { signUpUser } from "@/domains/auth/core/usecases/user/signUpUser";

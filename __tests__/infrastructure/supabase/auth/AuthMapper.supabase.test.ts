@@ -10,7 +10,6 @@ import {
   mapSupabaseAuthError,
   mapSupabaseSessionToDomain,
 } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
-import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
 
 describe("AuthMapper.supabase", () => {
   describe("mapSupabaseSessionToDomain", () => {
@@ -26,9 +25,6 @@ describe("AuthMapper.supabase", () => {
       expect(result).toEqual({
         userId: "user-123",
         email: "test@example.com",
-        displayName: null,
-        avatarUrl: null,
-        preferences: DEFAULT_USER_PREFERENCES,
         accessToken: "test-access-token",
         isSuperuser: false,
       });
@@ -49,15 +45,10 @@ describe("AuthMapper.supabase", () => {
       // Assert
       expect(result.email).toBe("different@example.com");
       expect(result.userId).toBe("user-123");
-      expect(result.displayName).toBeNull();
-      expect(result.avatarUrl).toBeNull();
-      expect(result.preferences).toEqual(DEFAULT_USER_PREFERENCES);
       expect(result.accessToken).toBe("test-access-token");
     });
 
-    it("should return null displayName (profile enrichment happens separately)", () => {
-      // Arrange: even with display_name in user_metadata, mapper returns null
-      // because displayName is now sourced from user_profiles table
+    it("should ignore profile data from user metadata", () => {
       const supabaseSession = createSupabaseSessionMock({
         user: {
           user_metadata: { display_name: "John Doe" },
@@ -71,13 +62,15 @@ describe("AuthMapper.supabase", () => {
       );
 
       // Assert
-      expect(result.displayName).toBeNull();
-      expect(result.avatarUrl).toBeNull();
+      expect(result).toEqual({
+        userId: "user-123",
+        email: "test@example.com",
+        accessToken: "test-access-token",
+        isSuperuser: false,
+      });
     });
 
-    it("should return default preferences (profile enrichment happens separately)", () => {
-      // Arrange: even with preferences in user_metadata, mapper returns defaults
-      // because preferences are now sourced from user_profiles table
+    it("should not expose preferences from user metadata", () => {
       const supabaseSession = createSupabaseSessionMock({
         user: {
           user_metadata: {
@@ -97,7 +90,12 @@ describe("AuthMapper.supabase", () => {
       );
 
       // Assert
-      expect(result.preferences).toEqual(DEFAULT_USER_PREFERENCES);
+      expect(result).toEqual({
+        userId: "user-123",
+        email: "test@example.com",
+        accessToken: "test-access-token",
+        isSuperuser: false,
+      });
     });
   });
 

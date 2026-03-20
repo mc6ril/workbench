@@ -13,7 +13,7 @@ import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authR
 import type {
   AuthResult,
   UpdatePasswordInput,
-} from "@/domains/auth/core/domain/schema/auth.schema";
+} from "@/domains/auth/core/domain/auth.schema";
 import { updatePassword } from "@/domains/auth/core/usecases/password/updatePassword";
 
 describe("updatePassword", () => {

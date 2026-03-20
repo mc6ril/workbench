@@ -1,7 +1,6 @@
 import { z } from "zod";
 
-import { PASSWORD_LIMITS } from "@/domains/auth/core/domain/constants/auth.constants";
-import { UserPreferencesSchema } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
+import { PASSWORD_LIMITS } from "@/domains/auth/core/domain/auth.constants";
 
 /**
  * Reusable Zod schema for password validation.
@@ -147,16 +146,12 @@ export type AuthenticationError = AuthError & {
 /**
  * Authentication session data.
  * Represents an authenticated user session.
- * displayName and preferences come from the user_profiles table (single source of truth).
  * isSuperuser comes from Supabase app_metadata.is_superuser (server-controlled, not user-editable).
  */
 export const AuthSessionSchema = z.object({
   userId: z.string().uuid(),
   email: z.string().email(),
-  displayName: z.string().nullable(),
-  avatarUrl: z.string().nullable(),
-  preferences: UserPreferencesSchema,
-  accessToken: z.string().min(1),
+  accessToken: z.string(),
   isSuperuser: z.boolean(),
 });
 
@@ -269,7 +264,7 @@ export type VerifyEmailInput = z.infer<typeof VerifyEmailSchema>;
 
 /**
  * Zod schema for updating auth credentials (email and/or password).
- * Profile data is managed via UserProfileRepository, not through auth.
+ * Profile data is managed in the profile domain, not through auth.
  */
 export const UpdateUserSchema = z.object({
   email: z.string().email("Invalid email format").optional(),
@@ -310,6 +305,13 @@ export type SamePasswordError = AuthError & {
 };
 
 /**
+ * Error when password updates are not available for the current auth method.
+ */
+export type PasswordUpdateNotAllowedError = AuthError & {
+  code: "PASSWORD_UPDATE_NOT_ALLOWED";
+};
+
+/**
  * Union type of all possible authentication errors.
  */
 export type AuthenticationFailure =
@@ -321,7 +323,8 @@ export type AuthenticationFailure =
   | EmailVerificationError
   | PasswordResetError
   | InvalidTokenError
-  | SamePasswordError;
+  | SamePasswordError
+  | PasswordUpdateNotAllowedError;
 
 /**
  * Zod schema for changing password from account settings.

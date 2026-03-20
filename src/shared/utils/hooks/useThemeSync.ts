@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useTheme } from "next-themes";
 
-import { useCurrentUserProfile } from "@/shared/profile";
+import { useMyProfile } from "@/shared/profile";
 
 import {
   type Theme,
@@ -16,7 +16,7 @@ import {
  * Should be mounted once at the app root (e.g. in AppProvider).
  */
 export const useThemeSync = (): void => {
-  const { data: profile } = useCurrentUserProfile();
+  const { data: profile } = useMyProfile();
   const { setTheme } = useTheme();
 
   const profileTheme = profile?.preferences?.theme;

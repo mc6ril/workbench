@@ -1,8 +1,13 @@
 /**
  * Bridge export for current profile access across domains.
  *
- * `useCurrentUserProfile` is implemented in `domains/profile` because it
- * depends on profile queries and repositories. Other layers import it from
- * here to avoid coupling directly to a domain owner.
+ * Profile hooks are implemented in `domains/profile` because they depend on
+ * profile queries and repositories. Other layers import them from here to
+ * avoid coupling directly to a domain owner.
+ *
+ * `useCurrentUserProfile` is kept as a compatibility alias during migration.
  */
-export { useCurrentUserProfile } from "@/domains/profile/presentation/hooks/profile/useCurrentUserProfile";
+export {
+  useCurrentUserProfile,
+  useMyProfile,
+} from "@/domains/profile/presentation/hooks/profile/useMyProfile";

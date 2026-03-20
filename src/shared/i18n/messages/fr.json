@@ -960,7 +960,8 @@
         },
         "changeButton": "Changer le mot de passe",
         "changeButtonAriaLabel": "Changer le mot de passe",
-        "changingButton": "Modification..."
+        "changingButton": "Modification...",
+        "oauthNotice": "Ce compte utilise une connexion OAuth. La mise à jour du mot de passe n'est pas disponible depuis Workbench."
       },
       "preferences": {
         "title": "Préférences",
@@ -1460,7 +1461,8 @@
       "EMAIL_VERIFICATION_ERROR": "Une erreur s'est produite lors de la vérification de l'email",
       "PASSWORD_RESET_ERROR": "Une erreur s'est produite lors de la réinitialisation du mot de passe",
       "INVALID_TOKEN": "Le lien est invalide ou a expiré. Veuillez en demander un nouveau",
-      "SAME_PASSWORD": "Le nouveau mot de passe doit être différent de l'ancien"
+      "SAME_PASSWORD": "Le nouveau mot de passe doit être différent de l'ancien",
+      "PASSWORD_UPDATE_NOT_ALLOWED": "Ce compte utilise une connexion externe. La mise à jour du mot de passe n'est pas disponible."
     },
     "repository": {
       "NOT_FOUND": "Ressource introuvable",

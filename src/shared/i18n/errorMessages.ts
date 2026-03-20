@@ -75,6 +75,7 @@ export const getErrorMessage = (
     PASSWORD_RESET_ERROR: "auth.PASSWORD_RESET_ERROR",
     INVALID_TOKEN: "auth.INVALID_TOKEN",
     SAME_PASSWORD: "auth.SAME_PASSWORD",
+    PASSWORD_UPDATE_NOT_ALLOWED: "auth.PASSWORD_UPDATE_NOT_ALLOWED",
   };
 
   const authTranslationKey = authKeyMap[error.code];

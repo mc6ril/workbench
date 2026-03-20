@@ -6,7 +6,7 @@ import type {
   SignUpInput,
   UpdatePasswordInput,
   VerifyEmailInput,
-} from "@/domains/auth/core/domain/schema/auth.schema";
+} from "@/domains/auth/core/domain/auth.schema";
 
 /**
  * Repository contract for Authentication operations.
@@ -53,6 +53,12 @@ export type AuthRepository = {
   getSession(): Promise<AuthSession | null>;
 
   /**
+   * Returns whether the current authenticated user can manage a password.
+   * OAuth-only accounts do not expose password updates from the application.
+   */
+  canUpdatePassword(): Promise<boolean>;
+
+  /**
    * Request a password reset email.
    * @param input - Password reset request (email)
    * @throws PasswordResetError if email not found or reset fails
@@ -91,7 +97,7 @@ export type AuthRepository = {
 
   /**
    * Update auth credentials (email and/or password).
-   * Profile data (display_name, preferences) is managed via UserProfileRepository.
+   * Profile data (display name, avatar, preferences) is managed in the profile domain.
    * @param input - Auth credential update (email and/or password)
    * @throws AuthenticationFailure if update fails
    */
