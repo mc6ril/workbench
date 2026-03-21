@@ -8,23 +8,26 @@ import {
 
 import {
   mapSupabaseAuthError,
-  mapSupabaseSessionToDomain,
 } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
+import { mapSupabaseSessionToCurrentSession } from "@/domains/session/infrastructure/supabase/SessionMapper.supabase";
 
 describe("AuthMapper.supabase", () => {
-  describe("mapSupabaseSessionToDomain", () => {
-    it("should map Supabase session to domain AuthSession", () => {
+  describe("mapSupabaseSessionToCurrentSession", () => {
+    it("should map Supabase session to domain CurrentSession", () => {
       // Arrange
       const supabaseSession = createSupabaseSessionMock();
       const userEmail = "test@example.com";
 
       // Act
-      const result = mapSupabaseSessionToDomain(supabaseSession, userEmail);
+      const result = mapSupabaseSessionToCurrentSession(
+        supabaseSession,
+        userEmail
+      );
 
       // Assert
       expect(result).toEqual({
         userId: "user-123",
-        email: "test@example.com",
+        loginEmail: "test@example.com",
         accessToken: "test-access-token",
         isSuperuser: false,
       });
@@ -40,10 +43,13 @@ describe("AuthMapper.supabase", () => {
       const userEmail = "different@example.com";
 
       // Act
-      const result = mapSupabaseSessionToDomain(supabaseSession, userEmail);
+      const result = mapSupabaseSessionToCurrentSession(
+        supabaseSession,
+        userEmail
+      );
 
       // Assert
-      expect(result.email).toBe("different@example.com");
+      expect(result.loginEmail).toBe("different@example.com");
       expect(result.userId).toBe("user-123");
       expect(result.accessToken).toBe("test-access-token");
     });
@@ -56,7 +62,7 @@ describe("AuthMapper.supabase", () => {
       });
 
       // Act
-      const result = mapSupabaseSessionToDomain(
+      const result = mapSupabaseSessionToCurrentSession(
         supabaseSession,
         "test@example.com"
       );
@@ -64,7 +70,7 @@ describe("AuthMapper.supabase", () => {
       // Assert
       expect(result).toEqual({
         userId: "user-123",
-        email: "test@example.com",
+        loginEmail: "test@example.com",
         accessToken: "test-access-token",
         isSuperuser: false,
       });
@@ -84,7 +90,7 @@ describe("AuthMapper.supabase", () => {
       });
 
       // Act
-      const result = mapSupabaseSessionToDomain(
+      const result = mapSupabaseSessionToCurrentSession(
         supabaseSession,
         "test@example.com"
       );
@@ -92,7 +98,7 @@ describe("AuthMapper.supabase", () => {
       // Assert
       expect(result).toEqual({
         userId: "user-123",
-        email: "test@example.com",
+        loginEmail: "test@example.com",
         accessToken: "test-access-token",
         isSuperuser: false,
       });

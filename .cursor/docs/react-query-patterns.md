@@ -32,9 +32,11 @@ React Query hooks belong in the owner that owns the server state:
 - `src/domains/<domain>/presentation/hooks/`
 - `src/modules/<module>/presentation/hooks/`
 
-Current shape examples:
+Target shape examples:
 
-- `src/domains/auth/presentation/hooks/useSession.ts`
+- `src/domains/session/presentation/hooks/useSession.ts`
+- `src/domains/profile/presentation/hooks/profile/useMyProfile.ts`
+- `src/domains/viewer/presentation/hooks/useViewer.ts`
 - `src/domains/workspace/presentation/hooks/useProjectsWithStats.ts`
 - `src/domains/project/presentation/hooks/`
 - `src/modules/board/presentation/hooks/ticket/useTickets.ts`
@@ -103,6 +105,51 @@ export const useCreateTicket = () => {
 };
 ```
 
+## Composition Hook Pattern
+
+A composition owner such as `viewer` may aggregate hooks from other owners.
+
+This is the preferred pattern for current-user UI that would otherwise keep
+repeating `session + profile + capability` wiring in many components.
+
+```typescript
+import { useMemo } from "react";
+
+import { useSession } from "@/domains/session/presentation/hooks/useSession";
+import { useMyProfile } from "@/domains/profile/presentation/hooks/profile/useMyProfile";
+
+export const useViewer = () => {
+  const sessionQuery = useSession();
+  const profileQuery = useMyProfile();
+
+  const data = useMemo(() => {
+    if (!sessionQuery.data) {
+      return null;
+    }
+
+    return {
+      userId: sessionQuery.data.userId,
+      loginEmail: sessionQuery.data.loginEmail,
+      displayName: profileQuery.data?.displayName ?? null,
+      avatarUrl: profileQuery.data?.avatarUrl ?? null,
+      isSuperuser: sessionQuery.data.isSuperuser,
+    };
+  }, [profileQuery.data, sessionQuery.data]);
+
+  return {
+    data,
+    isLoading: sessionQuery.isLoading || profileQuery.isLoading,
+  };
+};
+```
+
+Rules for composition owners:
+
+- compose read hooks, do not own their mutations
+- do not duplicate business rules from the source owners
+- avoid exposing raw tokens broadly through the composed model
+- prefer explicit names such as `loginEmail` over ambiguous `email`
+
 ## Rules
 
 - Hooks belong to a domain or module, not to a global `src/presentation/hooks/` folder
@@ -111,6 +158,7 @@ export const useCreateTicket = () => {
 - Shared design-system components in `src/shared/design-system/` do not contain queries or mutations
 - `src/app/` routes should compose domain shells, domain pages, or module pages, not host React Query logic
 - Server-only billing webhooks or route handlers are not a replacement for owner-owned client hooks
+- Read-model owners such as `viewer` may compose other owner hooks instead of owning repositories
 
 ## Shared Infrastructure
 

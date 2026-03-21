@@ -6,8 +6,8 @@ import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/cli
 import { createLoggerFactory } from "@/shared/observability";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
-import { getCurrentSession } from "@/domains/auth/core/usecases/getCurrentSession";
-import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
+import { createSessionRepository } from "@/domains/session/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("LandingLayout");
 
@@ -24,11 +24,11 @@ const LandingLayout = async ({
   try {
     // Create server client with cookie handling
     const supabaseClient = await createSupabaseServerClient();
-    const authRepository = createAuthRepository(supabaseClient);
+    const sessionRepository = createSessionRepository(supabaseClient);
 
     // Check if user is authenticated (throws NotFoundError if no session)
     // If authenticated, redirect to workspace
-    await getCurrentSession(authRepository);
+    await getCurrentSession(sessionRepository);
     redirect(PAGE_ROUTES.WORKSPACE);
   } catch (error) {
     // Next.js redirect() throws a special error that must be re-thrown

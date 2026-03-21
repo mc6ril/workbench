@@ -3,20 +3,20 @@ import {
   createAuthError,
   mockAuthResult,
   mockAuthResultWithEmailVerification,
-  mockAuthSession,
 } from "../../../../__mocks__/core/domain/authMocks";
+// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+import { mockCurrentSession } from "../../../../__mocks__/core/domain/sessionMocks";
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+import { createSessionRepositoryMock } from "../../../../__mocks__/core/ports/sessionRepository";
 
-import type {
-  AuthResult,
-  AuthSession,
-} from "@/domains/auth/core/domain/auth.schema";
-import { getCurrentSession } from "@/domains/auth/core/usecases/getCurrentSession";
+import type { AuthResult } from "@/domains/auth/core/domain/auth.schema";
 import { signInUser } from "@/domains/auth/core/usecases/user/signInUser";
 import { signUpUser } from "@/domains/auth/core/usecases/user/signUpUser";
+import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
 import {
   ProjectRole,
   type ProjectWithRole,
@@ -45,7 +45,9 @@ describe("Auth Flow Tests", () => {
         signUp: jest.fn<Promise<AuthResult>, [typeof mockSignUpInput]>(
           async () => mockAuthResultWithEmailVerification
         ),
-        getSession: jest.fn<Promise<AuthSession | null>, []>(async () => null),
+      });
+      const sessionRepository = createSessionRepositoryMock({
+        getCurrentSession: jest.fn(async () => null),
       });
 
       // Act - Step 1: Sign up user
@@ -59,13 +61,13 @@ describe("Auth Flow Tests", () => {
       expect(signUpResult.session).toBeNull();
 
       // Act & Assert - Step 2: Get current session (should throw NotFoundError as email not verified)
-      await expect(getCurrentSession(authRepository)).rejects.toMatchObject({
+      await expect(getCurrentSession(sessionRepository)).rejects.toMatchObject({
         code: "NOT_FOUND",
         entityType: "Session",
         entityId: "",
       });
-      expect(authRepository.getSession).toHaveBeenCalledTimes(1);
-      expect(authRepository.getSession).toHaveBeenCalledWith();
+      expect(sessionRepository.getCurrentSession).toHaveBeenCalledTimes(1);
+      expect(sessionRepository.getCurrentSession).toHaveBeenCalledWith();
     });
 
     it("should handle error propagation in signup flow", async () => {
@@ -107,9 +109,9 @@ describe("Auth Flow Tests", () => {
         signIn: jest.fn<Promise<AuthResult>, [typeof mockSignInInput]>(
           async () => mockAuthResult
         ),
-        getSession: jest.fn<Promise<AuthSession | null>, []>(
-          async () => mockAuthSession
-        ),
+      });
+      const sessionRepository = createSessionRepositoryMock({
+        getCurrentSession: jest.fn(async () => mockCurrentSession),
       });
 
       const projectRepository = createProjectRepositoryMock({
@@ -126,13 +128,13 @@ describe("Auth Flow Tests", () => {
       expect(signInResult.session).not.toBeNull();
 
       // Act - Step 2: Get current session
-      const sessionResult = await getCurrentSession(authRepository);
+      const sessionResult = await getCurrentSession(sessionRepository);
 
       // Assert - Step 2: Session should be available
-      expect(authRepository.getSession).toHaveBeenCalledTimes(1);
-      expect(authRepository.getSession).toHaveBeenCalledWith();
-      expect(sessionResult).toEqual(mockAuthSession);
-      expect(sessionResult.email).toBe(mockAuthSession.email);
+      expect(sessionRepository.getCurrentSession).toHaveBeenCalledTimes(1);
+      expect(sessionRepository.getCurrentSession).toHaveBeenCalledWith();
+      expect(sessionResult).toEqual(mockCurrentSession);
+      expect(sessionResult.loginEmail).toBe(mockCurrentSession.loginEmail);
 
       // Act - Step 3: List projects
       const projectsResult = await listProjects(projectRepository);
@@ -171,7 +173,9 @@ describe("Auth Flow Tests", () => {
         signIn: jest.fn<Promise<AuthResult>, [typeof mockSignInInput]>(
           async () => mockAuthResult
         ),
-        getSession: jest.fn<Promise<AuthSession | null>, []>(async () => {
+      });
+      const sessionRepository = createSessionRepositoryMock({
+        getCurrentSession: jest.fn(async () => {
           throw createAuthError.authentication("Session retrieval failed");
         }),
       });
@@ -184,7 +188,7 @@ describe("Auth Flow Tests", () => {
       await signInUser(authRepository, mockSignInInput);
 
       // Act & Assert - Step 2: Get session (should fail)
-      await expect(getCurrentSession(authRepository)).rejects.toMatchObject({
+      await expect(getCurrentSession(sessionRepository)).rejects.toMatchObject({
         code: "AUTHENTICATION_ERROR",
       });
 

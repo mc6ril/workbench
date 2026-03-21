@@ -1,21 +1,22 @@
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import {
   createAuthError,
-  mockAuthSession,
 } from "../../../../__mocks__/core/domain/authMocks";
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
-import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
+import { mockCurrentSession } from "../../../../__mocks__/core/domain/sessionMocks";
+// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+import { createSessionRepositoryMock } from "../../../../__mocks__/core/ports/sessionRepository";
 
-import type { AuthSession } from "@/domains/auth/core/domain/auth.schema";
-import { getCurrentSession } from "@/domains/auth/core/usecases/getCurrentSession";
+import type { CurrentSession } from "@/domains/session/core/domain/currentSession.schema";
+import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
 
 describe("getCurrentSession", () => {
-  const mockSession = mockAuthSession;
+  const mockSession = mockCurrentSession;
 
   it("should return session when user is authenticated", async () => {
     // Arrange
-    const repository = createAuthRepositoryMock({
-      getSession: jest.fn<Promise<AuthSession | null>, []>(
+    const repository = createSessionRepositoryMock({
+      getCurrentSession: jest.fn<Promise<CurrentSession | null>, []>(
         async () => mockSession
       ),
     });
@@ -24,15 +25,17 @@ describe("getCurrentSession", () => {
     const result = await getCurrentSession(repository);
 
     // Assert
-    expect(repository.getSession).toHaveBeenCalledTimes(1);
-    expect(repository.getSession).toHaveBeenCalledWith();
+    expect(repository.getCurrentSession).toHaveBeenCalledTimes(1);
+    expect(repository.getCurrentSession).toHaveBeenCalledWith();
     expect(result).toEqual(mockSession);
   });
 
   it("should throw NotFoundError when no session exists", async () => {
     // Arrange
-    const repository = createAuthRepositoryMock({
-      getSession: jest.fn<Promise<AuthSession | null>, []>(async () => null),
+    const repository = createSessionRepositoryMock({
+      getCurrentSession: jest.fn<Promise<CurrentSession | null>, []>(
+        async () => null
+      ),
     });
 
     // Act & Assert
@@ -41,8 +44,8 @@ describe("getCurrentSession", () => {
       entityType: "Session",
       entityId: "",
     });
-    expect(repository.getSession).toHaveBeenCalledTimes(1);
-    expect(repository.getSession).toHaveBeenCalledWith();
+    expect(repository.getCurrentSession).toHaveBeenCalledTimes(1);
+    expect(repository.getCurrentSession).toHaveBeenCalledWith();
   });
 
   it("should propagate authentication error from repository", async () => {
@@ -50,10 +53,12 @@ describe("getCurrentSession", () => {
     const repositoryError = createAuthError.authentication(
       "Session retrieval failed"
     );
-    const repository = createAuthRepositoryMock({
-      getSession: jest.fn<Promise<AuthSession | null>, []>(async () => {
-        throw repositoryError;
-      }),
+    const repository = createSessionRepositoryMock({
+      getCurrentSession: jest.fn<Promise<CurrentSession | null>, []>(
+        async () => {
+          throw repositoryError;
+        }
+      ),
     });
 
     // Act & Assert
@@ -66,6 +71,6 @@ describe("getCurrentSession", () => {
       });
       expect(error).toHaveProperty("debugMessage");
     }
-    expect(repository.getSession).toHaveBeenCalledTimes(1);
+    expect(repository.getCurrentSession).toHaveBeenCalledTimes(1);
   });
 });

@@ -107,7 +107,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-serif, "Cormorant Garamond"), Georgia, serif;
   font-weight: $font-weight-bold;
   line-height: $line-height-tight;
   color: $color-text-primary;

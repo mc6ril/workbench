@@ -27,8 +27,7 @@ export const extractAuthProviders = (
 
 /**
  * Password updates stay available whenever the email provider is linked.
- * If Supabase exposes no provider metadata, default to `true` to avoid
- * blocking legacy email/password users.
+ * If Supabase exposes no provider metadata, default to `true`.
  */
 export const canUpdatePasswordFromAppMetadata = (
   appMetadata: Record<string, unknown> | undefined

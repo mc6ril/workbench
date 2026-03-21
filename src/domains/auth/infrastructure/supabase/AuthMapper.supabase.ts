@@ -1,10 +1,7 @@
-import type { Session } from "@supabase/supabase-js";
-
 import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
 
 import type {
   AuthenticationFailure,
-  AuthSession,
   EmailAlreadyExistsError,
   EmailVerificationError,
   InvalidCredentialsError,
@@ -14,35 +11,6 @@ import type {
   SamePasswordError,
   WeakPasswordError,
 } from "@/domains/auth/core/domain/auth.schema";
-
-/**
- * Extracts the super user flag from Supabase app_metadata.
- * app_metadata is server-controlled and cannot be modified by the user.
- */
-const extractSuperuserFlag = (
-  appMetadata: Record<string, unknown> | undefined
-): boolean => {
-  return appMetadata?.is_superuser === true;
-};
-
-/**
- * Maps Supabase Session to an AuthSession.
- *
- * @param session - Supabase session
- * @param userEmail - User email from Supabase user object
- * @returns Auth session containing only authentication data
- */
-export const mapSupabaseSessionToDomain = (
-  session: Session,
-  userEmail: string
-): AuthSession => {
-  return {
-    userId: session.user.id,
-    email: userEmail,
-    accessToken: session.access_token,
-    isSuperuser: extractSuperuserFlag(session.user.app_metadata),
-  };
-};
 
 /**
  * Creates an invalid credentials error.

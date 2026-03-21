@@ -1,6 +1,5 @@
-import { useSession } from "@/shared/session";
-
 import { useUserProfile } from "@/domains/profile/presentation/hooks/profile/useUserProfile";
+import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 /**
  * Hook for fetching the current authenticated user's profile.
@@ -10,5 +9,3 @@ export const useMyProfile = () => {
 
   return useUserProfile(session?.userId);
 };
-
-export { useMyProfile as useCurrentUserProfile };

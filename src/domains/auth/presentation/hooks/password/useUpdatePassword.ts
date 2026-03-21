@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { UpdatePasswordInput } from "@/domains/auth/core/domain/auth.schema";
 import { updatePassword } from "@/domains/auth/core/usecases/password/updatePassword";
 import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
-import { invalidateAuthQueries } from "@/domains/auth/presentation/hooks/invalidateAuthQueries";
+import { invalidatePostAuthMutation } from "@/domains/auth/presentation/utils/invalidatePostAuthMutation";
 
 /**
  * Hook for updating password using a reset token.
@@ -16,7 +16,7 @@ export const useUpdatePassword = () => {
       updatePassword(authRepository, input),
     retry: false,
     onSuccess: async () => {
-      await invalidateAuthQueries(queryClient, { includeProjects: true });
+      await invalidatePostAuthMutation(queryClient, { includeProjects: true });
     },
   });
 };

@@ -8,7 +8,6 @@ import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/button";
 import Text from "@/shared/design-system/text";
 import { useTranslation } from "@/shared/i18n";
-import { useSession } from "@/shared/session";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
@@ -24,6 +23,7 @@ import {
   SubscriptionPlan,
 } from "@/domains/billing/core/domain/schema/subscription.schema";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
+import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 const PricingPage = () => {
   const router = useRouter();

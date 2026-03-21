@@ -12,6 +12,9 @@ Workbench is organized around:
 
 - stable domains:
   - `auth`
+  - `session`
+  - `profile`
+  - `viewer`
   - `billing`
   - `workspace`
   - `project`
@@ -77,13 +80,18 @@ Cross-cutting concerns live in `src/shared/`.
 
 ### 8. Specific Ownership Rules
 
-- **ALWAYS** keep account lifecycle in `src/domains/auth/`
+- **ALWAYS** keep auth mutations and action-oriented auth flows in `src/domains/auth/`
+- **ALWAYS** keep current identity/session state in `src/domains/session/`
+- **ALWAYS** keep user business data in `src/domains/profile/`
+- **ALWAYS** keep current-user read-only composition in `src/domains/viewer/`
 - **ALWAYS** keep workspace dashboard flows in `src/domains/workspace/`
 - **ALWAYS** keep project container logic in `src/domains/project/`
 - **ALWAYS** keep project members, invitations, roles, settings, and enabled-module rules in `src/domains/project/`
 - **ALWAYS** keep tickets, epics, sprints, labels, and board flows in `src/modules/board/`
 - **NEVER** put project container rules inside a module
 - **NEVER** put module-specific business rules inside `src/domains/project/`
+- **NEVER** put `accessToken`, auth claims, or identity state inside `src/domains/profile/`
+- **NEVER** turn `src/domains/viewer/` into a mutation owner or a duplicated business owner
 
 ### 9. Shared Layer - CROSS-CUTTING ONLY
 
@@ -93,6 +101,7 @@ Cross-cutting concerns live in `src/shared/`.
 - **ALWAYS** place generic shared constants, types, and utils in `src/shared/`
 - **NEVER** place auth-, billing-, workspace-, project-, or board-specific business rules in `src/shared/`
 - **NEVER** place owner-owned schemas in `src/shared/types/`
+- **NEVER** place session-, profile-, or viewer-owned business rules in `src/shared/`
 
 ### 10. Dependency Direction
 
@@ -107,6 +116,7 @@ Cross-cutting concerns live in `src/shared/`.
 - **NEVER** reverse the direction
 - **NEVER** make one owner's presentation layer depend directly on another owner's infrastructure layer
 - **ALWAYS** treat `src/domains/project/` as the project container and `src/modules/*` as project-scoped capabilities
+- **ALWAYS** allow a read-model owner such as `viewer` to compose `session` and `profile` read hooks without taking ownership of their mutations
 
 ## FILE ORGANIZATION
 

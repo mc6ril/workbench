@@ -1,6 +1,5 @@
 import type {
   AuthResult,
-  AuthSession,
   ResetPasswordInput,
   SignInInput,
   SignUpInput,
@@ -44,19 +43,6 @@ export type AuthRepository = {
    * @throws AuthenticationFailure if signout fails
    */
   signOut(): Promise<void>;
-
-  /**
-   * Get the current user session.
-   * @returns Current session or null if no session exists
-   * @throws AuthenticationFailure if session retrieval fails
-   */
-  getSession(): Promise<AuthSession | null>;
-
-  /**
-   * Returns whether the current authenticated user can manage a password.
-   * OAuth-only accounts do not expose password updates from the application.
-   */
-  canUpdatePassword(): Promise<boolean>;
 
   /**
    * Request a password reset email.

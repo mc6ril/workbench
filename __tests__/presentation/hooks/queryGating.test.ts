@@ -5,7 +5,7 @@ jest.mock("@tanstack/react-query", () => ({
   useQuery: (...args: unknown[]) => useQueryMock(...args),
 }));
 
-jest.mock("@/shared/session", () => ({
+jest.mock("@/domains/session/presentation/hooks/useSession", () => ({
   useSession: (...args: unknown[]) => useSessionMock(...args),
 }));
 

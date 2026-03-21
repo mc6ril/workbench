@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { PASSWORD_LIMITS } from "@/domains/auth/core/domain/auth.constants";
+import { CurrentSessionSchema } from "@/domains/session/core/domain/currentSession.schema";
 
 /**
  * Reusable Zod schema for password validation.
@@ -144,25 +145,11 @@ export type AuthenticationError = AuthError & {
 };
 
 /**
- * Authentication session data.
- * Represents an authenticated user session.
- * isSuperuser comes from Supabase app_metadata.is_superuser (server-controlled, not user-editable).
- */
-export const AuthSessionSchema = z.object({
-  userId: z.string().uuid(),
-  email: z.string().email(),
-  accessToken: z.string(),
-  isSuperuser: z.boolean(),
-});
-
-export type AuthSession = z.infer<typeof AuthSessionSchema>;
-
-/**
  * Authentication result for signup/signin operations.
  * When email verification is required, session will be null and requiresEmailVerification will be true.
  */
 export const AuthResultSchema = z.object({
-  session: AuthSessionSchema.nullable(),
+  session: CurrentSessionSchema.nullable(),
   requiresEmailVerification: z.boolean().optional(),
 });
 

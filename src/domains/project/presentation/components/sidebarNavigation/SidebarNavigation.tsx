@@ -14,8 +14,6 @@ import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { markNavigationStart } from "@/shared/navigationPerf";
-import { useMyProfile } from "@/shared/profile";
-import { useSession } from "@/shared/session";
 
 import SidebarNavigationList from "./components/SidebarNavigationList";
 import SidebarProfileMenu from "./components/SidebarProfileMenu";
@@ -29,6 +27,7 @@ import { omitParentIdFilter } from "./SidebarNavigation.utils";
 import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import { useSidebarItems } from "@/domains/project/presentation/hooks/useSidebarItems";
+import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 import { usePrefetchWorkspaceProjects } from "@/domains/workspace/presentation/hooks/usePrefetchWorkspaceProjects";
 import { usePrefetchProjectViews } from "@/modules/board/presentation/hooks/project/usePrefetchProjectViews";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
@@ -48,8 +47,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const filters = useFilterStore((state) => state.filters);
   const search = useFilterStore((state) => state.search);
   const sort = useSortStore((state) => state.sort);
-  const { data: session } = useSession();
-  const { data: profile } = useMyProfile();
+  const { data: viewer } = useViewer();
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileTriggerRef = useRef<HTMLButtonElement>(null);
@@ -65,8 +63,8 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
     router.push(`${PAGE_ROUTES.PRICING}?from=${from}`);
   }, [router, pathname]);
 
-  const displayNameValue = profile?.displayName?.trim();
-  const emailValue = session?.email?.trim();
+  const displayNameValue = viewer?.displayName?.trim();
+  const emailValue = viewer?.loginEmail?.trim();
   const profileIdentity = displayNameValue || emailValue;
   const displayName = profileIdentity ?? t("profile.userFallbackName");
   const lockedAriaLabelTemplate = t("locked.ariaLabel");
@@ -117,8 +115,8 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
 
   const prefetchWorkspace = useCallback(() => {
     void router.prefetch(PAGE_ROUTES.WORKSPACE);
-    prefetchWorkspaceProjects(session?.userId);
-  }, [prefetchWorkspaceProjects, router, session?.userId]);
+    prefetchWorkspaceProjects(viewer?.userId);
+  }, [prefetchWorkspaceProjects, router, viewer?.userId]);
 
   const handleProfileTriggerClick = useCallback(() => {
     setProfileMenuOpen((prev) => {
@@ -213,7 +211,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
         profileMenuId={profileMenuId}
         profileMenuOpen={profileMenuOpen}
         displayName={displayName}
-        avatarUrl={profile?.avatarUrl}
+        avatarUrl={viewer?.avatarUrl}
         profileAriaLabel={t("profile.ariaLabel")}
         workspaceHref={workspaceHref}
         workspaceLabel={t("profile.backToWorkspace")}
