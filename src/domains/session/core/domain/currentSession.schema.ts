@@ -6,7 +6,7 @@ import { z } from "zod";
  */
 export const CurrentSessionSchema = z.object({
   userId: z.string().uuid(),
-  email: z.string().email(),
+  loginEmail: z.string().email(),
   accessToken: z.string(),
   isSuperuser: z.boolean(),
 });

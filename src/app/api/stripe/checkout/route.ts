@@ -91,7 +91,7 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       subscriptionRepo,
       {
         userId: session.userId,
-        email: session.email,
+        email: session.loginEmail,
         plan,
         successUrl: `${origin}${PAGE_ROUTES.ACCOUNT}?checkout=success`,
         cancelUrl: cancelUrl.toString(),

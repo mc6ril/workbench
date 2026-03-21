@@ -10,7 +10,7 @@ import { CurrentSessionSchema } from "@/domains/session/core/domain/currentSessi
  */
 export const CurrentViewerSchema = CurrentSessionSchema.pick({
   userId: true,
-  email: true,
+  loginEmail: true,
   isSuperuser: true,
 }).extend({
   displayName: UserProfileSchema.shape.displayName,

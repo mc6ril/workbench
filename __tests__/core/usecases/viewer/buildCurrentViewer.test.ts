@@ -25,7 +25,7 @@ describe("buildCurrentViewer", () => {
 
     expect(result).toEqual({
       userId: mockCurrentSession.userId,
-      email: mockCurrentSession.email,
+      loginEmail: mockCurrentSession.loginEmail,
       isSuperuser: mockCurrentSession.isSuperuser,
       displayName: "Cyril",
       avatarUrl: "https://example.com/avatar.webp",

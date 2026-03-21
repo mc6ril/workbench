@@ -134,7 +134,7 @@ describe("Auth Flow Tests", () => {
       expect(sessionRepository.getCurrentSession).toHaveBeenCalledTimes(1);
       expect(sessionRepository.getCurrentSession).toHaveBeenCalledWith();
       expect(sessionResult).toEqual(mockCurrentSession);
-      expect(sessionResult.email).toBe(mockCurrentSession.email);
+      expect(sessionResult.loginEmail).toBe(mockCurrentSession.loginEmail);
 
       // Act - Step 3: List projects
       const projectsResult = await listProjects(projectRepository);

@@ -20,8 +20,6 @@ import Text from "@/shared/design-system/text";
 import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { markNavigationStart } from "@/shared/navigationPerf";
-import { useMyProfile } from "@/shared/profile";
-import { useSession } from "@/shared/session";
 import { shouldShowLoading } from "@/shared/utils/queryStatus";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
@@ -30,6 +28,7 @@ import styles from "./styles.module.scss";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
+import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 import type { CreateProjectInput } from "@/domains/workspace/core/domain/schema/project.schema";
 import { CreateProjectInputSchema } from "@/domains/workspace/core/domain/schema/project.schema";
 import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
@@ -67,15 +66,10 @@ const stripWorkspaceEmojiPrefix = (value: string): string => {
 const WorkspacePage = () => {
   const router = useRouter();
   const {
-    data: session,
-    isLoading: isSessionLoading,
-    isFetching: isSessionFetching,
-  } = useSession();
-  const {
-    data: profile,
-    isLoading: isProfileLoading,
-    isFetching: isProfileFetching,
-  } = useMyProfile();
+    data: viewer,
+    isLoading: isViewerLoading,
+    isPending: isViewerPending,
+  } = useViewer();
   const {
     data: projects,
     isLoading: isLoadingProjects,
@@ -110,7 +104,7 @@ const WorkspacePage = () => {
   const tReclaim = useTranslation("pages.workspace.reclaimable");
   const tErrors = useTranslation("errors");
 
-  const displayName = profile?.displayName ?? t("userFallbackName");
+  const displayName = viewer?.displayName?.trim() || t("userFallbackName");
 
   const {
     register,
@@ -217,10 +211,8 @@ const WorkspacePage = () => {
   }, [selectedEmoji]);
 
   const showInitialLoader =
-    isSessionLoading ||
-    (session?.userId &&
-      (isProfileLoading || (isProfileFetching && profile === undefined))) ||
-    (isSessionFetching && !session?.userId) ||
+    isViewerLoading ||
+    isViewerPending ||
     (shouldShowLoading({
       isLoading: isLoadingProjects,
       isFetching: isFetchingProjects,

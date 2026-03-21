@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
@@ -11,8 +10,7 @@ import {
   getVerifyEmailRedirectErrorCode,
   parseVerifyEmailParams,
 } from "@/domains/auth/presentation/utils/verifyEmail";
-import { sessionRepository } from "@/domains/session/infrastructure/supabase/repositories";
-import { queryKeys } from "@/domains/session/presentation/hooks/queryKeys";
+import { useOptionalSession } from "@/domains/session/presentation/hooks/useOptionalSession";
 
 /**
  * Encapsulates the full email verification orchestration.
@@ -34,16 +32,13 @@ export const useVerifyEmailFlow = () => {
   }, [locationHash, searchParamsValue]);
   const hasVerificationAttempt =
     !!parsedParams.input || !!parsedParams.redirectError;
-  const recoverySessionQuery = useQuery({
-    queryKey: [
-      ...queryKeys.session.current(),
+  const recoverySessionQuery = useOptionalSession({
+    enabled: hasVerificationAttempt,
+    queryKeySuffix: [
       "verify-email-recovery",
       searchParamsValue,
       locationHash ?? "",
     ],
-    queryFn: () => sessionRepository.getCurrentSession(),
-    enabled: hasVerificationAttempt,
-    retry: false,
   });
   const hasRecoveredSession =
     hasVerificationAttempt && !!recoverySessionQuery.data;

@@ -15,8 +15,6 @@ import type {
   WeakPasswordError,
 } from "@/domains/auth/core/domain/auth.schema";
 
-export const mockAuthSession = mockCurrentSession;
-
 /**
  * Mock authentication result for testing.
  */

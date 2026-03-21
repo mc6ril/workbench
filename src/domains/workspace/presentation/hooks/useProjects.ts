@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { useSession } from "@/shared/session";
-
+import { useSession } from "@/domains/session/presentation/hooks/useSession";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 import { projectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";

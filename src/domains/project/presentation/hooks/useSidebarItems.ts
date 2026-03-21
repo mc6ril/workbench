@@ -2,7 +2,6 @@ import { useMemo } from "react";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
-import { useSession } from "@/shared/session";
 
 import { getEffectivePlan } from "@/domains/billing/core/domain/rules/planFeatures.rules";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
@@ -14,6 +13,7 @@ import {
   buildProjectViewHref,
   getProjectViewConfigsForSidebar,
 } from "@/domains/project/presentation/navigation/projectViews.config";
+import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 export const useSidebarItems = (projectId: string): SidebarItem[] => {
   const t = useTranslation("navigation.sidebar");

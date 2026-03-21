@@ -22,6 +22,7 @@ src/
     session/                    # current identity state: userId, loginEmail, accessToken, claims, auth capabilities
     profile/                    # reusable user business data: displayName, avatar, preferences
     viewer/                     # read-model composition for the current authenticated user
+    settings/                   # cross-owner account/settings surfaces
     billing/                    # plans, subscriptions, Stripe checkout/portal/webhooks
     workspace/                  # workspace dashboard: list/create/join projects
     project/                    # project container: settings, members, invitations, enabled modules
@@ -74,6 +75,13 @@ src/
 - Owns read-only composition for the current user.
 - Aggregates session + profile for app-facing consumption.
 - Must not own auth mutations or profile mutations.
+
+### `src/domains/settings/`
+
+- Owns cross-owner settings surfaces such as `/account`.
+- May start as a presentation-first domain with no `core/` or
+  `infrastructure/` folder if it only orchestrates existing owners.
+- Composes `viewer`, `profile`, `session`, `auth`, and `billing` when needed.
 
 ### `src/domains/billing/`
 
@@ -208,16 +216,17 @@ Additional rule:
 ### Always
 
 1. Keep routing in `src/app/` only.
-2. Keep account lifecycle in `src/domains/auth/`.
+2. Keep auth lifecycle in `src/domains/auth/`.
 3. Keep current identity/session state in `src/domains/session/`.
 4. Keep user business data in `src/domains/profile/`.
 5. Keep current-user read-model composition in `src/domains/viewer/`.
-6. Keep workspace entry flows in `src/domains/workspace/`.
-7. Keep project container logic in `src/domains/project/`.
-8. Keep project-scoped capabilities in `src/modules/<module>/`.
-9. Put reusable primitives in `src/shared/design-system/`.
-10. Keep `src/shared/` domain- and module-agnostic.
-11. Use shared infrastructure clients from `src/shared/infrastructure/*`.
+6. Keep cross-owner account/settings surfaces in `src/domains/settings/`.
+7. Keep workspace entry flows in `src/domains/workspace/`.
+8. Keep project container logic in `src/domains/project/`.
+9. Keep project-scoped capabilities in `src/modules/<module>/`.
+10. Put reusable primitives in `src/shared/design-system/`.
+11. Keep `src/shared/` domain- and module-agnostic.
+12. Use shared infrastructure clients from `src/shared/infrastructure/*`.
 
 ### Never
 
@@ -252,6 +261,6 @@ Workbench is no longer documented as a flat set of top-level business domains on
 
 It is documented as:
 
-- **domains** for stable business capabilities and identity/account ownership (`auth`, `session`, `profile`, `viewer`, `billing`, `workspace`, `project`)
+- **domains** for stable business capabilities and identity/settings ownership (`auth`, `session`, `profile`, `viewer`, `settings`, `billing`, `workspace`, `project`)
 - **modules** for project-scoped pluggable capabilities (`board`, then `recipes`, `vacation`, `budget`)
 - **shared** for strict cross-cutting code only

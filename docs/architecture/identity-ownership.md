@@ -1,4 +1,4 @@
-# Identity, Session, Profile, and Viewer Ownership
+# Identity, Session, Profile, Viewer, and Settings Ownership
 
 ## Purpose
 
@@ -11,6 +11,7 @@ The goal is to avoid mixing:
 - current identity state
 - profile data
 - app-level "current viewer" composition
+- account/settings surface composition
 
 ## Target Owners
 
@@ -19,7 +20,8 @@ The goal is to avoid mixing:
 | Authentication actions | `src/domains/auth/` | `signIn`, `signOut`, `signUp`, OAuth, reset password, delete account |
 | Current identity state | `src/domains/session/` | `userId`, `loginEmail`, `accessToken`, `isSuperuser`, `canUpdatePassword` |
 | User business data | `src/domains/profile/` | `displayName`, `avatarUrl`, preferences |
-| Current viewer read-model | `src/domains/viewer/` | `useViewer()`, account-surface composition, current-user display model |
+| Current viewer read-model | `src/domains/viewer/` | `useViewer()`, current-user display model |
+| Account/settings surfaces | `src/domains/settings/` | `/account`, cross-owner settings composition |
 
 ## Ownership Rules
 
@@ -92,6 +94,21 @@ Examples of fields that may belong in `CurrentViewer`:
 - no profile mutations
 - no business rules copied from `session` or `profile`
 
+### `settings`
+
+`settings` owns cross-owner settings surfaces such as `/account`.
+
+It is a composition owner for settings screens, not an owner of identity or
+profile data.
+
+Typical composition for the account surface:
+
+- `viewer` for the current-user read model
+- `profile` for editable business data such as avatar and preferences
+- `session` for identity state and auth-derived capabilities
+- `auth` for mutations such as sign-out, password, and delete-account flows
+- `billing` for subscription management
+
 ## Important Guardrails
 
 ### 1. `accessToken` is never profile data
@@ -139,28 +156,25 @@ Examples:
 - password reset page -> `auth`
 - profile editor internals -> `profile`
 - session guard or auth gate -> `session`
+- account/settings page shell -> `settings`
 
-## Current Transitional State
+## Current State
 
-The current codebase is not fully migrated yet.
+The current split is now explicit in the codebase:
 
-At the time of writing:
-
-- `profile` already owns profile data and profile mutations
-- `@/shared/profile` is the thin cross-domain bridge for current-profile access
-- `@/shared/session` still re-exports `useSession()` from the auth domain
-- some account-facing UI still composes `session`, `profile`, and auth actions
-  directly
-
-This is acceptable during migration, but new architectural decisions should
-target the owner split described above.
+- `auth` owns authentication mutations and action-oriented flows
+- `session` owns current identity state and auth-derived capabilities
+- `profile` owns user business data and profile mutations
+- `viewer` owns read-only current-user composition
+- `settings` owns `/account` and other cross-owner settings surfaces
 
 ## Migration Direction
 
 1. Keep `auth` focused on mutations/actions.
-2. Introduce `session` as the owner of current identity state.
+2. Keep `session` as the owner of current identity state.
 3. Keep `profile` focused on business profile data.
-4. Add `viewer` as the read-model consumed by most account/current-user UI.
+4. Keep `viewer` as the read-model consumed by most current-user UI.
+5. Keep `/account` and similar cross-owner settings screens in `settings`.
 
 ## Related Documents
 

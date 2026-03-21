@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 
-import { useSession } from "@/shared/session";
-
 import { useUserProfile } from "@/domains/profile/presentation/hooks/profile/useUserProfile";
+import { useSession } from "@/domains/session/presentation/hooks/useSession";
 import { buildCurrentViewer } from "@/domains/viewer/core/usecases/buildCurrentViewer";
 
 /**

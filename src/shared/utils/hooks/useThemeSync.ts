@@ -3,15 +3,14 @@
 import { useEffect } from "react";
 import { useTheme } from "next-themes";
 
-import { useMyProfile } from "@/shared/profile";
-
 import {
   type Theme,
   ThemeValues,
 } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
+import { useMyProfile } from "@/domains/profile/presentation/hooks/profile/useMyProfile";
 
 /**
- * Syncs the user's persisted theme preference (from Supabase session)
+ * Syncs the user's persisted theme preference from the profile
  * into next-themes on mount and whenever the preference changes.
  * Should be mounted once at the app root (e.g. in AppProvider).
  */

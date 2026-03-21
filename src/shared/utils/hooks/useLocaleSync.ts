@@ -5,10 +5,11 @@ import { useEffect } from "react";
 import { defaultLocale, supportedLocales } from "@/shared/i18n/config";
 import type { Locale } from "@/shared/i18n/types";
 import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
-import { useMyProfile } from "@/shared/profile";
+
+import { useMyProfile } from "@/domains/profile/presentation/hooks/profile/useMyProfile";
 
 /**
- * Syncs the locale store with the user's language preference from the session.
+ * Syncs the locale store with the user's language preference from the profile.
  * Should be mounted once at the app root (e.g. in AppProvider).
  */
 export const useLocaleSync = (): void => {

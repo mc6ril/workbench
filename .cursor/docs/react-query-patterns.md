@@ -115,8 +115,8 @@ repeating `session + profile + capability` wiring in many components.
 ```typescript
 import { useMemo } from "react";
 
-import { useSession } from "@/shared/session";
-import { useMyProfile } from "@/shared/profile";
+import { useSession } from "@/domains/session/presentation/hooks/useSession";
+import { useMyProfile } from "@/domains/profile/presentation/hooks/profile/useMyProfile";
 
 export const useViewer = () => {
   const sessionQuery = useSession();

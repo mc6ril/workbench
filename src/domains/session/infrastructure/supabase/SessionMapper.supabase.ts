@@ -21,7 +21,7 @@ export const mapSupabaseSessionToCurrentSession = (
 ): CurrentSession => {
   return {
     userId: session.user.id,
-    email: userEmail,
+    loginEmail: userEmail,
     accessToken: session.access_token,
     isSuperuser: extractSuperuserFlag(session.user.app_metadata),
   };

@@ -67,13 +67,13 @@ flowchart TD
 
    ROUTE -->|public auth| AUTH_ROUTE[Auth route composition]
    ROUTE -->|workspace| WS_ROUTE[Workspace route composition]
-   ROUTE -->|account| ACCOUNT_ROUTE[Account surface composition]
+   ROUTE -->|account| ACCOUNT_ROUTE[Account settings route composition]
    ROUTE -->|project shell| PROJECT_ROUTE[Project route composition]
    ROUTE -->|billing api| BILLING_ROUTE[Billing route composition]
 
    AUTH_ROUTE --> AUTH_PAGE[domains/auth/presentation/...]
    WS_ROUTE --> WS_PAGE[domains/workspace/presentation/...]
-   ACCOUNT_ROUTE --> ACCOUNT_PAGE[viewer/profile/session/auth composition]
+   ACCOUNT_ROUTE --> ACCOUNT_PAGE[domains/settings/presentation/pages/account]
    PROJECT_ROUTE --> PROJECT_SHELL[domains/project/presentation/layouts/projectShell/...]
    PROJECT_SHELL --> BOARD_PAGE[modules/board/presentation/pages/...]
    BILLING_ROUTE --> BILLING_FLOW[domains/billing/...]
@@ -111,6 +111,10 @@ flowchart LR
       subgraph VIEWER[viewer]
          VIEWER_PRE[presentation]
          VIEWER_CORE[core]
+      end
+
+      subgraph SETTINGS[settings]
+         SETTINGS_PRE[presentation]
       end
 
       subgraph BILLING[billing]

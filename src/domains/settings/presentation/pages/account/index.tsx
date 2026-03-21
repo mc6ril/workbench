@@ -26,8 +26,6 @@ import {
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import type { Locale } from "@/shared/i18n/types";
-import { useMyProfile } from "@/shared/profile";
-import { useSession } from "@/shared/session";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
@@ -53,9 +51,12 @@ import {
   useRemoveAvatar,
   useUploadAvatar,
 } from "@/domains/profile/presentation/hooks/profile/useAvatarUpload";
+import { useMyProfile } from "@/domains/profile/presentation/hooks/profile/useMyProfile";
 import { useUpdatePreferences } from "@/domains/profile/presentation/hooks/profile/useUpdatePreferences";
 import { useUpdateProfile } from "@/domains/profile/presentation/hooks/profile/useUpdateProfile";
 import { useCanUpdatePassword } from "@/domains/session/presentation/hooks/useCanUpdatePassword";
+import { useSession } from "@/domains/session/presentation/hooks/useSession";
+import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 
 const LANGUAGE_SELECT_OPTIONS = supportedLocaleOptions.map((locale) => ({
   value: locale.code,
@@ -68,6 +69,7 @@ const AccountPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, isLoading: isSessionLoading } = useSession();
+  const { data: viewer, isLoading: isViewerLoading } = useViewer();
   const { data: canUpdatePassword, isLoading: isPasswordCapabilityLoading } =
     useCanUpdatePassword(!!session?.userId);
   const { data: profile, isLoading: isProfileLoading } = useMyProfile();
@@ -107,8 +109,8 @@ const AccountPage = () => {
   const [nameDraft, setNameDraft] = useState<string | undefined>(undefined);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  const email = emailDraft ?? session?.email ?? "";
-  const name = nameDraft ?? profile?.displayName ?? "";
+  const email = emailDraft ?? viewer?.loginEmail ?? "";
+  const name = nameDraft ?? viewer?.displayName ?? "";
   const { setTheme } = useTheme();
 
   const profileEmailNotifications =
@@ -378,6 +380,7 @@ const AccountPage = () => {
 
   if (
     isSessionLoading ||
+    (session?.userId && isViewerLoading) ||
     (session?.userId && (isProfileLoading || isPasswordCapabilityLoading))
   ) {
     return (
@@ -435,7 +438,7 @@ const AccountPage = () => {
 
           <div className={styles["section-content"]}>
             <AvatarUpload
-              avatarUrl={profile?.avatarUrl}
+              avatarUrl={viewer?.avatarUrl}
               name={name || email}
               disabled={!session?.userId}
               isUploading={uploadAvatarMutation.isPending}

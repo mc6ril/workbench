@@ -1,8 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { useSession } from "@/shared/session";
-
 import {
   SubscriptionPlan,
   SubscriptionStatus,
@@ -10,6 +8,7 @@ import {
 import { getCurrentUserSubscription } from "@/domains/billing/core/usecases/getCurrentUserSubscription";
 import { subscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/billing/presentation/hooks/queryKeys";
+import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 /**
  * Hook for fetching the current user's subscription.

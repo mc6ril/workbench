@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { SignUpInput } from "@/domains/auth/core/domain/auth.schema";
 import { signUpUser } from "@/domains/auth/core/usecases/user/signUpUser";
 import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
-import { invalidateAuthQueries } from "@/domains/auth/presentation/hooks/invalidateAuthQueries";
+import { invalidatePostAuthMutation } from "@/domains/auth/presentation/utils/invalidatePostAuthMutation";
 
 /**
  * Hook for signing up a new user.
@@ -15,7 +15,7 @@ export const useSignUp = () => {
     mutationFn: (input: SignUpInput) => signUpUser(authRepository, input),
     retry: false,
     onSuccess: async () => {
-      await invalidateAuthQueries(queryClient, { includeProjects: true });
+      await invalidatePostAuthMutation(queryClient, { includeProjects: true });
     },
   });
 };

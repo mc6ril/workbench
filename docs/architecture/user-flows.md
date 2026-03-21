@@ -15,9 +15,10 @@ Route files should:
 ## Ownership Map
 
 - `src/domains/auth/presentation/` -> auth screens and auth action flows
-- `src/domains/session/presentation/` -> target owner for current identity/session state
+- `src/domains/session/presentation/` -> current identity/session state
 - `src/domains/profile/presentation/` -> profile editing and reusable current-profile flows
-- `src/domains/viewer/presentation/` -> target owner for current-user/account composition
+- `src/domains/viewer/presentation/` -> current-user read-model composition
+- `src/domains/settings/presentation/` -> account/settings surfaces that compose viewer, profile, session, auth, and billing
 - `src/domains/workspace/presentation/` -> workspace dashboard and create/join project entry UX
 - `src/domains/project/presentation/` -> project shell, project settings, members, invitations, enabled-module management
 - `src/modules/board/presentation/` -> board, epics, and board-specific screens
@@ -73,7 +74,7 @@ flowchart TD
    PROTECTED --> BILLING_ROUTE[/api/stripe/* composition]
 
    WORKSPACE_ROUTE --> WORKSPACE_DOMAIN[workspace presentation]
-   ACCOUNT_ROUTE --> ACCOUNT_SURFACE[viewer/profile/session/auth composition]
+   ACCOUNT_ROUTE --> SETTINGS_DOMAIN[settings presentation]
    PROJECT_ROUTE --> ACCESS_CHECK{Project access allowed?}
    ACCESS_CHECK -->|No| REDIRECT_WS[Redirect to /workspace]
    ACCESS_CHECK -->|Yes| PROJECT_SHELL[project shell]
@@ -130,11 +131,13 @@ flowchart TD
 
 ### Account route handling
 
-- Delegates account settings UI to an account surface that composes:
+- Delegates account settings UI to `src/domains/settings/presentation/pages/account/`.
+- That settings surface composes:
   - `viewer` for the current-user read model
   - `profile` for user business data
   - `session` for current identity state and capabilities
   - `auth` for action-oriented flows such as password or account deletion
+  - `billing` for subscription management
 
 ### Project route handling
 
@@ -172,8 +175,8 @@ Routing stays in `src/app/`, but route-specific rendering is delegated to the co
 - session state -> `src/domains/session/`
 - profile data -> `src/domains/profile/`
 - current-user/viewer composition -> `src/domains/viewer/`
+- account/settings surfaces -> `src/domains/settings/`
 - workspace routes -> `src/domains/workspace/`
-- account routes -> composed from `viewer`, `profile`, `session`, and `auth`
 - project container routes -> `src/domains/project/`
 - project module routes -> `src/modules/<module>/`
 - billing flows -> `src/domains/billing/`

@@ -87,7 +87,7 @@ export const createSessionRepository = (
 
         return {
           userId: user.id,
-          email: userEmail!,
+          loginEmail: userEmail!,
           accessToken: "",
           isSuperuser: user.app_metadata?.is_superuser === true,
         };

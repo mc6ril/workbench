@@ -20,50 +20,7 @@ These exceptions are:
 If one of these exceptions grows beyond the guardrails below, it should be
 treated as architecture drift rather than as an approved pattern.
 
-## 1. Shared Session Bridge
-
-- Canonical import: `@/shared/session`
-- Target owner: `src/domains/session/`
-- Current implementation owner: `src/domains/auth/` during migration
-
-### Why this exists
-
-Session access is consumed by multiple owners across the app surface:
-
-- billing pages and hooks
-- project shell navigation
-- workspace flows
-- project modules
-- shared synchronization hooks such as locale/theme sync
-
-Using one thin shared import keeps consumption consistent while the codebase
-converges toward a dedicated `session` owner.
-
-### Guardrails
-
-- `src/shared/session.ts` stays a thin re-export surface
-- identity/session state should move toward `src/domains/session/`
-- auth mutations and action-oriented flows remain in `src/domains/auth/`
-- shared hooks/providers may consume `@/shared/session` only for cross-cutting
-  synchronization concerns
-
-## 2. Shared Profile Bridge
-
-- Canonical import: `@/shared/profile`
-- Implementation owner: `src/domains/profile/`
-
-### Why this exists
-
-Current-profile access is consumed by multiple owners and should not force
-cross-domain imports from `profile` everywhere.
-
-### Guardrails
-
-- `src/shared/profile.ts` stays a thin re-export surface
-- profile mutations and profile business rules remain in `src/domains/profile/`
-- the bridge must not accumulate viewer-style composition logic
-
-## 3. Shared Feature Access Bridge
+## 1. Shared Feature Access Bridge
 
 - Canonical import: `@/shared/featureAccess`
 - Implementation owner: `src/domains/billing/`
@@ -83,7 +40,7 @@ owner of the underlying rules and hooks.
 - if the bridge starts accumulating business logic, ownership must move back to
   an explicit owner layer
 
-## 4. Owner-Local Supabase Row Types
+## 2. Owner-Local Supabase Row Types
 
 - Canonical locations:
   - `src/domains/*/infrastructure/supabase/types.ts`
@@ -106,7 +63,7 @@ shared and keeps boundaries explicit.
 - no business behavior, use cases, permissions, or owner orchestration belongs
   in these files
 
-## 5. Top-Level Presentation Root For Public/Static Pages
+## 3. Top-Level Presentation Root For Public/Static Pages
 
 - Canonical location: `src/presentation/pages/`
 - Current scope: landing and legal

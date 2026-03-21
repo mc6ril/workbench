@@ -25,6 +25,7 @@ That means:
 - `auth`, `session`, `profile`, `billing`, `workspace`, and `project` own
   their repository or gateway implementations when they own persistence or
   provider contracts
+- `settings` is a composition owner and usually owns no repository
 - `board` owns its own repositories and mappers
 - `viewer` is a read-model/composition owner and usually owns no repository
 - `shared/infrastructure/supabase/` owns browser/server/admin Supabase clients
@@ -53,6 +54,8 @@ src/
     viewer/
       core/
         usecases/
+      presentation/
+    settings/
       presentation/
     billing/
       core/
@@ -190,6 +193,8 @@ const ticketRepository = createTicketRepository(client);
   `displayName`, `avatarUrl`, and preferences
 - `src/domains/viewer/` owns the current-user read-model composed from
   `session` + `profile`, and should remain read-only
+- `src/domains/settings/` owns account/settings surfaces and usually only
+  orchestrates other owners instead of owning repositories
 - `src/domains/project/` owns project settings, members, invitations, permissions, and enabled-module configuration
 - `src/modules/board/` owns board data such as tickets, epics, sprints, and labels
 - `src/domains/workspace/` may orchestrate create/join flows, but project membership and invitation contracts remain project-owned
@@ -211,7 +216,7 @@ They are documented in [Accepted Architecture Exceptions](./accepted-exceptions.
 
 This currently includes:
 
-- the thin shared bridges `@/shared/session`, `@/shared/profile`, and `@/shared/featureAccess`
+- the thin shared bridge `@/shared/featureAccess`
 - owner-local low-level Supabase row types in each owner infrastructure `types.ts`
 
 ## Benefits

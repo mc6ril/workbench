@@ -5,7 +5,7 @@ import { PAGE_ROUTES } from "@/shared/constants/routes";
 
 import { signOutUser } from "@/domains/auth/core/usecases/user/signOutUser";
 import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
-import { invalidateAuthQueries } from "@/domains/auth/presentation/hooks/invalidateAuthQueries";
+import { invalidatePostAuthMutation } from "@/domains/auth/presentation/utils/invalidatePostAuthMutation";
 
 /**
  * Hook for signing out the current user.
@@ -18,7 +18,7 @@ export const useSignOut = () => {
   return useMutation({
     mutationFn: () => signOutUser(authRepository),
     onSuccess: async () => {
-      await invalidateAuthQueries(queryClient);
+      await invalidatePostAuthMutation(queryClient);
       queryClient.clear();
       router.push(PAGE_ROUTES.HOME);
     },
