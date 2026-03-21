@@ -1,0 +1,25 @@
+import type { UserProfile } from "@/domains/profile/core/domain/schema/userProfile.schema";
+import type { CurrentSession } from "@/domains/session/core/domain/currentSession.schema";
+import type { CurrentViewer } from "@/domains/viewer/core/domain/currentViewer.schema";
+
+type BuildCurrentViewerInput = {
+  profile: UserProfile;
+  session: CurrentSession;
+};
+
+/**
+ * Projects current session and current profile into a single read-model for UI.
+ */
+export const buildCurrentViewer = ({
+  profile,
+  session,
+}: BuildCurrentViewerInput): CurrentViewer => {
+  return {
+    userId: session.userId,
+    email: session.email,
+    isSuperuser: session.isSuperuser,
+    displayName: profile.displayName,
+    avatarUrl: profile.avatarUrl,
+    preferences: profile.preferences,
+  };
+};
