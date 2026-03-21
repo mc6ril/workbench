@@ -1,6 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query";
 
 import { queryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
+import { queryKeys as sessionQueryKeys } from "@/domains/session/presentation/hooks/queryKeys";
 
 type InvalidateAuthQueriesOptions = {
   includeProjects?: boolean;
@@ -14,10 +15,11 @@ export const invalidateAuthQueries = async (
   options: InvalidateAuthQueriesOptions = {}
 ): Promise<void> => {
   const invalidations: Promise<unknown>[] = [
-    queryClient.invalidateQueries({ queryKey: queryKeys.auth.session() }),
-    queryClient.invalidateQueries({ queryKey: queryKeys.auth.user() }),
     queryClient.invalidateQueries({
-      queryKey: queryKeys.auth.passwordCapability(),
+      queryKey: sessionQueryKeys.session.current(),
+    }),
+    queryClient.invalidateQueries({
+      queryKey: sessionQueryKeys.session.passwordCapability(),
     }),
   ];
 

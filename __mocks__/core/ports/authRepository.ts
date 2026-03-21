@@ -1,6 +1,5 @@
 import type {
   AuthResult,
-  AuthSession,
   ResetPasswordInput,
   SignInInput,
   SignUpInput,
@@ -16,8 +15,6 @@ export type AuthRepositoryMock = {
   signUp: jest.Mock<Promise<AuthResult>, [SignUpInput]>;
   signIn: jest.Mock<Promise<AuthResult>, [SignInInput]>;
   signOut: jest.Mock<Promise<void>, []>;
-  getSession: jest.Mock<Promise<AuthSession | null>, []>;
-  canUpdatePassword: jest.Mock<Promise<boolean>, []>;
   resetPasswordForEmail: jest.Mock<Promise<void>, [ResetPasswordInput]>;
   updatePassword: jest.Mock<Promise<AuthResult>, [UpdatePasswordInput]>;
   verifyEmail: jest.Mock<Promise<AuthResult>, [VerifyEmailInput]>;
@@ -44,8 +41,6 @@ export const createAuthRepositoryMock = (
     signUp: jest.fn<Promise<AuthResult>, [SignUpInput]>(),
     signIn: jest.fn<Promise<AuthResult>, [SignInInput]>(),
     signOut: jest.fn<Promise<void>, []>(),
-    getSession: jest.fn<Promise<AuthSession | null>, []>(),
-    canUpdatePassword: jest.fn<Promise<boolean>, []>(),
     resetPasswordForEmail: jest.fn<Promise<void>, [ResetPasswordInput]>(),
     updatePassword: jest.fn<Promise<AuthResult>, [UpdatePasswordInput]>(),
     verifyEmail: jest.fn<Promise<AuthResult>, [VerifyEmailInput]>(),

@@ -27,15 +27,14 @@ import {
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import type { Locale } from "@/shared/i18n/types";
 import { useMyProfile } from "@/shared/profile";
+import { useSession } from "@/shared/session";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
 
 import type { ChangePasswordFormInput } from "@/domains/auth/core/domain/auth.schema";
 import { ChangePasswordFormSchema } from "@/domains/auth/core/domain/auth.schema";
-import { useCanUpdatePassword } from "@/domains/auth/presentation/hooks/password/useCanUpdatePassword";
 import { useChangePassword } from "@/domains/auth/presentation/hooks/password/useChangePassword";
-import { useSession } from "@/domains/auth/presentation/hooks/session/useSession";
 import { useDeleteUser } from "@/domains/auth/presentation/hooks/user/useDeleteUser";
 import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";
 import {
@@ -56,6 +55,7 @@ import {
 } from "@/domains/profile/presentation/hooks/profile/useAvatarUpload";
 import { useUpdatePreferences } from "@/domains/profile/presentation/hooks/profile/useUpdatePreferences";
 import { useUpdateProfile } from "@/domains/profile/presentation/hooks/profile/useUpdateProfile";
+import { useCanUpdatePassword } from "@/domains/session/presentation/hooks/useCanUpdatePassword";
 
 const LANGUAGE_SELECT_OPTIONS = supportedLocaleOptions.map((locale) => ({
   value: locale.code,

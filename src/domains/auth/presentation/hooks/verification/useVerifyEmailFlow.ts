@@ -6,13 +6,13 @@ import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
-import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
-import { queryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
 import { useVerifyEmail } from "@/domains/auth/presentation/hooks/verification/useVerifyEmail";
 import {
   getVerifyEmailRedirectErrorCode,
   parseVerifyEmailParams,
 } from "@/domains/auth/presentation/utils/verifyEmail";
+import { sessionRepository } from "@/domains/session/infrastructure/supabase/repositories";
+import { queryKeys } from "@/domains/session/presentation/hooks/queryKeys";
 
 /**
  * Encapsulates the full email verification orchestration.
@@ -36,12 +36,12 @@ export const useVerifyEmailFlow = () => {
     !!parsedParams.input || !!parsedParams.redirectError;
   const recoverySessionQuery = useQuery({
     queryKey: [
-      ...queryKeys.auth.session(),
+      ...queryKeys.session.current(),
       "verify-email-recovery",
       searchParamsValue,
       locationHash ?? "",
     ],
-    queryFn: () => authRepository.getSession(),
+    queryFn: () => sessionRepository.getCurrentSession(),
     enabled: hasVerificationAttempt,
     retry: false,
   });

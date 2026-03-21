@@ -1,7 +1,8 @@
+import { mockCurrentSession } from "./sessionMocks";
+
 import type {
   AuthenticationError,
   AuthResult,
-  AuthSession,
   EmailAlreadyExistsError,
   EmailVerificationError,
   InvalidCredentialsError,
@@ -14,21 +15,13 @@ import type {
   WeakPasswordError,
 } from "@/domains/auth/core/domain/auth.schema";
 
-/**
- * Mock authentication session for testing.
- */
-export const mockAuthSession: AuthSession = {
-  userId: "123e4567-e89b-12d3-a456-426614174000",
-  email: "test@example.com",
-  accessToken: "mock-access-token",
-  isSuperuser: false,
-};
+export const mockAuthSession = mockCurrentSession;
 
 /**
  * Mock authentication result for testing.
  */
 export const mockAuthResult: AuthResult = {
-  session: mockAuthSession,
+  session: mockCurrentSession,
   requiresEmailVerification: false,
 };
 

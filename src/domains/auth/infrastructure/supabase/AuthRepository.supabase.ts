@@ -7,7 +7,6 @@ import { handleAuthError } from "@/shared/infrastructure/errors/errorHandlers";
 import type {
   AuthenticationError,
   AuthResult,
-  AuthSession,
   EmailAlreadyExistsError,
   EmailVerificationError,
   InvalidTokenError,
@@ -19,8 +18,8 @@ import type {
   VerifyEmailInput,
 } from "@/domains/auth/core/domain/auth.schema";
 import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
-import { mapSupabaseSessionToDomain } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
-import { canUpdatePasswordFromAppMetadata } from "@/domains/auth/infrastructure/supabase/authProviderCapabilities";
+import { mapSupabaseSessionToCurrentSession } from "@/domains/session/infrastructure/supabase/SessionMapper.supabase";
+import { canUpdatePasswordFromAppMetadata } from "@/domains/session/infrastructure/supabase/sessionProviderCapabilities";
 
 /**
  * Create an AuthRepository implementation using the provided Supabase client.
@@ -55,7 +54,7 @@ const mapVerifiedSessionToAuthResult = (
   const userEmail = session.user.email || fallbackEmail || "";
 
   return {
-    session: mapSupabaseSessionToDomain(session, userEmail),
+    session: mapSupabaseSessionToCurrentSession(session, userEmail),
     requiresEmailVerification: false,
   };
 };
@@ -72,46 +71,10 @@ const createPasswordUpdateAuthRequiredError = (): AuthenticationError => ({
   debugMessage: "User must be authenticated to update password",
 });
 
-const isAuthSessionMissingError = (error: unknown): boolean => {
-  return (
-    !!error &&
-    typeof error === "object" &&
-    "name" in error &&
-    error.name === "AuthSessionMissingError" &&
-    "message" in error &&
-    error.message === "Auth session missing!"
-  );
-};
-
 export const createAuthRepository = (
   client: SupabaseClient,
   adminClient?: SupabaseClient
 ): AuthRepository => ({
-  async canUpdatePassword(): Promise<boolean> {
-    try {
-      const {
-        data: { user },
-        error,
-      } = await client.auth.getUser();
-
-      if (error) {
-        if (isAuthSessionMissingError(error)) {
-          return false;
-        }
-
-        handleAuthError(error);
-      }
-
-      if (!user) {
-        return false;
-      }
-
-      return canUpdatePasswordFromAppMetadata(user.app_metadata);
-    } catch (error) {
-      return handleAuthError(error);
-    }
-  },
-
   async signUp(input: SignUpInput): Promise<AuthResult> {
     try {
       const metadata: Record<string, unknown> = {};
@@ -188,7 +151,7 @@ export const createAuthRepository = (
         handleAuthError(error);
       }
 
-      const baseSession = mapSupabaseSessionToDomain(
+      const baseSession = mapSupabaseSessionToCurrentSession(
         data.session!,
         data.user!.email || input.email
       );
@@ -217,7 +180,7 @@ export const createAuthRepository = (
         handleAuthError(error);
       }
 
-      const baseSession = mapSupabaseSessionToDomain(
+      const baseSession = mapSupabaseSessionToCurrentSession(
         data.session!,
         data.user!.email || input.email
       );
@@ -276,76 +239,6 @@ export const createAuthRepository = (
       }
     } catch (error) {
       handleAuthError(error);
-    }
-  },
-
-  async getSession(): Promise<AuthSession | null> {
-    try {
-      const isServerContext = typeof window === "undefined";
-
-      if (isServerContext) {
-        // Security-first server path: always validate auth with Supabase.
-        const {
-          data: { user },
-          error,
-        } = await client.auth.getUser();
-
-        if (error) {
-          if (isAuthSessionMissingError(error)) {
-            return null;
-          }
-
-          handleAuthError(error);
-        }
-
-        if (!user) {
-          return null;
-        }
-
-        const userEmail = user.email;
-        if (!userEmail) {
-          const error: AuthenticationError = {
-            code: "AUTHENTICATION_ERROR",
-            debugMessage: "User email not found in authenticated user data",
-          };
-          handleAuthError(error);
-        }
-
-        // Server-side flow has no direct session token available from getUser().
-        return {
-          userId: user.id,
-          email: userEmail!,
-          accessToken: "",
-          isSuperuser: user.app_metadata?.is_superuser === true,
-        };
-      } else {
-        const {
-          data: { session },
-          error,
-        } = await client.auth.getSession();
-
-        if (error) {
-          handleAuthError(error);
-        }
-
-        if (!session) {
-          return null;
-        }
-
-        const userEmail = session.user.email;
-        if (!userEmail) {
-          const error: AuthenticationError = {
-            code: "AUTHENTICATION_ERROR",
-            debugMessage: "User email not found in session",
-          };
-          handleAuthError(error);
-        }
-
-        const baseSession = mapSupabaseSessionToDomain(session, userEmail!);
-        return baseSession;
-      }
-    } catch (error) {
-      return handleAuthError(error);
     }
   },
 
@@ -417,7 +310,7 @@ export const createAuthRepository = (
         }
 
         const userEmail = verifyData.user!.email || input.email!;
-        const baseSession = mapSupabaseSessionToDomain(
+        const baseSession = mapSupabaseSessionToCurrentSession(
           verifyData.session!,
           userEmail
         );
@@ -468,7 +361,7 @@ export const createAuthRepository = (
         return handleAuthError(error);
       }
 
-      const baseSession = mapSupabaseSessionToDomain(
+      const baseSession = mapSupabaseSessionToCurrentSession(
         sessionData.session,
         user.email || ""
       );

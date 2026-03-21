@@ -1,13 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { useSession } from "@/shared/session";
+
 import { updateUser } from "@/domains/auth/core/usecases/user/updateUser";
 import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
-import { queryKeys as authQueryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
-import { useSession } from "@/domains/auth/presentation/hooks/session/useSession";
 import type { UpdateProfileInput } from "@/domains/profile/core/domain/schema/userProfile.schema";
 import { updateProfile } from "@/domains/profile/core/usecases/updateProfile";
 import { userProfileRepository } from "@/domains/profile/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
+import { queryKeys as sessionQueryKeys } from "@/domains/session/presentation/hooks/queryKeys";
 
 /**
  * Hook for updating user profile (display name) and optionally email.
@@ -31,10 +32,7 @@ export const useUpdateProfile = () => {
     onSuccess: (_data, variables) => {
       if (variables.email) {
         queryClient.invalidateQueries({
-          queryKey: authQueryKeys.auth.session(),
-        });
-        queryClient.invalidateQueries({
-          queryKey: authQueryKeys.auth.user(),
+          queryKey: sessionQueryKeys.session.current(),
         });
       }
       if (session) {

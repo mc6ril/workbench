@@ -1,10 +1,12 @@
 /**
  * Bridge export for session access across domains.
  *
- * `useSession` is implemented in `domains/auth` because it depends on auth
- * infrastructure. However, it is a cross-cutting concern used by billing,
- * board, and other domains that should not import from each other.
+ * Session hooks are implemented in `domains/session` because current identity
+ * state is shared across billing, board, profile, project, and auth surfaces.
  *
- * All domains import `useSession` from here — not from `@/domains/auth`.
+ * All domains import session reads from here, not from another domain owner.
  */
-export { useSession } from "@/domains/auth/presentation/hooks/session/useSession";
+export {
+  useCanUpdatePassword,
+  useSession,
+} from "@/domains/session/presentation/hooks";
