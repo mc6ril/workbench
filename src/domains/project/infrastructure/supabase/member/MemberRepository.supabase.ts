@@ -6,7 +6,7 @@ import { isProjectRole } from "@/shared/utils/guards";
 
 import { mapMemberRowsToDomain } from "./MemberMapper.supabase";
 
-import type { UserProfileRow } from "@/domains/auth/infrastructure/supabase/userProfile/types";
+import type { UserProfileRow } from "@/domains/profile/infrastructure/supabase/userProfile/types";
 import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";

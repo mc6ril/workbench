@@ -3,30 +3,19 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { APP_LIMITS } from "@/shared/constants/app";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 
+import { prepareAvatarUploadFile } from "./avatarUploadTransform.browser";
 import {
   mapUserProfileRowsToDomain,
   mapUserProfileRowToDomain,
 } from "./UserProfileMapper.supabase";
 
-import type { UserPreferences } from "@/domains/auth/core/domain/schema/auth.schema";
+import type { UserPreferences } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
 import type {
   UpdateProfileInput,
   UserProfile,
-} from "@/domains/auth/core/domain/schema/userProfile.schema";
-import type { UserProfileRepository } from "@/domains/auth/core/ports/userProfileRepository";
-import type { UserProfileRow } from "@/domains/auth/infrastructure/supabase/userProfile/types";
-
-/**
- * Extracts the file extension from a MIME type.
- */
-const getExtensionFromMime = (mimeType: string): string => {
-  const map: Record<string, string> = {
-    "image/jpeg": "jpg",
-    "image/png": "png",
-    "image/webp": "webp",
-  };
-  return map[mimeType] ?? "jpg";
-};
+} from "@/domains/profile/core/domain/schema/userProfile.schema";
+import type { UserProfileRepository } from "@/domains/profile/core/ports/userProfileRepository";
+import type { UserProfileRow } from "@/domains/profile/infrastructure/supabase/userProfile/types";
 
 /**
  * Create a UserProfileRepository implementation using the provided Supabase client.
@@ -117,8 +106,8 @@ export const createUserProfileRepository = (
   },
 
   async uploadAvatar(userId: string, file: File): Promise<string> {
-    if (file.size > APP_LIMITS.AVATAR.MAX_SIZE_BYTES) {
-      throw new Error("Avatar file size must not exceed 2MB");
+    if (file.size > APP_LIMITS.AVATAR.MAX_INPUT_SIZE_BYTES) {
+      throw new Error("Avatar file is too large to process");
     }
 
     if (
@@ -129,14 +118,22 @@ export const createUserProfileRepository = (
       throw new Error("Avatar must be a JPEG, PNG, or WebP image");
     }
 
-    const ext = getExtensionFromMime(file.type);
-    const filePath = `${userId}/avatar.${ext}`;
+    const { data: existingFiles, error: listError } = await client.storage
+      .from(APP_LIMITS.AVATAR.STORAGE_BUCKET)
+      .list(userId);
+
+    if (listError) {
+      return handleRepositoryError(listError, "Avatar", userId);
+    }
+
+    const preparedFile = await prepareAvatarUploadFile(file);
+    const filePath = `${userId}/avatar.webp`;
 
     const { error: uploadError } = await client.storage
       .from(APP_LIMITS.AVATAR.STORAGE_BUCKET)
-      .upload(filePath, file, {
+      .upload(filePath, preparedFile, {
         upsert: true,
-        contentType: file.type,
+        contentType: preparedFile.type,
       });
 
     if (uploadError) {
@@ -148,16 +145,36 @@ export const createUserProfileRepository = (
     } = client.storage
       .from(APP_LIMITS.AVATAR.STORAGE_BUCKET)
       .getPublicUrl(filePath);
+    const versionedPublicUrl = `${publicUrl}?v=${Date.now()}`;
 
     const { error: updateError } = await client.rpc("update_avatar_url", {
-      new_avatar_url: publicUrl,
+      new_avatar_url: versionedPublicUrl,
     });
 
     if (updateError) {
       return handleRepositoryError(updateError, "UserProfile", userId);
     }
 
-    return publicUrl;
+    const legacyFilePaths = (existingFiles ?? [])
+      .map((existingFile) => `${userId}/${existingFile.name}`)
+      .filter((existingFilePath) => existingFilePath !== filePath);
+
+    if (legacyFilePaths.length > 0) {
+      const { error: cleanupError } = await client.storage
+        .from(APP_LIMITS.AVATAR.STORAGE_BUCKET)
+        .remove(legacyFilePaths);
+
+      // Keep the successful upload visible to the user even if old legacy
+      // objects could not be cleaned up immediately.
+      if (cleanupError) {
+        console.warn("Failed to cleanup legacy avatar files", {
+          userId,
+          error: cleanupError,
+        });
+      }
+    }
+
+    return versionedPublicUrl;
   },
 
   async deleteAvatar(userId: string): Promise<void> {

@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   SignUpFormSchema,
   SignUpSchema,
-} from "@/domains/auth/core/domain/schema/auth.schema";
+} from "@/domains/auth/core/domain/auth.schema";
 
 describe("SignUpSchema", () => {
   const validInput = {
@@ -72,8 +72,8 @@ describe("SignUpFormSchema", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      const termsError = result.error.issues.find(
-        (issue: z.ZodIssue) => issue.path.includes("acceptedTerms")
+      const termsError = result.error.issues.find((issue: z.ZodIssue) =>
+        issue.path.includes("acceptedTerms")
       );
       expect(termsError).toBeDefined();
     }
@@ -92,8 +92,8 @@ describe("SignUpFormSchema", () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      const mismatchError = result.error.issues.find(
-        (issue: z.ZodIssue) => issue.path.includes("confirmPassword")
+      const mismatchError = result.error.issues.find((issue: z.ZodIssue) =>
+        issue.path.includes("confirmPassword")
       );
       expect(mismatchError).toBeDefined();
     }

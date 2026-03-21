@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { SignUpInput } from "@/domains/auth/core/domain/schema/auth.schema";
+import type { SignUpInput } from "@/domains/auth/core/domain/auth.schema";
 import { signUpUser } from "@/domains/auth/core/usecases/user/signUpUser";
 import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
-import { queryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
+import { invalidateAuthQueries } from "@/domains/auth/presentation/hooks/invalidateAuthQueries";
 
 /**
  * Hook for signing up a new user.
@@ -14,10 +14,8 @@ export const useSignUp = () => {
   return useMutation({
     mutationFn: (input: SignUpInput) => signUpUser(authRepository, input),
     retry: false,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.auth.session() });
-      queryClient.invalidateQueries({ queryKey: queryKeys.auth.user() });
-      queryClient.invalidateQueries({ queryKey: queryKeys.projects.all() });
+    onSuccess: async () => {
+      await invalidateAuthQueries(queryClient, { includeProjects: true });
     },
   });
 };

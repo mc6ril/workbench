@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { API_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 
-import { queryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
+import { invalidateAuthQueries } from "@/domains/auth/presentation/hooks/invalidateAuthQueries";
 
 /**
  * Hook for deleting the current user account.
@@ -24,9 +24,8 @@ export const useDeleteUser = () => {
         throw new Error(errorData.error || "Failed to delete user account");
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.auth.session() });
-      queryClient.invalidateQueries({ queryKey: queryKeys.auth.user() });
+    onSuccess: async () => {
+      await invalidateAuthQueries(queryClient);
       queryClient.clear();
       router.push(PAGE_ROUTES.HOME);
     },

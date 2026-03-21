@@ -2,8 +2,8 @@ import {
   type UpdatePreferencesInput,
   type UserPreferences,
   UserPreferencesSchema,
-} from "@/domains/auth/core/domain/schema/auth.schema";
-import type { UserProfileRepository } from "@/domains/auth/core/ports/userProfileRepository";
+} from "@/domains/profile/core/domain/schema/profilePreferences.schema";
+import type { UserProfileRepository } from "@/domains/profile/core/ports/userProfileRepository";
 
 /**
  * Update the current user's preferences.

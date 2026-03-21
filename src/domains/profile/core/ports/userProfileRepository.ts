@@ -1,8 +1,8 @@
-import type { UserPreferences } from "@/domains/auth/core/domain/schema/auth.schema";
+import type { UserPreferences } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
 import type {
   UpdateProfileInput,
   UserProfile,
-} from "@/domains/auth/core/domain/schema/userProfile.schema";
+} from "@/domains/profile/core/domain/schema/userProfile.schema";
 
 /**
  * Repository contract for UserProfile operations.
@@ -60,10 +60,11 @@ export type UserProfileRepository = {
 
   /**
    * Upload an avatar file to storage and update the profile's avatar_url.
-   * Overwrites any existing avatar for the user.
+   * The image is normalized to WebP before upload and overwrites any existing avatar for the user.
    * @param userId - User ID (must match authenticated user)
-   * @param file - Image file (jpeg, png, or webp, max 2MB)
+   * @param file - Image file (jpeg, png, or webp)
    * @returns Public URL of the uploaded avatar
+   * @throws Error if the image is too large to process or cannot be converted
    * @throws DatabaseError if upload or profile update fails
    */
   uploadAvatar(userId: string, file: File): Promise<string>;

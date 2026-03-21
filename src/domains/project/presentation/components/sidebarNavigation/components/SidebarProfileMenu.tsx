@@ -1,6 +1,7 @@
 import type { RefObject } from "react";
 import Link from "next/link";
 
+import Avatar from "@/shared/design-system/avatar";
 import { UserProfileIcon } from "@/shared/design-system/icons";
 
 import styles from "@/domains/project/presentation/components/sidebarNavigation/SidebarNavigation.module.scss";
@@ -12,7 +13,7 @@ type Props = {
   profileMenuId: string;
   profileMenuOpen: boolean;
   displayName: string;
-  initials: string;
+  avatarUrl?: string | null;
   profileAriaLabel: string;
   workspaceHref: string;
   workspaceLabel: string;
@@ -34,7 +35,7 @@ const SidebarProfileMenu = ({
   profileMenuId,
   profileMenuOpen,
   displayName,
-  initials,
+  avatarUrl,
   profileAriaLabel,
   workspaceHref,
   workspaceLabel,
@@ -65,7 +66,7 @@ const SidebarProfileMenu = ({
           className={styles["sidebar-navigation__profile-avatar"]}
           aria-hidden
         >
-          {initials}
+          <Avatar src={avatarUrl} name={displayName} size="md" />
         </span>
         <span className={styles["sidebar-navigation__profile-name"]}>
           {displayName}

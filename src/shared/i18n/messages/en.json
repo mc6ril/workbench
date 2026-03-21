@@ -960,7 +960,8 @@
         },
         "changeButton": "Change password",
         "changeButtonAriaLabel": "Change password",
-        "changingButton": "Changing..."
+        "changingButton": "Changing...",
+        "oauthNotice": "This account uses OAuth sign-in. Password updates are not available from Workbench."
       },
       "preferences": {
         "title": "Preferences",
@@ -1460,7 +1461,8 @@
       "EMAIL_VERIFICATION_ERROR": "An error occurred during email verification",
       "PASSWORD_RESET_ERROR": "An error occurred during password reset",
       "INVALID_TOKEN": "The link is invalid or has expired. Please request a new one",
-      "SAME_PASSWORD": "New password must be different from the current one"
+      "SAME_PASSWORD": "New password must be different from the current one",
+      "PASSWORD_UPDATE_NOT_ALLOWED": "This account uses an external sign-in provider. Password updates are not available."
     },
     "repository": {
       "NOT_FOUND": "Resource not found",
@@ -1512,11 +1514,12 @@
       "remove": "Remove",
       "removeAriaLabel": "Remove profile picture",
       "selectFile": "Select an image file",
-      "hint": "JPEG, PNG, or WebP. 2 MB max.",
+      "hint": "JPEG, PNG, or WebP.",
       "uploadSuccess": "Profile picture updated",
       "removeSuccess": "Profile picture removed",
-      "errorTooLarge": "File is too large (2 MB max)",
-      "errorInvalidType": "Unsupported format. Use JPEG, PNG, or WebP"
+      "errorTooLarge": "File is too large to process",
+      "errorInvalidType": "Unsupported format. Use JPEG, PNG, or WebP",
+      "errorProcessing": "The image could not be prepared. Try another file."
     }
   }
 }

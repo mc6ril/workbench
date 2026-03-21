@@ -20,12 +20,12 @@ import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
 import styles from "./styles.module.scss";
 
-import { getNextUnmetCriterion } from "@/domains/auth/core/domain/passwordStrength";
 import type {
   SignUpFormInput,
   SignUpInput,
-} from "@/domains/auth/core/domain/schema/auth.schema";
-import { SignUpFormSchema } from "@/domains/auth/core/domain/schema/auth.schema";
+} from "@/domains/auth/core/domain/auth.schema";
+import { SignUpFormSchema } from "@/domains/auth/core/domain/auth.schema";
+import { getNextUnmetCriterion } from "@/domains/auth/core/domain/passwordStrength";
 import PasswordStrengthIndicator from "@/domains/auth/presentation/components/PasswordStrengthIndicator";
 import { useSignInWithGoogle } from "@/domains/auth/presentation/hooks/user/useSignInWithGoogle";
 import { useSignUp } from "@/domains/auth/presentation/hooks/user/useSignUp";

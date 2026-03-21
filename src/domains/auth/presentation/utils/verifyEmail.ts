@@ -1,7 +1,7 @@
 import type {
   VerifyEmailInput,
   VerifyEmailLinkType,
-} from "@/domains/auth/core/domain/schema/auth.schema";
+} from "@/domains/auth/core/domain/auth.schema";
 
 export type VerifyEmailRedirectError = {
   code: string | null;

@@ -20,6 +20,7 @@ import Text from "@/shared/design-system/text";
 import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { markNavigationStart } from "@/shared/navigationPerf";
+import { useMyProfile } from "@/shared/profile";
 import { useSession } from "@/shared/session";
 import { shouldShowLoading } from "@/shared/utils/queryStatus";
 import { buildProjectRoute } from "@/shared/utils/routes";
@@ -71,6 +72,11 @@ const WorkspacePage = () => {
     isFetching: isSessionFetching,
   } = useSession();
   const {
+    data: profile,
+    isLoading: isProfileLoading,
+    isFetching: isProfileFetching,
+  } = useMyProfile();
+  const {
     data: projects,
     isLoading: isLoadingProjects,
     isFetching: isFetchingProjects,
@@ -104,7 +110,7 @@ const WorkspacePage = () => {
   const tReclaim = useTranslation("pages.workspace.reclaimable");
   const tErrors = useTranslation("errors");
 
-  const displayName = session?.displayName ?? t("userFallbackName");
+  const displayName = profile?.displayName ?? t("userFallbackName");
 
   const {
     register,
@@ -212,7 +218,9 @@ const WorkspacePage = () => {
 
   const showInitialLoader =
     isSessionLoading ||
-    (isSessionFetching && !session?.displayName) ||
+    (session?.userId &&
+      (isProfileLoading || (isProfileFetching && profile === undefined))) ||
+    (isSessionFetching && !session?.userId) ||
     (shouldShowLoading({
       isLoading: isLoadingProjects,
       isFetching: isFetchingProjects,

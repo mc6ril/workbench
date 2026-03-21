@@ -32,7 +32,7 @@ const TicketMeta = ({
     <div className={className}>
       <span className={assigneeClassName}>
         <Avatar
-          src={assigneeAvatarUrl ?? "/default-profile.svg"}
+          src={assigneeAvatarUrl}
           name={assigneeName}
           size="sm"
           aria-label={

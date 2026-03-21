@@ -13,8 +13,7 @@ import type {
   PasswordResetError,
   SamePasswordError,
   WeakPasswordError,
-} from "@/domains/auth/core/domain/schema/auth.schema";
-import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
+} from "@/domains/auth/core/domain/auth.schema";
 
 /**
  * Extracts the super user flag from Supabase app_metadata.
@@ -27,13 +26,11 @@ const extractSuperuserFlag = (
 };
 
 /**
- * Maps Supabase Session to a base AuthSession.
- * displayName and preferences are set to defaults here;
- * they are enriched from user_profiles by the repository.
+ * Maps Supabase Session to an AuthSession.
  *
  * @param session - Supabase session
  * @param userEmail - User email from Supabase user object
- * @returns Base auth session (needs profile enrichment)
+ * @returns Auth session containing only authentication data
  */
 export const mapSupabaseSessionToDomain = (
   session: Session,
@@ -42,8 +39,6 @@ export const mapSupabaseSessionToDomain = (
   return {
     userId: session.user.id,
     email: userEmail,
-    displayName: null,
-    preferences: { ...DEFAULT_USER_PREFERENCES },
     accessToken: session.access_token,
     isSuperuser: extractSuperuserFlag(session.user.app_metadata),
   };

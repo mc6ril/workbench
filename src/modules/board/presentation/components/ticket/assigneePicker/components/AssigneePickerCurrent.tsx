@@ -1,10 +1,13 @@
 import Avatar from "@/shared/design-system/avatar";
 import Button from "@/shared/design-system/button";
 
+import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
 import styles from "@/modules/board/presentation/components/ticket/assigneePicker/AssigneePicker.module.scss";
+import { resolveAssigneeIdentity } from "@/modules/board/utils/assigneeUtils";
 
 type AssigneePickerCurrentProps = {
+  members: ProjectMember[];
   assignees: TicketAssignee[];
   noAssigneeLabel: string;
   assignLabel: string;
@@ -15,6 +18,7 @@ type AssigneePickerCurrentProps = {
 };
 
 const AssigneePickerCurrent = ({
+  members,
   assignees,
   noAssigneeLabel,
   assignLabel,
@@ -27,14 +31,18 @@ const AssigneePickerCurrent = ({
     <div className={styles["assignee-picker__current"]}>
       {assignees.length > 0 ? (
         <div className={styles["assignee-picker__avatars"]}>
-          {assignees.map((assignee) => (
-            <Avatar
-              key={assignee.userId}
-              src={assignee.avatarUrl}
-              name={assignee.displayName}
-              size="sm"
-            />
-          ))}
+          {assignees.map((assignee) => {
+            const assigneeIdentity = resolveAssigneeIdentity(assignee, members);
+
+            return (
+              <Avatar
+                key={assignee.userId}
+                src={assigneeIdentity.avatarUrl}
+                name={assigneeIdentity.displayName}
+                size="sm"
+              />
+            );
+          })}
         </div>
       ) : (
         <span className={styles["assignee-picker__empty"]}>{noAssigneeLabel}</span>

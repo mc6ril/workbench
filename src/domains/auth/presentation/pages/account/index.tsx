@@ -26,22 +26,15 @@ import {
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import type { Locale } from "@/shared/i18n/types";
+import { useMyProfile } from "@/shared/profile";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
 
-import type {
-  ChangePasswordFormInput,
-  Theme,
-} from "@/domains/auth/core/domain/schema/auth.schema";
-import {
-  ChangePasswordFormSchema,
-  DEFAULT_USER_PREFERENCES,
-  ThemeValues,
-} from "@/domains/auth/core/domain/schema/auth.schema";
+import type { ChangePasswordFormInput } from "@/domains/auth/core/domain/auth.schema";
+import { ChangePasswordFormSchema } from "@/domains/auth/core/domain/auth.schema";
+import { useCanUpdatePassword } from "@/domains/auth/presentation/hooks/password/useCanUpdatePassword";
 import { useChangePassword } from "@/domains/auth/presentation/hooks/password/useChangePassword";
-import { useUpdatePreferences } from "@/domains/auth/presentation/hooks/profile/useUpdatePreferences";
-import { useUpdateProfile } from "@/domains/auth/presentation/hooks/profile/useUpdateProfile";
 import { useSession } from "@/domains/auth/presentation/hooks/session/useSession";
 import { useDeleteUser } from "@/domains/auth/presentation/hooks/user/useDeleteUser";
 import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";
@@ -51,6 +44,18 @@ import {
 } from "@/domains/billing/core/domain/schema/subscription.schema";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
+import {
+  DEFAULT_USER_PREFERENCES,
+  type Theme,
+  ThemeValues,
+} from "@/domains/profile/core/domain/schema/profilePreferences.schema";
+import AvatarUpload from "@/domains/profile/presentation/components/avatarUpload/AvatarUpload";
+import {
+  useRemoveAvatar,
+  useUploadAvatar,
+} from "@/domains/profile/presentation/hooks/profile/useAvatarUpload";
+import { useUpdatePreferences } from "@/domains/profile/presentation/hooks/profile/useUpdatePreferences";
+import { useUpdateProfile } from "@/domains/profile/presentation/hooks/profile/useUpdateProfile";
 
 const LANGUAGE_SELECT_OPTIONS = supportedLocaleOptions.map((locale) => ({
   value: locale.code,
@@ -63,8 +68,13 @@ const AccountPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, isLoading: isSessionLoading } = useSession();
+  const { data: canUpdatePassword, isLoading: isPasswordCapabilityLoading } =
+    useCanUpdatePassword(!!session?.userId);
+  const { data: profile, isLoading: isProfileLoading } = useMyProfile();
   const updateProfileMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
+  const uploadAvatarMutation = useUploadAvatar();
+  const removeAvatarMutation = useRemoveAvatar();
   const updatePreferencesMutation = useUpdatePreferences();
   const deleteUserMutation = useDeleteUser();
   const signOutMutation = useSignOut();
@@ -74,6 +84,7 @@ const AccountPage = () => {
   const t = useTranslation("pages.account");
   const tErrors = useTranslation("errors");
   const tStripe = useTranslation("errors.stripe");
+  const tAvatar = useTranslation("ui.avatarUpload");
   const addToast = useToastStore((s) => s.addToast);
   const checkoutHandled = useRef(false);
 
@@ -97,34 +108,34 @@ const AccountPage = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const email = emailDraft ?? session?.email ?? "";
-  const name = nameDraft ?? session?.displayName ?? "";
+  const name = nameDraft ?? profile?.displayName ?? "";
   const { setTheme } = useTheme();
 
-  const sessionEmailNotifications =
-    session?.preferences.emailNotifications ??
+  const profileEmailNotifications =
+    profile?.preferences.emailNotifications ??
     DEFAULT_USER_PREFERENCES.emailNotifications;
-  const sessionTheme =
-    session?.preferences.theme ?? DEFAULT_USER_PREFERENCES.theme;
-  const sessionLanguage =
-    session?.preferences.language ?? DEFAULT_USER_PREFERENCES.language;
+  const profileTheme =
+    profile?.preferences.theme ?? DEFAULT_USER_PREFERENCES.theme;
+  const profileLanguage =
+    profile?.preferences.language ?? DEFAULT_USER_PREFERENCES.language;
   const [emailNotifications, setEmailNotifications] = useState<boolean>(
-    sessionEmailNotifications
+    profileEmailNotifications
   );
-  const [themePreference, setThemePreference] = useState<Theme>(sessionTheme);
+  const [themePreference, setThemePreference] = useState<Theme>(profileTheme);
   const [languagePreference, setLanguagePreference] =
-    useState<string>(sessionLanguage);
+    useState<string>(profileLanguage);
 
   useEffect(() => {
-    setEmailNotifications(sessionEmailNotifications);
-  }, [sessionEmailNotifications]);
+    setEmailNotifications(profileEmailNotifications);
+  }, [profileEmailNotifications]);
 
   useEffect(() => {
-    setThemePreference(sessionTheme);
-  }, [sessionTheme]);
+    setThemePreference(profileTheme);
+  }, [profileTheme]);
 
   useEffect(() => {
-    setLanguagePreference(sessionLanguage);
-  }, [sessionLanguage]);
+    setLanguagePreference(profileLanguage);
+  }, [profileLanguage]);
 
   const profileErrorMessage = useMemo(
     () =>
@@ -172,6 +183,94 @@ const AccountPage = () => {
   const handleProfileSave = useCallback(async () => {
     await updateProfileMutation.mutateAsync({ displayName: name, email });
   }, [updateProfileMutation, name, email]);
+
+  const getAvatarErrorMessage = useCallback(
+    (error: unknown) => {
+      if (
+        error instanceof Error &&
+        error.message.includes("Avatar file is too large to process")
+      ) {
+        return tAvatar("errorTooLarge");
+      }
+
+      if (
+        error instanceof Error &&
+        error.message.includes("Avatar must be a JPEG, PNG, or WebP image")
+      ) {
+        return tAvatar("errorInvalidType");
+      }
+
+      if (
+        error instanceof Error &&
+        error.message.includes("Avatar image could not be processed")
+      ) {
+        return tAvatar("errorProcessing");
+      }
+
+      return getErrorMessage(error as { code?: string }, tErrors);
+    },
+    [tAvatar, tErrors]
+  );
+
+  const handleAvatarFileSelect = useCallback(
+    async (file: File) => {
+      if (!session?.userId) {
+        return;
+      }
+
+      try {
+        await uploadAvatarMutation.mutateAsync({
+          userId: session.userId,
+          file,
+        });
+        addToast({
+          message: tAvatar("uploadSuccess"),
+          variant: "success",
+          duration: 4000,
+        });
+      } catch (error) {
+        addToast({
+          message: getAvatarErrorMessage(error),
+          variant: "error",
+          duration: 6000,
+        });
+      }
+    },
+    [
+      addToast,
+      getAvatarErrorMessage,
+      session?.userId,
+      tAvatar,
+      uploadAvatarMutation,
+    ]
+  );
+
+  const handleAvatarRemove = useCallback(async () => {
+    if (!session?.userId) {
+      return;
+    }
+
+    try {
+      await removeAvatarMutation.mutateAsync(session.userId);
+      addToast({
+        message: tAvatar("removeSuccess"),
+        variant: "success",
+        duration: 4000,
+      });
+    } catch (error) {
+      addToast({
+        message: getAvatarErrorMessage(error),
+        variant: "error",
+        duration: 6000,
+      });
+    }
+  }, [
+    addToast,
+    getAvatarErrorMessage,
+    removeAvatarMutation,
+    session?.userId,
+    tAvatar,
+  ]);
 
   const onPasswordSubmit: SubmitHandler<ChangePasswordFormInput> = useCallback(
     async (data) => {
@@ -275,7 +374,12 @@ const AccountPage = () => {
     [updatePreferencesMutation, setLocale]
   );
 
-  if (isSessionLoading) {
+  const canManagePassword = canUpdatePassword ?? true;
+
+  if (
+    isSessionLoading ||
+    (session?.userId && (isProfileLoading || isPasswordCapabilityLoading))
+  ) {
     return (
       <main className={styles["account-page"]}>
         <Loader variant="full-page" />
@@ -330,6 +434,20 @@ const AccountPage = () => {
           </div>
 
           <div className={styles["section-content"]}>
+            <AvatarUpload
+              avatarUrl={profile?.avatarUrl}
+              name={name || email}
+              disabled={!session?.userId}
+              isUploading={uploadAvatarMutation.isPending}
+              isRemoving={removeAvatarMutation.isPending}
+              onFileSelect={(file) => {
+                void handleAvatarFileSelect(file);
+              }}
+              onRemove={() => {
+                void handleAvatarRemove();
+              }}
+            />
+
             {updateProfileMutation.isSuccess && (
               <div
                 className={styles["success-message"]}
@@ -380,88 +498,109 @@ const AccountPage = () => {
         </section>
 
         {/* Security */}
-        <section
-          className={styles["account-section"]}
-          aria-labelledby={getAccessibilityId("account-security-title")}
-        >
-          <div className={styles["section-header"]}>
-            <div className={styles["section-header__icon"]} aria-hidden="true">
-              {t("security.icon")}
-            </div>
-            <div>
-              <h2
-                id={getAccessibilityId("account-security-title")}
-                className={styles["section-title"]}
-              >
-                {t("security.title")}
-              </h2>
-              <p className={styles["section-description"]}>
-                {t("security.description")}
-              </p>
-            </div>
-          </div>
-
-          <div className={styles["section-content"]}>
-            {changePasswordMutation.isSuccess && (
+        {canManagePassword && (
+          <section
+            className={styles["account-section"]}
+            aria-labelledby={getAccessibilityId("account-security-title")}
+          >
+            <div className={styles["section-header"]}>
               <div
-                className={styles["success-message"]}
-                role="status"
-                aria-live="polite"
+                className={styles["section-header__icon"]}
+                aria-hidden="true"
               >
-                {t("success.passwordChanged")}
+                {t("security.icon")}
               </div>
-            )}
-
-            {passwordErrorMessage && (
-              <div role="alert" aria-live="assertive">
-                <Text variant="small">{passwordErrorMessage}</Text>
+              <div>
+                <h2
+                  id={getAccessibilityId("account-security-title")}
+                  className={styles["section-title"]}
+                >
+                  {t("security.title")}
+                </h2>
+                <p className={styles["section-description"]}>
+                  {t("security.description")}
+                </p>
               </div>
-            )}
+            </div>
 
-            <Form
-              onSubmit={handleSubmit(onPasswordSubmit)}
-              className={styles["account-form"]}
-              noValidate
-            >
-              <Input
-                label={t("security.fields.currentPassword.label")}
-                type="password"
-                placeholder={t("security.fields.currentPassword.placeholder")}
-                error={passwordErrors.currentPassword?.message}
-                {...register("currentPassword")}
-              />
+            <div className={styles["section-content"]}>
+              {canManagePassword ? (
+                <>
+                  {changePasswordMutation.isSuccess && (
+                    <div
+                      className={styles["success-message"]}
+                      role="status"
+                      aria-live="polite"
+                    >
+                      {t("success.passwordChanged")}
+                    </div>
+                  )}
 
-              <Input
-                label={t("security.fields.newPassword.label")}
-                type="password"
-                placeholder={t("security.fields.newPassword.placeholder")}
-                error={passwordErrors.newPassword?.message}
-                {...register("newPassword")}
-              />
+                  {passwordErrorMessage && (
+                    <div role="alert" aria-live="assertive">
+                      <Text variant="small">{passwordErrorMessage}</Text>
+                    </div>
+                  )}
 
-              <Input
-                label={t("security.fields.confirmPassword.label")}
-                type="password"
-                placeholder={t("security.fields.confirmPassword.placeholder")}
-                error={passwordErrors.confirmPassword?.message}
-                {...register("confirmPassword")}
-              />
+                  <Form
+                    onSubmit={handleSubmit(onPasswordSubmit)}
+                    className={styles["account-form"]}
+                    noValidate
+                  >
+                    <Input
+                      label={t("security.fields.currentPassword.label")}
+                      type="password"
+                      placeholder={t(
+                        "security.fields.currentPassword.placeholder"
+                      )}
+                      error={passwordErrors.currentPassword?.message}
+                      {...register("currentPassword")}
+                    />
 
-              <div className={styles["form-actions"]}>
-                <Button
-                  label={
-                    changePasswordMutation.isPending
-                      ? t("security.changingButton")
-                      : t("security.changeButton")
-                  }
-                  type="submit"
-                  disabled={changePasswordMutation.isPending}
-                  aria-label={t("security.changeButtonAriaLabel")}
-                />
-              </div>
-            </Form>
-          </div>
-        </section>
+                    <Input
+                      label={t("security.fields.newPassword.label")}
+                      type="password"
+                      placeholder={t("security.fields.newPassword.placeholder")}
+                      error={passwordErrors.newPassword?.message}
+                      {...register("newPassword")}
+                    />
+
+                    <Input
+                      label={t("security.fields.confirmPassword.label")}
+                      type="password"
+                      placeholder={t(
+                        "security.fields.confirmPassword.placeholder"
+                      )}
+                      error={passwordErrors.confirmPassword?.message}
+                      {...register("confirmPassword")}
+                    />
+
+                    <div className={styles["form-actions"]}>
+                      <Button
+                        label={
+                          changePasswordMutation.isPending
+                            ? t("security.changingButton")
+                            : t("security.changeButton")
+                        }
+                        type="submit"
+                        disabled={changePasswordMutation.isPending}
+                        aria-label={t("security.changeButtonAriaLabel")}
+                      />
+                    </div>
+                  </Form>
+                </>
+              ) : (
+                <div
+                  className={styles["info-message"]}
+                  role="status"
+                  aria-live="polite"
+                >
+                  <Text variant="small">{t("security.oauthNotice")}</Text>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Preferences */}
         <section

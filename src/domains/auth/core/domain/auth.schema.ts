@@ -1,9 +1,6 @@
 import { z } from "zod";
 
-import {
-  DEFAULT_LANGUAGE,
-  PASSWORD_LIMITS,
-} from "@/domains/auth/core/domain/constants/auth.constants";
+import { PASSWORD_LIMITS } from "@/domains/auth/core/domain/auth.constants";
 
 /**
  * Reusable Zod schema for password validation.
@@ -147,55 +144,14 @@ export type AuthenticationError = AuthError & {
 };
 
 /**
- * Allowed theme values: light, dark, or system (follows OS preference).
- */
-export const ThemeValues = ["light", "dark", "system"] as const;
-export type Theme = (typeof ThemeValues)[number];
-
-/**
- * Zod schema for user preferences stored in user_profiles.preferences.
- */
-export const UserPreferencesSchema = z.object({
-  theme: z.enum(["light", "dark", "system"]),
-  emailNotifications: z.boolean(),
-  language: z.string().min(1),
-});
-
-/**
- * User preferences (theme, notifications, language).
- */
-export type UserPreferences = z.infer<typeof UserPreferencesSchema>;
-
-/**
- * Default preferences applied to new users or when stored preferences are missing/invalid.
- */
-export const DEFAULT_USER_PREFERENCES: UserPreferences = {
-  theme: "system",
-  emailNotifications: true,
-  language: DEFAULT_LANGUAGE,
-};
-
-/**
- * Input for partial preference updates.
- * Only the fields provided will be merged with existing preferences.
- */
-export const UpdatePreferencesInputSchema = UserPreferencesSchema.partial();
-export type UpdatePreferencesInput = z.infer<
-  typeof UpdatePreferencesInputSchema
->;
-
-/**
  * Authentication session data.
  * Represents an authenticated user session.
- * displayName and preferences come from the user_profiles table (single source of truth).
  * isSuperuser comes from Supabase app_metadata.is_superuser (server-controlled, not user-editable).
  */
 export const AuthSessionSchema = z.object({
   userId: z.string().uuid(),
   email: z.string().email(),
-  displayName: z.string().nullable(),
-  preferences: UserPreferencesSchema,
-  accessToken: z.string().min(1),
+  accessToken: z.string(),
   isSuperuser: z.boolean(),
 });
 
@@ -308,7 +264,7 @@ export type VerifyEmailInput = z.infer<typeof VerifyEmailSchema>;
 
 /**
  * Zod schema for updating auth credentials (email and/or password).
- * Profile data is managed via UserProfileRepository, not through auth.
+ * Profile data is managed in the profile domain, not through auth.
  */
 export const UpdateUserSchema = z.object({
   email: z.string().email("Invalid email format").optional(),
@@ -349,6 +305,13 @@ export type SamePasswordError = AuthError & {
 };
 
 /**
+ * Error when password updates are not available for the current auth method.
+ */
+export type PasswordUpdateNotAllowedError = AuthError & {
+  code: "PASSWORD_UPDATE_NOT_ALLOWED";
+};
+
+/**
  * Union type of all possible authentication errors.
  */
 export type AuthenticationFailure =
@@ -360,7 +323,8 @@ export type AuthenticationFailure =
   | EmailVerificationError
   | PasswordResetError
   | InvalidTokenError
-  | SamePasswordError;
+  | SamePasswordError
+  | PasswordUpdateNotAllowedError;
 
 /**
  * Zod schema for changing password from account settings.

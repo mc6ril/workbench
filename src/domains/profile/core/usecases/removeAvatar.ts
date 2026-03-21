@@ -1,5 +1,5 @@
-import { UploadAvatarInputSchema } from "@/domains/auth/core/domain/schema/userProfile.schema";
-import type { UserProfileRepository } from "@/domains/auth/core/ports/userProfileRepository";
+import { UploadAvatarInputSchema } from "@/domains/profile/core/domain/schema/userProfile.schema";
+import type { UserProfileRepository } from "@/domains/profile/core/ports/userProfileRepository";
 
 /**
  * Remove the avatar for the current user.
