@@ -18,7 +18,10 @@ The product is split between:
 src/
   app/                          # Next.js routing only
   domains/
-    auth/                       # account lifecycle: sign in/up, verify email, reset password, update profile, delete account
+    auth/                       # auth actions only: sign in/up, verify email, reset password, delete account
+    session/                    # current identity state: userId, loginEmail, accessToken, claims, auth capabilities
+    profile/                    # reusable user business data: displayName, avatar, preferences
+    viewer/                     # read-model composition for the current authenticated user
     billing/                    # plans, subscriptions, Stripe checkout/portal/webhooks
     workspace/                  # workspace dashboard: list/create/join projects
     project/                    # project container: settings, members, invitations, enabled modules
@@ -53,8 +56,24 @@ src/
 
 ### `src/domains/auth/`
 
-- Owns account lifecycle and identity flows.
-- Examples: sign in, sign up, OAuth callback, password reset, email verification, account preferences, delete account.
+- Owns authentication actions and action-oriented flows only.
+- Examples: sign in, sign up, OAuth callback, password reset, email verification, delete account.
+
+### `src/domains/session/`
+
+- Owns the current authenticated identity state.
+- Examples: `userId`, `loginEmail`, `accessToken`, auth-derived claims, `canUpdatePassword`.
+
+### `src/domains/profile/`
+
+- Owns user business data reused across the app.
+- Examples: `displayName`, `avatarUrl`, locale/theme/notification preferences.
+
+### `src/domains/viewer/`
+
+- Owns read-only composition for the current user.
+- Aggregates session + profile for app-facing consumption.
+- Must not own auth mutations or profile mutations.
 
 ### `src/domains/billing/`
 
@@ -134,6 +153,8 @@ src/modules/<module>/
 
 - Route-level and UI-level composition owned by the domain or module.
 - Components, hooks, stores, pages, layouts, navigation, and providers.
+- A read-model owner such as `viewer` may compose owner hooks from `session` and `profile`.
+- That composition must stay read-only and must not duplicate business ownership.
 
 ## Shared Layer Rules
 
@@ -188,12 +209,15 @@ Additional rule:
 
 1. Keep routing in `src/app/` only.
 2. Keep account lifecycle in `src/domains/auth/`.
-3. Keep workspace entry flows in `src/domains/workspace/`.
-4. Keep project container logic in `src/domains/project/`.
-5. Keep project-scoped capabilities in `src/modules/<module>/`.
-6. Put reusable primitives in `src/shared/design-system/`.
-7. Keep `src/shared/` domain- and module-agnostic.
-8. Use shared infrastructure clients from `src/shared/infrastructure/*`.
+3. Keep current identity/session state in `src/domains/session/`.
+4. Keep user business data in `src/domains/profile/`.
+5. Keep current-user read-model composition in `src/domains/viewer/`.
+6. Keep workspace entry flows in `src/domains/workspace/`.
+7. Keep project container logic in `src/domains/project/`.
+8. Keep project-scoped capabilities in `src/modules/<module>/`.
+9. Put reusable primitives in `src/shared/design-system/`.
+10. Keep `src/shared/` domain- and module-agnostic.
+11. Use shared infrastructure clients from `src/shared/infrastructure/*`.
 
 ### Never
 
@@ -203,6 +227,8 @@ Additional rule:
 4. Put module-specific business logic inside `src/domains/project/`.
 5. Put Supabase or Stripe client creation inside core/use cases.
 6. Treat `src/app/` as a business layer.
+7. Put `accessToken`, auth claims, or identity state inside `profile`.
+8. Turn `viewer` into a mutation owner or a god object.
 
 ## Concrete Example
 
@@ -226,6 +252,6 @@ Workbench is no longer documented as a flat set of top-level business domains on
 
 It is documented as:
 
-- **domains** for stable business capabilities (`auth`, `billing`, `workspace`, `project`)
+- **domains** for stable business capabilities and identity/account ownership (`auth`, `session`, `profile`, `viewer`, `billing`, `workspace`, `project`)
 - **modules** for project-scoped pluggable capabilities (`board`, then `recipes`, `vacation`, `budget`)
 - **shared** for strict cross-cutting code only

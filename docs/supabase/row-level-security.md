@@ -68,6 +68,8 @@ Invitation and profile collaboration functions include:
 ### User Projection Data (`user_profiles`, `subscriptions`)
 
 - User profile and subscription access are constrained to appropriate self/member scopes
+- `user_profiles` supports the app-level profile projection; authenticated
+  identity still comes from Supabase Auth/session state
 
 ## Operational Notes
 

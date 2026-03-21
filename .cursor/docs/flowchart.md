@@ -67,13 +67,13 @@ flowchart TD
 
    ROUTE -->|public auth| AUTH_ROUTE[Auth route composition]
    ROUTE -->|workspace| WS_ROUTE[Workspace route composition]
-   ROUTE -->|account| ACCOUNT_ROUTE[Auth account composition]
+   ROUTE -->|account| ACCOUNT_ROUTE[Account surface composition]
    ROUTE -->|project shell| PROJECT_ROUTE[Project route composition]
    ROUTE -->|billing api| BILLING_ROUTE[Billing route composition]
 
    AUTH_ROUTE --> AUTH_PAGE[domains/auth/presentation/...]
    WS_ROUTE --> WS_PAGE[domains/workspace/presentation/...]
-   ACCOUNT_ROUTE --> ACCOUNT_PAGE[domains/auth/presentation/pages/account/...]
+   ACCOUNT_ROUTE --> ACCOUNT_PAGE[viewer/profile/session/auth composition]
    PROJECT_ROUTE --> PROJECT_SHELL[domains/project/presentation/layouts/projectShell/...]
    PROJECT_SHELL --> BOARD_PAGE[modules/board/presentation/pages/...]
    BILLING_ROUTE --> BILLING_FLOW[domains/billing/...]
@@ -94,6 +94,23 @@ flowchart LR
          AUTH_PRE[presentation]
          AUTH_CORE[core]
          AUTH_INFRA[infrastructure]
+      end
+
+      subgraph SESSION[session]
+         SESSION_PRE[presentation]
+         SESSION_CORE[core]
+         SESSION_INFRA[infrastructure]
+      end
+
+      subgraph PROFILE[profile]
+         PROFILE_PRE[presentation]
+         PROFILE_CORE[core]
+         PROFILE_INFRA[infrastructure]
+      end
+
+      subgraph VIEWER[viewer]
+         VIEWER_PRE[presentation]
+         VIEWER_CORE[core]
       end
 
       subgraph BILLING[billing]
@@ -147,6 +164,7 @@ flowchart LR
    end
 
    APP1 --> AUTH_PRE
+   APP1 --> VIEWER_PRE
    APP1 --> WORKSPACE_PRE
    APP1 --> PROJECT_PRE
    PROJECT_PRE --> BOARD_PRE
@@ -154,6 +172,16 @@ flowchart LR
 
    AUTH_PRE --> AUTH_CORE
    AUTH_INFRA --> SHARED_4
+
+   SESSION_PRE --> SESSION_CORE
+   SESSION_INFRA --> SHARED_4
+
+   PROFILE_PRE --> PROFILE_CORE
+   PROFILE_INFRA --> SHARED_4
+
+   VIEWER_PRE --> VIEWER_CORE
+   VIEWER_PRE --> SESSION_PRE
+   VIEWER_PRE --> PROFILE_PRE
 
    BILLING_PRE --> BILLING_CORE
    BILLING_INFRA --> SHARED_5
@@ -198,4 +226,4 @@ flowchart TD
    CLIENT --> DB
 ```
 
-The routing layer composes domain shells and module pages. Domains own the container. Modules own project-scoped business flows. Infrastructure relies on shared technical clients.
+The routing layer composes domain shells and module pages. Session owns current identity state. Profile owns reusable user data. Viewer owns the read-only current-user composition consumed by the wider app. Modules own project-scoped business flows. Infrastructure relies on shared technical clients.
