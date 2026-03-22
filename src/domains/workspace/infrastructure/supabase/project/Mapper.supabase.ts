@@ -1,14 +1,8 @@
-export {
-  mapProjectRowsToDomain,
-  mapProjectRowToDomain,
-  mapProjectToProjectWithRole,
-} from "@/domains/project/infrastructure/supabase/project/ProjectMapper.supabase";
-
 import { ProjectRole } from "@/domains/project/core/domain/schema/project.schema";
 import type {
   ProjectWithStats,
   ReclaimableProject,
-} from "@/domains/workspace/core/domain/schema/workspaceProjectCatalog.schema";
+} from "@/domains/workspace/core/domain/workspaceProjectCatalog.schema";
 import type {
   ProjectWithStatsRow,
   ReclaimableProjectRow,

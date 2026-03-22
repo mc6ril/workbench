@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useUserProfile } from "@/domains/profile/presentation/hooks/profile/useUserProfile";
+import { useUserProfile } from "@/domains/profile/presentation/hooks/useUserProfile";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 import { buildCurrentViewer } from "@/domains/viewer/core/usecases/buildCurrentViewer";
 
@@ -29,11 +29,11 @@ export const useViewer = () => {
     data: viewer,
     error: sessionQuery.error ?? profileQuery.error ?? null,
     isError: sessionQuery.isError || profileQuery.isError,
-    isLoading:
-      sessionQuery.isLoading || (hasSession && profileQuery.isLoading),
-    isPending:
-      sessionQuery.isPending || (hasSession && profileQuery.isPending),
+    isLoading: sessionQuery.isLoading || (hasSession && profileQuery.isLoading),
+    isPending: sessionQuery.isPending || (hasSession && profileQuery.isPending),
     isSuccess:
-      !!viewer && sessionQuery.isSuccess && (!hasSession || profileQuery.isSuccess),
+      !!viewer &&
+      sessionQuery.isSuccess &&
+      (!hasSession || profileQuery.isSuccess),
   };
 };

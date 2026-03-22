@@ -1,5 +1,5 @@
-import type { Subscription } from "@/domains/billing/core/domain/schema/subscription.schema";
-import { DEFAULT_FREE_SUBSCRIPTION } from "@/domains/billing/core/domain/schema/subscription.schema";
+import type { Subscription } from "@/domains/billing/core/domain/subscription.schema";
+import { DEFAULT_FREE_SUBSCRIPTION } from "@/domains/billing/core/domain/subscription.schema";
 import type { SubscriptionRepository } from "@/domains/billing/core/ports/subscriptionRepository";
 
 /**

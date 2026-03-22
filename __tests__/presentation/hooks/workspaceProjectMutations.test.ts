@@ -11,7 +11,7 @@ jest.mock("@tanstack/react-query", () => ({
   }),
 }));
 
-jest.mock("@/domains/workspace/core/usecases/project/createProject", () => ({
+jest.mock("@/domains/project/core/usecases/project/createProject", () => ({
   createProject: jest.fn(),
 }));
 

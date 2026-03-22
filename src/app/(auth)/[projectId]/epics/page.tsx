@@ -4,7 +4,7 @@ import { Suspense, use } from "react";
 
 import Loader from "@/shared/design-system/loader";
 
-import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
+import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
 import FeatureGate from "@/domains/billing/presentation/layouts/featureGate/FeatureGate";
 import EpicsLayout from "@/modules/board/presentation/pages/epics";
 

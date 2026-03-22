@@ -1,4 +1,4 @@
-import type { ProjectWithStats } from "@/domains/workspace/core/domain/schema/workspaceProjectCatalog.schema";
+import type { ProjectWithStats } from "@/domains/workspace/core/domain/workspaceProjectCatalog.schema";
 import type { WorkspaceProjectCatalogRepository } from "@/domains/workspace/core/ports/workspaceProjectCatalogRepository";
 
 /**

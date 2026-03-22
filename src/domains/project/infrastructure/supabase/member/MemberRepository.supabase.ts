@@ -9,7 +9,7 @@ import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandl
 
 import { mapMemberRowsToDomain } from "./MemberMapper.supabase";
 
-import type { UserProfileRow } from "@/domains/profile/infrastructure/supabase/userProfile/types";
+import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
 import type { Project } from "@/domains/project/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";

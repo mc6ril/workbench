@@ -18,7 +18,7 @@ import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./ProjectCardActions.module.scss";
 
-import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
 import { ProjectRole } from "@/domains/project/core/domain/schema/project.schema";
 import { useInviteMember } from "@/domains/project/presentation/hooks/invitation/useInviteMember";
 import { useDeleteProject } from "@/domains/project/presentation/hooks/useDeleteProject";

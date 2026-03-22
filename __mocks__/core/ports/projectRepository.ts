@@ -6,7 +6,7 @@ import type {
 import type {
   ProjectWithStats,
   ReclaimableProject,
-} from "@/domains/workspace/core/domain/schema/workspaceProjectCatalog.schema";
+} from "@/domains/workspace/core/domain/workspaceProjectCatalog.schema";
 
 /**
  * Mock type for ProjectRepository.

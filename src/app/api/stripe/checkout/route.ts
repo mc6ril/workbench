@@ -8,7 +8,7 @@ import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
 import { createLoggerFactory } from "@/shared/observability";
 
-import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
 import { createCheckoutSession } from "@/domains/billing/core/usecases/createCheckoutSession";
 import { getBillingVisibility } from "@/domains/billing/core/usecases/getBillingVisibility";
 import { stripePaymentGateway } from "@/domains/billing/infrastructure/stripe/stripePaymentGateway";
@@ -41,8 +41,11 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
   try {
     const supabaseClient = await createSupabaseServerClient();
-    const billingConfigRepository = createBillingConfigRepository(supabaseClient);
-    const isBillingVisible = await getBillingVisibility(billingConfigRepository);
+    const billingConfigRepository =
+      createBillingConfigRepository(supabaseClient);
+    const isBillingVisible = await getBillingVisibility(
+      billingConfigRepository
+    );
 
     if (!isBillingVisible) {
       return NextResponse.json(

@@ -2,7 +2,7 @@ import type { ProjectWithRole } from "@/domains/project/core/domain/schema/proje
 import type {
   ProjectWithStats,
   ReclaimableProject,
-} from "@/domains/workspace/core/domain/schema/workspaceProjectCatalog.schema";
+} from "@/domains/workspace/core/domain/workspaceProjectCatalog.schema";
 
 /**
  * Repository contract for workspace-owned project catalog operations.

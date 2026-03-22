@@ -1,12 +1,12 @@
 "use client";
 
-import { use, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 
 import Loader from "@/shared/design-system/loader";
 import { useTranslation } from "@/shared/i18n";
 
-import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
+import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
 import UpgradePrompt from "@/domains/billing/presentation/components/upgradePrompt/UpgradePrompt";
 import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
 import SettingsLayout from "@/domains/project/presentation/layouts/settingsLayout/SettingsLayout";
@@ -39,11 +39,12 @@ const ExportImportSettings = dynamic(
 );
 
 type ProjectSettingsPageProps = {
-  params: Promise<{ projectId: string }>;
+  projectId: string;
 };
 
-export const ProjectSettingsPage = ({ params }: ProjectSettingsPageProps) => {
-  const { projectId } = use(params);
+export const ProjectSettingsPage = ({
+  projectId,
+}: ProjectSettingsPageProps) => {
   const t = useTranslation("pages.settings.page");
   const { hasAccess, minimumPlan, isLoading } = useFeatureAccess(
     PlanFeature.PRIORITIES

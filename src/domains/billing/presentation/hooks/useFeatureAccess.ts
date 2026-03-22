@@ -3,9 +3,9 @@ import { useMemo } from "react";
 import type {
   FeatureAccessResult,
   PlanFeature,
-} from "@/domains/billing/core/domain/rules/planFeatures.rules";
-import { getMinimumPlanForFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
-import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+} from "@/domains/billing/core/domain/planFeatures.rules";
+import { getMinimumPlanForFeature } from "@/domains/billing/core/domain/planFeatures.rules";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
 import { checkFeatureAccess } from "@/domains/billing/core/usecases/checkFeatureAccess";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 

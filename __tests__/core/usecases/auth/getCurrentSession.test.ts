@@ -1,10 +1,8 @@
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+ 
 import {
   createAuthError,
 } from "../../../../__mocks__/core/domain/authMocks";
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { mockCurrentSession } from "../../../../__mocks__/core/domain/sessionMocks";
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createSessionRepositoryMock } from "../../../../__mocks__/core/ports/sessionRepository";
 
 import type { CurrentSession } from "@/domains/session/core/domain/currentSession.schema";

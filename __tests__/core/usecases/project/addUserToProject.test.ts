@@ -3,7 +3,6 @@ import {
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
 
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";
 
 import { type Project, ProjectRole } from "@/domains/project/core/domain/schema/project.schema";

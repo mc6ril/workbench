@@ -9,13 +9,13 @@ import {
   mapUserProfileRowToDomain,
 } from "./UserProfileMapper.supabase";
 
-import type { UserPreferences } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
+import type { UserPreferences } from "@/domains/profile/core/domain/profilePreferences.schema";
 import type {
   UpdateProfileInput,
   UserProfile,
-} from "@/domains/profile/core/domain/schema/userProfile.schema";
+} from "@/domains/profile/core/domain/userProfile.schema";
 import type { UserProfileRepository } from "@/domains/profile/core/ports/userProfileRepository";
-import type { UserProfileRow } from "@/domains/profile/infrastructure/supabase/userProfile/types";
+import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
 
 /**
  * Create a UserProfileRepository implementation using the provided Supabase client.

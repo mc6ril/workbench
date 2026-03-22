@@ -1,9 +1,9 @@
-import { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
-import type { Subscription } from "@/domains/billing/core/domain/schema/subscription.schema";
+import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
+import type { Subscription } from "@/domains/billing/core/domain/subscription.schema";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
-} from "@/domains/billing/core/domain/schema/subscription.schema";
+} from "@/domains/billing/core/domain/subscription.schema";
 import { checkFeatureAccess } from "@/domains/billing/core/usecases/checkFeatureAccess";
 
 describe("checkFeatureAccess", () => {

@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { removeAvatar } from "@/domains/profile/core/usecases/removeAvatar";
 import { uploadAvatar } from "@/domains/profile/core/usecases/uploadAvatar";
-import { userProfileRepository } from "@/domains/profile/infrastructure/supabase/repositories";
+import { userProfileRepository } from "@/domains/profile/infrastructure/userProfileRepository.browser";
 import { queryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
 import { queryKeys as boardQueryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 

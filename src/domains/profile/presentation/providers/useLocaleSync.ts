@@ -6,7 +6,7 @@ import { defaultLocale, supportedLocales } from "@/shared/i18n/config";
 import type { Locale } from "@/shared/i18n/types";
 import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
 
-import { useMyProfile } from "@/domains/profile/presentation/hooks/profile/useMyProfile";
+import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
 
 /**
  * Syncs the locale store with the user's language preference from the profile.

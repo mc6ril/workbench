@@ -38,22 +38,22 @@ import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
-} from "@/domains/billing/core/domain/schema/subscription.schema";
+} from "@/domains/billing/core/domain/subscription.schema";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 import {
   DEFAULT_USER_PREFERENCES,
   type Theme,
   ThemeValues,
-} from "@/domains/profile/core/domain/schema/profilePreferences.schema";
-import AvatarUpload from "@/domains/profile/presentation/components/avatarUpload/AvatarUpload";
+} from "@/domains/profile/core/domain/profilePreferences.schema";
+import AvatarUpload from "@/domains/profile/presentation/components/AvatarUpload";
 import {
   useRemoveAvatar,
   useUploadAvatar,
-} from "@/domains/profile/presentation/hooks/profile/useAvatarUpload";
-import { useMyProfile } from "@/domains/profile/presentation/hooks/profile/useMyProfile";
-import { useUpdatePreferences } from "@/domains/profile/presentation/hooks/profile/useUpdatePreferences";
-import { useUpdateProfile } from "@/domains/profile/presentation/hooks/profile/useUpdateProfile";
+} from "@/domains/profile/presentation/hooks/useAvatarUpload";
+import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
+import { useUpdatePreferences } from "@/domains/profile/presentation/hooks/useUpdatePreferences";
+import { useUpdateProfile } from "@/domains/profile/presentation/hooks/useUpdateProfile";
 import { useCanUpdatePassword } from "@/domains/session/presentation/hooks/useCanUpdatePassword";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";

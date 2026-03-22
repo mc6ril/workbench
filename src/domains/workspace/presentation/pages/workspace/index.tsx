@@ -25,7 +25,7 @@ import { buildProjectRoute } from "@/shared/utils/routes";
 
 import styles from "./styles.module.scss";
 
-import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 import {

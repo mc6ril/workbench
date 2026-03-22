@@ -1,26 +1,20 @@
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+ 
 import {
   createAuthError,
   mockAuthResult,
   mockAuthResultWithEmailVerification,
 } from "../../../../__mocks__/core/domain/authMocks";
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { mockCurrentSession } from "../../../../__mocks__/core/domain/sessionMocks";
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createSessionRepositoryMock } from "../../../../__mocks__/core/ports/sessionRepository";
 
 import type { AuthResult } from "@/domains/auth/core/domain/auth.schema";
 import { signInUser } from "@/domains/auth/core/usecases/user/signInUser";
 import { signUpUser } from "@/domains/auth/core/usecases/user/signUpUser";
+import type { ProjectWithRole } from "@/domains/project/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
-import {
-  ProjectRole,
-  type ProjectWithRole,
-} from "@/domains/workspace/core/domain/schema/project.schema";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 
 describe("Auth Flow Tests", () => {

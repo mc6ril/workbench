@@ -21,7 +21,7 @@ import {
 import {
   PLAN_RANK,
   SubscriptionPlan,
-} from "@/domains/billing/core/domain/schema/subscription.schema";
+} from "@/domains/billing/core/domain/subscription.schema";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 

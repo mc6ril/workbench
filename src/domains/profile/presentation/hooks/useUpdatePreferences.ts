@@ -3,11 +3,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DEFAULT_USER_PREFERENCES,
   type UpdatePreferencesInput,
-} from "@/domains/profile/core/domain/schema/profilePreferences.schema";
+} from "@/domains/profile/core/domain/profilePreferences.schema";
 import { updatePreferences } from "@/domains/profile/core/usecases/updatePreferences";
-import { userProfileRepository } from "@/domains/profile/infrastructure/supabase/repositories";
-import { useMyProfile } from "@/domains/profile/presentation/hooks/profile/useMyProfile";
+import { userProfileRepository } from "@/domains/profile/infrastructure/userProfileRepository.browser";
 import { queryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
+import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 /**

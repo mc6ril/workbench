@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { getProject } from "@/domains/project/core/usecases/project/getProject";
 import { projectRepository } from "@/domains/project/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
-import { getProject } from "@/domains/workspace/core/usecases/project/getProject";
 
 /**
  * Hook for fetching a project by ID.

@@ -5,16 +5,14 @@ import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandl
 import {
   mapProjectWithStatsRowToDomain,
   mapReclaimableProjectRowToDomain,
-} from "./ProjectMapper.supabase";
+} from "./Mapper.supabase";
 
-import type {
-  ProjectWithRole,
-} from "@/domains/project/core/domain/schema/project.schema";
+import type { ProjectWithRole } from "@/domains/project/core/domain/schema/project.schema";
 import { createProjectRepository } from "@/domains/project/infrastructure/supabase/project/ProjectRepository.supabase";
 import type {
   ProjectWithStats,
   ReclaimableProject,
-} from "@/domains/workspace/core/domain/schema/workspaceProjectCatalog.schema";
+} from "@/domains/workspace/core/domain/workspaceProjectCatalog.schema";
 import type { WorkspaceProjectCatalogRepository } from "@/domains/workspace/core/ports/workspaceProjectCatalogRepository";
 import type {
   ProjectWithStatsRow,

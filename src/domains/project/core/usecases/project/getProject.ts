@@ -21,13 +21,10 @@ export const getProject = async (
   repository: ProjectRepository,
   id: string
 ): Promise<Project> => {
-  // Validate input with Zod schema
   GetProjectInputSchema.parse({ id });
 
-  // Fetch project from repository
   const project = await repository.findById(id);
 
-  // Throw NotFoundError if project not found
   if (!project) {
     throw createNotFoundError("Project", id);
   }

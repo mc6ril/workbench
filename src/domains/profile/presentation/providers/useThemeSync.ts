@@ -6,8 +6,8 @@ import { useTheme } from "next-themes";
 import {
   type Theme,
   ThemeValues,
-} from "@/domains/profile/core/domain/schema/profilePreferences.schema";
-import { useMyProfile } from "@/domains/profile/presentation/hooks/profile/useMyProfile";
+} from "@/domains/profile/core/domain/profilePreferences.schema";
+import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
 
 /**
  * Syncs the user's persisted theme preference from the profile

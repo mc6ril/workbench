@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
-} from "@/domains/billing/core/domain/schema/subscription.schema";
+} from "@/domains/billing/core/domain/subscription.schema";
 import { getCurrentUserSubscription } from "@/domains/billing/core/usecases/getCurrentUserSubscription";
 import { subscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/billing/presentation/hooks/queryKeys";

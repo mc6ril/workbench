@@ -4,9 +4,9 @@ import {
   DEFAULT_USER_PREFERENCES,
   type UserPreferences,
   UserPreferencesSchema,
-} from "@/domains/profile/core/domain/schema/profilePreferences.schema";
-import type { UserProfile } from "@/domains/profile/core/domain/schema/userProfile.schema";
-import type { UserProfileRow } from "@/domains/profile/infrastructure/supabase/userProfile/types";
+} from "@/domains/profile/core/domain/profilePreferences.schema";
+import type { UserProfile } from "@/domains/profile/core/domain/userProfile.schema";
+import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
 
 /**
  * Parses the jsonb preferences column into a validated UserPreferences object.

@@ -3,18 +3,16 @@ import {
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
 
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
 
 import {
   type Project,
-  ProjectRole,
   type ProjectWithRole,
 } from "@/domains/project/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import { joinProject } from "@/domains/project/core/usecases/membership/joinProject";
-import { getProject } from "@/domains/workspace/core/usecases/project/getProject";
+import { getProject } from "@/domains/project/core/usecases/project/getProject";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 
 describe("Project Flow Tests", () => {

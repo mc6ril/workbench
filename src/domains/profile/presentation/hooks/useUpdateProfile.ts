@@ -2,9 +2,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { updateUser } from "@/domains/auth/core/usecases/user/updateUser";
 import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
-import type { UpdateProfileInput } from "@/domains/profile/core/domain/schema/userProfile.schema";
+import type { UpdateProfileInput } from "@/domains/profile/core/domain/userProfile.schema";
 import { updateProfile } from "@/domains/profile/core/usecases/updateProfile";
-import { userProfileRepository } from "@/domains/profile/infrastructure/supabase/repositories";
+import { userProfileRepository } from "@/domains/profile/infrastructure/userProfileRepository.browser";
 import { queryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
 import { queryKeys as sessionQueryKeys } from "@/domains/session/presentation/hooks/queryKeys";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";

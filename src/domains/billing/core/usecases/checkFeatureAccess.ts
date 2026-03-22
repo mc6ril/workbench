@@ -1,14 +1,14 @@
 import type {
   FeatureAccessResult,
   PlanFeature,
-} from "@/domains/billing/core/domain/rules/planFeatures.rules";
+} from "@/domains/billing/core/domain/planFeatures.rules";
 import {
   canAccessFeature,
   getEffectivePlan,
   getFeatureLimit,
   getMinimumPlanForFeature,
-} from "@/domains/billing/core/domain/rules/planFeatures.rules";
-import type { Subscription } from "@/domains/billing/core/domain/schema/subscription.schema";
+} from "@/domains/billing/core/domain/planFeatures.rules";
+import type { Subscription } from "@/domains/billing/core/domain/subscription.schema";
 
 /**
  * Check whether a subscription grants access to a given feature.

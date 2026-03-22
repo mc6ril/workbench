@@ -1,19 +1,20 @@
-import { getFeatureLimit } from "@/domains/billing/core/domain/rules/planFeatures.rules";
-import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
-import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
+import { getFeatureLimit } from "@/domains/billing/core/domain/planFeatures.rules";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profilePreferences.schema";
 import {
   type CreateInvitationInput,
   InvitationStatus,
   type ProjectInvitation,
 } from "@/domains/project/core/domain/schema/invitation.schema";
 import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
+import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import { inviteToProject } from "@/domains/project/core/usecases/invitation/inviteToProject";
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
-jest.mock("@/domains/billing/core/domain/rules/planFeatures.rules", () => ({
-  ...jest.requireActual("@/domains/billing/core/domain/rules/planFeatures.rules"),
+jest.mock("@/domains/billing/core/domain/planFeatures.rules", () => ({
+  ...jest.requireActual("@/domains/billing/core/domain/planFeatures.rules"),
   getFeatureLimit: jest.fn(
-    jest.requireActual("@/domains/billing/core/domain/rules/planFeatures.rules").getFeatureLimit
+    jest.requireActual("@/domains/billing/core/domain/planFeatures.rules")
+      .getFeatureLimit
   ),
 }));
 
@@ -21,9 +22,7 @@ const mockedGetFeatureLimit = getFeatureLimit as jest.MockedFunction<
   typeof getFeatureLimit
 >;
 
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createInvitationRepositoryMock } from "../../../../__mocks__/core/ports/invitationRepository";
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";
 
 describe("inviteToProject", () => {

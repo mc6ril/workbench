@@ -4,6 +4,42 @@ import nextTs from "eslint-config-next/typescript";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 
+const forbiddenWorkspaceProjectShimImports = [
+  {
+    name: "@/domains/workspace/core/domain/schema/project.schema",
+    message:
+      "Workspace project schema shim removed. Import from @/domains/project/core/domain/schema/project.schema or @/domains/project/core/domain/schema/projectRole.schema.",
+  },
+  {
+    name: "@/domains/workspace/infrastructure/supabase/project/ProjectMapper.supabase",
+    message:
+      "Workspace project mapper shim removed. Import the canonical owner mapper instead.",
+  },
+  {
+    name: "@/domains/workspace/core/usecases/project/createProject",
+    message:
+      "Workspace createProject shim removed. Import from @/domains/project/core/usecases/project/createProject.",
+  },
+  {
+    name: "@/domains/workspace/core/usecases/project/getProject",
+    message:
+      "Workspace getProject shim removed. Import from @/domains/project/core/usecases/project/getProject.",
+  },
+  {
+    name: "@/domains/workspace/core/usecases/project/deleteProject",
+    message:
+      "Workspace deleteProject shim removed. Import from @/domains/project/core/usecases/project/deleteProject.",
+  },
+];
+
+const forbiddenWorkspaceProjectShimFiles = [
+  "src/domains/workspace/core/domain/schema/project.schema.ts",
+  "src/domains/workspace/infrastructure/supabase/project/ProjectMapper.supabase.ts",
+  "src/domains/workspace/core/usecases/project/createProject.ts",
+  "src/domains/workspace/core/usecases/project/getProject.ts",
+  "src/domains/workspace/core/usecases/project/deleteProject.ts",
+];
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
@@ -183,19 +219,25 @@ const eslintConfig = defineConfig([
   // No additional restrictions for src/app/**/route.ts on purpose:
   // webhooks and callback handlers legitimately orchestrate infrastructure and usecases.
   {
-    files: ["src/**/*"],
-    ignores: ["src/domains/workspace/core/domain/schema/project.schema.ts"],
+    files: ["src/**/*.{ts,tsx}", "__tests__/**/*.{ts,tsx}"],
     rules: {
       "no-restricted-imports": [
         "error",
         {
-          patterns: [
-            {
-              group: ["@/domains/workspace/core/domain/schema/project.schema"],
-              message:
-                "Import depuis @/domains/project/core/domain/schema/project.schema à la place",
-            },
-          ],
+          paths: forbiddenWorkspaceProjectShimImports,
+        },
+      ],
+    },
+  },
+  {
+    files: forbiddenWorkspaceProjectShimFiles,
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "Program",
+          message:
+            "Workspace-to-project shim removed. Restore the canonical project owner file instead of recreating this compatibility path.",
         },
       ],
     },
