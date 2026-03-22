@@ -33,10 +33,10 @@ import {
   CreateProjectInputSchema,
   ProjectRole,
 } from "@/domains/project/core/domain/schema/project.schema";
+import { useAddUserToProject } from "@/domains/project/presentation/hooks/useAddUserToProject";
+import { useCreateProject } from "@/domains/project/presentation/hooks/useCreateProject";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 import ProjectCardActions from "@/domains/workspace/presentation/components/workspace/projectCard/ProjectCardActions";
-import { useAddUserToProject } from "@/domains/workspace/presentation/hooks/useAddUserToProject";
-import { useCreateProject } from "@/domains/workspace/presentation/hooks/useCreateProject";
 import { useLastActivitySubtitle } from "@/domains/workspace/presentation/hooks/useLastActivitySubtitle";
 import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
 import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";

@@ -7,9 +7,8 @@ import { createProjectRepository } from "@/domains/project/infrastructure/supaba
 import { getProject } from "@/domains/workspace/core/usecases/project/getProject";
 
 /**
- * Shared server-side project loader for this route segment.
- * Uses React cache to deduplicate the same project lookup
- * between layout and page during a single request render.
+ * Shared server-side project loader for the authenticated project route segment.
+ * Uses React cache to deduplicate the same project lookup within a request render.
  */
 export const getProjectForRoute = cache(
   async (projectId: string): Promise<Project> => {

@@ -27,7 +27,8 @@ jest.mock("@/domains/workspace/infrastructure/supabase/repositories", () => ({
   workspaceProjectRepository: {},
 }));
 
-import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
+import { queryKeys as projectQueryKeys } from "@/domains/project/presentation/hooks/queryKeys";
+import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 import { useAddUserToProject } from "@/domains/workspace/presentation/hooks/useAddUserToProject";
 import { useCreateProject } from "@/domains/workspace/presentation/hooks/useCreateProject";
 
@@ -43,10 +44,10 @@ describe("workspace project mutations", () => {
     mutation.onSuccess?.();
 
     expect(invalidateQueriesMock).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.all(),
+      queryKey: projectQueryKeys.projects.all(),
     });
     expect(invalidateQueriesMock).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.withStats(),
+      queryKey: workspaceQueryKeys.projects.withStats(),
     });
   });
 
@@ -56,13 +57,13 @@ describe("workspace project mutations", () => {
     mutation.onSuccess?.();
 
     expect(invalidateQueriesMock).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.all(),
+      queryKey: projectQueryKeys.projects.all(),
     });
     expect(invalidateQueriesMock).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.withStats(),
+      queryKey: workspaceQueryKeys.projects.withStats(),
     });
     expect(invalidateQueriesMock).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.reclaimable(),
+      queryKey: workspaceQueryKeys.projects.reclaimable(),
     });
   });
 });

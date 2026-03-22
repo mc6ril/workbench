@@ -21,9 +21,9 @@ import styles from "./ProjectCardActions.module.scss";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
 import { ProjectRole } from "@/domains/project/core/domain/schema/project.schema";
 import { useInviteMember } from "@/domains/project/presentation/hooks/invitation/useInviteMember";
+import { useDeleteProject } from "@/domains/project/presentation/hooks/useDeleteProject";
 import { buildInvitationRoute } from "@/domains/project/utils/invitationUtils";
 import ProjectMembersModal from "@/domains/workspace/presentation/components/workspace/projectModal/ProjectMembersModal";
-import { useDeleteProject } from "@/domains/workspace/presentation/hooks/useDeleteProject";
 
 type ProjectCardActionsProps = {
   projectId: string;

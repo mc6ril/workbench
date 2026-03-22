@@ -4,8 +4,7 @@ import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { createLoggerFactory } from "@/shared/observability";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
-import { getProjectForRoute } from "./getProjectForRoute";
-
+import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
 import ProjectShell from "@/domains/project/presentation/layouts/projectShell/ProjectShell";
 
 const logger = createLoggerFactory().forScope("ProjectLayout");

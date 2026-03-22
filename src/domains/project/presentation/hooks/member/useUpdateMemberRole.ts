@@ -4,6 +4,7 @@ import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRo
 import { updateMemberRole } from "@/domains/project/core/usecases/member/updateMemberRole";
 import { memberRepository } from "@/domains/project/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
+import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
 type UpdateMemberRoleVariables = {
   memberId: string;
@@ -31,7 +32,7 @@ export const useUpdateMemberRole = () => {
         queryKey: queryKeys.projects.currentRole(variables.projectId),
       });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.projects.withStats(),
+        queryKey: workspaceQueryKeys.projects.withStats(),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.all(),
