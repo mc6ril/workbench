@@ -1,9 +1,8 @@
 import { useMemo } from "react";
 
-import { PROJECT_VIEWS } from "@/shared/constants/routes";
+import { PROJECT_VIEWS, type ProjectView } from "@/shared/constants/routes";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
-import type { ProjectViewKey } from "@/domains/project/presentation/navigation/projectViews.config";
 import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
@@ -21,7 +20,7 @@ export type ProjectSearchSuggestion = {
 
 type Input = {
   projectId: string;
-  viewKey: ProjectViewKey;
+  viewKey: ProjectView;
   searchValue: string;
 };
 

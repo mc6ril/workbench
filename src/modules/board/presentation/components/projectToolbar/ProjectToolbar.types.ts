@@ -1,7 +1,11 @@
 import type { ProjectSearchSuggestion } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
 
+export type ProjectToolbarAddActionType = "ticket" | "epic";
+
 export type ProjectToolbarProps = {
-  projectId: string;
+  pageTitle: string;
+  showFilterSort?: boolean;
+  addActionType?: ProjectToolbarAddActionType | null;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
   onFilterClick?: () => void;
