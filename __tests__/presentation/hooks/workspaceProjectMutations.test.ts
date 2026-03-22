@@ -19,8 +19,12 @@ jest.mock("@/domains/workspace/core/usecases/project/addUserToProject", () => ({
   addUserToProject: jest.fn(),
 }));
 
-jest.mock("@/domains/workspace/infrastructure/supabase/repositories", () => ({
+jest.mock("@/domains/project/infrastructure/supabase/repositories", () => ({
   projectRepository: {},
+}));
+
+jest.mock("@/domains/workspace/infrastructure/supabase/repositories", () => ({
+  workspaceProjectRepository: {},
 }));
 
 import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";

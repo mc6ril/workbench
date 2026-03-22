@@ -3,7 +3,7 @@ import {
   type Project,
   ProjectRole,
 } from "@/domains/workspace/core/domain/schema/project.schema";
-import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
+import type { WorkspaceProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**
  * Add the current user to a project as a member.
@@ -20,7 +20,7 @@ import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRe
  * @throws DatabaseError if adding user fails or permission denied
  */
 export const addUserToProject = async (
-  projectRepository: ProjectRepository,
+  projectRepository: WorkspaceProjectRepository,
   projectId: string,
   role: ProjectRole = ProjectRole.VIEWER
 ): Promise<Project> => {

@@ -1,9 +1,9 @@
-import type { Project } from "@/domains/workspace/core/domain/schema/project.schema";
 import {
   type CreateProjectInput,
   CreateProjectInputSchema,
-} from "@/domains/workspace/core/domain/schema/project.schema";
-import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
+  type Project,
+} from "@/domains/project/core/domain/schema/project.schema";
+import type { ProjectRepository } from "@/domains/project/core/ports/projectRepository";
 
 /**
  * Create a new project.

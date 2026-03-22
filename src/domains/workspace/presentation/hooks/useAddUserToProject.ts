@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import { addUserToProject } from "@/domains/workspace/core/usecases/project/addUserToProject";
-import { projectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
+import { workspaceProjectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
 /**
@@ -20,7 +20,7 @@ export const useAddUserToProject = () => {
     }: {
       projectId: string;
       role?: ProjectRole;
-    }) => addUserToProject(projectRepository, projectId, role),
+    }) => addUserToProject(workspaceProjectRepository, projectId, role),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.projects.all() });
       queryClient.invalidateQueries({

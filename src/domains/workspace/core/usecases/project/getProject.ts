@@ -3,8 +3,8 @@ import { createNotFoundError } from "@/shared/errors/repositoryError";
 import {
   GetProjectInputSchema,
   type Project,
-} from "@/domains/workspace/core/domain/schema/project.schema";
-import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
+} from "@/domains/project/core/domain/schema/project.schema";
+import type { ProjectRepository } from "@/domains/project/core/ports/projectRepository";
 
 /**
  * Get a project by ID.
