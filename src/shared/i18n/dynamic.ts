@@ -1,14 +1,12 @@
 import type { TranslationFunction } from "./types";
 
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
-
 /**
  * Translation keys for project roles.
  */
 export type RoleLabelKey = "roleAdmin" | "roleMember" | "roleViewer";
 
 /**
- * Maps a ProjectRole to its corresponding i18n translation key.
+ * Maps a project role string to its corresponding i18n translation key.
  *
  * @param role - The project role
  * @returns The translation key for the role label
@@ -16,17 +14,17 @@ export type RoleLabelKey = "roleAdmin" | "roleMember" | "roleViewer";
  * @example
  * ```tsx
  * const t = useTranslation("pages.workspace");
- * const roleKey = getRoleLabelKey(ProjectRole.ADMIN);
+ * const roleKey = getRoleLabelKey("admin");
  * const label = t(roleKey); // "Administrateur"
  * ```
  */
-export const getRoleLabelKey = (role: ProjectRole): RoleLabelKey => {
+export const getRoleLabelKey = (role: string): RoleLabelKey => {
   switch (role) {
-    case ProjectRole.ADMIN:
+    case "admin":
       return "roleAdmin";
-    case ProjectRole.MEMBER:
+    case "member":
       return "roleMember";
-    case ProjectRole.VIEWER:
+    case "viewer":
       return "roleViewer";
     default:
       return "roleMember";

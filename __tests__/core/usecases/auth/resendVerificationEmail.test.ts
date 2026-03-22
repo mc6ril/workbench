@@ -1,11 +1,9 @@
 import { z } from "zod";
 
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import {
   createAuthError,
   validEmail,
 } from "../../../../__mocks__/core/domain/authMocks";
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
 
 import { resendVerificationEmail } from "@/domains/auth/core/usecases/resendVerificationEmail";

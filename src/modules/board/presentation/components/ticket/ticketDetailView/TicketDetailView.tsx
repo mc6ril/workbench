@@ -136,6 +136,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
           commentsSection={
             <TicketDetailCommentsSection
               comments={comments}
+              projectMembers={projectMembers}
               sessionUserId={sessionUserId}
               canComment={canComment}
               commentInput={commentInput}

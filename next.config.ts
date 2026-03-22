@@ -5,10 +5,32 @@ import path from "path";
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseRemotePattern = (() => {
+  if (!supabaseUrl) {
+    return null;
+  }
+
+  try {
+    const { protocol, hostname, port } = new URL(supabaseUrl);
+    const basePattern = {
+      protocol: protocol.replace(":", "") as "http" | "https",
+      hostname,
+      pathname: "/storage/v1/object/public/**",
+    };
+
+    return port ? { ...basePattern, port } : basePattern;
+  } catch {
+    return null;
+  }
+})();
 
 const nextConfig: NextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, "./src/styles")],
+  },
+  images: {
+    remotePatterns: supabaseRemotePattern ? [supabaseRemotePattern] : [],
   },
   webpack: (config) => {
     config.resolve.alias = {

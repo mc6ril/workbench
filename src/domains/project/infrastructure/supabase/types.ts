@@ -1,5 +1,13 @@
 import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 
+export type ProjectRow = {
+  id: string;
+  name: string;
+  short_code: string;
+  created_at: string;
+  updated_at: string;
+};
+
 export type ProjectMemberRow = {
   id: string;
   project_id: string;

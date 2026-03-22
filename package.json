@@ -1,12 +1,12 @@
 {
   "name": "workbench",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "dev:stripe": "stripe listen --forward-to localhost:3000/api/stripe/webhook",
     "dev:all": "concurrently --names next,stripe --prefix-colors blue,magenta \"yarn dev\" \"yarn dev:stripe\"",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "i18n:check-keys": "node scripts/check-i18n-keys.mjs",

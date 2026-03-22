@@ -89,7 +89,11 @@ This principle drives both navigation and feature placement.
 Workbench now targets a **final domain + module architecture**:
 
 - `src/app/` remains the Next.js routing layer only
-- `src/domains/auth/` owns account lifecycle: sign in/up, OAuth, reset password, email verification, preferences, delete account
+- `src/domains/auth/` owns authentication actions only: sign in/up, OAuth, reset password, email verification, delete account
+- `src/domains/session/` owns current identity state and claims
+- `src/domains/profile/` owns reusable user business data: display name, avatar, preferences
+- `src/domains/viewer/` owns the read-model for current-user composition across the app
+- `src/domains/settings/` owns cross-owner account/settings surfaces such as `/account`
 - `src/domains/billing/` owns plans, subscriptions, entitlements, and Stripe webhooks
 - `src/domains/workspace/` owns the entry UX to list, create, and join projects
 - `src/domains/project/` owns the project container: project settings, members, invitations, permissions, and enabled modules
@@ -108,6 +112,9 @@ Inside each concrete domain or module, responsibilities stay layered:
 Guiding rules:
 > `src/app/` stays thin and route-focused.
 > Shared code stays cross-cutting and owner-agnostic.
+> Identity state does not belong to profile.
+> Current-user composition should converge toward a dedicated viewer owner.
+> Cross-owner account/settings screens belong to `domains/settings`.
 > Project container logic stays in `domains/project`.
 > Project-scoped capabilities stay in `modules/*`.
 > The current board experience is the first module, not the permanent shape of every future capability.

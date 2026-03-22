@@ -1,36 +1,25 @@
+import { mockCurrentSession } from "./sessionMocks";
+
 import type {
   AuthenticationError,
   AuthResult,
-  AuthSession,
   EmailAlreadyExistsError,
   EmailVerificationError,
   InvalidCredentialsError,
   InvalidTokenError,
   PasswordResetError,
+  PasswordUpdateNotAllowedError,
   SamePasswordError,
   SignInInput,
   SignUpInput,
   WeakPasswordError,
-} from "@/domains/auth/core/domain/schema/auth.schema";
-import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
-
-/**
- * Mock authentication session for testing.
- */
-export const mockAuthSession: AuthSession = {
-  userId: "123e4567-e89b-12d3-a456-426614174000",
-  email: "test@example.com",
-  displayName: "Test User",
-  preferences: { ...DEFAULT_USER_PREFERENCES },
-  accessToken: "mock-access-token",
-  isSuperuser: false,
-};
+} from "@/domains/auth/core/domain/auth.schema";
 
 /**
  * Mock authentication result for testing.
  */
 export const mockAuthResult: AuthResult = {
-  session: mockAuthSession,
+  session: mockCurrentSession,
   requiresEmailVerification: false,
 };
 
@@ -177,6 +166,16 @@ export const createAuthError = {
     debugMessage: string = "New password should be different"
   ): SamePasswordError => ({
     code: "SAME_PASSWORD",
+    debugMessage,
+  }),
+
+  /**
+   * Create a PasswordUpdateNotAllowedError.
+   */
+  passwordUpdateNotAllowed: (
+    debugMessage: string = "Password updates are not available for this account"
+  ): PasswordUpdateNotAllowedError => ({
+    code: "PASSWORD_UPDATE_NOT_ALLOWED",
     debugMessage,
   }),
 };

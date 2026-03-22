@@ -1,10 +1,10 @@
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+ 
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
 
 import {
-  ProjectRole,
   type ProjectWithRole,
-} from "@/domains/workspace/core/domain/schema/project.schema";
+} from "@/domains/project/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 
 describe("listProjects", () => {
@@ -33,15 +33,17 @@ describe("listProjects", () => {
       mockProjectWithRole2,
     ];
     const repository = createProjectRepositoryMock({
-      list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => projects),
+      listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+        async () => projects
+      ),
     });
 
     // Act
     const result = await listProjects(repository);
 
     // Assert
-    expect(repository.list).toHaveBeenCalledTimes(1);
-    expect(repository.list).toHaveBeenCalledWith();
+    expect(repository.listAccessibleProjects).toHaveBeenCalledTimes(1);
+    expect(repository.listAccessibleProjects).toHaveBeenCalledWith();
     expect(result).toEqual(projects);
     expect(result).toHaveLength(2);
     expect(result[0]).toMatchObject({
@@ -59,15 +61,17 @@ describe("listProjects", () => {
   it("should return empty array when no projects", async () => {
     // Arrange
     const repository = createProjectRepositoryMock({
-      list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => []),
+      listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+        async () => []
+      ),
     });
 
     // Act
     const result = await listProjects(repository);
 
     // Assert
-    expect(repository.list).toHaveBeenCalledTimes(1);
-    expect(repository.list).toHaveBeenCalledWith();
+    expect(repository.listAccessibleProjects).toHaveBeenCalledTimes(1);
+    expect(repository.listAccessibleProjects).toHaveBeenCalledWith();
     expect(result).toEqual([]);
     expect(result).toHaveLength(0);
   });
@@ -76,14 +80,16 @@ describe("listProjects", () => {
     // Arrange
     const repositoryError = new Error("Database connection failed");
     const repository = createProjectRepositoryMock({
-      list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => {
-        throw repositoryError;
-      }),
+      listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+        async () => {
+          throw repositoryError;
+        }
+      ),
     });
 
     // Act & Assert
     await expect(listProjects(repository)).rejects.toThrow(repositoryError);
-    expect(repository.list).toHaveBeenCalledTimes(1);
+    expect(repository.listAccessibleProjects).toHaveBeenCalledTimes(1);
   });
 
   it("should return projects with different roles", async () => {
@@ -101,7 +107,9 @@ describe("listProjects", () => {
       },
     ];
     const repository = createProjectRepositoryMock({
-      list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => projects),
+      listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+        async () => projects
+      ),
     });
 
     // Act

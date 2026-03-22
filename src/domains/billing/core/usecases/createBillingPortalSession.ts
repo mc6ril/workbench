@@ -1,4 +1,4 @@
-import type { CreateBillingPortalParams } from "@/domains/billing/core/domain/schema/subscription.schema";
+import type { CreateBillingPortalParams } from "@/domains/billing/core/domain/subscription.schema";
 import type { PaymentGateway } from "@/domains/billing/core/ports/paymentGateway";
 import type { SubscriptionRepository } from "@/domains/billing/core/ports/subscriptionRepository";
 

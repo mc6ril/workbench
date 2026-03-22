@@ -1,8 +1,3 @@
-import {
-  PROJECT_ROLES,
-  ProjectRole,
-} from "@/domains/project/core/domain/schema/projectRole.schema";
-
 /**
  * Type guards and validation utilities.
  * Provides simple, reusable functions for common validation patterns.
@@ -105,15 +100,6 @@ export const hasErrorCode = (
  */
 export const isNonEmptyArray = <T>(value: unknown): value is T[] => {
   return Array.isArray(value) && value.length > 0;
-};
-
-/**
- * Type guard to check if a string is a valid ProjectRole.
- * @param value - String to check
- * @returns true if value is a valid ProjectRole
- */
-export const isProjectRole = (value: string): value is ProjectRole => {
-  return (PROJECT_ROLES as readonly string[]).includes(value);
 };
 
 export const isPlainObject = (

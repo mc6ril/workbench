@@ -10,16 +10,16 @@ import Modal from "@/shared/design-system/modal";
 import Text from "@/shared/design-system/text";
 import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import { useSession } from "@/shared/session";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./ProjectMembersModal.module.scss";
 
+import { ProjectRole } from "@/domains/project/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useRemoveMember } from "@/domains/project/presentation/hooks/member/useRemoveMember";
 import { useUpdateMemberRole } from "@/domains/project/presentation/hooks/member/useUpdateMemberRole";
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
+import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 type ProjectMembersModalProps = {
   isOpen: boolean;

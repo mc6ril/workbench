@@ -14,7 +14,11 @@ Route files should:
 
 ## Ownership Map
 
-- `src/domains/auth/presentation/` -> auth screens and account-facing flows
+- `src/domains/auth/presentation/` -> auth screens and auth action flows
+- `src/domains/session/presentation/` -> current identity/session state
+- `src/domains/profile/presentation/` -> profile editing and reusable current-profile flows
+- `src/domains/viewer/presentation/` -> current-user read-model composition
+- `src/domains/settings/presentation/` -> account/settings surfaces that compose viewer, profile, session, auth, and billing
 - `src/domains/workspace/presentation/` -> workspace dashboard and create/join project entry UX
 - `src/domains/project/presentation/` -> project shell, project settings, members, invitations, enabled-module management
 - `src/modules/board/presentation/` -> board, epics, and board-specific screens
@@ -70,7 +74,7 @@ flowchart TD
    PROTECTED --> BILLING_ROUTE[/api/stripe/* composition]
 
    WORKSPACE_ROUTE --> WORKSPACE_DOMAIN[workspace presentation]
-   ACCOUNT_ROUTE --> AUTH_ACCOUNT[auth account presentation]
+   ACCOUNT_ROUTE --> SETTINGS_DOMAIN[settings presentation]
    PROJECT_ROUTE --> ACCESS_CHECK{Project access allowed?}
    ACCESS_CHECK -->|No| REDIRECT_WS[Redirect to /workspace]
    ACCESS_CHECK -->|Yes| PROJECT_SHELL[project shell]
@@ -124,10 +128,17 @@ flowchart TD
 ### Workspace route handling
 
 - Delegates list/create/join project UX to the workspace domain
+- Imports canonical project contracts from `src/domains/project/` when the flow touches the project entity itself
 
 ### Account route handling
 
-- Delegates account settings UI to the auth domain
+- Delegates account settings UI to `src/domains/settings/presentation/pages/account/`.
+- That settings surface composes:
+  - `viewer` for the current-user read model
+  - `profile` for user business data
+  - `session` for current identity state and capabilities
+  - `auth` for action-oriented flows such as password or account deletion
+  - `billing` for subscription management
 
 ### Project route handling
 
@@ -149,18 +160,30 @@ flowchart TD
 ## Security Model
 
 1. `middleware.ts` can optimize routing and early redirects
-2. auth/session concerns are owned by the auth domain and supported by shared infra clients
-3. workspace confirms that the user can enter project selection/create/join flows
-4. project access checks confirm route eligibility inside a given project
-5. database and provider policies remain the final source of truth
+2. `auth` owns authentication actions, not long-lived current-user state
+3. `session` owns current identity state and auth-derived capabilities
+4. `profile` owns user business data
+5. `viewer` owns read-only current-user composition for most UI consumption
+6. workspace confirms that the user can enter project selection/create/join flows
+7. project access checks confirm route eligibility inside a given project
+8. database and provider policies remain the final source of truth
 
 ## Key Takeaway
 
 Routing stays in `src/app/`, but route-specific rendering is delegated to the correct owner:
 
 - auth routes -> `src/domains/auth/`
+- session state -> `src/domains/session/`
+- profile data -> `src/domains/profile/`
+- current-user/viewer composition -> `src/domains/viewer/`
+- account/settings surfaces -> `src/domains/settings/`
 - workspace routes -> `src/domains/workspace/`
-- account routes -> `src/domains/auth/`
 - project container routes -> `src/domains/project/`
 - project module routes -> `src/modules/<module>/`
 - billing flows -> `src/domains/billing/`
+
+Canonical imports matter as much as route ownership:
+
+- `workspace` keeps catalog/entry flows
+- `project` keeps the canonical project schema, repository, and project CRUD use cases
+- no `workspace -> project` shim paths should exist in route composition, hooks, tests, or infrastructure

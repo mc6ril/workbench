@@ -8,7 +8,7 @@ import { mapSubscriptionRowToDomain } from "./SubscriptionMapper.supabase";
 import type {
   Subscription,
   UpsertSubscriptionInput,
-} from "@/domains/billing/core/domain/schema/subscription.schema";
+} from "@/domains/billing/core/domain/subscription.schema";
 import type { SubscriptionRepository } from "@/domains/billing/core/ports/subscriptionRepository";
 import type { SubscriptionRow } from "@/domains/billing/infrastructure/supabase/types";
 

@@ -22,8 +22,12 @@ Instead:
 
 That means:
 
-- `auth`, `billing`, `workspace`, and `project` own their repository or gateway implementations
+- `auth`, `session`, `profile`, `billing`, `workspace`, and `project` own
+  their repository or gateway implementations when they own persistence or
+  provider contracts
+- `settings` is a composition owner and usually owns no repository
 - `board` owns its own repositories and mappers
+- `viewer` is a read-model/composition owner and usually owns no repository
 - `shared/infrastructure/supabase/` owns browser/server/admin Supabase clients
 - `shared/infrastructure/stripe/` owns the low-level Stripe client
 
@@ -37,6 +41,22 @@ src/
         ports/
       infrastructure/
         supabase/
+    session/
+      core/
+        ports/
+      infrastructure/
+        supabase/
+    profile/
+      core/
+        ports/
+      infrastructure/
+        supabase/
+    viewer/
+      core/
+        usecases/
+      presentation/
+    settings/
+      presentation/
     billing/
       core/
         ports/
@@ -97,6 +117,8 @@ src/
 - Stay specific to one owner
 - Map low-level payloads to business shapes
 - Can depend on shared technical clients
+- A composition owner such as `viewer` may intentionally own no repository if
+  it only aggregates read state from other owners
 
 ### Shared infrastructure clients
 
@@ -164,9 +186,18 @@ const ticketRepository = createTicketRepository(client);
 
 ## Special Ownership Rules
 
-- `src/domains/project/` owns project settings, members, invitations, permissions, and enabled-module configuration
+- `src/domains/auth/` owns auth mutations and auth action flows only
+- `src/domains/session/` owns current identity state such as `userId`,
+  `loginEmail`, `accessToken`, auth claims, and auth-derived capabilities
+- `src/domains/profile/` owns reusable user business data such as
+  `displayName`, `avatarUrl`, and preferences
+- `src/domains/viewer/` owns the current-user read-model composed from
+  `session` + `profile`, and should remain read-only
+- `src/domains/settings/` owns account/settings surfaces and usually only
+  orchestrates other owners instead of owning repositories
+- `src/domains/project/` owns the canonical project entity, repository, project CRUD use cases, project settings, members, invitations, permissions, and enabled-module configuration
 - `src/modules/board/` owns board data such as tickets, epics, sprints, and labels
-- `src/domains/workspace/` may orchestrate create/join flows, but project membership and invitation contracts remain project-owned
+- `src/domains/workspace/` owns workspace catalog queries and entry flows such as list/join/reclaim, but project membership and invitation contracts remain project-owned
 - plan-to-module entitlement decisions remain owned by `billing`; the current codebase allows the thin shared bridge `@/shared/featureAccess` as a documented consumer entrypoint
 
 ## Rules
@@ -176,6 +207,7 @@ const ticketRepository = createTicketRepository(client);
 - Presentation hooks should use use cases, not raw low-level clients
 - `src/app/` should compose routes, not implement repository logic
 - Cross-owner reuse should happen through shared infrastructure or explicit contracts, not through a global repository bucket
+- Owner-to-owner compatibility shims are forbidden: import the canonical owner path directly instead of recreating `workspace -> project` bridges
 
 ## Documented Exceptions
 
@@ -185,7 +217,7 @@ They are documented in [Accepted Architecture Exceptions](./accepted-exceptions.
 
 This currently includes:
 
-- the thin shared bridges `@/shared/session` and `@/shared/featureAccess`
+- the thin shared bridge `@/shared/featureAccess`
 - owner-local low-level Supabase row types in each owner infrastructure `types.ts`
 
 ## Benefits

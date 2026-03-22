@@ -1,7 +1,7 @@
 import type {
   Subscription,
   UpsertSubscriptionInput,
-} from "@/domains/billing/core/domain/schema/subscription.schema";
+} from "@/domains/billing/core/domain/subscription.schema";
 
 /**
  * Repository contract for Subscription operations.

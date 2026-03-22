@@ -1,0 +1,566 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/gradients" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/breakpoints" as *;
+
+// ============================================================================
+// Page Layout
+// ============================================================================
+
+.account-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 0;
+  background: $color-workspace-page-gradient;
+  display: flex;
+  flex-direction: column;
+}
+
+// ============================================================================
+// Header
+// ============================================================================
+
+.account-header {
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    rgba($color-secondary, 0.95) 0%,
+    rgba($color-background, 0.9) 100%
+  );
+  backdrop-filter: blur($backdrop-blur-base);
+  padding: $spacing-3xl $spacing-2xl;
+  border-bottom: $border-width solid $color-accent-border-subtle;
+  box-shadow: $shadow-sm;
+}
+
+.account-header__content {
+  max-width: $spacing-container-max-width;
+  margin: 0 auto;
+}
+
+.account-welcome__label {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+  margin-bottom: $spacing-sm;
+}
+
+.account-welcome__title {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  margin-bottom: $spacing-2xs;
+}
+
+.account-welcome__subtitle {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  font-weight: $font-weight-normal;
+}
+
+// ============================================================================
+// Main Container
+// ============================================================================
+
+.account-container {
+  max-width: $spacing-container-max-width;
+  margin: 0 auto;
+  padding: $spacing-3xl $spacing-2xl;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3xl;
+}
+
+// ============================================================================
+// Section
+// ============================================================================
+
+.account-section {
+  background: $color-secondary;
+  border-radius: $border-radius-lg;
+  border: $border-width solid $color-border;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+  animation: fadeInUp $animation-duration-slower $easing-ease-out backwards;
+
+  @for $i from 1 through 5 {
+    &:nth-child(#{$i}) {
+      animation-delay: calc(#{$i} * #{$animation-delay-medium});
+    }
+  }
+}
+
+.account-section--danger {
+  border-color: $color-error;
+
+  .section-header {
+    background: linear-gradient(
+      $gradient-angle-diagonal,
+      rgba($color-error-background, 0.5) 0%,
+      $color-secondary 100%
+    );
+  }
+
+  .section-title {
+    color: $color-error-text;
+
+    &::before {
+      background: $color-error;
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY($spacing-xl);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================================================
+// Section Header
+// ============================================================================
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: $spacing-2xl $spacing-3xl;
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    rgba($color-surface-subtle, 0.5) 0%,
+    $color-secondary 100%
+  );
+  border-bottom: $border-width solid $color-border-subtle;
+}
+
+.section-header__icon {
+  font-size: $font-size-2xl;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.section-title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  &::before {
+    content: "";
+    width: $accent-bar-width;
+    height: $accent-bar-height;
+    background: linear-gradient(
+      $gradient-angle-vertical,
+      $color-accent,
+      $color-accent-peach
+    );
+    border-radius: $border-radius-2xs;
+  }
+}
+
+.section-description {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-top: $spacing-2xs;
+}
+
+// ============================================================================
+// Section Content
+// ============================================================================
+
+.section-content {
+  padding: $spacing-2xl $spacing-3xl;
+}
+
+// ============================================================================
+// Form
+// ============================================================================
+
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: $spacing-lg;
+  border-top: $border-width solid $color-border-subtle;
+}
+
+// ============================================================================
+// Success Message
+// ============================================================================
+
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  background-color: $color-success-background;
+  color: $color-success-text;
+  border-radius: $border-radius-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  border: $border-width solid $color-success-ring;
+  animation: fadeInUp $animation-duration-base $easing-ease-out;
+}
+
+.info-message {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  background-color: $color-surface-subtle;
+  color: $color-text-secondary;
+  border-radius: $border-radius-md;
+  border: $border-width solid $color-border-subtle;
+}
+
+// ============================================================================
+// Preference Items
+// ============================================================================
+
+.preference-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-2xl;
+  padding: $spacing-lg 0;
+
+  &:not(:last-child) {
+    border-bottom: $border-width solid $color-border-subtle;
+  }
+}
+
+.preference-info {
+  flex: 1;
+}
+
+.preference-label {
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $color-text;
+  margin-bottom: $spacing-2xs;
+}
+
+.preference-description {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+// ============================================================================
+// Danger Zone Items
+// ============================================================================
+
+.danger-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-2xl;
+}
+
+.danger-info {
+  flex: 1;
+}
+
+.danger-label {
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $color-text;
+  margin-bottom: $spacing-2xs;
+}
+
+.danger-description {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+// ============================================================================
+// Sign Out Section
+// ============================================================================
+
+.signout-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-2xl;
+}
+
+.signout-info {
+  flex: 1;
+}
+
+.signout-label {
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $color-text;
+  margin-bottom: $spacing-2xs;
+}
+
+.signout-description {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+// ============================================================================
+// Subscription Section
+// ============================================================================
+
+.subscription-info {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.subscription-details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.subscription-plan {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.subscription-plan__label {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.plan-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-2xs $spacing-md;
+  border-radius: $border-radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-wide;
+}
+
+.plan-badge--free {
+  background-color: $color-surface-subtle;
+  color: $color-text-secondary;
+  border: $border-width solid $color-border;
+}
+
+.plan-badge--pro {
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    $color-accent,
+    $color-accent-peach
+  );
+  color: $color-background;
+}
+
+.plan-badge--team {
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    $color-primary,
+    $color-accent
+  );
+  color: $color-background;
+}
+
+.plan-badge--superuser {
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    $color-success,
+    $color-accent
+  );
+  color: $color-background;
+  font-size: $font-size-base;
+  padding: $spacing-xs $spacing-lg;
+}
+
+.subscription-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+
+  &::before {
+    content: "";
+    width: $spacing-xs;
+    height: $spacing-xs;
+    border-radius: $border-radius-full;
+  }
+}
+
+.status-indicator--active {
+  color: $color-success-text;
+
+  &::before {
+    background-color: $color-success;
+  }
+}
+
+.status-indicator--canceled {
+  color: $color-text-secondary;
+
+  &::before {
+    background-color: $color-text-secondary;
+  }
+}
+
+.status-indicator--past_due {
+  color: $color-error-text;
+
+  &::before {
+    background-color: $color-error;
+  }
+}
+
+.status-indicator--trialing {
+  color: $color-accent;
+
+  &::before {
+    background-color: $color-accent;
+  }
+}
+
+.subscription-period {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.subscription-warning {
+  font-size: $font-size-sm;
+  color: $color-warning-text;
+  padding: $spacing-sm $spacing-md;
+  background-color: $color-warning-background;
+  border-radius: $border-radius-md;
+  border: $border-width solid $color-warning;
+}
+
+.subscription-description {
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  margin-top: $spacing-sm;
+}
+
+.subscription-actions {
+  display: flex;
+  gap: $spacing-md;
+  padding-top: $spacing-lg;
+  border-top: $border-width solid $color-border-subtle;
+}
+
+// ============================================================================
+// Back Link
+// ============================================================================
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  text-decoration: none;
+  transition: color $animation-duration-base $easing-ease-out;
+  margin-bottom: $spacing-lg;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+
+  &:hover {
+    color: $color-primary;
+  }
+
+  &:focus-visible {
+    outline: $border-width-thick solid $color-focus;
+    outline-offset: $border-width-thick;
+    border-radius: $border-radius-sm;
+  }
+}
+
+// ============================================================================
+// Modal
+// ============================================================================
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  margin-top: $spacing-2xl;
+}
+
+// ============================================================================
+// Responsive
+// ============================================================================
+
+@media (max-width: $breakpoint-md) {
+  .account-header {
+    padding: $spacing-2xl $spacing-lg;
+  }
+
+  .account-container {
+    padding: $spacing-2xl $spacing-lg;
+  }
+
+  .section-header {
+    padding: $spacing-lg $spacing-xl;
+  }
+
+  .section-content {
+    padding: $spacing-lg $spacing-xl;
+  }
+
+  .account-welcome__title {
+    font-size: $font-size-2xl;
+  }
+
+  .preference-item,
+  .danger-item,
+  .signout-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-lg;
+  }
+
+  .subscription-actions {
+    flex-direction: column;
+  }
+}
+
+// ============================================================================
+// Accessibility & Reduced Motion
+// ============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .account-page,
+  .account-page * {
+    animation-duration: 0ms !important;
+    animation: none !important;
+    transition-duration: 0ms !important;
+  }
+
+  .account-section {
+    animation: none;
+  }
+}

@@ -1,6 +1,6 @@
 import type Stripe from "stripe";
 
-import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
 import type { WebhookEvent } from "@/domains/billing/core/ports/paymentGateway";
 
 /** Maps paid SubscriptionPlan values to their Stripe Price IDs from env. */

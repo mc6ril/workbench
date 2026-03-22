@@ -4,6 +4,42 @@ import nextTs from "eslint-config-next/typescript";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 
+const forbiddenWorkspaceProjectShimImports = [
+  {
+    name: "@/domains/workspace/core/domain/schema/project.schema",
+    message:
+      "Workspace project schema shim removed. Import from @/domains/project/core/domain/schema/project.schema or @/domains/project/core/domain/schema/projectRole.schema.",
+  },
+  {
+    name: "@/domains/workspace/infrastructure/supabase/project/ProjectMapper.supabase",
+    message:
+      "Workspace project mapper shim removed. Import the canonical owner mapper instead.",
+  },
+  {
+    name: "@/domains/workspace/core/usecases/project/createProject",
+    message:
+      "Workspace createProject shim removed. Import from @/domains/project/core/usecases/project/createProject.",
+  },
+  {
+    name: "@/domains/workspace/core/usecases/project/getProject",
+    message:
+      "Workspace getProject shim removed. Import from @/domains/project/core/usecases/project/getProject.",
+  },
+  {
+    name: "@/domains/workspace/core/usecases/project/deleteProject",
+    message:
+      "Workspace deleteProject shim removed. Import from @/domains/project/core/usecases/project/deleteProject.",
+  },
+];
+
+const forbiddenWorkspaceProjectShimFiles = [
+  "src/domains/workspace/core/domain/schema/project.schema.ts",
+  "src/domains/workspace/infrastructure/supabase/project/ProjectMapper.supabase.ts",
+  "src/domains/workspace/core/usecases/project/createProject.ts",
+  "src/domains/workspace/core/usecases/project/getProject.ts",
+  "src/domains/workspace/core/usecases/project/deleteProject.ts",
+];
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
@@ -75,7 +111,7 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    files: ["src/core/**/*.{ts,tsx}"],
+    files: ["src/domains/*/core/**/*", "src/modules/*/core/**/*"],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -86,6 +122,7 @@ const eslintConfig = defineConfig([
               message:
                 "Use absolute imports with @/ prefix instead of relative imports from src/",
             },
+            // Keep @/shared/featureAccess importable from domains/modules during the transition.
             {
               group: ["@/presentation/**", "@/shared/i18n/**"],
               message:
@@ -97,7 +134,10 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    files: ["src/infrastructure/**/*.{ts,tsx}"],
+    files: [
+      "src/domains/*/infrastructure/**/*",
+      "src/modules/*/infrastructure/**/*",
+    ],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -114,6 +154,90 @@ const eslintConfig = defineConfig([
                 "Infrastructure layer must not pull dependencies from global configs singletons.",
             },
           ],
+        },
+      ],
+    },
+  },
+  {
+    files: [
+      "src/domains/*/presentation/**/*",
+      "src/modules/*/presentation/**/*",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["../*", "../../*", "../../../*", "../../../../*"],
+              message:
+                "Use absolute imports with @/ prefix instead of relative imports from src/",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: [
+      "src/app/**/page.tsx",
+      "src/app/**/layout.tsx",
+      "src/app/**/loading.tsx",
+      "src/app/**/error.tsx",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["../*", "../../*", "../../../*", "../../../../*"],
+              message:
+                "Use absolute imports with @/ prefix instead of relative imports from src/",
+            },
+            {
+              group: [
+                "@/domains/*/infrastructure/**",
+                "@/modules/*/infrastructure/**",
+              ],
+              message:
+                "App route UI files must not import infrastructure directly.",
+            },
+            {
+              group: [
+                "@/domains/*/core/usecases/**",
+                "@/modules/*/core/usecases/**",
+              ],
+              message:
+                "App route UI files must go through presentation/domain entry points instead of core usecases.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // No additional restrictions for src/app/**/route.ts on purpose:
+  // webhooks and callback handlers legitimately orchestrate infrastructure and usecases.
+  {
+    files: ["src/**/*.{ts,tsx}", "__tests__/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: forbiddenWorkspaceProjectShimImports,
+        },
+      ],
+    },
+  },
+  {
+    files: forbiddenWorkspaceProjectShimFiles,
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "Program",
+          message:
+            "Workspace-to-project shim removed. Restore the canonical project owner file instead of recreating this compatibility path.",
         },
       ],
     },

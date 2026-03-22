@@ -960,7 +960,8 @@
         },
         "changeButton": "Cambiar contraseña",
         "changeButtonAriaLabel": "Cambiar contraseña",
-        "changingButton": "Cambiando..."
+        "changingButton": "Cambiando...",
+        "oauthNotice": "Esta cuenta usa inicio de sesión OAuth. La actualización de contraseña no está disponible desde Workbench."
       },
       "preferences": {
         "title": "Preferencias",
@@ -1460,7 +1461,8 @@
       "EMAIL_VERIFICATION_ERROR": "Se ha producido un error al verificar el email",
       "PASSWORD_RESET_ERROR": "Se ha producido un error al restablecer la contraseña",
       "INVALID_TOKEN": "El enlace no es válido o ha caducado. Solicita uno nuevo",
-      "SAME_PASSWORD": "La nueva contraseña debe ser diferente de la actual"
+      "SAME_PASSWORD": "La nueva contraseña debe ser diferente de la actual",
+      "PASSWORD_UPDATE_NOT_ALLOWED": "Esta cuenta usa un proveedor de acceso externo. La actualización de contraseña no está disponible."
     },
     "repository": {
       "NOT_FOUND": "Recurso no encontrado",
@@ -1512,11 +1514,12 @@
       "remove": "Eliminar",
       "removeAriaLabel": "Eliminar la foto de perfil",
       "selectFile": "Seleccionar un archivo de imagen",
-      "hint": "JPEG, PNG o WebP. 2 MB máximo.",
+      "hint": "JPEG, PNG o WebP.",
       "uploadSuccess": "Foto de perfil actualizada",
       "removeSuccess": "Foto de perfil eliminada",
-      "errorTooLarge": "El archivo es demasiado grande (2 MB máximo)",
-      "errorInvalidType": "Formato no soportado. Usa JPEG, PNG o WebP"
+      "errorTooLarge": "El archivo es demasiado grande para procesarlo",
+      "errorInvalidType": "Formato no soportado. Usa JPEG, PNG o WebP",
+      "errorProcessing": "No se pudo preparar la imagen. Prueba con otro archivo."
     }
   }
 }

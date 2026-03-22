@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Geist, Geist_Mono } from "next/font/google";
 
 import type { TranslationMessages } from "@/shared/i18n";
 import { defaultLocale, getTranslationValue } from "@/shared/i18n";
@@ -7,22 +6,6 @@ import messagesFr from "@/shared/i18n/messages/fr.json";
 import AppProvider from "@/shared/providers/AppProvider";
 
 import "@/styles/global.scss";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const cormorantSerif = Cormorant_Garamond({
-  variable: "--font-serif",
-  weight: ["400", "600", "700"],
-  subsets: ["latin"],
-});
 
 const messages = messagesFr as TranslationMessages;
 
@@ -49,9 +32,7 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang={defaultLocale} suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${cormorantSerif.variable}`}
-      >
+      <body>
         <AppProvider>
           <div className="app-root">{children}</div>
         </AppProvider>

@@ -1,9 +1,9 @@
-import type { Subscription } from "@/domains/billing/core/domain/schema/subscription.schema";
+import type { Subscription } from "@/domains/billing/core/domain/subscription.schema";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
   type UpsertSubscriptionInput,
-} from "@/domains/billing/core/domain/schema/subscription.schema";
+} from "@/domains/billing/core/domain/subscription.schema";
 import type { SubscriptionRepository } from "@/domains/billing/core/ports/subscriptionRepository";
 import { getCurrentUserSubscription } from "@/domains/billing/core/usecases/getCurrentUserSubscription";
 

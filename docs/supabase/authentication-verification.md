@@ -91,6 +91,8 @@ Three roles are defined in the `project_members` table:
 - `auth.uid()` is available in all RLS policies via Supabase Auth
 - Helper functions use `auth.uid()` to check membership and roles
 - Project creation trigger automatically adds creator as admin
+- App-level profile data remains separate in `user_profiles`; it should not be
+  confused with session/identity state
 
 **Migration**: `000004_auto_add_creator_as_admin.sql`
 

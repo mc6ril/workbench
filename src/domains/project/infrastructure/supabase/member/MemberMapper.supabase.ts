@@ -1,7 +1,7 @@
 import { toDate } from "@/shared/utils/guards";
 
-import type { UserProfileRow } from "@/domains/auth/infrastructure/supabase/userProfile/types";
-import { mapUserProfileRowToDomain } from "@/domains/auth/infrastructure/supabase/userProfile/UserProfileMapper.supabase";
+import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
+import { mapUserProfileRowToDomain } from "@/domains/profile/infrastructure/UserProfileMapper.supabase";
 import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import type { ProjectMemberRow } from "@/domains/project/infrastructure/supabase/types";

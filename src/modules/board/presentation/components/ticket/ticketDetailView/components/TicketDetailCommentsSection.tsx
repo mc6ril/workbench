@@ -1,3 +1,4 @@
+import Avatar from "@/shared/design-system/avatar";
 import Button from "@/shared/design-system/button";
 import Card from "@/shared/design-system/card";
 import Text from "@/shared/design-system/text";
@@ -5,11 +6,13 @@ import Textarea from "@/shared/design-system/textarea";
 import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
+import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import type { CommentWithAuthor } from "@/modules/board/core/domain/schema/comment.schema";
 import styles from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 
 type Props = {
   comments: CommentWithAuthor[];
+  projectMembers: ProjectMember[];
   sessionUserId?: string;
   canComment: boolean;
   commentInput: string;
@@ -29,6 +32,7 @@ type Props = {
 
 const TicketDetailCommentsSection = ({
   comments,
+  projectMembers,
   sessionUserId,
   canComment,
   commentInput,
@@ -74,15 +78,32 @@ const TicketDetailCommentsSection = ({
         {comments.map((comment) => {
           const canEdit = canComment && comment.authorId === sessionUserId;
           const isEditing = editingCommentId === comment.id;
+          const authorMember = projectMembers.find(
+            (projectMember) => projectMember.userId === comment.authorId
+          );
+          const authorName =
+            comment.authorDisplayName ??
+            authorMember?.profile.displayName ??
+            authorMember?.profile.email ??
+            t("comments.unknownAuthor");
+          const authorAvatarUrl =
+            comment.authorAvatarUrl ?? authorMember?.profile.avatarUrl ?? null;
 
           return (
             <Card key={comment.id} className={styles["ticket-detail__comment"]}>
-              <Text variant="caption">
-                {t("comments.author", {
-                  author:
-                    comment.authorDisplayName ?? t("comments.unknownAuthor"),
-                })}
-              </Text>
+              <div className={styles["ticket-detail__comment-header"]}>
+                <div className={styles["ticket-detail__comment-author"]}>
+                  <Avatar
+                    src={authorAvatarUrl}
+                    name={authorName}
+                    size="sm"
+                    aria-label={authorName}
+                  />
+                  <Text variant="caption">
+                    {t("comments.author", { author: authorName })}
+                  </Text>
+                </div>
+              </div>
 
               {isEditing ? (
                 <Textarea

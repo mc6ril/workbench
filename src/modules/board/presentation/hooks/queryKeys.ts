@@ -19,10 +19,6 @@ import type {
  * - Mutations can invalidate queries without importing the hooks themselves
  */
 const queryKeysObject = {
-  auth: {
-    session: () => ["auth", "session"] as const,
-    user: () => ["auth", "user"] as const,
-  },
   projects: {
     all: () => ["projects"] as const,
     withStats: () => ["projects", "with-stats"] as const,
@@ -118,7 +114,6 @@ const queryKeysObject = {
 } as const;
 
 export const queryKeys = Object.freeze({
-  auth: Object.freeze(queryKeysObject.auth),
   projects: Object.freeze(queryKeysObject.projects),
   tickets: Object.freeze(queryKeysObject.tickets),
   epics: Object.freeze(queryKeysObject.epics),
