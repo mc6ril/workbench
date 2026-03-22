@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
 
-import type { ReclaimableProject } from "@/domains/workspace/core/domain/schema/project.schema";
+import type { ReclaimableProject } from "@/domains/workspace/core/domain/schema/workspaceProjectCatalog.schema";
 import { listReclaimableProjects } from "@/domains/workspace/core/usecases/project/listReclaimableProjects";
 
 describe("listReclaimableProjects", () => {

@@ -15,22 +15,19 @@ jest.mock("@/domains/workspace/core/usecases/project/createProject", () => ({
   createProject: jest.fn(),
 }));
 
-jest.mock("@/domains/workspace/core/usecases/project/addUserToProject", () => ({
-  addUserToProject: jest.fn(),
+jest.mock("@/domains/project/core/usecases/membership/joinProject", () => ({
+  joinProject: jest.fn(),
 }));
 
 jest.mock("@/domains/project/infrastructure/supabase/repositories", () => ({
   projectRepository: {},
-}));
-
-jest.mock("@/domains/workspace/infrastructure/supabase/repositories", () => ({
-  workspaceProjectRepository: {},
+  memberRepository: {},
 }));
 
 import { queryKeys as projectQueryKeys } from "@/domains/project/presentation/hooks/queryKeys";
+import { useAddUserToProject } from "@/domains/project/presentation/hooks/useAddUserToProject";
+import { useCreateProject } from "@/domains/project/presentation/hooks/useCreateProject";
 import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
-import { useAddUserToProject } from "@/domains/workspace/presentation/hooks/useAddUserToProject";
-import { useCreateProject } from "@/domains/workspace/presentation/hooks/useCreateProject";
 
 describe("workspace project mutations", () => {
   beforeEach(() => {

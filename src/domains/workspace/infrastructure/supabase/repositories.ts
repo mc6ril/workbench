@@ -1,9 +1,8 @@
 import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
 
-import { createWorkspaceProjectRepository } from "./project/ProjectRepository.supabase";
+import { createWorkspaceProjectCatalogRepository } from "./project/WorkspaceProjectCatalogRepository.supabase";
 
-export const workspaceProjectRepository = createWorkspaceProjectRepository(
-  createSupabaseBrowserClient()
-);
+export const workspaceProjectCatalogRepository =
+  createWorkspaceProjectCatalogRepository(createSupabaseBrowserClient());
 
-export { createWorkspaceProjectRepository } from "./project/ProjectRepository.supabase";
+export { createWorkspaceProjectCatalogRepository } from "./project/WorkspaceProjectCatalogRepository.supabase";

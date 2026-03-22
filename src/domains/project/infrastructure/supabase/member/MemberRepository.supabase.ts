@@ -1,16 +1,40 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { createDatabaseError } from "@/shared/errors/repositoryError";
+import {
+  createConstraintError,
+  createDatabaseError,
+  createNotFoundError,
+} from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 import { isProjectRole } from "@/shared/utils/guards";
 
 import { mapMemberRowsToDomain } from "./MemberMapper.supabase";
 
 import type { UserProfileRow } from "@/domains/profile/infrastructure/supabase/userProfile/types";
+import type { Project } from "@/domains/project/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
+import { mapProjectRowToDomain } from "@/domains/project/infrastructure/supabase/project/ProjectMapper.supabase";
+import type { ProjectRow } from "@/domains/project/infrastructure/supabase/types";
 import type { ProjectMemberRow } from "@/domains/project/infrastructure/supabase/types";
+
+/**
+ * Extract a full project row from an RPC response.
+ * The RPC may return a single object or an array of objects.
+ */
+const extractProjectRow = (data: unknown): ProjectRow | null => {
+  if (Array.isArray(data) && data.length > 0) {
+    const first = data[0];
+    if (typeof first === "object" && first !== null) {
+      return first as ProjectRow;
+    }
+  } else if (data && typeof data === "object" && !Array.isArray(data)) {
+    return data as ProjectRow;
+  }
+
+  return null;
+};
 
 /**
  * Create a MemberRepository implementation using the provided Supabase client.
@@ -21,6 +45,50 @@ import type { ProjectMemberRow } from "@/domains/project/infrastructure/supabase
 export const createMemberRepository = (
   client: SupabaseClient
 ): MemberRepository => ({
+  async addCurrentUserAsMember(
+    projectId: string,
+    _role?: ProjectRole
+  ): Promise<Project> {
+    try {
+      const { data, error } = await client.rpc("reclaim_or_join_project", {
+        project_uuid: projectId,
+      });
+
+      if (error) {
+        if (error.code === "P0002") {
+          return handleRepositoryError(
+            createNotFoundError("Project", projectId),
+            "Project"
+          );
+        }
+
+        if (error.code === "23505") {
+          return handleRepositoryError(
+            createConstraintError(
+              "ALREADY_MEMBER",
+              "User is already a member of this project"
+            ),
+            "Project"
+          );
+        }
+
+        return handleRepositoryError(error, "Project");
+      }
+
+      const projectRow = extractProjectRow(data);
+      if (!projectRow) {
+        return handleRepositoryError(
+          createNotFoundError("Project", projectId),
+          "Project"
+        );
+      }
+
+      return mapProjectRowToDomain(projectRow);
+    } catch (error) {
+      return handleRepositoryError(error, "Project");
+    }
+  },
+
   async getCurrentRole(projectId: string): Promise<ProjectRole | null> {
     const { data, error } = await client.rpc("get_project_role", {
       project_uuid: projectId,

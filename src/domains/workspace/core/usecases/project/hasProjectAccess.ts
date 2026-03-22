@@ -1,4 +1,4 @@
-import type { WorkspaceProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
+import type { WorkspaceProjectCatalogRepository } from "@/domains/workspace/core/ports/workspaceProjectCatalogRepository";
 
 /**
  * Check if the current user has access to any project.
@@ -9,7 +9,7 @@ import type { WorkspaceProjectRepository } from "@/domains/workspace/core/ports/
  * @throws DatabaseError if database operation fails
  */
 export const hasProjectAccess = async (
-  repository: WorkspaceProjectRepository
+  repository: WorkspaceProjectCatalogRepository
 ): Promise<boolean> => {
-  return repository.hasProjectAccess();
+  return repository.hasAnyProjectAccess();
 };

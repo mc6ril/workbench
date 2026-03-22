@@ -115,7 +115,9 @@ describe("Auth Flow Tests", () => {
       });
 
       const projectRepository = createProjectRepositoryMock({
-        list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => mockProjects),
+        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+          async () => mockProjects
+        ),
       });
 
       // Act - Step 1: Sign in user
@@ -140,8 +142,8 @@ describe("Auth Flow Tests", () => {
       const projectsResult = await listProjects(projectRepository);
 
       // Assert - Step 3: Projects should be listed
-      expect(projectRepository.list).toHaveBeenCalledTimes(1);
-      expect(projectRepository.list).toHaveBeenCalledWith();
+      expect(projectRepository.listAccessibleProjects).toHaveBeenCalledTimes(1);
+      expect(projectRepository.listAccessibleProjects).toHaveBeenCalledWith();
       expect(projectsResult).toEqual(mockProjects);
       expect(projectsResult).toHaveLength(1);
       expect(projectsResult[0].name).toBe("Test Project");
@@ -181,7 +183,9 @@ describe("Auth Flow Tests", () => {
       });
 
       const projectRepository = createProjectRepositoryMock({
-        list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => mockProjects),
+        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+          async () => mockProjects
+        ),
       });
 
       // Act - Step 1: Sign in (should succeed)
@@ -194,7 +198,7 @@ describe("Auth Flow Tests", () => {
 
       // Note: In a real flow, listProjects wouldn't be called if getCurrentSession fails,
       // but we verify that projectRepository was not called
-      expect(projectRepository.list).not.toHaveBeenCalled();
+      expect(projectRepository.listAccessibleProjects).not.toHaveBeenCalled();
     });
   });
 });

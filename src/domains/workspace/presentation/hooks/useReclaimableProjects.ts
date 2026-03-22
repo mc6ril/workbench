@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 import { listReclaimableProjects } from "@/domains/workspace/core/usecases/project/listReclaimableProjects";
-import { workspaceProjectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
+import { workspaceProjectCatalogRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
 /**
@@ -16,7 +16,8 @@ export const useReclaimableProjects = (enabled = true) => {
 
   return useQuery({
     queryKey: queryKeys.projects.reclaimable(),
-    queryFn: () => listReclaimableProjects(workspaceProjectRepository),
+    queryFn: () =>
+      listReclaimableProjects(workspaceProjectCatalogRepository),
     enabled: enabled && !isSessionLoading && !!session?.userId,
   });
 };

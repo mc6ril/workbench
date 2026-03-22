@@ -1,5 +1,5 @@
-import type { ProjectWithStats } from "@/domains/workspace/core/domain/schema/workspaceProject.schema";
-import type { WorkspaceProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
+import type { ProjectWithStats } from "@/domains/workspace/core/domain/schema/workspaceProjectCatalog.schema";
+import type { WorkspaceProjectCatalogRepository } from "@/domains/workspace/core/ports/workspaceProjectCatalogRepository";
 
 /**
  * List all projects accessible to the current user with their roles and statistics.
@@ -10,7 +10,7 @@ import type { WorkspaceProjectRepository } from "@/domains/workspace/core/ports/
  * @throws DatabaseError if database operation fails
  */
 export const listProjectsWithStats = async (
-  repository: WorkspaceProjectRepository
+  repository: WorkspaceProjectCatalogRepository
 ): Promise<ProjectWithStats[]> => {
-  return repository.listWithStats();
+  return repository.listProjectsWithStats();
 };

@@ -8,7 +8,7 @@ import { ProjectRole } from "@/domains/project/core/domain/schema/project.schema
 import type {
   ProjectWithStats,
   ReclaimableProject,
-} from "@/domains/workspace/core/domain/schema/workspaceProject.schema";
+} from "@/domains/workspace/core/domain/schema/workspaceProjectCatalog.schema";
 import type {
   ProjectWithStatsRow,
   ReclaimableProjectRow,

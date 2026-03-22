@@ -4,12 +4,12 @@ import {
 } from "@/shared/errors/repositoryError";
 
 // eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";
 
-import { type Project,ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
-import { addUserToProject } from "@/domains/workspace/core/usecases/project/addUserToProject";
+import { type Project, ProjectRole } from "@/domains/project/core/domain/schema/project.schema";
+import { joinProject } from "@/domains/project/core/usecases/membership/joinProject";
 
-describe("addUserToProject", () => {
+describe("joinProject", () => {
   const projectId = "123e4567-e89b-12d3-a456-426614174000";
 
   const mockProject: Project = {
@@ -22,7 +22,7 @@ describe("addUserToProject", () => {
 
   it("should add user to project successfully with default role", async () => {
     // Arrange
-    const repository = createProjectRepositoryMock({
+    const repository = createMemberRepositoryMock({
       addCurrentUserAsMember: jest.fn<
         Promise<Project>,
         [string, ("admin" | "member" | "viewer")?]
@@ -30,7 +30,7 @@ describe("addUserToProject", () => {
     });
 
     // Act
-    const result = await addUserToProject(repository, projectId);
+    const result = await joinProject(repository, projectId);
 
     // Assert
     expect(repository.addCurrentUserAsMember).toHaveBeenCalledTimes(1);
@@ -44,7 +44,7 @@ describe("addUserToProject", () => {
 
   it("should add user to project successfully with specified role", async () => {
     // Arrange
-    const repository = createProjectRepositoryMock({
+    const repository = createMemberRepositoryMock({
       addCurrentUserAsMember: jest.fn<
         Promise<Project>,
         [string, ("admin" | "member" | "viewer")?]
@@ -52,11 +52,7 @@ describe("addUserToProject", () => {
     });
 
     // Act
-    const result = await addUserToProject(
-      repository,
-      projectId,
-      ProjectRole.MEMBER
-    );
+    const result = await joinProject(repository, projectId, ProjectRole.MEMBER);
 
     // Assert
     expect(repository.addCurrentUserAsMember).toHaveBeenCalledTimes(1);
@@ -69,7 +65,7 @@ describe("addUserToProject", () => {
 
   it("should add user to project successfully with admin role", async () => {
     // Arrange
-    const repository = createProjectRepositoryMock({
+    const repository = createMemberRepositoryMock({
       addCurrentUserAsMember: jest.fn<
         Promise<Project>,
         [string, ("admin" | "member" | "viewer")?]
@@ -77,11 +73,7 @@ describe("addUserToProject", () => {
     });
 
     // Act
-    const result = await addUserToProject(
-      repository,
-      projectId,
-      ProjectRole.ADMIN
-    );
+    const result = await joinProject(repository, projectId, ProjectRole.ADMIN);
 
     // Assert
     expect(repository.addCurrentUserAsMember).toHaveBeenCalledTimes(1);
@@ -95,7 +87,7 @@ describe("addUserToProject", () => {
   it("should throw NotFoundError when project not found", async () => {
     // Arrange
     const notFoundError = createNotFoundError("Project", projectId);
-    const repository = createProjectRepositoryMock({
+    const repository = createMemberRepositoryMock({
       addCurrentUserAsMember: jest.fn<
         Promise<Project>,
         [string, ("admin" | "member" | "viewer")?]
@@ -106,8 +98,8 @@ describe("addUserToProject", () => {
 
     // Act & Assert
     try {
-      await addUserToProject(repository, projectId);
-      fail("Expected addUserToProject to throw");
+      await joinProject(repository, projectId);
+      fail("Expected joinProject to throw");
     } catch (error) {
       expect(error).toMatchObject({
         code: "NOT_FOUND",
@@ -124,7 +116,7 @@ describe("addUserToProject", () => {
       "unique_project_member",
       "User is already a member of this project"
     );
-    const repository = createProjectRepositoryMock({
+    const repository = createMemberRepositoryMock({
       addCurrentUserAsMember: jest.fn<
         Promise<Project>,
         [string, ("admin" | "member" | "viewer")?]
@@ -135,8 +127,8 @@ describe("addUserToProject", () => {
 
     // Act & Assert
     try {
-      await addUserToProject(repository, projectId);
-      fail("Expected addUserToProject to throw");
+      await joinProject(repository, projectId);
+      fail("Expected joinProject to throw");
     } catch (error) {
       expect(error).toMatchObject({
         code: "CONSTRAINT_VIOLATION",
@@ -149,7 +141,7 @@ describe("addUserToProject", () => {
   it("should propagate repository errors", async () => {
     // Arrange
     const repositoryError = new Error("Database connection failed");
-    const repository = createProjectRepositoryMock({
+    const repository = createMemberRepositoryMock({
       addCurrentUserAsMember: jest.fn<
         Promise<Project>,
         [string, ("admin" | "member" | "viewer")?]
@@ -159,7 +151,7 @@ describe("addUserToProject", () => {
     });
 
     // Act & Assert
-    await expect(addUserToProject(repository, projectId)).rejects.toThrow(
+    await expect(joinProject(repository, projectId)).rejects.toThrow(
       repositoryError
     );
     expect(repository.addCurrentUserAsMember).toHaveBeenCalledTimes(1);

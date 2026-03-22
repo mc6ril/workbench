@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { projectRepository } from "@/domains/project/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
+import { workspaceProjectCatalogRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
 
 /**
  * Hook for fetching all projects accessible to the current user.
@@ -18,7 +18,7 @@ export const useProjects = (enabled = true) => {
 
   return useQuery({
     queryKey: queryKeys.projects.all(),
-    queryFn: () => listProjects(projectRepository),
+    queryFn: () => listProjects(workspaceProjectCatalogRepository),
     enabled: enabled && !isSessionLoading && !!session?.userId,
   });
 };
