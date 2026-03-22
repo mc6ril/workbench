@@ -5,7 +5,7 @@ jest.mock("@tanstack/react-query", () => ({
   useQuery: (...args: unknown[]) => useQueryMock(...args),
 }));
 
-jest.mock("@/shared/session", () => ({
+jest.mock("@/domains/session/presentation/hooks/useSession", () => ({
   useSession: (...args: unknown[]) => useSessionMock(...args),
 }));
 
@@ -14,7 +14,7 @@ process.env.NEXT_PUBLIC_SUPABASE_URL =
 process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ?? "test-key";
 
-import { useProjects } from "@/domains/workspace/presentation/hooks/useProjects";
+import { useProjects } from "@/domains/project/presentation/hooks/useProjects";
 import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
 import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";

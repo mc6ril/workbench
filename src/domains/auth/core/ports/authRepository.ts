@@ -1,12 +1,11 @@
 import type {
   AuthResult,
-  AuthSession,
   ResetPasswordInput,
   SignInInput,
   SignUpInput,
   UpdatePasswordInput,
   VerifyEmailInput,
-} from "@/domains/auth/core/domain/schema/auth.schema";
+} from "@/domains/auth/core/domain/auth.schema";
 
 /**
  * Repository contract for Authentication operations.
@@ -44,13 +43,6 @@ export type AuthRepository = {
    * @throws AuthenticationFailure if signout fails
    */
   signOut(): Promise<void>;
-
-  /**
-   * Get the current user session.
-   * @returns Current session or null if no session exists
-   * @throws AuthenticationFailure if session retrieval fails
-   */
-  getSession(): Promise<AuthSession | null>;
 
   /**
    * Request a password reset email.
@@ -91,7 +83,7 @@ export type AuthRepository = {
 
   /**
    * Update auth credentials (email and/or password).
-   * Profile data (display_name, preferences) is managed via UserProfileRepository.
+   * Profile data (display name, avatar, preferences) is managed in the profile domain.
    * @param input - Auth credential update (email and/or password)
    * @throws AuthenticationFailure if update fails
    */

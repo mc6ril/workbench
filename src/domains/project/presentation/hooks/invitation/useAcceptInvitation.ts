@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { acceptInvitation } from "@/domains/project/core/usecases/invitation/acceptInvitation";
 import { invitationRepository } from "@/domains/project/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
+import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
 /**
  * Hook for accepting a project invitation.
@@ -24,7 +25,7 @@ export const useAcceptInvitation = () => {
         queryKey: queryKeys.projects.all(),
       });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.projects.withStats(),
+        queryKey: workspaceQueryKeys.projects.withStats(),
       });
     },
   });

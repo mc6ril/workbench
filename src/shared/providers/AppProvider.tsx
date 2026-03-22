@@ -8,10 +8,11 @@ import Toast from "@/shared/design-system/toast";
 import { registerLocaleGetter } from "@/shared/i18n/config";
 import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
 import { markNavigationSettled } from "@/shared/navigationPerf";
-import { useLocaleSync } from "@/shared/utils/hooks/useLocaleSync";
-import { useThemeSync } from "@/shared/utils/hooks/useThemeSync";
 
 import ReactQueryProvider from "./ReactQueryProvider";
+
+import { useLocaleSync } from "@/domains/profile/presentation/providers/useLocaleSync";
+import { useThemeSync } from "@/domains/profile/presentation/providers/useThemeSync";
 
 type Props = PropsWithChildren;
 
@@ -26,9 +27,9 @@ const NavigationPerfTracker = () => {
 };
 
 /**
- * Syncs locale from session preferences into the Zustand store.
+ * Syncs locale from the current profile preferences into the Zustand store.
  * Also registers the locale getter once so the i18n system reads from Zustand.
- * Must be a child of ReactQueryProvider so useSession is available.
+ * Must be a child of ReactQueryProvider so profile queries are available.
  */
 const LocaleSyncProvider = ({ children }: Props) => {
   const registeredRef = useRef(false);
@@ -45,8 +46,8 @@ const LocaleSyncProvider = ({ children }: Props) => {
 };
 
 /**
- * Syncs theme from session preferences into next-themes.
- * Must be a child of both ReactQueryProvider and ThemeProvider.
+ * Syncs theme from the current profile preferences into next-themes.
+ * Must be a child of both ReactQueryProvider and ThemeProvider so profile queries can run.
  */
 const ThemeSyncProvider = ({ children }: Props) => {
   useThemeSync();

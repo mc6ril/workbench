@@ -7,5 +7,5 @@
  *
  * All domains import feature access primitives from here — not from `@/domains/billing`.
  */
-export { PlanFeature } from "@/domains/billing/core/domain/rules/planFeatures.rules";
+export { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
 export { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";

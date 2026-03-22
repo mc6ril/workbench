@@ -9,9 +9,9 @@ import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
+import type { UpdatePasswordFormInput } from "@/domains/auth/core/domain/auth.schema";
+import { UpdatePasswordFormSchema } from "@/domains/auth/core/domain/auth.schema";
 import { getNextUnmetCriterion } from "@/domains/auth/core/domain/passwordStrength";
-import type { UpdatePasswordFormInput } from "@/domains/auth/core/domain/schema/auth.schema";
-import { UpdatePasswordFormSchema } from "@/domains/auth/core/domain/schema/auth.schema";
 import { useUpdatePassword } from "@/domains/auth/presentation/hooks/password/useUpdatePassword";
 
 export const useUpdatePasswordForm = () => {

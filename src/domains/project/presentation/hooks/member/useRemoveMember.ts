@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeMember } from "@/domains/project/core/usecases/member/removeMember";
 import { memberRepository } from "@/domains/project/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
+import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
 type RemoveMemberVariables = {
   memberId: string;
@@ -29,7 +30,7 @@ export const useRemoveMember = () => {
         queryKey: queryKeys.projects.currentRole(variables.projectId),
       });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.projects.withStats(),
+        queryKey: workspaceQueryKeys.projects.withStats(),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.all(),

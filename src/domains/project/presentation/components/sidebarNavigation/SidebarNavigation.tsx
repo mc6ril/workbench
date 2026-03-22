@@ -3,18 +3,15 @@
 import React, {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { markNavigationStart } from "@/shared/navigationPerf";
-import { useSession } from "@/shared/session";
 
 import SidebarNavigationList from "./components/SidebarNavigationList";
 import SidebarProfileMenu from "./components/SidebarProfileMenu";
@@ -23,32 +20,18 @@ import type {
   SidebarItem,
   SidebarNavigationProps,
 } from "./SidebarNavigation.types";
-import { omitParentIdFilter } from "./SidebarNavigation.utils";
 
 import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";
-import { getInitials } from "@/domains/auth/utils/userUtils";
-import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import { useSidebarItems } from "@/domains/project/presentation/hooks/useSidebarItems";
+import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 import { usePrefetchWorkspaceProjects } from "@/domains/workspace/presentation/hooks/usePrefetchWorkspaceProjects";
-import { usePrefetchProjectViews } from "@/modules/board/presentation/hooks/project/usePrefetchProjectViews";
-import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
-import { useSortStore } from "@/modules/board/presentation/stores/useSortStore";
-import { normalizeTicketSearch } from "@/modules/board/utils/ticketUtils";
-
-type CachedProjectSummary = {
-  shortCode?: string;
-};
 
 const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const pathname = usePathname();
   const router = useRouter();
-  const queryClient = useQueryClient();
   const t = useTranslation("navigation.sidebar");
   const signOutMutation = useSignOut();
-  const filters = useFilterStore((state) => state.filters);
-  const search = useFilterStore((state) => state.search);
-  const sort = useSortStore((state) => state.sort);
-  const { data: session } = useSession();
+  const { data: viewer } = useViewer();
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileTriggerRef = useRef<HTMLButtonElement>(null);
@@ -64,11 +47,10 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
     router.push(`${PAGE_ROUTES.PRICING}?from=${from}`);
   }, [router, pathname]);
 
-  const displayNameValue = session?.displayName?.trim();
-  const emailValue = session?.email?.trim();
+  const displayNameValue = viewer?.displayName?.trim();
+  const emailValue = viewer?.loginEmail?.trim();
   const profileIdentity = displayNameValue || emailValue;
   const displayName = profileIdentity ?? t("profile.userFallbackName");
-  const initials = getInitials(profileIdentity);
   const lockedAriaLabelTemplate = t("locked.ariaLabel");
   const workspaceHref = PAGE_ROUTES.WORKSPACE;
   const accountHref = `${PAGE_ROUTES.ACCOUNT}?from=${encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE)}`;
@@ -77,22 +59,6 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
     // Future: add tab action. No-op for now.
   }, []);
 
-  const projectWideFilters = useMemo(() => {
-    return omitParentIdFilter(filters);
-  }, [filters]);
-
-  const effectiveSearch = useMemo(() => {
-    const project = queryClient.getQueryData<CachedProjectSummary>(
-      queryKeys.projects.detail(projectId)
-    );
-    return normalizeTicketSearch(search, project?.shortCode);
-  }, [projectId, queryClient, search]);
-  const { prefetchBoardView, prefetchEpicsView } = usePrefetchProjectViews({
-    projectId,
-    filters: projectWideFilters,
-    sort,
-    search: effectiveSearch,
-  });
   const prefetchWorkspaceProjects = usePrefetchWorkspaceProjects();
 
   const prefetchProjectView = useCallback(
@@ -102,23 +68,14 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
       }
 
       void router.prefetch(item.href);
-
-      if (item.key === PROJECT_VIEWS.BOARD) {
-        prefetchBoardView();
-        return;
-      }
-
-      if (item.key === PROJECT_VIEWS.EPICS) {
-        prefetchEpicsView();
-      }
     },
-    [prefetchBoardView, prefetchEpicsView, router]
+    [router]
   );
 
   const prefetchWorkspace = useCallback(() => {
     void router.prefetch(PAGE_ROUTES.WORKSPACE);
-    prefetchWorkspaceProjects(session?.userId);
-  }, [prefetchWorkspaceProjects, router, session?.userId]);
+    prefetchWorkspaceProjects(viewer?.userId);
+  }, [prefetchWorkspaceProjects, router, viewer?.userId]);
 
   const handleProfileTriggerClick = useCallback(() => {
     setProfileMenuOpen((prev) => {
@@ -213,7 +170,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
         profileMenuId={profileMenuId}
         profileMenuOpen={profileMenuOpen}
         displayName={displayName}
-        initials={initials}
+        avatarUrl={viewer?.avatarUrl}
         profileAriaLabel={t("profile.ariaLabel")}
         workspaceHref={workspaceHref}
         workspaceLabel={t("profile.backToWorkspace")}

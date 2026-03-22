@@ -4,9 +4,9 @@ import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { createLoggerFactory } from "@/shared/observability";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
-import { getProjectForRoute } from "./getProjectForRoute";
-
+import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
 import ProjectShell from "@/domains/project/presentation/layouts/projectShell/ProjectShell";
+import BoardShellAdapter from "@/modules/board/presentation/projectShell/boardShellAdapter";
 
 const logger = createLoggerFactory().forScope("ProjectLayout");
 
@@ -52,7 +52,14 @@ const ProjectLayout = async ({
 
   // User has access, render children
   // Note: We don't pass project data here - client pages fetch via React Query
-  return <ProjectShell projectId={projectId}>{children}</ProjectShell>;
+  return (
+    <ProjectShell
+      projectId={projectId}
+      shellAdapter={<BoardShellAdapter projectId={projectId} />}
+    >
+      {children}
+    </ProjectShell>
+  );
 };
 
 export default ProjectLayout;

@@ -7,9 +7,9 @@ import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import { useSession } from "@/shared/session";
 
 import { useAcceptInvitation } from "@/domains/project/presentation/hooks/invitation/useAcceptInvitation";
+import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 const JoinInvitationPage = () => {
   const params = useParams<{ token: string }>();

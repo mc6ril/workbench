@@ -1,6 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createSupabaseClientMock } from "../../../__mocks__/infrastructure/supabase/supabaseClientMock";
 
 describe("createSupabaseClientMock", () => {

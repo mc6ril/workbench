@@ -43,7 +43,9 @@ participant Supabase as ☁️ Supabase
 
 # Notes
 
-- In the final architecture, auth is a **first-class domain** in `src/domains/auth/`.
+- In the target architecture, auth owns the password-update action itself.
 - `src/app/` keeps the route entrypoint and composition only.
 - Shared infrastructure in `src/shared/infrastructure/supabase/` provides technical clients, not auth business flows.
 - Password reset validation, orchestration, and provider adaptation belong to the auth domain.
+- The resulting authenticated identity state belongs to the `session` owner, not to `profile`.
+- Account surfaces belong to `settings`, which may compose `viewer`, `profile`, `session`, `auth`, and `billing` without making `auth` own all account UI.

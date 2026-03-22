@@ -40,8 +40,11 @@ export const APP_LIMITS = Object.freeze({
     MAX_PAGE_SIZE: 100,
   },
   AVATAR: {
-    MAX_SIZE_BYTES: 2 * 1024 * 1024, // 2MB
+    MAX_INPUT_SIZE_BYTES: 20 * 1024 * 1024, // 20MB safety cap before client-side processing
+    MAX_DIMENSION_PX: 1024,
     ALLOWED_MIME_TYPES: ["image/jpeg", "image/png", "image/webp"] as const,
+    OUTPUT_MIME_TYPE: "image/webp" as const,
+    OUTPUT_QUALITY: 0.86,
     STORAGE_BUCKET: "avatars",
   },
 });

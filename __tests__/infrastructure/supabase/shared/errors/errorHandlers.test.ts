@@ -1,8 +1,7 @@
 import { createConstraintError } from "@/shared/errors/repositoryError";
-import {
-  handleAuthError,
-  handleRepositoryError,
-} from "@/shared/infrastructure/errors/errorHandlers";
+import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+
+import { handleAuthError } from "@/domains/auth/infrastructure/errors/authErrorHandler";
 
 describe("handleRepositoryError", () => {
   beforeEach(() => {

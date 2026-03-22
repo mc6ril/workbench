@@ -1,10 +1,7 @@
-import type { Session } from "@supabase/supabase-js";
-
 import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
 
 import type {
   AuthenticationFailure,
-  AuthSession,
   EmailAlreadyExistsError,
   EmailVerificationError,
   InvalidCredentialsError,
@@ -13,41 +10,7 @@ import type {
   PasswordResetError,
   SamePasswordError,
   WeakPasswordError,
-} from "@/domains/auth/core/domain/schema/auth.schema";
-import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
-
-/**
- * Extracts the super user flag from Supabase app_metadata.
- * app_metadata is server-controlled and cannot be modified by the user.
- */
-const extractSuperuserFlag = (
-  appMetadata: Record<string, unknown> | undefined
-): boolean => {
-  return appMetadata?.is_superuser === true;
-};
-
-/**
- * Maps Supabase Session to a base AuthSession.
- * displayName and preferences are set to defaults here;
- * they are enriched from user_profiles by the repository.
- *
- * @param session - Supabase session
- * @param userEmail - User email from Supabase user object
- * @returns Base auth session (needs profile enrichment)
- */
-export const mapSupabaseSessionToDomain = (
-  session: Session,
-  userEmail: string
-): AuthSession => {
-  return {
-    userId: session.user.id,
-    email: userEmail,
-    displayName: null,
-    preferences: { ...DEFAULT_USER_PREFERENCES },
-    accessToken: session.access_token,
-    isSuperuser: extractSuperuserFlag(session.user.app_metadata),
-  };
-};
+} from "@/domains/auth/core/domain/auth.schema";
 
 /**
  * Creates an invalid credentials error.

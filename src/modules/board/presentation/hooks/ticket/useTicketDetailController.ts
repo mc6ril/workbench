@@ -3,11 +3,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { PlanFeature, useFeatureAccess } from "@/shared/featureAccess";
-import { useSession } from "@/shared/session";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
+import { useSession } from "@/domains/session/presentation/hooks/useSession";
 import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import {

@@ -2,10 +2,9 @@ import { useMemo } from "react";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
-import { useSession } from "@/shared/session";
 
-import { getEffectivePlan } from "@/domains/billing/core/domain/rules/planFeatures.rules";
-import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+import { getEffectivePlan } from "@/domains/billing/core/domain/planFeatures.rules";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
 import { computeFeatureLockState } from "@/domains/billing/core/usecases/computeFeatureLockState";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
@@ -14,6 +13,7 @@ import {
   buildProjectViewHref,
   getProjectViewConfigsForSidebar,
 } from "@/domains/project/presentation/navigation/projectViews.config";
+import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 export const useSidebarItems = (projectId: string): SidebarItem[] => {
   const t = useTranslation("navigation.sidebar");
@@ -77,9 +77,7 @@ export const useSidebarItems = (projectId: string): SidebarItem[] => {
           label: t(`items.${config.sidebarLabelKey}`),
           exactOnly: false,
           locked,
-          planBadge: minimumPlan
-            ? t(`locked.badge.${minimumPlan}`)
-            : undefined,
+          planBadge: minimumPlan ? t(`locked.badge.${minimumPlan}`) : undefined,
         },
       ];
     });

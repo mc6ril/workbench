@@ -1,5 +1,5 @@
+import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import { resolveProjectPermissions } from "@/domains/project/presentation/providers/permissions/resolveProjectPermissions";
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 describe("resolveProjectPermissions", () => {
   it("grants edit capabilities for admin", () => {

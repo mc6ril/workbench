@@ -36,7 +36,11 @@ Workbench follows a **domain + module architecture**:
 src/
   app/                          # Next.js routing only
   domains/
-    auth/                       # account lifecycle: sign in/up, reset password, verify email, profile, delete account
+    auth/                       # auth actions only: sign in/up, reset password, verify email, delete account
+    session/                    # current identity state: userId, loginEmail, accessToken, claims, auth capabilities
+    profile/                    # reusable user business data: displayName, avatar, preferences
+    viewer/                     # read-model composition for the current authenticated user
+    settings/                   # cross-owner account/settings surfaces
     billing/                    # plans, subscriptions, Stripe checkout/portal/webhooks
     workspace/                  # workspace dashboard: list/create/join projects
     project/                    # project container: settings, members, invitations, enabled modules
@@ -72,14 +76,27 @@ Inside both domains and modules, responsibilities stay layered:
 Ownership is explicit:
 
 - `src/app/` stays route-only
-- `src/domains/workspace/` owns the entry UX to list, create, and join projects
-- `src/domains/project/` owns the project container itself
+- `src/domains/auth/` owns auth mutations and action-oriented flows
+- `src/domains/session/` owns current identity state and auth-derived capabilities
+- `src/domains/profile/` owns user business data such as display name, avatar, and preferences
+- `src/domains/viewer/` owns read-only current-user composition
+- `src/domains/settings/` owns cross-owner account/settings surfaces such as `/account`
+- `src/domains/workspace/` owns workspace catalog and entry UX to list, join, and reclaim projects
+- `src/domains/project/` owns the canonical project entity, project CRUD/governance use cases, and the project container itself
 - `src/modules/board/` owns the current Trello/Jira-like module
 - `src/shared/` stays cross-cutting and domain-agnostic by default
 
+Import rules are explicit:
+
+- project entity imports target `@/domains/project/core/domain/schema/project.schema`
+- project role imports target `@/domains/project/core/domain/schema/projectRole.schema`
+- project CRUD imports target `@/domains/project/core/usecases/project/*`
+- workspace catalog imports target `@/domains/workspace/core/usecases/project/{listProjects,hasProjectAccess,listProjectsWithStats,listReclaimableProjects}`
+- no temporary `workspace -> project` compatibility shims or re-export paths are allowed
+
 Documented exceptions to that default are listed in `docs/architecture/accepted-exceptions.md`:
 
-- thin shared bridges such as `@/shared/session` and `@/shared/featureAccess`
+- the thin shared bridge `@/shared/featureAccess`
 - owner-local low-level Supabase row types in each `src/domains/*/infrastructure/supabase/types.ts` and `src/modules/*/infrastructure/supabase/types.ts`
 - public/static app-level pages in `src/presentation/pages/`
 

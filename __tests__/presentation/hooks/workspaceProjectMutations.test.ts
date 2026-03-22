@@ -11,21 +11,23 @@ jest.mock("@tanstack/react-query", () => ({
   }),
 }));
 
-jest.mock("@/domains/workspace/core/usecases/project/createProject", () => ({
+jest.mock("@/domains/project/core/usecases/project/createProject", () => ({
   createProject: jest.fn(),
 }));
 
-jest.mock("@/domains/workspace/core/usecases/project/addUserToProject", () => ({
-  addUserToProject: jest.fn(),
+jest.mock("@/domains/project/core/usecases/membership/joinProject", () => ({
+  joinProject: jest.fn(),
 }));
 
-jest.mock("@/domains/workspace/infrastructure/supabase/repositories", () => ({
+jest.mock("@/domains/project/infrastructure/supabase/repositories", () => ({
   projectRepository: {},
+  memberRepository: {},
 }));
 
-import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
-import { useAddUserToProject } from "@/domains/workspace/presentation/hooks/useAddUserToProject";
-import { useCreateProject } from "@/domains/workspace/presentation/hooks/useCreateProject";
+import { queryKeys as projectQueryKeys } from "@/domains/project/presentation/hooks/queryKeys";
+import { useAddUserToProject } from "@/domains/project/presentation/hooks/useAddUserToProject";
+import { useCreateProject } from "@/domains/project/presentation/hooks/useCreateProject";
+import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
 describe("workspace project mutations", () => {
   beforeEach(() => {
@@ -39,10 +41,10 @@ describe("workspace project mutations", () => {
     mutation.onSuccess?.();
 
     expect(invalidateQueriesMock).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.all(),
+      queryKey: projectQueryKeys.projects.all(),
     });
     expect(invalidateQueriesMock).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.withStats(),
+      queryKey: workspaceQueryKeys.projects.withStats(),
     });
   });
 
@@ -52,13 +54,13 @@ describe("workspace project mutations", () => {
     mutation.onSuccess?.();
 
     expect(invalidateQueriesMock).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.all(),
+      queryKey: projectQueryKeys.projects.all(),
     });
     expect(invalidateQueriesMock).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.withStats(),
+      queryKey: workspaceQueryKeys.projects.withStats(),
     });
     expect(invalidateQueriesMock).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.reclaimable(),
+      queryKey: workspaceQueryKeys.projects.reclaimable(),
     });
   });
 });

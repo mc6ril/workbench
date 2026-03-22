@@ -122,19 +122,7 @@
 
 .sidebar-navigation__profile-avatar {
   flex-shrink: 0;
-  width: $spacing-4xl;
-  height: $spacing-4xl;
-  min-width: $spacing-4xl;
-  min-height: $spacing-4xl;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: $border-radius-full;
-  background-color: $color-accent-subtle;
-  color: $color-accent;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  line-height: $line-height-tight;
 }
 
 .sidebar-navigation__profile-name {

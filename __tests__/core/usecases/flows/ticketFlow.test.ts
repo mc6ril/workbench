@@ -1,12 +1,9 @@
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+ 
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
-import {
-  ProjectRole,
-  type ProjectWithRole,
-} from "@/domains/workspace/core/domain/schema/project.schema";
+import type { ProjectWithRole } from "@/domains/project/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 import type { Ticket, TicketFilters, TicketSort } from "@/modules/board/core/domain/schema/ticket.schema";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
@@ -67,7 +64,9 @@ describe("Ticket Flow Tests", () => {
       const projects: ProjectWithRole[] = [mockProjectWithRole];
       const tickets: Ticket[] = [mockTicket1, mockTicket2];
       const projectRepository = createProjectRepositoryMock({
-        list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => projects),
+        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+          async () => projects
+        ),
       });
       const ticketRepository = createTicketRepositoryMock({
         listByProject: jest.fn<
@@ -82,8 +81,8 @@ describe("Ticket Flow Tests", () => {
       const projectsResult = await listProjects(projectRepository);
 
       // Assert - Step 1: Projects should be listed
-      expect(projectRepository.list).toHaveBeenCalledTimes(1);
-      expect(projectRepository.list).toHaveBeenCalledWith();
+      expect(projectRepository.listAccessibleProjects).toHaveBeenCalledTimes(1);
+      expect(projectRepository.listAccessibleProjects).toHaveBeenCalledWith();
       expect(projectsResult).toEqual(projects);
       expect(projectsResult).toHaveLength(1);
       expect(projectsResult[0].id).toBe(projectId);
@@ -110,7 +109,9 @@ describe("Ticket Flow Tests", () => {
       // Arrange
       const projects: ProjectWithRole[] = [mockProjectWithRole];
       const projectRepository = createProjectRepositoryMock({
-        list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => projects),
+        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+          async () => projects
+        ),
       });
       const ticketRepository = createTicketRepositoryMock({
         listByProject: jest.fn<
@@ -145,9 +146,11 @@ describe("Ticket Flow Tests", () => {
       // Arrange
       const repositoryError = new Error("Database connection failed");
       const projectRepository = createProjectRepositoryMock({
-        list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => {
+        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+          async () => {
           throw repositoryError;
-        }),
+          }
+        ),
       });
       const ticketRepository = createTicketRepositoryMock({
         listByProject: jest.fn<
@@ -173,7 +176,9 @@ describe("Ticket Flow Tests", () => {
       const projects: ProjectWithRole[] = [mockProjectWithRole];
       const repositoryError = new Error("Database connection failed");
       const projectRepository = createProjectRepositoryMock({
-        list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => projects),
+        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+          async () => projects
+        ),
       });
       const ticketRepository = createTicketRepositoryMock({
         listByProject: jest.fn<
@@ -218,7 +223,9 @@ describe("Ticket Flow Tests", () => {
       const projects: ProjectWithRole[] = [differentProject];
       const tickets: Ticket[] = [mockTicket1];
       const projectRepository = createProjectRepositoryMock({
-        list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => projects),
+        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+          async () => projects
+        ),
       });
       const ticketRepository = createTicketRepositoryMock({
         listByProject: jest.fn<

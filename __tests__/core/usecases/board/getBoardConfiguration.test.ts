@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+ 
 import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
 
 import type {

@@ -1,15 +1,13 @@
 import { z } from "zod";
 
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import {
   createAuthError,
   mockAuthResult,
   validSignInInput,
 } from "../../../../__mocks__/core/domain/authMocks";
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
 
-import type { AuthResult } from "@/domains/auth/core/domain/schema/auth.schema";
+import type { AuthResult } from "@/domains/auth/core/domain/auth.schema";
 import { signInUser } from "@/domains/auth/core/usecases/user/signInUser";
 
 describe("signInUser", () => {

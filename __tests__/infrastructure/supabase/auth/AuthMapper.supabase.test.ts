@@ -1,33 +1,32 @@
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+ 
 import { createAuthError } from "../../../../__mocks__/core/domain/authMocks";
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import {
   createSupabaseAuthError,
   createSupabaseSessionMock,
 } from "../../../../__mocks__/infrastructure/supabase/authMocks";
 
-import { DEFAULT_USER_PREFERENCES } from "@/domains/auth/core/domain/schema/auth.schema";
 import {
   mapSupabaseAuthError,
-  mapSupabaseSessionToDomain,
 } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
+import { mapSupabaseSessionToCurrentSession } from "@/domains/session/infrastructure/supabase/SessionMapper.supabase";
 
 describe("AuthMapper.supabase", () => {
-  describe("mapSupabaseSessionToDomain", () => {
-    it("should map Supabase session to domain AuthSession", () => {
+  describe("mapSupabaseSessionToCurrentSession", () => {
+    it("should map Supabase session to domain CurrentSession", () => {
       // Arrange
       const supabaseSession = createSupabaseSessionMock();
       const userEmail = "test@example.com";
 
       // Act
-      const result = mapSupabaseSessionToDomain(supabaseSession, userEmail);
+      const result = mapSupabaseSessionToCurrentSession(
+        supabaseSession,
+        userEmail
+      );
 
       // Assert
       expect(result).toEqual({
         userId: "user-123",
-        email: "test@example.com",
-        displayName: null,
-        preferences: DEFAULT_USER_PREFERENCES,
+        loginEmail: "test@example.com",
         accessToken: "test-access-token",
         isSuperuser: false,
       });
@@ -43,19 +42,18 @@ describe("AuthMapper.supabase", () => {
       const userEmail = "different@example.com";
 
       // Act
-      const result = mapSupabaseSessionToDomain(supabaseSession, userEmail);
+      const result = mapSupabaseSessionToCurrentSession(
+        supabaseSession,
+        userEmail
+      );
 
       // Assert
-      expect(result.email).toBe("different@example.com");
+      expect(result.loginEmail).toBe("different@example.com");
       expect(result.userId).toBe("user-123");
-      expect(result.displayName).toBeNull();
-      expect(result.preferences).toEqual(DEFAULT_USER_PREFERENCES);
       expect(result.accessToken).toBe("test-access-token");
     });
 
-    it("should return null displayName (profile enrichment happens separately)", () => {
-      // Arrange: even with display_name in user_metadata, mapper returns null
-      // because displayName is now sourced from user_profiles table
+    it("should ignore profile data from user metadata", () => {
       const supabaseSession = createSupabaseSessionMock({
         user: {
           user_metadata: { display_name: "John Doe" },
@@ -63,18 +61,21 @@ describe("AuthMapper.supabase", () => {
       });
 
       // Act
-      const result = mapSupabaseSessionToDomain(
+      const result = mapSupabaseSessionToCurrentSession(
         supabaseSession,
         "test@example.com"
       );
 
       // Assert
-      expect(result.displayName).toBeNull();
+      expect(result).toEqual({
+        userId: "user-123",
+        loginEmail: "test@example.com",
+        accessToken: "test-access-token",
+        isSuperuser: false,
+      });
     });
 
-    it("should return default preferences (profile enrichment happens separately)", () => {
-      // Arrange: even with preferences in user_metadata, mapper returns defaults
-      // because preferences are now sourced from user_profiles table
+    it("should not expose preferences from user metadata", () => {
       const supabaseSession = createSupabaseSessionMock({
         user: {
           user_metadata: {
@@ -88,13 +89,18 @@ describe("AuthMapper.supabase", () => {
       });
 
       // Act
-      const result = mapSupabaseSessionToDomain(
+      const result = mapSupabaseSessionToCurrentSession(
         supabaseSession,
         "test@example.com"
       );
 
       // Assert
-      expect(result.preferences).toEqual(DEFAULT_USER_PREFERENCES);
+      expect(result).toEqual({
+        userId: "user-123",
+        loginEmail: "test@example.com",
+        accessToken: "test-access-token",
+        isSuperuser: false,
+      });
     });
   });
 

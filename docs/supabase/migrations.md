@@ -56,7 +56,8 @@ This document describes the current migration strategy for Workbench and reflect
 ### Collaboration Features
 
 - `000013_user_profiles.sql`  
-  Adds `user_profiles` with sync trigger and avatar update path.
+  Adds `user_profiles` with sync trigger and avatar update path. This table backs
+  profile data, not session/identity state.
 
 - `000014_project_invitations.sql`  
   Adds `project_invitations` and invitation RPC flows.
@@ -65,7 +66,8 @@ This document describes the current migration strategy for Workbench and reflect
   Adds `ticket_assignees` and batch assignee RPC.
 
 - `000016_user_profiles_single_source.sql`  
-  Refines user profile synchronization/update behavior.
+  Refines user profile synchronization/update behavior for the profile
+  projection.
 
 ### Domain Enrichment
 

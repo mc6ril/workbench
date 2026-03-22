@@ -3,12 +3,12 @@ import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 import {
   type UpdateUserInput,
   UpdateUserSchema,
-} from "@/domains/auth/core/domain/schema/auth.schema";
+} from "@/domains/auth/core/domain/auth.schema";
 import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
 
 /**
  * Update auth credentials (email and/or password).
- * Profile data (display_name, preferences) is managed via profile usecases.
+ * Profile data (display name, avatar, preferences) is managed via the profile domain.
  *
  * @param repository - Auth repository
  * @param input - Auth credential update (email and/or password)

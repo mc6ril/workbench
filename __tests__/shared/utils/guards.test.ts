@@ -9,9 +9,10 @@ import {
   isNotUndefined,
   isNumber,
   isObject,
-  isProjectRole,
   isString,
 } from "@/shared/utils/guards";
+
+import { isProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 
 describe("guards", () => {
   describe("isObject", () => {

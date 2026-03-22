@@ -44,7 +44,8 @@ The active app flow focuses on `board` and `epics`, while collaboration tables r
 - `project_invitations`
   - Token-based invitation workflow
 - `user_profiles`
-  - Public profile projection from auth users
+  - Public profile projection from Supabase Auth users
+  - Backs the app-level `profile` owner, not session/identity state
 
 ### Billing / Plan
 

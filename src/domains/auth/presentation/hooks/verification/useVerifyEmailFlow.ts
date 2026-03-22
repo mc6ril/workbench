@@ -1,18 +1,16 @@
 import { useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
-import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
-import { queryKeys } from "@/domains/auth/presentation/hooks/queryKeys";
 import { useVerifyEmail } from "@/domains/auth/presentation/hooks/verification/useVerifyEmail";
 import {
   getVerifyEmailRedirectErrorCode,
   parseVerifyEmailParams,
 } from "@/domains/auth/presentation/utils/verifyEmail";
+import { useOptionalSession } from "@/domains/session/presentation/hooks/useOptionalSession";
 
 /**
  * Encapsulates the full email verification orchestration.
@@ -34,16 +32,13 @@ export const useVerifyEmailFlow = () => {
   }, [locationHash, searchParamsValue]);
   const hasVerificationAttempt =
     !!parsedParams.input || !!parsedParams.redirectError;
-  const recoverySessionQuery = useQuery({
-    queryKey: [
-      ...queryKeys.auth.session(),
+  const recoverySessionQuery = useOptionalSession({
+    enabled: hasVerificationAttempt,
+    queryKeySuffix: [
       "verify-email-recovery",
       searchParamsValue,
       locationHash ?? "",
     ],
-    queryFn: () => authRepository.getSession(),
-    enabled: hasVerificationAttempt,
-    retry: false,
   });
   const hasRecoveredSession =
     hasVerificationAttempt && !!recoverySessionQuery.data;

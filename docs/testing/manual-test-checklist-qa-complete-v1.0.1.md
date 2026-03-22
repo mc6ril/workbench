@@ -37,6 +37,7 @@ It is organized by feature domain and includes execution notes.
 - [ ] Sign up (new account)
 - [ ] Email verification flow and redirect behavior
 - [ ] Sign in with Google OAuth
+- [ ] OAuth-only account cannot update password from account settings
 - [ ] Delete account (with existing project memberships)
 - [ ] Profile update from account settings (name, email where applicable)
 - [ ] Session guards:

@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+ 
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
 import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";

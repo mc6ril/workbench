@@ -8,6 +8,7 @@ This document provides a checklist for manually testing the authentication flows
 - Access to browser dev tools (Network tab, Console)
 - Test email account: cyril.lesot@yahoo.fr
 - Test password: Azerty123!
+- Google OAuth test account
 - Access to email inbox for verification/reset links
 - Supabase dashboard access to verify redirect URLs configuration
 
@@ -83,6 +84,21 @@ This document provides a checklist for manually testing the authentication flows
   - Expected: Successful login
   - Expected: Redirect to `/myworkspace`
   - Expected: Old password no longer works
+
+### 2.1 OAuth-Only Account Password Restrictions
+
+- [ ] **Account Settings Hide Password Form For OAuth-Only User**
+  - Sign in with the Google OAuth test account
+  - Navigate to `/account`
+  - Expected: Security section displays an informational notice
+  - Expected: No password-change form is rendered
+  - Expected: No password mutation is triggered from the account page
+
+- [ ] **Direct Password Update Attempt Is Blocked For OAuth-Only User**
+  - Using an OAuth-only account, attempt to reach a password update path directly if a recovery session/link is available
+  - Expected: Password update is blocked by the domain/infrastructure layer
+  - Expected: User sees an explicit error instead of a silent success
+  - Expected: Existing OAuth sign-in behavior remains unchanged
 
 ### 3. Unverified User Sign-In Error Handling
 
