@@ -75,7 +75,7 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    files: ["src/core/**/*.{ts,tsx}"],
+    files: ["src/domains/*/core/**/*", "src/modules/*/core/**/*"],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -86,6 +86,7 @@ const eslintConfig = defineConfig([
               message:
                 "Use absolute imports with @/ prefix instead of relative imports from src/",
             },
+            // Keep @/shared/featureAccess importable from domains/modules during the transition.
             {
               group: ["@/presentation/**", "@/shared/i18n/**"],
               message:
@@ -97,7 +98,10 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    files: ["src/infrastructure/**/*.{ts,tsx}"],
+    files: [
+      "src/domains/*/infrastructure/**/*",
+      "src/modules/*/infrastructure/**/*",
+    ],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -112,6 +116,84 @@ const eslintConfig = defineConfig([
               group: ["@/configs/**"],
               message:
                 "Infrastructure layer must not pull dependencies from global configs singletons.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: [
+      "src/domains/*/presentation/**/*",
+      "src/modules/*/presentation/**/*",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["../*", "../../*", "../../../*", "../../../../*"],
+              message:
+                "Use absolute imports with @/ prefix instead of relative imports from src/",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: [
+      "src/app/**/page.tsx",
+      "src/app/**/layout.tsx",
+      "src/app/**/loading.tsx",
+      "src/app/**/error.tsx",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["../*", "../../*", "../../../*", "../../../../*"],
+              message:
+                "Use absolute imports with @/ prefix instead of relative imports from src/",
+            },
+            {
+              group: [
+                "@/domains/*/infrastructure/**",
+                "@/modules/*/infrastructure/**",
+              ],
+              message:
+                "App route UI files must not import infrastructure directly.",
+            },
+            {
+              group: [
+                "@/domains/*/core/usecases/**",
+                "@/modules/*/core/usecases/**",
+              ],
+              message:
+                "App route UI files must go through presentation/domain entry points instead of core usecases.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // No additional restrictions for src/app/**/route.ts on purpose:
+  // webhooks and callback handlers legitimately orchestrate infrastructure and usecases.
+  {
+    files: ["src/**/*"],
+    ignores: ["src/domains/workspace/core/domain/schema/project.schema.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/domains/workspace/core/domain/schema/project.schema"],
+              message:
+                "Import depuis @/domains/project/core/domain/schema/project.schema à la place",
             },
           ],
         },

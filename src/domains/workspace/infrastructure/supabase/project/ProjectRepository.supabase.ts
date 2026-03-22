@@ -12,15 +12,17 @@ import {
   mapReclaimableProjectRowToDomain,
 } from "./ProjectMapper.supabase";
 
+import {
+  type Project,
+  ProjectRole,
+  type ProjectWithRole,
+} from "@/domains/project/core/domain/schema/project.schema";
 import { createProjectRepository } from "@/domains/project/infrastructure/supabase/project/ProjectRepository.supabase";
 import type { ProjectRow } from "@/domains/project/infrastructure/supabase/types";
 import type {
-  Project,
-  ProjectWithRole,
   ProjectWithStats,
   ReclaimableProject,
-} from "@/domains/workspace/core/domain/schema/project.schema";
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
+} from "@/domains/workspace/core/domain/schema/workspaceProject.schema";
 import type { WorkspaceProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 import type {
   ProjectWithStatsRow,

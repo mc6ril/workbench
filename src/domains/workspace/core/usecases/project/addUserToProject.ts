@@ -2,7 +2,7 @@ import {
   AddUserToProjectInputSchema,
   type Project,
   ProjectRole,
-} from "@/domains/workspace/core/domain/schema/project.schema";
+} from "@/domains/project/core/domain/schema/project.schema";
 import type { WorkspaceProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**

@@ -14,12 +14,12 @@ import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./ProjectMembersModal.module.scss";
 
+import { ProjectRole } from "@/domains/project/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useRemoveMember } from "@/domains/project/presentation/hooks/member/useRemoveMember";
 import { useUpdateMemberRole } from "@/domains/project/presentation/hooks/member/useUpdateMemberRole";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 type ProjectMembersModalProps = {
   isOpen: boolean;

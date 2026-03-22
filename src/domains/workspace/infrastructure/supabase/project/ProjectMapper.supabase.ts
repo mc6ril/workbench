@@ -4,11 +4,11 @@ export {
   mapProjectToProjectWithRole,
 } from "@/domains/project/infrastructure/supabase/project/ProjectMapper.supabase";
 
+import { ProjectRole } from "@/domains/project/core/domain/schema/project.schema";
 import type {
-  ProjectRole,
   ProjectWithStats,
   ReclaimableProject,
-} from "@/domains/workspace/core/domain/schema/project.schema";
+} from "@/domains/workspace/core/domain/schema/workspaceProject.schema";
 import type {
   ProjectWithStatsRow,
   ReclaimableProjectRow,

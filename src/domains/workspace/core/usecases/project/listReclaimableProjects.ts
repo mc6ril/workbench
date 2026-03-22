@@ -1,4 +1,4 @@
-import type { ReclaimableProject } from "@/domains/workspace/core/domain/schema/project.schema";
+import type { ReclaimableProject } from "@/domains/workspace/core/domain/schema/workspaceProject.schema";
 import type { WorkspaceProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
 
 /**
