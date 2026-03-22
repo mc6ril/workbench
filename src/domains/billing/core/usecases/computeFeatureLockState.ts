@@ -2,8 +2,8 @@ import {
   canAccessFeature,
   getMinimumPlanForFeature,
   type PlanFeature,
-} from "@/domains/billing/core/domain/rules/planFeatures.rules";
-import type { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+} from "@/domains/billing/core/domain/planFeatures.rules";
+import type { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
 
 type ViewLockedState = {
   locked: boolean;

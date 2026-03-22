@@ -1,7 +1,7 @@
 import {
   type UpdateProfileInput,
   UpdateProfileInputSchema,
-} from "@/domains/profile/core/domain/schema/userProfile.schema";
+} from "@/domains/profile/core/domain/userProfile.schema";
 import type { UserProfileRepository } from "@/domains/profile/core/ports/userProfileRepository";
 
 /**

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useCallback, useMemo } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import React, { useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import Button from "@/shared/design-system/button";
@@ -13,14 +13,12 @@ import ProjectToolbarTools from "./components/ProjectToolbarTools";
 import styles from "./ProjectToolbar.module.scss";
 import type { ProjectToolbarProps } from "./ProjectToolbar.types";
 
-import {
-  getProjectViewConfig,
-  getProjectViewKeyFromPath,
-} from "@/domains/project/presentation/navigation/projectViews.config";
 import { useProjectToolbarSuggestions } from "@/modules/board/presentation/hooks/project/useProjectToolbarSuggestions";
 
 const ProjectToolbar = ({
-  projectId,
+  pageTitle,
+  showFilterSort = false,
+  addActionType = null,
   searchValue = "",
   onSearchChange,
   onFilterClick,
@@ -32,25 +30,9 @@ const ProjectToolbar = ({
   isPermissionsLoading = false,
   searchSuggestions = [],
 }: ProjectToolbarProps) => {
-  const pathname = usePathname();
   const router = useRouter();
-  const tSidebar = useTranslation("navigation.sidebar");
   const tNavbar = useTranslation("navigation.navbar");
   const tSearch = useTranslation("navigation.searchBar");
-
-  const viewKey = useMemo(
-    () => getProjectViewKeyFromPath(pathname, projectId),
-    [pathname, projectId]
-  );
-
-  const viewConfig = useMemo(() => getProjectViewConfig(viewKey), [viewKey]);
-
-  const pageTitle = useMemo(
-    () => tSidebar(`items.${viewConfig.sidebarLabelKey}`),
-    [tSidebar, viewConfig.sidebarLabelKey]
-  );
-
-  const { showFilterSort, addActionType } = viewConfig.navbar;
   const showAddAction = addActionType !== null;
 
   const addLabel =

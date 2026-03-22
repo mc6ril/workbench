@@ -81,10 +81,18 @@ Ownership is explicit:
 - `src/domains/profile/` owns user business data such as display name, avatar, and preferences
 - `src/domains/viewer/` owns read-only current-user composition
 - `src/domains/settings/` owns cross-owner account/settings surfaces such as `/account`
-- `src/domains/workspace/` owns the entry UX to list, create, and join projects
-- `src/domains/project/` owns the project container itself
+- `src/domains/workspace/` owns workspace catalog and entry UX to list, join, and reclaim projects
+- `src/domains/project/` owns the canonical project entity, project CRUD/governance use cases, and the project container itself
 - `src/modules/board/` owns the current Trello/Jira-like module
 - `src/shared/` stays cross-cutting and domain-agnostic by default
+
+Import rules are explicit:
+
+- project entity imports target `@/domains/project/core/domain/schema/project.schema`
+- project role imports target `@/domains/project/core/domain/schema/projectRole.schema`
+- project CRUD imports target `@/domains/project/core/usecases/project/*`
+- workspace catalog imports target `@/domains/workspace/core/usecases/project/{listProjects,hasProjectAccess,listProjectsWithStats,listReclaimableProjects}`
+- no temporary `workspace -> project` compatibility shims or re-export paths are allowed
 
 Documented exceptions to that default are listed in `docs/architecture/accepted-exceptions.md`:
 

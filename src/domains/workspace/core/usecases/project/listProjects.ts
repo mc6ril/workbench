@@ -1,5 +1,5 @@
-import type { ProjectWithRole } from "@/domains/workspace/core/domain/schema/project.schema";
-import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
+import type { ProjectWithRole } from "@/domains/project/core/domain/schema/project.schema";
+import type { WorkspaceProjectCatalogRepository } from "@/domains/workspace/core/ports/workspaceProjectCatalogRepository";
 
 /**
  * List all projects accessible to the current user with their roles.
@@ -10,7 +10,7 @@ import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRe
  * @throws DatabaseError if database operation fails
  */
 export const listProjects = async (
-  repository: ProjectRepository
+  repository: WorkspaceProjectCatalogRepository
 ): Promise<ProjectWithRole[]> => {
-  return repository.list();
+  return repository.listAccessibleProjects();
 };

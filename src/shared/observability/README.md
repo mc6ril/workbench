@@ -18,7 +18,7 @@ Usecases receive `loggerFactory` as a parameter:
 
 ```typescript
 import type { LoggerFactory } from "@/shared/observability/logger.port";
-import type { ProjectRepository } from "@/domains/workspace/core/ports/projectRepository";
+import type { ProjectRepository } from "@/domains/project/core/ports/projectRepository";
 
 export async function createProject(
   repo: ProjectRepository,

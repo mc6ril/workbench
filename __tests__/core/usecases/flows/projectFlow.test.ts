@@ -3,16 +3,16 @@ import {
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
 
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
 
 import {
   type Project,
-  ProjectRole,
   type ProjectWithRole,
-} from "@/domains/workspace/core/domain/schema/project.schema";
-import { addUserToProject } from "@/domains/workspace/core/usecases/project/addUserToProject";
-import { getProject } from "@/domains/workspace/core/usecases/project/getProject";
+} from "@/domains/project/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import { joinProject } from "@/domains/project/core/usecases/membership/joinProject";
+import { getProject } from "@/domains/project/core/usecases/project/getProject";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 
 describe("Project Flow Tests", () => {
@@ -31,15 +31,21 @@ describe("Project Flow Tests", () => {
     role: ProjectRole.ADMIN,
   };
 
-  describe("complete project access flow: listProjects → getProject → addUserToProject", () => {
+  describe("complete project access flow: listProjects → getProject → joinProject", () => {
     it("should complete project access flow successfully", async () => {
       // Arrange
       const projects: ProjectWithRole[] = [mockProjectWithRole];
-      const repository = createProjectRepositoryMock({
-        list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => projects),
+      const catalogRepository = createProjectRepositoryMock({
+        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+          async () => projects
+        ),
+      });
+      const projectRepository = createProjectRepositoryMock({
         findById: jest.fn<Promise<Project | null>, [string]>(
           async () => mockProject
         ),
+      });
+      const memberRepository = createMemberRepositoryMock({
         addCurrentUserAsMember: jest.fn<
           Promise<Project>,
           [string, ("admin" | "member" | "viewer")?]
@@ -47,35 +53,35 @@ describe("Project Flow Tests", () => {
       });
 
       // Act - Step 1: List projects
-      const projectsResult = await listProjects(repository);
+      const projectsResult = await listProjects(catalogRepository);
 
       // Assert - Step 1: Projects should be listed
-      expect(repository.list).toHaveBeenCalledTimes(1);
-      expect(repository.list).toHaveBeenCalledWith();
+      expect(catalogRepository.listAccessibleProjects).toHaveBeenCalledTimes(1);
+      expect(catalogRepository.listAccessibleProjects).toHaveBeenCalledWith();
       expect(projectsResult).toEqual(projects);
       expect(projectsResult).toHaveLength(1);
       expect(projectsResult[0].id).toBe(projectId);
 
       // Act - Step 2: Get project by ID
-      const projectResult = await getProject(repository, projectId);
+      const projectResult = await getProject(projectRepository, projectId);
 
       // Assert - Step 2: Project should be retrieved
-      expect(repository.findById).toHaveBeenCalledTimes(1);
-      expect(repository.findById).toHaveBeenCalledWith(projectId);
+      expect(projectRepository.findById).toHaveBeenCalledTimes(1);
+      expect(projectRepository.findById).toHaveBeenCalledWith(projectId);
       expect(projectResult).toEqual(mockProject);
       expect(projectResult.id).toBe(projectId);
       expect(projectResult.name).toBe("Test Project");
 
-      // Act - Step 3: Add user to project
-      const addedProjectResult = await addUserToProject(
-        repository,
+      // Act - Step 3: Join project
+      const addedProjectResult = await joinProject(
+        memberRepository,
         projectId,
         ProjectRole.MEMBER
       );
 
       // Assert - Step 3: User should be added to project
-      expect(repository.addCurrentUserAsMember).toHaveBeenCalledTimes(1);
-      expect(repository.addCurrentUserAsMember).toHaveBeenCalledWith(
+      expect(memberRepository.addCurrentUserAsMember).toHaveBeenCalledTimes(1);
+      expect(memberRepository.addCurrentUserAsMember).toHaveBeenCalledWith(
         projectId,
         ProjectRole.MEMBER
       );
@@ -87,9 +93,15 @@ describe("Project Flow Tests", () => {
       // Arrange
       const projects: ProjectWithRole[] = [mockProjectWithRole];
       const notFoundProjectId = "999e9999-e89b-12d3-a456-426614174999";
-      const repository = createProjectRepositoryMock({
-        list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => projects),
+      const catalogRepository = createProjectRepositoryMock({
+        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+          async () => projects
+        ),
+      });
+      const projectRepository = createProjectRepositoryMock({
         findById: jest.fn<Promise<Project | null>, [string]>(async () => null),
+      });
+      const memberRepository = createMemberRepositoryMock({
         addCurrentUserAsMember: jest.fn<
           Promise<Project>,
           [string, ("admin" | "member" | "viewer")?]
@@ -97,23 +109,23 @@ describe("Project Flow Tests", () => {
       });
 
       // Act - Step 1: List projects (should succeed)
-      const projectsResult = await listProjects(repository);
+      const projectsResult = await listProjects(catalogRepository);
       expect(projectsResult).toHaveLength(1);
 
       // Act & Assert - Step 2: Get project (should throw NotFoundError)
       await expect(
-        getProject(repository, notFoundProjectId)
+        getProject(projectRepository, notFoundProjectId)
       ).rejects.toMatchObject({
         code: "NOT_FOUND",
         entityType: "Project",
         entityId: notFoundProjectId,
       });
-      expect(repository.findById).toHaveBeenCalledTimes(1);
-      expect(repository.findById).toHaveBeenCalledWith(notFoundProjectId);
+      expect(projectRepository.findById).toHaveBeenCalledTimes(1);
+      expect(projectRepository.findById).toHaveBeenCalledWith(notFoundProjectId);
 
-      // Act - Step 3: Try to add user to non-existent project (should throw)
+      // Act - Step 3: Try to join a non-existent project (should throw)
       const notFoundError = createNotFoundError("Project", notFoundProjectId);
-      repository.addCurrentUserAsMember = jest.fn<
+      memberRepository.addCurrentUserAsMember = jest.fn<
         Promise<Project>,
         [string, ("admin" | "member" | "viewer")?]
       >(async () => {
@@ -122,8 +134,8 @@ describe("Project Flow Tests", () => {
 
       // Assert - Step 3: Should throw NotFoundError
       try {
-        await addUserToProject(repository, notFoundProjectId);
-        fail("Expected addUserToProject to throw");
+        await joinProject(memberRepository, notFoundProjectId);
+        fail("Expected joinProject to throw");
       } catch (error) {
         expect(error).toMatchObject({
           code: "NOT_FOUND",
@@ -136,11 +148,17 @@ describe("Project Flow Tests", () => {
     it("should handle constraint error when user already member", async () => {
       // Arrange
       const projects: ProjectWithRole[] = [mockProjectWithRole];
-      const repository = createProjectRepositoryMock({
-        list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => projects),
+      const catalogRepository = createProjectRepositoryMock({
+        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+          async () => projects
+        ),
+      });
+      const projectRepository = createProjectRepositoryMock({
         findById: jest.fn<Promise<Project | null>, [string]>(
           async () => mockProject
         ),
+      });
+      const memberRepository = createMemberRepositoryMock({
         addCurrentUserAsMember: jest.fn<
           Promise<Project>,
           [string, ("admin" | "member" | "viewer")?]
@@ -153,15 +171,15 @@ describe("Project Flow Tests", () => {
       });
 
       // Act - Step 1: List projects (should succeed)
-      await listProjects(repository);
+      await listProjects(catalogRepository);
 
       // Act - Step 2: Get project (should succeed)
-      await getProject(repository, projectId);
+      await getProject(projectRepository, projectId);
 
-      // Act & Assert - Step 3: Add user to project (should fail with constraint error)
+      // Act & Assert - Step 3: Join project (should fail with constraint error)
       try {
-        await addUserToProject(repository, projectId);
-        fail("Expected addUserToProject to throw");
+        await joinProject(memberRepository, projectId);
+        fail("Expected joinProject to throw");
       } catch (error) {
         expect(error).toMatchObject({
           code: "CONSTRAINT_VIOLATION",
@@ -173,13 +191,19 @@ describe("Project Flow Tests", () => {
     it("should handle error propagation through the flow", async () => {
       // Arrange
       const repositoryError = new Error("Database connection failed");
-      const repository = createProjectRepositoryMock({
-        list: jest.fn<Promise<ProjectWithRole[]>, []>(async () => {
+      const catalogRepository = createProjectRepositoryMock({
+        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+          async () => {
           throw repositoryError;
-        }),
+          }
+        ),
+      });
+      const projectRepository = createProjectRepositoryMock({
         findById: jest.fn<Promise<Project | null>, [string]>(
           async () => mockProject
         ),
+      });
+      const memberRepository = createMemberRepositoryMock({
         addCurrentUserAsMember: jest.fn<
           Promise<Project>,
           [string, ("admin" | "member" | "viewer")?]
@@ -187,12 +211,14 @@ describe("Project Flow Tests", () => {
       });
 
       // Act & Assert - Step 1: List projects (should fail)
-      await expect(listProjects(repository)).rejects.toThrow(repositoryError);
+      await expect(listProjects(catalogRepository)).rejects.toThrow(
+        repositoryError
+      );
 
-      // Note: In a real flow, getProject and addUserToProject wouldn't be called if listProjects fails,
+      // Note: In a real flow, getProject and joinProject wouldn't be called if listProjects fails,
       // but we verify they were not called
-      expect(repository.findById).not.toHaveBeenCalled();
-      expect(repository.addCurrentUserAsMember).not.toHaveBeenCalled();
+      expect(projectRepository.findById).not.toHaveBeenCalled();
+      expect(memberRepository.addCurrentUserAsMember).not.toHaveBeenCalled();
     });
   });
 });

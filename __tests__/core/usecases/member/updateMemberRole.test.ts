@@ -1,8 +1,8 @@
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
+ 
 import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";
 
+import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import { updateMemberRole } from "@/domains/project/core/usecases/member/updateMemberRole";
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 
 describe("updateMemberRole", () => {
   const memberId = "456e7890-e89b-12d3-a456-426614174001";

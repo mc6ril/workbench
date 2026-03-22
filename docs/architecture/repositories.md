@@ -195,9 +195,9 @@ const ticketRepository = createTicketRepository(client);
   `session` + `profile`, and should remain read-only
 - `src/domains/settings/` owns account/settings surfaces and usually only
   orchestrates other owners instead of owning repositories
-- `src/domains/project/` owns project settings, members, invitations, permissions, and enabled-module configuration
+- `src/domains/project/` owns the canonical project entity, repository, project CRUD use cases, project settings, members, invitations, permissions, and enabled-module configuration
 - `src/modules/board/` owns board data such as tickets, epics, sprints, and labels
-- `src/domains/workspace/` may orchestrate create/join flows, but project membership and invitation contracts remain project-owned
+- `src/domains/workspace/` owns workspace catalog queries and entry flows such as list/join/reclaim, but project membership and invitation contracts remain project-owned
 - plan-to-module entitlement decisions remain owned by `billing`; the current codebase allows the thin shared bridge `@/shared/featureAccess` as a documented consumer entrypoint
 
 ## Rules
@@ -207,6 +207,7 @@ const ticketRepository = createTicketRepository(client);
 - Presentation hooks should use use cases, not raw low-level clients
 - `src/app/` should compose routes, not implement repository logic
 - Cross-owner reuse should happen through shared infrastructure or explicit contracts, not through a global repository bucket
+- Owner-to-owner compatibility shims are forbidden: import the canonical owner path directly instead of recreating `workspace -> project` bridges
 
 ## Documented Exceptions
 

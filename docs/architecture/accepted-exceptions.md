@@ -20,6 +20,10 @@ These exceptions are:
 If one of these exceptions grows beyond the guardrails below, it should be
 treated as architecture drift rather than as an approved pattern.
 
+Owner-to-owner compatibility shims are not accepted exceptions.
+In particular, `workspace -> project` re-export paths are considered drift and
+must be replaced with direct imports from the canonical `project` owner.
+
 ## 1. Shared Feature Access Bridge
 
 - Canonical import: `@/shared/featureAccess`

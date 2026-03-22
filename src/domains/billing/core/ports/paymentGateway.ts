@@ -1,4 +1,4 @@
-import type { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+import type { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
 
 /**
  * Parsed webhook event from the payment provider.

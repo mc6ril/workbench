@@ -3,15 +3,13 @@
 import React, {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { markNavigationStart } from "@/shared/navigationPerf";
 
@@ -22,31 +20,17 @@ import type {
   SidebarItem,
   SidebarNavigationProps,
 } from "./SidebarNavigation.types";
-import { omitParentIdFilter } from "./SidebarNavigation.utils";
 
 import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";
-import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import { useSidebarItems } from "@/domains/project/presentation/hooks/useSidebarItems";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 import { usePrefetchWorkspaceProjects } from "@/domains/workspace/presentation/hooks/usePrefetchWorkspaceProjects";
-import { usePrefetchProjectViews } from "@/modules/board/presentation/hooks/project/usePrefetchProjectViews";
-import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
-import { useSortStore } from "@/modules/board/presentation/stores/useSortStore";
-import { normalizeTicketSearch } from "@/modules/board/utils/ticketUtils";
-
-type CachedProjectSummary = {
-  shortCode?: string;
-};
 
 const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const pathname = usePathname();
   const router = useRouter();
-  const queryClient = useQueryClient();
   const t = useTranslation("navigation.sidebar");
   const signOutMutation = useSignOut();
-  const filters = useFilterStore((state) => state.filters);
-  const search = useFilterStore((state) => state.search);
-  const sort = useSortStore((state) => state.sort);
   const { data: viewer } = useViewer();
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -75,22 +59,6 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
     // Future: add tab action. No-op for now.
   }, []);
 
-  const projectWideFilters = useMemo(() => {
-    return omitParentIdFilter(filters);
-  }, [filters]);
-
-  const effectiveSearch = useMemo(() => {
-    const project = queryClient.getQueryData<CachedProjectSummary>(
-      queryKeys.projects.detail(projectId)
-    );
-    return normalizeTicketSearch(search, project?.shortCode);
-  }, [projectId, queryClient, search]);
-  const { prefetchBoardView, prefetchEpicsView } = usePrefetchProjectViews({
-    projectId,
-    filters: projectWideFilters,
-    sort,
-    search: effectiveSearch,
-  });
   const prefetchWorkspaceProjects = usePrefetchWorkspaceProjects();
 
   const prefetchProjectView = useCallback(
@@ -100,17 +68,8 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
       }
 
       void router.prefetch(item.href);
-
-      if (item.key === PROJECT_VIEWS.BOARD) {
-        prefetchBoardView();
-        return;
-      }
-
-      if (item.key === PROJECT_VIEWS.EPICS) {
-        prefetchEpicsView();
-      }
     },
-    [prefetchBoardView, prefetchEpicsView, router]
+    [router]
   );
 
   const prefetchWorkspace = useCallback(() => {

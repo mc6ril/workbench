@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 import { listProjectsWithStats } from "@/domains/workspace/core/usecases/project/listProjectsWithStats";
-import { projectRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
+import { workspaceProjectCatalogRepository } from "@/domains/workspace/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
 /**
@@ -18,7 +18,7 @@ export const useProjectsWithStats = (enabled = true) => {
 
   return useQuery({
     queryKey: queryKeys.projects.withStats(),
-    queryFn: () => listProjectsWithStats(projectRepository),
+    queryFn: () => listProjectsWithStats(workspaceProjectCatalogRepository),
     enabled: enabled && !isSessionLoading && !!session?.userId,
   });
 };

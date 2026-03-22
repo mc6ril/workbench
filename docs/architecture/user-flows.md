@@ -128,6 +128,7 @@ flowchart TD
 ### Workspace route handling
 
 - Delegates list/create/join project UX to the workspace domain
+- Imports canonical project contracts from `src/domains/project/` when the flow touches the project entity itself
 
 ### Account route handling
 
@@ -180,3 +181,9 @@ Routing stays in `src/app/`, but route-specific rendering is delegated to the co
 - project container routes -> `src/domains/project/`
 - project module routes -> `src/modules/<module>/`
 - billing flows -> `src/domains/billing/`
+
+Canonical imports matter as much as route ownership:
+
+- `workspace` keeps catalog/entry flows
+- `project` keeps the canonical project schema, repository, and project CRUD use cases
+- no `workspace -> project` shim paths should exist in route composition, hooks, tests, or infrastructure

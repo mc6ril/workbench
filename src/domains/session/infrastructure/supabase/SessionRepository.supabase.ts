@@ -1,8 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
-import { handleAuthError } from "@/shared/infrastructure/errors/errorHandlers";
 
+import { handleAuthError } from "@/domains/auth/infrastructure/errors/authErrorHandler";
 import type { SessionRepository } from "@/domains/session/core/ports/sessionRepository";
 import { mapSupabaseSessionToCurrentSession } from "@/domains/session/infrastructure/supabase/SessionMapper.supabase";
 import { canUpdatePasswordFromAppMetadata } from "@/domains/session/infrastructure/supabase/sessionProviderCapabilities";

@@ -305,11 +305,15 @@ const removeEntityFromArray = <T extends { id: string }>(
  * Subscribe to project realtime changes and keep project views fresh.
  * Mounted once at project shell level so board/epics stay synchronized.
  */
-export const useProjectRealtime = (projectId: string, boardId?: string) => {
+export const useProjectRealtime = (
+  projectId: string,
+  boardId?: string,
+  options?: { enabled?: boolean }
+) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!projectId) {
+    if (!projectId || options?.enabled === false) {
       return;
     }
 
@@ -881,5 +885,5 @@ export const useProjectRealtime = (projectId: string, boardId?: string) => {
       }
       void realtimeRepository.removeChannel(channelSubscription);
     };
-  }, [boardId, projectId, queryClient]);
+  }, [boardId, options?.enabled, projectId, queryClient]);
 };

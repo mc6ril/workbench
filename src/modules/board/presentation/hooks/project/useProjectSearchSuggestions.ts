@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 
-import { PROJECT_VIEWS } from "@/shared/constants/routes";
+import { PROJECT_VIEWS, type ProjectView } from "@/shared/constants/routes";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
-import type { ProjectViewKey } from "@/domains/project/presentation/navigation/projectViews.config";
+import type { EpicWithProgress } from "@/modules/board/core/domain/schema/epic.schema";
+import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
@@ -19,9 +20,13 @@ export type ProjectSearchSuggestion = {
   href: string;
 };
 
+const EMPTY_EPICS: EpicWithProgress[] = [];
+const EMPTY_TICKETS: Ticket[] = [];
+const EMPTY_SEARCH_SUGGESTIONS: ProjectSearchSuggestion[] = [];
+
 type Input = {
   projectId: string;
-  viewKey: ProjectViewKey;
+  viewKey: ProjectView;
   searchValue: string;
 };
 
@@ -36,7 +41,8 @@ export const useProjectSearchSuggestions = ({
 
   const { data: projectShortCode } = useProjectShortCode(projectId);
 
-  const { data: epics = [] } = useEpics(projectId, { enabled: isEpicsView });
+  const { data: epicsData } = useEpics(projectId, { enabled: isEpicsView });
+  const epics = epicsData ?? EMPTY_EPICS;
   const effectiveSearch = useMemo(() => {
     return normalizeTicketSearch(searchTerm, projectShortCode);
   }, [projectShortCode, searchTerm]);
@@ -44,16 +50,18 @@ export const useProjectSearchSuggestions = ({
 
   // Intentionally ignore active filter/sort stores here:
   // suggestions should act as a global lookup within the current ticket view.
-  const { data: tickets = [] } = useTickets(
+  const { data: ticketsData } = useTickets(
     projectId,
     undefined,
     undefined,
     effectiveSearch,
     { enabled: isTicketView && hasEffectiveSearchTerm, limit: 20 }
   );
+  const tickets = ticketsData ?? EMPTY_TICKETS;
+
   return useMemo(() => {
     if (searchTerm === "") {
-      return [];
+      return EMPTY_SEARCH_SUGGESTIONS;
     }
 
     if (isEpicsView) {
@@ -74,7 +82,7 @@ export const useProjectSearchSuggestions = ({
       }));
     }
 
-    return [];
+    return EMPTY_SEARCH_SUGGESTIONS;
   }, [
     epics,
     isEpicsView,

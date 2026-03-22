@@ -25,16 +25,18 @@ import { buildProjectRoute } from "@/shared/utils/routes";
 
 import styles from "./styles.module.scss";
 
-import { SubscriptionPlan } from "@/domains/billing/core/domain/schema/subscription.schema";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
+import {
+  type CreateProjectInput,
+  CreateProjectInputSchema,
+  ProjectRole,
+} from "@/domains/project/core/domain/schema/project.schema";
+import { useAddUserToProject } from "@/domains/project/presentation/hooks/useAddUserToProject";
+import { useCreateProject } from "@/domains/project/presentation/hooks/useCreateProject";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
-import type { CreateProjectInput } from "@/domains/workspace/core/domain/schema/project.schema";
-import { CreateProjectInputSchema } from "@/domains/workspace/core/domain/schema/project.schema";
-import { ProjectRole } from "@/domains/workspace/core/domain/schema/project.schema";
 import ProjectCardActions from "@/domains/workspace/presentation/components/workspace/projectCard/ProjectCardActions";
-import { useAddUserToProject } from "@/domains/workspace/presentation/hooks/useAddUserToProject";
-import { useCreateProject } from "@/domains/workspace/presentation/hooks/useCreateProject";
 import { useLastActivitySubtitle } from "@/domains/workspace/presentation/hooks/useLastActivitySubtitle";
 import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
 import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";

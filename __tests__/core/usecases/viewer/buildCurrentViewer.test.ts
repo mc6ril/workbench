@@ -1,8 +1,7 @@
-// eslint-disable-next-line no-restricted-imports -- Allow relative import from __tests__/ to __mocks__/
 import { mockCurrentSession } from "../../../../__mocks__/core/domain/sessionMocks";
 
-import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/schema/profilePreferences.schema";
-import type { UserProfile } from "@/domains/profile/core/domain/schema/userProfile.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profilePreferences.schema";
+import type { UserProfile } from "@/domains/profile/core/domain/userProfile.schema";
 import { buildCurrentViewer } from "@/domains/viewer/core/usecases/buildCurrentViewer";
 
 describe("buildCurrentViewer", () => {

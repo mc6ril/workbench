@@ -2,7 +2,7 @@ import {
   type UpdatePreferencesInput,
   type UserPreferences,
   UserPreferencesSchema,
-} from "@/domains/profile/core/domain/schema/profilePreferences.schema";
+} from "@/domains/profile/core/domain/profilePreferences.schema";
 import type { UserProfileRepository } from "@/domains/profile/core/ports/userProfileRepository";
 
 /**

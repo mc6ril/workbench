@@ -1,3 +1,4 @@
+import type { Project } from "@/domains/project/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 
@@ -13,6 +14,18 @@ import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRo
  * - Role changes and removals require admin permission
  */
 export type MemberRepository = {
+  /**
+   * Join or reclaim a project for the current authenticated user.
+   * Uses the database RPC that handles both normal joins and orphan reclaim.
+   * @throws NotFoundError if project not found
+   * @throws ConstraintError if user is already a member
+   * @throws DatabaseError if database operation fails or permission denied
+   */
+  addCurrentUserAsMember(
+    projectId: string,
+    role?: ProjectRole
+  ): Promise<Project>;
+
   /**
    * Get current authenticated user's role for a project.
    * Returns null when the user is not a member (or has no access).
