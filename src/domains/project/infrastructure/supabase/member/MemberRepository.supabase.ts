@@ -6,7 +6,6 @@ import {
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
-import { isProjectRole } from "@/shared/utils/guards";
 
 import { mapMemberRowsToDomain } from "./MemberMapper.supabase";
 
@@ -14,6 +13,7 @@ import type { UserProfileRow } from "@/domains/profile/infrastructure/supabase/u
 import type { Project } from "@/domains/project/core/domain/schema/project.schema";
 import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import { isProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
 import { mapProjectRowToDomain } from "@/domains/project/infrastructure/supabase/project/ProjectMapper.supabase";
 import type { ProjectRow } from "@/domains/project/infrastructure/supabase/types";

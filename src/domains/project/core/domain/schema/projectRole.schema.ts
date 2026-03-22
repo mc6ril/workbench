@@ -9,3 +9,7 @@ export const PROJECT_ROLES: readonly ProjectRole[] = Object.freeze([
   ProjectRole.MEMBER,
   ProjectRole.VIEWER,
 ]);
+
+export const isProjectRole = (value: string): value is ProjectRole => {
+  return (PROJECT_ROLES as readonly string[]).includes(value);
+};

@@ -6,11 +6,7 @@ import {
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
-import {
-  isNonEmptyString,
-  isObject,
-  isProjectRole,
-} from "@/shared/utils/guards";
+import { isNonEmptyString, isObject } from "@/shared/utils/guards";
 
 import {
   mapProjectRowToDomain,
@@ -22,6 +18,7 @@ import type {
   Project,
   ProjectWithRole,
 } from "@/domains/project/core/domain/schema/project.schema";
+import { isProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import type { ProjectRepository } from "@/domains/project/core/ports/projectRepository";
 import type { ProjectRow } from "@/domains/project/infrastructure/supabase/types";
 

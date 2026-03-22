@@ -10,12 +10,12 @@ import { useTranslation } from "@/shared/i18n";
 import DashboardShell from "@/domains/project/presentation/components/dashboardShell";
 import SidebarNavigation from "@/domains/project/presentation/components/sidebarNavigation/SidebarNavigation";
 import {
-  ProjectPermissionsProvider,
-} from "@/domains/project/presentation/providers/permissions";
-import {
   ProjectShellContributionProvider,
   useProjectShellContribution,
 } from "@/domains/project/presentation/layouts/projectShell/ProjectShellContributionContext";
+import {
+  ProjectPermissionsProvider,
+} from "@/domains/project/presentation/providers/permissions";
 
 type Props = {
   projectId: string;

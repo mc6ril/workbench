@@ -2,7 +2,6 @@ import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
 
 import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
-import { handleAuthError } from "@/shared/infrastructure/errors/errorHandlers";
 
 import type {
   AuthenticationError,
@@ -18,6 +17,7 @@ import type {
   VerifyEmailInput,
 } from "@/domains/auth/core/domain/auth.schema";
 import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
+import { handleAuthError } from "@/domains/auth/infrastructure/errors/authErrorHandler";
 import { mapSupabaseSessionToCurrentSession } from "@/domains/session/infrastructure/supabase/SessionMapper.supabase";
 import { canUpdatePasswordFromAppMetadata } from "@/domains/session/infrastructure/supabase/sessionProviderCapabilities";
 

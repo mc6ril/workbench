@@ -79,6 +79,7 @@ export const useRegisterProjectViewContribution = (
   }
 
   const { setContribution } = context;
+  const onMount = contribution.onMount;
 
   useIsomorphicLayoutEffect(() => {
     setContribution(contribution);
@@ -89,6 +90,6 @@ export const useRegisterProjectViewContribution = (
   }, [contribution, setContribution]);
 
   useEffect(() => {
-    contribution.onMount?.();
-  }, [contribution.onMount]);
+    onMount?.();
+  }, [onMount]);
 };
