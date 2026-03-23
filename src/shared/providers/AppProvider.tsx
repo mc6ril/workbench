@@ -1,11 +1,13 @@
 "use client";
 
-import { type PropsWithChildren, useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { ThemeProvider } from "next-themes";
 
 import Toast from "@/shared/design-system/toast";
 import { registerLocaleGetter } from "@/shared/i18n/config";
+import { LocaleProvider } from "@/shared/i18n/LocaleProvider";
+import type { Locale } from "@/shared/i18n/types";
 import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
 import { markNavigationSettled } from "@/shared/navigationPerf";
 
@@ -14,7 +16,10 @@ import ReactQueryProvider from "./ReactQueryProvider";
 import { useLocaleSync } from "@/domains/profile/presentation/providers/useLocaleSync";
 import { useThemeSync } from "@/domains/profile/presentation/providers/useThemeSync";
 
-type Props = PropsWithChildren;
+type AppProviderProps = {
+  initialLocale: Locale;
+  children: React.ReactNode;
+};
 
 const NavigationPerfTracker = () => {
   const pathname = usePathname();
@@ -27,19 +32,16 @@ const NavigationPerfTracker = () => {
 };
 
 /**
- * Syncs locale from the current profile preferences into the Zustand store.
- * Also registers the locale getter once so the i18n system reads from Zustand.
+ * Syncs locale from the current profile preferences into the active locale
+ * provider and keeps the shared locale getter aligned with the current value.
  * Must be a child of ReactQueryProvider so profile queries are available.
  */
-const LocaleSyncProvider = ({ children }: Props) => {
-  const registeredRef = useRef(false);
+const LocaleSyncProvider = ({ children }: { children: React.ReactNode }) => {
+  const locale = useLocaleStore((state) => state.locale);
 
   useEffect(() => {
-    if (!registeredRef.current) {
-      registerLocaleGetter(() => useLocaleStore.getState().locale);
-      registeredRef.current = true;
-    }
-  }, []);
+    registerLocaleGetter(() => locale);
+  }, [locale]);
 
   useLocaleSync();
   return <>{children}</>;
@@ -49,7 +51,7 @@ const LocaleSyncProvider = ({ children }: Props) => {
  * Syncs theme from the current profile preferences into next-themes.
  * Must be a child of both ReactQueryProvider and ThemeProvider so profile queries can run.
  */
-const ThemeSyncProvider = ({ children }: Props) => {
+const ThemeSyncProvider = ({ children }: { children: React.ReactNode }) => {
   useThemeSync();
   return <>{children}</>;
 };
@@ -58,18 +60,20 @@ const ThemeSyncProvider = ({ children }: Props) => {
  * Central place for global providers.
  * Keep this file free of business logic and side effects.
  */
-const AppProvider = ({ children }: Props) => {
+const AppProvider = ({ children, initialLocale }: AppProviderProps) => {
   return (
     <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
-      <ReactQueryProvider>
-        <LocaleSyncProvider>
-          <ThemeSyncProvider>
-            <NavigationPerfTracker />
-            {children}
-            <Toast />
-          </ThemeSyncProvider>
-        </LocaleSyncProvider>
-      </ReactQueryProvider>
+      <LocaleProvider key={initialLocale} initialLocale={initialLocale}>
+        <ReactQueryProvider>
+          <LocaleSyncProvider>
+            <ThemeSyncProvider>
+              <NavigationPerfTracker />
+              {children}
+              <Toast />
+            </ThemeSyncProvider>
+          </LocaleSyncProvider>
+        </ReactQueryProvider>
+      </LocaleProvider>
     </ThemeProvider>
   );
 };

@@ -8,6 +8,21 @@ import { defaultLocale } from "@/shared/i18n/config";
 export const ThemeValues = ["light", "dark", "system"] as const;
 export type Theme = (typeof ThemeValues)[number];
 
+export const isThemePreference = (value: string): value is Theme => {
+  return (ThemeValues as readonly string[]).includes(value);
+};
+
+export const resolveThemePreference = (
+  value?: string | null,
+  fallback: Theme = "system"
+): Theme => {
+  if (!value) {
+    return fallback;
+  }
+
+  return isThemePreference(value) ? value : fallback;
+};
+
 /**
  * Zod schema for user preferences stored in user_profiles.preferences.
  */

@@ -19,6 +19,7 @@ import Text from "@/shared/design-system/text";
 import Toggle from "@/shared/design-system/toggle";
 import {
   getIntlLocale,
+  persistLocaleCookie,
   supportedLocaleOptions,
   supportedLocales,
   useLocaleStore,
@@ -312,6 +313,7 @@ const AccountPage = () => {
   }, [signOutMutation]);
 
   const [isManagingSubscription, setIsManagingSubscription] = useState(false);
+  const locale = useLocaleStore((s) => s.locale);
 
   const handleManageSubscription = useCallback(async () => {
     setIsManagingSubscription(true);
@@ -368,6 +370,7 @@ const AccountPage = () => {
         const nextLocale = value as Locale;
         setLanguagePreference(nextLocale);
         setLocale(nextLocale);
+        persistLocaleCookie(nextLocale);
       } else {
         setLanguagePreference(value);
       }
@@ -776,7 +779,7 @@ const AccountPage = () => {
                             "{date}",
                             new Date(
                               subscription.currentPeriodEnd
-                            ).toLocaleDateString(getIntlLocale())
+                            ).toLocaleDateString(getIntlLocale(locale))
                           )}
                         </p>
                       )}
