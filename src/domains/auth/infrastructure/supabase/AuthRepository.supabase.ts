@@ -2,6 +2,7 @@ import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
 
 import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
+import { getLocale } from "@/shared/i18n/config";
 
 import type {
   AuthenticationError,
@@ -62,8 +63,7 @@ const mapVerifiedSessionToAuthResult = (
 const createPasswordUpdateNotAllowedError =
   (): PasswordUpdateNotAllowedError => ({
     code: AUTH_ERROR_CODE.PASSWORD_UPDATE_NOT_ALLOWED,
-    debugMessage:
-      "Password updates are not available for OAuth-only accounts",
+    debugMessage: "Password updates are not available for OAuth-only accounts",
   });
 
 const createPasswordUpdateAuthRequiredError = (): AuthenticationError => ({
@@ -77,7 +77,10 @@ export const createAuthRepository = (
 ): AuthRepository => ({
   async signUp(input: SignUpInput): Promise<AuthResult> {
     try {
-      const metadata: Record<string, unknown> = {};
+      // `locale` is available in Supabase email templates as `{{ .Data.locale }}` (user_metadata).
+      const metadata: Record<string, unknown> = {
+        locale: getLocale(),
+      };
       if (input.displayName) {
         metadata.display_name = input.displayName;
       }
@@ -95,9 +98,7 @@ export const createAuthRepository = (
         emailRedirectTo?: string;
       } = {};
 
-      if (Object.keys(metadata).length > 0) {
-        signUpOptions.data = metadata;
-      }
+      signUpOptions.data = metadata;
 
       if (emailRedirectTo) {
         signUpOptions.emailRedirectTo = emailRedirectTo;
