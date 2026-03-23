@@ -2,7 +2,11 @@
 
 import { useEffect } from "react";
 
-import { defaultLocale, supportedLocales } from "@/shared/i18n/config";
+import {
+  defaultLocale,
+  persistLocaleCookie,
+  supportedLocales,
+} from "@/shared/i18n/config";
 import type { Locale } from "@/shared/i18n/types";
 import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
 
@@ -29,5 +33,6 @@ export const useLocaleSync = (): void => {
       : defaultLocale;
 
     setLocale(nextLocale);
+    persistLocaleCookie(nextLocale);
   }, [profileLanguage, setLocale]);
 };

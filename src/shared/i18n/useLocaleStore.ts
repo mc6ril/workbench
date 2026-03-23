@@ -1,23 +1,24 @@
 "use client";
 
-import { create } from "zustand";
+import { useContext } from "react";
 
-import type { Locale } from "@/shared/i18n/types";
+import { defaultLocale } from "@/shared/i18n/config";
+import {
+  LocaleStoreContext,
+  type LocaleStoreValue,
+} from "@/shared/i18n/LocaleProvider";
 
-type LocaleState = {
-  /** Active locale used by the translation system. */
-  locale: Locale;
+const fallbackLocaleStore: LocaleStoreValue = {
+  locale: defaultLocale,
+  setLocale: () => {},
 };
 
-type LocaleActions = {
-  setLocale: (locale: Locale) => void;
+/**
+ * Small selector-based locale hook kept compatible with the previous API.
+ */
+export const useLocaleStore = <T>(
+  selector: (store: LocaleStoreValue) => T
+): T => {
+  const store = useContext(LocaleStoreContext) ?? fallbackLocaleStore;
+  return selector(store);
 };
-
-type LocaleStore = LocaleState & LocaleActions;
-
-export const useLocaleStore = create<LocaleStore>((set) => ({
-  locale: "fr",
-  setLocale: (locale: Locale): void => {
-    set({ locale });
-  },
-}));

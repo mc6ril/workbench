@@ -6,10 +6,18 @@ export {
   defaultLocale,
   getIntlLocale,
   getLocale,
+  isSupportedLocale,
+  localeCookieName,
+  matchSupportedLocale,
+  parseAcceptLanguageHeader,
+  persistLocaleCookie,
+  resolveLocale,
   supportedLocaleOptions,
   supportedLocales,
 } from "./config";
 export type { RoleLabelKey } from "./dynamic";
+export { LocaleProvider } from "./LocaleProvider";
+export { getMessages } from "./messages";
 export type {
   Locale,
   Namespace,

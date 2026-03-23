@@ -1,39 +1,52 @@
 import type { Metadata } from "next";
 
-import type { TranslationMessages } from "@/shared/i18n";
-import { defaultLocale, getTranslationValue } from "@/shared/i18n";
-import messagesFr from "@/shared/i18n/messages/fr.json";
+import { getIntlLocale, getTranslationValue } from "@/shared/i18n";
+import { getMessages } from "@/shared/i18n/messages";
+import { getRequestLocale } from "@/shared/i18n/requestLocale";
 import AppProvider from "@/shared/providers/AppProvider";
 
 import "@/styles/global.scss";
 
-const messages = messagesFr as TranslationMessages;
+const getAppMetadata = async (): Promise<Metadata> => {
+  const locale = await getRequestLocale();
+  const messages = getMessages(locale);
 
-const appTitle = getTranslationValue(messages, "app.metadata", "title");
-const appDescription = getTranslationValue(messages, "app.metadata", "description");
+  const appTitle = getTranslationValue(messages, "app.metadata", "title");
+  const appDescription = getTranslationValue(
+    messages,
+    "app.metadata",
+    "description"
+  );
 
-if (!appTitle) {
-  throw new Error("Missing translation: app.metadata.title");
-}
+  if (!appTitle) {
+    throw new Error("Missing translation: app.metadata.title");
+  }
 
-if (!appDescription) {
-  throw new Error("Missing translation: app.metadata.description");
-}
+  if (!appDescription) {
+    throw new Error("Missing translation: app.metadata.description");
+  }
 
-export const metadata: Metadata = {
-  title: appTitle,
-  description: appDescription,
+  return {
+    title: appTitle,
+    description: appDescription,
+  };
 };
 
-const RootLayout = ({
+export const generateMetadata = async (): Promise<Metadata> => {
+  return getAppMetadata();
+};
+
+const RootLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
+  const locale = await getRequestLocale();
+
   return (
-    <html lang={defaultLocale} suppressHydrationWarning>
+    <html lang={getIntlLocale(locale)} suppressHydrationWarning>
       <body>
-        <AppProvider>
+        <AppProvider initialLocale={locale}>
           <div className="app-root">{children}</div>
         </AppProvider>
       </body>

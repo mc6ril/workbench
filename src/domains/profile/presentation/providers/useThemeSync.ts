@@ -4,8 +4,7 @@ import { useEffect } from "react";
 import { useTheme } from "next-themes";
 
 import {
-  type Theme,
-  ThemeValues,
+  resolveThemePreference,
 } from "@/domains/profile/core/domain/profilePreferences.schema";
 import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
 
@@ -25,9 +24,6 @@ export const useThemeSync = (): void => {
       return;
     }
 
-    const isValid = (ThemeValues as readonly string[]).includes(profileTheme);
-    const nextTheme: Theme = isValid ? (profileTheme as Theme) : "system";
-
-    setTheme(nextTheme);
+    setTheme(resolveThemePreference(profileTheme));
   }, [profileTheme, setTheme]);
 };
