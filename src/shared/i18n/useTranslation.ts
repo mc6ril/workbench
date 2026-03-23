@@ -3,23 +3,13 @@
 import { useMemo } from "react";
 
 import { createPluralKey } from "@/shared/i18n/dynamic";
-import messagesEn from "@/shared/i18n/messages/en.json";
-import messagesEs from "@/shared/i18n/messages/es.json";
-import messagesFr from "@/shared/i18n/messages/fr.json";
+import { getMessages } from "@/shared/i18n/messages";
 import type {
-  Locale,
-  TranslationMessages,
   TranslationNode,
   TranslationValue,
 } from "@/shared/i18n/types";
 import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
 import { interpolateTranslation } from "@/shared/i18n/utils";
-
-const messagesByLocale: Record<Locale, TranslationMessages> = {
-  fr: messagesFr as TranslationMessages,
-  en: messagesEn as TranslationMessages,
-  es: messagesEs as TranslationMessages,
-};
 
 /**
  * Returns a translation getter bound to a namespace.
@@ -27,10 +17,7 @@ const messagesByLocale: Record<Locale, TranslationMessages> = {
 export const useTranslation = (namespace: string) => {
   const locale = useLocaleStore((s) => s.locale);
 
-  const messages = useMemo(
-    () => messagesByLocale[locale] ?? messagesByLocale.fr,
-    [locale]
-  );
+  const messages = useMemo(() => getMessages(locale), [locale]);
 
   const getNamespaceValue = (
     obj: Record<string, unknown>,

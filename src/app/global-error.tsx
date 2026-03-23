@@ -4,8 +4,7 @@ import { useEffect } from "react";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
-import { useTranslation } from "@/shared/i18n";
-import { useLocaleStore } from "@/shared/i18n";
+import { getIntlLocale, useLocaleStore, useTranslation } from "@/shared/i18n";
 
 type Props = {
   error: Error & { digest?: string };
@@ -21,7 +20,7 @@ const GlobalErrorPage = ({ error, reset }: Props) => {
   }, [error]);
 
   return (
-    <html lang={locale}>
+    <html lang={getIntlLocale(locale)}>
       <body>
         <RouteFallbackPage
           tone="error"
