@@ -2,7 +2,7 @@ import React, { memo } from "react";
 
 import styles from "./title.module.scss";
 
-type TitleVariant = "h1" | "h2" | "h3";
+type TitleVariant = "h1" | "h2" | "h3" | "h4";
 
 type Props = {
   children: React.ReactNode;

@@ -3,6 +3,7 @@
 import React from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./empty_state.module.scss";
@@ -80,9 +81,9 @@ const EmptyState = ({
           {icon}
         </div>
       )}
-      <h2 id={titleId} className={styles["empty-state__title"]}>
+      <Title variant="h2" id={titleId} className={styles["empty-state__title"]}>
         {title}
-      </h2>
+      </Title>
       {displayMessage && (
         <p id={messageId} className={styles["empty-state__message"]}>
           {displayMessage}

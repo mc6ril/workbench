@@ -8,8 +8,25 @@ import { defaultLocale } from "@/shared/i18n/config";
 export const ThemeValues = ["light", "dark", "system"] as const;
 export type Theme = (typeof ThemeValues)[number];
 
+/**
+ * Allowed getting-started states for the onboarding experience.
+ */
+export const GettingStartedStatusValues = Object.freeze([
+  "pending",
+  "skipped",
+  "completed",
+]);
+
+export type GettingStartedStatus = (typeof GettingStartedStatusValues)[number];
+
 export const isThemePreference = (value: string): value is Theme => {
   return (ThemeValues as readonly string[]).includes(value);
+};
+
+export const isGettingStartedStatus = (
+  value: string
+): value is GettingStartedStatus => {
+  return (GettingStartedStatusValues as readonly string[]).includes(value);
 };
 
 export const resolveThemePreference = (
@@ -30,6 +47,8 @@ export const UserPreferencesSchema = z.object({
   theme: z.enum(ThemeValues),
   emailNotifications: z.boolean(),
   language: z.string().min(1),
+  gettingStartedStatus: z.enum(GettingStartedStatusValues),
+  epicsGettingStartedStatus: z.enum(GettingStartedStatusValues),
 });
 
 /**
@@ -44,6 +63,8 @@ export const DEFAULT_USER_PREFERENCES: UserPreferences = {
   theme: "system",
   emailNotifications: true,
   language: defaultLocale,
+  gettingStartedStatus: "pending",
+  epicsGettingStartedStatus: "pending",
 };
 
 /**

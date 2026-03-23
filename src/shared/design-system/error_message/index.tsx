@@ -4,6 +4,7 @@ import React from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { ErrorIcon } from "@/shared/design-system/icons";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./error_message.module.scss";
@@ -73,9 +74,13 @@ const ErrorMessage = ({
         <div className={styles["error-message__header"]}>
           <ErrorIcon className={styles["error-message__icon"]} />
           {title && (
-            <h3 id={titleId} className={styles["error-message__title"]}>
+            <Title
+              variant="h3"
+              id={titleId}
+              className={styles["error-message__title"]}
+            >
               {title}
-            </h3>
+            </Title>
           )}
           {onDismiss && (
             <div className={styles["error-message__dismiss"]}>

@@ -8,6 +8,7 @@ import ErrorMessage from "@/shared/design-system/error_message";
 import Form from "@/shared/design-system/form";
 import Input from "@/shared/design-system/input";
 import Textarea from "@/shared/design-system/textarea";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./CreateSubtaskForm.module.scss";
@@ -66,9 +67,13 @@ const CreateSubtaskForm = ({
   return (
     <section className={containerClasses} aria-labelledby={titleId}>
       <Form aria-label={t("ariaLabel")} onSubmit={handleSubmit}>
-        <h3 id={titleId} className={styles["create-subtask-form__title"]}>
+        <Title
+          variant="h3"
+          id={titleId}
+          className={styles["create-subtask-form__title"]}
+        >
           {t("title")}
-        </h3>
+        </Title>
 
         <div className={styles["create-subtask-form__fields"]}>
           <div className={styles["create-subtask-form__field"]}>
@@ -121,4 +126,3 @@ const CreateSubtaskForm = ({
 };
 
 export default React.memo(CreateSubtaskForm);
-

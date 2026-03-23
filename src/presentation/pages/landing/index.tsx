@@ -19,6 +19,7 @@ import type { FeatureKey } from "@/shared/constants/landing.types";
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/button";
 import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 import { buildFeaturePreviewContent, isFeatureKey } from "@/shared/utils";
 
@@ -39,9 +40,8 @@ const LandingPageContent = () => {
   const tCta = useTranslation("pages.landing.cta");
   const tFooter = useTranslation("pages.landing.footer");
   const { data: isBillingVisible } = useBillingVisibility();
-  const [selectedFeatureKey, setSelectedFeatureKey] = useState<FeatureKey>(
-    "board"
-  );
+  const [selectedFeatureKey, setSelectedFeatureKey] =
+    useState<FeatureKey>("board");
 
   // Supabase redirects to /?code=... instead of dedicated pages
   useEffect(() => {
@@ -75,7 +75,9 @@ const LandingPageContent = () => {
   }, [router]);
 
   const handleScrollToPreview = useCallback(() => {
-    const target = document.getElementById(getAccessibilityId("landing-example-preview"));
+    const target = document.getElementById(
+      getAccessibilityId("landing-example-preview")
+    );
     if (target) {
       target.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -105,20 +107,26 @@ const LandingPageContent = () => {
             className={styles["landing-hero__brand"]}
             aria-label={tHero("logoAriaLabel")}
           >
-            <span className={styles["landing-hero__brand-mark"]} aria-hidden="true">
+            <span
+              className={styles["landing-hero__brand-mark"]}
+              aria-hidden="true"
+            >
               TN
             </span>
-            <span className={styles["landing-hero__brand-name"]}>Tribu Nova</span>
+            <span className={styles["landing-hero__brand-name"]}>
+              Tribu Nova
+            </span>
           </div>
           <span className={styles["landing-hero__pill"]}>
             {tHero("brandPill")}
           </span>
-          <h1
+          <Title
+            variant="h1"
             className={styles["landing-hero__title"]}
             id={getAccessibilityId("landing-hero-title")}
           >
             {tHero("title")}
-          </h1>
+          </Title>
           <Text
             variant="body"
             className={styles["landing-hero__subtitle"]}
@@ -165,12 +173,13 @@ const LandingPageContent = () => {
           className={styles["values-section"]}
           aria-labelledby={getAccessibilityId("landing-values-title")}
         >
-          <h2
+          <Title
+            variant="h2"
             className={styles["section-title"]}
             id={getAccessibilityId("landing-values-title")}
           >
             {tValues("title")}
-          </h2>
+          </Title>
           <div className={styles["values-grid"]} role="list">
             {VALUE_KEYS.map((key) => (
               <article
@@ -181,9 +190,9 @@ const LandingPageContent = () => {
                 <span className={styles["value-card__icon"]} aria-hidden="true">
                   {tValues(`${key}.icon`)}
                 </span>
-                <h3 className={styles["value-card__title"]}>
+                <Title variant="h3" className={styles["value-card__title"]}>
                   {tValues(`${key}.title`)}
-                </h3>
+                </Title>
                 <Text
                   variant="body"
                   className={styles["value-card__description"]}
@@ -200,12 +209,13 @@ const LandingPageContent = () => {
           className={styles["features-section"]}
           aria-labelledby={getAccessibilityId("landing-features-title")}
         >
-          <h2
+          <Title
+            variant="h2"
             className={styles["section-title"]}
             id={getAccessibilityId("landing-features-title")}
           >
             {tFeatures("title")}
-          </h2>
+          </Title>
           <div className={styles["features-grid"]} role="list">
             {FEATURE_KEYS.map((key) => (
               <article
@@ -233,9 +243,12 @@ const LandingPageContent = () => {
                     {tFeatures(`${key}.icon`)}
                   </span>
                   <div className={styles["feature-card__content"]}>
-                    <h3 className={styles["feature-card__title"]}>
+                    <Title
+                      variant="h3"
+                      className={styles["feature-card__title"]}
+                    >
                       {tFeatures(`${key}.title`)}
-                    </h3>
+                    </Title>
                     <Text
                       variant="body"
                       className={styles["feature-card__description"]}
@@ -254,12 +267,13 @@ const LandingPageContent = () => {
               "landing-example-preview-title"
             )}
           >
-            <h3
+            <Title
+              variant="h3"
               id={getAccessibilityId("landing-example-preview-title")}
               className={styles["landing-example-preview__title"]}
             >
               {tExamples("title")}
-            </h3>
+            </Title>
             <Text
               variant="body"
               className={styles["landing-example-preview__description"]}
@@ -295,11 +309,14 @@ const LandingPageContent = () => {
                     className={styles["landing-example-preview__column"]}
                     role="listitem"
                   >
-                    <h4
-                      className={styles["landing-example-preview__column-title"]}
+                    <Title
+                      variant="h4"
+                      className={
+                        styles["landing-example-preview__column-title"]
+                      }
                     >
                       {tExamples(`columns.${columnKey}`)}
-                    </h4>
+                    </Title>
                     <ul className={styles["landing-example-preview__items"]}>
                       {selectedFeaturePreview.columns[columnKey].map((item) => (
                         <li
@@ -307,7 +324,9 @@ const LandingPageContent = () => {
                           className={styles["landing-example-preview__item"]}
                         >
                           <span
-                            className={styles["landing-example-preview__item-check"]}
+                            className={
+                              styles["landing-example-preview__item-check"]
+                            }
                             aria-hidden="true"
                           >
                             •
@@ -328,12 +347,13 @@ const LandingPageContent = () => {
           className={styles["impact-section"]}
           aria-labelledby={getAccessibilityId("landing-impact-title")}
         >
-          <h2
+          <Title
+            variant="h2"
             className={styles["section-title"]}
             id={getAccessibilityId("landing-impact-title")}
           >
             {tImpact("title")}
-          </h2>
+          </Title>
           <Text
             variant="body"
             className={styles["impact-section__description"]}
@@ -350,9 +370,9 @@ const LandingPageContent = () => {
                 <p className={styles["impact-card__metric"]}>
                   {tImpact(`${key}.value`)}
                 </p>
-                <h3 className={styles["impact-card__title"]}>
+                <Title variant="h3" className={styles["impact-card__title"]}>
                   {tImpact(`${key}.title`)}
-                </h3>
+                </Title>
                 <Text
                   variant="body"
                   className={styles["impact-card__description"]}
@@ -369,12 +389,13 @@ const LandingPageContent = () => {
           className={styles["rhythm-section"]}
           aria-labelledby={getAccessibilityId("landing-rhythm-title")}
         >
-          <h2
+          <Title
+            variant="h2"
             className={styles["section-title"]}
             id={getAccessibilityId("landing-rhythm-title")}
           >
             {tRhythm("title")}
-          </h2>
+          </Title>
           <div className={styles["rhythm-grid"]} role="list">
             {RHYTHM_KEYS.map((key, index) => (
               <article
@@ -393,9 +414,9 @@ const LandingPageContent = () => {
                     {tRhythm(`${key}.icon`)}
                   </span>
                 </div>
-                <h3 className={styles["rhythm-card__title"]}>
+                <Title variant="h3" className={styles["rhythm-card__title"]}>
                   {tRhythm(`${key}.title`)}
-                </h3>
+                </Title>
                 <Text
                   variant="body"
                   className={styles["rhythm-card__description"]}
@@ -412,19 +433,27 @@ const LandingPageContent = () => {
           className={styles["trust-section"]}
           aria-labelledby={getAccessibilityId("landing-trust-title")}
         >
-          <h2
+          <Title
+            variant="h2"
             className={styles["trust-section__title"]}
             id={getAccessibilityId("landing-trust-title")}
           >
             {tTrust("title")}
-          </h2>
+          </Title>
           <Text variant="body" className={styles["trust-section__description"]}>
             {tTrust("description")}
           </Text>
           <div className={styles["trust-badges"]} role="list">
             {TRUST_ITEM_KEYS.map(({ iconKey, labelKey }) => (
-              <span key={labelKey} className={styles["trust-badge"]} role="listitem">
-                <span className={styles["trust-badge__icon"]} aria-hidden="true">
+              <span
+                key={labelKey}
+                className={styles["trust-badge"]}
+                role="listitem"
+              >
+                <span
+                  className={styles["trust-badge__icon"]}
+                  aria-hidden="true"
+                >
                   {tTrust(iconKey)}
                 </span>
                 {tTrust(labelKey)}
@@ -438,12 +467,13 @@ const LandingPageContent = () => {
           className={styles["cta-section"]}
           aria-labelledby={getAccessibilityId("landing-cta-title")}
         >
-          <h2
+          <Title
+            variant="h2"
             className={styles["cta-section__title"]}
             id={getAccessibilityId("landing-cta-title")}
           >
             {tCta("title")}
-          </h2>
+          </Title>
           <Text variant="body" className={styles["cta-section__description"]}>
             {tCta("description")}
           </Text>
@@ -461,7 +491,10 @@ const LandingPageContent = () => {
           className={styles["landing-footer__nav"]}
           aria-label={tFooter("ariaLabel")}
         >
-          <Link href={PAGE_ROUTES.LEGAL} className={styles["landing-footer__link"]}>
+          <Link
+            href={PAGE_ROUTES.LEGAL}
+            className={styles["landing-footer__link"]}
+          >
             {tFooter("legal")}
           </Link>
           {isBillingVisible && (

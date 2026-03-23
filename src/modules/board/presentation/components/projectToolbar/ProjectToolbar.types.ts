@@ -1,6 +1,17 @@
+import type { ReactNode } from "react";
+
 import type { ProjectSearchSuggestion } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
 
 export type ProjectToolbarAddActionType = "ticket" | "epic";
+
+export type ProjectToolbarExtraTool = {
+  key: string;
+  label: string;
+  ariaLabel: string;
+  icon?: ReactNode;
+  onClick?: () => void;
+  isActive?: boolean;
+};
 
 export type ProjectToolbarProps = {
   pageTitle: string;
@@ -16,4 +27,5 @@ export type ProjectToolbarProps = {
   canAddAction?: boolean;
   isPermissionsLoading?: boolean;
   searchSuggestions?: ProjectSearchSuggestion[];
+  extraTools?: ProjectToolbarExtraTool[];
 };

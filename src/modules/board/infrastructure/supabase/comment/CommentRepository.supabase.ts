@@ -25,6 +25,24 @@ import type { CommentWithAuthorRow } from "@/modules/board/infrastructure/supaba
 export const createCommentRepository = (
   client: SupabaseClient
 ): CommentRepository => ({
+  async hasByProject(projectId: string): Promise<boolean> {
+    try {
+      const { data, error } = await client
+        .from("comments")
+        .select("id, tickets!inner(project_id)")
+        .eq("tickets.project_id", projectId)
+        .limit(1);
+
+      if (error) {
+        return handleRepositoryError(error, "Comment", projectId);
+      }
+
+      return Array.isArray(data) && data.length > 0;
+    } catch (error) {
+      return handleRepositoryError(error, "Comment", projectId);
+    }
+  },
+
   async listByTicket(ticketId: string): Promise<CommentWithAuthor[]> {
     try {
       const { data, error } = await client.rpc("get_ticket_comments", {

@@ -1,6 +1,7 @@
-import { render } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 
 import { ProjectShellContributionProvider } from "@/domains/project/presentation/layouts/projectShell/ProjectShellContributionContext";
+import { useProjectShellContribution } from "@/domains/project/presentation/layouts/projectShell/ProjectShellContributionContext";
 import {
   EPIC_PROGRESS_FILTER_VALUES,
   EPIC_SORT_FIELD_VALUES,
@@ -14,6 +15,7 @@ const prefetchMock = jest.fn();
 const prefetchBoardViewMock = jest.fn();
 const prefetchEpicsViewMock = jest.fn();
 const useProjectRealtimeMock = jest.fn();
+let mockPathname = "/project-1/board";
 const routerMock = {
   push: pushMock,
   replace: replaceMock,
@@ -22,7 +24,7 @@ const routerMock = {
 const searchParamsMock = new URLSearchParams();
 
 jest.mock("next/navigation", () => ({
-  usePathname: () => "/project-1/board",
+  usePathname: () => mockPathname,
   useRouter: () => routerMock,
   useSearchParams: () => searchParamsMock,
 }));
@@ -90,9 +92,17 @@ jest.mock("@/modules/board/presentation/hooks/ticket/useTickets", () => ({
   }),
 }));
 
+const ContributionProbe = () => {
+  const { toolbar } = useProjectShellContribution();
+
+  return <>{toolbar}</>;
+};
+
 describe("BoardShellAdapter", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    searchParamsMock.delete("onboarding");
+    mockPathname = "/project-1/board";
   });
 
   it("mounts without an infinite contribution update loop when queries are still empty", () => {
@@ -111,5 +121,88 @@ describe("BoardShellAdapter", () => {
         enabled: true,
       }
     );
+  });
+
+  it("opens the onboarding guide from the toolbar button", () => {
+    render(
+      <ProjectShellContributionProvider>
+        <BoardShellAdapter projectId="project-1" />
+        <ContributionProbe />
+      </ProjectShellContributionProvider>
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Revoir le guide d'onboarding du board",
+      })
+    );
+
+    expect(replaceMock).toHaveBeenCalledWith("/project-1/board?onboarding=1", {
+      scroll: false,
+    });
+  });
+
+  it("closes the onboarding guide from the toolbar button when it is already open", () => {
+    searchParamsMock.set("onboarding", "1");
+
+    render(
+      <ProjectShellContributionProvider>
+        <BoardShellAdapter projectId="project-1" />
+        <ContributionProbe />
+      </ProjectShellContributionProvider>
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Masquer le guide d'onboarding du board",
+      })
+    );
+
+    expect(replaceMock).toHaveBeenCalledWith("/project-1/board", {
+      scroll: false,
+    });
+  });
+
+  it("opens the goals onboarding guide from the epics toolbar button", () => {
+    mockPathname = "/project-1/epics";
+
+    render(
+      <ProjectShellContributionProvider>
+        <BoardShellAdapter projectId="project-1" />
+        <ContributionProbe />
+      </ProjectShellContributionProvider>
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Revoir le guide d'onboarding des objectifs",
+      })
+    );
+
+    expect(replaceMock).toHaveBeenCalledWith("/project-1/epics?onboarding=1", {
+      scroll: false,
+    });
+  });
+
+  it("closes the goals onboarding guide from the epics toolbar button when it is already open", () => {
+    mockPathname = "/project-1/epics";
+    searchParamsMock.set("onboarding", "1");
+
+    render(
+      <ProjectShellContributionProvider>
+        <BoardShellAdapter projectId="project-1" />
+        <ContributionProbe />
+      </ProjectShellContributionProvider>
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Masquer le guide d'onboarding des objectifs",
+      })
+    );
+
+    expect(replaceMock).toHaveBeenCalledWith("/project-1/epics", {
+      scroll: false,
+    });
   });
 });

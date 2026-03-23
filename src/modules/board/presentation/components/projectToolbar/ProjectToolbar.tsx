@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import Button from "@/shared/design-system/button";
 import Input from "@/shared/design-system/input";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
 import ProjectToolbarSuggestions from "./components/ProjectToolbarSuggestions";
@@ -29,6 +30,7 @@ const ProjectToolbar = ({
   canAddAction = true,
   isPermissionsLoading = false,
   searchSuggestions = [],
+  extraTools = [],
 }: ProjectToolbarProps) => {
   const router = useRouter();
   const tNavbar = useTranslation("navigation.navbar");
@@ -79,7 +81,9 @@ const ProjectToolbar = ({
     >
       <div className={styles["project-toolbar__content"]}>
         <div className={styles["project-toolbar__left"]}>
-          <h1 className={styles["project-toolbar__title"]}>{pageTitle}</h1>
+          <Title variant="h1" className={styles["project-toolbar__title"]}>
+            {pageTitle}
+          </Title>
           {showFilterSort && (
             <ProjectToolbarTools
               isFilterActive={isFilterActive}
@@ -90,6 +94,7 @@ const ProjectToolbar = ({
               filterAriaLabel={tNavbar("filterAriaLabel")}
               sortLabel={tNavbar("sort")}
               sortAriaLabel={tNavbar("sortAriaLabel")}
+              extraTools={extraTools}
             />
           )}
         </div>
