@@ -69,6 +69,8 @@
       "filterAriaLabel": "Abrir filtros",
       "sort": "Ordenar",
       "sortAriaLabel": "Abrir ordenación",
+      "reviewGuide": "Volver a ver la guia",
+      "reviewGuideAriaLabel": "Relanzar la guia de onboarding",
       "addTicket": "Añadir tarea",
       "addTicketAriaLabel": "Crear una nueva tarea",
       "addEpic": "Añadir objetivo",
@@ -464,12 +466,12 @@
       "pendingInvitationsAcceptAriaLabel": "Aceptar invitacion para {project}",
       "pendingInvitationsDecline": "Rechazar",
       "pendingInvitationsDeclineAriaLabel": "Rechazar invitacion para {project}",
-      "welcomeGuideTitle": "Guia de bienvenida",
-      "welcomeGuideDescription": "Tus espacios estan listos. Invita a tu pareja o crea otro espacio para empezar juntos.",
-      "welcomeGuidePrimaryCta": "Invitar a mi pareja",
-      "welcomeGuidePrimaryCtaAriaLabel": "Abrir formulario de invitacion para pareja",
-      "welcomeGuideSecondaryCta": "Crear otro espacio",
-      "welcomeGuideSecondaryCtaAriaLabel": "Abrir formulario de creacion de espacio",
+      "welcomeGuideTitle": "Guia de inicio",
+      "welcomeGuideDescription": "Empieza creando tu primer espacio. Despues podras invitar a alguien y descubrir el board.",
+      "welcomeGuidePrimaryCta": "Crear mi primer espacio",
+      "welcomeGuidePrimaryCtaAriaLabel": "Abrir el formulario para crear mi primer espacio",
+      "welcomeGuideSkipCta": "Omitir por ahora",
+      "welcomeGuideSkipCtaAriaLabel": "Dejar de abrir automaticamente la guia de inicio",
       "actions": {
         "openMenuAriaLabel": "Abrir menu de acciones para {name}",
         "menuAriaLabel": "Menu de acciones del espacio {name}",
@@ -647,6 +649,47 @@
         "errorGeneric": "Se ha producido un error al crear la tarea",
         "readOnlyHint": "Los lectores no pueden crear tareas.",
         "noStatusHint": "Gestiona y organiza tus tareas"
+      },
+      "onboarding": {
+        "eyebrow": "Onboarding",
+        "title": "Ubicate rapido en el board",
+        "description": "Sigue las tres acciones clave para entender el board y adoptar el flujo de trabajo basico.",
+        "reviewTitle": "Volver a ver la guia",
+        "reviewDescription": "Reinicia el recorrido completo cuando quieras para repasar la creacion de tickets, la asignacion y los comentarios.",
+        "reviewCta": "Volver a ver la guia",
+        "reviewCtaAriaLabel": "Volver a ver la guia de onboarding del board",
+        "hideCta": "Ocultar la guia",
+        "hideCtaAriaLabel": "Ocultar la guia de onboarding del board",
+        "skipCta": "Omitir onboarding",
+        "skipCtaAriaLabel": "Dejar de abrir automaticamente el onboarding",
+        "genericError": "No se pudieron actualizar tus preferencias de onboarding.",
+        "status": {
+          "complete": "Hecho",
+          "current": "En curso",
+          "pending": "Pendiente"
+        },
+        "steps": {
+          "createTicket": {
+            "title": "Crear un ticket",
+            "description": "Crea tu primera tarea para ver como el board organiza el trabajo.",
+            "action": "Crear un ticket",
+            "actionAriaLabel": "Abrir la creacion de un ticket"
+          },
+          "assignTicket": {
+            "title": "Abrir y asignar un ticket",
+            "description": "Abre un ticket y asignalo para dejar claro quien se encarga.",
+            "blockedDescription": "Primero crea un ticket. Despues podras abrirlo y asignarlo a una persona.",
+            "action": "Abrir el ticket",
+            "actionAriaLabel": "Abrir un ticket para asignarlo"
+          },
+          "commentTicket": {
+            "title": "Comentar un ticket",
+            "description": "Agrega un comentario en el ticket para centralizar el contexto y las decisiones.",
+            "blockedDescription": "Primero crea un ticket. Despues podras abrirlo y agregar un comentario.",
+            "action": "Abrir comentarios",
+            "actionAriaLabel": "Abrir un ticket para agregar un comentario"
+          }
+        }
       }
     },
     "epics": {
@@ -676,6 +719,49 @@
         "cancelButton": "Cancelar",
         "readOnlyHint": "Los lectores no pueden crear objetivos.",
         "errorGeneric": "Se ha producido un error al crear el objetivo"
+      },
+      "onboarding": {
+        "eyebrow": "Onboarding",
+        "title": "Ubicate rapido en los objetivos",
+        "description": "Sigue las tres acciones clave para crear un objetivo, vincular trabajo y empezar a seguir su progreso.",
+        "reviewTitle": "Volver a ver la guia",
+        "reviewDescription": "Reinicia el recorrido completo cuando quieras para repasar la creacion de un objetivo, el vinculo con una tarea y el seguimiento del progreso.",
+        "reviewCta": "Volver a ver la guia",
+        "reviewCtaAriaLabel": "Volver a ver la guia de onboarding de objetivos",
+        "hideCta": "Ocultar la guia",
+        "hideCtaAriaLabel": "Ocultar la guia de onboarding de objetivos",
+        "skipCta": "Omitir onboarding",
+        "skipCtaAriaLabel": "Dejar de abrir automaticamente el onboarding de objetivos",
+        "genericError": "No se pudieron actualizar tus preferencias de onboarding.",
+        "status": {
+          "complete": "Hecho",
+          "current": "En curso",
+          "pending": "Pendiente"
+        },
+        "steps": {
+          "createEpic": {
+            "title": "Crear un objetivo",
+            "description": "Crea tu primer objetivo para dar una direccion clara al trabajo que viene.",
+            "action": "Crear un objetivo",
+            "actionAriaLabel": "Abrir la creacion de un objetivo"
+          },
+          "linkTicket": {
+            "title": "Vincular una tarea al objetivo",
+            "description": "Abre una tarea y vinculala a un objetivo para seguir su impacto.",
+            "blockedDescription": "Primero crea un objetivo. Despues podras abrir una tarea y vincularla a ese objetivo.",
+            "openTicketAction": "Abrir una tarea",
+            "openTicketActionAriaLabel": "Abrir una tarea para vincularla a un objetivo",
+            "createTicketAction": "Crear una tarea",
+            "createTicketActionAriaLabel": "Abrir la creacion de una tarea para vincularla a un objetivo"
+          },
+          "trackProgress": {
+            "title": "Seguir el progreso",
+            "description": "Haz avanzar una tarea vinculada para ver como se actualiza el progreso del objetivo.",
+            "blockedDescription": "Primero vincula una tarea a un objetivo. Despues podras hacerlo avanzar y seguir su progreso.",
+            "action": "Abrir la tarea vinculada",
+            "actionAriaLabel": "Abrir una tarea vinculada para hacer avanzar el objetivo"
+          }
+        }
       },
       "epicDetail": {
         "title": "Detalles del objetivo",

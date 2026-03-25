@@ -88,6 +88,7 @@ const queryKeysObject = {
   comments: {
     root: () => ["comments"] as const,
     byTicket: (ticketId: string) => ["comments", "ticket", ticketId] as const,
+    byProject: (projectId: string) => ["comments", "project", projectId] as const,
   },
   labels: {
     root: () => ["labels"] as const,

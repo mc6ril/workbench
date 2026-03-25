@@ -16,6 +16,7 @@ import Loader from "@/shared/design-system/loader";
 import Modal from "@/shared/design-system/modal";
 import Select from "@/shared/design-system/select";
 import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 import Toggle from "@/shared/design-system/toggle";
 import {
   getIntlLocale,
@@ -406,9 +407,9 @@ const AccountPage = () => {
             ← {t("header.label")}
           </button>
           <div className={styles["account-welcome"]}>
-            <h1 className={styles["account-welcome__title"]}>
+            <Title variant="h1" className={styles["account-welcome__title"]}>
               {t("header.title")}
-            </h1>
+            </Title>
             <p className={styles["account-welcome__subtitle"]}>
               {t("header.subtitle")}
             </p>
@@ -427,12 +428,13 @@ const AccountPage = () => {
               {t("personalInfo.icon")}
             </div>
             <div>
-              <h2
+              <Title
+                variant="h2"
                 id={getAccessibilityId("account-personal-info-title")}
                 className={styles["section-title"]}
               >
                 {t("personalInfo.title")}
-              </h2>
+              </Title>
               <p className={styles["section-description"]}>
                 {t("personalInfo.description")}
               </p>
@@ -517,12 +519,13 @@ const AccountPage = () => {
                 {t("security.icon")}
               </div>
               <div>
-                <h2
+                <Title
+                  variant="h2"
                   id={getAccessibilityId("account-security-title")}
                   className={styles["section-title"]}
                 >
                   {t("security.title")}
-                </h2>
+                </Title>
                 <p className={styles["section-description"]}>
                   {t("security.description")}
                 </p>
@@ -618,12 +621,13 @@ const AccountPage = () => {
               {t("preferences.icon")}
             </div>
             <div>
-              <h2
+              <Title
+                variant="h2"
                 id={getAccessibilityId("account-preferences-title")}
                 className={styles["section-title"]}
               >
                 {t("preferences.title")}
-              </h2>
+              </Title>
               <p className={styles["section-description"]}>
                 {t("preferences.description")}
               </p>
@@ -720,12 +724,13 @@ const AccountPage = () => {
                 {t("subscription.icon")}
               </div>
               <div>
-                <h2
+                <Title
+                  variant="h2"
                   id={getAccessibilityId("account-subscription-title")}
                   className={styles["section-title"]}
                 >
                   {t("subscription.title")}
-                </h2>
+                </Title>
                 <p className={styles["section-description"]}>
                   {t("subscription.description")}
                 </p>
@@ -827,12 +832,13 @@ const AccountPage = () => {
               {t("signOut.icon")}
             </div>
             <div>
-              <h2
+              <Title
+                variant="h2"
                 id={getAccessibilityId("account-signout-title")}
                 className={styles["section-title"]}
               >
                 {t("signOut.title")}
-              </h2>
+              </Title>
               <p className={styles["section-description"]}>
                 {t("signOut.description")}
               </p>
@@ -874,12 +880,13 @@ const AccountPage = () => {
               {t("dangerZone.icon")}
             </div>
             <div>
-              <h2
+              <Title
+                variant="h2"
                 id={getAccessibilityId("account-danger-zone-title")}
                 className={styles["section-title"]}
               >
                 {t("dangerZone.title")}
-              </h2>
+              </Title>
               <p className={styles["section-description"]}>
                 {t("dangerZone.description")}
               </p>

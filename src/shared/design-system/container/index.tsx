@@ -24,7 +24,7 @@ type Props = {
  * @example
  * ```tsx
  * <Container>
- *   <h1>Page Title</h1>
+ *   <Title variant="h1">Page Title</Title>
  *   <p>Content here</p>
  * </Container>
  * ```

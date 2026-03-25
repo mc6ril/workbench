@@ -10,6 +10,7 @@ import React, {
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
+import { GuideIcon } from "@/shared/design-system/icons";
 import Modal from "@/shared/design-system/modal";
 import { useTranslation } from "@/shared/i18n";
 import { buildProjectRoute, normalizePath } from "@/shared/utils/routes";
@@ -36,6 +37,7 @@ import EpicSortControls from "@/modules/board/presentation/components/projectShe
 import TicketFilterControls from "@/modules/board/presentation/components/projectShellControls/TicketFilterControls";
 import TicketSortControls from "@/modules/board/presentation/components/projectShellControls/TicketSortControls";
 import ProjectToolbar from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar";
+import type { ProjectToolbarExtraTool } from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.types";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { useEpicQueryParams } from "@/modules/board/presentation/hooks/epic/useEpicQueryParams";
 import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
@@ -99,6 +101,8 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const tSidebar = useTranslation("navigation.sidebar");
   const tBreadcrumbs = useTranslation("navigation.breadcrumbs");
   const tNavbar = useTranslation("navigation.navbar");
+  const tBoardOnboarding = useTranslation("pages.board.onboarding");
+  const tEpicsOnboarding = useTranslation("pages.epics.onboarding");
   const {
     canCreateEpic,
     canCreateTicket,
@@ -252,6 +256,8 @@ const BoardShellAdapter = ({ projectId }: Props) => {
 
   const { epicProgressFilter, epicSortField, epicSortDirection } =
     useEpicQueryParams(searchParams);
+  const isOnboardingReviewRequested =
+    isBoardShellView && searchParams.get("onboarding") === "1";
   const isTicketFilterActive = Object.keys(filters).length > 0;
   const isTicketSortActive =
     sort.field !== TICKET_SORT_FIELD_VALUES.CREATED_AT ||
@@ -321,6 +327,12 @@ const BoardShellAdapter = ({ projectId }: Props) => {
     setIsSortModalOpen(true);
   }, []);
 
+  const handleReviewGuideClick = useCallback(() => {
+    updateQueryParams({
+      onboarding: isOnboardingReviewRequested ? null : "1",
+    });
+  }, [isOnboardingReviewRequested, updateQueryParams]);
+
   const handleResetTicketFilters = useCallback(() => {
     resetFilters();
     setIsFilterModalOpen(false);
@@ -369,6 +381,47 @@ const BoardShellAdapter = ({ projectId }: Props) => {
 
     return tSidebar(`items.${currentViewKey}`);
   }, [currentViewKey, tSidebar]);
+  const onboardingAriaLabels = useMemo(() => {
+    if (currentViewKey === PROJECT_VIEWS.EPICS) {
+      return {
+        reviewAriaLabel: tEpicsOnboarding("reviewCtaAriaLabel"),
+        hideAriaLabel: tEpicsOnboarding("hideCtaAriaLabel"),
+      };
+    }
+
+    return {
+      reviewAriaLabel: tBoardOnboarding("reviewCtaAriaLabel"),
+      hideAriaLabel: tBoardOnboarding("hideCtaAriaLabel"),
+    };
+  }, [currentViewKey, tBoardOnboarding, tEpicsOnboarding]);
+
+  const toolbarExtraTools = useMemo<ProjectToolbarExtraTool[]>(() => {
+    if (!isBoardShellView) {
+      return [];
+    }
+
+    return [
+      {
+        key: "review-guide",
+        label: isOnboardingReviewRequested
+          ? tNavbar("reviewGuide")
+          : tNavbar("reviewGuide"),
+        ariaLabel: isOnboardingReviewRequested
+          ? onboardingAriaLabels.hideAriaLabel
+          : onboardingAriaLabels.reviewAriaLabel,
+        icon: <GuideIcon />,
+        onClick: handleReviewGuideClick,
+        isActive: isOnboardingReviewRequested,
+      },
+    ];
+  }, [
+    handleReviewGuideClick,
+    isBoardShellView,
+    isOnboardingReviewRequested,
+    tNavbar,
+    onboardingAriaLabels.hideAriaLabel,
+    onboardingAriaLabels.reviewAriaLabel,
+  ]);
 
   const toolbar = useMemo(() => {
     if (!currentViewKey || !currentViewLabel) {
@@ -392,6 +445,7 @@ const BoardShellAdapter = ({ projectId }: Props) => {
         onAddClick={handleAddClick}
         canAddAction={canAddAction}
         isPermissionsLoading={isPermissionsLoading}
+        extraTools={toolbarExtraTools}
       />
     );
   }, [
@@ -406,6 +460,7 @@ const BoardShellAdapter = ({ projectId }: Props) => {
     isSortActive,
     searchInput,
     searchSuggestions,
+    toolbarExtraTools,
   ]);
 
   const breadcrumbs = useMemo(() => {

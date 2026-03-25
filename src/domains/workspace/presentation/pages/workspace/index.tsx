@@ -17,6 +17,7 @@ import Link from "@/shared/design-system/link";
 import Loader from "@/shared/design-system/loader";
 import Modal from "@/shared/design-system/modal";
 import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { markNavigationStart } from "@/shared/navigationPerf";
@@ -28,6 +29,7 @@ import styles from "./styles.module.scss";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
+import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
 import {
   type CreateProjectInput,
   CreateProjectInputSchema,
@@ -85,6 +87,12 @@ const WorkspacePage = () => {
   const { data: isBillingVisible } = useBillingVisibility();
   const { data: subscription, isLoading: isSubscriptionLoading } =
     useSubscription();
+  const {
+    canAutoOpen: canAutoOpenGettingStarted,
+    isPending: isGettingStartedPending,
+    error: gettingStartedError,
+    markSkipped,
+  } = useTicketGettingStartedStatus();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedEmoji, setSelectedEmoji] = useState<string>(
     WORKSPACE_EMOJI_OPTIONS[0]
@@ -107,6 +115,7 @@ const WorkspacePage = () => {
   const tErrors = useTranslation("errors");
 
   const displayName = viewer?.displayName?.trim() || t("userFallbackName");
+  const welcomeGuideTitleId = getAccessibilityId("workspace-welcome-guide");
 
   const {
     register,
@@ -204,6 +213,10 @@ const WorkspacePage = () => {
     }
   };
 
+  const handleSkipWelcomeGuide = useCallback(() => {
+    markSkipped();
+  }, [markSkipped]);
+
   const formatLastActivity = useLastActivitySubtitle();
 
   const selectedEmojiIndex = useMemo(() => {
@@ -230,6 +243,10 @@ const WorkspacePage = () => {
   }
 
   const hasProjects = Array.isArray(projects) && projects.length > 0;
+  const showWelcomeGuide = !hasProjects && canAutoOpenGettingStarted;
+  const gettingStartedErrorMessage = gettingStartedError
+    ? getErrorMessage(gettingStartedError as { code?: string }, tErrors)
+    : null;
 
   return (
     <main className={styles["workspace-page"]}>
@@ -239,9 +256,9 @@ const WorkspacePage = () => {
             <div className={styles["workspace-welcome__label"]}>
               {t("welcomeLabel")}
             </div>
-            <h1 className={styles["workspace-welcome__title"]}>
+            <Title variant="h1" className={styles["workspace-welcome__title"]}>
               {t("welcomeBanner", { name: displayName })}
-            </h1>
+            </Title>
             <p className={styles["workspace-welcome__subtitle"]}>
               {t("welcomeSubtitle")}
             </p>
@@ -274,10 +291,10 @@ const WorkspacePage = () => {
             >
               <div className={styles["reclaimable-banner"]}>
                 <div className={styles["reclaimable-header"]}>
-                  <h2 className={styles["reclaimable-title"]}>
+                  <Title variant="h2" className={styles["reclaimable-title"]}>
                     <span aria-hidden="true">📦</span>
                     {tReclaim("sectionTitle")}
-                  </h2>
+                  </Title>
                   <p className={styles["reclaimable-description"]}>
                     {tReclaim("sectionDescription")}
                   </p>
@@ -345,12 +362,13 @@ const WorkspacePage = () => {
             aria-labelledby={getAccessibilityId("workspace-main-title")}
           >
             <div className={styles["section-header"]}>
-              <h2
+              <Title
+                variant="h2"
                 id={getAccessibilityId("workspace-main-title")}
                 className={styles["section-title"]}
               >
                 {t("yourWorkspacesTitle")}
-              </h2>
+              </Title>
               <p className={styles["section-description"]}>
                 {t("sectionDescription")}
               </p>
@@ -415,7 +433,9 @@ const WorkspacePage = () => {
                         />
                       )}
                     </div>
-                    <h3 className={styles["workspace-name"]}>{project.name}</h3>
+                    <Title variant="h3" className={styles["workspace-name"]}>
+                      {project.name}
+                    </Title>
                     <p className={styles["workspace-last-activity"]}>
                       {formatLastActivity(project.updatedAt)}
                     </p>
@@ -463,22 +483,61 @@ const WorkspacePage = () => {
             </div>
           </section>
         ) : Array.isArray(projects) && projects.length === 0 ? (
-          <div className={styles["empty-state"]}>
-            <div className={styles["empty-state-icon"]} aria-hidden="true">
-              ✨
+          <>
+            {showWelcomeGuide && (
+              <section
+                className={styles["welcome-guide"]}
+                aria-labelledby={welcomeGuideTitleId}
+              >
+                <Title
+                  variant="h2"
+                  id={welcomeGuideTitleId}
+                  className={styles["welcome-guide__title"]}
+                >
+                  {t("welcomeGuideTitle")}
+                </Title>
+                <p className={styles["welcome-guide__description"]}>
+                  {t("welcomeGuideDescription")}
+                </p>
+                {gettingStartedErrorMessage && (
+                  <ErrorMessage message={gettingStartedErrorMessage} />
+                )}
+                <div className={styles["welcome-guide__actions"]}>
+                  <Button
+                    label={t("welcomeGuidePrimaryCta")}
+                    onClick={openCreateModal}
+                    aria-label={t("welcomeGuidePrimaryCtaAriaLabel")}
+                  />
+                  <Button
+                    label={t("welcomeGuideSkipCta")}
+                    onClick={handleSkipWelcomeGuide}
+                    aria-label={t("welcomeGuideSkipCtaAriaLabel")}
+                    variant="ghost"
+                    disabled={isGettingStartedPending}
+                  />
+                </div>
+              </section>
+            )}
+
+            <div className={styles["empty-state"]}>
+              <div className={styles["empty-state-icon"]} aria-hidden="true">
+                ✨
+              </div>
+              <Title variant="h2" className={styles["empty-state-title"]}>
+                {t("emptyStateCardTitle")}
+              </Title>
+              <p className={styles["empty-state-description"]}>
+                {t("emptyStateCardDescription")}
+              </p>
+              {!showWelcomeGuide && (
+                <Button
+                  label={t("addFirstProjectButton")}
+                  onClick={openCreateModal}
+                  aria-label={t("addFirstProjectButtonAriaLabel")}
+                />
+              )}
             </div>
-            <h2 className={styles["empty-state-title"]}>
-              {t("emptyStateCardTitle")}
-            </h2>
-            <p className={styles["empty-state-description"]}>
-              {t("emptyStateCardDescription")}
-            </p>
-            <Button
-              label={t("addFirstProjectButton")}
-              onClick={openCreateModal}
-              aria-label={t("addFirstProjectButtonAriaLabel")}
-            />
-          </div>
+          </>
         ) : null}
       </div>
 

@@ -4,6 +4,7 @@ import React from "react";
 import NextLink from "next/link";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
+import Title from "@/shared/design-system/title";
 
 import styles from "./route_fallback_page.module.scss";
 
@@ -91,9 +92,13 @@ const RouteFallbackPage = ({
           <span className={styles["route-fallback__status"]}>
             {statusLabel}
           </span>
-          <h1 id={titleId} className={styles["route-fallback__title"]}>
+          <Title
+            variant="h1"
+            id={titleId}
+            className={styles["route-fallback__title"]}
+          >
             {title}
-          </h1>
+          </Title>
           <p id={messageId} className={styles["route-fallback__message"]}>
             {message}
           </p>

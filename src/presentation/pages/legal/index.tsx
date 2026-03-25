@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { getAccessibilityId } from "@/shared/a11y";
 import { GDPR_RIGHTS_KEYS, LEGAL_SECTIONS } from "@/shared/constants";
 import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
@@ -31,9 +32,9 @@ const LegalPage = () => {
             ← {t("header.label")}
           </button>
           <div className={styles["legal-welcome"]}>
-            <h1 className={styles["legal-welcome__title"]}>
+            <Title variant="h1" className={styles["legal-welcome__title"]}>
               {t("header.title")}
-            </h1>
+            </Title>
             <p className={styles["legal-welcome__subtitle"]}>
               {t("header.subtitle")}
             </p>
@@ -56,12 +57,13 @@ const LegalPage = () => {
                 {t(`sections.${key}.icon`)}
               </div>
               <div>
-                <h2
+                <Title
+                  variant="h2"
                   id={getAccessibilityId(`${id}-title`)}
                   className={styles["section-title"]}
                 >
                   {t(`sections.${key}.title`)}
-                </h2>
+                </Title>
                 <p className={styles["section-description"]}>
                   {t(`sections.${key}.description`)}
                 </p>

@@ -2,6 +2,7 @@ import { toDate } from "@/shared/utils/guards";
 
 import {
   DEFAULT_USER_PREFERENCES,
+  isGettingStartedStatus,
   type UserPreferences,
   UserPreferencesSchema,
 } from "@/domains/profile/core/domain/profilePreferences.schema";
@@ -32,6 +33,16 @@ const parsePreferences = (raw: Record<string, unknown>): UserPreferences => {
       typeof raw["language"] === "string" && raw["language"].length > 0
         ? raw["language"]
         : DEFAULT_USER_PREFERENCES.language,
+    gettingStartedStatus:
+      typeof raw["gettingStartedStatus"] === "string" &&
+      isGettingStartedStatus(raw["gettingStartedStatus"])
+        ? raw["gettingStartedStatus"]
+        : DEFAULT_USER_PREFERENCES.gettingStartedStatus,
+    epicsGettingStartedStatus:
+      typeof raw["epicsGettingStartedStatus"] === "string" &&
+      isGettingStartedStatus(raw["epicsGettingStartedStatus"])
+        ? raw["epicsGettingStartedStatus"]
+        : DEFAULT_USER_PREFERENCES.epicsGettingStartedStatus,
   };
 };
 

@@ -1,6 +1,7 @@
 import { FilterIcon, SortIcon } from "@/shared/design-system/icons";
 
 import styles from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.module.scss";
+import type { ProjectToolbarExtraTool } from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.types";
 
 type Props = {
   isFilterActive: boolean;
@@ -11,6 +12,7 @@ type Props = {
   filterAriaLabel: string;
   sortLabel: string;
   sortAriaLabel: string;
+  extraTools?: ProjectToolbarExtraTool[];
 };
 
 const buildToolClassName = (isActive: boolean): string => {
@@ -31,6 +33,7 @@ const ProjectToolbarTools = ({
   filterAriaLabel,
   sortLabel,
   sortAriaLabel,
+  extraTools = [],
 }: Props) => {
   return (
     <div className={styles["project-toolbar__tools"]}>
@@ -60,6 +63,23 @@ const ProjectToolbarTools = ({
           {sortLabel}
         </span>
       </button>
+      {extraTools.map((tool) => (
+        <button
+          key={tool.key}
+          type="button"
+          className={buildToolClassName(tool.isActive ?? false)}
+          onClick={tool.onClick}
+          aria-label={tool.ariaLabel}
+          title={tool.label}
+          aria-pressed={tool.isActive ?? false}
+        >
+          {tool.icon ?? (
+            <span className={styles["project-toolbar__tool-label"]}>
+              {tool.label}
+            </span>
+          )}
+        </button>
+      ))}
     </div>
   );
 };
