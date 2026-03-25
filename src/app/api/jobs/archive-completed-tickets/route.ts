@@ -3,14 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
 import { createLoggerFactory } from "@/shared/observability";
 
-import {
-  WEEKLY_TICKET_ARCHIVE_CRON_SCHEDULE,
-  WEEKLY_TICKET_ARCHIVE_TIME_ZONE,
-} from "@/modules/board/core/domain/rules/ticketArchival.rules";
+import { WEEKLY_TICKET_ARCHIVE_TIME_ZONE } from "@/modules/board/core/domain/rules/ticketArchival.rules";
 import { archiveCompletedTicketsBatch } from "@/modules/board/core/usecases/ticket";
 import { createTicketRepository } from "@/modules/board/infrastructure/supabase/ticket/TicketRepository.supabase";
 
 const logger = createLoggerFactory().forScope("API.ArchiveCompletedTickets");
+
+export const dynamic = "force-dynamic";
 
 const isAuthorizedCronRequest = (request: NextRequest): boolean => {
   const cronSecret = process.env.CRON_SECRET;
@@ -46,7 +45,6 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
         success: true,
         archivedCount,
         timeZone: WEEKLY_TICKET_ARCHIVE_TIME_ZONE,
-        schedule: WEEKLY_TICKET_ARCHIVE_CRON_SCHEDULE,
       },
       { status: 200 }
     );

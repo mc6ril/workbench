@@ -2,6 +2,10 @@ import type {
   TicketFilters,
   TicketSort,
 } from "@/modules/board/core/domain/schema/ticket.schema";
+import {
+  createTicketListFilterKey,
+  createTicketListSortKey,
+} from "@/modules/board/presentation/hooks/queryKeys.mapper";
 
 /**
  * Centralized query key factory for React Query.
@@ -36,26 +40,13 @@ const queryKeysObject = {
       search?: string,
       limit?: number
     ) => {
-      // Create stable query keys by extracting filter/sort values
-      // This ensures identical values create the same key regardless of object reference.
-      const filterKey = filters
-        ? [
-            filters.status ?? null,
-            filters.epicId ?? null,
-            filters.parentId ?? null,
-            filters.priority ?? null,
-            filters.labelIds?.length ? [...filters.labelIds].sort() : null,
-          ]
-        : null;
-      const sortKey = sort ? [sort.field, sort.direction] : null;
-
       return [
         "projects",
         projectId,
         "tickets",
         "list",
-        filterKey,
-        sortKey,
+        createTicketListFilterKey(filters),
+        createTicketListSortKey(sort),
         search?.trim() || null,
         limit ?? null,
       ] as const;

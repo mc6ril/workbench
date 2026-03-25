@@ -1,52 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import { createQueryBuilderMock } from "../testUtils/queryBuilderMock";
+
 import { createTicketRepository } from "@/modules/board/infrastructure/supabase/ticket/TicketRepository.supabase";
 import type { TicketRow } from "@/modules/board/infrastructure/supabase/ticket/types";
-
-type QueryResult<T> = {
-  data: T;
-  error: null;
-};
-
-type QueryBuilderMock<T> = QueryResult<T> & {
-  select: jest.Mock<QueryBuilderMock<T>, [string?]>;
-  eq: jest.Mock<QueryBuilderMock<T>, [string, unknown]>;
-  is: jest.Mock<QueryBuilderMock<T>, [string, unknown]>;
-  order: jest.Mock<QueryBuilderMock<T>, [string, { ascending: boolean }]>;
-  limit: jest.Mock<QueryBuilderMock<T>, [number]>;
-  in: jest.Mock<QueryBuilderMock<T>, [string, unknown[]]>;
-  or: jest.Mock<QueryBuilderMock<T>, [string]>;
-  single: jest.Mock<QueryBuilderMock<T>, []>;
-  maybeSingle: jest.Mock<QueryBuilderMock<T>, []>;
-};
-
-const createQueryBuilderMock = <T>(data: T): QueryBuilderMock<T> => {
-  const builder = {
-    data,
-    error: null,
-    select: jest.fn(),
-    eq: jest.fn(),
-    is: jest.fn(),
-    order: jest.fn(),
-    limit: jest.fn(),
-    in: jest.fn(),
-    or: jest.fn(),
-    single: jest.fn(),
-    maybeSingle: jest.fn(),
-  } as QueryBuilderMock<T>;
-
-  builder.select.mockReturnValue(builder);
-  builder.eq.mockReturnValue(builder);
-  builder.is.mockReturnValue(builder);
-  builder.order.mockReturnValue(builder);
-  builder.limit.mockReturnValue(builder);
-  builder.in.mockReturnValue(builder);
-  builder.or.mockReturnValue(builder);
-  builder.single.mockReturnValue(builder);
-  builder.maybeSingle.mockReturnValue(builder);
-
-  return builder;
-};
 
 describe("TicketRepository.supabase active ticket filtering", () => {
   const projectId = "223e4567-e89b-12d3-a456-426614174000";

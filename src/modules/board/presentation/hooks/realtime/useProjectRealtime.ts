@@ -14,6 +14,7 @@ import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { RealtimeRepository } from "@/modules/board/core/ports/realtimeRepository";
 import { getRealtimeRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
+import { mapTicketListQueryKey } from "@/modules/board/presentation/hooks/queryKeys.mapper";
 
 type RealtimeEventType = "INSERT" | "UPDATE" | "DELETE";
 
@@ -161,42 +162,25 @@ const mapCommentRowFromPayload = (
   };
 };
 
-const isTicketListQueryKey = (
+const mapProjectTicketListQueryKey = (
   queryKey: readonly unknown[],
   projectId: string
-): boolean => {
-  return (
-    queryKey[0] === "projects" &&
-    queryKey[1] === projectId &&
-    queryKey[2] === "tickets" &&
-    queryKey[3] === "list"
-  );
-};
+) => {
+  const mappedQueryKey = mapTicketListQueryKey(queryKey);
 
-const extractFilterKeyFromTicketListQuery = (
-  queryKey: readonly unknown[]
-): unknown[] | null => {
-  if (!Array.isArray(queryKey[4])) {
+  if (!mappedQueryKey || mappedQueryKey.projectId !== projectId) {
     return null;
   }
 
-  return queryKey[4] as unknown[];
+  return mappedQueryKey;
 };
 
 const hasLabelFilterInTicketListQuery = (
   queryKey: readonly unknown[],
   projectId: string
 ): boolean => {
-  if (!isTicketListQueryKey(queryKey, projectId)) {
-    return false;
-  }
-
-  const filterKey = extractFilterKeyFromTicketListQuery(queryKey);
-  if (!filterKey || !Array.isArray(filterKey[4])) {
-    return false;
-  }
-
-  return filterKey[4].length > 0;
+  return (mapProjectTicketListQueryKey(queryKey, projectId)?.filters?.labelIds
+    ?.length ?? 0) > 0;
 };
 
 const matchesTicketListFilter = (
@@ -207,12 +191,17 @@ const matchesTicketListFilter = (
     return false;
   }
 
-  const filterKey = extractFilterKeyFromTicketListQuery(queryKey);
-  if (!filterKey) {
+  const mappedQueryKey = mapTicketListQueryKey(queryKey);
+  if (!mappedQueryKey) {
     return true;
   }
 
-  const [status, epicId, parentId, priority, labelIds] = filterKey;
+  const { filters } = mappedQueryKey;
+  if (!filters) {
+    return true;
+  }
+
+  const { status, epicId, parentId, priority, labelIds } = filters;
 
   if (typeof status === "string" && ticket.status !== status) {
     return false;
