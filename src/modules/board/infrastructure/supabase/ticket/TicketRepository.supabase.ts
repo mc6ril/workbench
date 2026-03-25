@@ -563,6 +563,29 @@ export const createTicketRepository = (
       }
     },
 
+    async archiveCompletedTicketsBatch(input: {
+      runAt: Date;
+      timeZone: string;
+    }): Promise<number> {
+      try {
+        const { data, error } = await client.rpc(
+          "archive_completed_tickets_batch",
+          {
+            p_now: input.runAt.toISOString(),
+            p_time_zone: input.timeZone,
+          }
+        );
+
+        if (error) {
+          return handleRepositoryError(error, "Ticket");
+        }
+
+        return typeof data === "number" ? data : 0;
+      } catch (error) {
+        return handleRepositoryError(error, "Ticket");
+      }
+    },
+
     async assignToEpic(ticketId: string, epicId: string): Promise<Ticket> {
       return repo.update(ticketId, { epicId });
     },

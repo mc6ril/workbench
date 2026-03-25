@@ -156,4 +156,26 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     });
     expect(result[ticketId]).toHaveLength(1);
   });
+
+  it("delegates weekly archival batches to the ticket archival rpc", async () => {
+    const client = {
+      rpc: jest.fn().mockResolvedValue({
+        data: 5,
+        error: null,
+      }),
+    } as unknown as SupabaseClient;
+    const repository = createTicketRepository(client);
+    const runAt = new Date("2026-03-30T00:05:00.000Z");
+
+    const result = await repository.archiveCompletedTicketsBatch({
+      runAt,
+      timeZone: "Europe/Paris",
+    });
+
+    expect(client.rpc).toHaveBeenCalledWith("archive_completed_tickets_batch", {
+      p_now: runAt.toISOString(),
+      p_time_zone: "Europe/Paris",
+    });
+    expect(result).toBe(5);
+  });
 });

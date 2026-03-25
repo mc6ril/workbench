@@ -37,6 +37,15 @@ export type TicketRepositoryMock = {
         position: number;
         completedAt: Date | null;
         ticketPositions: Array<{ id: string; position: number }>;
+        },
+      ]
+    >;
+  archiveCompletedTicketsBatch: jest.Mock<
+    Promise<number>,
+    [
+      {
+        runAt: Date;
+        timeZone: string;
       },
     ]
   >;
@@ -97,6 +106,15 @@ export const createTicketRepositoryMock = (
           position: number;
           completedAt: Date | null;
           ticketPositions: Array<{ id: string; position: number }>;
+        },
+      ]
+    >(),
+    archiveCompletedTicketsBatch: jest.fn<
+      Promise<number>,
+      [
+        {
+          runAt: Date;
+          timeZone: string;
         },
       ]
     >(),

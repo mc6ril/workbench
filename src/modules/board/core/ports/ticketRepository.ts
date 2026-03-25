@@ -143,6 +143,22 @@ export type TicketRepository = {
   }): Promise<Ticket[]>;
 
   /**
+   * Archive completed tickets in batch using the current weekly boundary.
+   * Implementations must archive only tickets that are still in a done workflow
+   * state, are not already archived, and were completed before the start of the
+   * current local week in the provided timezone.
+   *
+   * @param input.runAt - Reference time used to resolve the current week boundary
+   * @param input.timeZone - IANA timezone used to evaluate the week rule
+   * @returns Number of tickets archived in this batch
+   * @throws DatabaseError if database operation fails
+   */
+  archiveCompletedTicketsBatch(input: {
+    runAt: Date;
+    timeZone: string;
+  }): Promise<number>;
+
+  /**
    * Assign a ticket to an epic.
    * Updates the ticket's epicId field to reference the epic.
    * @param ticketId - Ticket ID to assign
