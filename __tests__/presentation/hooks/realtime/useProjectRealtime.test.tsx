@@ -223,6 +223,97 @@ describe("useProjectRealtime", () => {
     );
   });
 
+  it("removes an archived ticket from active project ticket lists on UPDATE", () => {
+    const queryClient = new QueryClient();
+    const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
+    const wrapper = createWrapper(queryClient);
+    const { registrations } = createRealtimeMocks();
+
+    queryClient.setQueryData(queryKeys.tickets.detail(TICKET_ID), {
+      id: TICKET_ID,
+      projectId: PROJECT_ID,
+      title: "Ticket to archive",
+      description: null,
+      status: "done",
+      position: 0,
+      codeNumber: 42,
+      epicId: null,
+      parentId: null,
+      sprintId: null,
+      priority: null,
+      dueDate: null,
+      storyPoints: null,
+      createdBy: null,
+      completedAt: new Date("2026-03-08T10:00:00.000Z"),
+      archivedAt: null,
+      archivedWeekStart: null,
+      createdAt: new Date("2026-03-08T10:00:00.000Z"),
+      updatedAt: new Date("2026-03-08T10:00:00.000Z"),
+    });
+
+    queryClient.setQueryData(queryKeys.projects.ticketsList(PROJECT_ID), [
+      {
+        id: TICKET_ID,
+        projectId: PROJECT_ID,
+        title: "Ticket to archive",
+        description: null,
+        status: "done",
+        position: 0,
+        codeNumber: 42,
+        epicId: null,
+        parentId: null,
+        sprintId: null,
+        priority: null,
+        dueDate: null,
+        storyPoints: null,
+        createdBy: null,
+        completedAt: new Date("2026-03-08T10:00:00.000Z"),
+        archivedAt: null,
+        archivedWeekStart: null,
+        createdAt: new Date("2026-03-08T10:00:00.000Z"),
+        updatedAt: new Date("2026-03-08T10:00:00.000Z"),
+      },
+    ]);
+
+    renderHook(() => useProjectRealtime(PROJECT_ID, BOARD_ID), { wrapper });
+
+    const registrationByTable = getRegistrationByTable(registrations);
+    const ticketsCallback = registrationByTable.get("tickets")?.callback;
+
+    ticketsCallback?.({
+      eventType: "UPDATE",
+      old: buildTicketRow({
+        status: "done",
+        completed_at: "2026-03-08T10:00:00.000Z",
+      }),
+      new: buildTicketRow({
+        status: "done",
+        completed_at: "2026-03-08T10:00:00.000Z",
+        archived_at: "2026-03-10T09:00:00.000Z",
+        archived_week_start: "2026-03-09",
+        updated_at: "2026-03-10T09:00:00.000Z",
+      }),
+    });
+
+    const updatedTicketDetail = queryClient.getQueryData<{
+      archivedAt: Date | null;
+    }>(queryKeys.tickets.detail(TICKET_ID));
+    expect(updatedTicketDetail?.archivedAt).toEqual(
+      new Date("2026-03-10T09:00:00.000Z")
+    );
+
+    const updatedTicketList = queryClient.getQueryData<
+      Array<{ id: string }>
+    >(queryKeys.projects.ticketsList(PROJECT_ID));
+    expect(updatedTicketList).toEqual([]);
+
+    expect(invalidateQueriesSpy).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryKey: queryKeys.projects.ticketsRoot(PROJECT_ID),
+      })
+    );
+  });
+
   it("targets assignee invalidations and avoids tickets root invalidation", () => {
     const queryClient = new QueryClient();
     const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");

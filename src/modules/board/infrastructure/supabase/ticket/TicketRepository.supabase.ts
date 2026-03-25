@@ -90,7 +90,8 @@ export const createTicketRepository = (
     const { data: ticketRows, error: ticketIdsError } = await client
       .from("tickets")
       .select("id")
-      .eq("project_id", projectId);
+      .eq("project_id", projectId)
+      .is("archived_at", null);
 
     if (ticketIdsError) {
       return handleRepositoryError(ticketIdsError, "TicketAssignee", projectId);
@@ -172,7 +173,8 @@ export const createTicketRepository = (
         let query = client
           .from("tickets")
           .select("*")
-          .eq("project_id", projectId);
+          .eq("project_id", projectId)
+          .is("archived_at", null);
 
         // Apply filters if provided
         if (filters?.status) {
@@ -345,6 +347,7 @@ export const createTicketRepository = (
           .select("*")
           .eq("project_id", projectId)
           .eq("status", status)
+          .is("archived_at", null)
           .order("position", { ascending: true });
 
         if (error) {
@@ -582,6 +585,7 @@ export const createTicketRepository = (
           .select("*")
           .eq("project_id", projectId)
           .eq("code_number", codeNumber)
+          .is("archived_at", null)
           .single();
 
         if (error) {

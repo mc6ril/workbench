@@ -212,6 +212,10 @@ const matchesTicketListFilter = (
   ticket: Ticket,
   queryKey: readonly unknown[]
 ): boolean => {
+  if (ticket.archivedAt !== null) {
+    return false;
+  }
+
   const filterKey = extractFilterKeyFromTicketListQuery(queryKey);
   if (!filterKey) {
     return true;
