@@ -27,7 +27,6 @@ export const TicketSchema = z.object({
   codeNumber: z.number().int().positive(),
   epicId: z.string().uuid().nullable(),
   parentId: z.string().uuid().nullable(),
-  sprintId: z.string().uuid().nullable(),
   priority: TicketPrioritySchema.nullable(),
   dueDate: z.coerce.date().nullable(),
   storyPoints: z.number().int().positive().nullable(),
@@ -55,7 +54,6 @@ export const CreateTicketInputSchema = z.object({
   position: z.number().int().nonnegative().default(0),
   epicId: z.string().uuid().nullable().optional(),
   parentId: z.string().uuid().nullable().optional(),
-  sprintId: z.string().uuid().nullable().optional(),
   priority: TicketPrioritySchema.nullable().optional(),
   dueDate: z.coerce.date().nullable().optional(),
   storyPoints: z.number().int().positive().nullable().optional(),
@@ -76,7 +74,6 @@ export const UpdateTicketInputSchema = z.object({
   position: z.number().int().nonnegative().optional(),
   epicId: z.string().uuid().nullable().optional(),
   parentId: z.string().uuid().nullable().optional(),
-  sprintId: z.string().uuid().nullable().optional(),
   priority: TicketPrioritySchema.nullable().optional(),
   dueDate: z.coerce.date().nullable().optional(),
   storyPoints: z.number().int().positive().nullable().optional(),
@@ -141,7 +138,6 @@ export type TicketFilters = {
   status?: string;
   epicId?: string;
   parentId?: string | null;
-  sprintId?: string | null;
   priority?: TicketPriority;
   labelIds?: string[];
 };
@@ -155,7 +151,6 @@ export const TicketSortFieldSchema = z.enum([
   "position",
   "title",
   "priority",
-  "sprint",
   "dueDate",
 ]);
 export type TicketSortField = z.infer<typeof TicketSortFieldSchema>;

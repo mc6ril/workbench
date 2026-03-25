@@ -5,8 +5,6 @@ import { mapEpicRowToDomain } from "@/modules/board/infrastructure/supabase/epic
 import type { EpicRow } from "@/modules/board/infrastructure/supabase/epic/types";
 import { mapLabelRowToDomain } from "@/modules/board/infrastructure/supabase/label/LabelMapper.supabase";
 import type { LabelRow } from "@/modules/board/infrastructure/supabase/label/types";
-import { mapSprintRowToDomain } from "@/modules/board/infrastructure/supabase/sprint/SprintMapper.supabase";
-import type { SprintRow } from "@/modules/board/infrastructure/supabase/sprint/types";
 import { mapTicketRowToDomain } from "@/modules/board/infrastructure/supabase/ticket/TicketMapper.supabase";
 import type { TicketRow } from "@/modules/board/infrastructure/supabase/ticket/types";
 
@@ -38,9 +36,6 @@ export const createRealtimeRepository = (
     },
     mapLabelRowToDomain: (row) => {
       return mapLabelRowToDomain(row as LabelRow);
-    },
-    mapSprintRowToDomain: (row) => {
-      return mapSprintRowToDomain(row as SprintRow);
     },
   };
 };

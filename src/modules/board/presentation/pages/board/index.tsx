@@ -127,17 +127,9 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   });
   const { hasAccess: hasEpicsAccess } = useFeatureAccess(PlanFeature.EPICS);
   const { data: projectShortCode } = useProjectShortCode(projectId);
-  const rawFilters = useFilterStore((state) => state.filters);
+  const filters = useFilterStore((state) => state.filters);
   const sort = useSortStore((state) => state.sort);
   const search = useFilterStore((state) => state.search);
-  const filters = useMemo(() => {
-    if (!Object.prototype.hasOwnProperty.call(rawFilters, "sprintId")) {
-      return rawFilters;
-    }
-
-    const { sprintId: _sprintId, ...rest } = rawFilters;
-    return rest;
-  }, [rawFilters]);
   const effectiveSearch = useMemo(() => {
     return normalizeTicketSearch(search, projectShortCode);
   }, [projectShortCode, search]);

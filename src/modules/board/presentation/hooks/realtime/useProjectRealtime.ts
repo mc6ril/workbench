@@ -192,12 +192,11 @@ const hasLabelFilterInTicketListQuery = (
   }
 
   const filterKey = extractFilterKeyFromTicketListQuery(queryKey);
-  const labelFilterIndex = filterKey?.length === 6 ? 5 : 4;
-  if (!filterKey || !Array.isArray(filterKey[labelFilterIndex])) {
+  if (!filterKey || !Array.isArray(filterKey[4])) {
     return false;
   }
 
-  return filterKey[labelFilterIndex].length > 0;
+  return filterKey[4].length > 0;
 };
 
 const matchesTicketListFilter = (
@@ -213,11 +212,7 @@ const matchesTicketListFilter = (
     return true;
   }
 
-  const [status, epicId, parentId, maybePriority, maybeLabelIds] = filterKey;
-  const priority =
-    filterKey.length === 6 ? filterKey[4] : maybePriority;
-  const labelIds =
-    filterKey.length === 6 ? filterKey[5] : maybeLabelIds;
+  const [status, epicId, parentId, priority, labelIds] = filterKey;
 
   if (typeof status === "string" && ticket.status !== status) {
     return false;

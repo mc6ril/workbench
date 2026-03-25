@@ -32,7 +32,6 @@ describe("Epic Business Rules", () => {
     codeNumber: 1,
     epicId: null,
     parentId: null,
-    sprintId: null,
     priority: null,
     dueDate: null,
     storyPoints: null,

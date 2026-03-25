@@ -197,15 +197,6 @@ export const createTicketRepository = (
           }
         }
 
-        // sprintId filter: null = no sprint, string = specific sprint
-        if (filters && "sprintId" in filters) {
-          if (filters.sprintId === null) {
-            query = query.is("sprint_id", null);
-          } else if (typeof filters.sprintId === "string") {
-            query = query.eq("sprint_id", filters.sprintId);
-          }
-        }
-
         if (filters?.priority) {
           query = query.eq("priority", filters.priority);
         }
@@ -278,7 +269,6 @@ export const createTicketRepository = (
           position: "position",
           title: "title",
           priority: "priority",
-          sprint: "sprint_id",
           dueDate: "due_date",
         };
         const orderColumn = sortFieldMap[sortField] ?? "created_at";
@@ -376,7 +366,6 @@ export const createTicketRepository = (
             position: input.position ?? 0,
             epic_id: input.epicId ?? null,
             parent_id: input.parentId ?? null,
-            sprint_id: input.sprintId ?? null,
             priority: input.priority ?? null,
             due_date: input.dueDate?.toISOString() ?? null,
             story_points: input.storyPoints ?? null,
@@ -425,9 +414,6 @@ export const createTicketRepository = (
         }
         if (input.parentId !== undefined) {
           updateData.parent_id = input.parentId;
-        }
-        if (input.sprintId !== undefined) {
-          updateData.sprint_id = input.sprintId;
         }
         if (input.priority !== undefined) {
           updateData.priority = input.priority;

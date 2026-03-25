@@ -81,15 +81,6 @@ const getBoardShellViewKey = (
   return null;
 };
 
-const omitHiddenTicketFilters = (filters: TicketFilters): TicketFilters => {
-  if (!Object.prototype.hasOwnProperty.call(filters, "sprintId")) {
-    return filters;
-  }
-
-  const { sprintId: _sprintId, ...rest } = filters;
-  return rest;
-};
-
 const omitParentIdFilter = (filters: TicketFilters): TicketFilters => {
   if (!Object.prototype.hasOwnProperty.call(filters, "parentId")) {
     return filters;
@@ -128,7 +119,7 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const search = useFilterStore((state) => state.search);
   const setSearch = useFilterStore((state) => state.setSearch);
   const [searchInput, setSearchInput] = useState(search);
-  const rawFilters = useFilterStore((state) => state.filters);
+  const filters = useFilterStore((state) => state.filters);
   const setStatus = useFilterStore((state) => state.setStatus);
   const clearStatus = useFilterStore((state) => state.clearStatus);
   const setEpicId = useFilterStore((state) => state.setEpicId);
@@ -143,10 +134,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const setField = useSortStore((state) => state.setField);
   const setDirection = useSortStore((state) => state.setDirection);
   const resetSort = useSortStore((state) => state.resetSort);
-
-  const filters = useMemo(() => {
-    return omitHiddenTicketFilters(rawFilters);
-  }, [rawFilters]);
 
   const projectWideFilters = useMemo(() => {
     return omitParentIdFilter(filters);

@@ -1,6 +1,5 @@
 import type { Epic } from "@/modules/board/core/domain/schema/epic.schema";
 import type { Label } from "@/modules/board/core/domain/schema/label.schema";
-import type { Sprint } from "@/modules/board/core/domain/schema/sprint.schema";
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 
 export type RealtimePostgresChangesFilter = {
@@ -41,5 +40,4 @@ export type RealtimeRepository = {
   mapTicketRowToDomain: (row: Record<string, unknown>) => Ticket;
   mapEpicRowToDomain: (row: Record<string, unknown>) => Epic;
   mapLabelRowToDomain: (row: Record<string, unknown>) => Label;
-  mapSprintRowToDomain: (row: Record<string, unknown>) => Sprint;
 };

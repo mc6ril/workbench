@@ -113,7 +113,6 @@ const buildTicketRow = (
     code_number: 42,
     epic_id: null,
     parent_id: null,
-    sprint_id: null,
     priority: null,
     due_date: null,
     story_points: null,
@@ -154,7 +153,6 @@ describe("useProjectRealtime", () => {
       codeNumber: 42,
       epicId: null,
       parentId: null,
-      sprintId: null,
       priority: null,
       dueDate: null,
       storyPoints: null,
@@ -177,7 +175,6 @@ describe("useProjectRealtime", () => {
         codeNumber: 42,
         epicId: null,
         parentId: null,
-        sprintId: null,
         priority: null,
         dueDate: null,
         storyPoints: null,
@@ -239,7 +236,6 @@ describe("useProjectRealtime", () => {
       codeNumber: 42,
       epicId: null,
       parentId: null,
-      sprintId: null,
       priority: null,
       dueDate: null,
       storyPoints: null,
@@ -262,7 +258,6 @@ describe("useProjectRealtime", () => {
         codeNumber: 42,
         epicId: null,
         parentId: null,
-        sprintId: null,
         priority: null,
         dueDate: null,
         storyPoints: null,
@@ -451,7 +446,6 @@ describe("useProjectRealtime", () => {
 
     const registrationByTable = getRegistrationByTable(registrations);
     expect(registrationByTable.get("columns")).toBeUndefined();
-    expect(registrationByTable.get("sprints")).toBeUndefined();
 
     registrationByTable.get("tickets")?.callback({
       eventType: "INSERT",

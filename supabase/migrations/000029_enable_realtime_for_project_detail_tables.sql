@@ -6,7 +6,6 @@ DECLARE
   realtime_table text;
   realtime_tables text[] := ARRAY[
     'epics',
-    'sprints',
     'labels',
     'project_members',
     'comments',

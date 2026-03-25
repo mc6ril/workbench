@@ -62,7 +62,6 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     code_number: 1,
     epic_id: null,
     parent_id: null,
-    sprint_id: null,
     priority: null,
     due_date: null,
     story_points: null,

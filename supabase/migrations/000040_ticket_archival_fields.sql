@@ -1,4 +1,4 @@
--- Add archival metadata to tickets while preserving the current sprint model.
+-- Add archival metadata to tickets while preserving the current ticket model.
 -- This prepares the future active-vs-archived split without changing current UI flows yet.
 
 ALTER TABLE tickets
