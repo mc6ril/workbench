@@ -103,7 +103,7 @@ export const ProjectBoardPage = ({ projectId }: { projectId: string }) => {
 - Shared UI primitives stay reusable and domain-agnostic
 - Shared status helpers stay pure and cross-cutting
 - No status-specific business logic belongs in `src/app/`
-- No shared status utility should encode ticket, board, epic, or sprint rules
+- No shared status utility should encode ticket, board, or epic rules
 
 ## Recommended Locations
 

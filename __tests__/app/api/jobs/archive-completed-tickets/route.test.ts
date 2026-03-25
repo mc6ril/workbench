@@ -24,6 +24,8 @@ jest.mock("@/modules/board/core/usecases/ticket", () => ({
   archiveCompletedTicketsBatch: jest.fn(),
 }));
 
+import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
+
 import { GET } from "@/app/api/jobs/archive-completed-tickets/route";
 import {
   WEEKLY_TICKET_ARCHIVE_CRON_SCHEDULE,
@@ -31,7 +33,6 @@ import {
 } from "@/modules/board/core/domain/rules/ticketArchival.rules";
 import { archiveCompletedTicketsBatch } from "@/modules/board/core/usecases/ticket";
 import { createTicketRepository } from "@/modules/board/infrastructure/supabase/ticket/TicketRepository.supabase";
-import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
 
 type MockNextResponse = {
   status: number;
