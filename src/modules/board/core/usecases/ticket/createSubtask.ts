@@ -7,7 +7,9 @@ import {
   CreateSubtaskInputSchema,
   type Ticket,
 } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
+import { resolveCompletedAtForProjectStatusChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
 
 /**
  * Create a subtask for a ticket.
@@ -25,6 +27,7 @@ import type { TicketRepository } from "@/modules/board/core/ports/ticketReposito
  */
 export const createSubtask = async (
   repository: TicketRepository,
+  boardRepository: BoardRepository,
   input: CreateSubtaskInput
 ): Promise<Ticket> => {
   // Validate input with Zod schema (parentId is required)
@@ -71,10 +74,20 @@ export const createSubtask = async (
   const codeNumber = await repository.getNextCodeNumberForProject(
     validatedInput.projectId
   );
+  const completedAt = await resolveCompletedAtForProjectStatusChange(
+    boardRepository,
+    validatedInput.projectId,
+    {
+      previousStatus: null,
+      previousCompletedAt: null,
+      nextStatus: validatedInput.status,
+    }
+  );
 
   // Call repository to create subtask with allocated code number
   return repository.create({
     ...validatedInput,
+    completedAt,
     codeNumber,
   });
 };

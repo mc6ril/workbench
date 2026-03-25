@@ -60,6 +60,7 @@ export const CreateTicketInputSchema = z.object({
   dueDate: z.coerce.date().nullable().optional(),
   storyPoints: z.number().int().positive().nullable().optional(),
   createdBy: z.string().uuid().nullable().optional(),
+  completedAt: z.coerce.date().nullable().optional(),
   codeNumber: z.number().int().positive().optional(),
 });
 

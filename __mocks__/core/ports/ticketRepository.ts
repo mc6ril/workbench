@@ -27,7 +27,7 @@ export type TicketRepositoryMock = {
     Promise<Ticket[]>,
     [Array<{ id: string; position: number }>]
   >;
-  moveTicket: jest.Mock<Promise<Ticket>, [string, string, number]>;
+  moveTicket: jest.Mock<Promise<Ticket>, [string, string, number, Date | null]>;
   moveAndReorderTicket: jest.Mock<
     Promise<Ticket[]>,
     [
@@ -35,6 +35,7 @@ export type TicketRepositoryMock = {
         ticketId: string;
         status: string;
         position: number;
+        completedAt: Date | null;
         ticketPositions: Array<{ id: string; position: number }>;
       },
     ]
@@ -83,7 +84,10 @@ export const createTicketRepositoryMock = (
       Promise<Ticket[]>,
       [Array<{ id: string; position: number }>]
     >(),
-    moveTicket: jest.fn<Promise<Ticket>, [string, string, number]>(),
+    moveTicket: jest.fn<
+      Promise<Ticket>,
+      [string, string, number, Date | null]
+    >(),
     moveAndReorderTicket: jest.fn<
       Promise<Ticket[]>,
       [
@@ -91,6 +95,7 @@ export const createTicketRepositoryMock = (
           ticketId: string;
           status: string;
           position: number;
+          completedAt: Date | null;
           ticketPositions: Array<{ id: string; position: number }>;
         },
       ]

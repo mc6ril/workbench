@@ -118,7 +118,12 @@ export type TicketRepository = {
    * @throws ConstraintError if constraint violation occurs
    * @throws DatabaseError if database operation fails
    */
-  moveTicket(id: string, status: string, position: number): Promise<Ticket>;
+  moveTicket(
+    id: string,
+    status: string,
+    position: number,
+    completedAt: Date | null
+  ): Promise<Ticket>;
 
   /**
    * Atomically move a ticket to a new status/position and reorder affected tickets.
@@ -133,6 +138,7 @@ export type TicketRepository = {
     ticketId: string;
     status: string;
     position: number;
+    completedAt: Date | null;
     ticketPositions: Array<{ id: string; position: number }>;
   }): Promise<Ticket[]>;
 

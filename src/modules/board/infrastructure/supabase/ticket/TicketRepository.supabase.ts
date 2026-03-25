@@ -381,6 +381,7 @@ export const createTicketRepository = (
             due_date: input.dueDate?.toISOString() ?? null,
             story_points: input.storyPoints ?? null,
             created_by: input.createdBy ?? null,
+            completed_at: input.completedAt?.toISOString() ?? null,
             code_number: input.codeNumber,
           })
           .select()
@@ -505,12 +506,19 @@ export const createTicketRepository = (
     async moveTicket(
       id: string,
       status: string,
-      position: number
+      position: number,
+      completedAt: Date | null
     ): Promise<Ticket> {
       try {
+        const updateData = {
+          status,
+          position,
+          completed_at: completedAt?.toISOString() ?? null,
+        };
+
         const { data, error } = await client
           .from("tickets")
-          .update({ status, position })
+          .update(updateData)
           .eq("id", id)
           .select()
           .single();
@@ -537,6 +545,7 @@ export const createTicketRepository = (
       ticketId: string;
       status: string;
       position: number;
+      completedAt: Date | null;
       ticketPositions: Array<{ id: string; position: number }>;
     }): Promise<Ticket[]> {
       try {
@@ -544,6 +553,7 @@ export const createTicketRepository = (
           p_ticket_id: input.ticketId,
           p_status: input.status,
           p_position: input.position,
+          p_completed_at: input.completedAt?.toISOString() ?? null,
           p_positions: input.ticketPositions,
         });
 
