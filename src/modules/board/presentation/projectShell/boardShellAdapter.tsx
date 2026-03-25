@@ -29,7 +29,6 @@ import {
 } from "@/modules/board/constants/filterSort";
 import type { EpicWithProgress } from "@/modules/board/core/domain/schema/epic.schema";
 import type { Label } from "@/modules/board/core/domain/schema/label.schema";
-import type { SprintWithStats } from "@/modules/board/core/domain/schema/sprint.schema";
 import type { TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
 import Breadcrumbs from "@/modules/board/presentation/components/breadcrumbs/Breadcrumbs";
 import EpicFilterControls from "@/modules/board/presentation/components/projectShellControls/EpicFilterControls";
@@ -46,7 +45,6 @@ import { usePrefetchProjectViews } from "@/modules/board/presentation/hooks/proj
 import { useProjectSearchSuggestions } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useProjectRealtime } from "@/modules/board/presentation/hooks/realtime/useProjectRealtime";
-import { useSprints } from "@/modules/board/presentation/hooks/sprint";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
 import { useSortStore } from "@/modules/board/presentation/stores/useSortStore";
 import { normalizeTicketSearch } from "@/modules/board/utils/ticketUtils";
@@ -60,7 +58,6 @@ type BoardShellViewKey =
   | typeof PROJECT_VIEWS.EPICS;
 
 const EMPTY_EPICS: readonly EpicWithProgress[] = [];
-const EMPTY_SPRINTS: readonly SprintWithStats[] = [];
 const EMPTY_LABELS: readonly Label[] = [];
 
 const getBoardShellViewKey = (
@@ -82,6 +79,15 @@ const getBoardShellViewKey = (
   }
 
   return null;
+};
+
+const omitHiddenTicketFilters = (filters: TicketFilters): TicketFilters => {
+  if (!Object.prototype.hasOwnProperty.call(filters, "sprintId")) {
+    return filters;
+  }
+
+  const { sprintId: _sprintId, ...rest } = filters;
+  return rest;
 };
 
 const omitParentIdFilter = (filters: TicketFilters): TicketFilters => {
@@ -122,13 +128,11 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const search = useFilterStore((state) => state.search);
   const setSearch = useFilterStore((state) => state.setSearch);
   const [searchInput, setSearchInput] = useState(search);
-  const filters = useFilterStore((state) => state.filters);
+  const rawFilters = useFilterStore((state) => state.filters);
   const setStatus = useFilterStore((state) => state.setStatus);
   const clearStatus = useFilterStore((state) => state.clearStatus);
   const setEpicId = useFilterStore((state) => state.setEpicId);
   const clearEpicId = useFilterStore((state) => state.clearEpicId);
-  const setSprintId = useFilterStore((state) => state.setSprintId);
-  const clearSprintId = useFilterStore((state) => state.clearSprintId);
   const setPriority = useFilterStore((state) => state.setPriority);
   const clearPriority = useFilterStore((state) => state.clearPriority);
   const setLabelIds = useFilterStore((state) => state.setLabelIds);
@@ -139,6 +143,10 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const setField = useSortStore((state) => state.setField);
   const setDirection = useSortStore((state) => state.setDirection);
   const resetSort = useSortStore((state) => state.resetSort);
+
+  const filters = useMemo(() => {
+    return omitHiddenTicketFilters(rawFilters);
+  }, [rawFilters]);
 
   const projectWideFilters = useMemo(() => {
     return omitParentIdFilter(filters);
@@ -190,10 +198,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
     enabled: shouldLoadTicketFilterData,
   });
   const epics = epicsData ?? EMPTY_EPICS;
-  const { data: sprintsData } = useSprints(projectId, {
-    enabled: shouldLoadTicketFilterData,
-  });
-  const sprints = sprintsData ?? EMPTY_SPRINTS;
   const { data: labelsData } = useLabels(projectId, {
     enabled: shouldLoadTicketFilterData,
   });
@@ -296,17 +300,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
       label: epic.name,
     }));
   }, [epics, isTicketView]);
-
-  const sprintOptions = useMemo(() => {
-    if (!isTicketView) {
-      return [];
-    }
-
-    return sprints.map((sprint) => ({
-      value: sprint.id,
-      label: sprint.name,
-    }));
-  }, [isTicketView, sprints]);
 
   const labelOptions = useMemo(() => {
     if (!isTicketView) {
@@ -496,14 +489,11 @@ const BoardShellAdapter = ({ projectId }: Props) => {
               filters={filters}
               statusOptions={statusOptions}
               epicOptions={epicOptions}
-              sprintOptions={sprintOptions}
               labelOptions={labelOptions}
               onSetStatus={setStatus}
               onClearStatus={clearStatus}
               onSetEpicId={setEpicId}
               onClearEpicId={clearEpicId}
-              onSetSprintId={setSprintId}
-              onClearSprintId={clearSprintId}
               onSetPriority={setPriority}
               onClearPriority={clearPriority}
               onSetLabelIds={setLabelIds}
@@ -566,7 +556,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
     clearEpicId,
     clearLabelIds,
     clearPriority,
-    clearSprintId,
     clearStatus,
     currentViewKey,
     epicOptions,
@@ -587,10 +576,8 @@ const BoardShellAdapter = ({ projectId }: Props) => {
     setIsSortModalOpen,
     setLabelIds,
     setPriority,
-    setSprintId,
     setStatus,
     sort,
-    sprintOptions,
     statusOptions,
     tNavbar,
     updateQueryParams,

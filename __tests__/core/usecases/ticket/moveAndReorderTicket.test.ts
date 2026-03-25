@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 
+import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
 import type { Board, Column } from "@/modules/board/core/domain/schema/board.schema";

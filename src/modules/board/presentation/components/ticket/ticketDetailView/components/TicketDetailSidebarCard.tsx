@@ -23,11 +23,9 @@ type Props = {
   effectiveStatus: string;
   effectivePriority: string;
   effectiveEpicId: string;
-  effectiveSprintId: string;
   statusOptions: TicketDetailStatusOption[];
   priorityOptions: SelectOption[];
   epicOptions: SelectOption[];
-  sprintOptions: SelectOption[];
   labels: Label[];
   assignedLabelIdSet: Set<string>;
   projectMembers: ProjectMember[];
@@ -39,7 +37,6 @@ type Props = {
   onStatusChange: (value: string) => void;
   onPriorityChange: (value: string) => void;
   onEpicChange: (value: string) => void;
-  onSprintChange: (value: string) => void;
   onToggleLabel: (labelId: string) => void;
   onAssign: (userId: string) => void;
   onUnassign: (userId: string) => void;
@@ -54,11 +51,9 @@ const TicketDetailSidebarCard = ({
   effectiveStatus,
   effectivePriority,
   effectiveEpicId,
-  effectiveSprintId,
   statusOptions,
   priorityOptions,
   epicOptions,
-  sprintOptions,
   labels,
   assignedLabelIdSet,
   projectMembers,
@@ -70,7 +65,6 @@ const TicketDetailSidebarCard = ({
   onStatusChange,
   onPriorityChange,
   onEpicChange,
-  onSprintChange,
   onToggleLabel,
   onAssign,
   onUnassign,
@@ -112,16 +106,6 @@ const TicketDetailSidebarCard = ({
           }}
         />
       ) : null}
-
-      <Select
-        label={t("fields.sprint")}
-        value={effectiveSprintId}
-        options={sprintOptions}
-        disabled={!canEditTicket}
-        onChange={(event) => {
-          onSprintChange(event.target.value);
-        }}
-      />
 
       <div className={styles["ticket-detail__labels"]}>
         <Text variant="caption">{t("fields.labels")}</Text>

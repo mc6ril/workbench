@@ -447,10 +447,11 @@ describe("useProjectRealtime", () => {
 
     renderHook(() => useProjectRealtime(PROJECT_ID), { wrapper });
 
-    expect(registrations).toHaveLength(8);
+    expect(registrations).toHaveLength(7);
 
     const registrationByTable = getRegistrationByTable(registrations);
     expect(registrationByTable.get("columns")).toBeUndefined();
+    expect(registrationByTable.get("sprints")).toBeUndefined();
 
     registrationByTable.get("tickets")?.callback({
       eventType: "INSERT",

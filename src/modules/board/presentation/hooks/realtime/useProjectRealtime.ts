@@ -10,7 +10,6 @@ import type {
   EpicWithProgress,
 } from "@/modules/board/core/domain/schema/epic.schema";
 import type { Label } from "@/modules/board/core/domain/schema/label.schema";
-import type { Sprint } from "@/modules/board/core/domain/schema/sprint.schema";
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { RealtimeRepository } from "@/modules/board/core/ports/realtimeRepository";
 import { getRealtimeRepository } from "@/modules/board/infrastructure/supabase/repositories";
@@ -138,14 +137,6 @@ const mapLabelFromPayload = (
   return mapRowSafely(payload, source, realtimeRepository.mapLabelRowToDomain);
 };
 
-const mapSprintFromPayload = (
-  realtimeRepository: RealtimeRepository,
-  payload: unknown,
-  source: "new" | "old"
-): Sprint | null => {
-  return mapRowSafely(payload, source, realtimeRepository.mapSprintRowToDomain);
-};
-
 const mapCommentRowFromPayload = (
   payload: unknown,
   source: "new" | "old"
@@ -201,11 +192,12 @@ const hasLabelFilterInTicketListQuery = (
   }
 
   const filterKey = extractFilterKeyFromTicketListQuery(queryKey);
-  if (!filterKey || !Array.isArray(filterKey[5])) {
+  const labelFilterIndex = filterKey?.length === 6 ? 5 : 4;
+  if (!filterKey || !Array.isArray(filterKey[labelFilterIndex])) {
     return false;
   }
 
-  return filterKey[5].length > 0;
+  return filterKey[labelFilterIndex].length > 0;
 };
 
 const matchesTicketListFilter = (
@@ -221,7 +213,11 @@ const matchesTicketListFilter = (
     return true;
   }
 
-  const [status, epicId, parentId, sprintId, priority, labelIds] = filterKey;
+  const [status, epicId, parentId, maybePriority, maybeLabelIds] = filterKey;
+  const priority =
+    filterKey.length === 6 ? filterKey[4] : maybePriority;
+  const labelIds =
+    filterKey.length === 6 ? filterKey[5] : maybeLabelIds;
 
   if (typeof status === "string" && ticket.status !== status) {
     return false;
@@ -231,13 +227,9 @@ const matchesTicketListFilter = (
     return false;
   }
 
-  // parentId / sprintId are tri-state in domain but query key flattens "undefined" and
+  // parentId is tri-state in domain but query key flattens "undefined" and
   // explicit null to the same value. We only enforce strict checks for explicit strings.
   if (typeof parentId === "string" && ticket.parentId !== parentId) {
-    return false;
-  }
-
-  if (typeof sprintId === "string" && ticket.sprintId !== sprintId) {
     return false;
   }
 
@@ -475,20 +467,6 @@ export const useProjectRealtime = (
       );
     };
 
-    const patchSprintInCache = (sprint: Sprint) => {
-      queryClient.setQueryData<Sprint[]>(
-        queryKeys.sprints.byProject(projectId),
-        (previous) => updateEntityInArray(previous, sprint)
-      );
-    };
-
-    const removeSprintFromCache = (sprintId: string) => {
-      queryClient.setQueryData<Sprint[]>(
-        queryKeys.sprints.byProject(projectId),
-        (previous) => removeEntityFromArray(previous, sprintId)
-      );
-    };
-
     const patchCommentInTicketCache = (
       ticketId: string,
       commentId: string,
@@ -683,41 +661,7 @@ export const useProjectRealtime = (
       }
     );
 
-    const channelWithSprints = channelWithEpics.on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "sprints",
-        filter: `project_id=eq.${projectId}`,
-      },
-      (payload) => {
-        const eventType = extractEventType(payload);
-        const sprintId = extractEntityId(payload);
-        const nextSprint = mapSprintFromPayload(
-          realtimeRepository,
-          payload,
-          "new"
-        );
-
-        if (eventType === "UPDATE" && sprintId && nextSprint) {
-          patchSprintInCache(nextSprint);
-          return;
-        }
-
-        if (eventType === "DELETE" && sprintId) {
-          removeSprintFromCache(sprintId);
-          return;
-        }
-
-        void queryClient.invalidateQueries({
-          queryKey: queryKeys.sprints.byProject(projectId),
-          refetchType: "active",
-        });
-      }
-    );
-
-    const channelWithLabels = channelWithSprints.on(
+    const channelWithLabels = channelWithEpics.on(
       "postgres_changes",
       {
         event: "*",

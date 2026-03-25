@@ -1,10 +1,11 @@
+import { createNotFoundError } from "@/shared/errors/repositoryError";
+
 import {
   MoveAndReorderTicketInputSchema,
   type Ticket,
 } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
-import { createNotFoundError } from "@/shared/errors/repositoryError";
 import { resolveCompletedAtForProjectStatusChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
 
 export const moveAndReorderTicket = async (

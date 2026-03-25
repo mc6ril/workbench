@@ -28,9 +28,6 @@ type FilterActions = {
   setEpicId: (epicId: string) => void;
   clearEpicId: () => void;
 
-  setSprintId: (sprintId: string | null) => void;
-  clearSprintId: () => void;
-
   setPriority: (priority: TicketPriority) => void;
   clearPriority: () => void;
 
@@ -95,21 +92,6 @@ export const useFilterStore = create<FilterStore>((set) => ({
   clearEpicId: (): void => {
     set((state) => {
       const { epicId: _epicId, ...rest } = state.filters;
-      return { filters: rest };
-    });
-  },
-
-  setSprintId: (sprintId: string | null): void => {
-    set((state) => ({
-      filters: {
-        ...state.filters,
-        sprintId,
-      },
-    }));
-  },
-  clearSprintId: (): void => {
-    set((state) => {
-      const { sprintId: _sprintId, ...rest } = state.filters;
       return { filters: rest };
     });
   },

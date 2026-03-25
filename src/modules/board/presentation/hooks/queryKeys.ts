@@ -43,7 +43,6 @@ const queryKeysObject = {
             filters.status ?? null,
             filters.epicId ?? null,
             filters.parentId ?? null,
-            filters.sprintId ?? null,
             filters.priority ?? null,
             filters.labelIds?.length ? [...filters.labelIds].sort() : null,
           ]
@@ -80,11 +79,6 @@ const queryKeysObject = {
     all: () => ["epics"] as const,
     detail: (id: string) => ["epics", id] as const,
   },
-  sprints: {
-    all: () => ["sprints"] as const,
-    byProject: (projectId: string) =>
-      ["sprints", "project", projectId] as const,
-  },
   comments: {
     root: () => ["comments"] as const,
     byTicket: (ticketId: string) => ["comments", "ticket", ticketId] as const,
@@ -118,7 +112,6 @@ export const queryKeys = Object.freeze({
   projects: Object.freeze(queryKeysObject.projects),
   tickets: Object.freeze(queryKeysObject.tickets),
   epics: Object.freeze(queryKeysObject.epics),
-  sprints: Object.freeze(queryKeysObject.sprints),
   comments: Object.freeze(queryKeysObject.comments),
   labels: Object.freeze(queryKeysObject.labels),
   invitations: Object.freeze(queryKeysObject.invitations),
