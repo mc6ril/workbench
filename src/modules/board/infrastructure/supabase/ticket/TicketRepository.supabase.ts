@@ -434,6 +434,16 @@ export const createTicketRepository = (
         if (input.storyPoints !== undefined) {
           updateData.story_points = input.storyPoints;
         }
+        if (input.completedAt !== undefined) {
+          updateData.completed_at = input.completedAt?.toISOString() ?? null;
+        }
+        if (input.archivedAt !== undefined) {
+          updateData.archived_at = input.archivedAt?.toISOString() ?? null;
+        }
+        if (input.archivedWeekStart !== undefined) {
+          updateData.archived_week_start =
+            input.archivedWeekStart?.toISOString().slice(0, 10) ?? null;
+        }
 
         const { data, error } = await client
           .from("tickets")

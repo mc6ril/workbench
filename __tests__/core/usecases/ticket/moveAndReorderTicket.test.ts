@@ -26,6 +26,9 @@ describe("moveAndReorderTicket", () => {
     dueDate: null,
     storyPoints: null,
     createdBy: null,
+    completedAt: null,
+    archivedAt: null,
+    archivedWeekStart: null,
     createdAt: new Date("2024-01-01T00:00:00Z"),
     updatedAt: new Date("2024-01-01T00:00:00Z"),
   };

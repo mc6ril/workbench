@@ -32,6 +32,9 @@ export const TicketSchema = z.object({
   dueDate: z.coerce.date().nullable(),
   storyPoints: z.number().int().positive().nullable(),
   createdBy: z.string().uuid().nullable(),
+  completedAt: z.coerce.date().nullable(),
+  archivedAt: z.coerce.date().nullable(),
+  archivedWeekStart: z.coerce.date().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
@@ -76,6 +79,9 @@ export const UpdateTicketInputSchema = z.object({
   priority: TicketPrioritySchema.nullable().optional(),
   dueDate: z.coerce.date().nullable().optional(),
   storyPoints: z.number().int().positive().nullable().optional(),
+  completedAt: z.coerce.date().nullable().optional(),
+  archivedAt: z.coerce.date().nullable().optional(),
+  archivedWeekStart: z.coerce.date().nullable().optional(),
 });
 
 export type UpdateTicketInput = z.infer<typeof UpdateTicketInputSchema>;

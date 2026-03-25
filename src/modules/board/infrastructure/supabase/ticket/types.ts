@@ -13,6 +13,9 @@ export type TicketRow = {
   due_date: string | null;
   story_points: number | null;
   created_by: string | null;
+  completed_at: string | null;
+  archived_at: string | null;
+  archived_week_start: string | null;
   created_at: string;
   updated_at: string;
 };
