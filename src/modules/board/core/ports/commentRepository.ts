@@ -12,6 +12,11 @@ import type {
  */
 export type CommentRepository = {
   /**
+   * Returns true when at least one comment exists anywhere in the project.
+   */
+  hasByProject(projectId: string): Promise<boolean>;
+
+  /**
    * List all comments for a ticket with author profile data.
    * Ordered by creation date ascending (oldest first).
    */

@@ -2,6 +2,7 @@ import type { ReactNode, RefObject } from "react";
 
 import styles from "@/shared/design-system/modal/modal.module.scss";
 import type { ModalSize } from "@/shared/design-system/modal/modal.types";
+import Title from "@/shared/design-system/title";
 
 type Props = {
   modalRef: RefObject<HTMLDivElement | null>;
@@ -49,9 +50,9 @@ const ModalDialog = ({
       onClick={(event) => event.stopPropagation()}
     >
       <div className={styles["modal__header"]}>
-        <h2 id={titleId} className={styles["modal__title"]}>
+        <Title variant="h2" id={titleId} className={styles["modal__title"]}>
           {title}
-        </h2>
+        </Title>
         <button
           type="button"
           onClick={onCloseButtonClick}

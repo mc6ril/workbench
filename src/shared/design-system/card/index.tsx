@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { isEnterKey, isSpaceKey } from "@/shared/a11y/utilities";
+import Title from "@/shared/design-system/title";
 
 import styles from "./card.module.scss";
 
@@ -99,7 +100,9 @@ const Card = ({
       {title && (
         <div className={styles["card__header"]}>
           {typeof title === "string" ? (
-            <h3 className={styles["card__title"]}>{title}</h3>
+            <Title variant="h3" className={styles["card__title"]}>
+              {title}
+            </Title>
           ) : (
             title
           )}

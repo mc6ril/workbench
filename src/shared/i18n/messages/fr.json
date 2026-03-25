@@ -69,6 +69,8 @@
       "filterAriaLabel": "Ouvrir les filtres",
       "sort": "Trier",
       "sortAriaLabel": "Ouvrir le tri",
+      "reviewGuide": "Revoir le guide",
+      "reviewGuideAriaLabel": "Relancer le guide d'onboarding",
       "addTicket": "Ajouter une tâche",
       "addTicketAriaLabel": "Créer une nouvelle tâche",
       "addEpic": "Ajouter un objectif",
@@ -464,12 +466,12 @@
       "pendingInvitationsAcceptAriaLabel": "Accepter l'invitation pour {project}",
       "pendingInvitationsDecline": "Refuser",
       "pendingInvitationsDeclineAriaLabel": "Refuser l'invitation pour {project}",
-      "welcomeGuideTitle": "Parcours bienvenue",
-      "welcomeGuideDescription": "Vos espaces sont prêts. Invitez votre partenaire ou créez un nouvel espace pour démarrer ensemble.",
-      "welcomeGuidePrimaryCta": "Inviter mon partenaire",
-      "welcomeGuidePrimaryCtaAriaLabel": "Ouvrir le formulaire pour inviter un partenaire",
-      "welcomeGuideSecondaryCta": "Créer un autre espace",
-      "welcomeGuideSecondaryCtaAriaLabel": "Ouvrir le formulaire de création d'espace",
+      "welcomeGuideTitle": "Guide de demarrage",
+      "welcomeGuideDescription": "Commencez par creer votre premier espace. Vous pourrez ensuite inviter une personne et decouvrir le board.",
+      "welcomeGuidePrimaryCta": "Creer mon premier espace",
+      "welcomeGuidePrimaryCtaAriaLabel": "Ouvrir le formulaire pour creer mon premier espace",
+      "welcomeGuideSkipCta": "Passer pour l'instant",
+      "welcomeGuideSkipCtaAriaLabel": "Ne plus ouvrir automatiquement le guide de demarrage",
       "actions": {
         "openMenuAriaLabel": "Ouvrir le menu d'actions pour {name}",
         "menuAriaLabel": "Menu d'actions de l'espace {name}",
@@ -647,6 +649,47 @@
         "errorGeneric": "Une erreur s'est produite lors de la création de la tâche",
         "readOnlyHint": "Les lecteurs ne peuvent pas créer de tâches.",
         "noStatusHint": "Gérez et organisez vos tâches"
+      },
+      "onboarding": {
+        "eyebrow": "Onboarding",
+        "title": "Prenez vos reperes sur le board",
+        "description": "Retrouvez les trois actions cle pour apprendre le fonctionnement du board et prendre vos premiers reflexes.",
+        "reviewTitle": "Revoir le guide",
+        "reviewDescription": "Relancez a tout moment le parcours complet pour revoir la creation d'un ticket, l'assignation et les commentaires.",
+        "reviewCta": "Revoir le guide",
+        "reviewCtaAriaLabel": "Revoir le guide d'onboarding du board",
+        "hideCta": "Masquer le guide",
+        "hideCtaAriaLabel": "Masquer le guide d'onboarding du board",
+        "skipCta": "Passer l'onboarding",
+        "skipCtaAriaLabel": "Ne plus ouvrir automatiquement l'onboarding",
+        "genericError": "Impossible de mettre a jour vos preferences d'onboarding.",
+        "status": {
+          "complete": "Fait",
+          "current": "En cours",
+          "pending": "A venir"
+        },
+        "steps": {
+          "createTicket": {
+            "title": "Creer un ticket",
+            "description": "Creez votre premiere tache pour voir comment le board organise le travail.",
+            "action": "Creer un ticket",
+            "actionAriaLabel": "Ouvrir la creation d'un ticket"
+          },
+          "assignTicket": {
+            "title": "Ouvrir et assigner un ticket",
+            "description": "Ouvrez un ticket puis assignez-le a une personne pour clarifier qui prend le sujet en charge.",
+            "blockedDescription": "Créez d'abord un premier ticket. Vous pourrez ensuite l'ouvrir et l'assigner a une personne.",
+            "action": "Ouvrir le ticket",
+            "actionAriaLabel": "Ouvrir un ticket pour l'assigner"
+          },
+          "commentTicket": {
+            "title": "Commenter un ticket",
+            "description": "Ajoutez un commentaire dans le ticket pour centraliser le contexte et les decisions.",
+            "blockedDescription": "Créez d'abord un premier ticket. Vous pourrez ensuite l'ouvrir et y ajouter un commentaire.",
+            "action": "Ouvrir les commentaires",
+            "actionAriaLabel": "Ouvrir un ticket pour ajouter un commentaire"
+          }
+        }
       }
     },
     "epics": {
@@ -676,6 +719,49 @@
         "cancelButton": "Annuler",
         "readOnlyHint": "Les lecteurs ne peuvent pas créer d'objectifs.",
         "errorGeneric": "Une erreur s'est produite lors de la création de l'objectif"
+      },
+      "onboarding": {
+        "eyebrow": "Onboarding",
+        "title": "Prenez vos reperes sur les objectifs",
+        "description": "Retrouvez les trois actions cle pour structurer vos objectifs, y rattacher du travail et commencer a suivre leur progression.",
+        "reviewTitle": "Revoir le guide",
+        "reviewDescription": "Relancez a tout moment le parcours complet pour revoir la creation d'un objectif, le lien avec une tache et le suivi de progression.",
+        "reviewCta": "Revoir le guide",
+        "reviewCtaAriaLabel": "Revoir le guide d'onboarding des objectifs",
+        "hideCta": "Masquer le guide",
+        "hideCtaAriaLabel": "Masquer le guide d'onboarding des objectifs",
+        "skipCta": "Passer l'onboarding",
+        "skipCtaAriaLabel": "Ne plus ouvrir automatiquement l'onboarding des objectifs",
+        "genericError": "Impossible de mettre a jour vos preferences d'onboarding.",
+        "status": {
+          "complete": "Fait",
+          "current": "En cours",
+          "pending": "A venir"
+        },
+        "steps": {
+          "createEpic": {
+            "title": "Creer un objectif",
+            "description": "Creez votre premier objectif pour donner une direction claire au travail a venir.",
+            "action": "Creer un objectif",
+            "actionAriaLabel": "Ouvrir la creation d'un objectif"
+          },
+          "linkTicket": {
+            "title": "Lier une tache a l'objectif",
+            "description": "Ouvrez une tache puis rattachez-la a un objectif pour suivre son impact.",
+            "blockedDescription": "Créez d'abord un premier objectif. Vous pourrez ensuite ouvrir une tâche pour la lier à cet objectif.",
+            "openTicketAction": "Ouvrir une tache",
+            "openTicketActionAriaLabel": "Ouvrir une tache pour la lier a un objectif",
+            "createTicketAction": "Creer une tache",
+            "createTicketActionAriaLabel": "Ouvrir la creation d'une tache a lier a un objectif"
+          },
+          "trackProgress": {
+            "title": "Suivre la progression",
+            "description": "Faites avancer une tache liee pour voir la progression de l'objectif se mettre a jour.",
+            "blockedDescription": "Liez d'abord une première tâche à un objectif. Vous pourrez ensuite faire avancer l'objectif et suivre sa progression.",
+            "action": "Ouvrir la tache liee",
+            "actionAriaLabel": "Ouvrir une tache liee pour faire progresser l'objectif"
+          }
+        }
       },
       "epicDetail": {
         "title": "Détails de l'objectif",

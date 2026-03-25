@@ -7,6 +7,7 @@ import { getAccessibilityId } from "@/shared/a11y";
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/button";
 import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
@@ -252,9 +253,9 @@ const PricingPage = () => {
             ← {t("header.label")}
           </button>
           <div className={styles["pricing-welcome"]}>
-            <h1 className={styles["pricing-welcome__title"]}>
+            <Title variant="h1" className={styles["pricing-welcome__title"]}>
               {t("header.title")}
-            </h1>
+            </Title>
             <p className={styles["pricing-welcome__subtitle"]}>
               {t("header.subtitle")}
             </p>
@@ -294,9 +295,9 @@ const PricingPage = () => {
                 )}
 
                 <div className={styles["pricing-card__header"]}>
-                  <h2 className={styles["pricing-card__name"]}>
+                  <Title variant="h2" className={styles["pricing-card__name"]}>
                     {t(`plans.${plan}.name`)}
-                  </h2>
+                  </Title>
                   <p className={styles["pricing-card__description"]}>
                     {t(`plans.${plan}.description`)}
                   </p>
@@ -336,12 +337,13 @@ const PricingPage = () => {
           className={styles["comparison-section"]}
           aria-labelledby={getAccessibilityId("pricing-comparison-title")}
         >
-          <h2
+          <Title
+            variant="h2"
             id={getAccessibilityId("pricing-comparison-title")}
             className="visually-hidden"
           >
             {t("comparison.title")}
-          </h2>
+          </Title>
           <div className={styles["comparison-table-wrapper"]}>
             <table
               className={styles["comparison-table"]}
@@ -391,7 +393,9 @@ const PricingPage = () => {
           <div className={styles["guarantee__icon"]} aria-hidden="true">
             🛡️
           </div>
-          <h3 className={styles["guarantee__title"]}>{t("guarantee.title")}</h3>
+          <Title variant="h3" className={styles["guarantee__title"]}>
+            {t("guarantee.title")}
+          </Title>
           <Text variant="small">{t("guarantee.description")}</Text>
         </div>
 
@@ -399,12 +403,13 @@ const PricingPage = () => {
           className={styles["pricing-trust-section"]}
           aria-labelledby={getAccessibilityId("pricing-trust-title")}
         >
-          <h2
+          <Title
+            variant="h2"
             id={getAccessibilityId("pricing-trust-title")}
             className={styles["pricing-trust-section__title"]}
           >
             {t("trust.title")}
-          </h2>
+          </Title>
           <div className={styles["pricing-trust-list"]} role="list">
             <span className={styles["pricing-trust-item"]} role="listitem">
               {t("trust.item1")}
@@ -423,12 +428,13 @@ const PricingPage = () => {
           className={styles["faq-section"]}
           aria-labelledby={getAccessibilityId("pricing-faq-title")}
         >
-          <h2
+          <Title
+            variant="h2"
             id={getAccessibilityId("pricing-faq-title")}
             className={styles["faq-title"]}
           >
             {t("faq.title")}
-          </h2>
+          </Title>
 
           <div className={styles["faq-list"]}>
             {FAQ_KEYS.map((faqKey, index) => {

@@ -1,0 +1,162 @@
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/breakpoints" as *;
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/gradients" as *;
+@use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+
+.board-onboarding-panel {
+  border: $border-width solid $color-accent-border-subtle;
+  border-radius: $border-radius-lg;
+  background:
+    radial-gradient(
+      circle at top right,
+      $color-accent-peach-bg-soft 0%,
+      transparent 34%
+    ),
+    $color-surface-onboarding-gradient;
+  box-shadow: $shadow-card;
+}
+
+.board-onboarding-panel--compact {
+  padding: $spacing-xl;
+}
+
+.board-onboarding-panel--expanded {
+  padding: $spacing-2xl;
+}
+
+.board-onboarding-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-lg;
+}
+
+.board-onboarding-panel__header-text {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.board-onboarding-panel__eyebrow {
+  @include typography-label-uppercase;
+  line-height: $line-height-normal;
+  font-weight: $font-weight-semibold;
+  color: $color-text-secondary;
+}
+
+.board-onboarding-panel__title {
+  color: $color-text;
+}
+
+.board-onboarding-panel__description {
+  color: $color-text-secondary;
+  max-width: 44rem;
+}
+
+.board-onboarding-panel__steps {
+  margin-top: $spacing-xl;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $spacing-lg;
+}
+
+.board-onboarding-panel__step {
+  border-radius: $border-radius-md;
+}
+
+.board-onboarding-panel__step-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-sm;
+}
+
+.board-onboarding-panel__step-index {
+  @include typography-body-sm;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $spacing-4xl;
+  height: $spacing-4xl;
+  border: $border-width-thick solid $color-border-highlight;
+  border-radius: $border-radius-full;
+  font-weight: $font-weight-semibold;
+  line-height: 1;
+  color: $color-secondary;
+  background: $color-text;
+}
+
+.board-onboarding-panel__step-index--complete {
+  background: $color-success-text;
+  border-color: $color-success-ring;
+}
+
+.board-onboarding-panel__step-index--current {
+  background: $color-accent;
+  border-color: $color-accent-border-soft;
+}
+
+.board-onboarding-panel__step-index--pending {
+  background: $color-text-secondary;
+  border-color: $color-border-subtle;
+}
+
+.board-onboarding-panel__step-index--blocked {
+  background: $color-error;
+  border-color: $color-error-ring;
+}
+
+.board-onboarding-panel__step-body {
+  margin-top: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.board-onboarding-panel__step-title {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+}
+
+.board-onboarding-panel__step-description {
+  color: $color-text-secondary;
+  min-height: 4.5rem;
+}
+
+.board-onboarding-panel__step-action {
+  margin-top: $spacing-md;
+}
+
+.board-onboarding-panel__footer {
+  margin-top: $spacing-xl;
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+}
+
+@media (max-width: $breakpoint-lg) {
+  .board-onboarding-panel__steps {
+    grid-template-columns: 1fr;
+  }
+
+  .board-onboarding-panel__step-description {
+    min-height: 0;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .board-onboarding-panel--compact,
+  .board-onboarding-panel--expanded {
+    padding: $spacing-lg;
+  }
+
+  .board-onboarding-panel__header,
+  .board-onboarding-panel__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
