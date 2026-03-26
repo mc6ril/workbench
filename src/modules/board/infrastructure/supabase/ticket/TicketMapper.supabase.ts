@@ -23,11 +23,15 @@ export const mapTicketRowToDomain = (row: TicketRow): Ticket => {
     codeNumber: row.code_number,
     epicId: row.epic_id,
     parentId: row.parent_id,
-    sprintId: row.sprint_id,
     priority: row.priority as Ticket["priority"],
     dueDate: row.due_date ? toDate(row.due_date) : null,
     storyPoints: row.story_points,
     createdBy: row.created_by,
+    completedAt: row.completed_at ? toDate(row.completed_at) : null,
+    archivedAt: row.archived_at ? toDate(row.archived_at) : null,
+    archivedWeekStart: row.archived_week_start
+      ? toDate(row.archived_week_start)
+      : null,
     createdAt: toDate(row.created_at),
     updatedAt: toDate(row.updated_at),
   };

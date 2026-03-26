@@ -145,10 +145,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
       return true;
     }
 
-    if (
-      Object.prototype.hasOwnProperty.call(filters, "parentId") ||
-      Object.prototype.hasOwnProperty.call(filters, "sprintId")
-    ) {
+    if (Object.prototype.hasOwnProperty.call(filters, "parentId")) {
       return true;
     }
 

@@ -118,7 +118,12 @@ export type TicketRepository = {
    * @throws ConstraintError if constraint violation occurs
    * @throws DatabaseError if database operation fails
    */
-  moveTicket(id: string, status: string, position: number): Promise<Ticket>;
+  moveTicket(
+    id: string,
+    status: string,
+    position: number,
+    completedAt: Date | null
+  ): Promise<Ticket>;
 
   /**
    * Atomically move a ticket to a new status/position and reorder affected tickets.
@@ -133,8 +138,25 @@ export type TicketRepository = {
     ticketId: string;
     status: string;
     position: number;
+    completedAt: Date | null;
     ticketPositions: Array<{ id: string; position: number }>;
   }): Promise<Ticket[]>;
+
+  /**
+   * Archive completed tickets in batch using the current weekly boundary.
+   * Implementations must archive only tickets that are still in a done workflow
+   * state, are not already archived, and were completed before the start of the
+   * current local week in the provided timezone.
+   *
+   * @param input.runAt - Reference time used to resolve the current week boundary
+   * @param input.timeZone - IANA timezone used to evaluate the week rule
+   * @returns Number of tickets archived in this batch
+   * @throws DatabaseError if database operation fails
+   */
+  archiveCompletedTicketsBatch(input: {
+    runAt: Date;
+    timeZone: string;
+  }): Promise<number>;
 
   /**
    * Assign a ticket to an epic.

@@ -23,7 +23,6 @@ import {
   useRemoveTicketLabels,
   useTicketLabelIds,
 } from "@/modules/board/presentation/hooks/label";
-import { useSprints } from "@/modules/board/presentation/hooks/sprint";
 import {
   useAssignTicket,
   useCreateSubtask,
@@ -68,7 +67,6 @@ export const useTicketDetailController = ({
   } = useTicket(ticketId);
   const { data: boardConfiguration } = useBoardConfiguration(projectId);
   const { data: epics = [] } = useEpics(projectId);
-  const { data: sprints = [] } = useSprints(projectId);
   const { data: labels = [] } = useLabels(projectId);
   const { data: ticketLabelIds = [] } = useTicketLabelIds(ticketId);
   const { data: projectMembers = [] } = useProjectMembers(projectId);
@@ -93,7 +91,6 @@ export const useTicketDetailController = ({
   const [descriptionDraft, setDescriptionDraft] = useState<string | null>(null);
   const [statusDraft, setStatusDraft] = useState<string | null>(null);
   const [priorityDraft, setPriorityDraft] = useState<string | null>(null);
-  const [sprintIdDraft, setSprintIdDraft] = useState<string | null>(null);
   const [epicIdDraft, setEpicIdDraft] = useState<string | null>(null);
   const [commentInput, setCommentInput] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
@@ -126,7 +123,6 @@ export const useTicketDetailController = ({
   const effectiveDescription = descriptionDraft ?? ticket?.description ?? "";
   const effectiveStatus = statusDraft ?? ticket?.status ?? "";
   const effectivePriority = priorityDraft ?? ticket?.priority ?? "";
-  const effectiveSprintId = sprintIdDraft ?? ticket?.sprintId ?? "";
   const effectiveEpicId = epicIdDraft ?? ticket?.epicId ?? "";
 
   const handleSaveMainFields = useCallback(async (): Promise<void> => {
@@ -141,7 +137,6 @@ export const useTicketDetailController = ({
         description: effectiveDescription || null,
         status: effectiveStatus || undefined,
         priority: (effectivePriority as TicketPriority) || null,
-        sprintId: effectiveSprintId || null,
         epicId: effectiveEpicId || null,
         position: ticket.position,
       },
@@ -151,14 +146,12 @@ export const useTicketDetailController = ({
     setDescriptionDraft(null);
     setStatusDraft(null);
     setPriorityDraft(null);
-    setSprintIdDraft(null);
     setEpicIdDraft(null);
   }, [
     canEditTicket,
     effectiveDescription,
     effectiveEpicId,
     effectivePriority,
-    effectiveSprintId,
     effectiveStatus,
     effectiveTitle,
     ticket,
@@ -390,7 +383,6 @@ export const useTicketDetailController = ({
     comments,
     subtasks,
     epics,
-    sprints,
     labels,
     projectMembers,
     assignees,
@@ -401,7 +393,6 @@ export const useTicketDetailController = ({
     effectiveDescription,
     effectiveStatus,
     effectivePriority,
-    effectiveSprintId,
     effectiveEpicId,
     commentInput,
     editingCommentId,
@@ -421,7 +412,6 @@ export const useTicketDetailController = ({
     setDescriptionDraft,
     setStatusDraft,
     setPriorityDraft,
-    setSprintIdDraft,
     setEpicIdDraft,
     setCommentInput,
     setEditingCommentContent,

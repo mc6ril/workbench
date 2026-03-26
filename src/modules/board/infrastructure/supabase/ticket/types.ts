@@ -8,11 +8,13 @@ export type TicketRow = {
   code_number: number;
   epic_id: string | null;
   parent_id: string | null;
-  sprint_id: string | null;
   priority: string | null;
   due_date: string | null;
   story_points: number | null;
   created_by: string | null;
+  completed_at: string | null;
+  archived_at: string | null;
+  archived_week_start: string | null;
   created_at: string;
   updated_at: string;
 };

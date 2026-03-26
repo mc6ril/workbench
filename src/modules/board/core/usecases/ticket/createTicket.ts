@@ -6,7 +6,9 @@ import {
   CreateTicketInputSchema,
   type Ticket,
 } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
+import { resolveCompletedAtForProjectStatusChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
 
 /**
  * Create a new ticket.
@@ -22,6 +24,7 @@ import type { TicketRepository } from "@/modules/board/core/ports/ticketReposito
  */
 export const createTicket = async (
   repository: TicketRepository,
+  boardRepository: BoardRepository,
   input: CreateTicketInput
 ): Promise<Ticket> => {
   // Validate input with Zod schema
@@ -47,10 +50,20 @@ export const createTicket = async (
   const codeNumber = await repository.getNextCodeNumberForProject(
     validatedInput.projectId
   );
+  const completedAt = await resolveCompletedAtForProjectStatusChange(
+    boardRepository,
+    validatedInput.projectId,
+    {
+      previousStatus: null,
+      previousCompletedAt: null,
+      nextStatus: validatedInput.status,
+    }
+  );
 
   // Call repository to create ticket with allocated code number
   return repository.create({
     ...validatedInput,
+    completedAt,
     codeNumber,
   });
 };

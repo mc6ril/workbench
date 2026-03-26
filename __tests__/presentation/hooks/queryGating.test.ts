@@ -19,7 +19,6 @@ import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/use
 import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { useLabels } from "@/modules/board/presentation/hooks/label/useLabels";
-import { useSprints } from "@/modules/board/presentation/hooks/sprint/useSprints";
 
 describe("query hook gating", () => {
   beforeEach(() => {
@@ -57,20 +56,9 @@ describe("query hook gating", () => {
     );
   });
 
-  it("disables sprints query when enabled is false", () => {
-    useSprints("project-1", { enabled: false });
-
-    expect(useQueryMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        enabled: false,
-      })
-    );
-  });
-
   it("keeps queries enabled by default", () => {
     useBoardConfiguration("project-1");
     useLabels("project-1");
-    useSprints("project-1");
 
     expect(useQueryMock).toHaveBeenNthCalledWith(
       1,
@@ -80,12 +68,6 @@ describe("query hook gating", () => {
     );
     expect(useQueryMock).toHaveBeenNthCalledWith(
       2,
-      expect.objectContaining({
-        enabled: true,
-      })
-    );
-    expect(useQueryMock).toHaveBeenNthCalledWith(
-      3,
       expect.objectContaining({
         enabled: true,
       })

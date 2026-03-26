@@ -90,7 +90,8 @@ export const createTicketRepository = (
     const { data: ticketRows, error: ticketIdsError } = await client
       .from("tickets")
       .select("id")
-      .eq("project_id", projectId);
+      .eq("project_id", projectId)
+      .is("archived_at", null);
 
     if (ticketIdsError) {
       return handleRepositoryError(ticketIdsError, "TicketAssignee", projectId);
@@ -172,7 +173,8 @@ export const createTicketRepository = (
         let query = client
           .from("tickets")
           .select("*")
-          .eq("project_id", projectId);
+          .eq("project_id", projectId)
+          .is("archived_at", null);
 
         // Apply filters if provided
         if (filters?.status) {
@@ -192,15 +194,6 @@ export const createTicketRepository = (
             query = query.is("parent_id", null);
           } else if (typeof filters.parentId === "string") {
             query = query.eq("parent_id", filters.parentId);
-          }
-        }
-
-        // sprintId filter: null = no sprint, string = specific sprint
-        if (filters && "sprintId" in filters) {
-          if (filters.sprintId === null) {
-            query = query.is("sprint_id", null);
-          } else if (typeof filters.sprintId === "string") {
-            query = query.eq("sprint_id", filters.sprintId);
           }
         }
 
@@ -276,7 +269,6 @@ export const createTicketRepository = (
           position: "position",
           title: "title",
           priority: "priority",
-          sprint: "sprint_id",
           dueDate: "due_date",
         };
         const orderColumn = sortFieldMap[sortField] ?? "created_at";
@@ -345,6 +337,7 @@ export const createTicketRepository = (
           .select("*")
           .eq("project_id", projectId)
           .eq("status", status)
+          .is("archived_at", null)
           .order("position", { ascending: true });
 
         if (error) {
@@ -373,11 +366,11 @@ export const createTicketRepository = (
             position: input.position ?? 0,
             epic_id: input.epicId ?? null,
             parent_id: input.parentId ?? null,
-            sprint_id: input.sprintId ?? null,
             priority: input.priority ?? null,
             due_date: input.dueDate?.toISOString() ?? null,
             story_points: input.storyPoints ?? null,
             created_by: input.createdBy ?? null,
+            completed_at: input.completedAt?.toISOString() ?? null,
             code_number: input.codeNumber,
           })
           .select()
@@ -422,9 +415,6 @@ export const createTicketRepository = (
         if (input.parentId !== undefined) {
           updateData.parent_id = input.parentId;
         }
-        if (input.sprintId !== undefined) {
-          updateData.sprint_id = input.sprintId;
-        }
         if (input.priority !== undefined) {
           updateData.priority = input.priority;
         }
@@ -433,6 +423,16 @@ export const createTicketRepository = (
         }
         if (input.storyPoints !== undefined) {
           updateData.story_points = input.storyPoints;
+        }
+        if (input.completedAt !== undefined) {
+          updateData.completed_at = input.completedAt?.toISOString() ?? null;
+        }
+        if (input.archivedAt !== undefined) {
+          updateData.archived_at = input.archivedAt?.toISOString() ?? null;
+        }
+        if (input.archivedWeekStart !== undefined) {
+          updateData.archived_week_start =
+            input.archivedWeekStart?.toISOString().slice(0, 10) ?? null;
         }
 
         const { data, error } = await client
@@ -492,12 +492,19 @@ export const createTicketRepository = (
     async moveTicket(
       id: string,
       status: string,
-      position: number
+      position: number,
+      completedAt: Date | null
     ): Promise<Ticket> {
       try {
+        const updateData = {
+          status,
+          position,
+          completed_at: completedAt?.toISOString() ?? null,
+        };
+
         const { data, error } = await client
           .from("tickets")
-          .update({ status, position })
+          .update(updateData)
           .eq("id", id)
           .select()
           .single();
@@ -524,6 +531,7 @@ export const createTicketRepository = (
       ticketId: string;
       status: string;
       position: number;
+      completedAt: Date | null;
       ticketPositions: Array<{ id: string; position: number }>;
     }): Promise<Ticket[]> {
       try {
@@ -531,6 +539,7 @@ export const createTicketRepository = (
           p_ticket_id: input.ticketId,
           p_status: input.status,
           p_position: input.position,
+          p_completed_at: input.completedAt?.toISOString() ?? null,
           p_positions: input.ticketPositions,
         });
 
@@ -554,6 +563,29 @@ export const createTicketRepository = (
       }
     },
 
+    async archiveCompletedTicketsBatch(input: {
+      runAt: Date;
+      timeZone: string;
+    }): Promise<number> {
+      try {
+        const { data, error } = await client.rpc(
+          "archive_completed_tickets_batch",
+          {
+            p_now: input.runAt.toISOString(),
+            p_time_zone: input.timeZone,
+          }
+        );
+
+        if (error) {
+          return handleRepositoryError(error, "Ticket");
+        }
+
+        return typeof data === "number" ? data : 0;
+      } catch (error) {
+        return handleRepositoryError(error, "Ticket");
+      }
+    },
+
     async assignToEpic(ticketId: string, epicId: string): Promise<Ticket> {
       return repo.update(ticketId, { epicId });
     },
@@ -572,6 +604,7 @@ export const createTicketRepository = (
           .select("*")
           .eq("project_id", projectId)
           .eq("code_number", codeNumber)
+          .is("archived_at", null)
           .single();
 
         if (error) {

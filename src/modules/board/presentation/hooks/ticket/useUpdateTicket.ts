@@ -2,7 +2,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import type { UpdateTicketInput } from "@/modules/board/core/domain/schema/ticket.schema";
 import { updateTicket } from "@/modules/board/core/usecases/ticket/updateTicket";
-import { ticketRepository } from "@/modules/board/infrastructure/supabase/repositories";
+import {
+  boardRepository,
+  ticketRepository,
+} from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 
 type UpdateTicketVariables = {
@@ -19,7 +22,7 @@ export const useUpdateTicket = () => {
 
   return useMutation({
     mutationFn: ({ id, input }: UpdateTicketVariables) =>
-      updateTicket(ticketRepository, id, input),
+      updateTicket(ticketRepository, boardRepository, id, input),
     onSuccess: (ticket) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.ticketsRoot(ticket.projectId),
@@ -30,4 +33,3 @@ export const useUpdateTicket = () => {
     },
   });
 };
-

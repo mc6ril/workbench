@@ -1,3 +1,4 @@
+export { archiveCompletedTicketsBatch } from "./archiveCompletedTicketsBatch";
 export { assignTicket } from "./assignTicket";
 export { assignTicketToEpic } from "./assignTicketToEpic";
 export { createSubtask } from "./createSubtask";

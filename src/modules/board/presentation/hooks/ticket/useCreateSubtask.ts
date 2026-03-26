@@ -2,7 +2,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import type { CreateSubtaskInput } from "@/modules/board/core/domain/schema/ticket.schema";
 import { createSubtask } from "@/modules/board/core/usecases/ticket/createSubtask";
-import { ticketRepository } from "@/modules/board/infrastructure/supabase/repositories";
+import {
+  boardRepository,
+  ticketRepository,
+} from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 
 /**
@@ -14,7 +17,7 @@ export const useCreateSubtask = () => {
 
   return useMutation({
     mutationFn: (input: CreateSubtaskInput) =>
-      createSubtask(ticketRepository, input),
+      createSubtask(ticketRepository, boardRepository, input),
     onSuccess: (ticket) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.ticketsRoot(ticket.projectId),
@@ -22,4 +25,3 @@ export const useCreateSubtask = () => {
     },
   });
 };
-

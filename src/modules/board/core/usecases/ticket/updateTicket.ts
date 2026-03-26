@@ -7,7 +7,9 @@ import {
   type UpdateTicketInput,
   UpdateTicketInputSchema,
 } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
+import { resolveCompletedAtForProjectStatusChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
 
 /**
  * Update an existing ticket.
@@ -25,6 +27,7 @@ import type { TicketRepository } from "@/modules/board/core/ports/ticketReposito
  */
 export const updateTicket = async (
   repository: TicketRepository,
+  boardRepository: BoardRepository,
   id: string,
   input: UpdateTicketInput
 ): Promise<Ticket> => {
@@ -69,6 +72,22 @@ export const updateTicket = async (
     }
   }
 
+  const completedAt =
+    validatedInput.status === undefined
+      ? validatedInput.completedAt
+      : await resolveCompletedAtForProjectStatusChange(
+          boardRepository,
+          existingTicket.projectId,
+          {
+            previousStatus: existingTicket.status,
+            previousCompletedAt: existingTicket.completedAt,
+            nextStatus: validatedInput.status,
+          }
+        );
+
   // Call repository to update ticket
-  return repository.update(id, validatedInput);
+  return repository.update(id, {
+    ...validatedInput,
+    completedAt,
+  });
 };

@@ -2,7 +2,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 import { moveTicket } from "@/modules/board/core/usecases/ticket/moveTicket";
-import { ticketRepository } from "@/modules/board/infrastructure/supabase/repositories";
+import {
+  boardRepository,
+  ticketRepository,
+} from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 
 type MoveTicketVariables = {
@@ -21,7 +24,7 @@ export const useMoveTicket = () => {
 
   return useMutation({
     mutationFn: ({ ticketId, status, position }: MoveTicketVariables) =>
-      moveTicket(ticketRepository, ticketId, status, position),
+      moveTicket(ticketRepository, boardRepository, ticketId, status, position),
     onMutate: async ({ projectId, ticketId, status, position }) => {
       await queryClient.cancelQueries({
         queryKey: queryKeys.projects.ticketsRoot(projectId),
@@ -98,4 +101,3 @@ export const useMoveTicket = () => {
     },
   });
 };
-

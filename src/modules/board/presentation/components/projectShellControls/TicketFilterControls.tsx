@@ -12,14 +12,11 @@ const TicketFilterControls = ({
   filters,
   statusOptions,
   epicOptions,
-  sprintOptions,
   labelOptions,
   onSetStatus,
   onClearStatus,
   onSetEpicId,
   onClearEpicId,
-  onSetSprintId,
-  onClearSprintId,
   onSetPriority,
   onClearPriority,
   onSetLabelIds,
@@ -75,31 +72,6 @@ const TicketFilterControls = ({
           { value: "medium", label: tTicket("priority.medium") },
           { value: "low", label: tTicket("priority.low") },
           { value: "lowest", label: tTicket("priority.lowest") },
-        ]}
-      />
-      <Select
-        label={t("sprintLabel")}
-        value={
-          filters.sprintId === null ? "__no_sprint__" : (filters.sprintId ?? "")
-        }
-        onChange={(event) => {
-          const nextSprintId = event.target.value;
-          if (!nextSprintId) {
-            onClearSprintId();
-            return;
-          }
-
-          if (nextSprintId === "__no_sprint__") {
-            onSetSprintId(null);
-            return;
-          }
-
-          onSetSprintId(nextSprintId);
-        }}
-        options={[
-          { value: "", label: "" },
-          { value: "__no_sprint__", label: t("noSprintLabel") },
-          ...sprintOptions,
         ]}
       />
       {labelOptions.length > 0 && (

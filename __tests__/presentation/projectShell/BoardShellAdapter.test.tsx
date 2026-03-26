@@ -80,12 +80,6 @@ jest.mock("@/modules/board/presentation/hooks/realtime/useProjectRealtime", () =
   useProjectRealtime: (...args: unknown[]) => useProjectRealtimeMock(...args),
 }));
 
-jest.mock("@/modules/board/presentation/hooks/sprint", () => ({
-  useSprints: () => ({
-    data: undefined,
-  }),
-}));
-
 jest.mock("@/modules/board/presentation/hooks/ticket/useTickets", () => ({
   useTickets: () => ({
     data: undefined,

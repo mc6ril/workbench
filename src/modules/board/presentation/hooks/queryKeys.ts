@@ -2,6 +2,10 @@ import type {
   TicketFilters,
   TicketSort,
 } from "@/modules/board/core/domain/schema/ticket.schema";
+import {
+  createTicketListFilterKey,
+  createTicketListSortKey,
+} from "@/modules/board/presentation/hooks/queryKeys.mapper";
 
 /**
  * Centralized query key factory for React Query.
@@ -36,27 +40,13 @@ const queryKeysObject = {
       search?: string,
       limit?: number
     ) => {
-      // Create stable query keys by extracting filter/sort values
-      // This ensures identical values create the same key regardless of object reference.
-      const filterKey = filters
-        ? [
-            filters.status ?? null,
-            filters.epicId ?? null,
-            filters.parentId ?? null,
-            filters.sprintId ?? null,
-            filters.priority ?? null,
-            filters.labelIds?.length ? [...filters.labelIds].sort() : null,
-          ]
-        : null;
-      const sortKey = sort ? [sort.field, sort.direction] : null;
-
       return [
         "projects",
         projectId,
         "tickets",
         "list",
-        filterKey,
-        sortKey,
+        createTicketListFilterKey(filters),
+        createTicketListSortKey(sort),
         search?.trim() || null,
         limit ?? null,
       ] as const;
@@ -79,11 +69,6 @@ const queryKeysObject = {
   epics: {
     all: () => ["epics"] as const,
     detail: (id: string) => ["epics", id] as const,
-  },
-  sprints: {
-    all: () => ["sprints"] as const,
-    byProject: (projectId: string) =>
-      ["sprints", "project", projectId] as const,
   },
   comments: {
     root: () => ["comments"] as const,
@@ -118,7 +103,6 @@ export const queryKeys = Object.freeze({
   projects: Object.freeze(queryKeysObject.projects),
   tickets: Object.freeze(queryKeysObject.tickets),
   epics: Object.freeze(queryKeysObject.epics),
-  sprints: Object.freeze(queryKeysObject.sprints),
   comments: Object.freeze(queryKeysObject.comments),
   labels: Object.freeze(queryKeysObject.labels),
   invitations: Object.freeze(queryKeysObject.invitations),
