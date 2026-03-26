@@ -23,7 +23,7 @@ const isAuthorizedCronRequest = (request: NextRequest): boolean => {
 /**
  * GET /api/jobs/archive-completed-tickets
  *
- * Hourly cron endpoint. The underlying batch use case is idempotent and only
+ * Daily cron endpoint. The underlying batch use case is idempotent and only
  * archives tickets completed before the current local week boundary in
  * Europe/Paris while they are still in a done column.
  */

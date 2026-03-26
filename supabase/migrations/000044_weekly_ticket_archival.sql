@@ -8,7 +8,7 @@
 --   * completed_at is before the current local week boundary
 --   * ticket is still mapped to a column whose workflow state is 'done'
 --
--- The application schedules this function hourly. Because the cutoff is the
+-- The application schedules this function daily. Because the cutoff is the
 -- current local week boundary, the function is idempotent and remains correct
 -- across DST changes and transient scheduler failures.
 
