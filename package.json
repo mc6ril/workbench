@@ -14,6 +14,8 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,scss,md}\"",
     "test": "jest",
     "test:watch": "jest --watch",
+    "clean:next": "rm -rf .next",
+    "clean:next:dev": "rm -rf .next/dev",
     "prepare": "husky"
   },
   "dependencies": {

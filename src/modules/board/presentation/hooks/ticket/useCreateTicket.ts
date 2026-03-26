@@ -2,7 +2,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import type { CreateTicketInput } from "@/modules/board/core/domain/schema/ticket.schema";
 import { createTicket } from "@/modules/board/core/usecases/ticket/createTicket";
-import { ticketRepository } from "@/modules/board/infrastructure/supabase/repositories";
+import {
+  boardRepository,
+  ticketRepository,
+} from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 
 /**
@@ -14,7 +17,7 @@ export const useCreateTicket = () => {
 
   return useMutation({
     mutationFn: (input: CreateTicketInput) =>
-      createTicket(ticketRepository, input),
+      createTicket(ticketRepository, boardRepository, input),
     onSuccess: (ticket) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.ticketsRoot(ticket.projectId),
@@ -28,4 +31,3 @@ export const useCreateTicket = () => {
     },
   });
 };
-

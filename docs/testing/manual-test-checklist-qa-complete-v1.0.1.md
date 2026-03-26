@@ -104,7 +104,7 @@ It is organized by feature domain and includes execution notes.
 - [ ] Permissions:
   - [ ] admin/member can edit
   - [ ] viewer cannot edit
-- [ ] Archive/cache behavior for completed tickets outside sprint (if feature exists)
+- [ ] Archive/cache behavior for completed tickets after weekly archival (if feature exists)
 
 ---
 

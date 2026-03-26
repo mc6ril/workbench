@@ -4,7 +4,9 @@ import {
   MoveTicketInputSchema,
   type Ticket,
 } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
+import { resolveCompletedAtForProjectStatusChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
 
 /**
  * Move a ticket to a new status/column and position.
@@ -23,6 +25,7 @@ import type { TicketRepository } from "@/modules/board/core/ports/ticketReposito
  */
 export const moveTicket = async (
   repository: TicketRepository,
+  boardRepository: BoardRepository,
   id: string,
   status: string,
   position: number
@@ -35,10 +38,21 @@ export const moveTicket = async (
     throw createNotFoundError("Ticket", validatedInput.id);
   }
 
+  const completedAt = await resolveCompletedAtForProjectStatusChange(
+    boardRepository,
+    ticket.projectId,
+    {
+      previousStatus: ticket.status,
+      previousCompletedAt: ticket.completedAt,
+      nextStatus: validatedInput.status,
+    }
+  );
+
   // Move ticket
   return repository.moveTicket(
     validatedInput.id,
     validatedInput.status,
-    validatedInput.position
+    validatedInput.position,
+    completedAt
   );
 };

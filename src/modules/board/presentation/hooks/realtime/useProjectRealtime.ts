@@ -10,11 +10,11 @@ import type {
   EpicWithProgress,
 } from "@/modules/board/core/domain/schema/epic.schema";
 import type { Label } from "@/modules/board/core/domain/schema/label.schema";
-import type { Sprint } from "@/modules/board/core/domain/schema/sprint.schema";
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { RealtimeRepository } from "@/modules/board/core/ports/realtimeRepository";
 import { getRealtimeRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
+import { mapTicketListQueryKey } from "@/modules/board/presentation/hooks/queryKeys.mapper";
 
 type RealtimeEventType = "INSERT" | "UPDATE" | "DELETE";
 
@@ -138,14 +138,6 @@ const mapLabelFromPayload = (
   return mapRowSafely(payload, source, realtimeRepository.mapLabelRowToDomain);
 };
 
-const mapSprintFromPayload = (
-  realtimeRepository: RealtimeRepository,
-  payload: unknown,
-  source: "new" | "old"
-): Sprint | null => {
-  return mapRowSafely(payload, source, realtimeRepository.mapSprintRowToDomain);
-};
-
 const mapCommentRowFromPayload = (
   payload: unknown,
   source: "new" | "old"
@@ -170,54 +162,46 @@ const mapCommentRowFromPayload = (
   };
 };
 
-const isTicketListQueryKey = (
+const mapProjectTicketListQueryKey = (
   queryKey: readonly unknown[],
   projectId: string
-): boolean => {
-  return (
-    queryKey[0] === "projects" &&
-    queryKey[1] === projectId &&
-    queryKey[2] === "tickets" &&
-    queryKey[3] === "list"
-  );
-};
+) => {
+  const mappedQueryKey = mapTicketListQueryKey(queryKey);
 
-const extractFilterKeyFromTicketListQuery = (
-  queryKey: readonly unknown[]
-): unknown[] | null => {
-  if (!Array.isArray(queryKey[4])) {
+  if (!mappedQueryKey || mappedQueryKey.projectId !== projectId) {
     return null;
   }
 
-  return queryKey[4] as unknown[];
+  return mappedQueryKey;
 };
 
 const hasLabelFilterInTicketListQuery = (
   queryKey: readonly unknown[],
   projectId: string
 ): boolean => {
-  if (!isTicketListQueryKey(queryKey, projectId)) {
-    return false;
-  }
-
-  const filterKey = extractFilterKeyFromTicketListQuery(queryKey);
-  if (!filterKey || !Array.isArray(filterKey[5])) {
-    return false;
-  }
-
-  return filterKey[5].length > 0;
+  return (mapProjectTicketListQueryKey(queryKey, projectId)?.filters?.labelIds
+    ?.length ?? 0) > 0;
 };
 
 const matchesTicketListFilter = (
   ticket: Ticket,
   queryKey: readonly unknown[]
 ): boolean => {
-  const filterKey = extractFilterKeyFromTicketListQuery(queryKey);
-  if (!filterKey) {
+  if (ticket.archivedAt !== null) {
+    return false;
+  }
+
+  const mappedQueryKey = mapTicketListQueryKey(queryKey);
+  if (!mappedQueryKey) {
     return true;
   }
 
-  const [status, epicId, parentId, sprintId, priority, labelIds] = filterKey;
+  const { filters } = mappedQueryKey;
+  if (!filters) {
+    return true;
+  }
+
+  const { status, epicId, parentId, priority, labelIds } = filters;
 
   if (typeof status === "string" && ticket.status !== status) {
     return false;
@@ -227,13 +211,9 @@ const matchesTicketListFilter = (
     return false;
   }
 
-  // parentId / sprintId are tri-state in domain but query key flattens "undefined" and
+  // parentId is tri-state in domain but query key flattens "undefined" and
   // explicit null to the same value. We only enforce strict checks for explicit strings.
   if (typeof parentId === "string" && ticket.parentId !== parentId) {
-    return false;
-  }
-
-  if (typeof sprintId === "string" && ticket.sprintId !== sprintId) {
     return false;
   }
 
@@ -471,20 +451,6 @@ export const useProjectRealtime = (
       );
     };
 
-    const patchSprintInCache = (sprint: Sprint) => {
-      queryClient.setQueryData<Sprint[]>(
-        queryKeys.sprints.byProject(projectId),
-        (previous) => updateEntityInArray(previous, sprint)
-      );
-    };
-
-    const removeSprintFromCache = (sprintId: string) => {
-      queryClient.setQueryData<Sprint[]>(
-        queryKeys.sprints.byProject(projectId),
-        (previous) => removeEntityFromArray(previous, sprintId)
-      );
-    };
-
     const patchCommentInTicketCache = (
       ticketId: string,
       commentId: string,
@@ -679,41 +645,7 @@ export const useProjectRealtime = (
       }
     );
 
-    const channelWithSprints = channelWithEpics.on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "sprints",
-        filter: `project_id=eq.${projectId}`,
-      },
-      (payload) => {
-        const eventType = extractEventType(payload);
-        const sprintId = extractEntityId(payload);
-        const nextSprint = mapSprintFromPayload(
-          realtimeRepository,
-          payload,
-          "new"
-        );
-
-        if (eventType === "UPDATE" && sprintId && nextSprint) {
-          patchSprintInCache(nextSprint);
-          return;
-        }
-
-        if (eventType === "DELETE" && sprintId) {
-          removeSprintFromCache(sprintId);
-          return;
-        }
-
-        void queryClient.invalidateQueries({
-          queryKey: queryKeys.sprints.byProject(projectId),
-          refetchType: "active",
-        });
-      }
-    );
-
-    const channelWithLabels = channelWithSprints.on(
+    const channelWithLabels = channelWithEpics.on(
       "postgres_changes",
       {
         event: "*",

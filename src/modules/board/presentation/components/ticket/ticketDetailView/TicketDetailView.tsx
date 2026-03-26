@@ -14,11 +14,7 @@ import TicketDetailMainCard from "./components/TicketDetailMainCard";
 import TicketDetailSidebarCard from "./components/TicketDetailSidebarCard";
 import TicketDetailSubtasksSection from "./components/TicketDetailSubtasksSection";
 import styles from "./TicketDetailView.module.scss";
-import {
-  buildEpicOptions,
-  buildPriorityOptions,
-  buildSprintOptions,
-} from "./TicketDetailView.utils";
+import { buildEpicOptions, buildPriorityOptions } from "./TicketDetailView.utils";
 
 import { useTicketDetailController } from "@/modules/board/presentation/hooks/ticket";
 
@@ -42,7 +38,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     comments,
     subtasks,
     epics,
-    sprints,
     labels,
     projectMembers,
     assignees,
@@ -53,7 +48,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     effectiveDescription,
     effectiveStatus,
     effectivePriority,
-    effectiveSprintId,
     effectiveEpicId,
     commentInput,
     editingCommentId,
@@ -72,7 +66,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     setDescriptionDraft,
     setStatusDraft,
     setPriorityDraft,
-    setSprintIdDraft,
     setEpicIdDraft,
     setCommentInput,
     setEditingCommentContent,
@@ -99,10 +92,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
   const priorityOptions = useMemo(() => {
     return buildPriorityOptions(t);
   }, [t]);
-
-  const sprintOptions = useMemo(() => {
-    return buildSprintOptions(sprints, t);
-  }, [sprints, t]);
 
   const epicOptions = useMemo(() => {
     return buildEpicOptions(epics, t);
@@ -169,11 +158,9 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
           effectiveStatus={effectiveStatus}
           effectivePriority={effectivePriority}
           effectiveEpicId={effectiveEpicId}
-          effectiveSprintId={effectiveSprintId}
           statusOptions={statusOptions}
           priorityOptions={priorityOptions}
           epicOptions={epicOptions}
-          sprintOptions={sprintOptions}
           labels={labels}
           assignedLabelIdSet={assignedLabelIdSet}
           projectMembers={projectMembers}
@@ -185,7 +172,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
           onStatusChange={setStatusDraft}
           onPriorityChange={setPriorityDraft}
           onEpicChange={setEpicIdDraft}
-          onSprintChange={setSprintIdDraft}
           onToggleLabel={(labelId) => {
             void handleToggleLabel(labelId);
           }}

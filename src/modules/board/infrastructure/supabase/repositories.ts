@@ -9,7 +9,6 @@ import { createBoardRepository } from "./board/BoardRepository.supabase";
 import { createEpicRepository } from "./epic/EpicRepository.supabase";
 import { createLabelRepository } from "./label/LabelRepository.supabase";
 import { createProjectLookupRepository } from "./project/ProjectLookupRepository.supabase";
-import { createSprintRepository } from "./sprint/SprintRepository.supabase";
 import { createTicketRepository } from "./ticket/TicketRepository.supabase";
 
 import { createCommentRepository } from "@/modules/board/infrastructure/supabase/comment/CommentRepository.supabase";
@@ -25,9 +24,6 @@ export const boardRepository = createBoardRepository(
   createSupabaseBrowserClient()
 );
 export const commentRepository = createCommentRepository(
-  createSupabaseBrowserClient()
-);
-export const sprintRepository = createSprintRepository(
   createSupabaseBrowserClient()
 );
 
@@ -52,7 +48,6 @@ export { createBoardRepository } from "./board/BoardRepository.supabase";
 export { createEpicRepository } from "./epic/EpicRepository.supabase";
 export { createLabelRepository } from "./label/LabelRepository.supabase";
 export { createProjectLookupRepository } from "./project/ProjectLookupRepository.supabase";
-export { createSprintRepository } from "./sprint/SprintRepository.supabase";
 export { createTicketRepository } from "./ticket/TicketRepository.supabase";
 export { createCommentRepository } from "@/modules/board/infrastructure/supabase/comment/CommentRepository.supabase";
 export { createRealtimeRepository } from "@/modules/board/infrastructure/supabase/realtime/RealtimeRepository.supabase";
