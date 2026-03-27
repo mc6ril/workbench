@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import type { ProjectSearchSuggestion } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
 
-export type ProjectToolbarAddActionType = "ticket" | "epic";
+export type ProjectToolbarAddActionType = "ticket";
 
 export type ProjectToolbarExtraTool = {
   key: string;

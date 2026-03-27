@@ -38,7 +38,6 @@
         "home": "Accueil",
         "board": "Tableau",
         "ticketDetail": "Tâche",
-        "epics": "Objectifs",
         "settings": "Paramètres"
       },
       "locked": {
@@ -73,23 +72,9 @@
       "reviewGuideAriaLabel": "Relancer le guide d'onboarding",
       "addTicket": "Ajouter une tâche",
       "addTicketAriaLabel": "Créer une nouvelle tâche",
-      "addEpic": "Ajouter un objectif",
-      "addEpicAriaLabel": "Créer un nouvel objectif",
-      "epicFilterLabel": "Progression des objectifs",
-      "epicFilterAll": "Tous les objectifs",
-      "epicFilterNotStarted": "Non démarrées",
-      "epicFilterInProgress": "En cours",
-      "epicFilterCompleted": "Terminées",
-      "resetEpicFilters": "Réinitialiser les filtres objectifs",
       "sortDirectionLabel": "Sens du tri",
       "sortDirectionAsc": "Croissant",
-      "sortDirectionDesc": "Décroissant",
-      "epicSortFieldLabel": "Champ de tri des objectifs",
-      "epicSortUpdatedAt": "Date de mise à jour",
-      "epicSortCreatedAt": "Date de création",
-      "epicSortName": "Nom",
-      "epicSortProgress": "Progression",
-      "resetEpicSort": "Réinitialiser le tri des objectifs"
+      "sortDirectionDesc": "Décroissant"
     }
   },
   "layout": {
@@ -330,7 +315,6 @@
         "title": "Raccourcis",
         "shortcuts": {
           "board": "Tableau",
-          "epics": "Objectifs",
           "settings": "Paramètres"
         }
       }
@@ -351,16 +335,10 @@
       "recentEmpty": "Aucune activité récente pour l'instant.",
       "openBacklog": "Voir toutes les tâches",
       "openBacklogAriaLabel": "Ouvrir la liste complète des tâches",
-      "goalProgressDeltaTitle": "Objectifs qui avancent",
-      "goalProgressDeltaDescription": "Les objectifs récemment travaillés avec une vraie progression.",
-      "goalProgressDeltaEmpty": "Aucun objectif n'a progressé récemment.",
-      "goalProgressDeltaValue": "+ {progress}%",
-      "goalProgressCurrentValue": "Avancement actuel : {progress}%",
       "shortcutsWidget": {
         "title": "Raccourcis",
         "shortcuts": {
           "board": "Tableau",
-          "epics": "Objectifs",
           "settings": "Paramètres"
         }
       }
@@ -377,7 +355,7 @@
         "eyebrow": "Chargement du projet",
         "status": "Synchronisation",
         "title": "Le projet prend forme",
-        "message": "On récupère le tableau, les objectifs et les permissions pour afficher un projet prêt à l'emploi.",
+        "message": "Nous chargeons le board et les permissions pour ouvrir le projet dans un etat pret a l'emploi.",
         "ariaLabel": "Chargement du projet"
       },
       "notFound": {
@@ -435,7 +413,7 @@
       "noWorkspaces": "Aucun espace",
       "noWorkspacesMessage": "Créez votre premier espace ou rejoignez un espace avec un lien d'invitation.",
       "emptyStateTitle": "Bienvenue chez vous",
-      "emptyStateMessage": "Créez un espace pour partager les tâches du quotidien, répartir la charge mentale et suivre vos objectifs ensemble.",
+      "emptyStateMessage": "Creez un espace pour partager les taches du quotidien, repartir la charge mentale et mieux vous coordonner.",
       "addFirstProjectButton": "Créer mon premier espace",
       "addFirstProjectButtonAriaLabel": "Créer mon premier espace de travail",
       "createWorkspaceTitle": "Créer un espace",
@@ -590,18 +568,14 @@
       },
       "filters": {
         "searchLabel": "Rechercher",
-        "searchPlaceholder": "Rechercher par titre ou description",
+        "searchPlaceholder": "Rechercher par titre ou notes",
         "statusLabel": "Statut",
-        "epicLabel": "Objectif",
-        "labelLabel": "Label",
-        "noLabelOptions": "Aucun label disponible pour ce projet",
         "resetLabel": "Réinitialiser les filtres",
         "assigneeLabel": "Assigné à"
       },
       "ticketCard": {
         "ticketAriaLabel": "Tâche",
         "statusLabel": "Statut",
-        "epicLabel": "Objectif",
         "assigneeLabel": "Assigné à",
         "priorityLabel": "Priorité",
         "storyPointsLabel": "{count} point",
@@ -634,10 +608,8 @@
         "title": "Créer une tâche",
         "fields": {
           "title": "Titre",
-          "description": "Description",
           "status": "Statut",
-          "epic": "Objectif",
-          "labels": "Labels"
+          "notes": "Notes"
         },
         "submitButton": "Créer la tâche",
         "cancelButton": "Annuler",
@@ -685,89 +657,6 @@
             "actionAriaLabel": "Ouvrir un ticket pour ajouter un commentaire"
           }
         }
-      }
-    },
-    "epics": {
-      "epicsList": {
-        "ariaLabel": "Liste des objectifs",
-        "title": "Objectifs",
-        "count": "{count} objectif",
-        "count_other": "{count} objectifs",
-        "emptyTitle": "Aucun objectif",
-        "emptyMessage": "Créez votre premier objectif pour donner une direction claire à votre semaine.",
-        "errorTitle": "Erreur lors du chargement des objectifs"
-      },
-      "epicCard": {
-        "epicAriaLabel": "Objectif",
-        "progressLabel": "{progress}% complété",
-        "viewDetailLabel": "Voir les détails",
-        "editLabel": "Modifier",
-        "deleteLabel": "Supprimer"
-      },
-      "createEpicForm": {
-        "title": "Créer un objectif",
-        "fields": {
-          "name": "Nom",
-          "description": "Description"
-        },
-        "submitButton": "Créer",
-        "cancelButton": "Annuler",
-        "readOnlyHint": "Les lecteurs ne peuvent pas créer d'objectifs.",
-        "errorGeneric": "Une erreur s'est produite lors de la création de l'objectif"
-      },
-      "onboarding": {
-        "eyebrow": "Onboarding",
-        "title": "Prenez vos reperes sur les objectifs",
-        "description": "Retrouvez les trois actions cle pour structurer vos objectifs, y rattacher du travail et commencer a suivre leur progression.",
-        "reviewTitle": "Revoir le guide",
-        "reviewDescription": "Relancez a tout moment le parcours complet pour revoir la creation d'un objectif, le lien avec une tache et le suivi de progression.",
-        "reviewCta": "Revoir le guide",
-        "reviewCtaAriaLabel": "Revoir le guide d'onboarding des objectifs",
-        "hideCta": "Masquer le guide",
-        "hideCtaAriaLabel": "Masquer le guide d'onboarding des objectifs",
-        "skipCta": "Passer l'onboarding",
-        "skipCtaAriaLabel": "Ne plus ouvrir automatiquement l'onboarding des objectifs",
-        "genericError": "Impossible de mettre a jour vos preferences d'onboarding.",
-        "status": {
-          "complete": "Fait",
-          "current": "En cours",
-          "pending": "A venir"
-        },
-        "steps": {
-          "createEpic": {
-            "title": "Creer un objectif",
-            "description": "Creez votre premier objectif pour donner une direction claire au travail a venir.",
-            "action": "Creer un objectif",
-            "actionAriaLabel": "Ouvrir la creation d'un objectif"
-          },
-          "linkTicket": {
-            "title": "Lier une tache a l'objectif",
-            "description": "Ouvrez une tache puis rattachez-la a un objectif pour suivre son impact.",
-            "blockedDescription": "Créez d'abord un premier objectif. Vous pourrez ensuite ouvrir une tâche pour la lier à cet objectif.",
-            "openTicketAction": "Ouvrir une tache",
-            "openTicketActionAriaLabel": "Ouvrir une tache pour la lier a un objectif",
-            "createTicketAction": "Creer une tache",
-            "createTicketActionAriaLabel": "Ouvrir la creation d'une tache a lier a un objectif"
-          },
-          "trackProgress": {
-            "title": "Suivre la progression",
-            "description": "Faites avancer une tache liee pour voir la progression de l'objectif se mettre a jour.",
-            "blockedDescription": "Liez d'abord une première tâche à un objectif. Vous pourrez ensuite faire avancer l'objectif et suivre sa progression.",
-            "action": "Ouvrir la tache liee",
-            "actionAriaLabel": "Ouvrir une tache liee pour faire progresser l'objectif"
-          }
-        }
-      },
-      "epicDetail": {
-        "title": "Détails de l'objectif",
-        "ticketsTitle": "Tâches associées",
-        "noTickets": "Aucune tâche associée",
-        "editLabel": "Modifier",
-        "deleteLabel": "Supprimer"
-      },
-      "epicProgress": {
-        "ariaLabel": "Progression de l'objectif",
-        "progressLabel": "{progress}% complété"
       }
     },
     "settings": {
@@ -831,18 +720,18 @@
       },
       "exportImport": {
         "title": "Export / import",
-        "subtitle": "Exportez ou importez des données du projet",
+        "subtitle": "Exportez ou importez les colonnes du board et les tickets",
         "export": {
           "title": "Export",
-          "hint": "Téléchargez une exportation des données du projet",
+          "hint": "Telechargez une copie des colonnes du board et des tickets",
           "action": "Exporter",
           "exporting": "Export en cours..."
         },
         "import": {
           "title": "Import",
-          "hint": "Importez des données depuis un fichier",
+          "hint": "Importez des colonnes du board et des tickets depuis un fichier",
           "fileLabel": "Fichier",
-          "fileHint": "Sélectionnez un fichier compatible pour lancer l'import",
+          "fileHint": "Selectionnez un fichier JSON compatible contenant des colonnes et des tickets",
           "fileAriaLabel": "Sélectionner un fichier à importer",
           "importing": "Import en cours...",
           "accept": ".json,application/json"
@@ -850,75 +739,6 @@
       }
     },
     "ticketDetail": {
-      "ticketOverview": {
-        "ariaLabel": "Détails de la tâche",
-        "meta": {
-          "status": "Statut",
-          "epic": "Objectif",
-          "assignee": "Assigné à",
-          "priority": "Priorité",
-          "storyPoints": "Story points",
-          "storyPointsValue": "{count} point",
-          "storyPointsValue_other": "{count} points",
-          "notSet": "Non défini"
-        }
-      },
-      "ticketEditForm": {
-        "title": "Modifier la tâche",
-        "ariaLabel": "Formulaire de modification de la tâche",
-        "fields": {
-          "title": "Titre",
-          "status": "Statut",
-          "epic": "Objectif",
-          "description": "Description",
-          "labels": "Labels"
-        },
-        "epicNoneOption": "Aucun",
-        "saveButton": "Enregistrer",
-        "cancelButton": "Annuler",
-        "errorGeneric": "Une erreur s'est produite lors de l'enregistrement de la tâche"
-      },
-      "subtasks": {
-        "list": {
-          "title": "Sous-tâches",
-          "ariaLabel": "Section des sous-tâches de la tâche",
-          "itemsAriaLabel": "Liste des sous-tâches",
-          "loadingAriaLabel": "Chargement des sous-tâches",
-          "errorTitle": "Erreur lors du chargement des sous-tâches",
-          "emptyTitle": "Aucune sous-tâche",
-          "emptyMessage": "Ajoutez une sous-tâche pour décomposer cette tâche",
-          "emptyAriaLabel": "Aucune sous-tâche"
-        },
-        "subtaskItem": {
-          "checkboxLabel": "Marquer la sous-tâche {title} comme terminée",
-          "editLabel": "Modifier",
-          "deleteLabel": "Supprimer"
-        }
-      },
-      "createSubtaskForm": {
-        "title": "Créer une sous-tâche",
-        "ariaLabel": "Formulaire de création de sous-tâche",
-        "fields": {
-          "title": "Titre",
-          "description": "Description"
-        },
-        "submitButton": "Ajouter",
-        "cancelButton": "Annuler",
-        "errorGeneric": "Une erreur s'est produite lors de la création de la sous-tâche"
-      },
-      "epicLinkSelector": {
-        "title": "Objectif",
-        "loadingAriaLabel": "Chargement des objectifs",
-        "errorTitle": "Erreur lors du chargement des objectifs",
-        "emptyTitle": "Aucun objectif",
-        "emptyMessage": "Créez un objectif pour pouvoir lier cette tâche",
-        "emptyAriaLabel": "Aucun objectif disponible",
-        "selectLabel": "Lier à un objectif",
-        "noneOption": "Aucun",
-        "currentEpic": "Objectif actuel : {name}",
-        "noEpicSelected": "Aucun objectif lié",
-        "unlinkButton": "Délier"
-      },
       "page": {
         "title": "Détail de la tâche",
         "modalTitle": "Tâche",
@@ -940,7 +760,6 @@
         },
         "fields": {
           "title": "Titre",
-          "description": "Description",
           "notes": "Notes",
           "notesPlaceholder": "Ajoutez quelques notes utiles pour la famille...",
           "status": "Statut",
@@ -948,9 +767,7 @@
           "assignee": "Assigné à",
           "dueDate": "Échéance",
           "createdAt": "Date de création",
-          "epic": "Objectif",
           "position": "Position",
-          "labels": "Labels",
           "none": "Aucun"
         },
         "sections": {
@@ -973,9 +790,6 @@
           "saveEdit": "Enregistrer",
           "editButton": "Modifier",
           "deleteButton": "Supprimer"
-        },
-        "subtasks": {
-          "addButton": "Ajouter une sous-tâche"
         }
       }
     },
@@ -1157,16 +971,6 @@
           "icon": "🧺",
           "title": "Tâches de la maison",
           "description": "Répartissez les routines pour que la maison tourne sans surcharge."
-        },
-        "epics": {
-          "icon": "🏡",
-          "title": "Projets familiaux",
-          "description": "Travaux, déménagement, grands achats: gardez les étapes sous contrôle."
-        },
-        "subtasks": {
-          "icon": "🎒",
-          "title": "École et activités",
-          "description": "Centralisez les échéances scolaires, inscriptions et logistique des enfants."
         }
       },
       "impact": {
@@ -1230,22 +1034,6 @@
           "todo2": "Préparer les cartables",
           "inProgress1": "Rangement de la cuisine",
           "done1": "Sortir les poubelles"
-        },
-        "epics": {
-          "title": "Projet familial",
-          "description": "Gardez une vue claire des étapes importantes et des décisions.",
-          "todo1": "Valider le devis du futur placard",
-          "todo2": "Planifier le week-end de tri",
-          "inProgress1": "Comparer deux solutions de garde",
-          "done1": "Commander le mobilier principal"
-        },
-        "subtasks": {
-          "title": "École et activités",
-          "description": "Ne rien oublier dans le rythme enfants-école-activités.",
-          "todo1": "Signer la sortie scolaire",
-          "todo2": "Préparer le sac de sport",
-          "inProgress1": "Inscription au centre de loisirs",
-          "done1": "Payer la cantine"
         }
       },
       "cta": {
@@ -1366,8 +1154,6 @@
         "membersPerWorkspace": "Membres du foyer",
         "tickets": "Tâches",
         "boardView": "Vue tableau",
-        "epics": "Objectifs partagés",
-        "subtasks": "Sous-tâches",
         "customColumns": "Personnalisation des colonnes",
         "exportImport": "Export / Import",
         "advancedRoles": "Rôles avancés (observateur)",
@@ -1436,8 +1222,6 @@
       "ctaLabel": "Voir les tarifs",
       "ctaAriaLabel": "Voir les tarifs et passer à un plan supérieur",
       "featureNames": {
-        "epics": "Objectifs",
-        "subtasks": "Sous-tâches",
         "exportImport": "Export / Import",
         "advancedRoles": "Rôles avancés",
         "workspaces": "Projets par compte",
@@ -1532,17 +1316,12 @@
       "DATABASE_ERROR": "Une erreur de base de données s'est produite"
     },
     "domain": {
-      "INVALID_TICKET_PARENT": "La tâche ne peut pas être son propre parent",
-      "INVALID_TICKET_PARENT_MULTI_LEVEL": "L'imbrication multi-niveaux n'est pas autorisée",
       "TICKET_PROJECT_MISMATCH": "La tâche n'appartient pas au même projet",
-      "TICKET_HAS_SUBTASKS": "La tâche ne peut pas être supprimée car elle contient des sous-tâches",
       "LAST_ADMIN_REQUIRED": "Le projet doit conserver au moins un administrateur",
       "INVITATION_ALREADY_USED": "Ce lien d'invitation n'est plus disponible",
       "INVITATION_EXPIRED": "Ce lien d'invitation a expiré",
       "INVITATION_ALREADY_MEMBER": "Vous faites déjà partie de ce projet",
       "INVITATION_LIMIT_REACHED": "Votre formule actuelle ne permet pas plus de membres actifs ou de liens d'invitation dans cet espace",
-      "DUPLICATE_EPIC_ASSIGNMENT": "La tâche est déjà assignée à un autre objectif",
-      "INVALID_EPIC_TICKET_CONSISTENCY": "Incohérence dans l'assignation de la tâche à l'objectif",
       "INVALID_COLUMN_ORDER": "Ordre de colonnes invalide",
       "DUPLICATE_COLUMN_STATUS": "Statut de colonne en double",
       "INVALID_BOARD_COLUMN_RELATIONSHIP": "La colonne n'appartient pas au tableau spécifié",

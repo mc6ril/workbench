@@ -39,7 +39,6 @@ describe("isProtectedRoute", () => {
     const uuid = "123e4567-e89b-12d3-a456-426614174000";
     expect(isProtectedRoute(`/${uuid}`)).toBe(true);
     expect(isProtectedRoute(`/${uuid}/board`)).toBe(true);
-    expect(isProtectedRoute(`/${uuid}/epics`)).toBe(true);
     expect(isProtectedRoute(`/${uuid}/settings`)).toBe(true);
   });
 
@@ -59,7 +58,6 @@ describe("isProjectRoute", () => {
 
   it("should return true for valid project routes", () => {
     expect(isProjectRoute(`/${uuid}/board`)).toBe(true);
-    expect(isProjectRoute(`/${uuid}/epics`)).toBe(true);
     expect(isProjectRoute(`/${uuid}/settings`)).toBe(true);
   });
 
@@ -102,7 +100,6 @@ describe("extractProjectView", () => {
   it("should extract view name from project route", () => {
     expect(extractProjectView(`/${uuid}/board`)).toBe("board");
     expect(extractProjectView(`/${uuid}/settings`)).toBe("settings");
-    expect(extractProjectView(`/${uuid}/epics`)).toBe("epics");
   });
 
   it("should return null when no view present", () => {

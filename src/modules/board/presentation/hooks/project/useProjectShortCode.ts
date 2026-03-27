@@ -6,7 +6,7 @@ import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 
 /**
  * Fetches the short code for a project.
- * Used to build human-readable ticket/epic codes in the board UI.
+ * Used to build human-readable ticket codes in the board UI.
  */
 export const useProjectShortCode = (projectId: string) => {
   return useQuery({

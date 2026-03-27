@@ -4,12 +4,6 @@
 @use "@/styles/variables/spacing" as *;
 @use "@/styles/variables/shadows" as *;
 
-.epics-layout {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-lg;
-}
-
 .board-layout {
   display: flex;
   flex-direction: column;

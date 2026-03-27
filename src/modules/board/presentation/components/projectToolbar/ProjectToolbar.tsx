@@ -37,12 +37,8 @@ const ProjectToolbar = ({
   const tSearch = useTranslation("navigation.searchBar");
   const showAddAction = addActionType !== null;
 
-  const addLabel =
-    addActionType === "epic" ? tNavbar("addEpic") : tNavbar("addTicket");
-  const addAriaLabel =
-    addActionType === "epic"
-      ? tNavbar("addEpicAriaLabel")
-      : tNavbar("addTicketAriaLabel");
+  const addLabel = tNavbar("addTicket");
+  const addAriaLabel = tNavbar("addTicketAriaLabel");
 
   const navbarId = getAccessibilityId("project-toolbar");
   const searchId = getAccessibilityId("project-toolbar-search");

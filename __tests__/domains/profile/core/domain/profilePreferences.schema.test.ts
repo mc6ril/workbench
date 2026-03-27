@@ -30,6 +30,5 @@ describe("profile getting started preferences", () => {
 
   it("defaults getting-started status to pending", () => {
     expect(DEFAULT_USER_PREFERENCES.gettingStartedStatus).toBe("pending");
-    expect(DEFAULT_USER_PREFERENCES.epicsGettingStartedStatus).toBe("pending");
   });
 });

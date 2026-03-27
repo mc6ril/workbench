@@ -25,34 +25,34 @@ describe("checkFeatureAccess", () => {
   });
 
   describe("active subscriptions", () => {
-    it("should grant epics access for FREE plan", () => {
+    it("should grant workspace access for FREE plan", () => {
       const subscription = createMockSubscription({
         plan: SubscriptionPlan.FREE,
       });
 
-      const result = checkFeatureAccess(subscription, PlanFeature.EPICS);
+      const result = checkFeatureAccess(subscription, PlanFeature.WORKSPACES);
 
       expect(result.hasAccess).toBe(true);
       expect(result.currentPlan).toBe(SubscriptionPlan.FREE);
     });
 
-    it("should grant epics access for PRO plan", () => {
+    it("should grant workspace access for PRO plan", () => {
       const subscription = createMockSubscription({
         plan: SubscriptionPlan.PRO,
       });
 
-      const result = checkFeatureAccess(subscription, PlanFeature.EPICS);
+      const result = checkFeatureAccess(subscription, PlanFeature.WORKSPACES);
 
       expect(result.hasAccess).toBe(true);
       expect(result.currentPlan).toBe(SubscriptionPlan.PRO);
     });
 
-    it("should grant epics access for TEAM plan", () => {
+    it("should grant workspace access for TEAM plan", () => {
       const subscription = createMockSubscription({
         plan: SubscriptionPlan.TEAM,
       });
 
-      const result = checkFeatureAccess(subscription, PlanFeature.EPICS);
+      const result = checkFeatureAccess(subscription, PlanFeature.WORKSPACES);
 
       expect(result.hasAccess).toBe(true);
       expect(result.currentPlan).toBe(SubscriptionPlan.TEAM);
@@ -111,13 +111,13 @@ describe("checkFeatureAccess", () => {
       expect(result.currentPlan).toBe(SubscriptionPlan.TEAM);
     });
 
-    it("should grant epics access to superusers on FREE plan", () => {
+    it("should grant export access to superusers on FREE plan", () => {
       const subscription = createMockSubscription({
         plan: SubscriptionPlan.FREE,
         isSuperuser: true,
       });
 
-      const result = checkFeatureAccess(subscription, PlanFeature.EPICS);
+      const result = checkFeatureAccess(subscription, PlanFeature.EXPORT_IMPORT);
 
       expect(result.hasAccess).toBe(true);
     });
@@ -157,7 +157,7 @@ describe("checkFeatureAccess", () => {
         status: SubscriptionStatus.TRIALING,
       });
 
-      const result = checkFeatureAccess(subscription, PlanFeature.EPICS);
+      const result = checkFeatureAccess(subscription, PlanFeature.EXPORT_IMPORT);
 
       expect(result.hasAccess).toBe(true);
       expect(result.currentPlan).toBe(SubscriptionPlan.PRO);
