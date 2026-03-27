@@ -4,7 +4,7 @@
 -- Priority levels matching standard project management tools
 ALTER TABLE tickets
   ADD COLUMN IF NOT EXISTS priority text DEFAULT NULL
-    CHECK (priority IN ('urgent', 'normal', 'low'));
+    CHECK (priority IN ('highest', 'high', 'medium', 'low', 'lowest'));
 
 ALTER TABLE tickets
   ADD COLUMN IF NOT EXISTS due_date timestamptz DEFAULT NULL;
