@@ -4,8 +4,6 @@ export type BuildTicketAriaLabelParams = {
   ticketCode?: string | null;
   status?: string;
   statusLabel?: string;
-  epicName?: string | null;
-  epicLabel?: string;
   assigneeName?: string | null;
   assigneeLabel?: string;
   priority?: string | null;

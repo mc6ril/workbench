@@ -6,7 +6,6 @@ export type TicketRow = {
   status: string;
   position: number;
   code_number: number;
-  epic_id: string | null;
   parent_id: string | null;
   priority: string | null;
   due_date: string | null;

@@ -51,7 +51,6 @@ describe("createSubtask completedAt workflow logic", () => {
     status: "todo",
     position: 0,
     codeNumber: 1,
-    epicId: null,
     parentId: null,
     priority: null,
     dueDate: null,

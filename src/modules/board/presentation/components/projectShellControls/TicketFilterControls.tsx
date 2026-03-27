@@ -11,12 +11,9 @@ import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.s
 const TicketFilterControls = ({
   filters,
   statusOptions,
-  epicOptions,
   labelOptions,
   onSetStatus,
   onClearStatus,
-  onSetEpicId,
-  onClearEpicId,
   onSetPriority,
   onClearPriority,
   onSetLabelIds,
@@ -40,19 +37,6 @@ const TicketFilterControls = ({
           onClearStatus();
         }}
         options={[{ value: "", label: "" }, ...statusOptions]}
-      />
-      <Select
-        label={t("epicLabel")}
-        value={filters.epicId ?? ""}
-        onChange={(event) => {
-          const nextEpicId = event.target.value;
-          if (nextEpicId) {
-            onSetEpicId(nextEpicId);
-            return;
-          }
-          onClearEpicId();
-        }}
-        options={[{ value: "", label: "" }, ...epicOptions]}
       />
       <Select
         label={t("priorityLabel")}

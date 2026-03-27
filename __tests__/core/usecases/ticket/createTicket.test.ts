@@ -71,7 +71,6 @@ describe("createTicket completedAt workflow logic", () => {
         status: value.status,
         position: value.position ?? 0,
         codeNumber: value.codeNumber ?? 7,
-        epicId: value.epicId ?? null,
         parentId: value.parentId ?? null,
         priority: value.priority ?? null,
         dueDate: value.dueDate ?? null,

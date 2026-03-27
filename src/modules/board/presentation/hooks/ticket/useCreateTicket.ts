@@ -22,12 +22,6 @@ export const useCreateTicket = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.ticketsRoot(ticket.projectId),
       });
-
-      if (ticket.epicId) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.projects.epicsRoot(ticket.projectId),
-        });
-      }
     },
   });
 };

@@ -24,9 +24,7 @@ export type OnboardingStep = {
   actionDisabled?: boolean;
 };
 
-export type OnboardingTranslationNamespace =
-  | "pages.board.onboarding"
-  | "pages.epics.onboarding";
+export type OnboardingTranslationNamespace = "pages.board.onboarding";
 
 export type OnboardingPanelProps = {
   isExpanded: boolean;

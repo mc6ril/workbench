@@ -5,7 +5,7 @@
 export type ProjectLookupRepository = {
   /**
    * Resolve a project ID from its short code.
-   * Used to look up tickets/epics by human-readable code (e.g. "WB-42").
+   * Used to look up tickets by human-readable code (e.g. "WB-42").
    */
   findIdByShortCode(shortCode: string): Promise<string | null>;
 

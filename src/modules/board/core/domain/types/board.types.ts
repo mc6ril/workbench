@@ -13,7 +13,6 @@ export type BoardTicketViewModel = {
   title: string;
   ticketCode?: string | null;
   status?: string;
-  epicName?: string | null;
   assigneeName?: string | null;
   assigneeAvatarUrl?: string | null;
   priority?: string | null;

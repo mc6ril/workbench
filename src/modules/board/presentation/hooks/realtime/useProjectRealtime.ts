@@ -4,11 +4,6 @@ import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import type { CommentWithAuthor } from "@/modules/board/core/domain/schema/comment.schema";
-import type {
-  Epic,
-  EpicDetail,
-  EpicWithProgress,
-} from "@/modules/board/core/domain/schema/epic.schema";
 import type { Label } from "@/modules/board/core/domain/schema/label.schema";
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { RealtimeRepository } from "@/modules/board/core/ports/realtimeRepository";
@@ -122,14 +117,6 @@ const mapTicketFromPayload = (
   return mapRowSafely(payload, source, realtimeRepository.mapTicketRowToDomain);
 };
 
-const mapEpicFromPayload = (
-  realtimeRepository: RealtimeRepository,
-  payload: unknown,
-  source: "new" | "old"
-): Epic | null => {
-  return mapRowSafely(payload, source, realtimeRepository.mapEpicRowToDomain);
-};
-
 const mapLabelFromPayload = (
   realtimeRepository: RealtimeRepository,
   payload: unknown,
@@ -201,13 +188,9 @@ const matchesTicketListFilter = (
     return true;
   }
 
-  const { status, epicId, parentId, priority, labelIds } = filters;
+  const { status, parentId, priority, labelIds } = filters;
 
   if (typeof status === "string" && ticket.status !== status) {
-    return false;
-  }
-
-  if (typeof epicId === "string" && ticket.epicId !== epicId) {
     return false;
   }
 
@@ -226,25 +209,6 @@ const matchesTicketListFilter = (
   // invalidation for label-filtered queries.
   void labelIds;
   return true;
-};
-
-const shouldInvalidateEpicsForTicketChange = (
-  eventType: RealtimeEventType | null,
-  nextTicket: Ticket | null,
-  previousTicket: Ticket | null
-): boolean => {
-  if (eventType === "INSERT" || eventType === "DELETE") {
-    return true;
-  }
-
-  if (eventType !== "UPDATE" || !nextTicket || !previousTicket) {
-    return false;
-  }
-
-  return (
-    nextTicket.status !== previousTicket.status ||
-    nextTicket.epicId !== previousTicket.epicId
-  );
 };
 
 const updateEntityInArray = <T extends { id: string }>(
@@ -282,8 +246,8 @@ const removeEntityFromArray = <T extends { id: string }>(
 };
 
 /**
- * Subscribe to project realtime changes and keep project views fresh.
- * Mounted once at project shell level so board/epics stay synchronized.
+ * Subscribe to project realtime changes and keep board-related project views fresh.
+ * Mounted once at project shell level so the board stays synchronized.
  */
 export const useProjectRealtime = (
   projectId: string,
@@ -298,32 +262,12 @@ export const useProjectRealtime = (
     }
 
     const realtimeRepository = getRealtimeRepository();
-    let pendingEpicsInvalidationTimeout: ReturnType<typeof setTimeout> | null =
-      null;
 
     const invalidateProjectTickets = () => {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.projects.ticketsRoot(projectId),
         refetchType: "active",
       });
-    };
-
-    const invalidateEpicsRoot = () => {
-      void queryClient.invalidateQueries({
-        queryKey: queryKeys.projects.epicsRoot(projectId),
-        refetchType: "active",
-      });
-    };
-
-    const scheduleEpicsRootInvalidation = () => {
-      if (pendingEpicsInvalidationTimeout) {
-        return;
-      }
-
-      pendingEpicsInvalidationTimeout = setTimeout(() => {
-        pendingEpicsInvalidationTimeout = null;
-        invalidateEpicsRoot();
-      }, 120);
     };
 
     const invalidateTicketListsWithLabelFilters = () => {
@@ -385,56 +329,6 @@ export const useProjectRealtime = (
 
         queryClient.setQueryData(queryKey, next);
       }
-    };
-
-    const patchEpicInCaches = (epic: Epic) => {
-      queryClient.setQueryData<EpicWithProgress[]>(
-        queryKeys.projects.epicsList(projectId),
-        (previous) => {
-          if (!Array.isArray(previous)) {
-            return previous;
-          }
-
-          const next = previous.map((currentEpic) => {
-            if (currentEpic.id !== epic.id) {
-              return currentEpic;
-            }
-
-            return {
-              ...currentEpic,
-              ...epic,
-            };
-          });
-
-          return next;
-        }
-      );
-
-      queryClient.setQueryData<EpicDetail>(
-        queryKeys.epics.detail(epic.id),
-        (previous) => {
-          if (!previous) {
-            return previous;
-          }
-
-          return {
-            ...previous,
-            ...epic,
-          };
-        }
-      );
-    };
-
-    const removeEpicFromCaches = (epicId: string) => {
-      queryClient.setQueryData<EpicWithProgress[]>(
-        queryKeys.projects.epicsList(projectId),
-        (previous) => removeEntityFromArray(previous, epicId)
-      );
-
-      queryClient.removeQueries({
-        queryKey: queryKeys.epics.detail(epicId),
-        exact: true,
-      });
     };
 
     const patchLabelInCache = (label: Label) => {
@@ -527,11 +421,6 @@ export const useProjectRealtime = (
           payload,
           "new"
         );
-        const previousTicket = mapTicketFromPayload(
-          realtimeRepository,
-          payload,
-          "old"
-        );
 
         if (eventType === "UPDATE" && ticketId && nextTicket) {
           queryClient.setQueryData(
@@ -539,17 +428,6 @@ export const useProjectRealtime = (
             nextTicket
           );
           patchTicketAcrossProjectLists(nextTicket);
-
-          if (
-            shouldInvalidateEpicsForTicketChange(
-              eventType,
-              nextTicket,
-              previousTicket
-            )
-          ) {
-            scheduleEpicsRootInvalidation();
-          }
-
           return;
         }
 
@@ -560,7 +438,6 @@ export const useProjectRealtime = (
             exact: true,
           });
           invalidateProjectTickets();
-          scheduleEpicsRootInvalidation();
           return;
         }
 
@@ -571,16 +448,6 @@ export const useProjectRealtime = (
             queryKey: queryKeys.tickets.detail(ticketId),
             refetchType: "active",
           });
-        }
-
-        if (
-          shouldInvalidateEpicsForTicketChange(
-            eventType,
-            nextTicket,
-            previousTicket
-          )
-        ) {
-          scheduleEpicsRootInvalidation();
         }
       }
     );
@@ -610,42 +477,7 @@ export const useProjectRealtime = (
     // Supabase Realtime filters are table-column based only, so we cannot scope these
     // subscriptions directly by project at SQL filter level.
     // We therefore subscribe globally and keep invalidations as targeted as possible.
-    const channelWithEpics = channelWithColumns.on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "epics",
-        filter: `project_id=eq.${projectId}`,
-      },
-      (payload) => {
-        const eventType = extractEventType(payload);
-        const epicId = extractEntityId(payload);
-        const nextEpic = mapEpicFromPayload(realtimeRepository, payload, "new");
-
-        if (eventType === "UPDATE" && epicId && nextEpic) {
-          patchEpicInCaches(nextEpic);
-          return;
-        }
-
-        if (eventType === "DELETE" && epicId) {
-          removeEpicFromCaches(epicId);
-          invalidateEpicsRoot();
-          return;
-        }
-
-        invalidateEpicsRoot();
-
-        if (epicId) {
-          void queryClient.invalidateQueries({
-            queryKey: queryKeys.epics.detail(epicId),
-            refetchType: "active",
-          });
-        }
-      }
-    );
-
-    const channelWithLabels = channelWithEpics.on(
+    const channelWithLabels = channelWithColumns.on(
       "postgres_changes",
       {
         event: "*",
@@ -812,9 +644,6 @@ export const useProjectRealtime = (
     const channelSubscription = channelWithTicketLabels.subscribe();
 
     return () => {
-      if (pendingEpicsInvalidationTimeout) {
-        clearTimeout(pendingEpicsInvalidationTimeout);
-      }
       void realtimeRepository.removeChannel(channelSubscription);
     };
   }, [boardId, options?.enabled, projectId, queryClient]);

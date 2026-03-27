@@ -52,8 +52,6 @@ export const buildTicketAriaLabel = ({
   ticketCode,
   status,
   statusLabel,
-  epicName,
-  epicLabel,
   assigneeName,
   assigneeLabel,
   priority,
@@ -68,10 +66,6 @@ export const buildTicketAriaLabel = ({
 
   if (status && statusLabel) {
     parts.push(`${statusLabel}: ${status}`);
-  }
-
-  if (epicName && epicLabel) {
-    parts.push(`${epicLabel}: ${epicName}`);
   }
 
   if (assigneeName && assigneeLabel) {

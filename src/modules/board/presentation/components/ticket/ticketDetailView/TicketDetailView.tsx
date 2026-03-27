@@ -14,7 +14,7 @@ import TicketDetailMainCard from "./components/TicketDetailMainCard";
 import TicketDetailSidebarCard from "./components/TicketDetailSidebarCard";
 import TicketDetailSubtasksSection from "./components/TicketDetailSubtasksSection";
 import styles from "./TicketDetailView.module.scss";
-import { buildEpicOptions, buildPriorityOptions } from "./TicketDetailView.utils";
+import { buildPriorityOptions } from "./TicketDetailView.utils";
 
 import { useTicketDetailController } from "@/modules/board/presentation/hooks/ticket";
 
@@ -34,10 +34,8 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     canComment,
     canDeleteTicket,
     canEditTicket,
-    hasEpicsAccess,
     comments,
     subtasks,
-    epics,
     labels,
     projectMembers,
     assignees,
@@ -48,7 +46,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     effectiveDescription,
     effectiveStatus,
     effectivePriority,
-    effectiveEpicId,
     commentInput,
     editingCommentId,
     editingCommentContent,
@@ -66,7 +63,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     setDescriptionDraft,
     setStatusDraft,
     setPriorityDraft,
-    setEpicIdDraft,
     setCommentInput,
     setEditingCommentContent,
     setIsSubtaskFormOpen,
@@ -92,10 +88,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
   const priorityOptions = useMemo(() => {
     return buildPriorityOptions(t);
   }, [t]);
-
-  const epicOptions = useMemo(() => {
-    return buildEpicOptions(epics, t);
-  }, [epics, t]);
 
   const canSaveMainFields =
     canEditTicket && effectiveTitle.trim().length > 0 && !isSavingMainFields;
@@ -154,13 +146,10 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
         <TicketDetailSidebarCard
           canEditTicket={canEditTicket}
           canDeleteTicket={canDeleteTicket}
-          hasEpicsAccess={hasEpicsAccess}
           effectiveStatus={effectiveStatus}
           effectivePriority={effectivePriority}
-          effectiveEpicId={effectiveEpicId}
           statusOptions={statusOptions}
           priorityOptions={priorityOptions}
-          epicOptions={epicOptions}
           labels={labels}
           assignedLabelIdSet={assignedLabelIdSet}
           projectMembers={projectMembers}
@@ -171,7 +160,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
           canSaveMainFields={canSaveMainFields}
           onStatusChange={setStatusDraft}
           onPriorityChange={setPriorityDraft}
-          onEpicChange={setEpicIdDraft}
           onToggleLabel={(labelId) => {
             void handleToggleLabel(labelId);
           }}

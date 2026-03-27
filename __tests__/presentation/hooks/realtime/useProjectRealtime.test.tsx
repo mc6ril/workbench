@@ -111,7 +111,6 @@ const buildTicketRow = (
     status: "todo",
     position: 1,
     code_number: 42,
-    epic_id: null,
     parent_id: null,
     priority: null,
     due_date: null,
@@ -151,7 +150,6 @@ describe("useProjectRealtime", () => {
       status: "todo",
       position: 1,
       codeNumber: 42,
-      epicId: null,
       parentId: null,
       priority: null,
       dueDate: null,
@@ -173,7 +171,6 @@ describe("useProjectRealtime", () => {
         status: "todo",
         position: 1,
         codeNumber: 42,
-        epicId: null,
         parentId: null,
         priority: null,
         dueDate: null,
@@ -234,7 +231,6 @@ describe("useProjectRealtime", () => {
       status: "done",
       position: 0,
       codeNumber: 42,
-      epicId: null,
       parentId: null,
       priority: null,
       dueDate: null,
@@ -256,7 +252,6 @@ describe("useProjectRealtime", () => {
         status: "done",
         position: 0,
         codeNumber: 42,
-        epicId: null,
         parentId: null,
         priority: null,
         dueDate: null,
@@ -442,7 +437,7 @@ describe("useProjectRealtime", () => {
 
     renderHook(() => useProjectRealtime(PROJECT_ID), { wrapper });
 
-    expect(registrations).toHaveLength(7);
+    expect(registrations).toHaveLength(6);
 
     const registrationByTable = getRegistrationByTable(registrations);
     expect(registrationByTable.get("columns")).toBeUndefined();

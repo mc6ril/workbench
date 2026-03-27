@@ -1,4 +1,4 @@
-import { type ChangeEvent, useMemo } from "react";
+import { type ChangeEvent } from "react";
 
 import Input from "@/shared/design-system/input";
 import Select from "@/shared/design-system/select";
@@ -6,30 +6,22 @@ import Textarea from "@/shared/design-system/textarea";
 
 import styles from "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm.module.scss";
 import type { Option } from "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm.types";
-import {
-  buildEpicOptions,
-  extractSelectedOptionValues,
-} from "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm.utils";
+import { extractSelectedOptionValues } from "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm.utils";
 
 type CreateTicketFormFieldsProps = {
   title: string;
   description: string;
   status: string;
-  epicId: string;
   labelIds: string[];
   statusOptions: Option[];
-  epicOptions: Option[];
   labelOptions: Option[];
-  showEpicField: boolean;
   isSubmitting?: boolean;
   titleLabel: string;
   statusLabel: string;
-  epicLabel: string;
   labelsLabel: string;
   descriptionLabel: string;
   onTitleChange: (value: string) => void;
   onStatusChange: (value: string) => void;
-  onEpicChange: (value: string) => void;
   onLabelIdsChange: (next: string[]) => void;
   onDescriptionChange: (value: string) => void;
 };
@@ -38,26 +30,19 @@ const CreateTicketFormFields = ({
   title,
   description,
   status,
-  epicId,
   labelIds,
   statusOptions,
-  epicOptions,
   labelOptions,
-  showEpicField,
   isSubmitting = false,
   titleLabel,
   statusLabel,
-  epicLabel,
   labelsLabel,
   descriptionLabel,
   onTitleChange,
   onStatusChange,
-  onEpicChange,
   onLabelIdsChange,
   onDescriptionChange,
 }: CreateTicketFormFieldsProps) => {
-  const epicSelectOptions = useMemo(() => buildEpicOptions(epicOptions), [epicOptions]);
-
   const handleLabelsChange = (event: ChangeEvent<HTMLSelectElement>): void => {
     onLabelIdsChange(extractSelectedOptionValues(event.target.selectedOptions));
   };
@@ -74,7 +59,7 @@ const CreateTicketFormFields = ({
       </div>
       <div
         className={`${styles["create-ticket-form__field"]} ${styles["create-ticket-form__field--half"]}`}
-      >
+        >
         <Select
           label={statusLabel}
           value={status}
@@ -82,18 +67,6 @@ const CreateTicketFormFields = ({
           options={statusOptions}
         />
       </div>
-      {showEpicField && (
-        <div
-          className={`${styles["create-ticket-form__field"]} ${styles["create-ticket-form__field--half"]}`}
-        >
-          <Select
-            label={epicLabel}
-            value={epicId}
-            onChange={(event) => onEpicChange(event.target.value)}
-            options={epicSelectOptions}
-          />
-        </div>
-      )}
       <div
         className={`${styles["create-ticket-form__field"]} ${styles["create-ticket-form__field--half"]}`}
       >

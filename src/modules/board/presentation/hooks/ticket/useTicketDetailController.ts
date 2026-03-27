@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
-import { PlanFeature, useFeatureAccess } from "@/shared/featureAccess";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
@@ -16,7 +15,6 @@ import {
   useDeleteComment,
   useUpdateComment,
 } from "@/modules/board/presentation/hooks/comment";
-import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
 import {
   useAddTicketLabels,
   useLabels,
@@ -66,14 +64,12 @@ export const useTicketDetailController = ({
     error,
   } = useTicket(ticketId);
   const { data: boardConfiguration } = useBoardConfiguration(projectId);
-  const { data: epics = [] } = useEpics(projectId);
   const { data: labels = [] } = useLabels(projectId);
   const { data: ticketLabelIds = [] } = useTicketLabelIds(ticketId);
   const { data: projectMembers = [] } = useProjectMembers(projectId);
   const { data: assignees = [] } = useTicketAssignees(ticketId);
   const { data: comments = [] } = useComments(ticketId);
   const { data: subtasks = [] } = useTickets(projectId, { parentId: ticketId });
-  const { hasAccess: hasEpicsAccess } = useFeatureAccess(PlanFeature.EPICS);
 
   const updateMainTicketMutation = useUpdateTicket();
   const updateSubtaskMutation = useUpdateTicket();
@@ -91,7 +87,6 @@ export const useTicketDetailController = ({
   const [descriptionDraft, setDescriptionDraft] = useState<string | null>(null);
   const [statusDraft, setStatusDraft] = useState<string | null>(null);
   const [priorityDraft, setPriorityDraft] = useState<string | null>(null);
-  const [epicIdDraft, setEpicIdDraft] = useState<string | null>(null);
   const [commentInput, setCommentInput] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentContent, setEditingCommentContent] = useState("");
@@ -123,7 +118,6 @@ export const useTicketDetailController = ({
   const effectiveDescription = descriptionDraft ?? ticket?.description ?? "";
   const effectiveStatus = statusDraft ?? ticket?.status ?? "";
   const effectivePriority = priorityDraft ?? ticket?.priority ?? "";
-  const effectiveEpicId = epicIdDraft ?? ticket?.epicId ?? "";
 
   const handleSaveMainFields = useCallback(async (): Promise<void> => {
     if (!ticket || !canEditTicket) {
@@ -137,7 +131,6 @@ export const useTicketDetailController = ({
         description: effectiveDescription || null,
         status: effectiveStatus || undefined,
         priority: (effectivePriority as TicketPriority) || null,
-        epicId: effectiveEpicId || null,
         position: ticket.position,
       },
     });
@@ -146,11 +139,9 @@ export const useTicketDetailController = ({
     setDescriptionDraft(null);
     setStatusDraft(null);
     setPriorityDraft(null);
-    setEpicIdDraft(null);
   }, [
     canEditTicket,
     effectiveDescription,
-    effectiveEpicId,
     effectivePriority,
     effectiveStatus,
     effectiveTitle,
@@ -379,10 +370,8 @@ export const useTicketDetailController = ({
     canComment,
     canDeleteTicket,
     canEditTicket,
-    hasEpicsAccess,
     comments,
     subtasks,
-    epics,
     labels,
     projectMembers,
     assignees,
@@ -393,7 +382,6 @@ export const useTicketDetailController = ({
     effectiveDescription,
     effectiveStatus,
     effectivePriority,
-    effectiveEpicId,
     commentInput,
     editingCommentId,
     editingCommentContent,
@@ -412,7 +400,6 @@ export const useTicketDetailController = ({
     setDescriptionDraft,
     setStatusDraft,
     setPriorityDraft,
-    setEpicIdDraft,
     setCommentInput,
     setEditingCommentContent,
     setIsSubtaskFormOpen,
