@@ -14,7 +14,10 @@ export const useDeleteProject = () => {
   return useMutation({
     mutationFn: (projectId: string) =>
       deleteProject(projectRepository, projectId),
-    onSuccess: () => {
+    onSuccess: (_data, projectId) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.detail(projectId),
+      });
       queryClient.invalidateQueries({ queryKey: queryKeys.projects.all() });
       queryClient.invalidateQueries({
         queryKey: workspaceQueryKeys.projects.withStats(),

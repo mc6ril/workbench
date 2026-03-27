@@ -80,7 +80,6 @@ const Modal = ({
     <div
       className={styles["modal-backdrop"]}
       onClick={handleBackdropClick}
-      aria-hidden="true"
     >
       <ModalDialog
         modalRef={modalRef}

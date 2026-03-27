@@ -30,12 +30,6 @@ export const FEATURE_ROWS: FeatureRow[] = [
     pro: "included",
     team: "included",
   },
-  {
-    key: "exportImport",
-    free: "notIncluded",
-    pro: "included",
-    team: "included",
-  },
 ];
 
 export const FAQ_KEYS = ["cancel", "upgrade", "data", "payment"] as const;

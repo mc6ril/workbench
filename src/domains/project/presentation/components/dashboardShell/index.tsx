@@ -11,8 +11,6 @@ type Props = {
   sidebar?: React.ReactNode;
   sidebarAriaLabel?: string;
   header?: React.ReactNode;
-  breadcrumbs?: React.ReactNode;
-  breadcrumbsAriaLabel?: string;
   footer?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
@@ -22,8 +20,6 @@ const DashboardShell = ({
   sidebar,
   sidebarAriaLabel,
   header,
-  breadcrumbs,
-  breadcrumbsAriaLabel,
   footer,
   children,
   className,
@@ -37,7 +33,6 @@ const DashboardShell = ({
 
   const isSidebarEmpty = !sidebar;
   const isHeaderEmpty = !header;
-  const isBreadcrumbsEmpty = !breadcrumbs;
   const isFooterEmpty = !footer;
 
   return (
@@ -61,18 +56,6 @@ const DashboardShell = ({
         >
           {header}
         </div>
-
-        <nav
-          className={styles["dashboard-shell__breadcrumbs"]}
-          aria-hidden={
-            isBreadcrumbsEmpty
-              ? ARIA_HIDDEN_VALUES.TRUE
-              : ARIA_HIDDEN_VALUES.FALSE
-          }
-          aria-label={breadcrumbsAriaLabel}
-        >
-          {breadcrumbs}
-        </nav>
 
         <main id={mainId} className={styles["dashboard-shell__main"]}>
           {children}

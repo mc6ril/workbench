@@ -15,17 +15,17 @@ import Modal from "@/shared/design-system/modal";
 import { useTranslation } from "@/shared/i18n";
 import { buildProjectRoute, normalizePath } from "@/shared/utils/routes";
 
-import {
-  EMPTY_PROJECT_VIEW_CONTRIBUTION,
-  type ProjectViewContribution,
-} from "@/domains/project/core/domain/shell/projectViewContribution";
+import type { ProjectViewContribution } from "@/domains/project/core/domain/shell/projectViewContribution";
 import { useRegisterProjectViewContribution } from "@/domains/project/presentation/layouts/projectShell/ProjectShellContributionContext";
+import {
+  getProjectViewConfig,
+  getProjectViewKeyFromPath,
+} from "@/domains/project/presentation/navigation/projectViews.config";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
 import {
   SORT_DIRECTION_VALUES,
   TICKET_SORT_FIELD_VALUES,
 } from "@/modules/board/constants/filterSort";
-import Breadcrumbs from "@/modules/board/presentation/components/breadcrumbs/Breadcrumbs";
 import TicketFilterControls from "@/modules/board/presentation/components/projectShellControls/TicketFilterControls";
 import TicketSortControls from "@/modules/board/presentation/components/projectShellControls/TicketSortControls";
 import ProjectToolbar from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar";
@@ -43,23 +43,12 @@ type Props = {
   projectId: string;
 };
 
-const isBoardShellViewPath = (pathname: string, projectId: string): boolean => {
-  const normalizedPathname = normalizePath(pathname);
-  const projectRootPath = `/${projectId}`;
-
-  return (
-    normalizedPathname === projectRootPath ||
-    normalizedPathname.startsWith(`${projectRootPath}/${PROJECT_VIEWS.BOARD}`)
-  );
-};
-
 const BoardShellAdapter = ({ projectId }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const searchParamsString = searchParams.toString();
   const tSidebar = useTranslation("navigation.sidebar");
-  const tBreadcrumbs = useTranslation("navigation.breadcrumbs");
   const tNavbar = useTranslation("navigation.navbar");
   const tBoardOnboarding = useTranslation("pages.board.onboarding");
   const { canCreateTicket, isLoading: isPermissionsLoading } =
@@ -68,9 +57,13 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
 
-  const isBoardShellView = useMemo(() => {
-    return isBoardShellViewPath(pathname, projectId);
+  const currentViewKey = useMemo(() => {
+    return getProjectViewKeyFromPath(normalizePath(pathname), projectId);
   }, [pathname, projectId]);
+  const currentViewConfig = useMemo(() => {
+    return getProjectViewConfig(currentViewKey);
+  }, [currentViewKey]);
+  const isBoardShellView = currentViewKey === PROJECT_VIEWS.BOARD;
 
   const search = useFilterStore((state) => state.search);
   const setSearch = useFilterStore((state) => state.setSearch);
@@ -126,8 +119,8 @@ const BoardShellAdapter = ({ projectId }: Props) => {
 
   const searchSuggestions = useProjectSearchSuggestions({
     projectId,
-    viewKey: isBoardShellView ? PROJECT_VIEWS.BOARD : PROJECT_VIEWS.SETTINGS,
-    searchValue: search,
+    viewKey: currentViewKey,
+    searchValue: currentViewConfig.navbar.showSearch ? search : "",
   });
 
   useEffect(() => {
@@ -227,9 +220,7 @@ const BoardShellAdapter = ({ projectId }: Props) => {
     router.push(`${buildProjectRoute(projectId, PROJECT_VIEWS.BOARD)}?createTicket=1`);
   }, [canCreateTicket, projectId, router]);
 
-  const currentViewLabel = isBoardShellView
-    ? tSidebar(`items.${PROJECT_VIEWS.BOARD}`)
-    : null;
+  const currentViewLabel = tSidebar(`items.${currentViewConfig.sidebarLabelKey}`);
 
   const onboardingAriaLabels = useMemo(() => {
     return {
@@ -265,18 +256,19 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   ]);
 
   const toolbar = useMemo(() => {
-    if (!currentViewLabel) {
-      return null;
-    }
-
     return (
       <ProjectToolbar
         pageTitle={currentViewLabel}
-        showFilterSort
-        addActionType="ticket"
-        searchValue={searchInput}
-        searchSuggestions={searchSuggestions}
-        onSearchChange={setSearchInput}
+        showSearch={currentViewConfig.navbar.showSearch}
+        showFilterSort={currentViewConfig.navbar.showFilterSort}
+        addActionType={currentViewConfig.navbar.addActionType}
+        searchValue={currentViewConfig.navbar.showSearch ? searchInput : ""}
+        searchSuggestions={
+          currentViewConfig.navbar.showSearch ? searchSuggestions : []
+        }
+        onSearchChange={
+          currentViewConfig.navbar.showSearch ? setSearchInput : undefined
+        }
         onFilterClick={handleFilterClick}
         onSortClick={handleSortClick}
         isFilterActive={isFilterActive}
@@ -290,6 +282,9 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   }, [
     canCreateTicket,
     currentViewLabel,
+    currentViewConfig.navbar.addActionType,
+    currentViewConfig.navbar.showFilterSort,
+    currentViewConfig.navbar.showSearch,
     handleAddClick,
     handleFilterClick,
     handleSortClick,
@@ -300,20 +295,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
     searchSuggestions,
     toolbarExtraTools,
   ]);
-
-  const breadcrumbs = useMemo(() => {
-    if (!currentViewLabel) {
-      return null;
-    }
-
-    return (
-      <Breadcrumbs
-        projectHref={buildProjectRoute(projectId, PROJECT_VIEWS.BOARD)}
-        projectLabel={tBreadcrumbs("project")}
-        currentLabel={currentViewLabel}
-      />
-    );
-  }, [currentViewLabel, projectId, tBreadcrumbs]);
 
   const filtersContent = useMemo(() => {
     if (!isBoardShellView) {
@@ -371,17 +352,12 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   ]);
 
   const contribution = useMemo<ProjectViewContribution>(() => {
-    if (!isBoardShellView) {
-      return EMPTY_PROJECT_VIEW_CONTRIBUTION;
-    }
-
     return {
       toolbar,
-      breadcrumbs,
       filters: filtersContent,
-      onMount,
+      onMount: isBoardShellView ? onMount : undefined,
     };
-  }, [breadcrumbs, filtersContent, isBoardShellView, onMount, toolbar]);
+  }, [filtersContent, isBoardShellView, onMount, toolbar]);
 
   useRegisterProjectViewContribution(contribution);
 
