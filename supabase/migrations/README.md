@@ -21,7 +21,7 @@ Migrations are numbered sequentially and applied in order:
 
 ## Running Migrations
 
-See [docs/migrations.md](../../docs/migrations.md) for detailed instructions on running migrations.
+See [docs/supabase/migrations.md](../../docs/supabase/migrations.md) for detailed instructions on running migrations.
 
 Quick start:
 
@@ -41,7 +41,7 @@ The seed migration (`000002_seed_default_project.sql`) creates:
 - Default board linked to the project
 - Three default columns: "To Do", "In Progress", "Done" (all with `visible = true`)
 
-The seed migration is **idempotent** - safe to run multiple times. See [docs/migrations.md](../../docs/migrations.md) for more details.
+The seed migration is **idempotent** - safe to run multiple times. See [docs/supabase/migrations.md](../../docs/supabase/migrations.md) for more details.
 
 ## Consolidated Initial Schema
 
@@ -63,11 +63,13 @@ The `000001_initial_schema.sql` migration is a consolidated migration that inclu
 
 This consolidated migration makes it easier to set up fresh databases with the complete schema in a single step. The migration is idempotent and can be safely applied multiple times.
 
+Later forward migrations intentionally remove legacy planning tables from the effective schema. Use `docs/supabase/database-schema.md` for the current post-migration shape.
+
 ## Creating New Migrations
 
-1. Create a new file: `000002_descriptive_name.sql`
+1. Create a new file using the next available prefix: `0000NN_descriptive_name.sql`
 2. Write idempotent SQL (use `IF NOT EXISTS`, `IF EXISTS`)
 3. Test on a clean database
 4. Apply using one of the methods above
 
-See [docs/migrations.md](../../docs/migrations.md) for best practices.
+See [docs/supabase/migrations.md](../../docs/supabase/migrations.md) for best practices.

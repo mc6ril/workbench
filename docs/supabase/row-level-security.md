@@ -54,13 +54,13 @@ Invitation and profile collaboration functions include:
 - Update/delete limited by role checks
 - Membership table operations restricted to admin-grade actions
 
-### Workflow Data (`boards`, `columns`, `tickets`, `epics`, `sprints`)
+### Workflow Data (`boards`, `columns`, `tickets`)
 
 - Read when project member
 - Write when edit-capable (`admin` or `member`)
 - Viewer role remains read-only
 
-### Collaboration Data (`comments`, `labels`, `ticket_labels`, `ticket_assignees`, `project_invitations`)
+### Collaboration Data (`comments`, `ticket_assignees`, `project_invitations`)
 
 - Read scoped to related project membership
 - Write constrained by editor/admin permissions and ownership rules where applicable
@@ -94,7 +94,7 @@ Consolidate policy logic only when behavior remains identical and fully tested.
 ## Testing Checklist
 
 - Authenticated non-member cannot read target project data
-- Viewer cannot mutate tickets/epics/columns/comments
+- Viewer cannot mutate tickets/boards/columns/comments
 - Member can mutate allowed workflow data
 - Admin can manage members and admin-only actions
 - Invitation flow honors token, expiration, and membership constraints

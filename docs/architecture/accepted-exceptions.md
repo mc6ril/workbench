@@ -24,27 +24,7 @@ Owner-to-owner compatibility shims are not accepted exceptions.
 In particular, `workspace -> project` re-export paths are considered drift and
 must be replaced with direct imports from the canonical `project` owner.
 
-## 1. Shared Feature Access Bridge
-
-- Canonical import: `@/shared/featureAccess`
-- Implementation owner: `src/domains/billing/`
-
-### Why this exists
-
-Feature entitlement primitives are consumed in multiple places across the
-product surface, especially in project-shell and module presentation code.
-A thin shared bridge provides a stable import path while keeping billing as the
-owner of the underlying rules and hooks.
-
-### Guardrails
-
-- `src/shared/featureAccess.ts` stays a thin re-export surface
-- entitlement computation, pricing rules, and subscription-fetching behavior
-  remain in `src/domains/billing/`
-- if the bridge starts accumulating business logic, ownership must move back to
-  an explicit owner layer
-
-## 2. Owner-Local Supabase Row Types
+## 1. Owner-Local Supabase Row Types
 
 - Canonical locations:
   - `src/domains/*/infrastructure/supabase/types.ts`
@@ -67,7 +47,7 @@ shared and keeps boundaries explicit.
 - no business behavior, use cases, permissions, or owner orchestration belongs
   in these files
 
-## 3. Top-Level Presentation Root For Public/Static Pages
+## 2. Top-Level Presentation Root For Public/Static Pages
 
 - Canonical location: `src/presentation/pages/`
 - Current scope: landing and legal
@@ -92,5 +72,5 @@ The items above should not be reported as architecture violations by default.
 They should be reported only when:
 
 - the implementation exceeds the documented guardrails
-- business logic starts leaking into the thin bridges
+- owner-local infrastructure types start accumulating business logic
 - public/static presentation starts hosting protected or owner-specific flows

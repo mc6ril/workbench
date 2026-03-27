@@ -85,11 +85,11 @@ src/
     board/
       core/
         ports/
-          ticketRepository.ts
           boardRepository.ts
-          epicRepository.ts
-          sprintRepository.ts
-          labelRepository.ts
+          commentRepository.ts
+          projectLookupRepository.ts
+          realtimeRepository.ts
+          ticketRepository.ts
       infrastructure/
         supabase/
           ticket/
@@ -196,9 +196,9 @@ const ticketRepository = createTicketRepository(client);
 - `src/domains/settings/` owns account/settings surfaces and usually only
   orchestrates other owners instead of owning repositories
 - `src/domains/project/` owns the canonical project entity, repository, project CRUD use cases, project settings, members, invitations, permissions, and enabled-module configuration
-- `src/modules/board/` owns board data such as tickets, epics, sprints, and labels
+- `src/modules/board/` owns board data such as tickets, board configuration, comments, and realtime sync
 - `src/domains/workspace/` owns workspace catalog queries and entry flows such as list/join/reclaim, but project membership and invitation contracts remain project-owned
-- plan-to-module entitlement decisions remain owned by `billing`; the current codebase allows the thin shared bridge `@/shared/featureAccess` as a documented consumer entrypoint
+- plan-to-module entitlement decisions remain owned by `billing`; consumers should import billing-owned rules and gates directly from that owner
 
 ## Rules
 
@@ -217,7 +217,6 @@ They are documented in [Accepted Architecture Exceptions](./accepted-exceptions.
 
 This currently includes:
 
-- the thin shared bridge `@/shared/featureAccess`
 - owner-local low-level Supabase row types in each owner infrastructure `types.ts`
 
 ## Benefits

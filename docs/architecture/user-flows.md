@@ -21,7 +21,7 @@ Route files should:
 - `src/domains/settings/presentation/` -> account/settings surfaces that compose viewer, profile, session, auth, and billing
 - `src/domains/workspace/presentation/` -> workspace dashboard and create/join project entry UX
 - `src/domains/project/presentation/` -> project shell, project settings, members, invitations, enabled-module management
-- `src/modules/board/presentation/` -> board, epics, and board-specific screens
+- `src/modules/board/presentation/` -> board and ticket-specific screens
 - `src/domains/billing/` -> checkout, portal, plans, subscriptions, billing webhooks
 
 Shared cross-cutting pieces still belong in:
@@ -103,7 +103,6 @@ flowchart TD
 - `/account`
 - `/:projectId`
 - `/:projectId/board`
-- `/:projectId/epics`
 - `/:projectId/settings`
 
 ### Billing/API Routes
