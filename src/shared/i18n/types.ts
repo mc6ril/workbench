@@ -12,7 +12,6 @@ export type TranslationKey =
   | `pages.updatePassword.${string}`
   | `pages.workspace.${string}`
   | `pages.board.${string}`
-  | `pages.epics.${string}`
   | `pages.ticketDetail.${string}`
   | `pages.landing.${string}`
   | `forms.${string}`
@@ -46,7 +45,6 @@ export type Namespace =
   | "pages.updatePassword"
   | "pages.workspace"
   | "pages.board"
-  | "pages.epics"
   | "pages.ticketDetail"
   | "pages.landing"
   | "forms"

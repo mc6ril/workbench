@@ -7,10 +7,7 @@ describe("queryKeys ticket list mapper", () => {
       "project-1",
       {
         status: "todo",
-        epicId: "epic-1",
-        parentId: "parent-1",
-        priority: "high",
-        labelIds: ["label-2", "label-1"],
+        priority: "urgent",
       },
       {
         field: "createdAt",
@@ -24,10 +21,7 @@ describe("queryKeys ticket list mapper", () => {
       projectId: "project-1",
       filters: {
         status: "todo",
-        epicId: "epic-1",
-        parentId: "parent-1",
-        priority: "high",
-        labelIds: ["label-1", "label-2"],
+        priority: "urgent",
       },
       sort: {
         field: "createdAt",

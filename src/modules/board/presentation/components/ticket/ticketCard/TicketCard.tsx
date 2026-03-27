@@ -9,6 +9,7 @@ import { useTranslation } from "@/shared/i18n";
 
 import styles from "./TicketCard.module.scss";
 
+import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
 import TicketMeta from "@/modules/board/presentation/components/ticket/ticketShared/TicketMeta";
 import { buildTicketAriaLabel } from "@/modules/board/utils/ticketUtils";
 
@@ -17,10 +18,9 @@ export type TicketCardProps = {
   title: string;
   ticketCode?: string | null;
   status?: string;
-  epicName?: string | null;
   assigneeName?: string | null;
   assigneeAvatarUrl?: string | null;
-  priority?: string | null;
+  priority?: TicketPriority | null;
   storyPoints?: number | null;
   onEdit?: (id: string) => void;
 };
@@ -31,7 +31,6 @@ const TicketCard = ({
   id,
   title,
   ticketCode,
-  epicName,
   assigneeName,
   assigneeAvatarUrl,
   priority,
@@ -56,18 +55,16 @@ const TicketCard = ({
       ticketAriaLabel: t("ticketAriaLabel"),
       title,
       ticketCode,
-      epicName,
-      epicLabel: t("epicLabel"),
       assigneeName,
       assigneeLabel: t("assigneeLabel"),
-      priority,
+      priority: priority ? t(`priority.${priority}`) : undefined,
       priorityLabel: t("priorityLabel"),
       storyPointsLabel:
         typeof storyPoints === "number"
           ? t("storyPointsLabel", { count: storyPoints })
           : undefined,
     });
-  }, [t, title, ticketCode, epicName, assigneeName, priority, storyPoints]);
+  }, [t, title, ticketCode, assigneeName, priority, storyPoints]);
 
   return (
     <article
@@ -80,10 +77,12 @@ const TicketCard = ({
         <TicketMeta
           className={styles["ticket-card__meta"]}
           assigneeClassName={styles["ticket-card__assignee"]}
+          priorityDotClassName={styles["ticket-card__priority-dot"]}
           ticketCodeClassName={styles["ticket-card__id"]}
           ticketCode={ticketCode}
           assigneeName={assigneeName}
           assigneeAvatarUrl={assigneeAvatarUrl}
+          priority={priority}
           assigneeLabel={t("assigneeLabel")}
         />
         <Title

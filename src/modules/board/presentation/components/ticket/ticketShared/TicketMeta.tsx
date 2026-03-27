@@ -5,14 +5,20 @@ import React from "react";
 import Avatar from "@/shared/design-system/avatar";
 import Text from "@/shared/design-system/text";
 
+import TicketPriorityDot from "./TicketPriorityDot";
+
+import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
+
 type Props = {
   ticketCode?: string | null;
   assigneeName?: string | null;
   assigneeAvatarUrl?: string | null;
+  priority?: TicketPriority | null;
   assigneeLabel: string;
   className?: string;
   assigneeClassName?: string;
   ticketCodeClassName?: string;
+  priorityDotClassName?: string;
 };
 
 /**
@@ -23,10 +29,12 @@ const TicketMeta = ({
   ticketCode,
   assigneeName,
   assigneeAvatarUrl,
+  priority,
   assigneeLabel,
   className,
   assigneeClassName,
   ticketCodeClassName,
+  priorityDotClassName,
 }: Props) => {
   return (
     <div className={className}>
@@ -40,6 +48,13 @@ const TicketMeta = ({
           }
         />
       </span>
+      {priority ? (
+        <TicketPriorityDot
+          priority={priority}
+          size="sm"
+          className={priorityDotClassName}
+        />
+      ) : null}
       {ticketCode && (
         <Text as="span" variant="caption" className={ticketCodeClassName}>
           {ticketCode}

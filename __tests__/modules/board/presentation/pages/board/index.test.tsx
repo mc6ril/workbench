@@ -6,8 +6,6 @@ import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/
 import { useBoardDnD } from "@/modules/board/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/modules/board/presentation/hooks/board/useBoardTickets";
 import { useHasProjectComments } from "@/modules/board/presentation/hooks/comment";
-import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
-import { useAddTicketLabels, useLabels } from "@/modules/board/presentation/hooks/label";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCreateTicket";
 import { useTicketAssigneesByProjectId } from "@/modules/board/presentation/hooks/ticket/useTicketAssigneesByProjectId";
@@ -112,13 +110,6 @@ jest.mock("@/modules/board/presentation/components/ticket/ticketCard/TicketCard"
   default: () => <div data-testid="ticket-card" />,
 }));
 
-jest.mock("@/shared/featureAccess", () => ({
-  PlanFeature: {
-    EPICS: "EPICS",
-  },
-  useFeatureAccess: jest.fn(),
-}));
-
 jest.mock("@/domains/project/presentation/providers/permissions", () => ({
   useProjectPermissions: jest.fn(),
 }));
@@ -144,15 +135,6 @@ jest.mock("@/modules/board/presentation/hooks/board/useBoardTickets", () => ({
 
 jest.mock("@/modules/board/presentation/hooks/comment", () => ({
   useHasProjectComments: jest.fn(),
-}));
-
-jest.mock("@/modules/board/presentation/hooks/epic/useEpics", () => ({
-  useEpics: jest.fn(),
-}));
-
-jest.mock("@/modules/board/presentation/hooks/label", () => ({
-  useAddTicketLabels: jest.fn(),
-  useLabels: jest.fn(),
 }));
 
 jest.mock(
@@ -201,7 +183,6 @@ const asMockedReturn = <T,>(value: unknown): T => value as T;
 describe("BoardPage onboarding", () => {
   const mockSetStatusAsync = jest.fn();
   const mockCreateTicketMutateAsync = jest.fn();
-  const mockAddTicketLabelsMutateAsync = jest.fn();
   let mockTicketsData: Array<{ id: string; status: string; title: string; codeNumber: number }> =
     [];
 
@@ -210,11 +191,6 @@ describe("BoardPage onboarding", () => {
     mockSearchParams = new URLSearchParams();
     mockTicketsData = [];
     mockSetStatusAsync.mockResolvedValue(undefined);
-
-    const { useFeatureAccess } = jest.requireMock("@/shared/featureAccess");
-    jest.mocked(useFeatureAccess).mockReturnValue({
-      hasAccess: false,
-    });
 
     jest.mocked(useProjectPermissions).mockReturnValue(
       asMockedReturn<ReturnType<typeof useProjectPermissions>>({
@@ -275,24 +251,6 @@ describe("BoardPage onboarding", () => {
     jest.mocked(useHasProjectComments).mockReturnValue(
       asMockedReturn<ReturnType<typeof useHasProjectComments>>({
         data: false,
-      })
-    );
-
-    jest.mocked(useEpics).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useEpics>>({
-        data: [],
-      })
-    );
-
-    jest.mocked(useLabels).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useLabels>>({
-        data: [],
-      })
-    );
-
-    jest.mocked(useAddTicketLabels).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useAddTicketLabels>>({
-        mutateAsync: mockAddTicketLabelsMutateAsync,
       })
     );
 

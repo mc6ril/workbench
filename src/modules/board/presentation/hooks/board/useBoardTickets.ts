@@ -28,6 +28,8 @@ const mapTicketToViewModel = (
     status: ticket.status,
     assigneeName: assigneeName ?? null,
     assigneeAvatarUrl: assigneeAvatarUrl ?? null,
+    priority: ticket.priority,
+    storyPoints: ticket.storyPoints,
   };
 };
 

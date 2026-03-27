@@ -38,7 +38,6 @@
         "home": "Home",
         "board": "Board",
         "ticketDetail": "Task",
-        "epics": "Goals",
         "settings": "Settings"
       },
       "locked": {
@@ -73,23 +72,9 @@
       "reviewGuideAriaLabel": "Restart the onboarding guide",
       "addTicket": "Add task",
       "addTicketAriaLabel": "Create a new task",
-      "addEpic": "Add goal",
-      "addEpicAriaLabel": "Create a new goal",
-      "epicFilterLabel": "Goal progress",
-      "epicFilterAll": "All goals",
-      "epicFilterNotStarted": "Not started",
-      "epicFilterInProgress": "In progress",
-      "epicFilterCompleted": "Completed",
-      "resetEpicFilters": "Reset goal filters",
       "sortDirectionLabel": "Sort direction",
       "sortDirectionAsc": "Ascending",
-      "sortDirectionDesc": "Descending",
-      "epicSortFieldLabel": "Goal sort field",
-      "epicSortUpdatedAt": "Updated date",
-      "epicSortCreatedAt": "Created date",
-      "epicSortName": "Name",
-      "epicSortProgress": "Progress",
-      "resetEpicSort": "Reset goal sort"
+      "sortDirectionDesc": "Descending"
     }
   },
   "layout": {
@@ -330,7 +315,6 @@
         "title": "Shortcuts",
         "shortcuts": {
           "board": "Board",
-          "epics": "Goals",
           "settings": "Settings"
         }
       }
@@ -351,16 +335,10 @@
       "recentEmpty": "No recent activity yet.",
       "openBacklog": "View all tasks",
       "openBacklogAriaLabel": "Open the full task list",
-      "goalProgressDeltaTitle": "Goals making progress",
-      "goalProgressDeltaDescription": "Recently worked goals with measurable progress.",
-      "goalProgressDeltaEmpty": "No goals have progressed recently.",
-      "goalProgressDeltaValue": "+ {progress}%",
-      "goalProgressCurrentValue": "Current progress: {progress}%",
       "shortcutsWidget": {
         "title": "Shortcuts",
         "shortcuts": {
           "board": "Board",
-          "epics": "Goals",
           "settings": "Settings"
         }
       }
@@ -377,7 +355,7 @@
         "eyebrow": "Loading project",
         "status": "Syncing",
         "title": "The project is taking shape",
-        "message": "We are loading the board, goals, and permissions so the project opens in a ready-to-use state.",
+        "message": "We are loading the board and permissions so the project opens in a ready-to-use state.",
         "ariaLabel": "Loading project"
       },
       "notFound": {
@@ -435,7 +413,7 @@
       "noWorkspaces": "No space",
       "noWorkspacesMessage": "Create your first space or join one with an invitation link.",
       "emptyStateTitle": "Welcome home",
-      "emptyStateMessage": "Create a space to share daily tasks, reduce mental load, and track your goals together.",
+      "emptyStateMessage": "Create a space to share daily tasks, reduce mental load, and stay aligned together.",
       "addFirstProjectButton": "Create my first workspace",
       "addFirstProjectButtonAriaLabel": "Create my first workspace",
       "createWorkspaceTitle": "Create a workspace",
@@ -590,19 +568,14 @@
       },
       "filters": {
         "searchLabel": "Search",
-        "searchPlaceholder": "Search by title or description",
+        "searchPlaceholder": "Search by title or notes",
         "statusLabel": "Status",
-        "epicLabel": "Goal",
-        "priorityLabel": "Priority",
-        "labelLabel": "Label",
-        "noLabelOptions": "No labels available for this project",
         "resetLabel": "Reset filters",
         "assigneeLabel": "Assignee"
       },
       "ticketCard": {
         "ticketAriaLabel": "Task",
         "statusLabel": "Status",
-        "epicLabel": "Goal",
         "assigneeLabel": "Assignee",
         "priorityLabel": "Priority",
         "storyPointsLabel": "{count} point",
@@ -625,7 +598,6 @@
         "fieldTitle": "Title",
         "fieldStatus": "Status",
         "fieldPosition": "Board position",
-        "fieldPriority": "Priority",
         "fieldDueDate": "Due date",
         "sortDirectionLabel": "Sort direction",
         "directionAsc": "Ascending",
@@ -636,10 +608,8 @@
         "title": "Create task",
         "fields": {
           "title": "Title",
-          "description": "Description",
           "status": "Status",
-          "epic": "Goal",
-          "labels": "Labels"
+          "notes": "Notes"
         },
         "submitButton": "Create task",
         "cancelButton": "Cancel",
@@ -689,95 +659,11 @@
         }
       }
     },
-    "epics": {
-      "epicsList": {
-        "ariaLabel": "Goals list",
-        "title": "Goals",
-        "count": "{count} goal",
-        "count_other": "{count} goals",
-        "emptyTitle": "No goals",
-        "emptyMessage": "Create your first goal to get started",
-        "errorTitle": "Error loading goals"
-      },
-      "epicCard": {
-        "epicAriaLabel": "Goal",
-        "progressLabel": "{progress}% complete",
-        "viewDetailLabel": "View details",
-        "editLabel": "Edit",
-        "deleteLabel": "Delete"
-      },
-      "createEpicForm": {
-        "title": "Create goal",
-        "fields": {
-          "name": "Name",
-          "description": "Description"
-        },
-        "submitButton": "Create",
-        "cancelButton": "Cancel",
-        "readOnlyHint": "Viewers cannot create goals.",
-        "errorGeneric": "An error occurred while creating the goal"
-      },
-      "onboarding": {
-        "eyebrow": "Onboarding",
-        "title": "Get oriented on goals",
-        "description": "Follow the three key actions to create a goal, connect work to it, and start tracking progress.",
-        "reviewTitle": "Review the guide",
-        "reviewDescription": "Restart the full flow whenever you want to revisit goal creation, ticket linking, and progress tracking.",
-        "reviewCta": "Review the guide",
-        "reviewCtaAriaLabel": "Review the goals onboarding guide",
-        "hideCta": "Hide guide",
-        "hideCtaAriaLabel": "Hide the goals onboarding guide",
-        "skipCta": "Skip onboarding",
-        "skipCtaAriaLabel": "Stop opening the goals onboarding automatically",
-        "genericError": "Unable to update your onboarding preferences.",
-        "status": {
-          "complete": "Done",
-          "current": "In progress",
-          "pending": "Coming up"
-        },
-        "steps": {
-          "createEpic": {
-            "title": "Create a goal",
-            "description": "Create your first goal to give the upcoming work a clear direction.",
-            "action": "Create a goal",
-            "actionAriaLabel": "Open goal creation"
-          },
-          "linkTicket": {
-            "title": "Link a ticket to the goal",
-            "description": "Open a ticket and attach it to a goal so you can track its impact.",
-            "blockedDescription": "Create a first goal first. Then you will be able to open a ticket and link it to that goal.",
-            "openTicketAction": "Open a ticket",
-            "openTicketActionAriaLabel": "Open a ticket to link it to a goal",
-            "createTicketAction": "Create a ticket",
-            "createTicketActionAriaLabel": "Open ticket creation to link it to a goal"
-          },
-          "trackProgress": {
-            "title": "Track progress",
-            "description": "Move a linked ticket forward to see the goal progress update.",
-            "blockedDescription": "Link a first ticket to a goal first. Then you will be able to move the goal forward and track its progress.",
-            "action": "Open the linked ticket",
-            "actionAriaLabel": "Open a linked ticket to move the goal forward"
-          }
-        }
-      },
-      "epicDetail": {
-        "title": "Goal details",
-        "ticketsTitle": "Related tasks",
-        "noTickets": "No related tasks",
-        "editLabel": "Edit",
-        "deleteLabel": "Delete"
-      },
-      "epicProgress": {
-        "ariaLabel": "Goal progress",
-        "progressLabel": "{progress}% complete"
-      }
-    },
     "settings": {
       "page": {
         "tabs": {
           "project": "Project",
           "statusesColumns": "Statuses and columns",
-          "priorities": "Priorities",
           "exportImport": "Export / import"
         },
         "fallback": "Settings section unavailable"
@@ -832,43 +718,20 @@
           "message": "Add a column to get started"
         }
       },
-      "priorities": {
-        "title": "Priorities",
-        "subtitle": "Configure priority levels",
-        "listAriaLabel": "Priority list",
-        "fields": {
-          "name": {
-            "label": "Name",
-            "placeholder": "Priority name",
-            "ariaLabel": "Rename priority {name}"
-          }
-        },
-        "actions": {
-          "add": "Add",
-          "moveUp": "Move up",
-          "moveDown": "Move down",
-          "moveUpAriaLabel": "Move priority {name} up",
-          "moveDownAriaLabel": "Move priority {name} down"
-        },
-        "empty": {
-          "title": "No priorities",
-          "message": "Add a priority to get started"
-        }
-      },
       "exportImport": {
         "title": "Export / import",
-        "subtitle": "Export or import project data",
+        "subtitle": "Export or import board columns and tickets",
         "export": {
           "title": "Export",
-          "hint": "Download a copy of the project data",
+          "hint": "Download a copy of the board columns and tickets",
           "action": "Export",
           "exporting": "Exporting..."
         },
         "import": {
           "title": "Import",
-          "hint": "Import data from a file",
+          "hint": "Import board columns and tickets from a file",
           "fileLabel": "File",
-          "fileHint": "Select a compatible file to start the import",
+          "fileHint": "Select a compatible JSON file containing columns and tickets",
           "fileAriaLabel": "Select a file to import",
           "importing": "Importing...",
           "accept": ".json,application/json"
@@ -876,75 +739,6 @@
       }
     },
     "ticketDetail": {
-      "ticketOverview": {
-        "ariaLabel": "Task details",
-        "meta": {
-          "status": "Status",
-          "epic": "Goal",
-          "assignee": "Assignee",
-          "priority": "Priority",
-          "storyPoints": "Story points",
-          "storyPointsValue": "{count} point",
-          "storyPointsValue_other": "{count} points",
-          "notSet": "Not set"
-        }
-      },
-      "ticketEditForm": {
-        "title": "Edit task",
-        "ariaLabel": "Task edit form",
-        "fields": {
-          "title": "Title",
-          "status": "Status",
-          "epic": "Goal",
-          "description": "Description",
-          "labels": "Labels"
-        },
-        "epicNoneOption": "None",
-        "saveButton": "Save",
-        "cancelButton": "Cancel",
-        "errorGeneric": "An error occurred while saving the task"
-      },
-      "subtasks": {
-        "list": {
-          "title": "Subtasks",
-          "ariaLabel": "Task subtasks section",
-          "itemsAriaLabel": "Subtask list",
-          "loadingAriaLabel": "Loading subtasks",
-          "errorTitle": "Error loading subtasks",
-          "emptyTitle": "No subtasks",
-          "emptyMessage": "Add a subtask to break down this task",
-          "emptyAriaLabel": "No subtasks"
-        },
-        "subtaskItem": {
-          "checkboxLabel": "Mark subtask {title} as complete",
-          "editLabel": "Edit",
-          "deleteLabel": "Delete"
-        }
-      },
-      "createSubtaskForm": {
-        "title": "Create subtask",
-        "ariaLabel": "Subtask creation form",
-        "fields": {
-          "title": "Title",
-          "description": "Description"
-        },
-        "submitButton": "Add",
-        "cancelButton": "Cancel",
-        "errorGeneric": "An error occurred while creating the subtask"
-      },
-      "epicLinkSelector": {
-        "title": "Goal",
-        "loadingAriaLabel": "Loading goals",
-        "errorTitle": "Error loading goals",
-        "emptyTitle": "No goals",
-        "emptyMessage": "Create a goal to link this task",
-        "emptyAriaLabel": "No goals available",
-        "selectLabel": "Link to a goal",
-        "noneOption": "None",
-        "currentEpic": "Current goal: {name}",
-        "noEpicSelected": "No goal linked",
-        "unlinkButton": "Unlink"
-      },
       "page": {
         "title": "Task detail",
         "modalTitle": "Task",
@@ -966,24 +760,28 @@
         },
         "fields": {
           "title": "Title",
-          "description": "Description",
+          "notes": "Notes",
+          "notesPlaceholder": "Add a few helpful notes for the household...",
           "status": "Status",
           "priority": "Priority",
-          "epic": "Goal",
+          "assignee": "Assignee",
+          "dueDate": "Due date",
+          "createdAt": "Created",
           "position": "Position",
-          "labels": "Labels",
           "none": "None"
         },
+        "sections": {
+          "details": "Details"
+        },
         "priority": {
-          "highest": "Highest",
-          "high": "High",
-          "medium": "Medium",
-          "low": "Low",
-          "lowest": "Lowest"
+          "urgent": "Urgent",
+          "normal": "Normal",
+          "low": "Low"
         },
         "comments": {
           "title": "Comments",
           "newLabel": "Add comment",
+          "newPlaceholder": "Add a comment...",
           "readOnlyHint": "Viewers cannot post comments.",
           "addButton": "Post",
           "author": "Author: {author}",
@@ -992,9 +790,6 @@
           "saveEdit": "Save",
           "editButton": "Edit",
           "deleteButton": "Delete"
-        },
-        "subtasks": {
-          "addButton": "Add subtask"
         }
       }
     },
@@ -1176,16 +971,6 @@
           "icon": "🧺",
           "title": "Home routines",
           "description": "Distribute recurring chores so the house runs smoothly."
-        },
-        "epics": {
-          "icon": "🏡",
-          "title": "Family projects",
-          "description": "Renovations, moves, major purchases: keep milestones visible."
-        },
-        "subtasks": {
-          "icon": "🎒",
-          "title": "School and activities",
-          "description": "Track school deadlines, registrations, and kid logistics in one place."
         }
       },
       "impact": {
@@ -1249,22 +1034,6 @@
           "todo2": "Prepare school bags",
           "inProgress1": "Kitchen reset",
           "done1": "Take out trash"
-        },
-        "epics": {
-          "title": "Family project",
-          "description": "Keep milestones and decisions visible for everyone.",
-          "todo1": "Validate storage quote",
-          "todo2": "Plan decluttering weekend",
-          "inProgress1": "Compare childcare options",
-          "done1": "Order main furniture"
-        },
-        "subtasks": {
-          "title": "School and activities",
-          "description": "Avoid misses across school, clubs, and kid logistics.",
-          "todo1": "Sign school field trip form",
-          "todo2": "Pack sports bag",
-          "inProgress1": "Register for activity camp",
-          "done1": "Pay cafeteria bill"
         }
       },
       "cta": {
@@ -1385,10 +1154,7 @@
         "membersPerWorkspace": "Members per workspace",
         "tickets": "Tickets",
         "boardView": "Board view",
-        "epics": "Epics",
-        "subtasks": "Subtasks",
         "customColumns": "Custom columns",
-        "priorities": "Priorities",
         "exportImport": "Export / Import",
         "advancedRoles": "Advanced roles (viewer)",
         "prioritySupport": "Priority support"
@@ -1474,9 +1240,6 @@
       "ctaLabel": "View plans",
       "ctaAriaLabel": "View plans and upgrade your subscription",
       "featureNames": {
-        "epics": "Epics",
-        "subtasks": "Subtasks",
-        "priorities": "Priorities",
         "exportImport": "Export / Import",
         "advancedRoles": "Advanced roles",
         "workspaces": "Projects per account",
@@ -1553,17 +1316,12 @@
       "DATABASE_ERROR": "A database error occurred"
     },
     "domain": {
-      "INVALID_TICKET_PARENT": "A ticket cannot be its own parent",
-      "INVALID_TICKET_PARENT_MULTI_LEVEL": "Multi-level nesting is not allowed",
       "TICKET_PROJECT_MISMATCH": "The ticket does not belong to the same project",
-      "TICKET_HAS_SUBTASKS": "The ticket cannot be deleted because it contains subtasks",
       "LAST_ADMIN_REQUIRED": "The project must keep at least one administrator",
       "INVITATION_ALREADY_USED": "This invitation link is no longer available",
       "INVITATION_EXPIRED": "This invitation link has expired",
       "INVITATION_ALREADY_MEMBER": "You are already a member of this project",
       "INVITATION_LIMIT_REACHED": "Your current plan does not allow more active members or invitation links in this workspace",
-      "DUPLICATE_EPIC_ASSIGNMENT": "The ticket is already assigned to another epic",
-      "INVALID_EPIC_TICKET_CONSISTENCY": "Inconsistency in ticket-to-epic assignment",
       "INVALID_COLUMN_ORDER": "Invalid column order",
       "DUPLICATE_COLUMN_STATUS": "Duplicate column status",
       "INVALID_BOARD_COLUMN_RELATIONSHIP": "The column does not belong to the specified board",

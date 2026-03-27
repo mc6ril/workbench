@@ -18,9 +18,6 @@ export type { CreateTicketFormValues } from "./CreateTicketForm.types";
 type Props = {
   initialValues?: Partial<CreateTicketFormValues>;
   statusOptions: Option[];
-  epicOptions: Option[];
-  labelOptions?: Option[];
-  showEpicField?: boolean;
   onSubmit: (values: CreateTicketFormValues) => void;
   onCancel?: () => void;
   isSubmitting?: boolean;
@@ -31,9 +28,6 @@ type Props = {
 const CreateTicketForm = ({
   initialValues,
   statusOptions,
-  epicOptions,
-  labelOptions = [],
-  showEpicField = true,
   onSubmit,
   onCancel,
   isSubmitting = false,
@@ -50,8 +44,6 @@ const CreateTicketForm = ({
   const [status, setStatus] = useState(
     initialValues?.status ?? statusOptions[0]?.value ?? ""
   );
-  const [epicId, setEpicId] = useState(initialValues?.epicId ?? "");
-  const [labelIds, setLabelIds] = useState(initialValues?.labelIds ?? []);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
@@ -61,9 +53,6 @@ const CreateTicketForm = ({
         title,
         description,
         status,
-        epicId,
-        labelIds,
-        showEpicField,
       })
     );
   };
@@ -82,22 +71,12 @@ const CreateTicketForm = ({
         title={title}
         description={description}
         status={status}
-        epicId={epicId}
-        labelIds={labelIds}
         statusOptions={statusOptions}
-        epicOptions={epicOptions}
-        labelOptions={labelOptions}
-        showEpicField={showEpicField}
-        isSubmitting={isSubmitting}
         titleLabel={t("fields.title")}
         statusLabel={t("fields.status")}
-        epicLabel={t("fields.epic")}
-        labelsLabel={t("fields.labels")}
-        descriptionLabel={t("fields.description")}
+        descriptionLabel={t("fields.notes")}
         onTitleChange={setTitle}
         onStatusChange={setStatus}
-        onEpicChange={setEpicId}
-        onLabelIdsChange={setLabelIds}
         onDescriptionChange={setDescription}
       />
 

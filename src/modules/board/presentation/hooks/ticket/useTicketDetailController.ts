@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
-import { PlanFeature, useFeatureAccess } from "@/shared/featureAccess";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
@@ -16,20 +15,11 @@ import {
   useDeleteComment,
   useUpdateComment,
 } from "@/modules/board/presentation/hooks/comment";
-import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
-import {
-  useAddTicketLabels,
-  useLabels,
-  useRemoveTicketLabels,
-  useTicketLabelIds,
-} from "@/modules/board/presentation/hooks/label";
 import {
   useAssignTicket,
-  useCreateSubtask,
   useDeleteTicket,
   useTicket,
   useTicketAssignees,
-  useTickets,
   useUnassignTicket,
   useUpdateTicket,
 } from "@/modules/board/presentation/hooks/ticket";
@@ -66,36 +56,30 @@ export const useTicketDetailController = ({
     error,
   } = useTicket(ticketId);
   const { data: boardConfiguration } = useBoardConfiguration(projectId);
-  const { data: epics = [] } = useEpics(projectId);
-  const { data: labels = [] } = useLabels(projectId);
-  const { data: ticketLabelIds = [] } = useTicketLabelIds(ticketId);
   const { data: projectMembers = [] } = useProjectMembers(projectId);
   const { data: assignees = [] } = useTicketAssignees(ticketId);
   const { data: comments = [] } = useComments(ticketId);
-  const { data: subtasks = [] } = useTickets(projectId, { parentId: ticketId });
-  const { hasAccess: hasEpicsAccess } = useFeatureAccess(PlanFeature.EPICS);
 
   const updateMainTicketMutation = useUpdateTicket();
-  const updateSubtaskMutation = useUpdateTicket();
-  const createSubtaskMutation = useCreateSubtask();
   const deleteTicketMutation = useDeleteTicket();
   const assignTicketMutation = useAssignTicket();
   const unassignTicketMutation = useUnassignTicket();
   const createCommentMutation = useCreateComment();
   const updateCommentMutation = useUpdateComment(ticketId);
   const deleteCommentMutation = useDeleteComment(ticketId);
-  const addTicketLabelsMutation = useAddTicketLabels(ticketId);
-  const removeTicketLabelsMutation = useRemoveTicketLabels(ticketId);
 
   const [titleDraft, setTitleDraft] = useState<string | null>(null);
   const [descriptionDraft, setDescriptionDraft] = useState<string | null>(null);
   const [statusDraft, setStatusDraft] = useState<string | null>(null);
-  const [priorityDraft, setPriorityDraft] = useState<string | null>(null);
-  const [epicIdDraft, setEpicIdDraft] = useState<string | null>(null);
+  const [priorityDraft, setPriorityDraft] = useState<TicketPriority | "" | null>(
+    null
+  );
+  const [dueDateDraft, setDueDateDraft] = useState<Date | null | undefined>(
+    undefined
+  );
   const [commentInput, setCommentInput] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentContent, setEditingCommentContent] = useState("");
-  const [isSubtaskFormOpen, setIsSubtaskFormOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const statusOptions = useMemo<TicketDetailStatusOption[]>(() => {
@@ -107,23 +91,13 @@ export const useTicketDetailController = ({
     }));
   }, [boardConfiguration?.columns]);
 
-  const assignedLabelIdSet = useMemo(() => {
-    return new Set(ticketLabelIds);
-  }, [ticketLabelIds]);
-
-  const doneStatuses = useMemo(() => {
-    return new Set(
-      statusOptions
-        .filter((option) => option.state === "done")
-        .map((option) => option.value)
-    );
-  }, [statusOptions]);
-
   const effectiveTitle = titleDraft ?? ticket?.title ?? "";
   const effectiveDescription = descriptionDraft ?? ticket?.description ?? "";
   const effectiveStatus = statusDraft ?? ticket?.status ?? "";
-  const effectivePriority = priorityDraft ?? ticket?.priority ?? "";
-  const effectiveEpicId = epicIdDraft ?? ticket?.epicId ?? "";
+  const effectivePriority: TicketPriority | "" =
+    priorityDraft ?? ticket?.priority ?? "";
+  const effectiveDueDate =
+    dueDateDraft === undefined ? ticket?.dueDate ?? null : dueDateDraft;
 
   const handleSaveMainFields = useCallback(async (): Promise<void> => {
     if (!ticket || !canEditTicket) {
@@ -137,7 +111,7 @@ export const useTicketDetailController = ({
         description: effectiveDescription || null,
         status: effectiveStatus || undefined,
         priority: (effectivePriority as TicketPriority) || null,
-        epicId: effectiveEpicId || null,
+        dueDate: effectiveDueDate,
         position: ticket.position,
       },
     });
@@ -146,38 +120,17 @@ export const useTicketDetailController = ({
     setDescriptionDraft(null);
     setStatusDraft(null);
     setPriorityDraft(null);
-    setEpicIdDraft(null);
+    setDueDateDraft(undefined);
   }, [
     canEditTicket,
     effectiveDescription,
-    effectiveEpicId,
+    effectiveDueDate,
     effectivePriority,
     effectiveStatus,
     effectiveTitle,
     ticket,
     updateMainTicketMutation,
   ]);
-
-  const handleToggleLabel = useCallback(
-    async (labelId: string): Promise<void> => {
-      if (!canEditTicket) {
-        return;
-      }
-
-      if (assignedLabelIdSet.has(labelId)) {
-        await removeTicketLabelsMutation.mutateAsync([labelId]);
-        return;
-      }
-
-      await addTicketLabelsMutation.mutateAsync([labelId]);
-    },
-    [
-      addTicketLabelsMutation,
-      assignedLabelIdSet,
-      canEditTicket,
-      removeTicketLabelsMutation,
-    ]
-  );
 
   const handleAssign = useCallback(
     async (userId: string): Promise<void> => {
@@ -262,79 +215,6 @@ export const useTicketDetailController = ({
     [deleteCommentMutation]
   );
 
-  const handleCreateSubtask = useCallback(
-    async (values: { title: string; description?: string }): Promise<void> => {
-      if (!canEditTicket) {
-        return;
-      }
-
-      const fallbackStatus = statusOptions[0]?.value ?? ticket?.status ?? "";
-
-      await createSubtaskMutation.mutateAsync({
-        projectId,
-        parentId: ticketId,
-        title: values.title,
-        description: values.description ?? null,
-        status: fallbackStatus,
-        position: subtasks.length,
-      });
-
-      setIsSubtaskFormOpen(false);
-    },
-    [
-      canEditTicket,
-      createSubtaskMutation,
-      projectId,
-      statusOptions,
-      subtasks.length,
-      ticket?.status,
-      ticketId,
-    ]
-  );
-
-  const handleToggleSubtaskCompleted = useCallback(
-    (subtaskId: string): void => {
-      if (!canEditTicket) {
-        return;
-      }
-
-      const subtask = subtasks.find((item) => item.id === subtaskId);
-      if (!subtask) {
-        return;
-      }
-
-      const doneStatus = statusOptions.find(
-        (option) => option.state === "done"
-      )?.value;
-      const defaultStatus = statusOptions[0]?.value ?? subtask.status;
-
-      const nextStatus =
-        subtask.status === doneStatus
-          ? defaultStatus
-          : (doneStatus ?? defaultStatus);
-
-      updateSubtaskMutation.mutate({
-        id: subtask.id,
-        input: { status: nextStatus },
-      });
-    },
-    [canEditTicket, statusOptions, subtasks, updateSubtaskMutation]
-  );
-
-  const handleDeleteSubtask = useCallback(
-    (subtaskId: string): void => {
-      if (!canDeleteTicket) {
-        return;
-      }
-
-      deleteTicketMutation.mutate({
-        projectId,
-        ticketId: subtaskId,
-      });
-    },
-    [canDeleteTicket, deleteTicketMutation, projectId]
-  );
-
   const handleDeleteTicket = useCallback(async (): Promise<void> => {
     if (!canDeleteTicket || deleteTicketMutation.isPending) {
       return;
@@ -366,11 +246,6 @@ export const useTicketDetailController = ({
     ticketId,
   ]);
 
-  const createSubtaskErrorMessage =
-    createSubtaskMutation.error instanceof Error
-      ? createSubtaskMutation.error.message
-      : undefined;
-
   return {
     ticket,
     error,
@@ -379,46 +254,35 @@ export const useTicketDetailController = ({
     canComment,
     canDeleteTicket,
     canEditTicket,
-    hasEpicsAccess,
     comments,
-    subtasks,
-    epics,
-    labels,
     projectMembers,
     assignees,
     statusOptions,
-    assignedLabelIdSet,
-    doneStatuses,
     effectiveTitle,
     effectiveDescription,
     effectiveStatus,
     effectivePriority,
-    effectiveEpicId,
+    effectiveDueDate,
     commentInput,
     editingCommentId,
     editingCommentContent,
-    isSubtaskFormOpen,
     isDeleteModalOpen,
     isCreatingComment: createCommentMutation.isPending,
     isUpdatingComment: updateCommentMutation.isPending,
     isDeletingComment: deleteCommentMutation.isPending,
-    isCreatingSubtask: createSubtaskMutation.isPending,
     isSavingMainFields: updateMainTicketMutation.isPending,
     isDeletingTicket: deleteTicketMutation.isPending,
     isUpdatingAssignees:
       assignTicketMutation.isPending || unassignTicketMutation.isPending,
-    createSubtaskErrorMessage,
     setTitleDraft,
     setDescriptionDraft,
     setStatusDraft,
     setPriorityDraft,
-    setEpicIdDraft,
+    setDueDateDraft,
     setCommentInput,
     setEditingCommentContent,
-    setIsSubtaskFormOpen,
     setIsDeleteModalOpen,
     handleSaveMainFields,
-    handleToggleLabel,
     handleAssign,
     handleUnassign,
     handleCreateComment,
@@ -426,9 +290,6 @@ export const useTicketDetailController = ({
     handleCancelCommentEditing,
     handleSaveComment,
     handleDeleteComment,
-    handleCreateSubtask,
-    handleToggleSubtaskCompleted,
-    handleDeleteSubtask,
     handleDeleteTicket,
   };
 };

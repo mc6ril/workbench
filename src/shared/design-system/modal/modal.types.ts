@@ -15,6 +15,8 @@ export type ModalProps = {
   footer?: ReactNode;
   /** Modal size variant */
   size?: ModalSize;
+  /** Whether to hide the standard visual header while keeping the dialog labelled */
+  hideHeader?: boolean;
   /** Whether to close on backdrop click */
   closeOnBackdropClick?: boolean;
   /** Custom ARIA label */

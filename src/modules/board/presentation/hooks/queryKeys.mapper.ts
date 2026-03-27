@@ -2,13 +2,11 @@ import type {
   TicketFilters,
   TicketSort,
 } from "@/modules/board/core/domain/schema/ticket.schema";
+import { TICKET_PRIORITY_VALUES } from "@/modules/board/core/domain/schema/ticket.schema";
 
 export type TicketListFilterKey = readonly [
   status: TicketFilters["status"] | null,
-  epicId: TicketFilters["epicId"] | null,
-  parentId: Exclude<TicketFilters["parentId"], undefined> | null,
   priority: TicketFilters["priority"] | null,
-  labelIds: readonly string[] | null,
 ];
 
 export type TicketListSortKey = readonly [
@@ -20,10 +18,7 @@ export type TicketListQueryKeyDescriptor = {
   projectId: string;
   filters: {
     status: TicketFilters["status"] | null;
-    epicId: TicketFilters["epicId"] | null;
-    parentId: string | null;
     priority: TicketFilters["priority"] | null;
-    labelIds: readonly string[] | null;
   } | null;
   sort: TicketSort | null;
   search: string | null;
@@ -39,10 +34,7 @@ export const createTicketListFilterKey = (
 
   return [
     filters.status ?? null,
-    filters.epicId ?? null,
-    filters.parentId ?? null,
     filters.priority ?? null,
-    filters.labelIds?.length ? [...filters.labelIds].sort() : null,
   ] as const;
 };
 
@@ -52,16 +44,12 @@ export const createTicketListSortKey = (
   return sort ? ([sort.field, sort.direction] as const) : null;
 };
 
-const isStringArray = (value: unknown): value is string[] => {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
-};
-
 const isTicketPriority = (
   value: unknown
 ): value is NonNullable<TicketFilters["priority"]> => {
   return (
     typeof value === "string" &&
-    ["highest", "high", "medium", "low", "lowest"].includes(value)
+    (TICKET_PRIORITY_VALUES as readonly string[]).includes(value)
   );
 };
 
@@ -72,14 +60,11 @@ const mapTicketListFilterKey = (
     return null;
   }
 
-  const [status, epicId, parentId, priority, labelIds] = filterKey;
+  const [status, priority] = filterKey;
 
   return {
     status: typeof status === "string" ? status : null,
-    epicId: typeof epicId === "string" ? epicId : null,
-    parentId: typeof parentId === "string" ? parentId : null,
     priority: isTicketPriority(priority) ? priority : null,
-    labelIds: isStringArray(labelIds) ? labelIds : null,
   };
 };
 

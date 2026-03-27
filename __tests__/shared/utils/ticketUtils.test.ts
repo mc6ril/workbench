@@ -50,17 +50,15 @@ describe("buildTicketAriaLabel", () => {
       ticketCode: "WB-1",
       status: "todo",
       statusLabel: "Status",
-      epicName: "Authentication",
-      epicLabel: "Epic",
       assigneeName: "Alice",
       assigneeLabel: "Assignee",
-      priority: "high",
+      priority: "urgent",
       priorityLabel: "Priority",
       storyPointsLabel: "3 points",
     });
 
     expect(result).toBe(
-      "Ticket: Fix login, WB-1, Status: todo, Epic: Authentication, Assignee: Alice, Priority: high, 3 points"
+      "Ticket: Fix login, WB-1, Status: todo, Assignee: Alice, Priority: urgent, 3 points"
     );
   });
 
@@ -69,7 +67,6 @@ describe("buildTicketAriaLabel", () => {
       ticketAriaLabel: "Ticket",
       title: "Refactor API",
       ticketCode: null,
-      epicName: null,
       assigneeName: null,
       priority: null,
     });
@@ -82,9 +79,8 @@ describe("buildTicketAriaLabel", () => {
       ticketAriaLabel: "Ticket",
       title: "Write tests",
       status: "in-progress",
-      epicName: "QA",
       assigneeName: "Bob",
-      priority: "medium",
+      priority: "normal",
       storyPointsLabel: "5 points",
     });
 

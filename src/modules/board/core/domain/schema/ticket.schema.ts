@@ -7,15 +7,16 @@ import { z } from "zod";
 /**
  * Priority levels matching standard project management conventions.
  */
-export const TicketPrioritySchema = z.enum([
-  "highest",
-  "high",
-  "medium",
-  "low",
-  "lowest",
-]);
+export const TICKET_PRIORITY_VALUES = ["urgent", "normal", "low"] as const;
+
+export const TicketPrioritySchema = z.enum(TICKET_PRIORITY_VALUES);
 
 export type TicketPriority = z.infer<typeof TicketPrioritySchema>;
+export const TICKET_PRIORITY_RANK: Record<TicketPriority, number> = {
+  urgent: 3,
+  normal: 2,
+  low: 1,
+};
 
 export const TicketSchema = z.object({
   id: z.string().uuid(),
@@ -25,8 +26,6 @@ export const TicketSchema = z.object({
   status: z.string().min(1, "Ticket status must not be empty"),
   position: z.number().int().nonnegative("Position must be non-negative"),
   codeNumber: z.number().int().positive(),
-  epicId: z.string().uuid().nullable(),
-  parentId: z.string().uuid().nullable(),
   priority: TicketPrioritySchema.nullable(),
   dueDate: z.coerce.date().nullable(),
   storyPoints: z.number().int().positive().nullable(),
@@ -52,8 +51,6 @@ export const CreateTicketInputSchema = z.object({
   description: z.string().nullable().optional(),
   status: z.string().min(1, "Ticket status must not be empty"),
   position: z.number().int().nonnegative().default(0),
-  epicId: z.string().uuid().nullable().optional(),
-  parentId: z.string().uuid().nullable().optional(),
   priority: TicketPrioritySchema.nullable().optional(),
   dueDate: z.coerce.date().nullable().optional(),
   storyPoints: z.number().int().positive().nullable().optional(),
@@ -72,8 +69,6 @@ export const UpdateTicketInputSchema = z.object({
   description: z.string().nullable().optional(),
   status: z.string().min(1, "Ticket status must not be empty").optional(),
   position: z.number().int().nonnegative().optional(),
-  epicId: z.string().uuid().nullable().optional(),
-  parentId: z.string().uuid().nullable().optional(),
   priority: TicketPrioritySchema.nullable().optional(),
   dueDate: z.coerce.date().nullable().optional(),
   storyPoints: z.number().int().positive().nullable().optional(),
@@ -83,15 +78,6 @@ export const UpdateTicketInputSchema = z.object({
 });
 
 export type UpdateTicketInput = z.infer<typeof UpdateTicketInputSchema>;
-
-/**
- * Input for creating a subtask (parentId is required).
- */
-export const CreateSubtaskInputSchema = CreateTicketInputSchema.extend({
-  parentId: z.string().uuid(), // Required, not optional
-});
-
-export type CreateSubtaskInput = z.infer<typeof CreateSubtaskInputSchema>;
 
 /**
  * Input for reordering tickets.
@@ -136,10 +122,7 @@ export type MoveAndReorderTicketInput = z.infer<
  */
 export type TicketFilters = {
   status?: string;
-  epicId?: string;
-  parentId?: string | null;
   priority?: TicketPriority;
-  labelIds?: string[];
 };
 
 /**
@@ -188,31 +171,6 @@ export const TicketIdInputSchema = z.object({
 });
 
 export type TicketIdInput = z.infer<typeof TicketIdInputSchema>;
-
-/**
- * Input for assigning a ticket to an epic.
- * Validates both ticketId and epicId as UUIDs.
- */
-export const AssignTicketToEpicInputSchema = z.object({
-  ticketId: z.string().uuid("Ticket ID must be a valid UUID"),
-  epicId: z.string().uuid("Epic ID must be a valid UUID"),
-});
-
-export type AssignTicketToEpicInput = z.infer<
-  typeof AssignTicketToEpicInputSchema
->;
-
-/**
- * Input for unassigning a ticket from its epic.
- * Validates ticketId as UUID.
- */
-export const UnassignTicketFromEpicInputSchema = z.object({
-  ticketId: z.string().uuid("Ticket ID must be a valid UUID"),
-});
-
-export type UnassignTicketFromEpicInput = z.infer<
-  typeof UnassignTicketFromEpicInputSchema
->;
 
 /**
  * Input for moving a ticket to a new status and position.

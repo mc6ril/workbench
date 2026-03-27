@@ -1,9 +1,6 @@
 import { create } from "zustand";
 
-import type {
-  TicketFilters,
-  TicketPriority,
-} from "@/modules/board/core/domain/schema/ticket.schema";
+import type { TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
 
 type FilterState = {
   /**
@@ -24,25 +21,6 @@ type FilterActions = {
 
   setStatus: (status: string) => void;
   clearStatus: () => void;
-
-  setEpicId: (epicId: string) => void;
-  clearEpicId: () => void;
-
-  setPriority: (priority: TicketPriority) => void;
-  clearPriority: () => void;
-
-  setLabelIds: (labelIds: string[]) => void;
-  clearLabelIds: () => void;
-
-  /**
-   * parentId supports two explicit modes:
-   * - null: only top-level tickets (parentId IS NULL)
-   * - string: only subtasks of that parent
-   *
-   * To remove the parentId filter entirely (undefined), use clearParentId().
-   */
-  setParentId: (parentId: string | null) => void;
-  clearParentId: () => void;
 
   /**
    * Resets domain-aligned filters only. Does NOT reset search.
@@ -77,66 +55,6 @@ export const useFilterStore = create<FilterStore>((set) => ({
   clearStatus: (): void => {
     set((state) => {
       const { status: _status, ...rest } = state.filters;
-      return { filters: rest };
-    });
-  },
-
-  setEpicId: (epicId: string): void => {
-    set((state) => ({
-      filters: {
-        ...state.filters,
-        epicId,
-      },
-    }));
-  },
-  clearEpicId: (): void => {
-    set((state) => {
-      const { epicId: _epicId, ...rest } = state.filters;
-      return { filters: rest };
-    });
-  },
-
-  setPriority: (priority: TicketPriority): void => {
-    set((state) => ({
-      filters: {
-        ...state.filters,
-        priority,
-      },
-    }));
-  },
-  clearPriority: (): void => {
-    set((state) => {
-      const { priority: _priority, ...rest } = state.filters;
-      return { filters: rest };
-    });
-  },
-
-  setLabelIds: (labelIds: string[]): void => {
-    set((state) => ({
-      filters: {
-        ...state.filters,
-        labelIds,
-      },
-    }));
-  },
-  clearLabelIds: (): void => {
-    set((state) => {
-      const { labelIds: _labelIds, ...rest } = state.filters;
-      return { filters: rest };
-    });
-  },
-
-  setParentId: (parentId: string | null): void => {
-    set((state) => ({
-      filters: {
-        ...state.filters,
-        parentId,
-      },
-    }));
-  },
-  clearParentId: (): void => {
-    set((state) => {
-      const { parentId: _parentId, ...rest } = state.filters;
       return { filters: rest };
     });
   },

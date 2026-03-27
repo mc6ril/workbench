@@ -1,5 +1,3 @@
-export { useAssignTicketToEpic } from "./useAssignTicketToEpic";
-export { useCreateSubtask } from "./useCreateSubtask";
 export { useCreateTicket } from "./useCreateTicket";
 export { useDeleteTicket } from "./useDeleteTicket";
 export { useMoveAndReorderTicket } from "./useMoveAndReorderTicket";

@@ -38,11 +38,6 @@ const parsePreferences = (raw: Record<string, unknown>): UserPreferences => {
       isGettingStartedStatus(raw["gettingStartedStatus"])
         ? raw["gettingStartedStatus"]
         : DEFAULT_USER_PREFERENCES.gettingStartedStatus,
-    epicsGettingStartedStatus:
-      typeof raw["epicsGettingStartedStatus"] === "string" &&
-      isGettingStartedStatus(raw["epicsGettingStartedStatus"])
-        ? raw["epicsGettingStartedStatus"]
-        : DEFAULT_USER_PREFERENCES.epicsGettingStartedStatus,
   };
 };
 

@@ -5,13 +5,12 @@ import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
 /** Project view keys available in the project shell. */
 export const PROJECT_VIEW_KEYS = Object.freeze([
   PROJECT_VIEWS.BOARD,
-  PROJECT_VIEWS.EPICS,
   PROJECT_VIEWS.SETTINGS,
 ]);
 
 export type ProjectViewKey = (typeof PROJECT_VIEW_KEYS)[number];
 
-export type NavbarAddActionType = "ticket" | "epic";
+export type NavbarAddActionType = "ticket";
 
 export type ProjectViewNavbarConfig = {
   showFilterSort: boolean;
@@ -42,13 +41,8 @@ const PROJECT_VIEW_CONFIG_INPUTS: Record<
   [PROJECT_VIEWS.BOARD]: {
     navbar: { showFilterSort: true, addActionType: "ticket" },
   },
-  [PROJECT_VIEWS.EPICS]: {
-    navbar: { showFilterSort: true, addActionType: "epic" },
-    requiredFeature: PlanFeature.EPICS,
-  },
   [PROJECT_VIEWS.SETTINGS]: {
     navbar: { showFilterSort: false, addActionType: null },
-    requiredFeature: PlanFeature.PRIORITIES,
   },
 });
 
@@ -71,10 +65,6 @@ const PROJECT_VIEW_CONFIGS: Record<ProjectViewKey, ProjectViewConfig> =
     [PROJECT_VIEWS.BOARD]: createProjectViewConfig(
       PROJECT_VIEWS.BOARD,
       PROJECT_VIEW_CONFIG_INPUTS[PROJECT_VIEWS.BOARD]
-    ),
-    [PROJECT_VIEWS.EPICS]: createProjectViewConfig(
-      PROJECT_VIEWS.EPICS,
-      PROJECT_VIEW_CONFIG_INPUTS[PROJECT_VIEWS.EPICS]
     ),
     [PROJECT_VIEWS.SETTINGS]: createProjectViewConfig(
       PROJECT_VIEWS.SETTINGS,

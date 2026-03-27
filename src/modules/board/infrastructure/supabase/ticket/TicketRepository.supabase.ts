@@ -19,6 +19,7 @@ import type {
   TicketSort,
   UpdateTicketInput,
 } from "@/modules/board/core/domain/schema/ticket.schema";
+import { TICKET_PRIORITY_RANK } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 import type { TicketRow } from "@/modules/board/infrastructure/supabase/ticket/types";
 
@@ -181,44 +182,8 @@ export const createTicketRepository = (
           query = query.eq("status", filters.status);
         }
 
-        if (filters?.epicId) {
-          query = query.eq("epic_id", filters.epicId);
-        }
-
-        // parentId filter is tri-state:
-        // - undefined: don't filter by parent_id
-        // - null: only top-level tickets (parent_id IS NULL)
-        // - string: only subtasks of given parent (parent_id = value)
-        if (filters && "parentId" in filters) {
-          if (filters.parentId === null) {
-            query = query.is("parent_id", null);
-          } else if (typeof filters.parentId === "string") {
-            query = query.eq("parent_id", filters.parentId);
-          }
-        }
-
         if (filters?.priority) {
           query = query.eq("priority", filters.priority);
-        }
-
-        if (filters?.labelIds && filters.labelIds.length > 0) {
-          const { data: labelTicketIds, error: labelFilterError } = await client
-            .from("ticket_labels")
-            .select("ticket_id")
-            .in("label_id", filters.labelIds);
-
-          if (labelFilterError) {
-            return handleRepositoryError(labelFilterError, "Ticket");
-          }
-
-          const ticketIds = (labelTicketIds ?? []).map(
-            (r: { ticket_id: string }) => r.ticket_id
-          );
-
-          if (ticketIds.length === 0) {
-            return [];
-          }
-          query = query.in("id", ticketIds);
         }
 
         const searchTerm = search?.trim();
@@ -299,17 +264,9 @@ export const createTicketRepository = (
           // DB stores priority as text, so semantic priority sort is done in-memory.
           // Trade-off: for this specific sort mode, all matching rows are fetched
           // before applying `limit`.
-          const priorityRank: Record<string, number> = {
-            highest: 5,
-            high: 4,
-            medium: 3,
-            low: 2,
-            lowest: 1,
-          };
-
           ticketRows.sort((a, b) => {
-            const rankA = a.priority ? (priorityRank[a.priority] ?? 0) : 0;
-            const rankB = b.priority ? (priorityRank[b.priority] ?? 0) : 0;
+            const rankA = a.priority ? TICKET_PRIORITY_RANK[a.priority] : 0;
+            const rankB = b.priority ? TICKET_PRIORITY_RANK[b.priority] : 0;
             if (rankA === rankB) {
               // TicketRow timestamps are ISO strings from Supabase row types.
               return a.created_at.localeCompare(b.created_at);
@@ -364,8 +321,6 @@ export const createTicketRepository = (
             description: input.description ?? null,
             status: input.status,
             position: input.position ?? 0,
-            epic_id: input.epicId ?? null,
-            parent_id: input.parentId ?? null,
             priority: input.priority ?? null,
             due_date: input.dueDate?.toISOString() ?? null,
             story_points: input.storyPoints ?? null,
@@ -408,12 +363,6 @@ export const createTicketRepository = (
         }
         if (input.position !== undefined) {
           updateData.position = input.position;
-        }
-        if (input.epicId !== undefined) {
-          updateData.epic_id = input.epicId;
-        }
-        if (input.parentId !== undefined) {
-          updateData.parent_id = input.parentId;
         }
         if (input.priority !== undefined) {
           updateData.priority = input.priority;
@@ -584,14 +533,6 @@ export const createTicketRepository = (
       } catch (error) {
         return handleRepositoryError(error, "Ticket");
       }
-    },
-
-    async assignToEpic(ticketId: string, epicId: string): Promise<Ticket> {
-      return repo.update(ticketId, { epicId });
-    },
-
-    async unassignFromEpic(ticketId: string): Promise<Ticket> {
-      return repo.update(ticketId, { epicId: null });
     },
 
     async findByCode(

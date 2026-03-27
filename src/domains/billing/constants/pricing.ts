@@ -24,16 +24,8 @@ export const FEATURE_ROWS: FeatureRow[] = [
   { key: "projectsPerAccount", free: "one", pro: "five", team: "unlimited" },
   { key: "tickets", free: "hundred", pro: "unlimited", team: "unlimited" },
   { key: "boardView", free: "included", pro: "included", team: "included" },
-  { key: "epics", free: "included", pro: "included", team: "included" },
   {
     key: "customColumns",
-    free: "notIncluded",
-    pro: "included",
-    team: "included",
-  },
-  { key: "subtasks", free: "notIncluded", pro: "included", team: "included" },
-  {
-    key: "priorities",
     free: "notIncluded",
     pro: "included",
     team: "included",

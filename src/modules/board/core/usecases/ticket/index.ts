@@ -1,7 +1,5 @@
 export { archiveCompletedTicketsBatch } from "./archiveCompletedTicketsBatch";
 export { assignTicket } from "./assignTicket";
-export { assignTicketToEpic } from "./assignTicketToEpic";
-export { createSubtask } from "./createSubtask";
 export { createTicket } from "./createTicket";
 export { deleteTicket } from "./deleteTicket";
 export { getTicketAssigneesByProjectId } from "./getTicketAssigneesByProjectId";
@@ -13,5 +11,4 @@ export { moveAndReorderTicket } from "./moveAndReorderTicket";
 export { moveTicket } from "./moveTicket";
 export { reorderTicket } from "./reorderTicket";
 export { unassignTicket } from "./unassignTicket";
-export { unassignTicketFromEpic } from "./unassignTicketFromEpic";
 export { updateTicket } from "./updateTicket";

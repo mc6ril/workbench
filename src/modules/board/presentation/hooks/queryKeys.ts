@@ -51,9 +51,6 @@ const queryKeysObject = {
         limit ?? null,
       ] as const;
     },
-    epicsRoot: (projectId: string) => ["projects", projectId, "epics"] as const,
-    epicsList: (projectId: string) =>
-      ["projects", projectId, "epics", "list"] as const,
     boardConfiguration: (projectId: string) =>
       ["projects", projectId, "board", "configuration"] as const,
   },
@@ -66,19 +63,10 @@ const queryKeysObject = {
     assigneesByTicketIds: (ticketIds: string[]) =>
       ["ticket-assignees", "batch", ...[...ticketIds].sort()] as const,
   },
-  epics: {
-    all: () => ["epics"] as const,
-    detail: (id: string) => ["epics", id] as const,
-  },
   comments: {
     root: () => ["comments"] as const,
     byTicket: (ticketId: string) => ["comments", "ticket", ticketId] as const,
     byProject: (projectId: string) => ["comments", "project", projectId] as const,
-  },
-  labels: {
-    root: () => ["labels"] as const,
-    byProject: (projectId: string) => ["labels", "project", projectId] as const,
-    byTicket: (ticketId: string) => ["labels", "ticket", ticketId] as const,
   },
   subscription: {
     current: () => ["subscription", "current"] as const,
@@ -102,9 +90,7 @@ const queryKeysObject = {
 export const queryKeys = Object.freeze({
   projects: Object.freeze(queryKeysObject.projects),
   tickets: Object.freeze(queryKeysObject.tickets),
-  epics: Object.freeze(queryKeysObject.epics),
   comments: Object.freeze(queryKeysObject.comments),
-  labels: Object.freeze(queryKeysObject.labels),
   invitations: Object.freeze(queryKeysObject.invitations),
   members: Object.freeze(queryKeysObject.members),
   subscription: Object.freeze(queryKeysObject.subscription),

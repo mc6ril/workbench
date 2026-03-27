@@ -3,12 +3,9 @@ import { useMemo } from "react";
 import { PROJECT_VIEWS, type ProjectView } from "@/shared/constants/routes";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
-import type { EpicWithProgress } from "@/modules/board/core/domain/schema/epic.schema";
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
-import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
-import { filterEpicsBySearch } from "@/modules/board/utils/epicUtils";
 import {
   buildTicketCode,
   normalizeTicketSearch,
@@ -20,7 +17,6 @@ export type ProjectSearchSuggestion = {
   href: string;
 };
 
-const EMPTY_EPICS: EpicWithProgress[] = [];
 const EMPTY_TICKETS: Ticket[] = [];
 const EMPTY_SEARCH_SUGGESTIONS: ProjectSearchSuggestion[] = [];
 
@@ -36,13 +32,9 @@ export const useProjectSearchSuggestions = ({
   searchValue,
 }: Input): ProjectSearchSuggestion[] => {
   const isTicketView = viewKey === PROJECT_VIEWS.BOARD;
-  const isEpicsView = viewKey === PROJECT_VIEWS.EPICS;
   const searchTerm = searchValue.trim();
 
   const { data: projectShortCode } = useProjectShortCode(projectId);
-
-  const { data: epicsData } = useEpics(projectId, { enabled: isEpicsView });
-  const epics = epicsData ?? EMPTY_EPICS;
   const effectiveSearch = useMemo(() => {
     return normalizeTicketSearch(searchTerm, projectShortCode);
   }, [projectShortCode, searchTerm]);
@@ -64,16 +56,6 @@ export const useProjectSearchSuggestions = ({
       return EMPTY_SEARCH_SUGGESTIONS;
     }
 
-    if (isEpicsView) {
-      return filterEpicsBySearch(epics, searchTerm)
-        .slice(0, 6)
-        .map((epic) => ({
-          id: epic.id,
-          label: epic.name,
-          href: `${buildProjectRoute(projectId, PROJECT_VIEWS.EPICS)}#epic-${epic.id}`,
-        }));
-    }
-
     if (isTicketView) {
       return tickets.slice(0, 6).map((ticket) => ({
         id: ticket.id,
@@ -84,8 +66,6 @@ export const useProjectSearchSuggestions = ({
 
     return EMPTY_SEARCH_SUGGESTIONS;
   }, [
-    epics,
-    isEpicsView,
     isTicketView,
     projectId,
     projectShortCode,

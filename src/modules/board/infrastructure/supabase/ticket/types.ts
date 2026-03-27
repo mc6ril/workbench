@@ -1,3 +1,5 @@
+import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
+
 export type TicketRow = {
   id: string;
   project_id: string;
@@ -6,9 +8,7 @@ export type TicketRow = {
   status: string;
   position: number;
   code_number: number;
-  epic_id: string | null;
-  parent_id: string | null;
-  priority: string | null;
+  priority: TicketPriority | null;
   due_date: string | null;
   story_points: number | null;
   created_by: string | null;

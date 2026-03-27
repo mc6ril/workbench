@@ -77,7 +77,7 @@ export const extractProjectView = (pathname: string): string | null => {
  * Build a project route pathname.
  *
  * @param projectId - The project UUID
- * @param view - The view name (board, epics, settings, etc.)
+ * @param view - The view name (board, settings, etc.)
  * @returns The route pathname
  */
 export const buildProjectRoute = (projectId: string, view: string): string => {
