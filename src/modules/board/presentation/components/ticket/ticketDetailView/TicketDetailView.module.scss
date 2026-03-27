@@ -51,7 +51,8 @@
   flex-direction: column;
   gap: $spacing-xs;
 
-  label {
+  label,
+  .ticket-detail__field-label {
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
     color: $color-text-secondary;
@@ -66,6 +67,52 @@
   color: $color-text;
   font-size: $font-size-base;
   padding: $spacing-md $spacing-lg;
+}
+
+.ticket-detail__priority-selector {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.ticket-detail__priority-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-full;
+  background: $color-surface;
+  cursor: pointer;
+  transition:
+    transform 160ms ease-in-out,
+    border-color 160ms ease-in-out,
+    box-shadow 160ms ease-in-out,
+    background-color 160ms ease-in-out;
+
+  &:hover:not(:disabled) {
+    border-color: $color-accent;
+    background: $color-surface-subtle;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.ticket-detail__priority-button--selected {
+  border-color: $color-accent;
+  background: $color-accent-bg-soft;
+  box-shadow: 0 0 0 3px $color-accent-border-subtle;
+}
+
+.ticket-detail__priority-summary {
+  @include typography-caption;
+  color: $color-text-secondary;
 }
 
 .ticket-detail__comments {

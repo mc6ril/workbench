@@ -593,7 +593,6 @@
         "searchPlaceholder": "Buscar por título o descripción",
         "statusLabel": "Estado",
         "epicLabel": "Objetivo",
-        "priorityLabel": "Prioridad",
         "labelLabel": "Etiqueta",
         "noLabelOptions": "No hay etiquetas disponibles para este proyecto",
         "resetLabel": "Restablecer filtros",
@@ -625,7 +624,6 @@
         "fieldTitle": "Título",
         "fieldStatus": "Estado",
         "fieldPosition": "Posición en tablero",
-        "fieldPriority": "Prioridad",
         "fieldDueDate": "Fecha de vencimiento",
         "sortDirectionLabel": "Dirección de orden",
         "directionAsc": "Ascendente",
@@ -777,7 +775,6 @@
         "tabs": {
           "project": "Proyecto",
           "statusesColumns": "Estados y columnas",
-          "priorities": "Prioridades",
           "exportImport": "Exportar / importar"
         },
         "fallback": "Sección de configuración no disponible"
@@ -830,29 +827,6 @@
         "empty": {
           "title": "Ninguna columna",
           "message": "Añade una columna para empezar"
-        }
-      },
-      "priorities": {
-        "title": "Prioridades",
-        "subtitle": "Configura los niveles de prioridad",
-        "listAriaLabel": "Lista de prioridades",
-        "fields": {
-          "name": {
-            "label": "Nombre",
-            "placeholder": "Nombre de la prioridad",
-            "ariaLabel": "Renombrar prioridad {name}"
-          }
-        },
-        "actions": {
-          "add": "Añadir",
-          "moveUp": "Subir",
-          "moveDown": "Bajar",
-          "moveUpAriaLabel": "Subir prioridad {name}",
-          "moveDownAriaLabel": "Bajar prioridad {name}"
-        },
-        "empty": {
-          "title": "Ninguna prioridad",
-          "message": "Añade una prioridad para empezar"
         }
       },
       "exportImport": {
@@ -975,11 +949,9 @@
           "none": "Ninguno"
         },
         "priority": {
-          "highest": "Muy alta",
-          "high": "Alta",
-          "medium": "Media",
-          "low": "Baja",
-          "lowest": "Muy baja"
+          "urgent": "Urgente",
+          "normal": "Normal",
+          "low": "Baja"
         },
         "comments": {
           "title": "Comentarios",
@@ -1388,7 +1360,6 @@
         "epics": "Epics",
         "subtasks": "Subtareas",
         "customColumns": "Columnas personalizadas",
-        "priorities": "Prioridades",
         "exportImport": "Exportar / Importar",
         "advancedRoles": "Roles avanzados (observador)",
         "prioritySupport": "Soporte prioritario"
@@ -1476,7 +1447,6 @@
       "featureNames": {
         "epics": "Epics",
         "subtasks": "Subtareas",
-        "priorities": "Prioridades",
         "exportImport": "Exportar / Importar",
         "advancedRoles": "Roles avanzados",
         "workspaces": "Proyectos por cuenta",

@@ -41,10 +41,6 @@ const TicketSortControls = ({
             label: t("fieldPosition"),
           },
           {
-            value: TICKET_SORT_FIELD_VALUES.PRIORITY,
-            label: t("fieldPriority"),
-          },
-          {
             value: TICKET_SORT_FIELD_VALUES.DUE_DATE,
             label: t("fieldDueDate"),
           },

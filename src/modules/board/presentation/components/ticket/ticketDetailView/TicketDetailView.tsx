@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React from "react";
 
 import Card from "@/shared/design-system/card";
 import Loader from "@/shared/design-system/loader";
@@ -13,7 +13,6 @@ import TicketDetailDeleteModal from "./components/TicketDetailDeleteModal";
 import TicketDetailMainCard from "./components/TicketDetailMainCard";
 import TicketDetailSidebarCard from "./components/TicketDetailSidebarCard";
 import styles from "./TicketDetailView.module.scss";
-import { buildPriorityOptions } from "./TicketDetailView.utils";
 
 import { useTicketDetailController } from "@/modules/board/presentation/hooks/ticket";
 
@@ -71,10 +70,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     projectId,
     ticketId,
   });
-
-  const priorityOptions = useMemo(() => {
-    return buildPriorityOptions(t);
-  }, [t]);
 
   const canSaveMainFields =
     canEditTicket && effectiveTitle.trim().length > 0 && !isSavingMainFields;
@@ -136,7 +131,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
           effectiveStatus={effectiveStatus}
           effectivePriority={effectivePriority}
           statusOptions={statusOptions}
-          priorityOptions={priorityOptions}
           projectMembers={projectMembers}
           assignees={assignees}
           isUpdatingAssignees={isUpdatingAssignees}

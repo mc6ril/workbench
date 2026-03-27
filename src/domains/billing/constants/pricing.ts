@@ -33,12 +33,6 @@ export const FEATURE_ROWS: FeatureRow[] = [
   },
   { key: "subtasks", free: "notIncluded", pro: "included", team: "included" },
   {
-    key: "priorities",
-    free: "notIncluded",
-    pro: "included",
-    team: "included",
-  },
-  {
     key: "exportImport",
     free: "notIncluded",
     pro: "included",

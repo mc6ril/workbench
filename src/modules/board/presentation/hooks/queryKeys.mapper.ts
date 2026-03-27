@@ -2,6 +2,7 @@ import type {
   TicketFilters,
   TicketSort,
 } from "@/modules/board/core/domain/schema/ticket.schema";
+import { TICKET_PRIORITY_VALUES } from "@/modules/board/core/domain/schema/ticket.schema";
 
 export type TicketListFilterKey = readonly [
   status: TicketFilters["status"] | null,
@@ -48,7 +49,7 @@ const isTicketPriority = (
 ): value is NonNullable<TicketFilters["priority"]> => {
   return (
     typeof value === "string" &&
-    ["highest", "high", "medium", "low", "lowest"].includes(value)
+    (TICKET_PRIORITY_VALUES as readonly string[]).includes(value)
   );
 };
 

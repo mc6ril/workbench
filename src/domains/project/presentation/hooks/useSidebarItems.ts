@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 
-import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 
 import { getEffectivePlan } from "@/domains/billing/core/domain/planFeatures.rules";
@@ -61,10 +60,6 @@ export const useSidebarItems = (projectId: string): SidebarItem[] => {
         effectivePlan === null
           ? { locked: false, minimumPlan: undefined }
           : computeFeatureLockState(config.requiredFeature, effectivePlan);
-
-      if (config.key === PROJECT_VIEWS.SETTINGS && locked) {
-        return [];
-      }
 
       if (!isBillingVisible && locked) {
         return [];

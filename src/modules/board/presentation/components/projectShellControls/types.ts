@@ -1,6 +1,5 @@
 import {
   TicketFilters,
-  TicketPriority,
   TicketSort,
 } from "@/modules/board/core/domain/schema/ticket.schema";
 
@@ -14,8 +13,6 @@ export type TicketFilterControlsProps = {
   statusOptions: Option[];
   onSetStatus: (value: string) => void;
   onClearStatus: () => void;
-  onSetPriority: (value: TicketPriority) => void;
-  onClearPriority: () => void;
   onResetFilters: () => void;
 };
 

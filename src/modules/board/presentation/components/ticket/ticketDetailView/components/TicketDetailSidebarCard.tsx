@@ -4,23 +4,22 @@ import Select from "@/shared/design-system/select";
 import { useTranslation } from "@/shared/i18n";
 
 import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
+import {
+  TICKET_PRIORITY_VALUES,
+  type TicketAssignee,
+  type TicketPriority,
+} from "@/modules/board/core/domain/schema/ticket.schema";
 import AssigneePicker from "@/modules/board/presentation/components/ticket/assigneePicker/AssigneePicker";
+import TicketPriorityDot from "@/modules/board/presentation/components/ticket/ticketShared/TicketPriorityDot";
 import styles from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 import type { TicketDetailStatusOption } from "@/modules/board/presentation/hooks/ticket/useTicketDetailController";
-
-type SelectOption = {
-  value: string;
-  label: string;
-};
 
 type Props = {
   canEditTicket: boolean;
   canDeleteTicket: boolean;
   effectiveStatus: string;
-  effectivePriority: string;
+  effectivePriority: TicketPriority | "";
   statusOptions: TicketDetailStatusOption[];
-  priorityOptions: SelectOption[];
   projectMembers: ProjectMember[];
   assignees: TicketAssignee[];
   isUpdatingAssignees: boolean;
@@ -28,7 +27,7 @@ type Props = {
   isDeletingTicket: boolean;
   canSaveMainFields: boolean;
   onStatusChange: (value: string) => void;
-  onPriorityChange: (value: string) => void;
+  onPriorityChange: (value: TicketPriority | "") => void;
   onAssign: (userId: string) => void;
   onUnassign: (userId: string) => void;
   onSaveMainFields: () => void;
@@ -41,7 +40,6 @@ const TicketDetailSidebarCard = ({
   effectiveStatus,
   effectivePriority,
   statusOptions,
-  priorityOptions,
   projectMembers,
   assignees,
   isUpdatingAssignees,
@@ -56,6 +54,9 @@ const TicketDetailSidebarCard = ({
   onOpenDeleteModal,
 }: Props) => {
   const t = useTranslation("pages.ticketDetail.page");
+  const prioritySummary = effectivePriority
+    ? t(`priority.${effectivePriority}`)
+    : t("fields.none");
 
   return (
     <Card className={styles["ticket-detail__aside"]}>
@@ -69,15 +70,46 @@ const TicketDetailSidebarCard = ({
         }}
       />
 
-      <Select
-        label={t("fields.priority")}
-        value={effectivePriority}
-        options={priorityOptions}
-        disabled={!canEditTicket}
-        onChange={(event) => {
-          onPriorityChange(event.target.value);
-        }}
-      />
+      <div className={styles["ticket-detail__field"]}>
+        <span className={styles["ticket-detail__field-label"]}>
+          {t("fields.priority")}
+        </span>
+        <div
+          className={styles["ticket-detail__priority-selector"]}
+          role="group"
+          aria-label={t("fields.priority")}
+        >
+          {TICKET_PRIORITY_VALUES.map((value) => {
+            const isSelected = effectivePriority === value;
+
+            return (
+              <button
+                key={value}
+                type="button"
+                className={[
+                  styles["ticket-detail__priority-button"],
+                  isSelected &&
+                    styles["ticket-detail__priority-button--selected"],
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                onClick={() => {
+                  onPriorityChange(isSelected ? "" : value);
+                }}
+                disabled={!canEditTicket}
+                aria-label={t(`priority.${value}`)}
+                aria-pressed={isSelected}
+                title={t(`priority.${value}`)}
+              >
+                <TicketPriorityDot priority={value} size="lg" />
+              </button>
+            );
+          })}
+          <span className={styles["ticket-detail__priority-summary"]}>
+            {prioritySummary}
+          </span>
+        </div>
+      </div>
 
       <AssigneePicker
         members={projectMembers}

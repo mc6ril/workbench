@@ -20,9 +20,6 @@ describe("Plan Features Domain Rules", () => {
         [PlanFeature.SUBTASKS, SubscriptionPlan.FREE, false],
         [PlanFeature.SUBTASKS, SubscriptionPlan.PRO, true],
         [PlanFeature.SUBTASKS, SubscriptionPlan.TEAM, true],
-        [PlanFeature.PRIORITIES, SubscriptionPlan.FREE, false],
-        [PlanFeature.PRIORITIES, SubscriptionPlan.PRO, true],
-        [PlanFeature.PRIORITIES, SubscriptionPlan.TEAM, true],
         [PlanFeature.EXPORT_IMPORT, SubscriptionPlan.FREE, false],
         [PlanFeature.EXPORT_IMPORT, SubscriptionPlan.PRO, true],
         [PlanFeature.EXPORT_IMPORT, SubscriptionPlan.TEAM, true],
@@ -115,9 +112,6 @@ describe("Plan Features Domain Rules", () => {
   describe("getMinimumPlanForFeature", () => {
     it("should return PRO for features available from PRO", () => {
       expect(getMinimumPlanForFeature(PlanFeature.SUBTASKS)).toBe(
-        SubscriptionPlan.PRO
-      );
-      expect(getMinimumPlanForFeature(PlanFeature.PRIORITIES)).toBe(
         SubscriptionPlan.PRO
       );
       expect(getMinimumPlanForFeature(PlanFeature.EXPORT_IMPORT)).toBe(

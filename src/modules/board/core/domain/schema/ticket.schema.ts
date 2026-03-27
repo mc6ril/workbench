@@ -7,15 +7,16 @@ import { z } from "zod";
 /**
  * Priority levels matching standard project management conventions.
  */
-export const TicketPrioritySchema = z.enum([
-  "highest",
-  "high",
-  "medium",
-  "low",
-  "lowest",
-]);
+export const TICKET_PRIORITY_VALUES = ["urgent", "normal", "low"] as const;
+
+export const TicketPrioritySchema = z.enum(TICKET_PRIORITY_VALUES);
 
 export type TicketPriority = z.infer<typeof TicketPrioritySchema>;
+export const TICKET_PRIORITY_RANK: Record<TicketPriority, number> = {
+  urgent: 3,
+  normal: 2,
+  low: 1,
+};
 
 export const TicketSchema = z.object({
   id: z.string().uuid(),

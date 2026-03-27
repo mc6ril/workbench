@@ -48,6 +48,24 @@ describe("TicketSchema", () => {
       expect(result.data.archivedWeekStart).toEqual(new Date("2026-03-24"));
     }
   });
+
+  it("accepts the simplified priority values", () => {
+    const result = TicketSchema.safeParse({
+      ...validTicket,
+      priority: "urgent",
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects legacy priority values", () => {
+    const result = TicketSchema.safeParse({
+      ...validTicket,
+      priority: "high",
+    });
+
+    expect(result.success).toBe(false);
+  });
 });
 
 describe("UpdateTicketInputSchema", () => {

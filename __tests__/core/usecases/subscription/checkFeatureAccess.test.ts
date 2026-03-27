@@ -36,18 +36,6 @@ describe("checkFeatureAccess", () => {
       expect(result.currentPlan).toBe(SubscriptionPlan.FREE);
     });
 
-    it("should deny priorities access for FREE plan", () => {
-      const subscription = createMockSubscription({
-        plan: SubscriptionPlan.FREE,
-      });
-
-      const result = checkFeatureAccess(subscription, PlanFeature.PRIORITIES);
-
-      expect(result.hasAccess).toBe(false);
-      expect(result.currentPlan).toBe(SubscriptionPlan.FREE);
-      expect(result.minimumPlan).toBe(SubscriptionPlan.PRO);
-    });
-
     it("should grant epics access for PRO plan", () => {
       const subscription = createMockSubscription({
         plan: SubscriptionPlan.PRO,
@@ -142,7 +130,7 @@ describe("checkFeatureAccess", () => {
         status: SubscriptionStatus.CANCELED,
       });
 
-      const result = checkFeatureAccess(subscription, PlanFeature.PRIORITIES);
+      const result = checkFeatureAccess(subscription, PlanFeature.EXPORT_IMPORT);
 
       expect(result.hasAccess).toBe(false);
       expect(result.currentPlan).toBe(SubscriptionPlan.FREE);
