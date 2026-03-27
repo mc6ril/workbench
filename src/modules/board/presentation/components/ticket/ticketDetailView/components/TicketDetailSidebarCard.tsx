@@ -10,8 +10,8 @@ import {
   type TicketPriority,
 } from "@/modules/board/core/domain/schema/ticket.schema";
 import AssigneePicker from "@/modules/board/presentation/components/ticket/assigneePicker/AssigneePicker";
-import TicketPriorityDot from "@/modules/board/presentation/components/ticket/ticketShared/TicketPriorityDot";
 import styles from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
+import TicketPriorityDot from "@/modules/board/presentation/components/ticket/ticketShared/TicketPriorityDot";
 import type { TicketDetailStatusOption } from "@/modules/board/presentation/hooks/ticket/useTicketDetailController";
 
 type Props = {
