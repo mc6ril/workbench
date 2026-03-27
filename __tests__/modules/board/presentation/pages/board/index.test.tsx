@@ -110,13 +110,6 @@ jest.mock("@/modules/board/presentation/components/ticket/ticketCard/TicketCard"
   default: () => <div data-testid="ticket-card" />,
 }));
 
-jest.mock("@/shared/featureAccess", () => ({
-  PlanFeature: {
-    EPICS: "EPICS",
-  },
-  useFeatureAccess: jest.fn(),
-}));
-
 jest.mock("@/domains/project/presentation/providers/permissions", () => ({
   useProjectPermissions: jest.fn(),
 }));
@@ -198,11 +191,6 @@ describe("BoardPage onboarding", () => {
     mockSearchParams = new URLSearchParams();
     mockTicketsData = [];
     mockSetStatusAsync.mockResolvedValue(undefined);
-
-    const { useFeatureAccess } = jest.requireMock("@/shared/featureAccess");
-    jest.mocked(useFeatureAccess).mockReturnValue({
-      hasAccess: false,
-    });
 
     jest.mocked(useProjectPermissions).mockReturnValue(
       asMockedReturn<ReturnType<typeof useProjectPermissions>>({

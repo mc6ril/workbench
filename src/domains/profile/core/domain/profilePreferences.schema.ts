@@ -48,7 +48,6 @@ export const UserPreferencesSchema = z.object({
   emailNotifications: z.boolean(),
   language: z.string().min(1),
   gettingStartedStatus: z.enum(GettingStartedStatusValues),
-  epicsGettingStartedStatus: z.enum(GettingStartedStatusValues),
 });
 
 /**
@@ -64,7 +63,6 @@ export const DEFAULT_USER_PREFERENCES: UserPreferences = {
   emailNotifications: true,
   language: defaultLocale,
   gettingStartedStatus: "pending",
-  epicsGettingStartedStatus: "pending",
 };
 
 /**

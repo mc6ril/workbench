@@ -22,7 +22,6 @@ describe("UserProfileMapper.supabase", () => {
         emailNotifications: false,
         language: "fr",
         gettingStartedStatus: "completed",
-        epicsGettingStartedStatus: "skipped",
       },
     });
 
@@ -31,7 +30,6 @@ describe("UserProfileMapper.supabase", () => {
       emailNotifications: false,
       language: "fr",
       gettingStartedStatus: "completed",
-      epicsGettingStartedStatus: "skipped",
     });
   });
 
@@ -43,7 +41,6 @@ describe("UserProfileMapper.supabase", () => {
         emailNotifications: false,
         language: "fr",
         gettingStartedStatus: "archived",
-        epicsGettingStartedStatus: "paused",
       },
     });
 
@@ -52,8 +49,6 @@ describe("UserProfileMapper.supabase", () => {
       emailNotifications: false,
       language: "fr",
       gettingStartedStatus: DEFAULT_USER_PREFERENCES.gettingStartedStatus,
-      epicsGettingStartedStatus:
-        DEFAULT_USER_PREFERENCES.epicsGettingStartedStatus,
     });
   });
 });

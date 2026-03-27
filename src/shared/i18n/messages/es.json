@@ -38,7 +38,6 @@
         "home": "Inicio",
         "board": "Tablero",
         "ticketDetail": "Tarea",
-        "epics": "Objetivos",
         "settings": "Configuración"
       },
       "locked": {
@@ -73,23 +72,9 @@
       "reviewGuideAriaLabel": "Relanzar la guia de onboarding",
       "addTicket": "Añadir tarea",
       "addTicketAriaLabel": "Crear una nueva tarea",
-      "addEpic": "Añadir objetivo",
-      "addEpicAriaLabel": "Crear un nuevo objetivo",
-      "epicFilterLabel": "Progreso de objetivos",
-      "epicFilterAll": "Todos los objetivos",
-      "epicFilterNotStarted": "No iniciadas",
-      "epicFilterInProgress": "En progreso",
-      "epicFilterCompleted": "Completadas",
-      "resetEpicFilters": "Restablecer filtros de objetivos",
       "sortDirectionLabel": "Dirección de orden",
       "sortDirectionAsc": "Ascendente",
-      "sortDirectionDesc": "Descendente",
-      "epicSortFieldLabel": "Campo de orden de objetivos",
-      "epicSortUpdatedAt": "Fecha de actualización",
-      "epicSortCreatedAt": "Fecha de creación",
-      "epicSortName": "Nombre",
-      "epicSortProgress": "Progreso",
-      "resetEpicSort": "Restablecer orden de objetivos"
+      "sortDirectionDesc": "Descendente"
     }
   },
   "layout": {
@@ -330,7 +315,6 @@
         "title": "Accesos directos",
         "shortcuts": {
           "board": "Tablero",
-          "epics": "Objetivos",
           "settings": "Configuración"
         }
       }
@@ -351,16 +335,10 @@
       "recentEmpty": "Aun no hay actividad reciente.",
       "openBacklog": "Ver todas las tareas",
       "openBacklogAriaLabel": "Abrir la lista completa de tareas",
-      "goalProgressDeltaTitle": "Objetivos en avance",
-      "goalProgressDeltaDescription": "Objetivos trabajados recientemente con progreso real.",
-      "goalProgressDeltaEmpty": "Ningún objetivo avanzó recientemente.",
-      "goalProgressDeltaValue": "+ {progress}%",
-      "goalProgressCurrentValue": "Progreso actual: {progress}%",
       "shortcutsWidget": {
         "title": "Accesos directos",
         "shortcuts": {
           "board": "Tablero",
-          "epics": "Objetivos",
           "settings": "Configuración"
         }
       }
@@ -377,7 +355,7 @@
         "eyebrow": "Cargando proyecto",
         "status": "Sincronizando",
         "title": "El proyecto va tomando forma",
-        "message": "Estamos cargando el tablero, los objetivos y los permisos para abrir el proyecto listo para usar.",
+        "message": "Estamos cargando el board y los permisos para abrir el proyecto listo para usar.",
         "ariaLabel": "Cargando proyecto"
       },
       "notFound": {
@@ -435,7 +413,7 @@
       "noWorkspaces": "Ningún espacio",
       "noWorkspacesMessage": "Crea tu primer espacio o unete con un enlace de invitacion.",
       "emptyStateTitle": "Bienvenido a casa",
-      "emptyStateMessage": "Crea un espacio para compartir tareas diarias, reducir la carga mental y seguir objetivos juntos.",
+      "emptyStateMessage": "Crea un espacio para compartir tareas diarias, reducir la carga mental y coordinaros mejor.",
       "addFirstProjectButton": "Crear mi primer espacio",
       "addFirstProjectButtonAriaLabel": "Crear mi primer espacio de trabajo",
       "createWorkspaceTitle": "Crear un espacio",
@@ -590,18 +568,14 @@
       },
       "filters": {
         "searchLabel": "Buscar",
-        "searchPlaceholder": "Buscar por título o descripción",
+        "searchPlaceholder": "Buscar por titulo o notas",
         "statusLabel": "Estado",
-        "epicLabel": "Objetivo",
-        "labelLabel": "Etiqueta",
-        "noLabelOptions": "No hay etiquetas disponibles para este proyecto",
         "resetLabel": "Restablecer filtros",
         "assigneeLabel": "Asignado a"
       },
       "ticketCard": {
         "ticketAriaLabel": "Tarea",
         "statusLabel": "Estado",
-        "epicLabel": "Objetivo",
         "assigneeLabel": "Asignado a",
         "priorityLabel": "Prioridad",
         "storyPointsLabel": "{count} point",
@@ -634,10 +608,8 @@
         "title": "Crear tarea",
         "fields": {
           "title": "Título",
-          "description": "Descripción",
           "status": "Estado",
-          "epic": "Objetivo",
-          "labels": "Etiquetas"
+          "notes": "Notas"
         },
         "submitButton": "Crear tarea",
         "cancelButton": "Cancelar",
@@ -685,89 +657,6 @@
             "actionAriaLabel": "Abrir un ticket para agregar un comentario"
           }
         }
-      }
-    },
-    "epics": {
-      "epicsList": {
-        "ariaLabel": "Lista de objetivos",
-        "title": "Objetivos",
-        "count": "{count} objetivo",
-        "count_other": "{count} objetivos",
-        "emptyTitle": "Ningun objetivo",
-        "emptyMessage": "Crea tu primer objetivo para empezar",
-        "errorTitle": "Error al cargar los objetivos"
-      },
-      "epicCard": {
-        "epicAriaLabel": "Objetivo",
-        "progressLabel": "{progress}% completado",
-        "viewDetailLabel": "Ver detalles",
-        "editLabel": "Editar",
-        "deleteLabel": "Eliminar"
-      },
-      "createEpicForm": {
-        "title": "Crear objetivo",
-        "fields": {
-          "name": "Nombre",
-          "description": "Descripción"
-        },
-        "submitButton": "Crear",
-        "cancelButton": "Cancelar",
-        "readOnlyHint": "Los lectores no pueden crear objetivos.",
-        "errorGeneric": "Se ha producido un error al crear el objetivo"
-      },
-      "onboarding": {
-        "eyebrow": "Onboarding",
-        "title": "Ubicate rapido en los objetivos",
-        "description": "Sigue las tres acciones clave para crear un objetivo, vincular trabajo y empezar a seguir su progreso.",
-        "reviewTitle": "Volver a ver la guia",
-        "reviewDescription": "Reinicia el recorrido completo cuando quieras para repasar la creacion de un objetivo, el vinculo con una tarea y el seguimiento del progreso.",
-        "reviewCta": "Volver a ver la guia",
-        "reviewCtaAriaLabel": "Volver a ver la guia de onboarding de objetivos",
-        "hideCta": "Ocultar la guia",
-        "hideCtaAriaLabel": "Ocultar la guia de onboarding de objetivos",
-        "skipCta": "Omitir onboarding",
-        "skipCtaAriaLabel": "Dejar de abrir automaticamente el onboarding de objetivos",
-        "genericError": "No se pudieron actualizar tus preferencias de onboarding.",
-        "status": {
-          "complete": "Hecho",
-          "current": "En curso",
-          "pending": "Pendiente"
-        },
-        "steps": {
-          "createEpic": {
-            "title": "Crear un objetivo",
-            "description": "Crea tu primer objetivo para dar una direccion clara al trabajo que viene.",
-            "action": "Crear un objetivo",
-            "actionAriaLabel": "Abrir la creacion de un objetivo"
-          },
-          "linkTicket": {
-            "title": "Vincular una tarea al objetivo",
-            "description": "Abre una tarea y vinculala a un objetivo para seguir su impacto.",
-            "blockedDescription": "Primero crea un objetivo. Despues podras abrir una tarea y vincularla a ese objetivo.",
-            "openTicketAction": "Abrir una tarea",
-            "openTicketActionAriaLabel": "Abrir una tarea para vincularla a un objetivo",
-            "createTicketAction": "Crear una tarea",
-            "createTicketActionAriaLabel": "Abrir la creacion de una tarea para vincularla a un objetivo"
-          },
-          "trackProgress": {
-            "title": "Seguir el progreso",
-            "description": "Haz avanzar una tarea vinculada para ver como se actualiza el progreso del objetivo.",
-            "blockedDescription": "Primero vincula una tarea a un objetivo. Despues podras hacerlo avanzar y seguir su progreso.",
-            "action": "Abrir la tarea vinculada",
-            "actionAriaLabel": "Abrir una tarea vinculada para hacer avanzar el objetivo"
-          }
-        }
-      },
-      "epicDetail": {
-        "title": "Detalles del objetivo",
-        "ticketsTitle": "Tareas asociadas",
-        "noTickets": "Ninguna tarea asociada",
-        "editLabel": "Editar",
-        "deleteLabel": "Eliminar"
-      },
-      "epicProgress": {
-        "ariaLabel": "Progreso del objetivo",
-        "progressLabel": "{progress}% completado"
       }
     },
     "settings": {
@@ -831,18 +720,18 @@
       },
       "exportImport": {
         "title": "Exportar / importar",
-        "subtitle": "Exporta o importa datos del proyecto",
+        "subtitle": "Exporta o importa columnas del board y tickets",
         "export": {
           "title": "Exportar",
-          "hint": "Descarga una exportación de los datos del proyecto",
+          "hint": "Descarga una copia de las columnas del board y los tickets",
           "action": "Exportar",
           "exporting": "Exportando..."
         },
         "import": {
           "title": "Importar",
-          "hint": "Importa datos desde un archivo",
+          "hint": "Importa columnas del board y tickets desde un archivo",
           "fileLabel": "Archivo",
-          "fileHint": "Selecciona un archivo compatible para iniciar la importación",
+          "fileHint": "Selecciona un archivo JSON compatible que contenga columnas y tickets",
           "fileAriaLabel": "Seleccionar archivo para importar",
           "importing": "Importando...",
           "accept": ".json,application/json"
@@ -850,75 +739,6 @@
       }
     },
     "ticketDetail": {
-      "ticketOverview": {
-        "ariaLabel": "Detalles de la tarea",
-        "meta": {
-          "status": "Estado",
-          "epic": "Objetivo",
-          "assignee": "Asignado a",
-          "priority": "Prioridad",
-          "storyPoints": "Story points",
-          "storyPointsValue": "{count} point",
-          "storyPointsValue_other": "{count} points",
-          "notSet": "No definido"
-        }
-      },
-      "ticketEditForm": {
-        "title": "Editar tarea",
-        "ariaLabel": "Formulario de edicion de la tarea",
-        "fields": {
-          "title": "Título",
-          "status": "Estado",
-          "epic": "Objetivo",
-          "description": "Descripción",
-          "labels": "Etiquetas"
-        },
-        "epicNoneOption": "Ninguno",
-        "saveButton": "Guardar",
-        "cancelButton": "Cancelar",
-        "errorGeneric": "Se ha producido un error al guardar la tarea"
-      },
-      "subtasks": {
-        "list": {
-          "title": "Subtareas",
-          "ariaLabel": "Seccion de subtareas de la tarea",
-          "itemsAriaLabel": "Lista de subtareas",
-          "loadingAriaLabel": "Cargando subtareas",
-          "errorTitle": "Error al cargar las subtareas",
-          "emptyTitle": "Ninguna subtarea",
-          "emptyMessage": "Añade una subtarea para desglosar esta tarea",
-          "emptyAriaLabel": "Ninguna subtarea"
-        },
-        "subtaskItem": {
-          "checkboxLabel": "Marcar la subtarea {title} como completada",
-          "editLabel": "Editar",
-          "deleteLabel": "Eliminar"
-        }
-      },
-      "createSubtaskForm": {
-        "title": "Crear subtarea",
-        "ariaLabel": "Formulario de creación de subtarea",
-        "fields": {
-          "title": "Título",
-          "description": "Descripción"
-        },
-        "submitButton": "Añadir",
-        "cancelButton": "Cancelar",
-        "errorGeneric": "Se ha producido un error al crear la subtarea"
-      },
-      "epicLinkSelector": {
-        "title": "Objetivo",
-        "loadingAriaLabel": "Cargando objetivos",
-        "errorTitle": "Error al cargar los objetivos",
-        "emptyTitle": "Ningun objetivo",
-        "emptyMessage": "Crea un objetivo para poder vincular esta tarea",
-        "emptyAriaLabel": "Ningun objetivo disponible",
-        "selectLabel": "Vincular a un objetivo",
-        "noneOption": "Ninguno",
-        "currentEpic": "Objetivo actual: {name}",
-        "noEpicSelected": "Ningun objetivo vinculado",
-        "unlinkButton": "Desvincular"
-      },
       "page": {
         "title": "Detalle de la tarea",
         "modalTitle": "Tarea",
@@ -940,7 +760,6 @@
         },
         "fields": {
           "title": "Título",
-          "description": "Descripción",
           "notes": "Notas",
           "notesPlaceholder": "Añade algunas notas útiles para la familia...",
           "status": "Estado",
@@ -948,9 +767,7 @@
           "assignee": "Asignado a",
           "dueDate": "Vencimiento",
           "createdAt": "Creada",
-          "epic": "Objetivo",
           "position": "Posición",
-          "labels": "Etiquetas",
           "none": "Ninguno"
         },
         "sections": {
@@ -973,9 +790,6 @@
           "saveEdit": "Guardar",
           "editButton": "Editar",
           "deleteButton": "Eliminar"
-        },
-        "subtasks": {
-          "addButton": "Añadir subtarea"
         }
       }
     },
@@ -1157,16 +971,6 @@
           "icon": "🧺",
           "title": "Rutinas del hogar",
           "description": "Repartid tareas recurrentes para que la casa funcione sin sobrecarga."
-        },
-        "epics": {
-          "icon": "🏡",
-          "title": "Proyectos familiares",
-          "description": "Reformas, mudanzas y grandes compras con hitos claros."
-        },
-        "subtasks": {
-          "icon": "🎒",
-          "title": "Escuela y actividades",
-          "description": "Centralizad plazos escolares, inscripciones y logistica infantil."
         }
       },
       "impact": {
@@ -1230,22 +1034,6 @@
           "todo2": "Preparar mochilas del cole",
           "inProgress1": "Recoger cocina",
           "done1": "Sacar la basura"
-        },
-        "epics": {
-          "title": "Proyecto familiar",
-          "description": "Manten visibles hitos y decisiones importantes.",
-          "todo1": "Validar presupuesto del armario",
-          "todo2": "Planificar fin de semana de orden",
-          "inProgress1": "Comparar opciones de cuidado",
-          "done1": "Comprar mobiliario principal"
-        },
-        "subtasks": {
-          "title": "Escuela y actividades",
-          "description": "Evita olvidos entre colegio, extraescolares y gestion diaria.",
-          "todo1": "Firmar autorizacion escolar",
-          "todo2": "Preparar bolsa de deporte",
-          "inProgress1": "Inscripcion al campamento",
-          "done1": "Pagar comedor"
         }
       },
       "cta": {
@@ -1366,8 +1154,6 @@
         "membersPerWorkspace": "Miembros por espacio",
         "tickets": "Tickets",
         "boardView": "Vista Tablero",
-        "epics": "Epics",
-        "subtasks": "Subtareas",
         "customColumns": "Columnas personalizadas",
         "exportImport": "Exportar / Importar",
         "advancedRoles": "Roles avanzados (observador)",
@@ -1454,8 +1240,6 @@
       "ctaLabel": "Ver planes",
       "ctaAriaLabel": "Ver planes y mejorar tu suscripción",
       "featureNames": {
-        "epics": "Epics",
-        "subtasks": "Subtareas",
         "exportImport": "Exportar / Importar",
         "advancedRoles": "Roles avanzados",
         "workspaces": "Proyectos por cuenta",
@@ -1532,17 +1316,12 @@
       "DATABASE_ERROR": "Se ha producido un error de base de datos"
     },
     "domain": {
-      "INVALID_TICKET_PARENT": "El ticket no puede ser su propio padre",
-      "INVALID_TICKET_PARENT_MULTI_LEVEL": "No está permitida la anidación multinivel",
       "TICKET_PROJECT_MISMATCH": "El ticket no pertenece al mismo proyecto",
-      "TICKET_HAS_SUBTASKS": "El ticket no se puede eliminar porque contiene subtareas",
       "LAST_ADMIN_REQUIRED": "El proyecto debe conservar al menos un administrador",
       "INVITATION_ALREADY_USED": "Este enlace de invitacion ya no esta disponible",
       "INVITATION_EXPIRED": "Este enlace de invitacion ha caducado",
       "INVITATION_ALREADY_MEMBER": "Ya formas parte de este proyecto",
       "INVITATION_LIMIT_REACHED": "Tu plan actual no permite mas miembros activos o enlaces de invitacion en este espacio",
-      "DUPLICATE_EPIC_ASSIGNMENT": "El ticket ya está asignado a otro epic",
-      "INVALID_EPIC_TICKET_CONSISTENCY": "Inconsistencia en la asignación del ticket al epic",
       "INVALID_COLUMN_ORDER": "Orden de columnas no válido",
       "DUPLICATE_COLUMN_STATUS": "Estado de columna duplicado",
       "INVALID_BOARD_COLUMN_RELATIONSHIP": "La columna no pertenece al tablero especificado",
