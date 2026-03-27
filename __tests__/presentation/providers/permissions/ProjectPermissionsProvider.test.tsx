@@ -38,6 +38,7 @@ describe("ProjectPermissionsProvider", () => {
     expect(result.current.role).toBe(ProjectRole.ADMIN);
     expect(result.current.isAdmin).toBe(true);
     expect(result.current.canEditProject).toBe(true);
+    expect(result.current.canDeleteProject).toBe(true);
     expect(result.current.canManageMembers).toBe(true);
     expect(result.current.canComment).toBe(true);
   });

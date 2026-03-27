@@ -42,6 +42,18 @@ export const CreateProjectInputSchema = z.object({
 export type CreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
 
 /**
+ * Input schema for updating an existing project.
+ * At least one updatable field must be provided.
+ */
+export const UpdateProjectInputSchema = z
+  .object({
+    name: z.string().trim().min(1, "Project name must not be empty").optional(),
+  })
+  .refine((input) => Object.keys(input).length > 0, {
+    message: "At least one project field must be provided",
+  });
+
+/**
  * Project with role information for the current user.
  * Used when listing projects to display user's role in each project.
  */

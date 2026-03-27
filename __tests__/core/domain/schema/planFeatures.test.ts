@@ -14,9 +14,6 @@ describe("Plan Features Domain Rules", () => {
   describe("canAccessFeature", () => {
     describe("boolean features", () => {
       it.each([
-        [PlanFeature.EXPORT_IMPORT, SubscriptionPlan.FREE, false],
-        [PlanFeature.EXPORT_IMPORT, SubscriptionPlan.PRO, true],
-        [PlanFeature.EXPORT_IMPORT, SubscriptionPlan.TEAM, true],
         [PlanFeature.ADVANCED_ROLES, SubscriptionPlan.FREE, false],
         [PlanFeature.ADVANCED_ROLES, SubscriptionPlan.PRO, false],
         [PlanFeature.ADVANCED_ROLES, SubscriptionPlan.TEAM, true],
@@ -94,22 +91,19 @@ describe("Plan Features Domain Rules", () => {
 
     it("should return -1 for accessible boolean features", () => {
       expect(
-        getFeatureLimit(SubscriptionPlan.PRO, PlanFeature.EXPORT_IMPORT)
+        getFeatureLimit(SubscriptionPlan.TEAM, PlanFeature.ADVANCED_ROLES)
       ).toBe(-1);
     });
 
     it("should return 0 for inaccessible boolean features", () => {
       expect(
-        getFeatureLimit(SubscriptionPlan.FREE, PlanFeature.EXPORT_IMPORT)
+        getFeatureLimit(SubscriptionPlan.PRO, PlanFeature.ADVANCED_ROLES)
       ).toBe(0);
     });
   });
 
   describe("getMinimumPlanForFeature", () => {
     it("should return PRO for features available from PRO", () => {
-      expect(getMinimumPlanForFeature(PlanFeature.EXPORT_IMPORT)).toBe(
-        SubscriptionPlan.PRO
-      );
       expect(getMinimumPlanForFeature(PlanFeature.CUSTOM_COLUMNS)).toBe(
         SubscriptionPlan.PRO
       );

@@ -55,10 +55,6 @@
         "userFallbackName": "Usuario"
       }
     },
-    "breadcrumbs": {
-      "ariaLabel": "Migas de pan",
-      "project": "Proyecto"
-    },
     "searchBar": {
       "ariaLabel": "Barra de búsqueda",
       "placeholder": "Buscar"
@@ -661,10 +657,12 @@
     },
     "settings": {
       "page": {
+        "loading": "Cargando la configuración del proyecto...",
+        "loadErrorTitle": "No se puede cargar el proyecto",
+        "retry": "Reintentar",
         "tabs": {
           "project": "Proyecto",
-          "statusesColumns": "Estados y columnas",
-          "exportImport": "Exportar / importar"
+          "statusesColumns": "Estados y columnas"
         },
         "fallback": "Sección de configuración no disponible"
       },
@@ -673,12 +671,18 @@
         "tabsNavAriaLabel": "Navegación de configuración"
       },
       "project": {
-        "title": "Proyecto",
-        "subtitle": "Gestiona la información y preferencias del proyecto",
+        "title": "Información del proyecto",
+        "subtitle": "Actualiza el nombre visible del proyecto. Los cambios se aplican inmediatamente.",
         "fields": {
           "projectName": {
             "label": "Nombre del proyecto",
             "placeholder": "Introduce el nombre del proyecto"
+          },
+          "shortCode": {
+            "label": "Código del proyecto"
+          },
+          "createdAt": {
+            "label": "Creado el"
           },
           "projectDescription": {
             "label": "Descripción del proyecto",
@@ -689,7 +693,115 @@
           "save": "Guardar",
           "saving": "Guardando...",
           "reset": "Restablecer"
+        },
+        "permissions": {
+          "editable": "Tu rol actual te permite renombrar el proyecto.",
+          "readOnly": "Tu rol actual solo te permite consultar esta información."
+        },
+        "status": {
+          "saved": "Nombre del proyecto guardado"
+        },
+        "validation": {
+          "projectNameRequired": "El nombre del proyecto es obligatorio."
         }
+      },
+      "access": {
+        "title": "Tus permisos",
+        "subtitle": "Las acciones disponibles aquí dependen de tu rol actual en este proyecto.",
+        "currentRoleLabel": "Rol actual",
+        "roles": {
+          "admin": "Administrador",
+          "member": "Miembro",
+          "viewer": "Lector"
+        },
+        "fallbackRole": "Acceso desconocido",
+        "capabilities": {
+          "renameAllowed": "Puedes renombrar el proyecto.",
+          "renameBlocked": "Puedes consultar el proyecto, pero no renombrarlo.",
+          "deleteAllowed": "Puedes eliminar el proyecto.",
+          "deleteBlocked": "Solo un administrador puede eliminar el proyecto."
+        }
+      },
+      "dangerZone": {
+        "title": "Zona peligrosa",
+        "subtitle": "Eliminar borra definitivamente el proyecto y todo su contenido asociado.",
+        "description": "Esta acción no se puede deshacer. Asegúrate de que ya no necesitas los datos del proyecto antes de continuar.",
+        "adminOnly": "La eliminación del proyecto está reservada a los administradores.",
+        "readOnly": "Tu rol actual es de solo lectura."
+      },
+      "delete": {
+        "open": "Eliminar proyecto",
+        "openAriaLabel": "Abrir la confirmación de eliminación del proyecto",
+        "modalTitle": "Eliminar proyecto",
+        "modalDescription": "Escribe el nombre del proyecto para confirmar la eliminación definitiva.",
+        "confirmationLabel": "Confirmar el nombre del proyecto",
+        "confirmationPlaceholder": "Vuelve a escribir {name}",
+        "confirmationHelper": "Introduce exactamente \"{name}\" para activar la eliminación.",
+        "confirm": "Eliminar definitivamente",
+        "deleting": "Eliminando...",
+        "cancel": "Cancelar"
+      },
+      "people": {
+        "title": "Miembros e invitaciones",
+        "subtitle": "Gestiona el acceso al proyecto, los roles activos y los enlaces de invitación que siguen siendo válidos.",
+        "adminOnly": "Solo un administrador puede invitar personas, cambiar roles o eliminar a un miembro del proyecto.",
+        "advancedRolesLocked": "El rol Observador requiere el plan {plan}. Los observadores actuales siguen visibles hasta su próximo cambio de rol.",
+        "currentPlan": "Plan actual: {plan}",
+        "memberLimit": {
+          "limited": "{count}/{limit} accesos usados",
+          "unlimited": "{count} accesos usados, sin límite",
+          "reached": "Se ha alcanzado el límite de {limit} accesos para tu plan {plan}. Los miembros activos y las invitaciones pendientes cuentan en este total."
+        }
+      },
+      "members": {
+        "title": "Miembros del proyecto",
+        "subtitle": "Esta lista refleja los roles realmente activos en el proyecto.",
+        "loading": "Cargando miembros...",
+        "loadErrorTitle": "No se pueden cargar los miembros",
+        "emptyTitle": "No hay miembros para mostrar",
+        "emptyDescription": "Las personas que se unan al proyecto aparecerán aquí.",
+        "adminsCount": "{count} administrador",
+        "adminsCount_other": "{count} administradores",
+        "syncing": "Sincronizando...",
+        "live": "Sincronizado",
+        "roleFieldLabel": "Rol"
+      },
+      "invitations": {
+        "title": "Invitaciones pendientes",
+        "subtitle": "Crea enlaces de acceso y sigue las invitaciones que siguen siendo válidas.",
+        "createTitle": "Crear un enlace de invitación",
+        "createDescription": "Elige el rol que tendrá la persona cuando se una al proyecto.",
+        "roleLabel": "Rol asignado",
+        "create": "Crear enlace",
+        "creating": "Creando...",
+        "copyLink": "Copiar enlace",
+        "copyLinkSuccess": "Enlace de invitación copiado",
+        "linkLabel": "Enlace de invitación",
+        "linkHelper": "Comparte este enlace antes de que caduque.",
+        "listTitle": "Enlaces activos",
+        "listDescription": "Cada enlace cuenta en la capacidad del proyecto hasta que se usa o se revoca.",
+        "loading": "Cargando invitaciones...",
+        "loadErrorTitle": "No se pueden cargar las invitaciones",
+        "emptyTitle": "No hay invitaciones pendientes",
+        "emptyDescription": "Los enlaces activos aparecerán aquí en cuanto crees uno.",
+        "activeCount": "{count} invitación pendiente",
+        "activeCount_other": "{count} invitaciones pendientes",
+        "pendingLinkTitle": "Enlace de invitación",
+        "createdAt": "Creado el {date}",
+        "expiresAt": "Caduca el {date}",
+        "revoke": "Revocar",
+        "revokeAriaLabel": "Revocar la invitación que caduca el {date}",
+        "revokeConfirm": "¿Revocar este enlace de invitación?",
+        "revokeModal": {
+          "title": "Revocar este enlace",
+          "description": "¿Seguro que quieres revocar esta invitación? El enlace ya no se podrá usar.",
+          "confirm": "Confirmar revocación",
+          "pending": "Revocando...",
+          "cancel": "Cancelar"
+        },
+        "revokeSuccess": "Invitación revocada",
+        "listAriaLabel": "Lista de invitaciones pendientes",
+        "syncing": "Sincronizando..."
       },
       "statusesColumns": {
         "title": "Estados y columnas",
@@ -716,25 +828,6 @@
         "empty": {
           "title": "Ninguna columna",
           "message": "Añade una columna para empezar"
-        }
-      },
-      "exportImport": {
-        "title": "Exportar / importar",
-        "subtitle": "Exporta o importa columnas del board y tickets",
-        "export": {
-          "title": "Exportar",
-          "hint": "Descarga una copia de las columnas del board y los tickets",
-          "action": "Exportar",
-          "exporting": "Exportando..."
-        },
-        "import": {
-          "title": "Importar",
-          "hint": "Importa columnas del board y tickets desde un archivo",
-          "fileLabel": "Archivo",
-          "fileHint": "Selecciona un archivo JSON compatible que contenga columnas y tickets",
-          "fileAriaLabel": "Seleccionar archivo para importar",
-          "importing": "Importando...",
-          "accept": ".json,application/json"
         }
       }
     },
@@ -1155,7 +1248,6 @@
         "tickets": "Tickets",
         "boardView": "Vista Tablero",
         "customColumns": "Columnas personalizadas",
-        "exportImport": "Exportar / Importar",
         "advancedRoles": "Roles avanzados (observador)",
         "prioritySupport": "Soporte prioritario"
       },
@@ -1229,6 +1321,13 @@
         "viewer": "Lector"
       },
       "removeConfirm": "¿Eliminar a {name} de este proyecto?",
+      "removeModal": {
+        "title": "Eliminar a este miembro",
+        "description": "¿Seguro que quieres eliminar a {name} del proyecto?",
+        "confirm": "Confirmar eliminación",
+        "pending": "Eliminando...",
+        "cancel": "Cancelar"
+      },
       "removeSuccess": "Miembro eliminado del proyecto",
       "roleUpdateSuccess": "Rol actualizado",
       "lastAdminError": "No se puede eliminar al último administrador",
@@ -1240,7 +1339,6 @@
       "ctaLabel": "Ver planes",
       "ctaAriaLabel": "Ver planes y mejorar tu suscripción",
       "featureNames": {
-        "exportImport": "Exportar / Importar",
         "advancedRoles": "Roles avanzados",
         "workspaces": "Proyectos por cuenta",
         "membersPerWorkspace": "Miembros por espacio",

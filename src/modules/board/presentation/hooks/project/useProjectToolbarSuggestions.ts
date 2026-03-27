@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { ProjectSearchSuggestion } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
 
 type UseProjectToolbarSuggestionsParams = {
+  enabled?: boolean;
   searchValue: string;
   searchSuggestions: ProjectSearchSuggestion[];
   onSearchChange?: (value: string) => void;
@@ -10,6 +11,7 @@ type UseProjectToolbarSuggestionsParams = {
 };
 
 export const useProjectToolbarSuggestions = ({
+  enabled = true,
   searchValue,
   searchSuggestions,
   onSearchChange,
@@ -27,6 +29,10 @@ export const useProjectToolbarSuggestions = ({
 
   const handleSearchChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (!enabled) {
+        return;
+      }
+
       const nextValue = event.target.value;
       onSearchChange?.(nextValue);
 
@@ -37,17 +43,25 @@ export const useProjectToolbarSuggestions = ({
 
       setIsSuggestionsOpen(true);
     },
-    [closeSuggestions, onSearchChange]
+    [closeSuggestions, enabled, onSearchChange]
   );
 
   const openSuggestions = useCallback(() => {
+    if (!enabled) {
+      return;
+    }
+
     if (searchValue.trim() === "" || searchSuggestions.length === 0) {
       return;
     }
     setIsSuggestionsOpen(true);
-  }, [searchSuggestions.length, searchValue]);
+  }, [enabled, searchSuggestions.length, searchValue]);
 
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
     const handlePointerDown = (event: MouseEvent): void => {
       if (
         searchContainerRef.current &&
@@ -61,7 +75,7 @@ export const useProjectToolbarSuggestions = ({
     return () => {
       document.removeEventListener("mousedown", handlePointerDown);
     };
-  }, [closeSuggestions]);
+  }, [closeSuggestions, enabled]);
 
   const handleSuggestionSelect = useCallback(
     (href: string) => {
@@ -129,6 +143,7 @@ export const useProjectToolbarSuggestions = ({
   );
 
   const showSuggestions =
+    enabled &&
     isSuggestionsOpen &&
     searchValue.trim() !== "" &&
     searchSuggestions.length > 0;

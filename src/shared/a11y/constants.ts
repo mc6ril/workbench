@@ -76,7 +76,6 @@ export const FORM_LABELS = Object.freeze({
 export const NAVIGATION_LABELS = Object.freeze({
   MENU: "menu",
   SIDEBAR: "sidebar",
-  BREADCRUMB: "breadcrumb",
   PAGINATION: "pagination",
   TABS: "tabs",
   SKIP_TO_CONTENT: "skipToContent",

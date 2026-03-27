@@ -10,7 +10,6 @@ import {
  * Boolean features are on/off; limit features have numeric thresholds.
  */
 export enum PlanFeature {
-  EXPORT_IMPORT = "exportImport",
   ADVANCED_ROLES = "advancedRoles",
   WORKSPACES = "workspaces",
   MEMBERS_PER_WORKSPACE = "membersPerWorkspace",
@@ -40,7 +39,6 @@ const UNLIMITED = -1;
 /** Full capability matrix for each subscription plan. */
 export const PLAN_CAPABILITIES: Record<SubscriptionPlan, PlanCapabilityMap> = {
   [SubscriptionPlan.FREE]: {
-    [PlanFeature.EXPORT_IMPORT]: { type: "boolean", access: false },
     [PlanFeature.ADVANCED_ROLES]: { type: "boolean", access: false },
     [PlanFeature.WORKSPACES]: { type: "limit", limit: 1 },
     [PlanFeature.MEMBERS_PER_WORKSPACE]: { type: "limit", limit: 2 },
@@ -48,7 +46,6 @@ export const PLAN_CAPABILITIES: Record<SubscriptionPlan, PlanCapabilityMap> = {
     [PlanFeature.CUSTOM_COLUMNS]: { type: "limit", limit: 0 },
   },
   [SubscriptionPlan.PRO]: {
-    [PlanFeature.EXPORT_IMPORT]: { type: "boolean", access: true },
     [PlanFeature.ADVANCED_ROLES]: { type: "boolean", access: false },
     [PlanFeature.WORKSPACES]: { type: "limit", limit: 5 },
     [PlanFeature.MEMBERS_PER_WORKSPACE]: { type: "limit", limit: 4 },
@@ -56,7 +53,6 @@ export const PLAN_CAPABILITIES: Record<SubscriptionPlan, PlanCapabilityMap> = {
     [PlanFeature.CUSTOM_COLUMNS]: { type: "limit", limit: UNLIMITED },
   },
   [SubscriptionPlan.TEAM]: {
-    [PlanFeature.EXPORT_IMPORT]: { type: "boolean", access: true },
     [PlanFeature.ADVANCED_ROLES]: { type: "boolean", access: true },
     [PlanFeature.WORKSPACES]: { type: "limit", limit: UNLIMITED },
     [PlanFeature.MEMBERS_PER_WORKSPACE]: { type: "limit", limit: 20 },

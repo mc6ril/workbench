@@ -9,6 +9,7 @@ describe("resolveProjectPermissions", () => {
     expect(permissions.isMember).toBe(false);
     expect(permissions.isViewer).toBe(false);
     expect(permissions.canEditProject).toBe(true);
+    expect(permissions.canDeleteProject).toBe(true);
     expect(permissions.canManageMembers).toBe(true);
     expect(permissions.canComment).toBe(true);
     expect(permissions.canMoveTicket).toBe(true);
@@ -23,6 +24,7 @@ describe("resolveProjectPermissions", () => {
     expect(permissions.isMember).toBe(true);
     expect(permissions.isViewer).toBe(false);
     expect(permissions.canEditProject).toBe(true);
+    expect(permissions.canDeleteProject).toBe(false);
     expect(permissions.canManageMembers).toBe(false);
     expect(permissions.canComment).toBe(true);
     expect(permissions.canMoveTicket).toBe(true);
@@ -37,6 +39,7 @@ describe("resolveProjectPermissions", () => {
     expect(permissions.isMember).toBe(false);
     expect(permissions.isViewer).toBe(true);
     expect(permissions.canEditProject).toBe(false);
+    expect(permissions.canDeleteProject).toBe(false);
     expect(permissions.canManageMembers).toBe(false);
     expect(permissions.canComment).toBe(false);
     expect(permissions.canMoveTicket).toBe(false);
@@ -51,6 +54,7 @@ describe("resolveProjectPermissions", () => {
     expect(permissions.isMember).toBe(false);
     expect(permissions.isViewer).toBe(false);
     expect(permissions.canEditProject).toBe(false);
+    expect(permissions.canDeleteProject).toBe(false);
     expect(permissions.canManageMembers).toBe(false);
     expect(permissions.canComment).toBe(false);
     expect(permissions.canMoveTicket).toBe(false);
