@@ -19,7 +19,6 @@ import type {
   TicketSort,
   UpdateTicketInput,
 } from "@/modules/board/core/domain/schema/ticket.schema";
-import { TICKET_PRIORITY_RANK } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 import type { TicketRow } from "@/modules/board/infrastructure/supabase/ticket/types";
 
@@ -233,19 +232,16 @@ export const createTicketRepository = (
           createdAt: "created_at",
           position: "position",
           title: "title",
-          priority: "priority",
           dueDate: "due_date",
         };
         const orderColumn = sortFieldMap[sortField] ?? "created_at";
 
-        if (sortField !== "priority") {
-          query = query.order(orderColumn, {
-            ascending: sortDirection === "asc",
-          });
+        query = query.order(orderColumn, {
+          ascending: sortDirection === "asc",
+        });
 
-          if (typeof limit === "number" && limit > 0) {
-            query = query.limit(limit);
-          }
+        if (typeof limit === "number" && limit > 0) {
+          query = query.limit(limit);
         }
 
         const { data, error } = await query;
@@ -259,29 +255,7 @@ export const createTicketRepository = (
         }
 
         const ticketRows = data as unknown as TicketRow[];
-
-        if (sortField === "priority") {
-          // DB stores priority as text, so semantic priority sort is done in-memory.
-          // Trade-off: for this specific sort mode, all matching rows are fetched
-          // before applying `limit`.
-          ticketRows.sort((a, b) => {
-            const rankA = a.priority ? TICKET_PRIORITY_RANK[a.priority] : 0;
-            const rankB = b.priority ? TICKET_PRIORITY_RANK[b.priority] : 0;
-            if (rankA === rankB) {
-              // TicketRow timestamps are ISO strings from Supabase row types.
-              return a.created_at.localeCompare(b.created_at);
-            }
-
-            return sortDirection === "asc" ? rankA - rankB : rankB - rankA;
-          });
-        }
-
-        const limitedTicketRows =
-          typeof limit === "number" && limit > 0
-            ? ticketRows.slice(0, limit)
-            : ticketRows;
-
-        return mapTicketRowsToDomain(limitedTicketRows);
+        return mapTicketRowsToDomain(ticketRows);
       } catch (error) {
         return handleRepositoryError(error, "Ticket");
       }
