@@ -501,12 +501,16 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
         }}
         title={modalTitle}
         size="full"
+        hideHeader
       >
         {selectedTicketId && (
           <TicketDetailView
             key={selectedTicketId}
             projectId={projectId}
             ticketId={selectedTicketId}
+            onClose={() => {
+              updateSearchParam(null);
+            }}
           />
         )}
       </Modal>

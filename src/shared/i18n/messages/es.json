@@ -941,12 +941,20 @@
         "fields": {
           "title": "Título",
           "description": "Descripción",
+          "notes": "Notas",
+          "notesPlaceholder": "Añade algunas notas útiles para la familia...",
           "status": "Estado",
           "priority": "Prioridad",
+          "assignee": "Asignado a",
+          "dueDate": "Vencimiento",
+          "createdAt": "Creada",
           "epic": "Objetivo",
           "position": "Posición",
           "labels": "Etiquetas",
           "none": "Ninguno"
+        },
+        "sections": {
+          "details": "Detalles"
         },
         "priority": {
           "urgent": "Urgente",
@@ -956,6 +964,7 @@
         "comments": {
           "title": "Comentarios",
           "newLabel": "Añadir comentario",
+          "newPlaceholder": "Añadir un comentario...",
           "readOnlyHint": "Los lectores no pueden publicar comentarios.",
           "addButton": "Publicar",
           "author": "Autor: {author}",

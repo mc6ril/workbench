@@ -37,6 +37,7 @@ const Modal = ({
   children,
   footer,
   size = "medium",
+  hideHeader = false,
   closeOnBackdropClick = true,
   ariaLabel,
   ariaDescribedBy,
@@ -87,6 +88,7 @@ const Modal = ({
         size={size}
         titleId={titleId}
         title={title}
+        hideHeader={hideHeader}
         descriptionId={descriptionId}
         ariaDescribedBy={ariaDescribedBy}
         ariaLabel={ariaLabel}

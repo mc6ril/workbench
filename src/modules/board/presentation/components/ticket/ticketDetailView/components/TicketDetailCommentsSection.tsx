@@ -1,10 +1,5 @@
 import Avatar from "@/shared/design-system/avatar";
-import Button from "@/shared/design-system/button";
-import Card from "@/shared/design-system/card";
-import Text from "@/shared/design-system/text";
-import Textarea from "@/shared/design-system/textarea";
-import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { getIntlLocale, useTranslation } from "@/shared/i18n";
 
 import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import type { CommentWithAuthor } from "@/modules/board/core/domain/schema/comment.schema";
@@ -51,29 +46,27 @@ const TicketDetailCommentsSection = ({
 }: Props) => {
   const t = useTranslation("pages.ticketDetail.page");
   const tCommon = useTranslation("common");
+  const intlLocale = getIntlLocale();
+  const currentMember =
+    projectMembers.find((projectMember) => projectMember.userId === sessionUserId) ??
+    null;
+  const currentUserName =
+    currentMember?.profile.displayName ??
+    currentMember?.profile.email ??
+    t("comments.unknownAuthor");
+  const currentUserAvatarUrl = currentMember?.profile.avatarUrl ?? null;
+  const commentDateFormatter = new Intl.DateTimeFormat(intlLocale, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
 
   return (
-    <div className={styles["ticket-detail__comments"]}>
-      <Title variant="h3">{t("comments.title")}</Title>
-      <Textarea
-        label={t("comments.newLabel")}
-        value={commentInput}
-        rows={3}
-        helperText={canComment ? undefined : t("comments.readOnlyHint")}
-        disabled={!canComment || isCreatingComment}
-        onChange={(event) => {
-          onCommentInputChange(event.target.value);
-        }}
-      />
-      <Button
-        label={t("comments.addButton")}
-        variant="publish"
-        onClick={onCreateComment}
-        disabled={
-          !canComment || isCreatingComment || commentInput.trim().length === 0
-        }
-      />
-
+    <div className={styles["ticket-detail__section"]}>
+      <div className={styles["ticket-detail__section-header"]}>
+        <span className={styles["ticket-detail__section-label"]}>
+          {t("comments.title")}
+        </span>
+      </div>
       <div className={styles["ticket-detail__comment-list"]}>
         {comments.map((comment) => {
           const canEdit = canComment && comment.authorId === sessionUserId;
@@ -90,76 +83,139 @@ const TicketDetailCommentsSection = ({
             comment.authorAvatarUrl ?? authorMember?.profile.avatarUrl ?? null;
 
           return (
-            <Card key={comment.id} className={styles["ticket-detail__comment"]}>
-              <div className={styles["ticket-detail__comment-header"]}>
-                <div className={styles["ticket-detail__comment-author"]}>
-                  <Avatar
-                    src={authorAvatarUrl}
-                    name={authorName}
-                    size="sm"
-                    aria-label={authorName}
-                  />
-                  <Text variant="caption">
+            <article
+              key={comment.id}
+              className={styles["ticket-detail__comment"]}
+            >
+              <Avatar
+                src={authorAvatarUrl}
+                name={authorName}
+                size="sm"
+                aria-label={authorName}
+              />
+
+              <div className={styles["ticket-detail__comment-body"]}>
+                <div className={styles["ticket-detail__comment-header"]}>
+                  <span className={styles["ticket-detail__comment-author"]}>
                     {t("comments.author", { author: authorName })}
-                  </Text>
+                  </span>
+                  <span className={styles["ticket-detail__comment-time"]}>
+                    {commentDateFormatter.format(comment.createdAt)}
+                  </span>
                 </div>
+
+                {isEditing ? (
+                  <textarea
+                    className={styles["ticket-detail__comment-editor"]}
+                    aria-label={t("comments.editLabel")}
+                    rows={3}
+                    value={editingCommentContent}
+                    onChange={(event) => {
+                      onEditingCommentContentChange(event.target.value);
+                    }}
+                  />
+                ) : (
+                  <p className={styles["ticket-detail__comment-text"]}>
+                    {comment.content}
+                  </p>
+                )}
+
+                {canEdit ? (
+                  <div className={styles["ticket-detail__comment-actions"]}>
+                    {isEditing ? (
+                      <>
+                        <button
+                          type="button"
+                          className={styles["ticket-detail__comment-action"]}
+                          onClick={() => {
+                            onSaveComment(comment.id);
+                          }}
+                          disabled={isUpdatingComment}
+                        >
+                          {t("comments.saveEdit")}
+                        </button>
+                        <button
+                          type="button"
+                          className={styles["ticket-detail__comment-action"]}
+                          onClick={onCancelCommentEditing}
+                        >
+                          {tCommon("cancel")}
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          className={styles["ticket-detail__comment-action"]}
+                          onClick={() => {
+                            onStartCommentEditing(comment.id, comment.content);
+                          }}
+                        >
+                          {t("comments.editButton")}
+                        </button>
+                        <button
+                          type="button"
+                          className={[
+                            styles["ticket-detail__comment-action"],
+                            styles["ticket-detail__comment-action--danger"],
+                          ]
+                            .filter(Boolean)
+                            .join(" ")}
+                          onClick={() => {
+                            onDeleteComment(comment.id);
+                          }}
+                          disabled={isDeletingComment}
+                        >
+                          {t("comments.deleteButton")}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                ) : null}
               </div>
-
-              {isEditing ? (
-                <Textarea
-                  label={t("comments.editLabel")}
-                  value={editingCommentContent}
-                  rows={3}
-                  onChange={(event) => {
-                    onEditingCommentContentChange(event.target.value);
-                  }}
-                />
-              ) : (
-                <Text variant="body">{comment.content}</Text>
-              )}
-
-              {canEdit ? (
-                <div className={styles["ticket-detail__comment-actions"]}>
-                  {isEditing ? (
-                    <>
-                      <Button
-                        label={t("comments.saveEdit")}
-                        variant="save"
-                        onClick={() => {
-                          onSaveComment(comment.id);
-                        }}
-                        disabled={isUpdatingComment}
-                      />
-                      <Button
-                        label={tCommon("cancel")}
-                        variant="secondary"
-                        onClick={onCancelCommentEditing}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        label={t("comments.editButton")}
-                        variant="edit"
-                        onClick={() => {
-                          onStartCommentEditing(comment.id, comment.content);
-                        }}
-                      />
-                      <Button
-                        label={t("comments.deleteButton")}
-                        variant="delete"
-                        onClick={() => {
-                          onDeleteComment(comment.id);
-                        }}
-                        disabled={isDeletingComment}
-                      />
-                    </>
-                  )}
-                </div>
-              ) : null}
-            </Card>
+            </article>
           );
         })}
+      </div>
+
+      <div className={styles["ticket-detail__comment-composer"]}>
+        <Avatar
+          src={currentUserAvatarUrl}
+          name={currentUserName}
+          size="sm"
+          aria-label={currentUserName}
+        />
+        <div className={styles["ticket-detail__comment-composer-body"]}>
+          <textarea
+            className={styles["ticket-detail__comment-input"]}
+            aria-label={t("comments.newLabel")}
+            placeholder={t("comments.newPlaceholder")}
+            rows={2}
+            value={commentInput}
+            disabled={!canComment || isCreatingComment}
+            onChange={(event) => {
+              onCommentInputChange(event.target.value);
+            }}
+          />
+          {!canComment ? (
+            <p className={styles["ticket-detail__comment-hint"]}>
+              {t("comments.readOnlyHint")}
+            </p>
+          ) : null}
+        </div>
+        <button
+          type="button"
+          className={styles["ticket-detail__comment-send"]}
+          onClick={onCreateComment}
+          aria-label={t("comments.addButton")}
+          disabled={
+            !canComment || isCreatingComment || commentInput.trim().length === 0
+          }
+        >
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M14 8L2 14l4-6-4-6L14 8z" fill="currentColor" />
+          </svg>
+        </button>
       </div>
     </div>
   );

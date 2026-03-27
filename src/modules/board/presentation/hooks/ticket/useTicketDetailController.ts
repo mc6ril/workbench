@@ -74,6 +74,9 @@ export const useTicketDetailController = ({
   const [priorityDraft, setPriorityDraft] = useState<TicketPriority | "" | null>(
     null
   );
+  const [dueDateDraft, setDueDateDraft] = useState<Date | null | undefined>(
+    undefined
+  );
   const [commentInput, setCommentInput] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentContent, setEditingCommentContent] = useState("");
@@ -93,6 +96,8 @@ export const useTicketDetailController = ({
   const effectiveStatus = statusDraft ?? ticket?.status ?? "";
   const effectivePriority: TicketPriority | "" =
     priorityDraft ?? ticket?.priority ?? "";
+  const effectiveDueDate =
+    dueDateDraft === undefined ? ticket?.dueDate ?? null : dueDateDraft;
 
   const handleSaveMainFields = useCallback(async (): Promise<void> => {
     if (!ticket || !canEditTicket) {
@@ -106,6 +111,7 @@ export const useTicketDetailController = ({
         description: effectiveDescription || null,
         status: effectiveStatus || undefined,
         priority: (effectivePriority as TicketPriority) || null,
+        dueDate: effectiveDueDate,
         position: ticket.position,
       },
     });
@@ -114,9 +120,11 @@ export const useTicketDetailController = ({
     setDescriptionDraft(null);
     setStatusDraft(null);
     setPriorityDraft(null);
+    setDueDateDraft(undefined);
   }, [
     canEditTicket,
     effectiveDescription,
+    effectiveDueDate,
     effectivePriority,
     effectiveStatus,
     effectiveTitle,
@@ -254,6 +262,7 @@ export const useTicketDetailController = ({
     effectiveDescription,
     effectiveStatus,
     effectivePriority,
+    effectiveDueDate,
     commentInput,
     editingCommentId,
     editingCommentContent,
@@ -269,6 +278,7 @@ export const useTicketDetailController = ({
     setDescriptionDraft,
     setStatusDraft,
     setPriorityDraft,
+    setDueDateDraft,
     setCommentInput,
     setEditingCommentContent,
     setIsDeleteModalOpen,

@@ -10,6 +10,7 @@ type Props = {
   size: ModalSize;
   titleId: string;
   title: string;
+  hideHeader?: boolean;
   descriptionId: string;
   ariaDescribedBy?: string;
   ariaLabel?: string;
@@ -26,6 +27,7 @@ const ModalDialog = ({
   size,
   titleId,
   title,
+  hideHeader = false,
   descriptionId,
   ariaDescribedBy,
   ariaLabel,
@@ -44,24 +46,26 @@ const ModalDialog = ({
       className={modalClassName}
       role="dialog"
       aria-modal="true"
-      aria-labelledby={titleId}
+      aria-labelledby={hideHeader ? undefined : titleId}
       aria-describedby={ariaDescribedBy ? descriptionId : undefined}
-      aria-label={ariaLabel}
+      aria-label={hideHeader ? (ariaLabel ?? title) : ariaLabel}
       onClick={(event) => event.stopPropagation()}
     >
-      <div className={styles["modal__header"]}>
-        <Title variant="h2" id={titleId} className={styles["modal__title"]}>
-          {title}
-        </Title>
-        <button
-          type="button"
-          onClick={onCloseButtonClick}
-          className={styles["modal__close-button"]}
-          aria-label={dismissAriaLabel}
-        >
-          {dismissLabel}
-        </button>
-      </div>
+      {!hideHeader ? (
+        <div className={styles["modal__header"]}>
+          <Title variant="h2" id={titleId} className={styles["modal__title"]}>
+            {title}
+          </Title>
+          <button
+            type="button"
+            onClick={onCloseButtonClick}
+            className={styles["modal__close-button"]}
+            aria-label={dismissAriaLabel}
+          >
+            {dismissLabel}
+          </button>
+        </div>
+      ) : null}
 
       <div id={descriptionId} className={styles["modal__body"]}>
         {children}

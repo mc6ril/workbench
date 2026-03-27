@@ -941,12 +941,20 @@
         "fields": {
           "title": "Title",
           "description": "Description",
+          "notes": "Notes",
+          "notesPlaceholder": "Add a few helpful notes for the household...",
           "status": "Status",
           "priority": "Priority",
+          "assignee": "Assignee",
+          "dueDate": "Due date",
+          "createdAt": "Created",
           "epic": "Goal",
           "position": "Position",
           "labels": "Labels",
           "none": "None"
+        },
+        "sections": {
+          "details": "Details"
         },
         "priority": {
           "urgent": "Urgent",
@@ -956,6 +964,7 @@
         "comments": {
           "title": "Comments",
           "newLabel": "Add comment",
+          "newPlaceholder": "Add a comment...",
           "readOnlyHint": "Viewers cannot post comments.",
           "addButton": "Post",
           "author": "Author: {author}",
