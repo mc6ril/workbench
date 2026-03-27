@@ -6,7 +6,6 @@ import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/
 import { useBoardDnD } from "@/modules/board/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/modules/board/presentation/hooks/board/useBoardTickets";
 import { useHasProjectComments } from "@/modules/board/presentation/hooks/comment";
-import { useAddTicketLabels, useLabels } from "@/modules/board/presentation/hooks/label";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCreateTicket";
 import { useTicketAssigneesByProjectId } from "@/modules/board/presentation/hooks/ticket/useTicketAssigneesByProjectId";
@@ -145,11 +144,6 @@ jest.mock("@/modules/board/presentation/hooks/comment", () => ({
   useHasProjectComments: jest.fn(),
 }));
 
-jest.mock("@/modules/board/presentation/hooks/label", () => ({
-  useAddTicketLabels: jest.fn(),
-  useLabels: jest.fn(),
-}));
-
 jest.mock(
   "@/modules/board/presentation/hooks/project/useProjectShortCode",
   () => ({
@@ -196,7 +190,6 @@ const asMockedReturn = <T,>(value: unknown): T => value as T;
 describe("BoardPage onboarding", () => {
   const mockSetStatusAsync = jest.fn();
   const mockCreateTicketMutateAsync = jest.fn();
-  const mockAddTicketLabelsMutateAsync = jest.fn();
   let mockTicketsData: Array<{ id: string; status: string; title: string; codeNumber: number }> =
     [];
 
@@ -270,18 +263,6 @@ describe("BoardPage onboarding", () => {
     jest.mocked(useHasProjectComments).mockReturnValue(
       asMockedReturn<ReturnType<typeof useHasProjectComments>>({
         data: false,
-      })
-    );
-
-    jest.mocked(useLabels).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useLabels>>({
-        data: [],
-      })
-    );
-
-    jest.mocked(useAddTicketLabels).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useAddTicketLabels>>({
-        mutateAsync: mockAddTicketLabelsMutateAsync,
       })
     );
 

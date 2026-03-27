@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import type { CommentWithAuthor } from "@/modules/board/core/domain/schema/comment.schema";
-import type { Label } from "@/modules/board/core/domain/schema/label.schema";
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { RealtimeRepository } from "@/modules/board/core/ports/realtimeRepository";
 import { getRealtimeRepository } from "@/modules/board/infrastructure/supabase/repositories";
@@ -117,14 +116,6 @@ const mapTicketFromPayload = (
   return mapRowSafely(payload, source, realtimeRepository.mapTicketRowToDomain);
 };
 
-const mapLabelFromPayload = (
-  realtimeRepository: RealtimeRepository,
-  payload: unknown,
-  source: "new" | "old"
-): Label | null => {
-  return mapRowSafely(payload, source, realtimeRepository.mapLabelRowToDomain);
-};
-
 const mapCommentRowFromPayload = (
   payload: unknown,
   source: "new" | "old"
@@ -149,27 +140,6 @@ const mapCommentRowFromPayload = (
   };
 };
 
-const mapProjectTicketListQueryKey = (
-  queryKey: readonly unknown[],
-  projectId: string
-) => {
-  const mappedQueryKey = mapTicketListQueryKey(queryKey);
-
-  if (!mappedQueryKey || mappedQueryKey.projectId !== projectId) {
-    return null;
-  }
-
-  return mappedQueryKey;
-};
-
-const hasLabelFilterInTicketListQuery = (
-  queryKey: readonly unknown[],
-  projectId: string
-): boolean => {
-  return (mapProjectTicketListQueryKey(queryKey, projectId)?.filters?.labelIds
-    ?.length ?? 0) > 0;
-};
-
 const matchesTicketListFilter = (
   ticket: Ticket,
   queryKey: readonly unknown[]
@@ -188,7 +158,7 @@ const matchesTicketListFilter = (
     return true;
   }
 
-  const { status, parentId, priority, labelIds } = filters;
+  const { status, parentId, priority } = filters;
 
   if (typeof status === "string" && ticket.status !== status) {
     return false;
@@ -203,46 +173,7 @@ const matchesTicketListFilter = (
   if (typeof priority === "string" && ticket.priority !== priority) {
     return false;
   }
-
-  // Label filtering depends on ticket_labels join table and cannot be inferred
-  // from Ticket data alone, so we keep patched entries and rely on targeted
-  // invalidation for label-filtered queries.
-  void labelIds;
   return true;
-};
-
-const updateEntityInArray = <T extends { id: string }>(
-  previous: T[] | undefined,
-  entity: T
-): T[] | undefined => {
-  if (!Array.isArray(previous)) {
-    return previous;
-  }
-
-  const index = previous.findIndex((item) => item.id === entity.id);
-  if (index < 0) {
-    return previous;
-  }
-
-  const next = [...previous];
-  next[index] = entity;
-  return next;
-};
-
-const removeEntityFromArray = <T extends { id: string }>(
-  previous: T[] | undefined,
-  entityId: string
-): T[] | undefined => {
-  if (!Array.isArray(previous)) {
-    return previous;
-  }
-
-  const next = previous.filter((item) => item.id !== entityId);
-  if (next.length === previous.length) {
-    return previous;
-  }
-
-  return next;
 };
 
 /**
@@ -266,14 +197,6 @@ export const useProjectRealtime = (
     const invalidateProjectTickets = () => {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.projects.ticketsRoot(projectId),
-        refetchType: "active",
-      });
-    };
-
-    const invalidateTicketListsWithLabelFilters = () => {
-      void queryClient.invalidateQueries({
-        predicate: (query) =>
-          hasLabelFilterInTicketListQuery(query.queryKey, projectId),
         refetchType: "active",
       });
     };
@@ -329,20 +252,6 @@ export const useProjectRealtime = (
 
         queryClient.setQueryData(queryKey, next);
       }
-    };
-
-    const patchLabelInCache = (label: Label) => {
-      queryClient.setQueryData<Label[]>(
-        queryKeys.labels.byProject(projectId),
-        (previous) => updateEntityInArray(previous, label)
-      );
-    };
-
-    const removeLabelFromCache = (labelId: string) => {
-      queryClient.setQueryData<Label[]>(
-        queryKeys.labels.byProject(projectId),
-        (previous) => removeEntityFromArray(previous, labelId)
-      );
     };
 
     const patchCommentInTicketCache = (
@@ -473,45 +382,11 @@ export const useProjectRealtime = (
     // We intentionally keep tickets subscriptions active immediately and attach
     // columns subscription as soon as boardId is resolved.
 
-    // Important: comments/ticket_assignees/ticket_labels have no project_id column.
+    // Important: comments/ticket_assignees have no project_id column.
     // Supabase Realtime filters are table-column based only, so we cannot scope these
     // subscriptions directly by project at SQL filter level.
     // We therefore subscribe globally and keep invalidations as targeted as possible.
-    const channelWithLabels = channelWithColumns.on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "labels",
-        filter: `project_id=eq.${projectId}`,
-      },
-      (payload) => {
-        const eventType = extractEventType(payload);
-        const labelId = extractEntityId(payload);
-        const nextLabel = mapLabelFromPayload(
-          realtimeRepository,
-          payload,
-          "new"
-        );
-
-        if (eventType === "UPDATE" && labelId && nextLabel) {
-          patchLabelInCache(nextLabel);
-          return;
-        }
-
-        if (eventType === "DELETE" && labelId) {
-          removeLabelFromCache(labelId);
-          return;
-        }
-
-        void queryClient.invalidateQueries({
-          queryKey: queryKeys.labels.byProject(projectId),
-          refetchType: "active",
-        });
-      }
-    );
-
-    const channelWithProjectMembers = channelWithLabels.on(
+    const channelWithProjectMembers = channelWithColumns.on(
       "postgres_changes",
       {
         event: "*",
@@ -614,34 +489,7 @@ export const useProjectRealtime = (
       }
     );
 
-    const channelWithTicketLabels = channelWithTicketAssignees.on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        // No project_id column on this table — subscription is project-unscoped.
-        table: "ticket_labels",
-      },
-      (payload) => {
-        const ticketId = extractTicketId(payload);
-
-        if (ticketId) {
-          void queryClient.invalidateQueries({
-            queryKey: queryKeys.labels.byTicket(ticketId),
-            refetchType: "active",
-          });
-        } else {
-          void queryClient.invalidateQueries({
-            queryKey: queryKeys.labels.byProject(projectId),
-            refetchType: "active",
-          });
-        }
-
-        invalidateTicketListsWithLabelFilters();
-      }
-    );
-
-    const channelSubscription = channelWithTicketLabels.subscribe();
+    const channelSubscription = channelWithTicketAssignees.subscribe();
 
     return () => {
       void realtimeRepository.removeChannel(channelSubscription);

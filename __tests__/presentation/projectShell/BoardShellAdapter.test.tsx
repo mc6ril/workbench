@@ -36,12 +36,6 @@ jest.mock("@/modules/board/presentation/hooks/board/useBoardConfiguration", () =
   }),
 }));
 
-jest.mock("@/modules/board/presentation/hooks/label", () => ({
-  useLabels: () => ({
-    data: undefined,
-  }),
-}));
-
 jest.mock("@/modules/board/presentation/hooks/project/usePrefetchProjectViews", () => ({
   usePrefetchProjectViews: () => ({
     prefetchBoardView: prefetchBoardViewMock,

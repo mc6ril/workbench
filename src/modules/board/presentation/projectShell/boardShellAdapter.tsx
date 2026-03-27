@@ -25,7 +25,6 @@ import {
   SORT_DIRECTION_VALUES,
   TICKET_SORT_FIELD_VALUES,
 } from "@/modules/board/constants/filterSort";
-import type { Label } from "@/modules/board/core/domain/schema/label.schema";
 import type { TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
 import Breadcrumbs from "@/modules/board/presentation/components/breadcrumbs/Breadcrumbs";
 import TicketFilterControls from "@/modules/board/presentation/components/projectShellControls/TicketFilterControls";
@@ -33,7 +32,6 @@ import TicketSortControls from "@/modules/board/presentation/components/projectS
 import ProjectToolbar from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar";
 import type { ProjectToolbarExtraTool } from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.types";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
-import { useLabels } from "@/modules/board/presentation/hooks/label";
 import { usePrefetchProjectViews } from "@/modules/board/presentation/hooks/project/usePrefetchProjectViews";
 import { useProjectSearchSuggestions } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
@@ -45,8 +43,6 @@ import { normalizeTicketSearch } from "@/modules/board/utils/ticketUtils";
 type Props = {
   projectId: string;
 };
-
-const EMPTY_LABELS: readonly Label[] = [];
 
 const isBoardShellViewPath = (pathname: string, projectId: string): boolean => {
   const normalizedPathname = normalizePath(pathname);
@@ -94,8 +90,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const clearStatus = useFilterStore((state) => state.clearStatus);
   const setPriority = useFilterStore((state) => state.setPriority);
   const clearPriority = useFilterStore((state) => state.clearPriority);
-  const setLabelIds = useFilterStore((state) => state.setLabelIds);
-  const clearLabelIds = useFilterStore((state) => state.clearLabelIds);
   const resetSearch = useFilterStore((state) => state.resetSearch);
   const resetFilters = useFilterStore((state) => state.resetFilters);
   const sort = useSortStore((state) => state.sort);
@@ -138,7 +132,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
     prefetchRef.current.prefetchBoardView();
   }, []);
 
-  const shouldLoadTicketFilterData = isBoardShellView && isFilterModalOpen;
   const { data: boardConfiguration } = useBoardConfiguration(projectId, {
     enabled: isBoardShellView,
   });
@@ -147,10 +140,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
     enabled: isBoardShellView,
   });
 
-  const { data: labelsData } = useLabels(projectId, {
-    enabled: shouldLoadTicketFilterData,
-  });
-  const labels = labelsData ?? EMPTY_LABELS;
   const searchSuggestions = useProjectSearchSuggestions({
     projectId,
     viewKey: isBoardShellView ? PROJECT_VIEWS.BOARD : PROJECT_VIEWS.SETTINGS,
@@ -221,13 +210,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
       label: column.name,
     }));
   }, [boardConfiguration?.columns]);
-
-  const labelOptions = useMemo(() => {
-    return labels.map((label) => ({
-      value: label.id,
-      label: label.name,
-    }));
-  }, [labels]);
 
   const handleFilterClick = useCallback(() => {
     setIsFilterModalOpen(true);
@@ -366,13 +348,10 @@ const BoardShellAdapter = ({ projectId }: Props) => {
           <TicketFilterControls
             filters={filters}
             statusOptions={statusOptions}
-            labelOptions={labelOptions}
             onSetStatus={setStatus}
             onClearStatus={clearStatus}
             onSetPriority={setPriority}
             onClearPriority={clearPriority}
-            onSetLabelIds={setLabelIds}
-            onClearLabelIds={clearLabelIds}
             onResetFilters={handleResetTicketFilters}
           />
         </Modal>
@@ -394,7 +373,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
       </>
     );
   }, [
-    clearLabelIds,
     clearPriority,
     clearStatus,
     filters,
@@ -403,10 +381,8 @@ const BoardShellAdapter = ({ projectId }: Props) => {
     isBoardShellView,
     isFilterModalOpen,
     isSortModalOpen,
-    labelOptions,
     setDirection,
     setField,
-    setLabelIds,
     setPriority,
     setStatus,
     sort,

@@ -1,11 +1,9 @@
 import Button from "@/shared/design-system/button";
 import Card from "@/shared/design-system/card";
 import Select from "@/shared/design-system/select";
-import Text from "@/shared/design-system/text";
 import { useTranslation } from "@/shared/i18n";
 
 import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import type { Label } from "@/modules/board/core/domain/schema/label.schema";
 import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
 import AssigneePicker from "@/modules/board/presentation/components/ticket/assigneePicker/AssigneePicker";
 import styles from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
@@ -23,8 +21,6 @@ type Props = {
   effectivePriority: string;
   statusOptions: TicketDetailStatusOption[];
   priorityOptions: SelectOption[];
-  labels: Label[];
-  assignedLabelIdSet: Set<string>;
   projectMembers: ProjectMember[];
   assignees: TicketAssignee[];
   isUpdatingAssignees: boolean;
@@ -33,7 +29,6 @@ type Props = {
   canSaveMainFields: boolean;
   onStatusChange: (value: string) => void;
   onPriorityChange: (value: string) => void;
-  onToggleLabel: (labelId: string) => void;
   onAssign: (userId: string) => void;
   onUnassign: (userId: string) => void;
   onSaveMainFields: () => void;
@@ -47,8 +42,6 @@ const TicketDetailSidebarCard = ({
   effectivePriority,
   statusOptions,
   priorityOptions,
-  labels,
-  assignedLabelIdSet,
   projectMembers,
   assignees,
   isUpdatingAssignees,
@@ -57,7 +50,6 @@ const TicketDetailSidebarCard = ({
   canSaveMainFields,
   onStatusChange,
   onPriorityChange,
-  onToggleLabel,
   onAssign,
   onUnassign,
   onSaveMainFields,
@@ -86,30 +78,6 @@ const TicketDetailSidebarCard = ({
           onPriorityChange(event.target.value);
         }}
       />
-
-      <div className={styles["ticket-detail__labels"]}>
-        <Text variant="caption">{t("fields.labels")}</Text>
-        <div className={styles["ticket-detail__label-list"]}>
-          {labels.map((label) => {
-            const isSelected = assignedLabelIdSet.has(label.id);
-            return (
-              <button
-                key={label.id}
-                type="button"
-                className={`${styles["ticket-detail__label-chip"]} ${
-                  isSelected ? styles["ticket-detail__label-chip--active"] : ""
-                }`}
-                disabled={!canEditTicket}
-                onClick={() => {
-                  onToggleLabel(label.id);
-                }}
-              >
-                {label.name}
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
       <AssigneePicker
         members={projectMembers}

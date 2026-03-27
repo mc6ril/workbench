@@ -197,26 +197,6 @@ export const createTicketRepository = (
           query = query.eq("priority", filters.priority);
         }
 
-        if (filters?.labelIds && filters.labelIds.length > 0) {
-          const { data: labelTicketIds, error: labelFilterError } = await client
-            .from("ticket_labels")
-            .select("ticket_id")
-            .in("label_id", filters.labelIds);
-
-          if (labelFilterError) {
-            return handleRepositoryError(labelFilterError, "Ticket");
-          }
-
-          const ticketIds = (labelTicketIds ?? []).map(
-            (r: { ticket_id: string }) => r.ticket_id
-          );
-
-          if (ticketIds.length === 0) {
-            return [];
-          }
-          query = query.in("id", ticketIds);
-        }
-
         const searchTerm = search?.trim();
         if (searchTerm) {
           const escapedSearchTerm = searchTerm

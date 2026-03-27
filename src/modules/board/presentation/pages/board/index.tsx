@@ -22,7 +22,9 @@ import {
   ONBOARDING_STEP_STATUS,
   type OnboardingStep,
 } from "@/modules/board/presentation/components/boardOnboardingPanel/onboarding.types";
-import CreateTicketForm from "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm";
+import CreateTicketForm, {
+  type CreateTicketFormValues,
+} from "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm";
 import TicketCard from "@/modules/board/presentation/components/ticket/ticketCard/TicketCard";
 import TicketDetailView from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView";
 import { useBoardColumns } from "@/modules/board/presentation/hooks/board/useBoardColumns";
@@ -30,10 +32,6 @@ import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/
 import { useBoardDnD } from "@/modules/board/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/modules/board/presentation/hooks/board/useBoardTickets";
 import { useHasProjectComments } from "@/modules/board/presentation/hooks/comment";
-import {
-  useAddTicketLabels,
-  useLabels,
-} from "@/modules/board/presentation/hooks/label";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCreateTicket";
 import { useTicketAssigneesByProjectId } from "@/modules/board/presentation/hooks/ticket/useTicketAssigneesByProjectId";
@@ -73,7 +71,6 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     setStatusAsync,
   } = useTicketGettingStartedStatus();
   const createTicketMutation = useCreateTicket();
-  const addTicketLabelsMutation = useAddTicketLabels();
   const completionTriggeredRef = useRef(false);
 
   const replaceSearchParams = useCallback(
@@ -117,9 +114,6 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     isLoading,
     error,
   } = useBoardConfiguration(projectId);
-  const { data: labels = [] } = useLabels(projectId, {
-    enabled: isCreateTicketModalOpen,
-  });
   const { data: projectShortCode } = useProjectShortCode(projectId);
   const filters = useFilterStore((state) => state.filters);
   const sort = useSortStore((state) => state.sort);
@@ -142,8 +136,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     if (Object.prototype.hasOwnProperty.call(filters, "parentId")) {
       return true;
     }
-
-    return Array.isArray(filters.labelIds) && filters.labelIds.length > 0;
+    return false;
   }, [filters]);
   const shouldLoadProjectWideTicketsForProgress =
     hasActiveFilters || effectiveSearch.trim() !== "";
@@ -285,13 +278,6 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
       label: column.name,
     }));
   }, [boardConfiguration?.columns]);
-
-  const labelOptions = useMemo(() => {
-    return labels.map((label) => ({
-      value: label.id,
-      label: label.name,
-    }));
-  }, [labels]);
 
   const createTicketErrorMessage =
     createTicketMutation.error instanceof Error
@@ -435,6 +421,33 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     closeOnboardingReview();
   }, [closeOnboardingReview, setStatusAsync]);
 
+  const handleCreateTicketSubmit = useCallback(
+    async (values: CreateTicketFormValues): Promise<void> => {
+      if (!canCreateTicket) {
+        return;
+      }
+
+      await createTicketMutation.mutateAsync({
+        projectId,
+        title: values.title,
+        description: values.description ?? null,
+        status: values.status,
+        position: ticketsForCreatePosition.filter(
+          (ticket) => ticket.status === values.status
+        ).length,
+      });
+
+      closeCreateTicketModal();
+    },
+    [
+      canCreateTicket,
+      closeCreateTicketModal,
+      createTicketMutation,
+      projectId,
+      ticketsForCreatePosition,
+    ]
+  );
+
   if (isPermissionsLoading) {
     return <Loader variant="full-page" />;
   }
@@ -519,34 +532,10 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
         ) : (
           <CreateTicketForm
             statusOptions={statusOptions}
-            labelOptions={labelOptions}
             isSubmitting={createTicketMutation.isPending}
             errorMessage={createTicketErrorMessage}
             onCancel={closeCreateTicketModal}
-            onSubmit={async (values) => {
-              if (!canCreateTicket) {
-                return;
-              }
-
-              const createdTicket = await createTicketMutation.mutateAsync({
-                projectId,
-                title: values.title,
-                description: values.description ?? null,
-                status: values.status,
-                position: ticketsForCreatePosition.filter(
-                  (ticket) => ticket.status === values.status
-                ).length,
-              });
-
-              if (values.labelIds && values.labelIds.length > 0) {
-                await addTicketLabelsMutation.mutateAsync({
-                  ticketId: createdTicket.id,
-                  labelIds: values.labelIds,
-                });
-              }
-
-              closeCreateTicketModal();
-            }}
+            onSubmit={handleCreateTicketSubmit}
           />
         )}
       </Modal>

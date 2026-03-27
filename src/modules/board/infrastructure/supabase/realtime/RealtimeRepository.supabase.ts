@@ -1,8 +1,6 @@
 import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
 
 import type { RealtimeRepository } from "@/modules/board/core/ports/realtimeRepository";
-import { mapLabelRowToDomain } from "@/modules/board/infrastructure/supabase/label/LabelMapper.supabase";
-import type { LabelRow } from "@/modules/board/infrastructure/supabase/label/types";
 import { mapTicketRowToDomain } from "@/modules/board/infrastructure/supabase/ticket/TicketMapper.supabase";
 import type { TicketRow } from "@/modules/board/infrastructure/supabase/ticket/types";
 
@@ -28,9 +26,6 @@ export const createRealtimeRepository = (
     },
     mapTicketRowToDomain: (row) => {
       return mapTicketRowToDomain(row as TicketRow);
-    },
-    mapLabelRowToDomain: (row) => {
-      return mapLabelRowToDomain(row as LabelRow);
     },
   };
 };

@@ -1,4 +1,3 @@
-import type { Label } from "@/modules/board/core/domain/schema/label.schema";
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 
 export type RealtimePostgresChangesFilter = {
@@ -37,5 +36,4 @@ export type RealtimeRepository = {
   createChannel: (channelName: string) => RealtimeChannel;
   removeChannel: (subscription: RealtimeSubscription) => Promise<void>;
   mapTicketRowToDomain: (row: Record<string, unknown>) => Ticket;
-  mapLabelRowToDomain: (row: Record<string, unknown>) => Label;
 };

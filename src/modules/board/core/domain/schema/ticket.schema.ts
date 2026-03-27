@@ -135,7 +135,6 @@ export type TicketFilters = {
   status?: string;
   parentId?: string | null;
   priority?: TicketPriority;
-  labelIds?: string[];
 };
 
 /**
