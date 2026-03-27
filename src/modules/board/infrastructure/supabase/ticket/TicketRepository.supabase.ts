@@ -322,7 +322,7 @@ export const createTicketRepository = (
             status: input.status,
             position: input.position ?? 0,
             priority: input.priority ?? null,
-            due_date: input.dueDate?.toISOString() ?? null,
+            due_date: input.dueDate ?? null,
             story_points: input.storyPoints ?? null,
             created_by: input.createdBy ?? null,
             completed_at: input.completedAt?.toISOString() ?? null,
@@ -368,7 +368,7 @@ export const createTicketRepository = (
           updateData.priority = input.priority;
         }
         if (input.dueDate !== undefined) {
-          updateData.due_date = input.dueDate?.toISOString() ?? null;
+          updateData.due_date = input.dueDate ?? null;
         }
         if (input.storyPoints !== undefined) {
           updateData.story_points = input.storyPoints;

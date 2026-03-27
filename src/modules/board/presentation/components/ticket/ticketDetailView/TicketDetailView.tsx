@@ -46,29 +46,7 @@ const getAssigneeName = (
   return member ? getMemberName(member) : fallbackLabel;
 };
 
-const formatDateForDisplay = (value: Date, intlLocale: string): string => {
-  return new Intl.DateTimeFormat(intlLocale, {
-    dateStyle: "medium",
-  }).format(value);
-};
-
-const formatDateInputValue = (value: Date | null): string => {
-  if (!value) {
-    return "";
-  }
-
-  const year = value.getFullYear();
-  const month = `${value.getMonth() + 1}`.padStart(2, "0");
-  const day = `${value.getDate()}`.padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-};
-
-const parseDateInputValue = (value: string): Date | null => {
-  if (!value) {
-    return null;
-  }
-
+const parseCalendarDate = (value: string): Date | null => {
   const [year, month, day] = value.split("-").map((segment) => Number(segment));
   if (!year || !month || !day) {
     return null;
@@ -77,12 +55,32 @@ const parseDateInputValue = (value: string): Date | null => {
   return new Date(year, month - 1, day);
 };
 
-const isDueDateOverdue = (value: Date | null): boolean => {
+const formatDateForDisplay = (value: string, intlLocale: string): string => {
+  const parsed = parseCalendarDate(value);
+  if (!parsed) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat(intlLocale, {
+    dateStyle: "medium",
+  }).format(parsed);
+};
+
+const formatDateInputValue = (value: string | null): string => value ?? "";
+
+const parseDateInputValue = (value: string): string | null => value || null;
+
+const isDueDateOverdue = (value: string | null): boolean => {
   if (!value) {
     return false;
   }
 
-  const dueDate = new Date(value.getFullYear(), value.getMonth(), value.getDate());
+  const dueDate = parseCalendarDate(value);
+  if (!dueDate) {
+    return false;
+  }
+
+  const dueDay = new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate());
   const today = new Date();
   const currentDate = new Date(
     today.getFullYear(),
@@ -90,7 +88,7 @@ const isDueDateOverdue = (value: Date | null): boolean => {
     today.getDate()
   );
 
-  return dueDate < currentDate;
+  return dueDay < currentDate;
 };
 
 const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {

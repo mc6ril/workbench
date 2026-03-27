@@ -27,7 +27,10 @@ export const TicketSchema = z.object({
   position: z.number().int().nonnegative("Position must be non-negative"),
   codeNumber: z.number().int().positive(),
   priority: TicketPrioritySchema.nullable(),
-  dueDate: z.coerce.date().nullable(),
+  dueDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Due date must be a calendar date (YYYY-MM-DD)")
+    .nullable(),
   storyPoints: z.number().int().positive().nullable(),
   createdBy: z.string().uuid().nullable(),
   completedAt: z.coerce.date().nullable(),
@@ -52,7 +55,11 @@ export const CreateTicketInputSchema = z.object({
   status: z.string().min(1, "Ticket status must not be empty"),
   position: z.number().int().nonnegative().default(0),
   priority: TicketPrioritySchema.nullable().optional(),
-  dueDate: z.coerce.date().nullable().optional(),
+  dueDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Due date must be a calendar date (YYYY-MM-DD)")
+    .nullable()
+    .optional(),
   storyPoints: z.number().int().positive().nullable().optional(),
   createdBy: z.string().uuid().nullable().optional(),
   completedAt: z.coerce.date().nullable().optional(),
@@ -70,7 +77,11 @@ export const UpdateTicketInputSchema = z.object({
   status: z.string().min(1, "Ticket status must not be empty").optional(),
   position: z.number().int().nonnegative().optional(),
   priority: TicketPrioritySchema.nullable().optional(),
-  dueDate: z.coerce.date().nullable().optional(),
+  dueDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Due date must be a calendar date (YYYY-MM-DD)")
+    .nullable()
+    .optional(),
   storyPoints: z.number().int().positive().nullable().optional(),
   completedAt: z.coerce.date().nullable().optional(),
   archivedAt: z.coerce.date().nullable().optional(),

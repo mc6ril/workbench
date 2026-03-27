@@ -74,7 +74,7 @@ export const useTicketDetailController = ({
   const [priorityDraft, setPriorityDraft] = useState<TicketPriority | "" | null>(
     null
   );
-  const [dueDateDraft, setDueDateDraft] = useState<Date | null | undefined>(
+  const [dueDateDraft, setDueDateDraft] = useState<string | null | undefined>(
     undefined
   );
   const [commentInput, setCommentInput] = useState("");

@@ -22,7 +22,7 @@ export const mapTicketRowToDomain = (row: TicketRow): Ticket => {
     position: row.position,
     codeNumber: row.code_number,
     priority: row.priority,
-    dueDate: row.due_date ? toDate(row.due_date) : null,
+    dueDate: row.due_date,
     storyPoints: row.story_points,
     createdBy: row.created_by,
     completedAt: row.completed_at ? toDate(row.completed_at) : null,
