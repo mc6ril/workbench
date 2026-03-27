@@ -294,6 +294,7 @@
 
 .people-settings__member-actions {
   min-width: 14rem;
+  align-items: flex-end;
 }
 
 .people-settings__role-field {
@@ -338,8 +339,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: $spacing-xs $spacing-md;
-  border: $border-width solid "transparent";
+  height: 2.75rem;
+  padding: 0 $spacing-md;
+  border: $border-width solid transparent;
   border-radius: $border-radius-full;
   background: transparent;
   color: $color-error-text;

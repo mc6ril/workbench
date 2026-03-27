@@ -742,6 +742,10 @@ const ProjectPeopleSettingsSection = ({
                 const isCurrentUser = member.userId === session?.userId;
                 const isUpdating = updatingMemberId === member.id;
                 const isRemoving = removingMemberId === member.id;
+                const isProtectedSoleAdmin =
+                  member.role === ProjectRole.ADMIN && adminCount === 1;
+                const shouldShowMemberActions =
+                  canManageMembers && !isProtectedSoleAdmin;
                 const availableRoles = [
                   ...MANAGEABLE_ROLES,
                   ...(advancedRolesAccess.hasAccess ||
@@ -795,55 +799,52 @@ const ProjectPeopleSettingsSection = ({
                       </div>
                     </div>
 
-                    <div className={styles["people-settings__member-actions"]}>
-                      <label className={styles["people-settings__role-field"]}>
-                        <span className={styles["people-settings__role-label"]}>
-                          {tMembers("roleFieldLabel")}
-                        </span>
-                        <select
-                          className={styles["people-settings__role-select"]}
-                          value={member.role}
-                          disabled={
-                            !canManageMembers || isUpdating || isRemoving
-                          }
-                          aria-label={tMembersGlobal("changeRoleAriaLabel", {
+                    {shouldShowMemberActions && (
+                      <div className={styles["people-settings__member-actions"]}>
+                        <label className={styles["people-settings__role-field"]}>
+                          <span className={styles["people-settings__role-label"]}>
+                            {tMembers("roleFieldLabel")}
+                          </span>
+                          <select
+                            className={styles["people-settings__role-select"]}
+                            value={member.role}
+                            disabled={
+                              !canManageMembers || isUpdating || isRemoving
+                            }
+                            aria-label={tMembersGlobal("changeRoleAriaLabel", {
+                              name: displayName,
+                            })}
+                            onChange={(event) => {
+                              void handleRoleChange(
+                                member,
+                                event.target.value as ProjectRole
+                              );
+                            }}
+                          >
+                            {availableRoles.map((role) => (
+                              <option key={role} value={role}>
+                                {tWorkspace(getRoleLabelKey(role))}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+
+                        <button
+                          type="button"
+                          className={styles["people-settings__remove"]}
+                          disabled={!canManageMembers || isUpdating || isRemoving}
+                          aria-label={tMembersGlobal("removeAriaLabel", {
                             name: displayName,
                           })}
-                          onChange={(event) => {
-                            void handleRoleChange(
-                              member,
-                              event.target.value as ProjectRole
-                            );
+                          onClick={() => {
+                            removeMemberMutation.reset();
+                            setMemberPendingRemoval(member);
                           }}
                         >
-                          {availableRoles.map((role) => (
-                            <option key={role} value={role}>
-                              {tWorkspace(getRoleLabelKey(role))}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-
-                      <button
-                        type="button"
-                        className={styles["people-settings__remove"]}
-                        disabled={
-                          !canManageMembers ||
-                          isUpdating ||
-                          isRemoving ||
-                          (member.role === ProjectRole.ADMIN && adminCount === 1)
-                        }
-                        aria-label={tMembersGlobal("removeAriaLabel", {
-                          name: displayName,
-                        })}
-                        onClick={() => {
-                          removeMemberMutation.reset();
-                          setMemberPendingRemoval(member);
-                        }}
-                      >
-                        {tMembersGlobal("remove")}
-                      </button>
-                    </div>
+                          {tMembersGlobal("remove")}
+                        </button>
+                      </div>
+                    )}
                   </article>
                 );
               })}

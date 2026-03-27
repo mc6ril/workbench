@@ -457,4 +457,79 @@ describe("ProjectPeopleSettingsSection", () => {
       screen.getAllByRole("button", { name: "Réessayer l'opération" })
     ).toHaveLength(2);
   });
+
+  it("hides role and remove actions for the sole administrator account", () => {
+    jest.mocked(useProjectMembers).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useProjectMembers>>({
+        data: [MEMBERS[0]],
+        isLoading: false,
+        isFetching: false,
+        error: null,
+        refetch: jest.fn(),
+      })
+    );
+
+    render(<ProjectPeopleSettingsSection projectId={PROJECT_ID} />);
+
+    expect(
+      screen.queryByLabelText("Changer le rôle de Camille")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", {
+        name: "Retirer Camille du projet",
+      })
+    ).not.toBeInTheDocument();
+  });
+
+  it("hides role and remove actions for the only admin row", () => {
+    render(<ProjectPeopleSettingsSection projectId={PROJECT_ID} />);
+
+    expect(
+      screen.queryByLabelText("Changer le rôle de Camille")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", {
+        name: "Retirer Camille du projet",
+      })
+    ).not.toBeInTheDocument();
+
+    expect(screen.getByLabelText("Changer le rôle de Marie")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: "Retirer Marie du projet",
+      })
+    ).toBeInTheDocument();
+  });
+
+  it("hides role and remove actions when user cannot manage members", () => {
+    jest.mocked(useProjectPermissions).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useProjectPermissions>>({
+        role: ProjectRole.MEMBER,
+        isLoading: false,
+        canEditProject: true,
+        canDeleteProject: false,
+        canManageMembers: false,
+        canComment: true,
+        canCreateTicket: true,
+        canMoveTicket: true,
+        canCreateEpic: true,
+        canEditTicket: true,
+        canDeleteTicket: false,
+        isViewer: false,
+        isMember: true,
+        isAdmin: false,
+      })
+    );
+
+    render(<ProjectPeopleSettingsSection projectId={PROJECT_ID} />);
+
+    expect(
+      screen.queryByLabelText("Changer le rôle de Marie")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", {
+        name: "Retirer Marie du projet",
+      })
+    ).not.toBeInTheDocument();
+  });
 });
