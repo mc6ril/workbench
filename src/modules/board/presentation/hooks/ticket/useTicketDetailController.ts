@@ -71,7 +71,9 @@ export const useTicketDetailController = ({
   const [titleDraft, setTitleDraft] = useState<string | null>(null);
   const [descriptionDraft, setDescriptionDraft] = useState<string | null>(null);
   const [statusDraft, setStatusDraft] = useState<string | null>(null);
-  const [priorityDraft, setPriorityDraft] = useState<string | null>(null);
+  const [priorityDraft, setPriorityDraft] = useState<TicketPriority | "" | null>(
+    null
+  );
   const [commentInput, setCommentInput] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentContent, setEditingCommentContent] = useState("");
@@ -89,7 +91,8 @@ export const useTicketDetailController = ({
   const effectiveTitle = titleDraft ?? ticket?.title ?? "";
   const effectiveDescription = descriptionDraft ?? ticket?.description ?? "";
   const effectiveStatus = statusDraft ?? ticket?.status ?? "";
-  const effectivePriority = priorityDraft ?? ticket?.priority ?? "";
+  const effectivePriority: TicketPriority | "" =
+    priorityDraft ?? ticket?.priority ?? "";
 
   const handleSaveMainFields = useCallback(async (): Promise<void> => {
     if (!ticket || !canEditTicket) {

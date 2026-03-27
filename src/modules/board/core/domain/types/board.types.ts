@@ -1,4 +1,5 @@
 import type { ColumnWorkflowState } from "@/modules/board/core/domain/schema/board.schema";
+import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
 
 export type BoardColumnConfig = {
   id: string;
@@ -15,6 +16,6 @@ export type BoardTicketViewModel = {
   status?: string;
   assigneeName?: string | null;
   assigneeAvatarUrl?: string | null;
-  priority?: string | null;
+  priority?: TicketPriority | null;
   storyPoints?: number | null;
 };

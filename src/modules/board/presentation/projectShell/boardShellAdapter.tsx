@@ -78,8 +78,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const filters = useFilterStore((state) => state.filters);
   const setStatus = useFilterStore((state) => state.setStatus);
   const clearStatus = useFilterStore((state) => state.clearStatus);
-  const setPriority = useFilterStore((state) => state.setPriority);
-  const clearPriority = useFilterStore((state) => state.clearPriority);
   const resetSearch = useFilterStore((state) => state.resetSearch);
   const resetFilters = useFilterStore((state) => state.resetFilters);
   const sort = useSortStore((state) => state.sort);
@@ -336,8 +334,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
             statusOptions={statusOptions}
             onSetStatus={setStatus}
             onClearStatus={clearStatus}
-            onSetPriority={setPriority}
-            onClearPriority={clearPriority}
             onResetFilters={handleResetTicketFilters}
           />
         </Modal>
@@ -359,7 +355,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
       </>
     );
   }, [
-    clearPriority,
     clearStatus,
     filters,
     handleResetTicketFilters,
@@ -369,7 +364,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
     isSortModalOpen,
     setDirection,
     setField,
-    setPriority,
     setStatus,
     sort,
     statusOptions,

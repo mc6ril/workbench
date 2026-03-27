@@ -19,6 +19,7 @@ import type {
   TicketSort,
   UpdateTicketInput,
 } from "@/modules/board/core/domain/schema/ticket.schema";
+import { TICKET_PRIORITY_RANK } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 import type { TicketRow } from "@/modules/board/infrastructure/supabase/ticket/types";
 
@@ -263,17 +264,9 @@ export const createTicketRepository = (
           // DB stores priority as text, so semantic priority sort is done in-memory.
           // Trade-off: for this specific sort mode, all matching rows are fetched
           // before applying `limit`.
-          const priorityRank: Record<string, number> = {
-            highest: 5,
-            high: 4,
-            medium: 3,
-            low: 2,
-            lowest: 1,
-          };
-
           ticketRows.sort((a, b) => {
-            const rankA = a.priority ? (priorityRank[a.priority] ?? 0) : 0;
-            const rankB = b.priority ? (priorityRank[b.priority] ?? 0) : 0;
+            const rankA = a.priority ? TICKET_PRIORITY_RANK[a.priority] : 0;
+            const rankB = b.priority ? TICKET_PRIORITY_RANK[b.priority] : 0;
             if (rankA === rankB) {
               // TicketRow timestamps are ISO strings from Supabase row types.
               return a.created_at.localeCompare(b.created_at);

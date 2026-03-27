@@ -7,7 +7,7 @@ describe("queryKeys ticket list mapper", () => {
       "project-1",
       {
         status: "todo",
-        priority: "high",
+        priority: "urgent",
       },
       {
         field: "createdAt",
@@ -21,7 +21,7 @@ describe("queryKeys ticket list mapper", () => {
       projectId: "project-1",
       filters: {
         status: "todo",
-        priority: "high",
+        priority: "urgent",
       },
       sort: {
         field: "createdAt",

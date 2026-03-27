@@ -3,15 +3,10 @@
 import { useCallback, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 
-import Loader from "@/shared/design-system/loader";
 import { useTranslation } from "@/shared/i18n";
 
-import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
-import UpgradePrompt from "@/domains/billing/presentation/components/upgradePrompt/UpgradePrompt";
-import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
 import SettingsLayout from "@/domains/project/presentation/layouts/settingsLayout/SettingsLayout";
 import { getDefaultBoardConfiguration } from "@/modules/board/core/domain/rules/board.rules";
-import type { PriorityItem } from "@/modules/board/presentation/components/prioritiesSettings/PrioritiesSettings";
 import type { StatusColumnItem } from "@/modules/board/presentation/components/statusesColumnsSettings/StatusesColumnsSettings";
 
 const ProjectSettings = dynamic(
@@ -23,12 +18,6 @@ const ProjectSettings = dynamic(
 const StatusesColumnsSettings = dynamic(
   () =>
     import("@/modules/board/presentation/components/statusesColumnsSettings/StatusesColumnsSettings"),
-  { ssr: false }
-);
-
-const PrioritiesSettings = dynamic(
-  () =>
-    import("@/modules/board/presentation/components/prioritiesSettings/PrioritiesSettings"),
   { ssr: false }
 );
 
@@ -46,9 +35,6 @@ export const ProjectSettingsPage = ({
   projectId,
 }: ProjectSettingsPageProps) => {
   const t = useTranslation("pages.settings.page");
-  const { hasAccess, minimumPlan, isLoading } = useFeatureAccess(
-    PlanFeature.PRIORITIES
-  );
 
   const [activeTabId, setActiveTabId] = useState<string>("project");
   const [statusColumns, setStatusColumns] = useState<StatusColumnItem[]>(() =>
@@ -63,7 +49,6 @@ export const ProjectSettingsPage = ({
     () => [
       { id: "project", label: t("tabs.project") },
       { id: "statusesColumns", label: t("tabs.statusesColumns") },
-      { id: "priorities", label: t("tabs.priorities") },
       { id: "exportImport", label: t("tabs.exportImport") },
     ],
     [t]
@@ -79,10 +64,6 @@ export const ProjectSettingsPage = ({
     (columns: StatusColumnItem[]): void => {
       setStatusColumns(columns);
     },
-    []
-  );
-  const handleNoopPrioritiesChange = useCallback(
-    (_priorities: PriorityItem[]): void => {},
     []
   );
   const handleNoopImportFile = useCallback((_file: File): void => {}, []);
@@ -108,14 +89,6 @@ export const ProjectSettingsPage = ({
             onCreate={handleNoop}
           />
         );
-      case "priorities":
-        return (
-          <PrioritiesSettings
-            priorities={[]}
-            onChange={handleNoopPrioritiesChange}
-            onCreate={handleNoop}
-          />
-        );
       case "exportImport":
         return (
           <ExportImportSettings
@@ -131,24 +104,10 @@ export const ProjectSettingsPage = ({
     handleNoop,
     handleNoopChange,
     handleNoopImportFile,
-    handleNoopPrioritiesChange,
     handleStatusColumnsChange,
     projectId,
     statusColumns,
   ]);
-
-  if (isLoading) {
-    return <Loader variant="full-page" />;
-  }
-
-  if (!hasAccess) {
-    return (
-      <UpgradePrompt
-        feature={PlanFeature.PRIORITIES}
-        minimumPlan={minimumPlan}
-      />
-    );
-  }
 
   return (
     <SettingsLayout

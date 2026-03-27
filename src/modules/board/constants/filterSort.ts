@@ -10,7 +10,6 @@ export const TICKET_SORT_FIELD_VALUES = Object.freeze({
   CREATED_AT: ticketSortFields.createdAt,
   TITLE: ticketSortFields.title,
   POSITION: ticketSortFields.position,
-  PRIORITY: ticketSortFields.priority,
   DUE_DATE: ticketSortFields.dueDate,
 });
 

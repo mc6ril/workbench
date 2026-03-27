@@ -1,9 +1,6 @@
 import { create } from "zustand";
 
-import type {
-  TicketFilters,
-  TicketPriority,
-} from "@/modules/board/core/domain/schema/ticket.schema";
+import type { TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
 
 type FilterState = {
   /**
@@ -24,9 +21,6 @@ type FilterActions = {
 
   setStatus: (status: string) => void;
   clearStatus: () => void;
-
-  setPriority: (priority: TicketPriority) => void;
-  clearPriority: () => void;
 
   /**
    * Resets domain-aligned filters only. Does NOT reset search.
@@ -61,21 +55,6 @@ export const useFilterStore = create<FilterStore>((set) => ({
   clearStatus: (): void => {
     set((state) => {
       const { status: _status, ...rest } = state.filters;
-      return { filters: rest };
-    });
-  },
-
-  setPriority: (priority: TicketPriority): void => {
-    set((state) => ({
-      filters: {
-        ...state.filters,
-        priority,
-      },
-    }));
-  },
-  clearPriority: (): void => {
-    set((state) => {
-      const { priority: _priority, ...rest } = state.filters;
       return { filters: rest };
     });
   },

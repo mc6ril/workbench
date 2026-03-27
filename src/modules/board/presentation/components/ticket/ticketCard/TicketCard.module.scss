@@ -68,6 +68,10 @@
   justify-content: center;
 }
 
+.ticket-card__priority-dot {
+  box-shadow: 0 0 0 2px $color-surface;
+}
+
 .ticket-card__id {
   margin: 0;
   @include typography-caption;

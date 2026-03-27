@@ -12,7 +12,6 @@ import {
 export enum PlanFeature {
   EPICS = "epics",
   SUBTASKS = "subtasks",
-  PRIORITIES = "priorities",
   EXPORT_IMPORT = "exportImport",
   ADVANCED_ROLES = "advancedRoles",
   WORKSPACES = "workspaces",
@@ -45,7 +44,6 @@ export const PLAN_CAPABILITIES: Record<SubscriptionPlan, PlanCapabilityMap> = {
   [SubscriptionPlan.FREE]: {
     [PlanFeature.EPICS]: { type: "boolean", access: true },
     [PlanFeature.SUBTASKS]: { type: "boolean", access: false },
-    [PlanFeature.PRIORITIES]: { type: "boolean", access: false },
     [PlanFeature.EXPORT_IMPORT]: { type: "boolean", access: false },
     [PlanFeature.ADVANCED_ROLES]: { type: "boolean", access: false },
     [PlanFeature.WORKSPACES]: { type: "limit", limit: 1 },
@@ -56,7 +54,6 @@ export const PLAN_CAPABILITIES: Record<SubscriptionPlan, PlanCapabilityMap> = {
   [SubscriptionPlan.PRO]: {
     [PlanFeature.EPICS]: { type: "boolean", access: true },
     [PlanFeature.SUBTASKS]: { type: "boolean", access: true },
-    [PlanFeature.PRIORITIES]: { type: "boolean", access: true },
     [PlanFeature.EXPORT_IMPORT]: { type: "boolean", access: true },
     [PlanFeature.ADVANCED_ROLES]: { type: "boolean", access: false },
     [PlanFeature.WORKSPACES]: { type: "limit", limit: 5 },
@@ -67,7 +64,6 @@ export const PLAN_CAPABILITIES: Record<SubscriptionPlan, PlanCapabilityMap> = {
   [SubscriptionPlan.TEAM]: {
     [PlanFeature.EPICS]: { type: "boolean", access: true },
     [PlanFeature.SUBTASKS]: { type: "boolean", access: true },
-    [PlanFeature.PRIORITIES]: { type: "boolean", access: true },
     [PlanFeature.EXPORT_IMPORT]: { type: "boolean", access: true },
     [PlanFeature.ADVANCED_ROLES]: { type: "boolean", access: true },
     [PlanFeature.WORKSPACES]: { type: "limit", limit: UNLIMITED },

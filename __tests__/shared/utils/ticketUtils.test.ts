@@ -52,13 +52,13 @@ describe("buildTicketAriaLabel", () => {
       statusLabel: "Status",
       assigneeName: "Alice",
       assigneeLabel: "Assignee",
-      priority: "high",
+      priority: "urgent",
       priorityLabel: "Priority",
       storyPointsLabel: "3 points",
     });
 
     expect(result).toBe(
-      "Ticket: Fix login, WB-1, Status: todo, Assignee: Alice, Priority: high, 3 points"
+      "Ticket: Fix login, WB-1, Status: todo, Assignee: Alice, Priority: urgent, 3 points"
     );
   });
 
@@ -80,7 +80,7 @@ describe("buildTicketAriaLabel", () => {
       title: "Write tests",
       status: "in-progress",
       assigneeName: "Bob",
-      priority: "medium",
+      priority: "normal",
       storyPointsLabel: "5 points",
     });
 

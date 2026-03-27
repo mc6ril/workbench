@@ -44,6 +44,18 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     expect(result[0]?.id).toBe(ticketId);
   });
 
+  it("filters by the simplified priority value", async () => {
+    const ticketsQuery = createQueryBuilderMock<TicketRow[]>([baseRow]);
+    const client = {
+      from: jest.fn(() => ticketsQuery),
+    } as unknown as SupabaseClient;
+
+    const repository = createTicketRepository(client);
+    await repository.listByProject(projectId, { priority: "urgent" });
+
+    expect(ticketsQuery.eq).toHaveBeenCalledWith("priority", "urgent");
+  });
+
   it("filters archived tickets out of status queries by default", async () => {
     const ticketsQuery = createQueryBuilderMock<TicketRow[]>([baseRow]);
     const client = {

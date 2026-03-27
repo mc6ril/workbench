@@ -593,7 +593,6 @@
         "searchPlaceholder": "Search by title or description",
         "statusLabel": "Status",
         "epicLabel": "Goal",
-        "priorityLabel": "Priority",
         "labelLabel": "Label",
         "noLabelOptions": "No labels available for this project",
         "resetLabel": "Reset filters",
@@ -625,7 +624,6 @@
         "fieldTitle": "Title",
         "fieldStatus": "Status",
         "fieldPosition": "Board position",
-        "fieldPriority": "Priority",
         "fieldDueDate": "Due date",
         "sortDirectionLabel": "Sort direction",
         "directionAsc": "Ascending",
@@ -777,7 +775,6 @@
         "tabs": {
           "project": "Project",
           "statusesColumns": "Statuses and columns",
-          "priorities": "Priorities",
           "exportImport": "Export / import"
         },
         "fallback": "Settings section unavailable"
@@ -830,29 +827,6 @@
         "empty": {
           "title": "No columns",
           "message": "Add a column to get started"
-        }
-      },
-      "priorities": {
-        "title": "Priorities",
-        "subtitle": "Configure priority levels",
-        "listAriaLabel": "Priority list",
-        "fields": {
-          "name": {
-            "label": "Name",
-            "placeholder": "Priority name",
-            "ariaLabel": "Rename priority {name}"
-          }
-        },
-        "actions": {
-          "add": "Add",
-          "moveUp": "Move up",
-          "moveDown": "Move down",
-          "moveUpAriaLabel": "Move priority {name} up",
-          "moveDownAriaLabel": "Move priority {name} down"
-        },
-        "empty": {
-          "title": "No priorities",
-          "message": "Add a priority to get started"
         }
       },
       "exportImport": {
@@ -975,11 +949,9 @@
           "none": "None"
         },
         "priority": {
-          "highest": "Highest",
-          "high": "High",
-          "medium": "Medium",
-          "low": "Low",
-          "lowest": "Lowest"
+          "urgent": "Urgent",
+          "normal": "Normal",
+          "low": "Low"
         },
         "comments": {
           "title": "Comments",
@@ -1388,7 +1360,6 @@
         "epics": "Epics",
         "subtasks": "Subtasks",
         "customColumns": "Custom columns",
-        "priorities": "Priorities",
         "exportImport": "Export / Import",
         "advancedRoles": "Advanced roles (viewer)",
         "prioritySupport": "Priority support"
@@ -1476,7 +1447,6 @@
       "featureNames": {
         "epics": "Epics",
         "subtasks": "Subtasks",
-        "priorities": "Priorities",
         "exportImport": "Export / Import",
         "advancedRoles": "Advanced roles",
         "workspaces": "Projects per account",
