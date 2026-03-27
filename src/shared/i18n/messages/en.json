@@ -55,10 +55,6 @@
         "userFallbackName": "User"
       }
     },
-    "breadcrumbs": {
-      "ariaLabel": "Breadcrumb",
-      "project": "Project"
-    },
     "searchBar": {
       "ariaLabel": "Search bar",
       "placeholder": "Search"
@@ -661,9 +657,6 @@
     },
     "settings": {
       "page": {
-        "eyebrow": "Governance",
-        "title": "Project settings",
-        "description": "Manage the core project information and the sensitive actions that are already available.",
         "loading": "Loading project settings...",
         "loadErrorTitle": "Unable to load the project",
         "retry": "Retry",
@@ -799,6 +792,13 @@
         "revoke": "Revoke",
         "revokeAriaLabel": "Revoke the invitation expiring on {date}",
         "revokeConfirm": "Revoke this invitation link?",
+        "revokeModal": {
+          "title": "Revoke this link",
+          "description": "Are you sure you want to revoke this invitation? The link will no longer be usable.",
+          "confirm": "Confirm revocation",
+          "pending": "Revoking...",
+          "cancel": "Cancel"
+        },
         "revokeSuccess": "Invitation revoked",
         "listAriaLabel": "Pending invitations list",
         "syncing": "Syncing..."
@@ -1321,6 +1321,13 @@
         "viewer": "Viewer"
       },
       "removeConfirm": "Remove {name} from this project?",
+      "removeModal": {
+        "title": "Remove this member",
+        "description": "Are you sure you want to remove {name} from the project?",
+        "confirm": "Confirm removal",
+        "pending": "Removing...",
+        "cancel": "Cancel"
+      },
       "removeSuccess": "Member removed from project",
       "roleUpdateSuccess": "Role updated",
       "lastAdminError": "Cannot remove the last administrator",

@@ -36,22 +36,12 @@
   height: 100%;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: $layout-dashboard-header-height $layout-dashboard-breadcrumbs-height minmax(0, 1fr) $layout-dashboard-footer-height;
+  grid-template-rows: $layout-dashboard-header-height minmax(0, 1fr) $layout-dashboard-footer-height;
 }
 
 .dashboard-shell__header {
   width: 100%;
   min-height: $layout-dashboard-header-height;
-  border-bottom: $border-width solid $color-border;
-  background-color: $color-background;
-}
-
-.dashboard-shell__breadcrumbs {
-  width: 100%;
-  min-height: $layout-dashboard-breadcrumbs-height;
-  display: flex;
-  align-items: center;
-  padding: 0 $layout-dashboard-main-padding;
   border-bottom: $border-width solid $color-border;
   background-color: $color-background;
 }

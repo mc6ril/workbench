@@ -26,9 +26,8 @@ type Props = {
 const ProjectShellContent = ({ projectId, children, shellAdapter }: Props) => {
   const tSkipLink = useTranslation("navigation.skipLink");
   const tSidebar = useTranslation("navigation.sidebar");
-  const tBreadcrumbs = useTranslation("navigation.breadcrumbs");
   const mainContentId = getAccessibilityId("main-content");
-  const { toolbar, breadcrumbs, filters } = useProjectShellContribution();
+  const { toolbar, filters } = useProjectShellContribution();
 
   return (
     <>
@@ -40,8 +39,6 @@ const ProjectShellContent = ({ projectId, children, shellAdapter }: Props) => {
         sidebar={<SidebarNavigation projectId={projectId} />}
         sidebarAriaLabel={tSidebar("ariaLabel")}
         header={toolbar}
-        breadcrumbs={breadcrumbs}
-        breadcrumbsAriaLabel={tBreadcrumbs("ariaLabel")}
         footer={<AppFooter />}
       >
         {children}

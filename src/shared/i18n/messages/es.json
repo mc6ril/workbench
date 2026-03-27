@@ -55,10 +55,6 @@
         "userFallbackName": "Usuario"
       }
     },
-    "breadcrumbs": {
-      "ariaLabel": "Migas de pan",
-      "project": "Proyecto"
-    },
     "searchBar": {
       "ariaLabel": "Barra de búsqueda",
       "placeholder": "Buscar"
@@ -661,9 +657,6 @@
     },
     "settings": {
       "page": {
-        "eyebrow": "Gobernanza",
-        "title": "Configuración del proyecto",
-        "description": "Gestiona la información esencial del proyecto y las acciones sensibles que ya están disponibles.",
         "loading": "Cargando la configuración del proyecto...",
         "loadErrorTitle": "No se puede cargar el proyecto",
         "retry": "Reintentar",
@@ -799,6 +792,13 @@
         "revoke": "Revocar",
         "revokeAriaLabel": "Revocar la invitación que caduca el {date}",
         "revokeConfirm": "¿Revocar este enlace de invitación?",
+        "revokeModal": {
+          "title": "Revocar este enlace",
+          "description": "¿Seguro que quieres revocar esta invitación? El enlace ya no se podrá usar.",
+          "confirm": "Confirmar revocación",
+          "pending": "Revocando...",
+          "cancel": "Cancelar"
+        },
         "revokeSuccess": "Invitación revocada",
         "listAriaLabel": "Lista de invitaciones pendientes",
         "syncing": "Sincronizando..."
@@ -1321,6 +1321,13 @@
         "viewer": "Lector"
       },
       "removeConfirm": "¿Eliminar a {name} de este proyecto?",
+      "removeModal": {
+        "title": "Eliminar a este miembro",
+        "description": "¿Seguro que quieres eliminar a {name} del proyecto?",
+        "confirm": "Confirmar eliminación",
+        "pending": "Eliminando...",
+        "cancel": "Cancelar"
+      },
       "removeSuccess": "Miembro eliminado del proyecto",
       "roleUpdateSuccess": "Rol actualizado",
       "lastAdminError": "No se puede eliminar al último administrador",

@@ -15,6 +15,7 @@ export type ProjectToolbarExtraTool = {
 
 export type ProjectToolbarProps = {
   pageTitle: string;
+  showSearch?: boolean;
   showFilterSort?: boolean;
   addActionType?: ProjectToolbarAddActionType | null;
   searchValue?: string;

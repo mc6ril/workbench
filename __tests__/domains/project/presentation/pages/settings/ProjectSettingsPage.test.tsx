@@ -102,6 +102,7 @@ describe("ProjectSettingsPage", () => {
 
     render(<ProjectSettingsPage projectId={PROJECT_ID} />);
 
+    expect(screen.queryByText("Gouvernance")).not.toBeInTheDocument();
     expect(screen.getByLabelText("Nom du projet")).toBeDisabled();
     expect(
       screen.getByRole("button", {

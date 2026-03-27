@@ -18,6 +18,7 @@ import { useProjectToolbarSuggestions } from "@/modules/board/presentation/hooks
 
 const ProjectToolbar = ({
   pageTitle,
+  showSearch = true,
   showFilterSort = false,
   addActionType = null,
   searchValue = "",
@@ -62,6 +63,7 @@ const ProjectToolbar = ({
     handleSuggestionMouseDown,
     handleSuggestionSelect,
   } = useProjectToolbarSuggestions({
+    enabled: showSearch,
     searchValue,
     searchSuggestions,
     onSearchChange,
@@ -96,41 +98,43 @@ const ProjectToolbar = ({
         </div>
 
         <div className={styles["project-toolbar__right"]}>
-          <div
-            ref={searchContainerRef}
-            className={styles["project-toolbar__search"]}
-          >
-            <Input
-              id={searchId}
-              type="search"
-              placeholder={tSearch("placeholder")}
-              aria-label={tSearch("ariaLabel")}
-              role="combobox"
-              aria-autocomplete="list"
-              aria-controls={suggestionsId}
-              aria-expanded={showSuggestions}
-              aria-activedescendant={
-                activeSuggestionIndex >= 0
-                  ? `${suggestionsId}-option-${activeSuggestionIndex}`
-                  : undefined
-              }
-              value={searchValue}
-              onChange={handleSearchChange}
-              onFocus={openSuggestions}
-              onKeyDown={handleSearchKeyDown}
-              inline
-            />
-            {showSuggestions ? (
-              <ProjectToolbarSuggestions
-                suggestionsId={suggestionsId}
-                searchSuggestions={searchSuggestions}
-                activeSuggestionIndex={activeSuggestionIndex}
-                onSuggestionMouseEnter={handleSuggestionMouseEnter}
-                onSuggestionMouseDown={handleSuggestionMouseDown}
-                onSuggestionSelect={handleSuggestionSelect}
+          {showSearch ? (
+            <div
+              ref={searchContainerRef}
+              className={styles["project-toolbar__search"]}
+            >
+              <Input
+                id={searchId}
+                type="search"
+                placeholder={tSearch("placeholder")}
+                aria-label={tSearch("ariaLabel")}
+                role="combobox"
+                aria-autocomplete="list"
+                aria-controls={suggestionsId}
+                aria-expanded={showSuggestions}
+                aria-activedescendant={
+                  activeSuggestionIndex >= 0
+                    ? `${suggestionsId}-option-${activeSuggestionIndex}`
+                    : undefined
+                }
+                value={searchValue}
+                onChange={handleSearchChange}
+                onFocus={openSuggestions}
+                onKeyDown={handleSearchKeyDown}
+                inline
               />
-            ) : null}
-          </div>
+              {showSuggestions ? (
+                <ProjectToolbarSuggestions
+                  suggestionsId={suggestionsId}
+                  searchSuggestions={searchSuggestions}
+                  activeSuggestionIndex={activeSuggestionIndex}
+                  onSuggestionMouseEnter={handleSuggestionMouseEnter}
+                  onSuggestionMouseDown={handleSuggestionMouseDown}
+                  onSuggestionSelect={handleSuggestionSelect}
+                />
+              ) : null}
+            </div>
+          ) : null}
           {showAddAction && !isPermissionsLoading && (
             <Button
               label={addLabel}

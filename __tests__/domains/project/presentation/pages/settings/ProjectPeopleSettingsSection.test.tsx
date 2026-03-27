@@ -156,7 +156,6 @@ describe("ProjectPeopleSettingsSection", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(window, "confirm").mockReturnValue(true);
 
     jest.mocked(useSession).mockReturnValue(
       asMockedReturn<ReturnType<typeof useSession>>({
@@ -306,6 +305,7 @@ describe("ProjectPeopleSettingsSection", () => {
     fireEvent.click(
       screen.getByRole("button", { name: "Retirer Marie du projet" })
     );
+    fireEvent.click(screen.getByRole("button", { name: "Confirmer le retrait" }));
 
     await waitFor(() => {
       expect(removeMemberMutateAsync).toHaveBeenCalledWith({
@@ -318,6 +318,9 @@ describe("ProjectPeopleSettingsSection", () => {
       screen.getByRole("button", {
         name: /Révoquer l'invitation qui expire le/i,
       })
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Confirmer la révocation" })
     );
 
     await waitFor(() => {

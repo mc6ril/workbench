@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent,useEffect, useRef, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
@@ -187,18 +187,6 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
   if (!project) {
     return (
       <section className={styles["settings-page"]}>
-        <div className={styles["settings-page__hero"]}>
-          <Text variant="caption" className={styles["settings-page__eyebrow"]}>
-            {tPage("eyebrow")}
-          </Text>
-          <Title className={styles["settings-page__title"]}>
-            {tPage("title")}
-          </Title>
-          <Text className={styles["settings-page__description"]}>
-            {tPage("description")}
-          </Text>
-        </div>
-
         <ErrorMessage
           title={tPage("loadErrorTitle")}
           message={projectErrorMessage ?? tErrors("generic")}
@@ -214,18 +202,6 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
   return (
     <>
       <section className={styles["settings-page"]}>
-        <div className={styles["settings-page__hero"]}>
-          <Text variant="caption" className={styles["settings-page__eyebrow"]}>
-            {tPage("eyebrow")}
-          </Text>
-          <Title className={styles["settings-page__title"]}>
-            {tPage("title")}
-          </Title>
-          <Text className={styles["settings-page__description"]}>
-            {tPage("description")}
-          </Text>
-        </div>
-
         <div className={styles["settings-page__grid"]}>
           <Card className={styles["settings-page__card"]}>
             <div className={styles["settings-page__section-header"]}>
@@ -381,45 +357,42 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
         <Card
           className={`${styles["settings-page__card"]} ${styles["settings-page__card--danger"]}`}
         >
-          <div className={styles["settings-page__section-header"]}>
-            <Title
-              variant="h2"
-              className={styles["settings-page__section-title"]}
-            >
-              {tDanger("title")}
-            </Title>
-            <Text
-              variant="caption"
-              className={styles["settings-page__section-subtitle"]}
-            >
-              {tDanger("subtitle")}
-            </Text>
+          <div className={styles["settings-page__danger-body"]}>
+            <div className={styles["settings-page__danger-content"]}>
+              <Title
+                variant="h2"
+                className={styles["settings-page__danger-title"]}
+              >
+                {tDanger("title")}
+              </Title>
+              <Text
+                variant="small"
+                className={styles["settings-page__danger-copy"]}
+              >
+                {tDanger("description")}
+              </Text>
+            </div>
+
+            <div className={styles["settings-page__danger-side"]}>
+              <Button
+                label={tDelete("open")}
+                variant="danger"
+                onClick={openDeleteModal}
+                disabled={!canDeleteProject}
+                aria-label={tDelete("openAriaLabel")}
+              />
+              {!canDeleteProject && (
+                <Text
+                  variant="small"
+                  className={styles["settings-page__danger-hint"]}
+                >
+                  {role === ProjectRole.VIEWER
+                    ? tDanger("readOnly")
+                    : tDanger("adminOnly")}
+                </Text>
+              )}
+            </div>
           </div>
-
-          <Text className={styles["settings-page__danger-copy"]}>
-            {tDanger("description")}
-          </Text>
-
-          <div className={styles["settings-page__danger-actions"]}>
-            <Button
-              label={tDelete("open")}
-              variant="danger"
-              onClick={openDeleteModal}
-              disabled={!canDeleteProject}
-              aria-label={tDelete("openAriaLabel")}
-            />
-          </div>
-
-          {!canDeleteProject && (
-            <Text
-              variant="small"
-              className={styles["settings-page__danger-hint"]}
-            >
-              {role === ProjectRole.VIEWER
-                ? tDanger("readOnly")
-                : tDanger("adminOnly")}
-            </Text>
-          )}
         </Card>
       </section>
 

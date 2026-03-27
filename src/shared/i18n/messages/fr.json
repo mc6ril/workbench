@@ -55,10 +55,6 @@
         "userFallbackName": "Utilisateur"
       }
     },
-    "breadcrumbs": {
-      "ariaLabel": "Fil d'Ariane",
-      "project": "Projet"
-    },
     "searchBar": {
       "ariaLabel": "Barre de recherche",
       "placeholder": "Rechercher"
@@ -661,9 +657,6 @@
     },
     "settings": {
       "page": {
-        "eyebrow": "Gouvernance",
-        "title": "Paramètres du projet",
-        "description": "Pilotez les informations essentielles du projet et les actions sensibles déjà disponibles.",
         "loading": "Chargement des paramètres du projet...",
         "loadErrorTitle": "Impossible de charger le projet",
         "retry": "Réessayer",
@@ -799,6 +792,13 @@
         "revoke": "Révoquer",
         "revokeAriaLabel": "Révoquer l'invitation qui expire le {date}",
         "revokeConfirm": "Révoquer ce lien d'invitation ?",
+        "revokeModal": {
+          "title": "Révoquer ce lien",
+          "description": "Voulez-vous vraiment révoquer cette invitation ? Le lien ne pourra plus être utilisé.",
+          "confirm": "Confirmer la révocation",
+          "pending": "Révocation...",
+          "cancel": "Annuler"
+        },
         "revokeSuccess": "Invitation révoquée",
         "listAriaLabel": "Liste des invitations en attente",
         "syncing": "Synchronisation..."
@@ -1339,6 +1339,13 @@
         "viewer": "Lecteur"
       },
       "removeConfirm": "Retirer {name} du projet ?",
+      "removeModal": {
+        "title": "Retirer ce membre",
+        "description": "Voulez-vous vraiment retirer {name} du projet ?",
+        "confirm": "Confirmer le retrait",
+        "pending": "Retrait...",
+        "cancel": "Annuler"
+      },
       "removeSuccess": "Membre retiré du projet",
       "roleUpdateSuccess": "Rôle mis à jour",
       "lastAdminError": "Impossible de retirer le dernier administrateur",

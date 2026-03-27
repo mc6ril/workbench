@@ -10,6 +10,7 @@ import Card from "@/shared/design-system/card";
 import ErrorMessage from "@/shared/design-system/error_message";
 import Input from "@/shared/design-system/input";
 import Loader from "@/shared/design-system/loader";
+import Modal from "@/shared/design-system/modal";
 import Select from "@/shared/design-system/select";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
@@ -106,9 +107,13 @@ const ProjectPeopleSettingsSection = ({
   const [invitationLink, setInvitationLink] = useState("");
   const [updatingMemberId, setUpdatingMemberId] = useState<string | null>(null);
   const [removingMemberId, setRemovingMemberId] = useState<string | null>(null);
+  const [memberPendingRemoval, setMemberPendingRemoval] =
+    useState<ProjectMember | null>(null);
   const [revokingInvitationId, setRevokingInvitationId] = useState<
     string | null
   >(null);
+  const [invitationPendingRevoke, setInvitationPendingRevoke] =
+    useState<ProjectInvitation | null>(null);
 
   useEffect(() => {
     if (!advancedRolesAccess.hasAccess && inviteRole === ProjectRole.VIEWER) {
@@ -124,7 +129,6 @@ const ProjectPeopleSettingsSection = ({
     `planBadges.${membersLimitAccess.currentPlan}`
   );
   const hasInvitationLink = invitationLink.length > 0;
-  const selectedRoleLabel = tWorkspace(getRoleLabelKey(inviteRole));
   const selectedRoleDescription = tWorkspace(
     INVITE_ROLE_DESCRIPTION_KEYS[inviteRole]
   );
@@ -282,15 +286,6 @@ const ProjectPeopleSettingsSection = ({
         return;
       }
 
-      const memberName = getMemberDisplayName(member);
-      const confirmed = window.confirm(
-        tMembersGlobal("removeConfirm", { name: memberName })
-      );
-
-      if (!confirmed) {
-        return;
-      }
-
       setRemovingMemberId(member.id);
       removeMemberMutation.reset();
 
@@ -313,6 +308,7 @@ const ProjectPeopleSettingsSection = ({
         // Error state is rendered in the members card.
       } finally {
         setRemovingMemberId(null);
+        setMemberPendingRemoval(null);
       }
     },
     [
@@ -329,12 +325,6 @@ const ProjectPeopleSettingsSection = ({
   const handleRevokeInvitation = useCallback(
     async (invitation: ProjectInvitation) => {
       if (!canManageMembers) {
-        return;
-      }
-
-      const confirmed = window.confirm(tInvitations("revokeConfirm"));
-
-      if (!confirmed) {
         return;
       }
 
@@ -356,6 +346,7 @@ const ProjectPeopleSettingsSection = ({
         // Error state is rendered in the invitations card.
       } finally {
         setRevokingInvitationId(null);
+        setInvitationPendingRevoke(null);
       }
     },
     [
@@ -366,6 +357,24 @@ const ProjectPeopleSettingsSection = ({
       tInvitations,
     ]
   );
+
+  const closeRemoveMemberModal = useCallback(() => {
+    if (removeMemberMutation.isPending) {
+      return;
+    }
+
+    removeMemberMutation.reset();
+    setMemberPendingRemoval(null);
+  }, [removeMemberMutation]);
+
+  const closeRevokeInvitationModal = useCallback(() => {
+    if (revokeInvitationMutation.isPending) {
+      return;
+    }
+
+    revokeInvitationMutation.reset();
+    setInvitationPendingRevoke(null);
+  }, [revokeInvitationMutation]);
 
   return (
     <section className={styles["people-settings"]}>
@@ -424,7 +433,7 @@ const ProjectPeopleSettingsSection = ({
             </span>
           </div>
 
-          {!advancedRolesAccess.hasAccess && (
+          {canManageMembers && !advancedRolesAccess.hasAccess && (
             <div
               className={`${styles["people-settings__notice"]} ${styles["people-settings__notice--info"]}`}
             >
@@ -438,7 +447,7 @@ const ProjectPeopleSettingsSection = ({
             </div>
           )}
 
-          {isMemberLimitReached && (
+          {canManageMembers && isMemberLimitReached && (
             <div
               className={`${styles["people-settings__notice"]} ${styles["people-settings__notice--warning"]}`}
             >
@@ -489,19 +498,6 @@ const ProjectPeopleSettingsSection = ({
                 inviteMutation.reset();
               }}
             />
-
-            <div className={styles["people-settings__role-preview"]}>
-              <span
-                className={`${styles["people-settings__tag"]} ${
-                  styles[`people-settings__tag--${inviteRole}`]
-                }`}
-              >
-                {selectedRoleLabel}
-              </span>
-              <Text variant="small" className={styles["people-settings__role-copy"]}>
-                {selectedRoleDescription}
-              </Text>
-            </div>
 
             {hasInvitationLink && (
               <Input
@@ -650,7 +646,10 @@ const ProjectPeopleSettingsSection = ({
                       <Button
                         label={tInvitations("revoke")}
                         variant="secondary"
-                        onClick={() => void handleRevokeInvitation(invitation)}
+                        onClick={() => {
+                          revokeInvitationMutation.reset();
+                          setInvitationPendingRevoke(invitation);
+                        }}
                         disabled={!canManageMembers || isRevoking}
                         aria-label={tInvitations("revokeAriaLabel", {
                           date: formatDate(invitation.expiresAt),
@@ -838,7 +837,8 @@ const ProjectPeopleSettingsSection = ({
                           name: displayName,
                         })}
                         onClick={() => {
-                          void handleRemoveMember(member);
+                          removeMemberMutation.reset();
+                          setMemberPendingRemoval(member);
                         }}
                       >
                         {tMembersGlobal("remove")}
@@ -851,6 +851,81 @@ const ProjectPeopleSettingsSection = ({
           )}
         </Card>
       </div>
+
+      <Modal
+        isOpen={memberPendingRemoval != null}
+        onClose={closeRemoveMemberModal}
+        title={tMembersGlobal("removeModal.title")}
+        size="medium"
+      >
+        <Text className={styles["people-settings__modal-copy"]}>
+          {tMembersGlobal("removeModal.description", {
+            name:
+              memberPendingRemoval != null
+                ? getMemberDisplayName(memberPendingRemoval)
+                : "",
+          })}
+        </Text>
+
+        <div className={styles["people-settings__modal-actions"]}>
+          <Button
+            label={tMembersGlobal("removeModal.cancel")}
+            variant="secondary"
+            onClick={closeRemoveMemberModal}
+            disabled={removeMemberMutation.isPending}
+          />
+          <Button
+            label={
+              removeMemberMutation.isPending
+                ? tMembersGlobal("removeModal.pending")
+                : tMembersGlobal("removeModal.confirm")
+            }
+            variant="danger"
+            onClick={() => {
+              if (memberPendingRemoval != null) {
+                void handleRemoveMember(memberPendingRemoval);
+              }
+            }}
+            disabled={memberPendingRemoval == null || removeMemberMutation.isPending}
+          />
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={invitationPendingRevoke != null}
+        onClose={closeRevokeInvitationModal}
+        title={tInvitations("revokeModal.title")}
+        size="medium"
+      >
+        <Text className={styles["people-settings__modal-copy"]}>
+          {tInvitations("revokeModal.description")}
+        </Text>
+
+        <div className={styles["people-settings__modal-actions"]}>
+          <Button
+            label={tInvitations("revokeModal.cancel")}
+            variant="secondary"
+            onClick={closeRevokeInvitationModal}
+            disabled={revokeInvitationMutation.isPending}
+          />
+          <Button
+            label={
+              revokeInvitationMutation.isPending
+                ? tInvitations("revokeModal.pending")
+                : tInvitations("revokeModal.confirm")
+            }
+            variant="danger"
+            onClick={() => {
+              if (invitationPendingRevoke != null) {
+                void handleRevokeInvitation(invitationPendingRevoke);
+              }
+            }}
+            disabled={
+              invitationPendingRevoke == null || revokeInvitationMutation.isPending
+            }
+          />
+        </div>
+      </Modal>
     </section>
   );
 };

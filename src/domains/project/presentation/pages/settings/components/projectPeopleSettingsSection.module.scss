@@ -6,10 +6,12 @@
 @use "@/styles/variables/spacing" as *;
 @use "@/styles/variables/typography" as *;
 
+// ─── Layout ──────────────────────────────────────────────────────────────────
+
 .people-settings {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xl;
+  gap: $spacing-2xl;
 }
 
 .people-settings__header {
@@ -30,11 +32,14 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: $spacing-xl;
+  align-items: start;
 }
 
 .people-settings__card {
   height: 100%;
 }
+
+// ─── Section headers ─────────────────────────────────────────────────────────
 
 .people-settings__section-header,
 .people-settings__form-header {
@@ -59,6 +64,8 @@
   color: $color-text-secondary;
 }
 
+// ─── Pills ───────────────────────────────────────────────────────────────────
+
 .people-settings__pills {
   display: flex;
   flex-wrap: wrap;
@@ -70,18 +77,32 @@
   display: inline-flex;
   align-items: center;
   gap: $spacing-xs;
-  padding: $spacing-xs $spacing-sm;
-  border: $border-width solid $color-border-subtle;
+  padding: $spacing-2xs $spacing-md;
+  border: $border-width solid $color-border;
   border-radius: $border-radius-full;
-  background: $color-surface-subtle;
-  font-size: $font-size-sm;
+  background: $color-secondary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
   color: $color-text-secondary;
+
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: $border-radius-full;
+    background: $color-text-muted;
+    flex-shrink: 0;
+  }
 }
+
+// ─── Notices ─────────────────────────────────────────────────────────────────
 
 .people-settings__notice {
   padding: $spacing-md $spacing-lg;
   border-radius: $border-radius-md;
   margin-bottom: $spacing-lg;
+  font-size: $font-size-sm;
 }
 
 .people-settings__notice--info {
@@ -96,6 +117,8 @@
   color: $color-warning-text;
 }
 
+// ─── Invitation form ─────────────────────────────────────────────────────────
+
 .people-settings__form {
   display: flex;
   flex-direction: column;
@@ -106,7 +129,7 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
-  padding: $spacing-lg;
+  padding: $spacing-md $spacing-lg;
   border: $border-width solid $color-border-subtle;
   border-radius: $border-radius-md;
   background: linear-gradient(
@@ -122,11 +145,24 @@
   gap: $spacing-sm;
 }
 
+.people-settings__modal-copy {
+  margin-bottom: $spacing-lg;
+  color: $color-text-secondary;
+}
+
+.people-settings__modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+}
+
 .people-settings__divider {
   height: $border-width;
   margin: $spacing-xl 0;
   background: $color-border-subtle;
 }
+
+// ─── Empty / loading states ──────────────────────────────────────────────────
 
 .people-settings__loading,
 .people-settings__empty {
@@ -137,7 +173,11 @@
   padding: $spacing-lg;
   border: $border-width solid $color-border-subtle;
   border-radius: $border-radius-md;
-  background: $color-surface-subtle;
+  background: linear-gradient(
+    150deg,
+    $color-surface-subtle 0%,
+    $color-secondary 100%
+  );
 }
 
 .people-settings__empty-title {
@@ -148,7 +188,10 @@
 
 .people-settings__empty-description {
   color: $color-text-secondary;
+  font-size: $font-size-sm;
 }
+
+// ─── Members list ────────────────────────────────────────────────────────────
 
 .people-settings__list {
   display: flex;
@@ -158,10 +201,11 @@
 .people-settings__item {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: $spacing-lg;
-  padding: $spacing-lg 0;
+  padding: $spacing-md 0;
   border-top: $border-width solid $color-border-subtle;
+  transition: background-color 150ms ease-in-out;
 
   &:first-child {
     padding-top: 0;
@@ -175,7 +219,7 @@
 
 .people-settings__identity {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: $spacing-md;
   min-width: 0;
 }
@@ -197,46 +241,53 @@
 .people-settings__name {
   font-weight: $font-weight-semibold;
   color: $color-text;
+  font-size: $font-size-sm;
 }
+
+// ─── Role tags ───────────────────────────────────────────────────────────────
 
 .people-settings__tag {
   display: inline-flex;
   align-items: center;
-  padding: $spacing-2xs $spacing-sm;
+  padding: 1px $spacing-sm;
   border-radius: $border-radius-full;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
 }
 
 .people-settings__tag--admin {
-  background: rgba($color-accent, 0.14);
+  background: rgba($color-accent, 0.12);
   color: $color-accent;
 }
 
 .people-settings__tag--member {
-  background: rgba($color-sage, 0.18);
+  background: rgba($color-sage, 0.16);
   color: $color-sage-text;
 }
 
 .people-settings__tag--viewer {
-  background: rgba($color-info, 0.16);
+  background: rgba($color-info, 0.14);
   color: $color-info-text;
 }
 
 .people-settings__tag--current {
-  background: rgba($color-foreground, 0.08);
-  color: $color-text-secondary;
+  background: rgba($color-foreground, 0.07);
+  color: $color-text-muted;
 }
 
 .people-settings__tag--muted {
-  background: rgba($color-warning, 0.14);
+  background: rgba($color-warning, 0.12);
   color: $color-warning-text;
 }
+
+// ─── Member actions ──────────────────────────────────────────────────────────
 
 .people-settings__item-actions,
 .people-settings__member-actions {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: $spacing-sm;
   flex-shrink: 0;
 }
@@ -253,7 +304,7 @@
 }
 
 .people-settings__role-label {
-  font-size: $font-size-sm;
+  font-size: $font-size-xs;
   color: $color-text-secondary;
 }
 
@@ -266,6 +317,7 @@
   background: $color-secondary;
   color: $color-text;
   font: inherit;
+  font-size: $font-size-sm;
   transition: $transition-border, $transition-shadow;
 
   &:focus {
@@ -283,27 +335,42 @@
 }
 
 .people-settings__remove {
-  appearance: none;
-  padding: $spacing-sm $spacing-md;
-  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xs $spacing-md;
+  border: $border-width solid "transparent";
+  border-radius: $border-radius-full;
   background: transparent;
-  color: $color-error;
+  color: $color-error-text;
   font: inherit;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   cursor: pointer;
+  transition:
+    border-color 150ms ease-in-out,
+    background-color 150ms ease-in-out,
+    color 150ms ease-in-out;
 
   &:hover:not(:disabled),
   &:focus-visible:not(:disabled) {
-    color: $color-error-text;
-    text-decoration: underline;
+    border-color: $color-error-ring;
+    background: $color-error-background;
+    color: $color-error;
+    outline: none;
+  }
+
+  &:focus-visible:not(:disabled) {
+    box-shadow: $shadow-focus-error;
   }
 
   &:disabled {
     cursor: not-allowed;
     color: $color-disabled-text;
-    text-decoration: none;
   }
 }
+
+// ─── Responsive ──────────────────────────────────────────────────────────────
 
 @media (max-width: $breakpoint-lg) {
   .people-settings__grid {

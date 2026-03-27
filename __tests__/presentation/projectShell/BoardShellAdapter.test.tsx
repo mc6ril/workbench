@@ -128,4 +128,31 @@ describe("BoardShellAdapter", () => {
       scroll: false,
     });
   });
+
+  it("renders a settings title without board controls on the settings view", () => {
+    mockPathname = "/project-1/settings";
+
+    render(
+      <ProjectShellContributionProvider>
+        <BoardShellAdapter projectId="project-1" />
+        <ContributionProbe />
+      </ProjectShellContributionProvider>
+    );
+
+    expect(
+      screen.getByRole("heading", {
+        name: "Paramètres",
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", {
+        name: "Ajouter une tâche",
+      })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("combobox", {
+        name: "Barre de recherche",
+      })
+    ).not.toBeInTheDocument();
+  });
 });
