@@ -1,6 +1,5 @@
 export { archiveCompletedTicketsBatch } from "./archiveCompletedTicketsBatch";
 export { assignTicket } from "./assignTicket";
-export { createSubtask } from "./createSubtask";
 export { createTicket } from "./createTicket";
 export { deleteTicket } from "./deleteTicket";
 export { getTicketAssigneesByProjectId } from "./getTicketAssigneesByProjectId";

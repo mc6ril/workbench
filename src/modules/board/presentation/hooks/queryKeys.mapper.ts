@@ -5,7 +5,6 @@ import type {
 
 export type TicketListFilterKey = readonly [
   status: TicketFilters["status"] | null,
-  parentId: Exclude<TicketFilters["parentId"], undefined> | null,
   priority: TicketFilters["priority"] | null,
 ];
 
@@ -18,7 +17,6 @@ export type TicketListQueryKeyDescriptor = {
   projectId: string;
   filters: {
     status: TicketFilters["status"] | null;
-    parentId: string | null;
     priority: TicketFilters["priority"] | null;
   } | null;
   sort: TicketSort | null;
@@ -35,7 +33,6 @@ export const createTicketListFilterKey = (
 
   return [
     filters.status ?? null,
-    filters.parentId ?? null,
     filters.priority ?? null,
   ] as const;
 };
@@ -62,11 +59,10 @@ const mapTicketListFilterKey = (
     return null;
   }
 
-  const [status, parentId, priority] = filterKey;
+  const [status, priority] = filterKey;
 
   return {
     status: typeof status === "string" ? status : null,
-    parentId: typeof parentId === "string" ? parentId : null,
     priority: isTicketPriority(priority) ? priority : null,
   };
 };

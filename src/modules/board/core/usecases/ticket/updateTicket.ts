@@ -1,7 +1,5 @@
-import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 
-import { validateTicket } from "@/modules/board/core/domain/rules/ticket.rules";
 import {
   type Ticket,
   type UpdateTicketInput,
@@ -13,15 +11,13 @@ import { resolveCompletedAtForProjectStatusChange } from "@/modules/board/core/u
 
 /**
  * Update an existing ticket.
- * Validates input and domain rules, then updates the ticket.
- * Only validates parent relationships if parentId is being changed.
+ * Validates input and updates the ticket.
  *
  * @param repository - Ticket repository
  * @param id - Ticket ID
  * @param input - Ticket update data
  * @returns Updated ticket
  * @throws NotFoundError if ticket not found
- * @throws DomainRuleError if domain rules are violated (invalid parent relationship)
  * @throws ConstraintError if constraint violation occurs
  * @throws DatabaseError if database operation fails
  */
@@ -38,38 +34,6 @@ export const updateTicket = async (
   const existingTicket = await repository.findById(id);
   if (!existingTicket) {
     throw createNotFoundError("Ticket", id);
-  }
-
-  // Validate domain rules only if parentId is being updated
-  if (validatedInput.parentId !== undefined) {
-    // Determine the new parentId (could be null to remove parent)
-    const newParentId =
-      validatedInput.parentId ?? existingTicket.parentId ?? null;
-
-    // Only validate if parentId is actually changing
-    if (newParentId !== existingTicket.parentId) {
-      // Fetch all tickets for multi-level nesting check
-      const allTickets = await repository.listByProject(
-        existingTicket.projectId
-      );
-
-      // Create ticket with new parentId for validation
-      const ticketToValidate = {
-        ...existingTicket,
-        parentId: newParentId,
-      };
-
-      // Validate parent relationships
-      const validationResult = validateTicket(ticketToValidate, allTickets);
-
-      if (!validationResult.success) {
-        throw createDomainRuleError(
-          validationResult.error.code,
-          validationResult.error.message,
-          validationResult.error.field
-        );
-      }
-    }
   }
 
   const completedAt =

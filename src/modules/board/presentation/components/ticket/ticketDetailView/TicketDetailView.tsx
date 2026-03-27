@@ -12,7 +12,6 @@ import TicketDetailCommentsSection from "./components/TicketDetailCommentsSectio
 import TicketDetailDeleteModal from "./components/TicketDetailDeleteModal";
 import TicketDetailMainCard from "./components/TicketDetailMainCard";
 import TicketDetailSidebarCard from "./components/TicketDetailSidebarCard";
-import TicketDetailSubtasksSection from "./components/TicketDetailSubtasksSection";
 import styles from "./TicketDetailView.module.scss";
 import { buildPriorityOptions } from "./TicketDetailView.utils";
 
@@ -35,11 +34,9 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     canDeleteTicket,
     canEditTicket,
     comments,
-    subtasks,
     projectMembers,
     assignees,
     statusOptions,
-    doneStatuses,
     effectiveTitle,
     effectiveDescription,
     effectiveStatus,
@@ -47,23 +44,19 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     commentInput,
     editingCommentId,
     editingCommentContent,
-    isSubtaskFormOpen,
     isDeleteModalOpen,
     isCreatingComment,
     isUpdatingComment,
     isDeletingComment,
-    isCreatingSubtask,
     isSavingMainFields,
     isDeletingTicket,
     isUpdatingAssignees,
-    createSubtaskErrorMessage,
     setTitleDraft,
     setDescriptionDraft,
     setStatusDraft,
     setPriorityDraft,
     setCommentInput,
     setEditingCommentContent,
-    setIsSubtaskFormOpen,
     setIsDeleteModalOpen,
     handleSaveMainFields,
     handleAssign,
@@ -73,9 +66,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     handleCancelCommentEditing,
     handleSaveComment,
     handleDeleteComment,
-    handleCreateSubtask,
-    handleToggleSubtaskCompleted,
-    handleDeleteSubtask,
     handleDeleteTicket,
   } = useTicketDetailController({
     projectId,
@@ -165,27 +155,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
           }}
         />
       </div>
-
-      <TicketDetailSubtasksSection
-        subtasks={subtasks}
-        doneStatuses={doneStatuses}
-        canEditTicket={canEditTicket}
-        canDeleteTicket={canDeleteTicket}
-        isSubtaskFormOpen={isSubtaskFormOpen}
-        isCreatingSubtask={isCreatingSubtask}
-        createSubtaskErrorMessage={createSubtaskErrorMessage}
-        onToggleSubtaskCompleted={handleToggleSubtaskCompleted}
-        onDeleteSubtask={handleDeleteSubtask}
-        onOpenSubtaskForm={() => {
-          setIsSubtaskFormOpen(true);
-        }}
-        onCloseSubtaskForm={() => {
-          setIsSubtaskFormOpen(false);
-        }}
-        onCreateSubtask={(values) => {
-          void handleCreateSubtask(values);
-        }}
-      />
 
       <TicketDetailDeleteModal
         isOpen={isDeleteModalOpen}

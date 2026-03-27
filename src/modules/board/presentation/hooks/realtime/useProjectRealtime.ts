@@ -158,15 +158,9 @@ const matchesTicketListFilter = (
     return true;
   }
 
-  const { status, parentId, priority } = filters;
+  const { status, priority } = filters;
 
   if (typeof status === "string" && ticket.status !== status) {
-    return false;
-  }
-
-  // parentId is tri-state in domain but query key flattens "undefined" and
-  // explicit null to the same value. We only enforce strict checks for explicit strings.
-  if (typeof parentId === "string" && ticket.parentId !== parentId) {
     return false;
   }
 

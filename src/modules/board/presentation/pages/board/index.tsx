@@ -125,18 +125,10 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     projectId,
     filters,
     sort,
-    effectiveSearch,
-    { useProjectWideCache: true }
+    effectiveSearch
   );
   const hasActiveFilters = useMemo(() => {
-    if (filters.status || filters.priority) {
-      return true;
-    }
-
-    if (Object.prototype.hasOwnProperty.call(filters, "parentId")) {
-      return true;
-    }
-    return false;
+    return Boolean(filters.status || filters.priority);
   }, [filters]);
   const shouldLoadProjectWideTicketsForProgress =
     hasActiveFilters || effectiveSearch.trim() !== "";
@@ -148,7 +140,6 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     {
       enabled: shouldLoadProjectWideTicketsForProgress,
       limit: 1,
-      useProjectWideCache: true,
     }
   );
   const shouldLoadProjectWideTicketsForCreate =
@@ -160,7 +151,6 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     "",
     {
       enabled: shouldLoadProjectWideTicketsForCreate,
-      useProjectWideCache: true,
     }
   );
   const ticketsForCreatePosition = shouldLoadProjectWideTicketsForCreate
