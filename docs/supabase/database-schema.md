@@ -4,8 +4,8 @@ This document reflects the effective Supabase schema used by Workbench after the
 
 ## Scope
 
-Workbench uses a project-centric collaborative model with role-based access and family-friendly workflow features.  
-The active app flow focuses on `board` and `epics`, while collaboration tables remain first-class and intentionally preserved.
+Workbench uses a project-centric collaborative model with role-based access and a simplified board workflow.  
+The current product keeps tickets, comments, assignees, invitations, and billing data. Legacy epics, labels, sprints, and subtasks are removed by forward migrations.
 
 ## Tables (public schema)
 
@@ -24,12 +24,7 @@ The active app flow focuses on `board` and `epics`, while collaboration tables r
 
 - `tickets`
   - Main work item table
-  - Supports parent-child relation (`parent_id`) for one-level subtasks
-  - Supports links to epics/sprints, extended priority and date fields
-- `epics`
-  - Objectives table with color and date metadata
-- `sprints`
-  - Iteration buckets, linked to tickets via `tickets.sprint_id`
+  - Includes workflow status, position, priority, due date, archival metadata, story points, creator metadata, and per-project code numbers
 
 ### Collaboration
 
@@ -37,10 +32,6 @@ The active app flow focuses on `board` and `epics`, while collaboration tables r
   - Ticket comments with author relation
 - `ticket_assignees`
   - Many-to-many assignment table between tickets and users
-- `labels`
-  - Project-scoped labels
-- `ticket_labels`
-  - Join table between tickets and labels
 - `project_invitations`
   - Token-based invitation workflow
 - `user_profiles`
@@ -51,39 +42,32 @@ The active app flow focuses on `board` and `epics`, while collaboration tables r
 
 - `subscriptions`
   - User subscription state (`free/pro/team`) and billing metadata
+- `app_runtime_config`
+  - Runtime flags for product surfaces such as billing visibility
 
 ## Key Relationships
 
 - `projects.id` -> `boards.project_id` (1:1 logical)
 - `projects.id` -> `columns` via `boards`
 - `projects.id` -> `tickets.project_id`
-- `projects.id` -> `epics.project_id`
-- `projects.id` -> `sprints.project_id`
-- `projects.id` -> `labels.project_id`
 - `projects.id` -> `project_members.project_id`
 - `projects.id` -> `project_invitations.project_id`
 
-- `epics.id` -> `tickets.epic_id` (optional)
-- `sprints.id` -> `tickets.sprint_id` (optional)
-- `tickets.id` -> `tickets.parent_id` (optional self-reference)
 - `tickets.id` -> `comments.ticket_id`
 - `tickets.id` -> `ticket_assignees.ticket_id`
-- `tickets.id` -> `ticket_labels.ticket_id`
-- `labels.id` -> `ticket_labels.label_id`
 
 ## Important Constraints and Guarantees
 
 - Non-empty names/titles/statuses enforced with database checks
 - `short_code` is immutable 2-character project key
-- Per-project code uniqueness:
-  - `tickets(project_id, code_number)` unique
-  - `epics(project_id, code_number)` unique
+- Per-project code uniqueness: `tickets(project_id, code_number)` unique
 - One board per project via unique constraint on `boards.project_id`
 - Column order/status consistency enforced by unique constraints on board scope
+- Ticket due dates are stored as timezone-safe calendar dates (`date`)
 
 ## Realtime Coverage
 
-Realtime publication migrations ensure change streams are enabled for project workflow tables (including tickets, columns, and additional project detail tables used by the app synchronization layer).
+Realtime publication migrations ensure change streams are enabled for tickets, columns, comments, project members, and ticket assignees.
 
 ## RPC / Function Highlights
 
@@ -112,10 +96,11 @@ These indexes reduce planner regressions on joins/filtering without schema-break
 
 ## Current Product Alignment
 
-Even though the UI no longer exposes backlog/home flows, schema support for collaboration and planning remains intentionally broader:
+The schema now matches the simplified board product:
 
-- invitations, labels, sprints, comments, and assignees are retained as essential capabilities
-- cleanup strategy is incremental and non-destructive for stability
+- tickets are the only work-item level
+- comments, assignees, invitations, and archival flows remain first-class
+- legacy epics, labels, sprints, and subtasks are removed through forward cleanup migrations
 
 ## References
 

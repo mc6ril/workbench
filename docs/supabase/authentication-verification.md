@@ -14,7 +14,7 @@ This document verifies that all security requirements are properly implemented.
 
 **Implementation Details:**
 
-- All tables (`projects`, `tickets`, `epics`, `boards`, `columns`, `project_members`) have RLS enabled
+- All core project tables (`projects`, `tickets`, `boards`, `columns`, `project_members`) have RLS enabled
 - All SELECT policies require authentication via `auth.uid()`
 - Supabase client is configured with session persistence
 
@@ -29,7 +29,7 @@ This document verifies that all security requirements are properly implemented.
 Three roles are defined in the `project_members` table:
 
 - **admin**: Full access (view, edit, delete, manage members)
-- **member**: Can edit project data (view, create, update, delete tickets/epics/boards)
+- **member**: Can edit project data (view, create, update, delete tickets/boards/columns)
 - **viewer**: Read-only access (view only)
 
 **Implementation Details:**
@@ -70,7 +70,7 @@ Three roles are defined in the `project_members` table:
 
 **Implementation Details:**
 
-- **Tickets/Epics/Boards/Columns**: Require `can_edit_project()` for UPDATE/DELETE
+- **Tickets/Boards/Columns**: Require `can_edit_project()` for UPDATE/DELETE
 - **Projects**: Require `can_edit_project()` for UPDATE, `is_project_admin()` for DELETE
 - **Project Members**: Require `is_project_admin()` for INSERT/UPDATE/DELETE
 

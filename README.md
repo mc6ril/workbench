@@ -17,7 +17,7 @@ Workbench is built around a simple idea:
 - each enabled module provides one concrete way of working inside that project
 
 Current module:
-- **Board** — tickets, epics, sprints, Kanban / Jira-like workflow
+- **Board** — tickets, comments, Kanban / Jira-like workflow
 
 Future modules:
 - **Recipes** — meal planning, recipe base, shopping support
@@ -49,7 +49,7 @@ src/
     workspace/                  # workspace dashboard: list/create/join projects
     project/                    # project container: settings, members, invitations, enabled modules
   modules/
-    board/                      # tickets, epics, sprints, labels, board views
+    board/                      # tickets, comments, board views
     recipes/                    # future project module
     vacation/                   # future project module
     budget/                     # future project module
@@ -100,7 +100,6 @@ Import rules are explicit:
 
 Documented exceptions to that default are listed in `docs/architecture/accepted-exceptions.md`:
 
-- the thin shared bridge `@/shared/featureAccess`
 - owner-local low-level Supabase row types in each `src/domains/*/infrastructure/supabase/types.ts` and `src/modules/*/infrastructure/supabase/types.ts`
 - public/static app-level pages in `src/presentation/pages/`
 
@@ -115,9 +114,8 @@ Current build order stays pragmatic:
 3. Board module (ticket CRUD)
 4. Board columns configuration
 5. Drag and drop workflow
-6. Epics
-7. Sub-tasks
-8. Future modules (`recipes`, `vacation`, `budget`)
+6. Ticket detail and comments
+7. Future modules (`recipes`, `vacation`, `budget`)
 
 ### Testing
 

@@ -1,31 +1,15 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { Suspense, use } from "react";
+import { PROJECT_VIEWS } from "@/shared/constants/routes";
 
-import Loader from "@/shared/design-system/loader";
-
-import ProjectSettingsPage from "@/domains/project/presentation/pages/settings/ProjectSettingsPage";
-
-const ProjectSettingsRouteContent = ({
+const SettingsPage = async ({
   params,
 }: {
   params: Promise<{ projectId: string }>;
 }) => {
-  const { projectId } = use(params);
+  const { projectId } = await params;
 
-  return <ProjectSettingsPage projectId={projectId} />;
-};
-
-const SettingsPage = ({
-  params,
-}: {
-  params: Promise<{ projectId: string }>;
-}) => {
-  return (
-    <Suspense fallback={<Loader />}>
-      <ProjectSettingsRouteContent params={params} />
-    </Suspense>
-  );
+  redirect(`/${projectId}/${PROJECT_VIEWS.BOARD}`);
 };
 
 export default SettingsPage;

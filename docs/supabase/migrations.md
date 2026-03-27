@@ -5,7 +5,7 @@ This document describes the current migration strategy for Workbench and reflect
 ## Migration Model
 
 - SQL migrations are stored in `supabase/migrations/`
-- Files are applied in ascending order (`000001` -> `000030`)
+- Files are applied in ascending order (`000001` -> `000047`), while preserving intentional gaps from earlier consolidation work
 - Migrations should remain additive and idempotent whenever possible
 - Destructive changes should be handled in dedicated, explicit migrations
 
@@ -34,10 +34,10 @@ This document describes the current migration strategy for Workbench and reflect
 - `000007_bypass_rls_with_function.sql`  
   Adds controlled `SECURITY DEFINER` helpers for project creation/join flows.
 
-### Ticket and Epic Identity / Stats
+### Ticket Identity / Stats
 
 - `000008_add_ticket_epic_codes.sql`  
-  Adds human-readable code support (`short_code`, `code_number`) and supporting functions.
+  Adds human-readable code support (`short_code`, `code_number`) and supporting functions. Epics are historical at this stage and are later removed by cleanup migrations.
 
 - `000009_project_stats_function.sql`  
   Adds `get_projects_with_stats()`.
@@ -75,16 +75,13 @@ This document describes the current migration strategy for Workbench and reflect
   Adds ticket extended fields (`priority`, `due_date`, `story_points`, `created_by`).
 
 - `000018_epic_extended_fields.sql`  
-  Adds epic extended fields (`start_date`, `target_date`, `color`).
-
-- `000019_sprints.sql`  
-  Adds `sprints` and links tickets to sprints.
+  Adds epic extended fields (`start_date`, `target_date`, `color`) as part of the historical model.
 
 - `000020_comments.sql`  
   Adds `comments` and comment retrieval RPC.
 
 - `000021_labels.sql`  
-  Adds `labels` and `ticket_labels`.
+  Adds `labels` and `ticket_labels` as part of the historical model.
 
 ### Positioning, Search, and Realtime
 
@@ -114,6 +111,61 @@ This document describes the current migration strategy for Workbench and reflect
 
 - `000030_project_ticket_assignees_rpc.sql`  
   Adds project-wide ticket assignees RPC.
+
+### Invitations, Billing, and Storage Hardening
+
+- `000031_fix_pending_invitations_ambiguous_id.sql`
+  Fixes an ambiguous `id` reference in `get_pending_invitations()`.
+
+- `000032_make_project_invitations_link_based.sql`
+  Simplifies invitations to role-based links instead of email-bound invites.
+
+- `000033_fix_project_invitations_rls_policy.sql`
+  Restores a safe `project_invitations` SELECT policy for authenticated clients.
+
+- `000034_enforce_last_admin_and_refine_invitation_errors.sql`
+  Enforces the last-admin invariant and improves invitation acceptance errors.
+
+- `000035_fix_last_admin_trigger_search_path.sql`
+  Hardens trigger search-path behavior for the last-admin protection logic.
+
+- `000036_add_runtime_billing_visibility_config.sql`
+  Adds `app_runtime_config` for remotely toggling billing visibility.
+
+- `000037_allow_owner_manual_user_deletion.sql`
+  Allows the database owner to manually delete users without violating the last-admin invariant.
+
+- `000038_restore_projects_rls_policies.sql`
+  Restores missing `projects` RLS policies.
+
+- `000039_avatars_storage_bucket.sql`
+  Creates the public avatars storage bucket and related access policies.
+
+### Archival and Board Simplification
+
+- `000040_ticket_archival_fields.sql`
+  Adds ticket archival metadata.
+
+- `000041_filter_archived_from_project_ticket_assignees.sql`
+  Excludes archived tickets from project-level assignee hydration.
+
+- `000042_move_and_reorder_ticket_completed_at.sql`
+  Keeps `completed_at` aligned with workflow-state transitions during drag and drop.
+
+- `000043_remove_sprint_model.sql`
+  Removes the sprint model from the effective schema.
+
+- `000044_weekly_ticket_archival.sql`
+  Adds the weekly archival batch for completed tickets.
+
+- `000045_simplify_ticket_priority.sql`
+  Simplifies ticket priorities from five levels to three.
+
+- `000046_due_date_calendar_date.sql`
+  Stores `due_date` as a timezone-safe calendar date.
+
+- `000047_remove_legacy_epics_labels_subtasks.sql`
+  Removes legacy epics, labels, `ticket_labels`, and subtask-specific ticket fields from the effective schema.
 
 ## Out-of-Band Changes
 

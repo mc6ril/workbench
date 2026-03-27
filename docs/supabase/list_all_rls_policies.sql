@@ -20,5 +20,16 @@ SELECT
 FROM pg_tables t
 LEFT JOIN pg_policies p ON t.tablename = p.tablename AND t.schemaname = p.schemaname
 WHERE t.schemaname = 'public'
-  AND t.tablename IN ('projects', 'project_members', 'boards', 'columns', 'epics', 'tickets')
+  AND t.tablename IN (
+    'projects',
+    'project_members',
+    'boards',
+    'columns',
+    'tickets',
+    'comments',
+    'ticket_assignees',
+    'project_invitations',
+    'user_profiles',
+    'subscriptions'
+  )
 ORDER BY t.tablename, p.policyname;
