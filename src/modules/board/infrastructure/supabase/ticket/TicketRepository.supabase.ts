@@ -181,10 +181,6 @@ export const createTicketRepository = (
           query = query.eq("status", filters.status);
         }
 
-        if (filters?.epicId) {
-          query = query.eq("epic_id", filters.epicId);
-        }
-
         // parentId filter is tri-state:
         // - undefined: don't filter by parent_id
         // - null: only top-level tickets (parent_id IS NULL)
@@ -364,7 +360,6 @@ export const createTicketRepository = (
             description: input.description ?? null,
             status: input.status,
             position: input.position ?? 0,
-            epic_id: input.epicId ?? null,
             parent_id: input.parentId ?? null,
             priority: input.priority ?? null,
             due_date: input.dueDate?.toISOString() ?? null,
@@ -408,9 +403,6 @@ export const createTicketRepository = (
         }
         if (input.position !== undefined) {
           updateData.position = input.position;
-        }
-        if (input.epicId !== undefined) {
-          updateData.epic_id = input.epicId;
         }
         if (input.parentId !== undefined) {
           updateData.parent_id = input.parentId;
@@ -584,14 +576,6 @@ export const createTicketRepository = (
       } catch (error) {
         return handleRepositoryError(error, "Ticket");
       }
-    },
-
-    async assignToEpic(ticketId: string, epicId: string): Promise<Ticket> {
-      return repo.update(ticketId, { epicId });
-    },
-
-    async unassignFromEpic(ticketId: string): Promise<Ticket> {
-      return repo.update(ticketId, { epicId: null });
     },
 
     async findByCode(

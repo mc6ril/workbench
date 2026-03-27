@@ -17,7 +17,6 @@ export type TicketCardProps = {
   title: string;
   ticketCode?: string | null;
   status?: string;
-  epicName?: string | null;
   assigneeName?: string | null;
   assigneeAvatarUrl?: string | null;
   priority?: string | null;
@@ -31,7 +30,6 @@ const TicketCard = ({
   id,
   title,
   ticketCode,
-  epicName,
   assigneeName,
   assigneeAvatarUrl,
   priority,
@@ -56,8 +54,6 @@ const TicketCard = ({
       ticketAriaLabel: t("ticketAriaLabel"),
       title,
       ticketCode,
-      epicName,
-      epicLabel: t("epicLabel"),
       assigneeName,
       assigneeLabel: t("assigneeLabel"),
       priority,
@@ -67,7 +63,7 @@ const TicketCard = ({
           ? t("storyPointsLabel", { count: storyPoints })
           : undefined,
     });
-  }, [t, title, ticketCode, epicName, assigneeName, priority, storyPoints]);
+  }, [t, title, ticketCode, assigneeName, priority, storyPoints]);
 
   return (
     <article

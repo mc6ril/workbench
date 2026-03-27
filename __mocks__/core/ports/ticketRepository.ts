@@ -49,8 +49,6 @@ export type TicketRepositoryMock = {
       },
     ]
   >;
-  assignToEpic: jest.Mock<Promise<Ticket>, [string, string]>;
-  unassignFromEpic: jest.Mock<Promise<Ticket>, [string]>;
   assignUsers: jest.Mock<Promise<void>, [string, string[]]>;
   unassignUsers: jest.Mock<Promise<void>, [string, string[]]>;
   getAssignees: jest.Mock<Promise<TicketAssignee[]>, [string]>;
@@ -118,8 +116,6 @@ export const createTicketRepositoryMock = (
         },
       ]
     >(),
-    assignToEpic: jest.fn<Promise<Ticket>, [string, string]>(),
-    unassignFromEpic: jest.fn<Promise<Ticket>, [string]>(),
     assignUsers: jest.fn<Promise<void>, [string, string[]]>(),
     unassignUsers: jest.fn<Promise<void>, [string, string[]]>(),
     getAssignees: jest.fn<Promise<TicketAssignee[]>, [string]>(),

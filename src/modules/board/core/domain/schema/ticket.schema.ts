@@ -25,7 +25,6 @@ export const TicketSchema = z.object({
   status: z.string().min(1, "Ticket status must not be empty"),
   position: z.number().int().nonnegative("Position must be non-negative"),
   codeNumber: z.number().int().positive(),
-  epicId: z.string().uuid().nullable(),
   parentId: z.string().uuid().nullable(),
   priority: TicketPrioritySchema.nullable(),
   dueDate: z.coerce.date().nullable(),
@@ -52,7 +51,6 @@ export const CreateTicketInputSchema = z.object({
   description: z.string().nullable().optional(),
   status: z.string().min(1, "Ticket status must not be empty"),
   position: z.number().int().nonnegative().default(0),
-  epicId: z.string().uuid().nullable().optional(),
   parentId: z.string().uuid().nullable().optional(),
   priority: TicketPrioritySchema.nullable().optional(),
   dueDate: z.coerce.date().nullable().optional(),
@@ -72,7 +70,6 @@ export const UpdateTicketInputSchema = z.object({
   description: z.string().nullable().optional(),
   status: z.string().min(1, "Ticket status must not be empty").optional(),
   position: z.number().int().nonnegative().optional(),
-  epicId: z.string().uuid().nullable().optional(),
   parentId: z.string().uuid().nullable().optional(),
   priority: TicketPrioritySchema.nullable().optional(),
   dueDate: z.coerce.date().nullable().optional(),
@@ -136,7 +133,6 @@ export type MoveAndReorderTicketInput = z.infer<
  */
 export type TicketFilters = {
   status?: string;
-  epicId?: string;
   parentId?: string | null;
   priority?: TicketPriority;
   labelIds?: string[];
@@ -188,31 +184,6 @@ export const TicketIdInputSchema = z.object({
 });
 
 export type TicketIdInput = z.infer<typeof TicketIdInputSchema>;
-
-/**
- * Input for assigning a ticket to an epic.
- * Validates both ticketId and epicId as UUIDs.
- */
-export const AssignTicketToEpicInputSchema = z.object({
-  ticketId: z.string().uuid("Ticket ID must be a valid UUID"),
-  epicId: z.string().uuid("Epic ID must be a valid UUID"),
-});
-
-export type AssignTicketToEpicInput = z.infer<
-  typeof AssignTicketToEpicInputSchema
->;
-
-/**
- * Input for unassigning a ticket from its epic.
- * Validates ticketId as UUID.
- */
-export const UnassignTicketFromEpicInputSchema = z.object({
-  ticketId: z.string().uuid("Ticket ID must be a valid UUID"),
-});
-
-export type UnassignTicketFromEpicInput = z.infer<
-  typeof UnassignTicketFromEpicInputSchema
->;
 
 /**
  * Input for moving a ticket to a new status and position.

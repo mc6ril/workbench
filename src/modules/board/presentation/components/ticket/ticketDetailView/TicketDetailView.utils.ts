@@ -1,4 +1,3 @@
-import type { Epic } from "@/modules/board/core/domain/schema/epic.schema";
 import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
 
 type TranslateFn = (key: string) => string;
@@ -23,15 +22,5 @@ export const buildPriorityOptions = (t: TranslateFn): SelectOption[] => {
       value,
       label: t(`priority.${value}`),
     })),
-  ];
-};
-
-export const buildEpicOptions = (
-  epics: Epic[],
-  t: TranslateFn
-): SelectOption[] => {
-  return [
-    { value: "", label: t("fields.none") },
-    ...epics.map((epic) => ({ value: epic.id, label: epic.name })),
   ];
 };

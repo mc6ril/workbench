@@ -159,28 +159,6 @@ export type TicketRepository = {
   }): Promise<number>;
 
   /**
-   * Assign a ticket to an epic.
-   * Updates the ticket's epicId field to reference the epic.
-   * @param ticketId - Ticket ID to assign
-   * @param epicId - Epic ID to assign ticket to
-   * @returns Updated ticket with epicId set
-   * @throws NotFoundError if ticket not found
-   * @throws ConstraintError if constraint violation occurs
-   * @throws DatabaseError if database operation fails
-   */
-  assignToEpic(ticketId: string, epicId: string): Promise<Ticket>;
-
-  /**
-   * Unassign a ticket from its epic.
-   * Sets the ticket's epicId field to null.
-   * @param ticketId - Ticket ID to unassign
-   * @returns Updated ticket with epicId set to null
-   * @throws NotFoundError if ticket not found
-   * @throws DatabaseError if database operation fails
-   */
-  unassignFromEpic(ticketId: string): Promise<Ticket>;
-
-  /**
    * Assign multiple users to a ticket.
    * Existing assignments are preserved; duplicates are silently ignored.
    * @param ticketId - Ticket to assign users to

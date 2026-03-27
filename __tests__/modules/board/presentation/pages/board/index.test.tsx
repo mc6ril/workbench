@@ -6,7 +6,6 @@ import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/
 import { useBoardDnD } from "@/modules/board/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/modules/board/presentation/hooks/board/useBoardTickets";
 import { useHasProjectComments } from "@/modules/board/presentation/hooks/comment";
-import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
 import { useAddTicketLabels, useLabels } from "@/modules/board/presentation/hooks/label";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCreateTicket";
@@ -146,10 +145,6 @@ jest.mock("@/modules/board/presentation/hooks/comment", () => ({
   useHasProjectComments: jest.fn(),
 }));
 
-jest.mock("@/modules/board/presentation/hooks/epic/useEpics", () => ({
-  useEpics: jest.fn(),
-}));
-
 jest.mock("@/modules/board/presentation/hooks/label", () => ({
   useAddTicketLabels: jest.fn(),
   useLabels: jest.fn(),
@@ -275,12 +270,6 @@ describe("BoardPage onboarding", () => {
     jest.mocked(useHasProjectComments).mockReturnValue(
       asMockedReturn<ReturnType<typeof useHasProjectComments>>({
         data: false,
-      })
-    );
-
-    jest.mocked(useEpics).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useEpics>>({
-        data: [],
       })
     );
 

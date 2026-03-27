@@ -8,7 +8,6 @@ import { getAccessibilityId } from "@/shared/a11y";
 import Loader from "@/shared/design-system/loader";
 import Modal from "@/shared/design-system/modal";
 import Text from "@/shared/design-system/text";
-import { PlanFeature, useFeatureAccess } from "@/shared/featureAccess";
 import { useTranslation } from "@/shared/i18n";
 
 import { getBoardOnboardingProgress } from "./boardOnboardingProgress";
@@ -31,7 +30,6 @@ import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/
 import { useBoardDnD } from "@/modules/board/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/modules/board/presentation/hooks/board/useBoardTickets";
 import { useHasProjectComments } from "@/modules/board/presentation/hooks/comment";
-import { useEpics } from "@/modules/board/presentation/hooks/epic/useEpics";
 import {
   useAddTicketLabels,
   useLabels,
@@ -119,13 +117,9 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     isLoading,
     error,
   } = useBoardConfiguration(projectId);
-  const { data: epics = [] } = useEpics(projectId, {
-    enabled: isCreateTicketModalOpen,
-  });
   const { data: labels = [] } = useLabels(projectId, {
     enabled: isCreateTicketModalOpen,
   });
-  const { hasAccess: hasEpicsAccess } = useFeatureAccess(PlanFeature.EPICS);
   const { data: projectShortCode } = useProjectShortCode(projectId);
   const filters = useFilterStore((state) => state.filters);
   const sort = useSortStore((state) => state.sort);
@@ -141,7 +135,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     { useProjectWideCache: true }
   );
   const hasActiveFilters = useMemo(() => {
-    if (filters.status || filters.epicId || filters.priority) {
+    if (filters.status || filters.priority) {
       return true;
     }
 
@@ -291,13 +285,6 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
       label: column.name,
     }));
   }, [boardConfiguration?.columns]);
-
-  const epicOptions = useMemo(() => {
-    return epics.map((epic) => ({
-      value: epic.id,
-      label: epic.name,
-    }));
-  }, [epics]);
 
   const labelOptions = useMemo(() => {
     return labels.map((label) => ({
@@ -532,9 +519,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
         ) : (
           <CreateTicketForm
             statusOptions={statusOptions}
-            epicOptions={epicOptions}
             labelOptions={labelOptions}
-            showEpicField={hasEpicsAccess}
             isSubmitting={createTicketMutation.isPending}
             errorMessage={createTicketErrorMessage}
             onCancel={closeCreateTicketModal}
@@ -548,7 +533,6 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
                 title: values.title,
                 description: values.description ?? null,
                 status: values.status,
-                epicId: values.epicId ?? null,
                 position: ticketsForCreatePosition.filter(
                   (ticket) => ticket.status === values.status
                 ).length,

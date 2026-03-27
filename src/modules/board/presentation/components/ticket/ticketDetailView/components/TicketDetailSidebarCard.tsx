@@ -19,13 +19,10 @@ type SelectOption = {
 type Props = {
   canEditTicket: boolean;
   canDeleteTicket: boolean;
-  hasEpicsAccess: boolean;
   effectiveStatus: string;
   effectivePriority: string;
-  effectiveEpicId: string;
   statusOptions: TicketDetailStatusOption[];
   priorityOptions: SelectOption[];
-  epicOptions: SelectOption[];
   labels: Label[];
   assignedLabelIdSet: Set<string>;
   projectMembers: ProjectMember[];
@@ -36,7 +33,6 @@ type Props = {
   canSaveMainFields: boolean;
   onStatusChange: (value: string) => void;
   onPriorityChange: (value: string) => void;
-  onEpicChange: (value: string) => void;
   onToggleLabel: (labelId: string) => void;
   onAssign: (userId: string) => void;
   onUnassign: (userId: string) => void;
@@ -47,13 +43,10 @@ type Props = {
 const TicketDetailSidebarCard = ({
   canEditTicket,
   canDeleteTicket,
-  hasEpicsAccess,
   effectiveStatus,
   effectivePriority,
-  effectiveEpicId,
   statusOptions,
   priorityOptions,
-  epicOptions,
   labels,
   assignedLabelIdSet,
   projectMembers,
@@ -64,7 +57,6 @@ const TicketDetailSidebarCard = ({
   canSaveMainFields,
   onStatusChange,
   onPriorityChange,
-  onEpicChange,
   onToggleLabel,
   onAssign,
   onUnassign,
@@ -94,18 +86,6 @@ const TicketDetailSidebarCard = ({
           onPriorityChange(event.target.value);
         }}
       />
-
-      {hasEpicsAccess ? (
-        <Select
-          label={t("fields.epic")}
-          value={effectiveEpicId}
-          options={epicOptions}
-          disabled={!canEditTicket}
-          onChange={(event) => {
-            onEpicChange(event.target.value);
-          }}
-        />
-      ) : null}
 
       <div className={styles["ticket-detail__labels"]}>
         <Text variant="caption">{t("fields.labels")}</Text>

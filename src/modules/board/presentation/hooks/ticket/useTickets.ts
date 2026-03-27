@@ -43,7 +43,7 @@ const applyParentIdFilter = (
  * Hook for fetching tickets for a project.
  *
  * @param projectId - Project ID
- * @param filters - Optional filters (status, epicId, parentId)
+ * @param filters - Optional filters (status, parentId)
  * @param sort - Optional sort configuration
  * @param search - Optional server-side search term
  * @param options - Query options (enabled, limit, useProjectWideCache)

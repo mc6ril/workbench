@@ -17,7 +17,6 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     status: "todo",
     position: 0,
     code_number: 1,
-    epic_id: null,
     parent_id: null,
     priority: null,
     due_date: null,
