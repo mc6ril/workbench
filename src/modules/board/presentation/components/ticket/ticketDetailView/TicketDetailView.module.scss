@@ -156,12 +156,6 @@
   margin-top: $spacing-lg;
 }
 
-.ticket-detail__subtasks {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-lg;
-}
-
 .ticket-detail__error {
   border: $border-width solid $color-error;
   box-shadow: $shadow-sm;

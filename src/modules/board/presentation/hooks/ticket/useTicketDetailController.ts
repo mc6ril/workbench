@@ -17,11 +17,9 @@ import {
 } from "@/modules/board/presentation/hooks/comment";
 import {
   useAssignTicket,
-  useCreateSubtask,
   useDeleteTicket,
   useTicket,
   useTicketAssignees,
-  useTickets,
   useUnassignTicket,
   useUpdateTicket,
 } from "@/modules/board/presentation/hooks/ticket";
@@ -61,11 +59,8 @@ export const useTicketDetailController = ({
   const { data: projectMembers = [] } = useProjectMembers(projectId);
   const { data: assignees = [] } = useTicketAssignees(ticketId);
   const { data: comments = [] } = useComments(ticketId);
-  const { data: subtasks = [] } = useTickets(projectId, { parentId: ticketId });
 
   const updateMainTicketMutation = useUpdateTicket();
-  const updateSubtaskMutation = useUpdateTicket();
-  const createSubtaskMutation = useCreateSubtask();
   const deleteTicketMutation = useDeleteTicket();
   const assignTicketMutation = useAssignTicket();
   const unassignTicketMutation = useUnassignTicket();
@@ -80,7 +75,6 @@ export const useTicketDetailController = ({
   const [commentInput, setCommentInput] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentContent, setEditingCommentContent] = useState("");
-  const [isSubtaskFormOpen, setIsSubtaskFormOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const statusOptions = useMemo<TicketDetailStatusOption[]>(() => {
@@ -91,14 +85,6 @@ export const useTicketDetailController = ({
       state: column.state,
     }));
   }, [boardConfiguration?.columns]);
-
-  const doneStatuses = useMemo(() => {
-    return new Set(
-      statusOptions
-        .filter((option) => option.state === "done")
-        .map((option) => option.value)
-    );
-  }, [statusOptions]);
 
   const effectiveTitle = titleDraft ?? ticket?.title ?? "";
   const effectiveDescription = descriptionDraft ?? ticket?.description ?? "";
@@ -218,79 +204,6 @@ export const useTicketDetailController = ({
     [deleteCommentMutation]
   );
 
-  const handleCreateSubtask = useCallback(
-    async (values: { title: string; description?: string }): Promise<void> => {
-      if (!canEditTicket) {
-        return;
-      }
-
-      const fallbackStatus = statusOptions[0]?.value ?? ticket?.status ?? "";
-
-      await createSubtaskMutation.mutateAsync({
-        projectId,
-        parentId: ticketId,
-        title: values.title,
-        description: values.description ?? null,
-        status: fallbackStatus,
-        position: subtasks.length,
-      });
-
-      setIsSubtaskFormOpen(false);
-    },
-    [
-      canEditTicket,
-      createSubtaskMutation,
-      projectId,
-      statusOptions,
-      subtasks.length,
-      ticket?.status,
-      ticketId,
-    ]
-  );
-
-  const handleToggleSubtaskCompleted = useCallback(
-    (subtaskId: string): void => {
-      if (!canEditTicket) {
-        return;
-      }
-
-      const subtask = subtasks.find((item) => item.id === subtaskId);
-      if (!subtask) {
-        return;
-      }
-
-      const doneStatus = statusOptions.find(
-        (option) => option.state === "done"
-      )?.value;
-      const defaultStatus = statusOptions[0]?.value ?? subtask.status;
-
-      const nextStatus =
-        subtask.status === doneStatus
-          ? defaultStatus
-          : (doneStatus ?? defaultStatus);
-
-      updateSubtaskMutation.mutate({
-        id: subtask.id,
-        input: { status: nextStatus },
-      });
-    },
-    [canEditTicket, statusOptions, subtasks, updateSubtaskMutation]
-  );
-
-  const handleDeleteSubtask = useCallback(
-    (subtaskId: string): void => {
-      if (!canDeleteTicket) {
-        return;
-      }
-
-      deleteTicketMutation.mutate({
-        projectId,
-        ticketId: subtaskId,
-      });
-    },
-    [canDeleteTicket, deleteTicketMutation, projectId]
-  );
-
   const handleDeleteTicket = useCallback(async (): Promise<void> => {
     if (!canDeleteTicket || deleteTicketMutation.isPending) {
       return;
@@ -322,11 +235,6 @@ export const useTicketDetailController = ({
     ticketId,
   ]);
 
-  const createSubtaskErrorMessage =
-    createSubtaskMutation.error instanceof Error
-      ? createSubtaskMutation.error.message
-      : undefined;
-
   return {
     ticket,
     error,
@@ -336,11 +244,9 @@ export const useTicketDetailController = ({
     canDeleteTicket,
     canEditTicket,
     comments,
-    subtasks,
     projectMembers,
     assignees,
     statusOptions,
-    doneStatuses,
     effectiveTitle,
     effectiveDescription,
     effectiveStatus,
@@ -348,24 +254,20 @@ export const useTicketDetailController = ({
     commentInput,
     editingCommentId,
     editingCommentContent,
-    isSubtaskFormOpen,
     isDeleteModalOpen,
     isCreatingComment: createCommentMutation.isPending,
     isUpdatingComment: updateCommentMutation.isPending,
     isDeletingComment: deleteCommentMutation.isPending,
-    isCreatingSubtask: createSubtaskMutation.isPending,
     isSavingMainFields: updateMainTicketMutation.isPending,
     isDeletingTicket: deleteTicketMutation.isPending,
     isUpdatingAssignees:
       assignTicketMutation.isPending || unassignTicketMutation.isPending,
-    createSubtaskErrorMessage,
     setTitleDraft,
     setDescriptionDraft,
     setStatusDraft,
     setPriorityDraft,
     setCommentInput,
     setEditingCommentContent,
-    setIsSubtaskFormOpen,
     setIsDeleteModalOpen,
     handleSaveMainFields,
     handleAssign,
@@ -375,9 +277,6 @@ export const useTicketDetailController = ({
     handleCancelCommentEditing,
     handleSaveComment,
     handleDeleteComment,
-    handleCreateSubtask,
-    handleToggleSubtaskCompleted,
-    handleDeleteSubtask,
     handleDeleteTicket,
   };
 };

@@ -1,6 +1,3 @@
-import { createDomainRuleError } from "@/shared/errors/domainRuleError";
-
-import { validateTicket } from "@/modules/board/core/domain/rules/ticket.rules";
 import {
   type CreateTicketInput,
   CreateTicketInputSchema,
@@ -12,13 +9,11 @@ import { resolveCompletedAtForProjectStatusChange } from "@/modules/board/core/u
 
 /**
  * Create a new ticket.
- * Validates input and domain rules, then creates the ticket.
- * Enforces parent relationship rules (no circular refs, no multi-level nesting).
+ * Validates input and creates the ticket.
  *
  * @param repository - Ticket repository
  * @param input - Ticket creation data
  * @returns Created ticket
- * @throws DomainRuleError if domain rules are violated (invalid parent relationship)
  * @throws ConstraintError if constraint violation occurs
  * @throws DatabaseError if database operation fails
  */
@@ -29,23 +24,6 @@ export const createTicket = async (
 ): Promise<Ticket> => {
   // Validate input with Zod schema
   const validatedInput = CreateTicketInputSchema.parse(input);
-
-  // Validate domain rules if parentId is provided
-  if (validatedInput.parentId) {
-    // Fetch all tickets for multi-level nesting check
-    const allTickets = await repository.listByProject(validatedInput.projectId);
-
-    // Validate parent relationships
-    const validationResult = validateTicket(validatedInput, allTickets);
-
-    if (!validationResult.success) {
-      throw createDomainRuleError(
-        validationResult.error.code,
-        validationResult.error.message,
-        validationResult.error.field
-      );
-    }
-  }
 
   const codeNumber = await repository.getNextCodeNumberForProject(
     validatedInput.projectId

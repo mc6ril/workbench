@@ -12,7 +12,6 @@ describe("TicketSchema", () => {
     status: "todo",
     position: 0,
     codeNumber: 1,
-    parentId: null,
     priority: null,
     dueDate: null,
     storyPoints: null,

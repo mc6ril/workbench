@@ -181,18 +181,6 @@ export const createTicketRepository = (
           query = query.eq("status", filters.status);
         }
 
-        // parentId filter is tri-state:
-        // - undefined: don't filter by parent_id
-        // - null: only top-level tickets (parent_id IS NULL)
-        // - string: only subtasks of given parent (parent_id = value)
-        if (filters && "parentId" in filters) {
-          if (filters.parentId === null) {
-            query = query.is("parent_id", null);
-          } else if (typeof filters.parentId === "string") {
-            query = query.eq("parent_id", filters.parentId);
-          }
-        }
-
         if (filters?.priority) {
           query = query.eq("priority", filters.priority);
         }
@@ -340,7 +328,6 @@ export const createTicketRepository = (
             description: input.description ?? null,
             status: input.status,
             position: input.position ?? 0,
-            parent_id: input.parentId ?? null,
             priority: input.priority ?? null,
             due_date: input.dueDate?.toISOString() ?? null,
             story_points: input.storyPoints ?? null,
@@ -383,9 +370,6 @@ export const createTicketRepository = (
         }
         if (input.position !== undefined) {
           updateData.position = input.position;
-        }
-        if (input.parentId !== undefined) {
-          updateData.parent_id = input.parentId;
         }
         if (input.priority !== undefined) {
           updateData.priority = input.priority;

@@ -7,7 +7,6 @@ describe("queryKeys ticket list mapper", () => {
       "project-1",
       {
         status: "todo",
-        parentId: "parent-1",
         priority: "high",
       },
       {
@@ -22,7 +21,6 @@ describe("queryKeys ticket list mapper", () => {
       projectId: "project-1",
       filters: {
         status: "todo",
-        parentId: "parent-1",
         priority: "high",
       },
       sort: {

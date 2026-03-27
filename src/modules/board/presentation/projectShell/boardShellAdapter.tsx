@@ -25,7 +25,6 @@ import {
   SORT_DIRECTION_VALUES,
   TICKET_SORT_FIELD_VALUES,
 } from "@/modules/board/constants/filterSort";
-import type { TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
 import Breadcrumbs from "@/modules/board/presentation/components/breadcrumbs/Breadcrumbs";
 import TicketFilterControls from "@/modules/board/presentation/components/projectShellControls/TicketFilterControls";
 import TicketSortControls from "@/modules/board/presentation/components/projectShellControls/TicketSortControls";
@@ -52,15 +51,6 @@ const isBoardShellViewPath = (pathname: string, projectId: string): boolean => {
     normalizedPathname === projectRootPath ||
     normalizedPathname.startsWith(`${projectRootPath}/${PROJECT_VIEWS.BOARD}`)
   );
-};
-
-const omitParentIdFilter = (filters: TicketFilters): TicketFilters => {
-  if (!Object.prototype.hasOwnProperty.call(filters, "parentId")) {
-    return filters;
-  }
-
-  const { parentId: _parentId, ...rest } = filters;
-  return rest;
 };
 
 const BoardShellAdapter = ({ projectId }: Props) => {
@@ -97,10 +87,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const setDirection = useSortStore((state) => state.setDirection);
   const resetSort = useSortStore((state) => state.resetSort);
 
-  const projectWideFilters = useMemo(() => {
-    return omitParentIdFilter(filters);
-  }, [filters]);
-
   const { data: projectShortCode } = useProjectShortCode(projectId);
   const effectiveSearch = useMemo(() => {
     return normalizeTicketSearch(search, projectShortCode);
@@ -108,7 +94,7 @@ const BoardShellAdapter = ({ projectId }: Props) => {
 
   const { prefetchBoardView } = usePrefetchProjectViews({
     projectId,
-    filters: projectWideFilters,
+    filters,
     sort,
     search: effectiveSearch,
   });

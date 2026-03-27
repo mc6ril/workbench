@@ -29,16 +29,6 @@ type FilterActions = {
   clearPriority: () => void;
 
   /**
-   * parentId supports two explicit modes:
-   * - null: only top-level tickets (parentId IS NULL)
-   * - string: only subtasks of that parent
-   *
-   * To remove the parentId filter entirely (undefined), use clearParentId().
-   */
-  setParentId: (parentId: string | null) => void;
-  clearParentId: () => void;
-
-  /**
    * Resets domain-aligned filters only. Does NOT reset search.
    */
   resetFilters: () => void;
@@ -86,21 +76,6 @@ export const useFilterStore = create<FilterStore>((set) => ({
   clearPriority: (): void => {
     set((state) => {
       const { priority: _priority, ...rest } = state.filters;
-      return { filters: rest };
-    });
-  },
-
-  setParentId: (parentId: string | null): void => {
-    set((state) => ({
-      filters: {
-        ...state.filters,
-        parentId,
-      },
-    }));
-  },
-  clearParentId: (): void => {
-    set((state) => {
-      const { parentId: _parentId, ...rest } = state.filters;
       return { filters: rest };
     });
   },

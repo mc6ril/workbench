@@ -41,7 +41,6 @@ describe("boardDnD usecase helpers", () => {
     status,
     position,
     codeNumber: position + 1,
-    parentId: null,
     priority: null,
     dueDate: null,
     storyPoints: null,
