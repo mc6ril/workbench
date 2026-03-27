@@ -16,12 +16,6 @@ import {
   useUpdateComment,
 } from "@/modules/board/presentation/hooks/comment";
 import {
-  useAddTicketLabels,
-  useLabels,
-  useRemoveTicketLabels,
-  useTicketLabelIds,
-} from "@/modules/board/presentation/hooks/label";
-import {
   useAssignTicket,
   useCreateSubtask,
   useDeleteTicket,
@@ -64,8 +58,6 @@ export const useTicketDetailController = ({
     error,
   } = useTicket(ticketId);
   const { data: boardConfiguration } = useBoardConfiguration(projectId);
-  const { data: labels = [] } = useLabels(projectId);
-  const { data: ticketLabelIds = [] } = useTicketLabelIds(ticketId);
   const { data: projectMembers = [] } = useProjectMembers(projectId);
   const { data: assignees = [] } = useTicketAssignees(ticketId);
   const { data: comments = [] } = useComments(ticketId);
@@ -80,8 +72,6 @@ export const useTicketDetailController = ({
   const createCommentMutation = useCreateComment();
   const updateCommentMutation = useUpdateComment(ticketId);
   const deleteCommentMutation = useDeleteComment(ticketId);
-  const addTicketLabelsMutation = useAddTicketLabels(ticketId);
-  const removeTicketLabelsMutation = useRemoveTicketLabels(ticketId);
 
   const [titleDraft, setTitleDraft] = useState<string | null>(null);
   const [descriptionDraft, setDescriptionDraft] = useState<string | null>(null);
@@ -101,10 +91,6 @@ export const useTicketDetailController = ({
       state: column.state,
     }));
   }, [boardConfiguration?.columns]);
-
-  const assignedLabelIdSet = useMemo(() => {
-    return new Set(ticketLabelIds);
-  }, [ticketLabelIds]);
 
   const doneStatuses = useMemo(() => {
     return new Set(
@@ -148,27 +134,6 @@ export const useTicketDetailController = ({
     ticket,
     updateMainTicketMutation,
   ]);
-
-  const handleToggleLabel = useCallback(
-    async (labelId: string): Promise<void> => {
-      if (!canEditTicket) {
-        return;
-      }
-
-      if (assignedLabelIdSet.has(labelId)) {
-        await removeTicketLabelsMutation.mutateAsync([labelId]);
-        return;
-      }
-
-      await addTicketLabelsMutation.mutateAsync([labelId]);
-    },
-    [
-      addTicketLabelsMutation,
-      assignedLabelIdSet,
-      canEditTicket,
-      removeTicketLabelsMutation,
-    ]
-  );
 
   const handleAssign = useCallback(
     async (userId: string): Promise<void> => {
@@ -372,11 +337,9 @@ export const useTicketDetailController = ({
     canEditTicket,
     comments,
     subtasks,
-    labels,
     projectMembers,
     assignees,
     statusOptions,
-    assignedLabelIdSet,
     doneStatuses,
     effectiveTitle,
     effectiveDescription,
@@ -405,7 +368,6 @@ export const useTicketDetailController = ({
     setIsSubtaskFormOpen,
     setIsDeleteModalOpen,
     handleSaveMainFields,
-    handleToggleLabel,
     handleAssign,
     handleUnassign,
     handleCreateComment,

@@ -341,59 +341,6 @@ describe("useProjectRealtime", () => {
     );
   });
 
-  it("invalidates only label-dependent ticket list queries on ticket_labels events", () => {
-    const queryClient = new QueryClient();
-    const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
-    const wrapper = createWrapper(queryClient);
-    const { registrations } = createRealtimeMocks();
-
-    const noLabelFilterQueryKey = queryKeys.projects.ticketsList(PROJECT_ID, {
-      status: "todo",
-    });
-    const labelFilterQueryKey = queryKeys.projects.ticketsList(PROJECT_ID, {
-      labelIds: ["label-1"],
-    });
-
-    queryClient.setQueryData(noLabelFilterQueryKey, []);
-    queryClient.setQueryData(labelFilterQueryKey, []);
-
-    renderHook(() => useProjectRealtime(PROJECT_ID, BOARD_ID), { wrapper });
-
-    const registrationByTable = getRegistrationByTable(registrations);
-    const ticketLabelsCallback =
-      registrationByTable.get("ticket_labels")?.callback;
-
-    ticketLabelsCallback?.({
-      eventType: "UPDATE",
-      new: { ticket_id: TICKET_ID },
-    });
-
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.labels.byTicket(TICKET_ID),
-      refetchType: "active",
-    });
-
-    const predicateCall = invalidateQueriesSpy.mock.calls.find(([arg]) => {
-      const maybeArg = arg as { predicate?: unknown };
-      return typeof maybeArg.predicate === "function";
-    });
-
-    expect(predicateCall).toBeDefined();
-    const predicate = (
-      predicateCall?.[0] as {
-        predicate: (query: { queryKey: readonly unknown[] }) => boolean;
-      }
-    ).predicate;
-    expect(predicate({ queryKey: labelFilterQueryKey })).toBe(true);
-    expect(predicate({ queryKey: noLabelFilterQueryKey })).toBe(false);
-
-    expect(invalidateQueriesSpy).not.toHaveBeenCalledWith(
-      expect.objectContaining({
-        queryKey: queryKeys.projects.ticketsRoot(PROJECT_ID),
-      })
-    );
-  });
-
   it("falls back to project-scoped invalidation when payload has no ticket id", () => {
     const queryClient = new QueryClient();
     const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
@@ -409,24 +356,10 @@ describe("useProjectRealtime", () => {
       old: { id: "assignee-1" },
     });
 
-    registrationByTable.get("ticket_labels")?.callback({
-      eventType: "DELETE",
-      old: { id: "ticket-label-1" },
-    });
-
     expect(invalidateQueriesSpy).toHaveBeenCalledWith({
       queryKey: queryKeys.tickets.assigneesByProjectId(PROJECT_ID),
       refetchType: "active",
     });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.labels.byProject(PROJECT_ID),
-      refetchType: "active",
-    });
-    expect(invalidateQueriesSpy).not.toHaveBeenCalledWith(
-      expect.objectContaining({
-        queryKey: queryKeys.labels.root(),
-      })
-    );
   });
 
   it("subscribes only to tickets when boardId is not available", () => {
@@ -437,7 +370,7 @@ describe("useProjectRealtime", () => {
 
     renderHook(() => useProjectRealtime(PROJECT_ID), { wrapper });
 
-    expect(registrations).toHaveLength(6);
+    expect(registrations).toHaveLength(4);
 
     const registrationByTable = getRegistrationByTable(registrations);
     expect(registrationByTable.get("columns")).toBeUndefined();

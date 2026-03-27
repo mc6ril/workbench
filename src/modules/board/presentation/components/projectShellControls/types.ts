@@ -12,13 +12,10 @@ type Option = {
 export type TicketFilterControlsProps = {
   filters: TicketFilters;
   statusOptions: Option[];
-  labelOptions: Option[];
   onSetStatus: (value: string) => void;
   onClearStatus: () => void;
   onSetPriority: (value: TicketPriority) => void;
   onClearPriority: () => void;
-  onSetLabelIds: (value: string[]) => void;
-  onClearLabelIds: () => void;
   onResetFilters: () => void;
 };
 

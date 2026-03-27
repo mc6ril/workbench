@@ -36,11 +36,9 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     canEditTicket,
     comments,
     subtasks,
-    labels,
     projectMembers,
     assignees,
     statusOptions,
-    assignedLabelIdSet,
     doneStatuses,
     effectiveTitle,
     effectiveDescription,
@@ -68,7 +66,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     setIsSubtaskFormOpen,
     setIsDeleteModalOpen,
     handleSaveMainFields,
-    handleToggleLabel,
     handleAssign,
     handleUnassign,
     handleCreateComment,
@@ -150,8 +147,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
           effectivePriority={effectivePriority}
           statusOptions={statusOptions}
           priorityOptions={priorityOptions}
-          labels={labels}
-          assignedLabelIdSet={assignedLabelIdSet}
           projectMembers={projectMembers}
           assignees={assignees}
           isUpdatingAssignees={isUpdatingAssignees}
@@ -160,9 +155,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
           canSaveMainFields={canSaveMainFields}
           onStatusChange={setStatusDraft}
           onPriorityChange={setPriorityDraft}
-          onToggleLabel={(labelId) => {
-            void handleToggleLabel(labelId);
-          }}
           onAssign={handleAssign}
           onUnassign={handleUnassign}
           onSaveMainFields={() => {

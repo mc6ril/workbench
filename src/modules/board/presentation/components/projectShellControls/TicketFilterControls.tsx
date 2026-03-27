@@ -1,6 +1,5 @@
 import Button from "@/shared/design-system/button";
 import Select from "@/shared/design-system/select";
-import Text from "@/shared/design-system/text";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./ProjectShellControls.module.scss";
@@ -11,13 +10,10 @@ import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.s
 const TicketFilterControls = ({
   filters,
   statusOptions,
-  labelOptions,
   onSetStatus,
   onClearStatus,
   onSetPriority,
   onClearPriority,
-  onSetLabelIds,
-  onClearLabelIds,
   onResetFilters,
 }: TicketFilterControlsProps) => {
   const t = useTranslation("pages.board.filters");
@@ -58,29 +54,6 @@ const TicketFilterControls = ({
           { value: "lowest", label: tTicket("priority.lowest") },
         ]}
       />
-      {labelOptions.length > 0 && (
-        <Select
-          label={t("labelLabel")}
-          value={filters.labelIds ?? []}
-          multiple
-          size={Math.min(6, Math.max(4, labelOptions.length))}
-          onChange={(event) => {
-            const nextLabelIds = Array.from(
-              event.target.selectedOptions,
-              (option) => option.value
-            ).filter(Boolean);
-            if (nextLabelIds.length > 0) {
-              onSetLabelIds(nextLabelIds);
-              return;
-            }
-            onClearLabelIds();
-          }}
-          options={labelOptions}
-        />
-      )}
-      {labelOptions.length === 0 && (
-        <Text variant="caption">{t("noLabelOptions")}</Text>
-      )}
       <Button
         label={t("resetLabel")}
         onClick={onResetFilters}

@@ -140,12 +140,6 @@
   }
 }
 
-.ticket-detail__labels {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-}
-
 .ticket-detail__actions {
   display: flex;
   flex-direction: column;
@@ -160,27 +154,6 @@
   flex-direction: column;
   gap: $spacing-sm;
   margin-top: $spacing-lg;
-}
-
-.ticket-detail__label-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-sm;
-}
-
-.ticket-detail__label-chip {
-  border: $border-width solid $color-border;
-  border-radius: $border-radius-full;
-  background: $color-surface-subtle;
-  color: $color-text;
-  padding: $spacing-xs $spacing-md;
-  font-size: $font-size-sm;
-  cursor: pointer;
-}
-
-.ticket-detail__label-chip--active {
-  border-color: $color-accent;
-  background: $color-accent-bg-soft;
 }
 
 .ticket-detail__subtasks {

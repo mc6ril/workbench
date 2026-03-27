@@ -9,7 +9,6 @@ describe("queryKeys ticket list mapper", () => {
         status: "todo",
         parentId: "parent-1",
         priority: "high",
-        labelIds: ["label-2", "label-1"],
       },
       {
         field: "createdAt",
@@ -25,7 +24,6 @@ describe("queryKeys ticket list mapper", () => {
         status: "todo",
         parentId: "parent-1",
         priority: "high",
-        labelIds: ["label-1", "label-2"],
       },
       sort: {
         field: "createdAt",

@@ -7,5 +7,4 @@ export type CreateTicketFormValues = {
   title: string;
   description?: string;
   status: string;
-  labelIds?: string[];
 };

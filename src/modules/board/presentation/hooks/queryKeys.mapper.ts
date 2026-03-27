@@ -7,7 +7,6 @@ export type TicketListFilterKey = readonly [
   status: TicketFilters["status"] | null,
   parentId: Exclude<TicketFilters["parentId"], undefined> | null,
   priority: TicketFilters["priority"] | null,
-  labelIds: readonly string[] | null,
 ];
 
 export type TicketListSortKey = readonly [
@@ -21,7 +20,6 @@ export type TicketListQueryKeyDescriptor = {
     status: TicketFilters["status"] | null;
     parentId: string | null;
     priority: TicketFilters["priority"] | null;
-    labelIds: readonly string[] | null;
   } | null;
   sort: TicketSort | null;
   search: string | null;
@@ -39,7 +37,6 @@ export const createTicketListFilterKey = (
     filters.status ?? null,
     filters.parentId ?? null,
     filters.priority ?? null,
-    filters.labelIds?.length ? [...filters.labelIds].sort() : null,
   ] as const;
 };
 
@@ -47,10 +44,6 @@ export const createTicketListSortKey = (
   sort?: TicketSort
 ): TicketListSortKey | null => {
   return sort ? ([sort.field, sort.direction] as const) : null;
-};
-
-const isStringArray = (value: unknown): value is string[] => {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
 };
 
 const isTicketPriority = (
@@ -69,13 +62,12 @@ const mapTicketListFilterKey = (
     return null;
   }
 
-  const [status, parentId, priority, labelIds] = filterKey;
+  const [status, parentId, priority] = filterKey;
 
   return {
     status: typeof status === "string" ? status : null,
     parentId: typeof parentId === "string" ? parentId : null,
     priority: isTicketPriority(priority) ? priority : null,
-    labelIds: isStringArray(labelIds) ? labelIds : null,
   };
 };
 

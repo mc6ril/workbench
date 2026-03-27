@@ -18,7 +18,6 @@ export type { CreateTicketFormValues } from "./CreateTicketForm.types";
 type Props = {
   initialValues?: Partial<CreateTicketFormValues>;
   statusOptions: Option[];
-  labelOptions?: Option[];
   onSubmit: (values: CreateTicketFormValues) => void;
   onCancel?: () => void;
   isSubmitting?: boolean;
@@ -29,7 +28,6 @@ type Props = {
 const CreateTicketForm = ({
   initialValues,
   statusOptions,
-  labelOptions = [],
   onSubmit,
   onCancel,
   isSubmitting = false,
@@ -46,7 +44,6 @@ const CreateTicketForm = ({
   const [status, setStatus] = useState(
     initialValues?.status ?? statusOptions[0]?.value ?? ""
   );
-  const [labelIds, setLabelIds] = useState(initialValues?.labelIds ?? []);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
@@ -56,7 +53,6 @@ const CreateTicketForm = ({
         title,
         description,
         status,
-        labelIds,
       })
     );
   };
@@ -75,17 +71,12 @@ const CreateTicketForm = ({
         title={title}
         description={description}
         status={status}
-        labelIds={labelIds}
         statusOptions={statusOptions}
-        labelOptions={labelOptions}
-        isSubmitting={isSubmitting}
         titleLabel={t("fields.title")}
         statusLabel={t("fields.status")}
-        labelsLabel={t("fields.labels")}
         descriptionLabel={t("fields.description")}
         onTitleChange={setTitle}
         onStatusChange={setStatus}
-        onLabelIdsChange={setLabelIds}
         onDescriptionChange={setDescription}
       />
 

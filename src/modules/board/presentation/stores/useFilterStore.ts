@@ -28,9 +28,6 @@ type FilterActions = {
   setPriority: (priority: TicketPriority) => void;
   clearPriority: () => void;
 
-  setLabelIds: (labelIds: string[]) => void;
-  clearLabelIds: () => void;
-
   /**
    * parentId supports two explicit modes:
    * - null: only top-level tickets (parentId IS NULL)
@@ -89,21 +86,6 @@ export const useFilterStore = create<FilterStore>((set) => ({
   clearPriority: (): void => {
     set((state) => {
       const { priority: _priority, ...rest } = state.filters;
-      return { filters: rest };
-    });
-  },
-
-  setLabelIds: (labelIds: string[]): void => {
-    set((state) => ({
-      filters: {
-        ...state.filters,
-        labelIds,
-      },
-    }));
-  },
-  clearLabelIds: (): void => {
-    set((state) => {
-      const { labelIds: _labelIds, ...rest } = state.filters;
       return { filters: rest };
     });
   },

@@ -68,11 +68,6 @@ const queryKeysObject = {
     byTicket: (ticketId: string) => ["comments", "ticket", ticketId] as const,
     byProject: (projectId: string) => ["comments", "project", projectId] as const,
   },
-  labels: {
-    root: () => ["labels"] as const,
-    byProject: (projectId: string) => ["labels", "project", projectId] as const,
-    byTicket: (ticketId: string) => ["labels", "ticket", ticketId] as const,
-  },
   subscription: {
     current: () => ["subscription", "current"] as const,
   },
@@ -96,7 +91,6 @@ export const queryKeys = Object.freeze({
   projects: Object.freeze(queryKeysObject.projects),
   tickets: Object.freeze(queryKeysObject.tickets),
   comments: Object.freeze(queryKeysObject.comments),
-  labels: Object.freeze(queryKeysObject.labels),
   invitations: Object.freeze(queryKeysObject.invitations),
   members: Object.freeze(queryKeysObject.members),
   subscription: Object.freeze(queryKeysObject.subscription),
