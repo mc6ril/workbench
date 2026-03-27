@@ -43,7 +43,6 @@ const PROJECT_VIEW_CONFIG_INPUTS: Record<
   },
   [PROJECT_VIEWS.SETTINGS]: {
     navbar: { showFilterSort: false, addActionType: null },
-    showInSidebar: false,
   },
 });
 

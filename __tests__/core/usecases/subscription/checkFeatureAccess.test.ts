@@ -110,27 +110,19 @@ describe("checkFeatureAccess", () => {
       expect(result.hasAccess).toBe(true);
       expect(result.currentPlan).toBe(SubscriptionPlan.TEAM);
     });
-
-    it("should grant export access to superusers on FREE plan", () => {
-      const subscription = createMockSubscription({
-        plan: SubscriptionPlan.FREE,
-        isSuperuser: true,
-      });
-
-      const result = checkFeatureAccess(subscription, PlanFeature.EXPORT_IMPORT);
-
-      expect(result.hasAccess).toBe(true);
-    });
   });
 
   describe("degraded subscription statuses", () => {
-    it("should downgrade canceled PRO subscription to FREE capabilities", () => {
+    it("should downgrade canceled TEAM subscription to FREE capabilities", () => {
       const subscription = createMockSubscription({
-        plan: SubscriptionPlan.PRO,
+        plan: SubscriptionPlan.TEAM,
         status: SubscriptionStatus.CANCELED,
       });
 
-      const result = checkFeatureAccess(subscription, PlanFeature.EXPORT_IMPORT);
+      const result = checkFeatureAccess(
+        subscription,
+        PlanFeature.ADVANCED_ROLES
+      );
 
       expect(result.hasAccess).toBe(false);
       expect(result.currentPlan).toBe(SubscriptionPlan.FREE);
@@ -157,7 +149,7 @@ describe("checkFeatureAccess", () => {
         status: SubscriptionStatus.TRIALING,
       });
 
-      const result = checkFeatureAccess(subscription, PlanFeature.EXPORT_IMPORT);
+      const result = checkFeatureAccess(subscription, PlanFeature.CUSTOM_COLUMNS);
 
       expect(result.hasAccess).toBe(true);
       expect(result.currentPlan).toBe(SubscriptionPlan.PRO);

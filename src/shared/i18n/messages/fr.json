@@ -661,10 +661,15 @@
     },
     "settings": {
       "page": {
+        "eyebrow": "Gouvernance",
+        "title": "Paramètres du projet",
+        "description": "Pilotez les informations essentielles du projet et les actions sensibles déjà disponibles.",
+        "loading": "Chargement des paramètres du projet...",
+        "loadErrorTitle": "Impossible de charger le projet",
+        "retry": "Réessayer",
         "tabs": {
           "project": "Projet",
-          "statusesColumns": "Statuts et colonnes",
-          "exportImport": "Export / import"
+          "statusesColumns": "Statuts et colonnes"
         },
         "fallback": "Section de paramètres indisponible"
       },
@@ -673,12 +678,18 @@
         "tabsNavAriaLabel": "Navigation des paramètres"
       },
       "project": {
-        "title": "Projet",
-        "subtitle": "Gérez les informations et préférences du projet",
+        "title": "Informations du projet",
+        "subtitle": "Mettez à jour le nom visible du projet. Les changements sont appliqués immédiatement.",
         "fields": {
           "projectName": {
             "label": "Nom du projet",
             "placeholder": "Entrez le nom du projet"
+          },
+          "shortCode": {
+            "label": "Code projet"
+          },
+          "createdAt": {
+            "label": "Créé le"
           },
           "projectDescription": {
             "label": "Description du projet",
@@ -689,7 +700,108 @@
           "save": "Enregistrer",
           "saving": "Enregistrement...",
           "reset": "Réinitialiser"
+        },
+        "permissions": {
+          "editable": "Votre rôle actuel permet de renommer le projet.",
+          "readOnly": "Votre rôle actuel permet uniquement de consulter ces informations."
+        },
+        "status": {
+          "saved": "Nom du projet enregistré"
+        },
+        "validation": {
+          "projectNameRequired": "Le nom du projet est requis."
         }
+      },
+      "access": {
+        "title": "Vos permissions",
+        "subtitle": "Les actions disponibles dépendent de votre rôle actuel dans ce projet.",
+        "currentRoleLabel": "Rôle actuel",
+        "roles": {
+          "admin": "Administrateur",
+          "member": "Membre",
+          "viewer": "Lecteur"
+        },
+        "fallbackRole": "Accès inconnu",
+        "capabilities": {
+          "renameAllowed": "Vous pouvez renommer le projet.",
+          "renameBlocked": "Vous pouvez consulter le projet, mais pas le renommer.",
+          "deleteAllowed": "Vous pouvez supprimer le projet.",
+          "deleteBlocked": "Seul un administrateur peut supprimer le projet."
+        }
+      },
+      "dangerZone": {
+        "title": "Zone dangereuse",
+        "subtitle": "La suppression retire définitivement le projet et son contenu associé.",
+        "description": "Cette action est irréversible. Vérifiez que vous n'avez plus besoin des données du projet avant de continuer.",
+        "adminOnly": "La suppression du projet est réservée aux administrateurs.",
+        "readOnly": "Votre rôle actuel est en lecture seule."
+      },
+      "delete": {
+        "open": "Supprimer le projet",
+        "openAriaLabel": "Ouvrir la confirmation de suppression du projet",
+        "modalTitle": "Supprimer le projet",
+        "modalDescription": "Tapez le nom du projet pour confirmer sa suppression définitive.",
+        "confirmationLabel": "Confirmer le nom du projet",
+        "confirmationPlaceholder": "Retapez {name}",
+        "confirmationHelper": "Saisissez exactement \"{name}\" pour activer la suppression.",
+        "confirm": "Supprimer définitivement",
+        "deleting": "Suppression...",
+        "cancel": "Annuler"
+      },
+      "people": {
+        "title": "Membres et invitations",
+        "subtitle": "Gérez les accès au projet, les rôles en cours et les liens d'invitation encore actifs.",
+        "adminOnly": "Seul un administrateur peut inviter, changer les rôles ou retirer un membre du projet.",
+        "advancedRolesLocked": "Le rôle Observateur est réservé au plan {plan}. Les membres déjà observateurs restent visibles jusqu'à leur prochaine modification.",
+        "currentPlan": "Plan actuel : {plan}",
+        "memberLimit": {
+          "limited": "{count}/{limit} accès utilisés",
+          "unlimited": "{count} accès utilisés, sans limite",
+          "reached": "La limite de {limit} accès est atteinte pour votre plan {plan}. Les membres actifs et les invitations en attente comptent tous dans ce total."
+        }
+      },
+      "members": {
+        "title": "Membres du projet",
+        "subtitle": "La liste reflète les rôles réellement actifs dans le projet.",
+        "loading": "Chargement des membres...",
+        "loadErrorTitle": "Impossible de charger les membres",
+        "emptyTitle": "Aucun membre à afficher",
+        "emptyDescription": "Les personnes qui rejoignent le projet apparaîtront ici.",
+        "adminsCount": "{count} administrateur",
+        "adminsCount_other": "{count} administrateurs",
+        "syncing": "Synchronisation...",
+        "live": "Synchronisé",
+        "roleFieldLabel": "Rôle"
+      },
+      "invitations": {
+        "title": "Invitations en attente",
+        "subtitle": "Créez des liens d'accès et suivez les invitations encore valides.",
+        "createTitle": "Créer un lien d'invitation",
+        "createDescription": "Choisissez le rôle attribué à la personne lorsqu'elle rejoint le projet.",
+        "roleLabel": "Rôle attribué",
+        "create": "Créer un lien",
+        "creating": "Création...",
+        "copyLink": "Copier le lien",
+        "copyLinkSuccess": "Lien d'invitation copié",
+        "linkLabel": "Lien d'invitation",
+        "linkHelper": "Partagez ce lien avant son expiration.",
+        "listTitle": "Liens actifs",
+        "listDescription": "Chaque lien compte dans la capacité du projet tant qu'il n'est pas utilisé ou révoqué.",
+        "loading": "Chargement des invitations...",
+        "loadErrorTitle": "Impossible de charger les invitations",
+        "emptyTitle": "Aucune invitation en attente",
+        "emptyDescription": "Les liens actifs apparaîtront ici dès qu'une invitation est créée.",
+        "activeCount": "{count} invitation en attente",
+        "activeCount_other": "{count} invitations en attente",
+        "pendingLinkTitle": "Lien d'invitation",
+        "createdAt": "Créé le {date}",
+        "expiresAt": "Expire le {date}",
+        "revoke": "Révoquer",
+        "revokeAriaLabel": "Révoquer l'invitation qui expire le {date}",
+        "revokeConfirm": "Révoquer ce lien d'invitation ?",
+        "revokeSuccess": "Invitation révoquée",
+        "listAriaLabel": "Liste des invitations en attente",
+        "syncing": "Synchronisation..."
       },
       "statusesColumns": {
         "title": "Statuts et colonnes",
@@ -716,25 +828,6 @@
         "empty": {
           "title": "Aucune colonne",
           "message": "Ajoutez une colonne pour commencer"
-        }
-      },
-      "exportImport": {
-        "title": "Export / import",
-        "subtitle": "Exportez ou importez les colonnes du board et les tickets",
-        "export": {
-          "title": "Export",
-          "hint": "Telechargez une copie des colonnes du board et des tickets",
-          "action": "Exporter",
-          "exporting": "Export en cours..."
-        },
-        "import": {
-          "title": "Import",
-          "hint": "Importez des colonnes du board et des tickets depuis un fichier",
-          "fileLabel": "Fichier",
-          "fileHint": "Selectionnez un fichier JSON compatible contenant des colonnes et des tickets",
-          "fileAriaLabel": "Sélectionner un fichier à importer",
-          "importing": "Import en cours...",
-          "accept": ".json,application/json"
         }
       }
     },
@@ -1155,7 +1248,6 @@
         "tickets": "Tâches",
         "boardView": "Vue tableau",
         "customColumns": "Personnalisation des colonnes",
-        "exportImport": "Export / Import",
         "advancedRoles": "Rôles avancés (observateur)",
         "prioritySupport": "Support prioritaire"
       },
@@ -1222,7 +1314,6 @@
       "ctaLabel": "Voir les tarifs",
       "ctaAriaLabel": "Voir les tarifs et passer à un plan supérieur",
       "featureNames": {
-        "exportImport": "Export / Import",
         "advancedRoles": "Rôles avancés",
         "workspaces": "Projets par compte",
         "membersPerWorkspace": "Membres du foyer",

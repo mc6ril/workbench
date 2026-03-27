@@ -1,6 +1,4 @@
-import { redirect } from "next/navigation";
-
-import { PROJECT_VIEWS } from "@/shared/constants/routes";
+import ProjectSettingsPage from "@/domains/project/presentation/pages/settings/ProjectSettingsPage";
 
 const SettingsPage = async ({
   params,
@@ -9,7 +7,7 @@ const SettingsPage = async ({
 }) => {
   const { projectId } = await params;
 
-  redirect(`/${projectId}/${PROJECT_VIEWS.BOARD}`);
+  return <ProjectSettingsPage projectId={projectId} />;
 };
 
 export default SettingsPage;

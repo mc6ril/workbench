@@ -3,6 +3,7 @@ import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRo
 export type ProjectPermissionFlags = {
   // Used by project settings/edit actions.
   canEditProject: boolean;
+  canDeleteProject: boolean;
   canComment: boolean;
   canManageMembers: boolean;
   canCreateTicket: boolean;

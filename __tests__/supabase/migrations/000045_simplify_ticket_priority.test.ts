@@ -29,4 +29,15 @@ describe("000045_simplify_ticket_priority.sql", () => {
       "CHECK (priority IS NULL OR priority IN ('urgent', 'normal', 'low'))"
     );
   });
+
+  it("drops the legacy constraint before updating priorities", () => {
+    const dropIndex = normalizedSql.indexOf(
+      "ALTER TABLE tickets DROP CONSTRAINT IF EXISTS tickets_priority_check"
+    );
+    const updateIndex = normalizedSql.indexOf("UPDATE tickets SET priority =");
+
+    expect(dropIndex).toBeGreaterThanOrEqual(0);
+    expect(updateIndex).toBeGreaterThanOrEqual(0);
+    expect(dropIndex).toBeLessThan(updateIndex);
+  });
 });

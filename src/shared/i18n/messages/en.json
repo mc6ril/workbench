@@ -661,10 +661,15 @@
     },
     "settings": {
       "page": {
+        "eyebrow": "Governance",
+        "title": "Project settings",
+        "description": "Manage the core project information and the sensitive actions that are already available.",
+        "loading": "Loading project settings...",
+        "loadErrorTitle": "Unable to load the project",
+        "retry": "Retry",
         "tabs": {
           "project": "Project",
-          "statusesColumns": "Statuses and columns",
-          "exportImport": "Export / import"
+          "statusesColumns": "Statuses and columns"
         },
         "fallback": "Settings section unavailable"
       },
@@ -673,12 +678,18 @@
         "tabsNavAriaLabel": "Settings navigation"
       },
       "project": {
-        "title": "Project",
-        "subtitle": "Manage project information and preferences",
+        "title": "Project information",
+        "subtitle": "Update the visible project name. Changes apply immediately.",
         "fields": {
           "projectName": {
             "label": "Project name",
             "placeholder": "Enter the project name"
+          },
+          "shortCode": {
+            "label": "Project code"
+          },
+          "createdAt": {
+            "label": "Created on"
           },
           "projectDescription": {
             "label": "Project description",
@@ -689,7 +700,108 @@
           "save": "Save",
           "saving": "Saving...",
           "reset": "Reset"
+        },
+        "permissions": {
+          "editable": "Your current role allows you to rename the project.",
+          "readOnly": "Your current role only allows you to view this information."
+        },
+        "status": {
+          "saved": "Project name saved"
+        },
+        "validation": {
+          "projectNameRequired": "Project name is required."
         }
+      },
+      "access": {
+        "title": "Your permissions",
+        "subtitle": "The actions available here depend on your current role in this project.",
+        "currentRoleLabel": "Current role",
+        "roles": {
+          "admin": "Administrator",
+          "member": "Member",
+          "viewer": "Viewer"
+        },
+        "fallbackRole": "Unknown access",
+        "capabilities": {
+          "renameAllowed": "You can rename the project.",
+          "renameBlocked": "You can view the project, but not rename it.",
+          "deleteAllowed": "You can delete the project.",
+          "deleteBlocked": "Only an administrator can delete the project."
+        }
+      },
+      "dangerZone": {
+        "title": "Danger zone",
+        "subtitle": "Deleting permanently removes the project and all associated content.",
+        "description": "This action cannot be undone. Make sure you no longer need the project data before continuing.",
+        "adminOnly": "Project deletion is reserved for administrators.",
+        "readOnly": "Your current role is read-only."
+      },
+      "delete": {
+        "open": "Delete project",
+        "openAriaLabel": "Open the project deletion confirmation",
+        "modalTitle": "Delete project",
+        "modalDescription": "Type the project name to confirm permanent deletion.",
+        "confirmationLabel": "Confirm the project name",
+        "confirmationPlaceholder": "Type {name} again",
+        "confirmationHelper": "Enter exactly \"{name}\" to enable deletion.",
+        "confirm": "Delete permanently",
+        "deleting": "Deleting...",
+        "cancel": "Cancel"
+      },
+      "people": {
+        "title": "Members and invitations",
+        "subtitle": "Manage project access, active roles, and invitation links that are still valid.",
+        "adminOnly": "Only an administrator can invite people, change roles, or remove a member from the project.",
+        "advancedRolesLocked": "The Viewer role requires the {plan} plan. Existing viewers remain visible until their next role change.",
+        "currentPlan": "Current plan: {plan}",
+        "memberLimit": {
+          "limited": "{count}/{limit} seats used",
+          "unlimited": "{count} seats used, no limit",
+          "reached": "The {plan} plan limit of {limit} seats has been reached. Active members and pending invitations both count toward this total."
+        }
+      },
+      "members": {
+        "title": "Project members",
+        "subtitle": "This list reflects the roles currently active in the project.",
+        "loading": "Loading members...",
+        "loadErrorTitle": "Unable to load members",
+        "emptyTitle": "No members to display",
+        "emptyDescription": "People who join the project will appear here.",
+        "adminsCount": "{count} administrator",
+        "adminsCount_other": "{count} administrators",
+        "syncing": "Syncing...",
+        "live": "Synced",
+        "roleFieldLabel": "Role"
+      },
+      "invitations": {
+        "title": "Pending invitations",
+        "subtitle": "Create access links and keep track of invitations that are still valid.",
+        "createTitle": "Create an invitation link",
+        "createDescription": "Choose the role assigned when someone joins the project.",
+        "roleLabel": "Assigned role",
+        "create": "Create link",
+        "creating": "Creating...",
+        "copyLink": "Copy link",
+        "copyLinkSuccess": "Invitation link copied",
+        "linkLabel": "Invitation link",
+        "linkHelper": "Share this link before it expires.",
+        "listTitle": "Active links",
+        "listDescription": "Each link counts toward project capacity until it is used or revoked.",
+        "loading": "Loading invitations...",
+        "loadErrorTitle": "Unable to load invitations",
+        "emptyTitle": "No pending invitations",
+        "emptyDescription": "Active links will appear here as soon as you create one.",
+        "activeCount": "{count} pending invitation",
+        "activeCount_other": "{count} pending invitations",
+        "pendingLinkTitle": "Invitation link",
+        "createdAt": "Created on {date}",
+        "expiresAt": "Expires on {date}",
+        "revoke": "Revoke",
+        "revokeAriaLabel": "Revoke the invitation expiring on {date}",
+        "revokeConfirm": "Revoke this invitation link?",
+        "revokeSuccess": "Invitation revoked",
+        "listAriaLabel": "Pending invitations list",
+        "syncing": "Syncing..."
       },
       "statusesColumns": {
         "title": "Statuses and columns",
@@ -716,25 +828,6 @@
         "empty": {
           "title": "No columns",
           "message": "Add a column to get started"
-        }
-      },
-      "exportImport": {
-        "title": "Export / import",
-        "subtitle": "Export or import board columns and tickets",
-        "export": {
-          "title": "Export",
-          "hint": "Download a copy of the board columns and tickets",
-          "action": "Export",
-          "exporting": "Exporting..."
-        },
-        "import": {
-          "title": "Import",
-          "hint": "Import board columns and tickets from a file",
-          "fileLabel": "File",
-          "fileHint": "Select a compatible JSON file containing columns and tickets",
-          "fileAriaLabel": "Select a file to import",
-          "importing": "Importing...",
-          "accept": ".json,application/json"
         }
       }
     },
@@ -1155,7 +1248,6 @@
         "tickets": "Tickets",
         "boardView": "Board view",
         "customColumns": "Custom columns",
-        "exportImport": "Export / Import",
         "advancedRoles": "Advanced roles (viewer)",
         "prioritySupport": "Priority support"
       },
@@ -1240,7 +1332,6 @@
       "ctaLabel": "View plans",
       "ctaAriaLabel": "View plans and upgrade your subscription",
       "featureNames": {
-        "exportImport": "Export / Import",
         "advancedRoles": "Advanced roles",
         "workspaces": "Projects per account",
         "membersPerWorkspace": "Members per workspace",

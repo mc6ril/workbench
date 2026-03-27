@@ -16,6 +16,7 @@ export const resolveProjectPermissions = (
 
   return {
     canEditProject: hasEditPermission,
+    canDeleteProject: isAdmin,
     canComment: hasEditPermission,
     canManageMembers: isAdmin,
     canCreateTicket: hasEditPermission,

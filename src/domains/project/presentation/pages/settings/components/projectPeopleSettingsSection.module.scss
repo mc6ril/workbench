@@ -1,0 +1,330 @@
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/breakpoints" as *;
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+
+.people-settings {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.people-settings__header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+}
+
+.people-settings__title {
+  margin: 0;
+}
+
+.people-settings__subtitle {
+  color: $color-text-secondary;
+}
+
+.people-settings__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $spacing-xl;
+}
+
+.people-settings__card {
+  height: 100%;
+}
+
+.people-settings__section-header,
+.people-settings__form-header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+}
+
+.people-settings__section-header {
+  margin-bottom: $spacing-lg;
+}
+
+.people-settings__section-title,
+.people-settings__block-title {
+  margin: 0;
+}
+
+.people-settings__section-subtitle,
+.people-settings__block-subtitle,
+.people-settings__meta,
+.people-settings__role-copy {
+  color: $color-text-secondary;
+}
+
+.people-settings__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+}
+
+.people-settings__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  border: $border-width solid $color-border-subtle;
+  border-radius: $border-radius-full;
+  background: $color-surface-subtle;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.people-settings__notice {
+  padding: $spacing-md $spacing-lg;
+  border-radius: $border-radius-md;
+  margin-bottom: $spacing-lg;
+}
+
+.people-settings__notice--info {
+  border: $border-width solid rgba($color-info, 0.28);
+  background: $color-info-background;
+  color: $color-info-text;
+}
+
+.people-settings__notice--warning {
+  border: $border-width solid rgba($color-warning, 0.28);
+  background: $color-warning-background;
+  color: $color-warning-text;
+}
+
+.people-settings__form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.people-settings__role-preview {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding: $spacing-lg;
+  border: $border-width solid $color-border-subtle;
+  border-radius: $border-radius-md;
+  background: linear-gradient(
+    145deg,
+    rgba($color-surface-subtle, 0.96) 0%,
+    rgba($color-secondary, 0.98) 100%
+  );
+}
+
+.people-settings__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+}
+
+.people-settings__divider {
+  height: $border-width;
+  margin: $spacing-xl 0;
+  background: $color-border-subtle;
+}
+
+.people-settings__loading,
+.people-settings__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-lg;
+  border: $border-width solid $color-border-subtle;
+  border-radius: $border-radius-md;
+  background: $color-surface-subtle;
+}
+
+.people-settings__empty-title {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+}
+
+.people-settings__empty-description {
+  color: $color-text-secondary;
+}
+
+.people-settings__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.people-settings__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $spacing-lg;
+  padding: $spacing-lg 0;
+  border-top: $border-width solid $color-border-subtle;
+
+  &:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.people-settings__identity {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  min-width: 0;
+}
+
+.people-settings__item-copy {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+  min-width: 0;
+}
+
+.people-settings__name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.people-settings__name {
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+}
+
+.people-settings__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-2xs $spacing-sm;
+  border-radius: $border-radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.people-settings__tag--admin {
+  background: rgba($color-accent, 0.14);
+  color: $color-accent;
+}
+
+.people-settings__tag--member {
+  background: rgba($color-sage, 0.18);
+  color: $color-sage-text;
+}
+
+.people-settings__tag--viewer {
+  background: rgba($color-info, 0.16);
+  color: $color-info-text;
+}
+
+.people-settings__tag--current {
+  background: rgba($color-foreground, 0.08);
+  color: $color-text-secondary;
+}
+
+.people-settings__tag--muted {
+  background: rgba($color-warning, 0.14);
+  color: $color-warning-text;
+}
+
+.people-settings__item-actions,
+.people-settings__member-actions {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-sm;
+  flex-shrink: 0;
+}
+
+.people-settings__member-actions {
+  min-width: 14rem;
+}
+
+.people-settings__role-field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+  min-width: 9rem;
+}
+
+.people-settings__role-label {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.people-settings__role-select {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: $spacing-input-padding-y $spacing-input-padding-x;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-input;
+  background: $color-secondary;
+  color: $color-text;
+  font: inherit;
+  transition: $transition-border, $transition-shadow;
+
+  &:focus {
+    outline: none;
+    border-color: $color-focus;
+    box-shadow: $shadow-focus;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+    background: $color-disabled-background;
+    color: $color-disabled-text;
+  }
+}
+
+.people-settings__remove {
+  appearance: none;
+  padding: $spacing-sm $spacing-md;
+  border: 0;
+  background: transparent;
+  color: $color-error;
+  font: inherit;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    color: $color-error-text;
+    text-decoration: underline;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    color: $color-disabled-text;
+    text-decoration: none;
+  }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .people-settings__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .people-settings__actions,
+  .people-settings__item,
+  .people-settings__member-actions,
+  .people-settings__item-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .people-settings__member-actions {
+    min-width: 0;
+  }
+
+  .people-settings__role-field {
+    min-width: 0;
+  }
+}
