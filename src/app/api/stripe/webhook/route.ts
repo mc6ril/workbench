@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { API_MESSAGES_STRIPE } from "@/shared/constants";
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
+import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { createLoggerFactory } from "@/shared/observability";
 
 import { handlePaymentWebhook } from "@/domains/billing/core/usecases/handlePaymentWebhook";
@@ -9,6 +10,10 @@ import { stripePaymentGateway } from "@/domains/billing/infrastructure/stripe/st
 import { createSubscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("API.Webhook");
+
+const isStripeSignatureVerificationError = (error: unknown): boolean => {
+  return error instanceof Error && error.name === "StripeSignatureVerificationError";
+};
 
 /**
  * POST /api/stripe/webhook
@@ -19,6 +24,15 @@ const logger = createLoggerFactory().forScope("API.Webhook");
  * Must read the raw body (not parsed JSON) for signature verification.
  */
 export const POST = async (request: NextRequest): Promise<NextResponse> => {
+  const rateLimitResponse = withRateLimit(request, {
+    maxRequests: 30,
+    windowMs: 60_000,
+    keyPrefix: "api:stripe:webhook",
+  });
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const signature = request.headers.get("stripe-signature");
 
@@ -44,6 +58,15 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (error) {
+    if (isStripeSignatureVerificationError(error)) {
+      logger.warn("Webhook signature verification failed", { error });
+
+      return NextResponse.json(
+        { error: API_MESSAGES_STRIPE.INVALID_SIGNATURE },
+        { status: 400 }
+      );
+    }
+
     logger.error("Webhook error", { error });
 
     return NextResponse.json(
