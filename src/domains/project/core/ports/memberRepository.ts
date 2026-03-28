@@ -15,8 +15,8 @@ import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRo
  */
 export type MemberRepository = {
   /**
-   * Join or reclaim a project for the current authenticated user.
-   * Uses the database RPC that handles both normal joins and orphan reclaim.
+   * Reclaim an orphaned project for the current authenticated user.
+   * Uses the database RPC that validates reclaim eligibility server-side.
    * @throws NotFoundError if project not found
    * @throws ConstraintError if user is already a member
    * @throws DatabaseError if database operation fails or permission denied

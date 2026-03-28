@@ -74,7 +74,7 @@ Realtime publication migrations ensure change streams are enabled for tickets, c
 The schema includes RPC helpers for:
 
 - project creation and membership bootstrap
-- project reclaim/join lifecycle
+- orphaned project reclaim lifecycle
 - project-level statistics (`get_projects_with_stats`)
 - ticket move/reorder operations (transactional)
 - assignee aggregation (ticket-level and project-level)

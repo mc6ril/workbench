@@ -34,7 +34,7 @@ Core helper functions include:
 Project lifecycle functions include:
 
 - `create_project(project_name text)`
-- `reclaim_or_join_project(project_uuid uuid)`
+- `reclaim_or_join_project(project_uuid uuid)` for orphaned-project recovery
 - `get_reclaimable_projects()`
 - `cleanup_expired_orphaned_projects()`
 

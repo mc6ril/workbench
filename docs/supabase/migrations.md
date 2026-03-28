@@ -173,6 +173,9 @@ This document describes the current migration strategy for Workbench and reflect
 - `000049_remove_invitation_email_and_pending_lookup.sql`
   Removes the legacy invitation email column and the unused email-based pending invitation lookup.
 
+- `000051_restrict_project_reclaim_and_remove_self_join.sql`
+  Removes the legacy self-join viewer policy and limits reclaim RPC access to orphaned projects owned by the same creator email.
+
 ## Out-of-Band Changes
 
 An additional safe performance pass was applied directly to the remote project (not yet committed as a repository migration):
