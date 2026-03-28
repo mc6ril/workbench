@@ -18,7 +18,7 @@ const TicketFilterControls = ({
     <div className={styles["project-shell-controls"]}>
       <Select
         label={t("statusLabel")}
-        value={filters.status ?? ""}
+        value={filters.columnId ?? ""}
         onChange={(event) => {
           const nextStatus = event.target.value;
           if (nextStatus) {

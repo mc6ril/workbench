@@ -2,8 +2,8 @@ import type { InvitationRepository } from "@/domains/project/core/ports/invitati
 
 /**
  * Accept a project invitation using its token.
- * The RPC function handles all validation (token, expiry, email matching)
- * and adds the user to project_members.
+ * The RPC function handles all validation (token, expiry, email matching),
+ * adds the user to project_members, and removes the consumed invitation row.
  *
  * @param repository - Invitation repository
  * @param token - Invitation token

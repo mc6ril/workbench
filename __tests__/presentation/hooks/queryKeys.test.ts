@@ -6,7 +6,7 @@ describe("queryKeys ticket list mapper", () => {
     const queryKey = queryKeys.projects.ticketsList(
       "project-1",
       {
-        status: "todo",
+        columnId: "column-todo",
         priority: "urgent",
       },
       {
@@ -20,7 +20,34 @@ describe("queryKeys ticket list mapper", () => {
     expect(mapTicketListQueryKey(queryKey)).toEqual({
       projectId: "project-1",
       filters: {
-        status: "todo",
+        columnId: "column-todo",
+        priority: "urgent",
+      },
+      sort: {
+        field: "createdAt",
+        direction: "desc",
+      },
+      search: "search me",
+      limit: 25,
+    });
+  });
+
+  it("maps legacy ticket list query keys", () => {
+    expect(
+      mapTicketListQueryKey([
+        "projects",
+        "project-1",
+        "tickets",
+        "list",
+        ["column-todo", "urgent"],
+        ["createdAt", "desc"],
+        "search me",
+        25,
+      ])
+    ).toEqual({
+      projectId: "project-1",
+      filters: {
+        columnId: "column-todo",
         priority: "urgent",
       },
       sort: {

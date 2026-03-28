@@ -25,7 +25,7 @@ const mapTicketToViewModel = (
     id: ticket.id,
     title: ticket.title,
     ticketCode: buildTicketCode(projectShortCode, ticket.codeNumber),
-    status: ticket.status,
+    columnId: ticket.columnId,
     assigneeName: assigneeName ?? null,
     assigneeAvatarUrl: assigneeAvatarUrl ?? null,
     priority: ticket.priority,

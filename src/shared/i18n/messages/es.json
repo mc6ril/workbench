@@ -1421,7 +1421,7 @@
       "INVITATION_ALREADY_MEMBER": "Ya formas parte de este proyecto",
       "INVITATION_LIMIT_REACHED": "Tu plan actual no permite mas miembros activos o enlaces de invitacion en este espacio",
       "INVALID_COLUMN_ORDER": "Orden de columnas no válido",
-      "DUPLICATE_COLUMN_STATUS": "Estado de columna duplicado",
+      "DUPLICATE_COLUMN_KEY": "Clave de columna duplicada",
       "INVALID_BOARD_COLUMN_RELATIONSHIP": "La columna no pertenece al tablero especificado",
       "MIXED_BOARD_COLUMNS": "Columnas de varios tableros mezcladas"
     },

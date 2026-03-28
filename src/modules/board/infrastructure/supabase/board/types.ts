@@ -9,7 +9,7 @@ export type ColumnRow = {
   id: string;
   board_id: string;
   name: string;
-  status: string;
+  key: string;
   state: string;
   position: number;
   visible: boolean;

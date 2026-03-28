@@ -1421,7 +1421,7 @@
       "INVITATION_ALREADY_MEMBER": "You are already a member of this project",
       "INVITATION_LIMIT_REACHED": "Your current plan does not allow more active members or invitation links in this workspace",
       "INVALID_COLUMN_ORDER": "Invalid column order",
-      "DUPLICATE_COLUMN_STATUS": "Duplicate column status",
+      "DUPLICATE_COLUMN_KEY": "Duplicate column key",
       "INVALID_BOARD_COLUMN_RELATIONSHIP": "The column does not belong to the specified board",
       "MIXED_BOARD_COLUMNS": "Columns from multiple boards mixed together"
     },

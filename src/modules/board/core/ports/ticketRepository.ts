@@ -57,13 +57,13 @@ export type TicketRepository = {
   ): Promise<Ticket[]>;
 
   /**
-   * Get tickets by status.
+   * Get tickets by column.
    * @param projectId - Project ID
-   * @param status - Ticket status
+   * @param columnId - Target column ID
    * @returns Array of tickets ordered by position
    * @throws DatabaseError if database operation fails
    */
-  listByStatus(projectId: string, status: string): Promise<Ticket[]>;
+  listByColumnId(projectId: string, columnId: string): Promise<Ticket[]>;
 
   /**
    * Create a new ticket.
@@ -107,11 +107,11 @@ export type TicketRepository = {
   ): Promise<Ticket[]>;
 
   /**
-   * Move a ticket to a new status/column and position.
-   * Updates both status and position in a single atomic operation.
+   * Move a ticket to a new column and position.
+   * Updates both column assignment and position in a single atomic operation.
    * Used for drag-and-drop operations on the board.
    * @param id - Ticket ID
-   * @param status - New status/column
+   * @param columnId - New column ID
    * @param position - New position within the column
    * @returns Updated ticket
    * @throws NotFoundError if ticket not found
@@ -120,13 +120,13 @@ export type TicketRepository = {
    */
   moveTicket(
     id: string,
-    status: string,
+    columnId: string,
     position: number,
     completedAt: Date | null
   ): Promise<Ticket>;
 
   /**
-   * Atomically move a ticket to a new status/position and reorder affected tickets.
+   * Atomically move a ticket to a new column/position and reorder affected tickets.
    * Designed for cross-column drag-and-drop to avoid partial updates.
    * @param input - Move target + affected ticket positions
    * @returns Array of updated tickets
@@ -136,7 +136,7 @@ export type TicketRepository = {
    */
   moveAndReorderTicket(input: {
     ticketId: string;
-    status: string;
+    columnId: string;
     position: number;
     completedAt: Date | null;
     ticketPositions: Array<{ id: string; position: number }>;

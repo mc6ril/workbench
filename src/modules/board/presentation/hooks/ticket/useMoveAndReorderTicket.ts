@@ -11,7 +11,7 @@ import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 type MoveAndReorderTicketVariables = {
   projectId: string;
   ticketId: string;
-  status: string;
+  columnId: string;
   position: number;
   ticketPositions: Array<{ id: string; position: number }>;
 };
@@ -22,20 +22,20 @@ export const useMoveAndReorderTicket = () => {
   return useMutation({
     mutationFn: ({
       ticketId,
-      status,
+      columnId,
       position,
       ticketPositions,
     }: MoveAndReorderTicketVariables) =>
       moveAndReorderTicket(ticketRepository, boardRepository, {
         ticketId,
-        status,
+        columnId,
         position,
         ticketPositions,
       }),
     onMutate: async ({
       projectId,
       ticketId,
-      status,
+      columnId,
       position,
       ticketPositions,
     }) => {
@@ -68,7 +68,8 @@ export const useMoveAndReorderTicket = () => {
 
             return {
               ...ticket,
-              status: ticket.id === ticketId ? status : ticket.status,
+              columnId:
+                ticket.id === ticketId ? columnId : ticket.columnId,
               position:
                 ticket.id === ticketId
                   ? position

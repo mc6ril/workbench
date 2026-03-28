@@ -104,4 +104,13 @@ export type BoardRepository = {
   updateColumnPositions(
     columnPositions: Array<{ id: string; position: number }>
   ): Promise<Column[]>;
+
+  /**
+   * Count active tickets grouped by column.
+   * Used to prevent deleting columns that still contain tickets.
+   * @param columnIds - Column IDs to inspect
+   * @returns Map of columnId -> active ticket count
+   * @throws DatabaseError if database operation fails
+   */
+  countTicketsByColumnIds(columnIds: string[]): Promise<Record<string, number>>;
 };

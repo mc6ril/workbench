@@ -9,7 +9,7 @@ describe("TicketSchema", () => {
     projectId: "223e4567-e89b-12d3-a456-426614174000",
     title: "Refactor archiving model",
     description: null,
-    status: "todo",
+    columnId: "323e4567-e89b-12d3-a456-426614174000",
     position: 0,
     codeNumber: 1,
     priority: null,

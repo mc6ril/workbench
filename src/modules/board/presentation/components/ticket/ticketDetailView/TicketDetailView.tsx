@@ -112,7 +112,7 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
     statusOptions,
     effectiveTitle,
     effectiveDescription,
-    effectiveStatus,
+    effectiveColumnId,
     effectivePriority,
     effectiveDueDate,
     commentInput,
@@ -127,7 +127,7 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
     isUpdatingAssignees,
     setTitleDraft,
     setDescriptionDraft,
-    setStatusDraft,
+    setColumnIdDraft,
     setPriorityDraft,
     setDueDateDraft,
     setCommentInput,
@@ -186,10 +186,10 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
 
       <TicketStatusBar
         canEditTicket={canEditTicket}
-        effectiveStatus={effectiveStatus}
+        effectiveColumnId={effectiveColumnId}
         effectivePriority={effectivePriority}
         statusOptions={statusOptions}
-        onStatusChange={setStatusDraft}
+        onColumnChange={setColumnIdDraft}
         onPriorityChange={setPriorityDraft}
       />
 

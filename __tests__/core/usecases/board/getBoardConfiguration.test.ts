@@ -24,7 +24,7 @@ describe("getBoardConfiguration", () => {
     id: "323e4567-e89b-12d3-a456-426614174000",
     boardId,
     name: "Todo",
-    status: "todo",
+    key: "todo",
     state: "todo",
     position: 0,
     visible: true,
@@ -36,7 +36,7 @@ describe("getBoardConfiguration", () => {
     id: "423e4567-e89b-12d3-a456-426614174001",
     boardId,
     name: "In Progress",
-    status: "in-progress",
+    key: "in-progress",
     state: "in_progress",
     position: 1,
     visible: true,
@@ -44,9 +44,20 @@ describe("getBoardConfiguration", () => {
     updatedAt: new Date("2024-01-01T00:00:00Z"),
   };
 
-  it("should return existing board configuration", async () => {
-    // Arrange
-    const existingColumns = [mockColumn1, mockColumn2];
+  const mockColumn3: Column = {
+    id: "523e4567-e89b-12d3-a456-426614174002",
+    boardId,
+    name: "Done",
+    key: "completed",
+    state: "done",
+    position: 2,
+    visible: true,
+    createdAt: new Date("2024-01-01T00:00:00Z"),
+    updatedAt: new Date("2024-01-01T00:00:00Z"),
+  };
+
+  it("should return existing board configuration when all default workflow states exist", async () => {
+    const existingColumns = [mockColumn1, mockColumn2, mockColumn3];
     const repository = createBoardRepositoryMock({
       findByProject: jest.fn<Promise<Board | null>, [string]>(
         async () => mockBoard
@@ -56,10 +67,8 @@ describe("getBoardConfiguration", () => {
       ),
     });
 
-    // Act
     const result = await getBoardConfiguration(repository, projectId);
 
-    // Assert
     expect(repository.findByProject).toHaveBeenCalledTimes(1);
     expect(repository.findByProject).toHaveBeenCalledWith(projectId);
     expect(repository.listColumnsByBoard).toHaveBeenCalledTimes(1);
@@ -70,7 +79,44 @@ describe("getBoardConfiguration", () => {
       board: mockBoard,
       columns: existingColumns,
     });
-    expect(result.columns).toHaveLength(2);
+    expect(result.columns).toHaveLength(3);
+  });
+
+  it("should create only missing default columns when some workflow states already exist", async () => {
+    const existingColumns = [mockColumn1, mockColumn2];
+    let listCall = 0;
+    const repository = createBoardRepositoryMock({
+      findByProject: jest.fn<Promise<Board | null>, [string]>(
+        async () => mockBoard
+      ),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => {
+        listCall += 1;
+        if (listCall === 1) {
+          return existingColumns;
+        }
+        return [mockColumn1, mockColumn2, mockColumn3];
+      }),
+      createColumn: jest.fn<Promise<Column>, [CreateColumnInput]>(
+        async (input) => {
+          expect(input.state).toBe("done");
+          return mockColumn3;
+        }
+      ),
+    });
+
+    const result = await getBoardConfiguration(repository, projectId);
+
+    expect(repository.listColumnsByBoard).toHaveBeenCalledTimes(2);
+    expect(repository.createColumn).toHaveBeenCalledTimes(1);
+    expect(repository.createColumn).toHaveBeenCalledWith({
+      boardId,
+      name: "Done",
+      key: "completed",
+      state: "done",
+      position: 2,
+      visible: true,
+    });
+    expect(result.columns).toHaveLength(3);
   });
 
   it("should return default configuration when no board exists (auto-create board + columns)", async () => {
@@ -79,7 +125,7 @@ describe("getBoardConfiguration", () => {
       id: "323e4567-e89b-12d3-a456-426614174000",
       boardId,
       name: "Todo",
-      status: "todo",
+      key: "todo",
       state: "todo",
       position: 0,
       visible: true,
@@ -90,7 +136,7 @@ describe("getBoardConfiguration", () => {
       id: "423e4567-e89b-12d3-a456-426614174001",
       boardId,
       name: "In Progress",
-      status: "in-progress",
+      key: "in-progress",
       state: "in_progress",
       position: 1,
       visible: true,
@@ -101,7 +147,7 @@ describe("getBoardConfiguration", () => {
       id: "523e4567-e89b-12d3-a456-426614174002",
       boardId,
       name: "Done",
-      status: "completed",
+      key: "completed",
       state: "done",
       position: 2,
       visible: true,
@@ -109,12 +155,19 @@ describe("getBoardConfiguration", () => {
       updatedAt: new Date("2024-01-01T00:00:00Z"),
     };
     const defaultColumns = [defaultColumn1, defaultColumn2, defaultColumn3];
+    let listCall = 0;
     const repository = createBoardRepositoryMock({
       findByProject: jest.fn<Promise<Board | null>, [string]>(async () => null),
       create: jest.fn<Promise<Board>, [{ projectId: string }]>(
         async () => mockBoard
       ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => []),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => {
+        listCall += 1;
+        if (listCall === 1) {
+          return [];
+        }
+        return defaultColumns;
+      }),
       createColumn: jest.fn<Promise<Column>, [CreateColumnInput]>(
         async (input) => {
           if (input.name === "Todo") return defaultColumn1;
@@ -132,7 +185,7 @@ describe("getBoardConfiguration", () => {
     expect(repository.findByProject).toHaveBeenCalledWith(projectId);
     expect(repository.create).toHaveBeenCalledTimes(1);
     expect(repository.create).toHaveBeenCalledWith({ projectId });
-    expect(repository.listColumnsByBoard).toHaveBeenCalledTimes(1);
+    expect(repository.listColumnsByBoard).toHaveBeenCalledTimes(2);
     expect(repository.listColumnsByBoard).toHaveBeenCalledWith(boardId);
     expect(repository.createColumn).toHaveBeenCalledTimes(3);
     expect(result).toMatchObject<BoardConfiguration>({
@@ -151,7 +204,7 @@ describe("getBoardConfiguration", () => {
       id: "323e4567-e89b-12d3-a456-426614174000",
       boardId,
       name: "Todo",
-      status: "todo",
+      key: "todo",
       state: "todo",
       position: 0,
       visible: true,
@@ -162,7 +215,7 @@ describe("getBoardConfiguration", () => {
       id: "423e4567-e89b-12d3-a456-426614174001",
       boardId,
       name: "In Progress",
-      status: "in-progress",
+      key: "in-progress",
       state: "in_progress",
       position: 1,
       visible: true,
@@ -173,7 +226,7 @@ describe("getBoardConfiguration", () => {
       id: "523e4567-e89b-12d3-a456-426614174002",
       boardId,
       name: "Done",
-      status: "completed",
+      key: "completed",
       state: "done",
       position: 2,
       visible: true,
@@ -181,11 +234,18 @@ describe("getBoardConfiguration", () => {
       updatedAt: new Date("2024-01-01T00:00:00Z"),
     };
     const defaultColumns = [defaultColumn1, defaultColumn2, defaultColumn3];
+    let listCallBoardOnly = 0;
     const repository = createBoardRepositoryMock({
       findByProject: jest.fn<Promise<Board | null>, [string]>(
         async () => mockBoard
       ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => []),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => {
+        listCallBoardOnly += 1;
+        if (listCallBoardOnly === 1) {
+          return [];
+        }
+        return defaultColumns;
+      }),
       createColumn: jest.fn<Promise<Column>, [CreateColumnInput]>(
         async (input) => {
           if (input.name === "Todo") return defaultColumn1;
@@ -200,7 +260,7 @@ describe("getBoardConfiguration", () => {
 
     // Assert
     expect(repository.findByProject).toHaveBeenCalledTimes(1);
-    expect(repository.listColumnsByBoard).toHaveBeenCalledTimes(1);
+    expect(repository.listColumnsByBoard).toHaveBeenCalledTimes(2);
     expect(repository.listColumnsByBoard).toHaveBeenCalledWith(boardId);
     expect(repository.create).not.toHaveBeenCalled();
     expect(repository.createColumn).toHaveBeenCalledTimes(3);

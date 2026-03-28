@@ -1,3 +1,5 @@
+import { isNumber, isObject, isString } from "@/shared/utils";
+
 import type {
   TicketFilters,
   TicketSort,
@@ -5,7 +7,7 @@ import type {
 import { TICKET_PRIORITY_VALUES } from "@/modules/board/core/domain/schema/ticket.schema";
 
 export type TicketListFilterKey = readonly [
-  status: TicketFilters["status"] | null,
+  columnId: TicketFilters["columnId"] | null,
   priority: TicketFilters["priority"] | null,
 ];
 
@@ -14,10 +16,17 @@ export type TicketListSortKey = readonly [
   direction: TicketSort["direction"],
 ];
 
+export type TicketListQueryParamsKey = Readonly<{
+  filters: TicketListFilterKey | null;
+  sort: TicketListSortKey | null;
+  search: string | null;
+  limit: number | null;
+}>;
+
 export type TicketListQueryKeyDescriptor = {
   projectId: string;
   filters: {
-    status: TicketFilters["status"] | null;
+    columnId: TicketFilters["columnId"] | null;
     priority: TicketFilters["priority"] | null;
   } | null;
   sort: TicketSort | null;
@@ -32,10 +41,7 @@ export const createTicketListFilterKey = (
     return null;
   }
 
-  return [
-    filters.status ?? null,
-    filters.priority ?? null,
-  ] as const;
+  return [filters.columnId ?? null, filters.priority ?? null] as const;
 };
 
 export const createTicketListSortKey = (
@@ -44,11 +50,25 @@ export const createTicketListSortKey = (
   return sort ? ([sort.field, sort.direction] as const) : null;
 };
 
+export const createTicketListQueryParamsKey = (
+  filters?: TicketFilters,
+  sort?: TicketSort,
+  search?: string,
+  limit?: number
+): TicketListQueryParamsKey => {
+  return {
+    filters: createTicketListFilterKey(filters),
+    sort: createTicketListSortKey(sort),
+    search: search?.trim() || null,
+    limit: limit ?? null,
+  };
+};
+
 const isTicketPriority = (
   value: unknown
 ): value is NonNullable<TicketFilters["priority"]> => {
   return (
-    typeof value === "string" &&
+    isString(value) &&
     (TICKET_PRIORITY_VALUES as readonly string[]).includes(value)
   );
 };
@@ -60,10 +80,10 @@ const mapTicketListFilterKey = (
     return null;
   }
 
-  const [status, priority] = filterKey;
+  const [columnId, priority] = filterKey;
 
   return {
-    status: typeof status === "string" ? status : null,
+    columnId: isString(columnId) ? columnId : null,
     priority: isTicketPriority(priority) ? priority : null,
   };
 };
@@ -77,7 +97,7 @@ const mapTicketListSortKey = (
 
   const [field, direction] = sortKey;
 
-  if (typeof field !== "string" || typeof direction !== "string") {
+  if (!isString(field) || !isString(direction)) {
     return null;
   }
 
@@ -87,23 +107,77 @@ const mapTicketListSortKey = (
   };
 };
 
+const mapTicketListQueryParamsKey = (
+  paramsKey: unknown
+): Omit<TicketListQueryKeyDescriptor, "projectId"> => {
+  if (!isObject(paramsKey)) {
+    return {
+      filters: null,
+      sort: null,
+      search: null,
+      limit: null,
+    };
+  }
+
+  return {
+    filters: mapTicketListFilterKey(paramsKey.filters),
+    sort: mapTicketListSortKey(paramsKey.sort),
+    search: isString(paramsKey.search) ? paramsKey.search : null,
+    limit: isNumber(paramsKey.limit) ? paramsKey.limit : null,
+  };
+};
+
+const mapLegacyTicketListQueryParamsKey = (
+  filterKey: unknown,
+  sortKey: unknown,
+  search: unknown,
+  limit: unknown
+): Omit<TicketListQueryKeyDescriptor, "projectId"> => {
+  return {
+    filters: mapTicketListFilterKey(filterKey),
+    sort: mapTicketListSortKey(sortKey),
+    search: isString(search) ? search : null,
+    limit: isNumber(limit) ? limit : null,
+  };
+};
+
 export const mapTicketListQueryKey = (
   queryKey: readonly unknown[]
 ): TicketListQueryKeyDescriptor | null => {
+  const [
+    scope,
+    projectId,
+    resource,
+    operation,
+    paramsKey,
+    legacySortKey,
+    legacySearch,
+    legacyLimit,
+  ] = queryKey;
+
   if (
-    queryKey[0] !== "projects" ||
-    typeof queryKey[1] !== "string" ||
-    queryKey[2] !== "tickets" ||
-    queryKey[3] !== "list"
+    scope !== "projects" ||
+    !isString(projectId) ||
+    resource !== "tickets" ||
+    operation !== "list"
   ) {
     return null;
   }
 
+  if (isObject(paramsKey)) {
+    return {
+      projectId,
+      ...mapTicketListQueryParamsKey(paramsKey),
+    };
+  }
+
   return {
-    projectId: queryKey[1],
-    filters: mapTicketListFilterKey(queryKey[4]),
-    sort: mapTicketListSortKey(queryKey[5]),
-    search: typeof queryKey[6] === "string" ? queryKey[6] : null,
-    limit: typeof queryKey[7] === "number" ? queryKey[7] : null,
+    projectId,
+    ...mapLegacyTicketListQueryParamsKey(
+      paramsKey,
+      legacySortKey,
+      legacySearch,
+      legacyLimit
+    ),
   };
 };

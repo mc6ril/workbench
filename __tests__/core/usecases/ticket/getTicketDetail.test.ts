@@ -13,7 +13,7 @@ describe("getTicketDetail", () => {
     projectId,
     title: "Test Ticket",
     description: "Test description",
-    status: "todo",
+    columnId: "323e4567-e89b-12d3-a456-426614174000",
     position: 0,
     codeNumber: 1,
     priority: null,

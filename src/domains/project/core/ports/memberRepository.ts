@@ -50,7 +50,8 @@ export type MemberRepository = {
 
   /**
    * Remove a member from a project.
-   * Cascade effects: the orphaned project trigger may fire if this is the last member.
+   * Cascade effects: ticket assignments in that project are removed for the user,
+   * and the orphaned project trigger may fire if this is the last member.
    * @throws NotFoundError if member not found
    * @throws DatabaseError if database operation fails or permission denied
    */

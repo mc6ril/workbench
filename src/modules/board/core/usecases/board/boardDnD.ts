@@ -53,11 +53,8 @@ export const buildBoardTicketIds = (
   const orderedTickets = [...tickets].sort((a, b) => a.position - b.position);
 
   for (const ticket of orderedTickets) {
-    const targetColumn = columns.find(
-      (column) => column.status === ticket.status
-    );
-    if (targetColumn) {
-      boardTicketIds[targetColumn.id].push(ticket.id);
+    if (ticket.columnId in boardTicketIds) {
+      boardTicketIds[ticket.columnId].push(ticket.id);
     }
   }
 

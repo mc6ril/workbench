@@ -18,7 +18,7 @@ export const TicketSchema = z.object({
   projectId: z.string().uuid(),
   title: z.string().min(1, "Ticket title must not be empty"),
   description: z.string().nullable(),
-  status: z.string().min(1, "Ticket status must not be empty"),
+  columnId: z.string().uuid("Ticket column ID must be a valid UUID"),
   position: z.number().int().nonnegative("Position must be non-negative"),
   codeNumber: z.number().int().positive(),
   priority: TicketPrioritySchema.nullable(),
@@ -47,7 +47,7 @@ export const CreateTicketInputSchema = z.object({
   projectId: z.string().uuid(),
   title: z.string().min(1, "Ticket title must not be empty"),
   description: z.string().nullable().optional(),
-  status: z.string().min(1, "Ticket status must not be empty"),
+  columnId: z.string().uuid("Ticket column ID must be a valid UUID"),
   position: z.number().int().nonnegative().default(0),
   priority: TicketPrioritySchema.nullable().optional(),
   dueDate: z
@@ -69,7 +69,10 @@ export type CreateTicketInput = z.infer<typeof CreateTicketInputSchema>;
 export const UpdateTicketInputSchema = z.object({
   title: z.string().min(1, "Ticket title must not be empty").optional(),
   description: z.string().nullable().optional(),
-  status: z.string().min(1, "Ticket status must not be empty").optional(),
+  columnId: z
+    .string()
+    .uuid("Ticket column ID must be a valid UUID")
+    .optional(),
   position: z.number().int().nonnegative().optional(),
   priority: TicketPrioritySchema.nullable().optional(),
   dueDate: z
@@ -108,7 +111,7 @@ export type ReorderTicketInput = z.infer<typeof ReorderTicketInputSchema>;
  */
 export const MoveAndReorderTicketInputSchema = z.object({
   ticketId: z.string().uuid("Ticket ID must be a valid UUID"),
-  status: z.string().min(1, "Status must not be empty"),
+  columnId: z.string().uuid("Column ID must be a valid UUID"),
   position: z.number().int().nonnegative("Position must be non-negative"),
   ticketPositions: z.array(
     z.object({
@@ -127,7 +130,7 @@ export type MoveAndReorderTicketInput = z.infer<
  * Used for filtering support in ticket queries.
  */
 export type TicketFilters = {
-  status?: string;
+  columnId?: string;
   priority?: TicketPriority;
 };
 
@@ -178,12 +181,12 @@ export const TicketIdInputSchema = z.object({
 export type TicketIdInput = z.infer<typeof TicketIdInputSchema>;
 
 /**
- * Input for moving a ticket to a new status and position.
+ * Input for moving a ticket to a new column and position.
  * Used for drag-and-drop operations on the board.
  */
 export const MoveTicketInputSchema = z.object({
   id: z.string().uuid("Ticket ID must be a valid UUID"),
-  status: z.string().min(1, "Status must not be empty"),
+  columnId: z.string().uuid("Column ID must be a valid UUID"),
   position: z.number().int().nonnegative("Position must be non-negative"),
 });
 

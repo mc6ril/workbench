@@ -7,7 +7,7 @@ describe("TicketMapper.supabase", () => {
     project_id: "223e4567-e89b-12d3-a456-426614174000",
     title: "Refactor archiving model",
     description: null,
-    status: "todo",
+    column_id: "323e4567-e89b-12d3-a456-426614174000",
     position: 0,
     code_number: 1,
     priority: null,
@@ -36,6 +36,7 @@ describe("TicketMapper.supabase", () => {
       new Date("2026-03-24T08:30:00.000Z")
     );
     expect(result.archivedWeekStart).toEqual(new Date("2026-03-24"));
+    expect(result.columnId).toBe(baseRow.column_id);
   });
 
   it("keeps archival metadata nullable", () => {

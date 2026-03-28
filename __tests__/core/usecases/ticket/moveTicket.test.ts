@@ -11,6 +11,9 @@ describe("moveTicket", () => {
   const ticketId = "123e4567-e89b-12d3-a456-426614174000";
   const projectId = "223e4567-e89b-12d3-a456-426614174000";
   const boardId = "323e4567-e89b-12d3-a456-426614174000";
+  const todoColumnId = "423e4567-e89b-12d3-a456-426614174000";
+  const doingColumnId = "523e4567-e89b-12d3-a456-426614174000";
+  const doneColumnId = "623e4567-e89b-12d3-a456-426614174000";
   const board: Board = {
     id: boardId,
     projectId,
@@ -19,10 +22,10 @@ describe("moveTicket", () => {
   };
   const columns: Column[] = [
     {
-      id: "todo-column",
+      id: todoColumnId,
       boardId,
       name: "Todo",
-      status: "todo",
+      key: "todo",
       state: "todo",
       position: 0,
       visible: true,
@@ -30,12 +33,23 @@ describe("moveTicket", () => {
       updatedAt: new Date("2024-01-01T00:00:00Z"),
     },
     {
-      id: "done-column",
+      id: doingColumnId,
+      boardId,
+      name: "In Progress",
+      key: "in-progress",
+      state: "in_progress",
+      position: 1,
+      visible: true,
+      createdAt: new Date("2024-01-01T00:00:00Z"),
+      updatedAt: new Date("2024-01-01T00:00:00Z"),
+    },
+    {
+      id: doneColumnId,
       boardId,
       name: "Done",
-      status: "completed",
+      key: "completed",
       state: "done",
-      position: 1,
+      position: 2,
       visible: true,
       createdAt: new Date("2024-01-01T00:00:00Z"),
       updatedAt: new Date("2024-01-01T00:00:00Z"),
@@ -47,7 +61,7 @@ describe("moveTicket", () => {
     projectId,
     title: "Test Ticket",
     description: "Test description",
-    status: "todo",
+    columnId: todoColumnId,
     position: 0,
     codeNumber: 1,
     priority: null,
@@ -71,7 +85,7 @@ describe("moveTicket", () => {
 
   const updatedTicket: Ticket = {
     ...mockTicket,
-    status: "in-progress",
+    columnId: doingColumnId,
     position: 1,
     updatedAt: new Date("2024-01-02T00:00:00Z"),
   };
@@ -96,7 +110,7 @@ describe("moveTicket", () => {
       repository,
       boardRepository,
       ticketId,
-      "in-progress",
+      doingColumnId,
       1
     );
 
@@ -106,7 +120,7 @@ describe("moveTicket", () => {
     expect(repository.moveTicket).toHaveBeenCalledTimes(1);
     expect(repository.moveTicket).toHaveBeenCalledWith(
       ticketId,
-      "in-progress",
+      doingColumnId,
       1,
       null
     );
@@ -126,17 +140,17 @@ describe("moveTicket", () => {
         [string, string, number, Date | null]
       >(async () => ({
         ...mockTicket,
-        status: "completed",
+        columnId: doneColumnId,
         position: 1,
         completedAt: now,
       })),
     });
 
-    await moveTicket(repository, boardRepository, ticketId, "completed", 1);
+    await moveTicket(repository, boardRepository, ticketId, doneColumnId, 1);
 
     expect(repository.moveTicket).toHaveBeenCalledWith(
       ticketId,
-      "completed",
+      doneColumnId,
       1,
       now
     );
@@ -145,7 +159,7 @@ describe("moveTicket", () => {
   it("should clear completedAt when moving a ticket out of a done column", async () => {
     const completedTicket: Ticket = {
       ...mockTicket,
-      status: "completed",
+      columnId: doneColumnId,
       completedAt: new Date("2026-03-24T09:00:00.000Z"),
     };
     const boardRepository = createBoardRepositoryMock({
@@ -161,22 +175,22 @@ describe("moveTicket", () => {
         [string, string, number, Date | null]
       >(async () => ({
         ...completedTicket,
-        status: "todo",
+        columnId: todoColumnId,
         completedAt: null,
       })),
     });
 
-    await moveTicket(repository, boardRepository, ticketId, "todo", 0);
+    await moveTicket(repository, boardRepository, ticketId, todoColumnId, 0);
 
     expect(repository.moveTicket).toHaveBeenCalledWith(
       ticketId,
-      "todo",
+      todoColumnId,
       0,
       null
     );
   });
 
-  it("should throw ZodError on invalid status", async () => {
+  it("should throw ZodError on invalid column id", async () => {
     // Arrange
     const boardRepository = createBoardRepositoryMock();
     const repository = createTicketRepositoryMock();
@@ -196,7 +210,7 @@ describe("moveTicket", () => {
 
     // Act & Assert
     await expect(
-      moveTicket(repository, boardRepository, ticketId, "in-progress", -1)
+      moveTicket(repository, boardRepository, ticketId, doingColumnId, -1)
     ).rejects.toThrow(z.ZodError);
     expect(repository.findById).not.toHaveBeenCalled();
     expect(repository.moveTicket).not.toHaveBeenCalled();
@@ -211,7 +225,7 @@ describe("moveTicket", () => {
 
     // Act & Assert
     await expect(
-      moveTicket(repository, boardRepository, ticketId, "in-progress", 1)
+      moveTicket(repository, boardRepository, ticketId, doingColumnId, 1)
     ).rejects.toMatchObject({
       code: "NOT_FOUND",
       entityType: "Ticket",
@@ -244,7 +258,7 @@ describe("moveTicket", () => {
 
     // Act & Assert
     await expect(
-      moveTicket(repository, boardRepository, ticketId, "in-progress", 1)
+      moveTicket(repository, boardRepository, ticketId, doingColumnId, 1)
     ).rejects.toThrow(repositoryError);
     expect(repository.findById).toHaveBeenCalledTimes(1);
     expect(repository.moveTicket).toHaveBeenCalledTimes(1);

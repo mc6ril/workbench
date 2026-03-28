@@ -69,8 +69,8 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const setSearch = useFilterStore((state) => state.setSearch);
   const [searchInput, setSearchInput] = useState(search);
   const filters = useFilterStore((state) => state.filters);
-  const setStatus = useFilterStore((state) => state.setStatus);
-  const clearStatus = useFilterStore((state) => state.clearStatus);
+  const setColumnId = useFilterStore((state) => state.setColumnId);
+  const clearColumnId = useFilterStore((state) => state.clearColumnId);
   const resetSearch = useFilterStore((state) => state.resetSearch);
   const resetFilters = useFilterStore((state) => state.resetFilters);
   const sort = useSortStore((state) => state.sort);
@@ -183,7 +183,7 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const statusOptions = useMemo(() => {
     const columns = boardConfiguration?.columns ?? [];
     return columns.map((column) => ({
-      value: column.status,
+      value: column.id,
       label: column.name,
     }));
   }, [boardConfiguration?.columns]);
@@ -313,8 +313,8 @@ const BoardShellAdapter = ({ projectId }: Props) => {
           <TicketFilterControls
             filters={filters}
             statusOptions={statusOptions}
-            onSetStatus={setStatus}
-            onClearStatus={clearStatus}
+            onSetStatus={setColumnId}
+            onClearStatus={clearColumnId}
             onResetFilters={handleResetTicketFilters}
           />
         </Modal>
@@ -336,7 +336,7 @@ const BoardShellAdapter = ({ projectId }: Props) => {
       </>
     );
   }, [
-    clearStatus,
+    clearColumnId,
     filters,
     handleResetTicketFilters,
     handleResetTicketSort,
@@ -345,7 +345,7 @@ const BoardShellAdapter = ({ projectId }: Props) => {
     isSortModalOpen,
     setDirection,
     setField,
-    setStatus,
+    setColumnId,
     sort,
     statusOptions,
     tNavbar,

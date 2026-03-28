@@ -7,7 +7,7 @@ import {
 } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
-import { resolveCompletedAtForProjectStatusChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
+import { resolveCompletedAtForProjectColumnChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
 
 /**
  * Update an existing ticket.
@@ -37,15 +37,15 @@ export const updateTicket = async (
   }
 
   const completedAt =
-    validatedInput.status === undefined
+    validatedInput.columnId === undefined
       ? validatedInput.completedAt
-      : await resolveCompletedAtForProjectStatusChange(
+      : await resolveCompletedAtForProjectColumnChange(
           boardRepository,
           existingTicket.projectId,
           {
-            previousStatus: existingTicket.status,
+            previousColumnId: existingTicket.columnId,
             previousCompletedAt: existingTicket.completedAt,
-            nextStatus: validatedInput.status,
+            nextColumnId: validatedInput.columnId,
           }
         );
 

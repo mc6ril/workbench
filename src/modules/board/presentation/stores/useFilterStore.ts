@@ -19,8 +19,8 @@ type FilterActions = {
   setSearch: (search: string) => void;
   resetSearch: () => void;
 
-  setStatus: (status: string) => void;
-  clearStatus: () => void;
+  setColumnId: (columnId: string) => void;
+  clearColumnId: () => void;
 
   /**
    * Resets domain-aligned filters only. Does NOT reset search.
@@ -44,17 +44,17 @@ export const useFilterStore = create<FilterStore>((set) => ({
     set({ search: initialSearch });
   },
 
-  setStatus: (status: string): void => {
+  setColumnId: (columnId: string): void => {
     set((state) => ({
       filters: {
         ...state.filters,
-        status,
+        columnId,
       },
     }));
   },
-  clearStatus: (): void => {
+  clearColumnId: (): void => {
     set((state) => {
-      const { status: _status, ...rest } = state.filters;
+      const { columnId: _columnId, ...rest } = state.filters;
       return { filters: rest };
     });
   },

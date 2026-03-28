@@ -9,7 +9,7 @@ import type {
   CreateColumnInput,
   UpdateColumnInput,
 } from "@/modules/board/core/domain/schema/board.schema";
-import { configureColumns } from "@/modules/board/core/usecases/board/configureColumns";
+import { configureColumns } from "@/modules/board/core/usecases/board/configuration/configureColumns";
 
 describe("configureColumns", () => {
   const projectId = "123e4567-e89b-12d3-a456-426614174000";
@@ -26,7 +26,7 @@ describe("configureColumns", () => {
     id: "323e4567-e89b-12d3-a456-426614174000",
     boardId,
     name: "Todo",
-    status: "todo",
+    key: "todo",
     state: "todo",
     position: 0,
     visible: true,
@@ -38,7 +38,7 @@ describe("configureColumns", () => {
     id: "423e4567-e89b-12d3-a456-426614174001",
     boardId,
     name: "Done",
-    status: "completed",
+    key: "completed",
     state: "done",
     position: 1,
     visible: true,
@@ -54,14 +54,14 @@ describe("configureColumns", () => {
         {
           id: mockColumn1.id,
           name: "Updated Todo",
-          status: "todo",
+          key: "todo",
           state: "todo",
           position: 0,
           visible: true,
         },
         {
           name: "New Column",
-          status: "new-status",
+          key: "new-status",
           state: "done",
           position: 2,
           visible: true,
@@ -76,7 +76,7 @@ describe("configureColumns", () => {
       id: "523e4567-e89b-12d3-a456-426614174002",
       boardId,
       name: "New Column",
-      status: "new-status",
+      key: "new-status",
       state: "done",
       position: 2,
       visible: true,
@@ -116,7 +116,7 @@ describe("configureColumns", () => {
     expect(repository.updateColumn).toHaveBeenCalledTimes(1);
     expect(repository.updateColumn).toHaveBeenCalledWith(mockColumn1.id, {
       name: "Updated Todo",
-      status: "todo",
+      key: "todo",
       state: "todo",
       position: 0,
       visible: true,
@@ -125,7 +125,7 @@ describe("configureColumns", () => {
     expect(repository.createColumn).toHaveBeenCalledWith({
       boardId,
       name: "New Column",
-      status: "new-status",
+      key: "new-status",
       state: "done",
       position: 2,
       visible: true,
@@ -145,14 +145,14 @@ describe("configureColumns", () => {
       columns: [
         {
           name: "Todo",
-          status: "todo",
+          key: "todo",
           state: "todo",
           position: 0,
           visible: true,
         },
         {
           name: "Done",
-          status: "completed",
+          key: "completed",
           state: "done",
           position: 1,
           visible: true,
@@ -163,7 +163,7 @@ describe("configureColumns", () => {
       id: "323e4567-e89b-12d3-a456-426614174000",
       boardId,
       name: "Todo",
-      status: "todo",
+      key: "todo",
       state: "todo",
       position: 0,
       visible: true,
@@ -174,7 +174,7 @@ describe("configureColumns", () => {
       id: "423e4567-e89b-12d3-a456-426614174001",
       boardId,
       name: "Done",
-      status: "completed",
+      key: "completed",
       state: "done",
       position: 1,
       visible: true,
@@ -222,7 +222,7 @@ describe("configureColumns", () => {
         {
           id: mockColumn1.id,
           name: mockColumn1.name,
-          status: mockColumn1.status,
+          key: mockColumn1.key,
           state: mockColumn1.state,
           position: mockColumn1.position,
           visible: mockColumn1.visible,
@@ -230,7 +230,7 @@ describe("configureColumns", () => {
         {
           id: mockColumn2.id,
           name: mockColumn2.name,
-          status: mockColumn2.status,
+          key: mockColumn2.key,
           state: mockColumn2.state,
           position: mockColumn2.position,
           visible: mockColumn2.visible,
@@ -288,14 +288,14 @@ describe("configureColumns", () => {
       columns: [
         {
           name: "Todo 1",
-          status: "todo",
+          key: "todo",
           state: "todo",
           position: 0,
           visible: true,
         },
         {
           name: "Todo 2",
-          status: "todo-2",
+          key: "todo-2",
           state: "in_progress",
           position: 1,
           visible: true,
@@ -312,7 +312,7 @@ describe("configureColumns", () => {
           id: "new-id",
           boardId,
           name: input.name,
-          status: input.status,
+          key: input.key,
           state: input.state,
           position: input.position,
           visible: input.visible ?? true,
@@ -328,7 +328,7 @@ describe("configureColumns", () => {
         id: "1",
         boardId,
         name: "Todo 1",
-        status: "todo",
+        key: "todo",
         state: "todo",
         position: 0,
         visible: true,
@@ -339,7 +339,7 @@ describe("configureColumns", () => {
         id: "2",
         boardId,
         name: "Todo 2",
-        status: "todo-2",
+        key: "todo-2",
         state: "in_progress",
         position: 1,
         visible: true,
@@ -353,7 +353,7 @@ describe("configureColumns", () => {
       code: "MISSING_DONE_COLUMN",
     });
     expect(repository.findByProject).toHaveBeenCalledTimes(1);
-    expect(repository.createColumn).toHaveBeenCalledTimes(2);
+    expect(repository.createColumn).not.toHaveBeenCalled();
   });
 
   it("should throw DomainRuleError on duplicate positions", async () => {
@@ -363,14 +363,14 @@ describe("configureColumns", () => {
       columns: [
         {
           name: "Column 1",
-          status: "status1",
+          key: "status1",
           state: "todo",
           position: 0,
           visible: true,
         },
         {
           name: "Column 2",
-          status: "status2",
+          key: "status2",
           state: "done",
           position: 0,
           visible: true,
@@ -387,7 +387,7 @@ describe("configureColumns", () => {
           id: "new-id",
           boardId,
           name: input.name,
-          status: input.status,
+          key: input.key,
           state: input.state,
           position: input.position,
           visible: input.visible ?? true,
@@ -403,7 +403,7 @@ describe("configureColumns", () => {
         id: "1",
         boardId,
         name: "Column 1",
-        status: "status1",
+        key: "status1",
         state: "todo",
         position: 0,
         visible: true,
@@ -414,7 +414,7 @@ describe("configureColumns", () => {
         id: "2",
         boardId,
         name: "Column 2",
-        status: "status2",
+        key: "status2",
         state: "done",
         position: 0,
         visible: true,
@@ -428,7 +428,7 @@ describe("configureColumns", () => {
       code: "INVALID_COLUMN_ORDER",
     });
     expect(repository.findByProject).toHaveBeenCalledTimes(1);
-    expect(repository.createColumn).toHaveBeenCalledTimes(2);
+    expect(repository.createColumn).not.toHaveBeenCalled();
   });
 
   it("should propagate repository errors", async () => {
@@ -438,7 +438,7 @@ describe("configureColumns", () => {
       columns: [
         {
           name: "Todo",
-          status: "todo",
+          key: "todo",
           state: "done",
           position: 0,
           visible: true,
@@ -457,5 +457,100 @@ describe("configureColumns", () => {
       repositoryError
     );
     expect(repository.findByProject).toHaveBeenCalledTimes(1);
+  });
+
+  it("should use temporary keys before swapping existing column keys", async () => {
+    const swapColumn1: Column = {
+      ...mockColumn1,
+      key: "alpha",
+    };
+    const swapColumn2: Column = {
+      ...mockColumn2,
+      key: "omega",
+    };
+    const input: ConfigureColumnsInput = {
+      projectId,
+      columns: [
+        {
+          id: swapColumn1.id,
+          name: swapColumn1.name,
+          key: "omega",
+          state: swapColumn1.state,
+          position: swapColumn1.position,
+          visible: swapColumn1.visible,
+        },
+        {
+          id: swapColumn2.id,
+          name: swapColumn2.name,
+          key: "alpha",
+          state: swapColumn2.state,
+          position: swapColumn2.position,
+          visible: swapColumn2.visible,
+        },
+      ],
+    };
+    const repository = createBoardRepositoryMock({
+      findByProject: jest.fn<Promise<Board | null>, [string]>(
+        async () => mockBoard
+      ),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => [
+        swapColumn1,
+        swapColumn2,
+      ]),
+      updateColumn: jest.fn<Promise<Column>, [string, UpdateColumnInput]>(
+        async (id, update) => ({
+          ...(id === swapColumn1.id ? swapColumn1 : swapColumn2),
+          ...update,
+          visible:
+            update.visible ??
+            (id === swapColumn1.id ? swapColumn1.visible : swapColumn2.visible),
+          state:
+            update.state ??
+            (id === swapColumn1.id ? swapColumn1.state : swapColumn2.state),
+          position:
+            update.position ??
+            (id === swapColumn1.id
+              ? swapColumn1.position
+              : swapColumn2.position),
+        })
+      ),
+    });
+    repository.listColumnsByBoard.mockResolvedValueOnce([
+      swapColumn1,
+      swapColumn2,
+    ]);
+    repository.listColumnsByBoard.mockResolvedValueOnce([
+      {
+        ...swapColumn1,
+        key: "omega",
+      },
+      {
+        ...swapColumn2,
+        key: "alpha",
+      },
+    ]);
+
+    await configureColumns(repository, input);
+
+    expect(repository.updateColumn).toHaveBeenNthCalledWith(1, swapColumn1.id, {
+      key: `__tmp__column-config__${swapColumn1.id}`,
+    });
+    expect(repository.updateColumn).toHaveBeenNthCalledWith(2, swapColumn2.id, {
+      key: `__tmp__column-config__${swapColumn2.id}`,
+    });
+    expect(repository.updateColumn).toHaveBeenCalledWith(swapColumn1.id, {
+      name: swapColumn1.name,
+      key: "omega",
+      state: swapColumn1.state,
+      position: swapColumn1.position,
+      visible: swapColumn1.visible,
+    });
+    expect(repository.updateColumn).toHaveBeenCalledWith(swapColumn2.id, {
+      name: swapColumn2.name,
+      key: "alpha",
+      state: swapColumn2.state,
+      position: swapColumn2.position,
+      visible: swapColumn2.visible,
+    });
   });
 });

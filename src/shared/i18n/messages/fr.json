@@ -1421,7 +1421,7 @@
       "INVITATION_ALREADY_MEMBER": "Vous faites déjà partie de ce projet",
       "INVITATION_LIMIT_REACHED": "Votre formule actuelle ne permet pas plus de membres actifs ou de liens d'invitation dans cet espace",
       "INVALID_COLUMN_ORDER": "Ordre de colonnes invalide",
-      "DUPLICATE_COLUMN_STATUS": "Statut de colonne en double",
+      "DUPLICATE_COLUMN_KEY": "Clé de colonne en double",
       "INVALID_BOARD_COLUMN_RELATIONSHIP": "La colonne n'appartient pas au tableau spécifié",
       "MIXED_BOARD_COLUMNS": "Colonnes de plusieurs tableaux mélangées"
     },

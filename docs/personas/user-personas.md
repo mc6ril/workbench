@@ -5,10 +5,11 @@
 Workbench now targets one primary segment: **families managing daily life together**.
 
 The product is intentionally simple:
-- One clear default flow (free plan first)
+- One clear default flow (a shared project starts free)
 - Two core views (`Board` and `Objectives`)
 - Fast onboarding and low cognitive load
 - Mobile-first usage for day-to-day updates
+- Collaboration, permissions, and billing are all project-scoped
 
 These personas are used to guide product decisions, UX copy, and prioritization.
 
@@ -27,7 +28,7 @@ These personas are used to guide product decisions, UX copy, and prioritization.
 | Tech comfort | Medium |
 | Devices | Smartphone first, laptop occasionally |
 | Current tools | Notes app, WhatsApp, sticky notes |
-| Plan fit | Free |
+| Typical role | Project admin / coordinator |
 
 ### Context
 
@@ -53,6 +54,7 @@ Emma coordinates many invisible tasks: school logistics, appointments, home admi
 - `Objectives` for medium-term initiatives (moving, renovation, school period)
 - Single create flow from the board (no hidden shortcuts)
 - Shared visibility across family members
+- Project settings remain understandable for membership, billing, and invoices when needed
 
 ### Success Signal
 
@@ -73,7 +75,7 @@ The family runs a weekly check-in from the board in less than 10 minutes.
 | Tech comfort | Medium-low |
 | Devices | Mobile only most of the time |
 | Current tools | Calendar + SMS + memory |
-| Plan fit | Free |
+| Typical role | Project admin or member |
 
 ### Context
 
@@ -97,6 +99,7 @@ Lucas has little time and needs fast updates while commuting or between meetings
 - Minimal navigation (only `Board` and `Objectives`)
 - Clear ownership and status progression
 - Lightweight interactions on mobile
+- Can act as co-admin on the same project without needing any personal paid status
 
 ### Success Signal
 
@@ -117,7 +120,7 @@ Lucas can open the app, update one task, and leave in under 30 seconds.
 | Tech comfort | High |
 | Devices | Smartphone |
 | Current tools | Messaging apps |
-| Plan fit | Free |
+| Typical role | Project member |
 
 ### Context
 
@@ -157,20 +160,23 @@ Chloé completes and updates tasks without additional reminders.
 | Key view | Board | Board | Board |
 | Secondary view | Objectives | Objectives | Objectives |
 | Tolerance for complexity | Low | Very low | Low |
-| Target plan | Free | Free | Free |
+| Typical project role | Admin / creator | Admin or member | Member |
+| Billing involvement | May upgrade or manage invoices | May co-manage billing if admin | No billing involvement |
 
 ---
 
 ## Product Implications
 
-1. **Free-first by default**: the natural user flow must work fully on the free plan.
-2. **Navigation discipline**: keep only the views that create daily value (`Board`, `Objectives`).
-3. **Single creation path**: avoid duplicate creation patterns that confuse users.
-4. **Mobile speed**: optimize for short sessions and fast status updates.
-5. **Clarity over feature count**: each visible action must have obvious value.
+1. **Free project first**: the natural user flow must work fully when a new shared project starts in `free`.
+2. **Project-scoped billing**: upgrades, invoices, subscription management, and payment recovery belong to the project settings, not to a personal user plan.
+3. **Project-scoped permissions**: a family member can be admin of a paid project without needing any personal paid status.
+4. **Single active creation slot**: a user can create one active project at a time, while joining other projects remains frictionless.
+5. **Navigation discipline**: keep only the views that create daily value (`Board`, `Objectives`).
+6. **Mobile speed**: optimize for short sessions and fast status updates.
+7. **Clarity over feature count**: each visible action must have obvious value.
 
 ---
 
 ## One-Sentence Summary
 
-> Workbench is a family daily-management app where simplicity, shared clarity, and quick execution matter more than advanced configuration.
+> Workbench is a family daily-management app where a shared project starts simple, collaboration stays clear, and any billing complexity lives at the project level rather than on individual users.

@@ -154,8 +154,10 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 4px;
+    width: $spacing-md;
     height: 100%;
+    border-top-left-radius: $border-radius-xl;
+    border-bottom-left-radius: $border-radius-xl;
     background: linear-gradient(180deg, $color-accent, $color-accent-peach);
     opacity: 0;
     transition: opacity $animation-duration-slow;

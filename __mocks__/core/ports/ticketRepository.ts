@@ -19,7 +19,7 @@ export type TicketRepositoryMock = {
     Promise<Ticket[]>,
     [string, TicketFilters?, TicketSort?, string?, number?]
   >;
-  listByStatus: jest.Mock<Promise<Ticket[]>, [string, string]>;
+  listByColumnId: jest.Mock<Promise<Ticket[]>, [string, string]>;
   create: jest.Mock<Promise<Ticket>, [CreateTicketInput]>;
   update: jest.Mock<Promise<Ticket>, [string, UpdateTicketInput]>;
   delete: jest.Mock<Promise<void>, [string]>;
@@ -27,13 +27,16 @@ export type TicketRepositoryMock = {
     Promise<Ticket[]>,
     [Array<{ id: string; position: number }>]
   >;
-  moveTicket: jest.Mock<Promise<Ticket>, [string, string, number, Date | null]>;
+  moveTicket: jest.Mock<
+    Promise<Ticket>,
+    [string, string, number, Date | null]
+  >;
   moveAndReorderTicket: jest.Mock<
     Promise<Ticket[]>,
     [
       {
         ticketId: string;
-        status: string;
+        columnId: string;
         position: number;
         completedAt: Date | null;
         ticketPositions: Array<{ id: string; position: number }>;
@@ -83,7 +86,7 @@ export const createTicketRepositoryMock = (
       Promise<Ticket[]>,
       [string, TicketFilters?, TicketSort?, string?, number?]
     >(),
-    listByStatus: jest.fn<Promise<Ticket[]>, [string, string]>(),
+    listByColumnId: jest.fn<Promise<Ticket[]>, [string, string]>(),
     create: jest.fn<Promise<Ticket>, [CreateTicketInput]>(),
     update: jest.fn<Promise<Ticket>, [string, UpdateTicketInput]>(),
     delete: jest.fn<Promise<void>, [string]>(),
@@ -100,7 +103,7 @@ export const createTicketRepositoryMock = (
       [
         {
           ticketId: string;
-          status: string;
+          columnId: string;
           position: number;
           completedAt: Date | null;
           ticketPositions: Array<{ id: string; position: number }>;

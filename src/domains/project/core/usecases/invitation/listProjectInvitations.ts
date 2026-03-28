@@ -2,7 +2,7 @@ import type { ProjectInvitation } from "@/domains/project/core/domain/schema/inv
 import type { InvitationRepository } from "@/domains/project/core/ports/invitationRepository";
 
 /**
- * List all invitations for a project (all statuses).
+ * List invitations currently stored for a project.
  * Requires project membership (enforced by RLS).
  *
  * @param repository - Invitation repository

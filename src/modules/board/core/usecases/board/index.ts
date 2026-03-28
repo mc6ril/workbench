@@ -4,5 +4,5 @@ export {
   buildTicketLocationIndex,
   getTicketLocation,
 } from "./boardDnD";
-export { configureColumns } from "./configureColumns";
+export { configureColumns } from "./configuration/configureColumns";
 export { getBoardConfiguration } from "./getBoardConfiguration";

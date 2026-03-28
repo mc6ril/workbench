@@ -12,33 +12,33 @@ describe("boardDnD usecase helpers", () => {
     {
       id: "todo-column",
       title: "Todo",
-      status: "todo",
+      key: "todo",
       state: "todo",
     },
     {
       id: "doing-column",
       title: "In Progress",
-      status: "in-progress",
+      key: "in-progress",
       state: "in_progress",
     },
     {
       id: "done-column",
       title: "Done",
-      status: "done",
+      key: "done",
       state: "done",
     },
   ];
 
   const createTicket = (
     id: string,
-    status: string,
+    columnId: string,
     position: number
   ): Ticket => ({
     id,
     projectId: "project-1",
     title: `Ticket ${id}`,
     description: null,
-    status,
+    columnId,
     position,
     codeNumber: position + 1,
     priority: null,
@@ -53,11 +53,11 @@ describe("boardDnD usecase helpers", () => {
   });
 
   describe("buildBoardTicketIds", () => {
-    it("groups tickets by matching column status and keeps every column key", () => {
+    it("groups tickets by column id and keeps every column key", () => {
       const tickets = [
-        createTicket("ticket-2", "todo", 2),
-        createTicket("ticket-3", "in-progress", 0),
-        createTicket("ticket-1", "todo", 1),
+        createTicket("ticket-2", "todo-column", 2),
+        createTicket("ticket-3", "doing-column", 0),
+        createTicket("ticket-1", "todo-column", 1),
         createTicket("ticket-4", "unknown", 3),
       ];
 

@@ -70,7 +70,7 @@ export const useTicketDetailController = ({
 
   const [titleDraft, setTitleDraft] = useState<string | null>(null);
   const [descriptionDraft, setDescriptionDraft] = useState<string | null>(null);
-  const [statusDraft, setStatusDraft] = useState<string | null>(null);
+  const [columnIdDraft, setColumnIdDraft] = useState<string | null>(null);
   const [priorityDraft, setPriorityDraft] = useState<TicketPriority | "" | null>(
     null
   );
@@ -85,7 +85,7 @@ export const useTicketDetailController = ({
   const statusOptions = useMemo<TicketDetailStatusOption[]>(() => {
     const columns = boardConfiguration?.columns ?? [];
     return columns.map((column) => ({
-      value: column.status,
+      value: column.id,
       label: column.name,
       state: column.state,
     }));
@@ -93,7 +93,7 @@ export const useTicketDetailController = ({
 
   const effectiveTitle = titleDraft ?? ticket?.title ?? "";
   const effectiveDescription = descriptionDraft ?? ticket?.description ?? "";
-  const effectiveStatus = statusDraft ?? ticket?.status ?? "";
+  const effectiveColumnId = columnIdDraft ?? ticket?.columnId ?? "";
   const effectivePriority: TicketPriority | "" =
     priorityDraft ?? ticket?.priority ?? "";
   const effectiveDueDate =
@@ -109,7 +109,7 @@ export const useTicketDetailController = ({
       input: {
         title: effectiveTitle,
         description: effectiveDescription || null,
-        status: effectiveStatus || undefined,
+        columnId: effectiveColumnId || undefined,
         priority: (effectivePriority as TicketPriority) || null,
         dueDate: effectiveDueDate,
         position: ticket.position,
@@ -118,15 +118,15 @@ export const useTicketDetailController = ({
 
     setTitleDraft(null);
     setDescriptionDraft(null);
-    setStatusDraft(null);
+    setColumnIdDraft(null);
     setPriorityDraft(null);
     setDueDateDraft(undefined);
   }, [
     canEditTicket,
+    effectiveColumnId,
     effectiveDescription,
     effectiveDueDate,
     effectivePriority,
-    effectiveStatus,
     effectiveTitle,
     ticket,
     updateMainTicketMutation,
@@ -260,7 +260,7 @@ export const useTicketDetailController = ({
     statusOptions,
     effectiveTitle,
     effectiveDescription,
-    effectiveStatus,
+    effectiveColumnId,
     effectivePriority,
     effectiveDueDate,
     commentInput,
@@ -276,7 +276,7 @@ export const useTicketDetailController = ({
       assignTicketMutation.isPending || unassignTicketMutation.isPending,
     setTitleDraft,
     setDescriptionDraft,
-    setStatusDraft,
+    setColumnIdDraft,
     setPriorityDraft,
     setDueDateDraft,
     setCommentInput,

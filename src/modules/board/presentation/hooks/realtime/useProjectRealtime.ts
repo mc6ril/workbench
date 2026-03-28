@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { isNonEmptyString, isObject, isString } from "@/shared/utils";
+
 import type { CommentWithAuthor } from "@/modules/board/core/domain/schema/comment.schema";
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { RealtimeRepository } from "@/modules/board/core/ports/realtimeRepository";
@@ -25,10 +27,6 @@ type CommentRealtimeRow = {
   updated_at: string;
 };
 
-const isObject = (value: unknown): value is Record<string, unknown> => {
-  return value !== null && typeof value === "object";
-};
-
 const extractPayloadRow = (
   payload: unknown,
   source: "new" | "old"
@@ -46,20 +44,20 @@ const extractStringField = (
   payload: unknown,
   fieldName: string
 ): string | null => {
-  if (!payload || typeof payload !== "object") {
+  if (!payload || !isObject(payload)) {
     return null;
   }
 
   const candidate = payload as RealtimePayload;
   const newValue = candidate.new?.[fieldName];
 
-  if (typeof newValue === "string" && newValue.length > 0) {
+  if (isString(newValue) && isNonEmptyString(newValue)) {
     return newValue;
   }
 
   const oldValue = candidate.old?.[fieldName];
 
-  if (typeof oldValue === "string" && oldValue.length > 0) {
+  if (isString(oldValue) && isNonEmptyString(oldValue)) {
     return oldValue;
   }
 
@@ -125,8 +123,8 @@ const mapCommentRowFromPayload = (
     return null;
   }
 
-  const id = typeof row.id === "string" ? row.id : null;
-  const ticketId = typeof row.ticket_id === "string" ? row.ticket_id : null;
+  const id = isString(row.id) ? row.id : null;
+  const ticketId = isString(row.ticket_id) ? row.ticket_id : null;
 
   if (!id || !ticketId) {
     return null;
@@ -135,8 +133,8 @@ const mapCommentRowFromPayload = (
   return {
     id,
     ticket_id: ticketId,
-    content: typeof row.content === "string" ? row.content : "",
-    updated_at: typeof row.updated_at === "string" ? row.updated_at : "",
+    content: isString(row.content) ? row.content : "",
+    updated_at: isString(row.updated_at) ? row.updated_at : "",
   };
 };
 
@@ -158,13 +156,13 @@ const matchesTicketListFilter = (
     return true;
   }
 
-  const { status, priority } = filters;
+  const { columnId, priority } = filters;
 
-  if (typeof status === "string" && ticket.status !== status) {
+  if (isString(columnId) && ticket.columnId !== columnId) {
     return false;
   }
 
-  if (typeof priority === "string" && ticket.priority !== priority) {
+  if (isString(priority) && ticket.priority !== priority) {
     return false;
   }
   return true;

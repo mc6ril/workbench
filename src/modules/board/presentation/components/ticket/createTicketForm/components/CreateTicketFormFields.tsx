@@ -8,26 +8,26 @@ import type { Option } from "@/modules/board/presentation/components/ticket/crea
 type CreateTicketFormFieldsProps = {
   title: string;
   description: string;
-  status: string;
-  statusOptions: Option[];
+  columnId: string;
+  columnOptions: Option[];
   titleLabel: string;
   statusLabel: string;
   descriptionLabel: string;
   onTitleChange: (value: string) => void;
-  onStatusChange: (value: string) => void;
+  onColumnChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
 };
 
 const CreateTicketFormFields = ({
   title,
   description,
-  status,
-  statusOptions,
+  columnId,
+  columnOptions,
   titleLabel,
   statusLabel,
   descriptionLabel,
   onTitleChange,
-  onStatusChange,
+  onColumnChange,
   onDescriptionChange,
 }: CreateTicketFormFieldsProps) => {
   return (
@@ -43,9 +43,9 @@ const CreateTicketFormFields = ({
       <div className={styles["create-ticket-form__field"]}>
         <Select
           label={statusLabel}
-          value={status}
-          onChange={(event) => onStatusChange(event.target.value)}
-          options={statusOptions}
+          value={columnId}
+          onChange={(event) => onColumnChange(event.target.value)}
+          options={columnOptions}
         />
       </div>
       <div className={styles["create-ticket-form__field"]}>

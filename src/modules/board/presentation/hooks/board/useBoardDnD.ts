@@ -267,7 +267,7 @@ export const useBoardDnD = ({
       }
 
       const finalTargetColumn = columnById.get(finalSourceColumnId);
-      if (finalTargetColumn?.status == null) {
+      if (!finalTargetColumn) {
         setDraftBoardTicketIds(null);
         return;
       }
@@ -309,7 +309,7 @@ export const useBoardDnD = ({
         await moveAndReorderTicketMutation.mutateAsync({
           projectId,
           ticketId: activeId,
-          status: finalTargetColumn.status,
+          columnId: finalTargetColumn.id,
           position: movedTicketPosition,
           ticketPositions: updatedPositions,
         });

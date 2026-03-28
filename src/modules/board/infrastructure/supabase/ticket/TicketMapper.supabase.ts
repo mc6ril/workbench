@@ -18,7 +18,7 @@ export const mapTicketRowToDomain = (row: TicketRow): Ticket => {
     projectId: row.project_id,
     title: row.title,
     description: row.description,
-    status: row.status,
+    columnId: row.column_id,
     position: row.position,
     codeNumber: row.code_number,
     priority: row.priority,
