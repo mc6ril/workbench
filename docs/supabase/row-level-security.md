@@ -42,7 +42,6 @@ Invitation and profile collaboration functions include:
 
 - `accept_invitation(invitation_token text)`
 - `decline_invitation(invitation_token text)`
-- `get_pending_invitations()`
 - `update_user_profile(...)`
 
 ## Policy Intent by Domain

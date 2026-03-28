@@ -22,9 +22,6 @@ export const useRevokeInvitation = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.invitations.byProject(variables.projectId),
       });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.invitations.pending(),
-      });
     },
   });
 };

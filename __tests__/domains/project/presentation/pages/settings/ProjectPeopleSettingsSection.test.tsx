@@ -36,9 +36,12 @@ jest.mock("@/domains/project/presentation/providers/permissions", () => ({
   useProjectPermissions: jest.fn(),
 }));
 
-jest.mock("@/domains/project/presentation/hooks/member/useProjectMembers", () => ({
-  useProjectMembers: jest.fn(),
-}));
+jest.mock(
+  "@/domains/project/presentation/hooks/member/useProjectMembers",
+  () => ({
+    useProjectMembers: jest.fn(),
+  })
+);
 
 jest.mock(
   "@/domains/project/presentation/hooks/invitation/useProjectInvitations",
@@ -51,9 +54,12 @@ jest.mock("@/domains/billing/presentation/hooks/useFeatureAccess", () => ({
   useFeatureAccess: jest.fn(),
 }));
 
-jest.mock("@/domains/project/presentation/hooks/invitation/useInviteMember", () => ({
-  useInviteMember: jest.fn(),
-}));
+jest.mock(
+  "@/domains/project/presentation/hooks/invitation/useInviteMember",
+  () => ({
+    useInviteMember: jest.fn(),
+  })
+);
 
 jest.mock(
   "@/domains/project/presentation/hooks/invitation/useRevokeInvitation",
@@ -62,17 +68,24 @@ jest.mock(
   })
 );
 
-jest.mock("@/domains/project/presentation/hooks/member/useUpdateMemberRole", () => ({
-  useUpdateMemberRole: jest.fn(),
-}));
+jest.mock(
+  "@/domains/project/presentation/hooks/member/useUpdateMemberRole",
+  () => ({
+    useUpdateMemberRole: jest.fn(),
+  })
+);
 
-jest.mock("@/domains/project/presentation/hooks/member/useRemoveMember", () => ({
-  useRemoveMember: jest.fn(),
-}));
+jest.mock(
+  "@/domains/project/presentation/hooks/member/useRemoveMember",
+  () => ({
+    useRemoveMember: jest.fn(),
+  })
+);
 
 jest.mock("@/shared/stores/useToastStore", () => ({
-  useToastStore: (selector: (state: { addToast: typeof addToastMock }) => unknown) =>
-    selector({ addToast: addToastMock }),
+  useToastStore: (
+    selector: (state: { addToast: typeof addToastMock }) => unknown
+  ) => selector({ addToast: addToastMock }),
 }));
 
 const PROJECT_ID = "123e4567-e89b-12d3-a456-426614174000";
@@ -131,7 +144,6 @@ const INVITATIONS: ProjectInvitation[] = [
   {
     id: "123e4567-e89b-12d3-a456-426614174111",
     projectId: PROJECT_ID,
-    email: null,
     role: ProjectRole.MEMBER,
     status: InvitationStatus.PENDING,
     token: "invite-token",
@@ -305,7 +317,9 @@ describe("ProjectPeopleSettingsSection", () => {
     fireEvent.click(
       screen.getByRole("button", { name: "Retirer Marie du projet" })
     );
-    fireEvent.click(screen.getByRole("button", { name: "Confirmer le retrait" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Confirmer le retrait" })
+    );
 
     await waitFor(() => {
       expect(removeMemberMutateAsync).toHaveBeenCalledWith({
@@ -363,7 +377,9 @@ describe("ProjectPeopleSettingsSection", () => {
     expect(
       screen.queryByRole("option", { name: "Observateur" })
     ).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Créer un lien" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Créer un lien" })
+    ).toBeDisabled();
   });
 
   it("renders loading states for members and invitations", () => {
@@ -493,7 +509,9 @@ describe("ProjectPeopleSettingsSection", () => {
       })
     ).not.toBeInTheDocument();
 
-    expect(screen.getByLabelText("Changer le rôle de Marie")).toBeInTheDocument();
+    expect(
+      screen.getByLabelText("Changer le rôle de Marie")
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("button", {
         name: "Retirer Marie du projet",

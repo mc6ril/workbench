@@ -2,21 +2,14 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 
-import {
-  mapInvitationRowToDomain,
-  mapPendingInvitationRowToDomain,
-} from "./InvitationMapper.supabase";
+import { mapInvitationRowToDomain } from "./InvitationMapper.supabase";
 
 import type {
   CreateInvitationInput,
-  PendingInvitation,
   ProjectInvitation,
 } from "@/domains/project/core/domain/schema/invitation.schema";
 import type { InvitationRepository } from "@/domains/project/core/ports/invitationRepository";
-import type {
-  InvitationRow,
-  PendingInvitationRow,
-} from "@/domains/project/infrastructure/supabase/types";
+import type { InvitationRow } from "@/domains/project/infrastructure/supabase/types";
 
 /**
  * Create an InvitationRepository implementation using the provided Supabase client.
@@ -97,18 +90,6 @@ export const createInvitationRepository = (
     if (error) {
       return handleRepositoryError(error, "ProjectInvitation", invitationId);
     }
-  },
-
-  async listPendingForCurrentUser(): Promise<PendingInvitation[]> {
-    const { data, error } = await client.rpc("get_pending_invitations");
-
-    if (error) {
-      return handleRepositoryError(error, "ProjectInvitation");
-    }
-
-    return ((data ?? []) as PendingInvitationRow[]).map(
-      mapPendingInvitationRowToDomain
-    );
   },
 
   async countPending(projectId: string): Promise<number> {

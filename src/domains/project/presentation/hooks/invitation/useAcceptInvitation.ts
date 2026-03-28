@@ -7,7 +7,7 @@ import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentatio
 
 /**
  * Hook for accepting a project invitation.
- * Invalidates pending invitations and projects queries on success.
+ * Invalidates project queries on success.
  *
  * @returns Mutation object
  */
@@ -18,9 +18,6 @@ export const useAcceptInvitation = () => {
     mutationFn: (token: string) =>
       acceptInvitation(invitationRepository, token),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.invitations.pending(),
-      });
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.all(),
       });
