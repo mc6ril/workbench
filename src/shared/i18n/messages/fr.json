@@ -573,6 +573,11 @@
         "ticketAriaLabel": "Tâche",
         "statusLabel": "Statut",
         "assigneeLabel": "Assigné à",
+        "priority": {
+          "urgent": "Urgente",
+          "normal": "Normale",
+          "low": "Basse"
+        },
         "priorityLabel": "Priorité",
         "storyPointsLabel": "{count} point",
         "storyPointsLabel_other": "{count} points",
