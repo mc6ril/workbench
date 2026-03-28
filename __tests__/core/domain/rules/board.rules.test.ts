@@ -1,4 +1,5 @@
 import {
+  buildMissingDefaultColumnCreates,
   validateBoardColumnRelationship,
   validateBoardHasActiveDoneState,
   validateBoardWithColumns,
@@ -337,6 +338,68 @@ describe("Board Business Rules", () => {
       // Assert
       // Should use first column's boardId for validation
       expect(result.success).toBe(true);
+    });
+  });
+
+  describe("buildMissingDefaultColumnCreates", () => {
+    it("returns all three defaults when the board has no columns", () => {
+      const creates = buildMissingDefaultColumnCreates([]);
+
+      expect(creates).toHaveLength(3);
+      expect(creates.map((c) => c.state)).toEqual([
+        "todo",
+        "in_progress",
+        "done",
+      ]);
+      expect(creates.map((c) => c.position)).toEqual([0, 1, 2]);
+    });
+
+    it("returns no creates when each workflow state already exists", () => {
+      const columns: Column[] = [
+        createMockColumn({ id: "a", state: "todo", position: 0 }),
+        createMockColumn({ id: "b", state: "in_progress", position: 1 }),
+        createMockColumn({ id: "c", state: "done", position: 2 }),
+      ];
+
+      expect(buildMissingDefaultColumnCreates(columns)).toHaveLength(0);
+    });
+
+    it("creates only absent states and skips duplicate state coverage", () => {
+      const columns: Column[] = [
+        createMockColumn({ id: "a", state: "todo", position: 0 }),
+        createMockColumn({
+          id: "b",
+          state: "todo",
+          position: 3,
+          name: "Backlog",
+        }),
+      ];
+
+      const creates = buildMissingDefaultColumnCreates(columns);
+
+      expect(creates).toHaveLength(2);
+      expect(creates.map((c) => c.state)).toEqual(["in_progress", "done"]);
+      expect(creates[0].position).toBe(1);
+      expect(creates[1].position).toBe(2);
+    });
+
+    it("avoids position collisions with existing columns", () => {
+      const columns: Column[] = [
+        createMockColumn({ id: "a", state: "todo", position: 0 }),
+        createMockColumn({ id: "b", state: "in_progress", position: 1 }),
+        createMockColumn({
+          id: "c",
+          state: "in_progress",
+          position: 2,
+          name: "Review",
+        }),
+      ];
+
+      const creates = buildMissingDefaultColumnCreates(columns);
+
+      expect(creates).toHaveLength(1);
+      expect(creates[0].state).toBe("done");
+      expect(creates[0].position).toBe(3);
     });
   });
 });

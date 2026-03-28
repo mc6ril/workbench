@@ -1,11 +1,12 @@
-import { getDefaultBoardConfiguration } from "@/modules/board/core/domain/rules/board.rules";
+import { buildMissingDefaultColumnCreates } from "@/modules/board/core/domain/rules/board.rules";
 import type { BoardConfiguration } from "@/modules/board/core/domain/schema/board.schema";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 
 /**
  * Get board configuration for a project.
- * Returns the board and its columns, or creates a default configuration if no board exists.
- * Ensures a valid board configuration is always returned.
+ * Ensures the board row exists, then ensures each default workflow state (todo,
+ * in_progress, done) has at least one column—creating only missing defaults so
+ * reopening the project does not insert duplicate lanes when columns already exist.
  *
  * @param repository - Board repository
  * @param projectId - Project ID
@@ -16,28 +17,26 @@ export const getBoardConfiguration = async (
   repository: BoardRepository,
   projectId: string
 ): Promise<BoardConfiguration> => {
-  // Find board for project
   let board = await repository.findByProject(projectId);
 
-  // If board doesn't exist, create it
   if (!board) {
     board = await repository.create({ projectId });
   }
 
-  // Fetch columns for board
   let columns = await repository.listColumnsByBoard(board.id);
 
-  // If no columns exist, create default columns
-  if (columns.length === 0) {
-    const defaultConfig = getDefaultBoardConfiguration(projectId);
-    columns = await Promise.all(
-      defaultConfig.columns.map((columnInput) =>
+  const missingCreates = buildMissingDefaultColumnCreates(columns);
+
+  if (missingCreates.length > 0) {
+    await Promise.all(
+      missingCreates.map((columnInput) =>
         repository.createColumn({
           ...columnInput,
           boardId: board.id,
         })
       )
     );
+    columns = await repository.listColumnsByBoard(board.id);
   }
 
   return {

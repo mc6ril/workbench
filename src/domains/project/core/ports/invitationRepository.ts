@@ -17,7 +17,7 @@ import type {
  */
 export type InvitationRepository = {
   /**
-   * List all invitations for a project (all statuses).
+   * List invitations currently stored for a project.
    * @returns Invitations ordered by creation date (newest first)
    * @throws DatabaseError if database operation fails
    */
@@ -31,7 +31,7 @@ export type InvitationRepository = {
 
   /**
    * Accept a pending invitation using its token.
-   * Adds the user to project_members and marks invitation as accepted.
+   * Adds the user to project_members and removes the consumed invitation row.
    * @returns Project ID, name, and assigned role
    * @throws NotFoundError if token is invalid or invitation is not pending
    * @throws Error if invitation has expired or email doesn't match

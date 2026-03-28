@@ -8,6 +8,7 @@ import type { MemberRepository } from "@/domains/project/core/ports/memberReposi
  * Business rules:
  * - Only admins can remove members (enforced by RLS)
  * - The database prevents removing the last admin of a project
+ * - The database removes that user's ticket assignments for the same project
  * - If this was the last member, the orphaned project trigger will fire
  *
  * @param repository - Member repository
