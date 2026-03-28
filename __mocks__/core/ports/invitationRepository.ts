@@ -1,6 +1,5 @@
 import type {
   CreateInvitationInput,
-  PendingInvitation,
   ProjectInvitation,
 } from "@/domains/project/core/domain/schema/invitation.schema";
 
@@ -16,7 +15,6 @@ export type InvitationRepositoryMock = {
   >;
   decline: jest.Mock<Promise<void>, [string]>;
   revoke: jest.Mock<Promise<void>, [string]>;
-  listPendingForCurrentUser: jest.Mock<Promise<PendingInvitation[]>, []>;
   countPending: jest.Mock<Promise<number>, [string]>;
 };
 
@@ -37,7 +35,6 @@ export const createInvitationRepositoryMock = (
     >(),
     decline: jest.fn<Promise<void>, [string]>(),
     revoke: jest.fn<Promise<void>, [string]>(),
-    listPendingForCurrentUser: jest.fn<Promise<PendingInvitation[]>, []>(),
     countPending: jest.fn<Promise<number>, [string]>(),
   };
 

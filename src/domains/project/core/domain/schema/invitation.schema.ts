@@ -19,7 +19,6 @@ export enum InvitationStatus {
 export const ProjectInvitationSchema = z.object({
   id: z.string().uuid(),
   projectId: z.string().uuid(),
-  email: z.string().email().nullable().optional(),
   role: z.nativeEnum(ProjectRole),
   status: z.nativeEnum(InvitationStatus),
   token: z.string(),
@@ -42,18 +41,3 @@ export const CreateInvitationInputSchema = z.object({
 });
 
 export type CreateInvitationInput = z.infer<typeof CreateInvitationInputSchema>;
-
-/**
- * A pending invitation enriched with project and inviter info.
- * Returned by get_pending_invitations RPC for display to invited users.
- */
-export type PendingInvitation = {
-  id: string;
-  projectId: string;
-  projectName: string;
-  role: ProjectRole;
-  invitedByName: string;
-  expiresAt: Date;
-  createdAt: Date;
-  token: string;
-};

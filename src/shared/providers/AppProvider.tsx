@@ -11,6 +11,7 @@ import type { Locale } from "@/shared/i18n/types";
 import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
 import { markNavigationSettled } from "@/shared/navigationPerf";
 
+import AppErrorBoundary from "./AppErrorBoundary";
 import ReactQueryProvider from "./ReactQueryProvider";
 
 import { useLocaleSync } from "@/domains/profile/presentation/providers/useLocaleSync";
@@ -64,15 +65,17 @@ const AppProvider = ({ children, initialLocale }: AppProviderProps) => {
   return (
     <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
       <LocaleProvider key={initialLocale} initialLocale={initialLocale}>
-        <ReactQueryProvider>
-          <LocaleSyncProvider>
-            <ThemeSyncProvider>
-              <NavigationPerfTracker />
-              {children}
-              <Toast />
-            </ThemeSyncProvider>
-          </LocaleSyncProvider>
-        </ReactQueryProvider>
+        <AppErrorBoundary>
+          <ReactQueryProvider>
+            <LocaleSyncProvider>
+              <ThemeSyncProvider>
+                <NavigationPerfTracker />
+                {children}
+                <Toast />
+              </ThemeSyncProvider>
+            </LocaleSyncProvider>
+          </ReactQueryProvider>
+        </AppErrorBoundary>
       </LocaleProvider>
     </ThemeProvider>
   );

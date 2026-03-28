@@ -11,24 +11,34 @@ const logger = createLoggerFactory().forScope("API.ArchiveCompletedTickets");
 
 export const dynamic = "force-dynamic";
 
-const isAuthorizedCronRequest = (request: NextRequest): boolean => {
-  const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret) {
-    return true;
-  }
+const getCronSecret = (): string | null => {
+  return process.env.CRON_SECRET?.trim() || null;
+};
 
+const isAuthorizedCronRequest = (
+  request: NextRequest,
+  cronSecret: string
+): boolean => {
   return request.headers.get("authorization") === `Bearer ${cronSecret}`;
 };
 
-/**
- * GET /api/jobs/archive-completed-tickets
- *
- * Daily cron endpoint. The underlying batch use case is idempotent and only
- * archives tickets completed before the current local week boundary in
- * Europe/Paris while they are still in a done column.
- */
-export const GET = async (request: NextRequest): Promise<NextResponse> => {
-  if (!isAuthorizedCronRequest(request)) {
+const executeArchiveCompletedTickets = async (
+  request: NextRequest
+): Promise<NextResponse> => {
+  const cronSecret = getCronSecret();
+
+  if (!cronSecret) {
+    logger.error("Archive completed tickets job is misconfigured", {
+      reason: "CRON_SECRET is missing",
+    });
+
+    return NextResponse.json(
+      { error: "Cron secret is not configured" },
+      { status: 503 }
+    );
+  }
+
+  if (!isAuthorizedCronRequest(request, cronSecret)) {
     return NextResponse.json(
       { error: "Unauthorized cron request" },
       { status: 401 }
@@ -57,3 +67,17 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
     );
   }
 };
+
+/**
+ * GET /api/jobs/archive-completed-tickets
+ *
+ * Daily cron endpoint. The underlying batch use case is idempotent and only
+ * archives tickets completed before the current local week boundary in
+ * Europe/Paris while they are still in a done column.
+ *
+ * Vercel Cron invokes this route with GET in production. We also support POST
+ * with the same bearer secret to allow secure manual triggering when testing.
+ */
+export const GET = executeArchiveCompletedTickets;
+
+export const POST = executeArchiveCompletedTickets;

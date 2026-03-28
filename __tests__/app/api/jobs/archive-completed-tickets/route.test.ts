@@ -24,9 +24,21 @@ jest.mock("@/modules/board/core/usecases/ticket", () => ({
   archiveCompletedTicketsBatch: jest.fn(),
 }));
 
+jest.mock("@/shared/observability", () => ({
+  createLoggerFactory: () => ({
+    forScope: () => ({
+      error: jest.fn(),
+      warn: jest.fn(),
+    }),
+  }),
+}));
+
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
 
-import { GET } from "@/app/api/jobs/archive-completed-tickets/route";
+import {
+  GET,
+  POST,
+} from "@/app/api/jobs/archive-completed-tickets/route";
 import { WEEKLY_TICKET_ARCHIVE_TIME_ZONE } from "@/modules/board/core/domain/rules/ticketArchival.rules";
 import { archiveCompletedTicketsBatch } from "@/modules/board/core/usecases/ticket";
 import { createTicketRepository } from "@/modules/board/infrastructure/supabase/ticket/TicketRepository.supabase";
@@ -59,6 +71,15 @@ describe("GET /api/jobs/archive-completed-tickets", () => {
     }
 
     process.env.CRON_SECRET = originalCronSecret;
+  });
+
+  it("rejects execution when CRON_SECRET is missing", async () => {
+    const response = (await GET(createRequest())) as MockNextResponse;
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({
+      error: "Cron secret is not configured",
+    });
   });
 
   it("rejects unauthorized cron requests when CRON_SECRET is configured", async () => {
@@ -94,5 +115,28 @@ describe("GET /api/jobs/archive-completed-tickets", () => {
       timeZone: WEEKLY_TICKET_ARCHIVE_TIME_ZONE,
     });
     expect(archiveCompletedTicketsBatch).toHaveBeenCalledTimes(1);
+  });
+
+  it("allows secure manual POST execution with the cron bearer secret", async () => {
+    process.env.CRON_SECRET = "super-secret";
+
+    jest
+      .mocked(createSupabaseAdminClient)
+      .mockReturnValue({} as ReturnType<typeof createSupabaseAdminClient>);
+    jest
+      .mocked(createTicketRepository)
+      .mockReturnValue({} as ReturnType<typeof createTicketRepository>);
+    jest.mocked(archiveCompletedTicketsBatch).mockResolvedValue(2);
+
+    const response = (await POST(
+      createRequest("Bearer super-secret")
+    )) as MockNextResponse;
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      success: true,
+      archivedCount: 2,
+      timeZone: WEEKLY_TICKET_ARCHIVE_TIME_ZONE,
+    });
   });
 });

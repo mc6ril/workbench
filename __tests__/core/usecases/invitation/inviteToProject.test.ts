@@ -31,7 +31,6 @@ describe("inviteToProject", () => {
   const mockInvitation: ProjectInvitation = {
     id: "inv-001",
     projectId,
-    email: null,
     role: ProjectRole.MEMBER,
     status: InvitationStatus.PENDING,
     token: "abc123",

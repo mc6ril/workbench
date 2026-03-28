@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { API_MESSAGES_AUTH } from "@/shared/constants";
+import { API_MESSAGES_AUTH, API_MESSAGES_COMMON } from "@/shared/constants";
+import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
 import { createLoggerFactory } from "@/shared/observability";
+import { hasErrorCode } from "@/shared/utils/guards";
 
 import { deleteUser } from "@/domains/auth/core/usecases/user/deleteUser";
 import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
+import { createSessionRepository } from "@/domains/session/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("API.DeleteUser");
 
@@ -35,6 +39,7 @@ export const DELETE = async (request: NextRequest): Promise<NextResponse> => {
   const rateLimitResponse = withRateLimit(request, {
     maxRequests: 3,
     windowMs: 60_000,
+    keyPrefix: "api:auth:delete-user",
   });
   if (rateLimitResponse) {
     return rateLimitResponse;
@@ -42,6 +47,17 @@ export const DELETE = async (request: NextRequest): Promise<NextResponse> => {
 
   try {
     const supabaseClient = await createSupabaseServerClient();
+    const sessionRepository = createSessionRepository(supabaseClient);
+
+    try {
+      await getCurrentSession(sessionRepository);
+    } catch {
+      return NextResponse.json(
+        { error: API_MESSAGES_COMMON.NOT_AUTHENTICATED },
+        { status: 401 }
+      );
+    }
+
     const supabaseAdmin = createSupabaseAdminClient();
     const authRepository = createAuthRepository(supabaseClient, supabaseAdmin);
 
@@ -52,6 +68,13 @@ export const DELETE = async (request: NextRequest): Promise<NextResponse> => {
       { status: 200 }
     );
   } catch (error) {
+    if (hasErrorCode(error, [AUTH_ERROR_CODE.AUTHENTICATION_ERROR])) {
+      return NextResponse.json(
+        { error: API_MESSAGES_COMMON.NOT_AUTHENTICATED },
+        { status: 401 }
+      );
+    }
+
     logger.error("Delete user error", { error });
 
     return NextResponse.json(

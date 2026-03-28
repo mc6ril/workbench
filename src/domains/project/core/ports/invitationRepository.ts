@@ -1,6 +1,5 @@
 import type {
   CreateInvitationInput,
-  PendingInvitation,
   ProjectInvitation,
 } from "@/domains/project/core/domain/schema/invitation.schema";
 
@@ -34,7 +33,7 @@ export type InvitationRepository = {
    * Adds the user to project_members and removes the consumed invitation row.
    * @returns Project ID, name, and assigned role
    * @throws NotFoundError if token is invalid or invitation is not pending
-   * @throws Error if invitation has expired or email doesn't match
+   * @throws Error if invitation has expired
    */
   accept(
     token: string
@@ -51,13 +50,6 @@ export type InvitationRepository = {
    * @throws DatabaseError if database operation fails or permission denied
    */
   revoke(invitationId: string): Promise<void>;
-
-  /**
-   * List pending invitations for the current user.
-   * Uses the user's email to find matching pending invitations.
-   * @returns Array of pending invitations with project info
-   */
-  listPendingForCurrentUser(): Promise<PendingInvitation[]>;
 
   /**
    * Count pending invitations for a project.
