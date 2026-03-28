@@ -8,7 +8,6 @@ const queryKeysObject = {
   invitations: {
     byProject: (projectId: string) =>
       ["invitations", "project", projectId] as const,
-    pending: () => ["invitations", "pending"] as const,
   },
   members: {
     byProject: (projectId: string) =>

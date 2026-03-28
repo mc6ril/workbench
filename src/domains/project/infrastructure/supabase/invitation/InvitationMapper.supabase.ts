@@ -1,15 +1,9 @@
 import { toDate } from "@/shared/utils/guards";
 
-import type {
-  PendingInvitation,
-  ProjectInvitation,
-} from "@/domains/project/core/domain/schema/invitation.schema";
+import type { ProjectInvitation } from "@/domains/project/core/domain/schema/invitation.schema";
 import { InvitationStatus } from "@/domains/project/core/domain/schema/invitation.schema";
 import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
-import type {
-  InvitationRow,
-  PendingInvitationRow,
-} from "@/domains/project/infrastructure/supabase/types";
+import type { InvitationRow } from "@/domains/project/infrastructure/supabase/types";
 
 /**
  * Maps a Supabase row to a domain ProjectInvitation.
@@ -19,7 +13,6 @@ export const mapInvitationRowToDomain = (
 ): ProjectInvitation => ({
   id: row.id,
   projectId: row.project_id,
-  email: row.email,
   role: row.role as ProjectRole,
   status: row.status as InvitationStatus,
   token: row.token,
@@ -27,20 +20,4 @@ export const mapInvitationRowToDomain = (
   expiresAt: toDate(row.expires_at),
   createdAt: toDate(row.created_at),
   updatedAt: toDate(row.updated_at),
-});
-
-/**
- * Maps a pending invitation RPC row to the domain type.
- */
-export const mapPendingInvitationRowToDomain = (
-  row: PendingInvitationRow
-): PendingInvitation => ({
-  id: row.id,
-  projectId: row.project_id,
-  projectName: row.project_name,
-  role: row.role as ProjectRole,
-  invitedByName: row.invited_by_name,
-  expiresAt: toDate(row.expires_at),
-  createdAt: toDate(row.created_at),
-  token: row.token,
 });

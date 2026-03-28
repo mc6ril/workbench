@@ -5,7 +5,7 @@ This document describes the current migration strategy for Workbench and reflect
 ## Migration Model
 
 - SQL migrations are stored in `supabase/migrations/`
-- Files are applied in ascending order (`000001` -> `000047`), while preserving intentional gaps from earlier consolidation work
+- Files are applied in ascending order (`000001` -> `000049`), while preserving intentional gaps from earlier consolidation work
 - Migrations should remain additive and idempotent whenever possible
 - Destructive changes should be handled in dedicated, explicit migrations
 
@@ -166,6 +166,15 @@ This document describes the current migration strategy for Workbench and reflect
 
 - `000047_remove_legacy_epics_labels_subtasks.sql`
   Removes legacy epics, labels, `ticket_labels`, and subtask-specific ticket fields from the effective schema.
+
+- `000048_delete_accepted_project_invitations.sql`
+  Deletes consumed invitation rows and keeps link acceptance single-use.
+
+- `000049_remove_invitation_email_and_pending_lookup.sql`
+  Removes the legacy invitation email column and the unused email-based pending invitation lookup.
+
+- `000051_restrict_project_reclaim_and_remove_self_join.sql`
+  Removes the legacy self-join viewer policy and limits reclaim RPC access to orphaned projects owned by the same creator email.
 
 ## Out-of-Band Changes
 

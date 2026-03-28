@@ -34,7 +34,7 @@ Core helper functions include:
 Project lifecycle functions include:
 
 - `create_project(project_name text)`
-- `reclaim_or_join_project(project_uuid uuid)`
+- `reclaim_or_join_project(project_uuid uuid)` for orphaned-project recovery
 - `get_reclaimable_projects()`
 - `cleanup_expired_orphaned_projects()`
 
@@ -42,7 +42,6 @@ Invitation and profile collaboration functions include:
 
 - `accept_invitation(invitation_token text)`
 - `decline_invitation(invitation_token text)`
-- `get_pending_invitations()`
 - `update_user_profile(...)`
 
 ## Policy Intent by Domain

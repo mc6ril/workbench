@@ -37,6 +37,8 @@ type RateLimitConfig = {
   maxRequests: number;
   /** Window duration in milliseconds */
   windowMs: number;
+  /** Optional route-specific key prefix to isolate buckets */
+  keyPrefix?: string;
 };
 
 const DEFAULT_CONFIG: RateLimitConfig = {
@@ -109,7 +111,17 @@ export const withRateLimit = (
   config: RateLimitConfig = DEFAULT_CONFIG
 ): NextResponse | null => {
   const ip = getClientIp(request);
-  const result = checkRateLimit(ip, config);
+  let keyPrefix = config.keyPrefix ?? "global";
+
+  if (!config.keyPrefix) {
+    try {
+      keyPrefix = new URL(request.url).pathname;
+    } catch {
+      keyPrefix = "global";
+    }
+  }
+
+  const result = checkRateLimit(`${keyPrefix}:${ip}`, config);
 
   if (!result.success) {
     return NextResponse.json(

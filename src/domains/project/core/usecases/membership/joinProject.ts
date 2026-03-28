@@ -6,14 +6,14 @@ import {
 import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
 
 /**
- * Join or reclaim a project for the current authenticated user.
- * Validates the target project ID and delegates membership creation to the
+ * Reclaim an orphaned project for the current authenticated user.
+ * Validates the target project ID and delegates reclaim authorization to the
  * project member repository.
  *
  * @param repository - Member repository
- * @param projectId - Project ID to join or reclaim
+ * @param projectId - Project ID to reclaim
  * @param role - Requested role (default: viewer)
- * @returns The project that was joined or reclaimed
+ * @returns The reclaimed project
  */
 export const joinProject = async (
   repository: MemberRepository,

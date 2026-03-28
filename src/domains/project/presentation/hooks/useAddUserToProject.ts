@@ -7,7 +7,7 @@ import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
 /**
- * Hook for joining or reclaiming a project as the current user.
+ * Hook for reclaiming an orphaned project as the current user.
  *
  * @returns Mutation object with mutate, mutateAsync, data, isPending, error, etc.
  */

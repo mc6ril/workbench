@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
-import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
@@ -32,6 +31,7 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
   const rateLimitResponse = withRateLimit(request, {
     maxRequests: 5,
     windowMs: 60_000,
+    keyPrefix: "api:stripe:portal",
   });
   if (rateLimitResponse) {
     return rateLimitResponse;
@@ -61,10 +61,9 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       );
     }
 
-    const adminClient = createSupabaseAdminClient();
     const subscriptionRepo = createSubscriptionRepository(
       supabaseClient,
-      adminClient
+      supabaseClient
     );
 
     const origin = request.nextUrl.origin;
