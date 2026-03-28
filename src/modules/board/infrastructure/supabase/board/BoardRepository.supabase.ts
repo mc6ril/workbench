@@ -181,7 +181,7 @@ export const createBoardRepository = (
         .insert({
           board_id: input.boardId,
           name: input.name,
-          status: input.status,
+          key: input.key,
           state: input.state,
           position: input.position ?? 0,
           visible: input.visible ?? true,
@@ -213,8 +213,8 @@ export const createBoardRepository = (
       if (input.name !== undefined) {
         updateData.name = input.name;
       }
-      if (input.status !== undefined) {
-        updateData.status = input.status;
+      if (input.key !== undefined) {
+        updateData.key = input.key;
       }
       if (input.state !== undefined) {
         updateData.state = input.state;
@@ -295,6 +295,41 @@ export const createBoardRepository = (
       return updatedColumns;
     } catch (error) {
       return handleRepositoryError(error, "Column");
+    }
+  },
+
+  async countTicketsByColumnIds(
+    columnIds: string[]
+  ): Promise<Record<string, number>> {
+    if (columnIds.length === 0) {
+      return {};
+    }
+
+    try {
+      const { data, error } = await client
+        .from("tickets")
+        .select("column_id")
+        .in("column_id", columnIds);
+
+      if (error) {
+        return handleRepositoryError(error, "Ticket");
+      }
+
+      const counts: Record<string, number> = {};
+      for (const columnId of columnIds) {
+        counts[columnId] = 0;
+      }
+
+      for (const row of (data ?? []) as Array<{ column_id: string | null }>) {
+        if (!row.column_id) {
+          continue;
+        }
+        counts[row.column_id] = (counts[row.column_id] ?? 0) + 1;
+      }
+
+      return counts;
+    } catch (error) {
+      return handleRepositoryError(error, "Ticket");
     }
   },
 });

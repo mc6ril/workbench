@@ -1,4 +1,4 @@
-import { buildMissingDefaultColumnCreates } from "@/modules/board/core/domain/rules/board.rules";
+import { buildMissingDefaultColumnCreates } from "@/modules/board/core/domain/board.defaults";
 import type { BoardConfiguration } from "@/modules/board/core/domain/schema/board.schema";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 

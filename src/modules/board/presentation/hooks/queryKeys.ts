@@ -3,8 +3,7 @@ import type {
   TicketSort,
 } from "@/modules/board/core/domain/schema/ticket.schema";
 import {
-  createTicketListFilterKey,
-  createTicketListSortKey,
+  createTicketListQueryParamsKey,
 } from "@/modules/board/presentation/hooks/queryKeys.mapper";
 
 /**
@@ -45,10 +44,7 @@ const queryKeysObject = {
         projectId,
         "tickets",
         "list",
-        createTicketListFilterKey(filters),
-        createTicketListSortKey(sort),
-        search?.trim() || null,
-        limit ?? null,
+        createTicketListQueryParamsKey(filters, sort, search, limit),
       ] as const;
     },
     boardConfiguration: (projectId: string) =>

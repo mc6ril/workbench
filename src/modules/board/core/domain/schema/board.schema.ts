@@ -45,7 +45,7 @@ export const ColumnSchema = z.object({
   id: z.string().uuid(),
   boardId: z.string().uuid(),
   name: z.string().min(1, "Column name must not be empty"),
-  status: z.string().min(1, "Column status must not be empty"),
+  key: z.string().min(1, "Column key must not be empty"),
   state: ColumnWorkflowStateSchema,
   position: z.number().int().nonnegative("Position must be non-negative"),
   visible: z.boolean().default(true),
@@ -64,7 +64,7 @@ export type Column = z.infer<typeof ColumnSchema>;
 export const CreateColumnInputSchema = z.object({
   boardId: z.string().uuid(),
   name: z.string().min(1, "Column name must not be empty"),
-  status: z.string().min(1, "Column status must not be empty"),
+  key: z.string().min(1, "Column key must not be empty"),
   state: ColumnWorkflowStateSchema,
   position: z.number().int().nonnegative().default(0),
   visible: z.boolean().default(true).optional(),
@@ -77,7 +77,7 @@ export type CreateColumnInput = z.infer<typeof CreateColumnInputSchema>;
  */
 export const UpdateColumnInputSchema = z.object({
   name: z.string().min(1, "Column name must not be empty").optional(),
-  status: z.string().min(1, "Column status must not be empty").optional(),
+  key: z.string().min(1, "Column key must not be empty").optional(),
   state: ColumnWorkflowStateSchema.optional(),
   position: z.number().int().nonnegative().optional(),
   visible: z.boolean().optional(),
@@ -97,7 +97,7 @@ export const ConfigureColumnsInputSchema = z.object({
       z.object({
         id: z.string().uuid().optional(), // Optional: if provided, update existing; if not, create new
         name: z.string().min(1, "Column name must not be empty"),
-        status: z.string().min(1, "Column status must not be empty"),
+        key: z.string().min(1, "Column key must not be empty").optional(),
         state: ColumnWorkflowStateSchema,
         position: z.number().int().nonnegative(),
         visible: z.boolean().default(true),

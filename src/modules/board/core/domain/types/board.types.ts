@@ -4,7 +4,7 @@ import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.s
 export type BoardColumnConfig = {
   id: string;
   title: string;
-  status?: string;
+  key?: string;
   state: ColumnWorkflowState;
   isVisible?: boolean;
 };
@@ -13,7 +13,7 @@ export type BoardTicketViewModel = {
   id: string;
   title: string;
   ticketCode?: string | null;
-  status?: string;
+  columnId?: string;
   assigneeName?: string | null;
   assigneeAvatarUrl?: string | null;
   priority?: TicketPriority | null;

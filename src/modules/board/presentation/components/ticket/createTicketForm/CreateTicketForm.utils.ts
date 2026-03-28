@@ -3,15 +3,15 @@ import type { CreateTicketFormValues } from "@/modules/board/presentation/compon
 export const buildCreateTicketFormValues = ({
   title,
   description,
-  status,
+  columnId,
 }: {
   title: string;
   description: string;
-  status: string;
+  columnId: string;
 }): CreateTicketFormValues => {
   return {
     title,
     description: description || undefined,
-    status,
+    columnId,
   };
 };

@@ -183,7 +183,12 @@ const asMockedReturn = <T,>(value: unknown): T => value as T;
 describe("BoardPage onboarding", () => {
   const mockSetStatusAsync = jest.fn();
   const mockCreateTicketMutateAsync = jest.fn();
-  let mockTicketsData: Array<{ id: string; status: string; title: string; codeNumber: number }> =
+  let mockTicketsData: Array<{
+    id: string;
+    columnId: string;
+    title: string;
+    codeNumber: number;
+  }> =
     [];
 
   beforeEach(() => {
@@ -219,7 +224,16 @@ describe("BoardPage onboarding", () => {
     jest.mocked(useBoardConfiguration).mockReturnValue(
       asMockedReturn<ReturnType<typeof useBoardConfiguration>>({
         data: {
-          columns: [{ id: "todo", name: "Todo", status: "todo" }],
+          columns: [
+            {
+              id: "column-todo",
+              name: "Todo",
+              key: "todo",
+              state: "todo",
+              position: 0,
+              visible: true,
+            },
+          ],
         },
         isLoading: false,
         error: null,
@@ -240,7 +254,7 @@ describe("BoardPage onboarding", () => {
         activeTicketId: null,
         activeTicket: null,
         boardTicketIds: {},
-        boardColumnTickets: new Map([["todo", []]]),
+        boardColumnTickets: new Map([["column-todo", []]]),
         onDragStart: jest.fn(),
         onDragOver: jest.fn(),
         onDragEnd: jest.fn(),
@@ -329,7 +343,7 @@ describe("BoardPage onboarding", () => {
     mockTicketsData = [
       {
         id: "ticket-1",
-        status: "todo",
+        columnId: "column-todo",
         title: "First task",
         codeNumber: 1,
       },
@@ -408,7 +422,7 @@ describe("BoardPage onboarding", () => {
     mockTicketsData = [
       {
         id: "ticket-1",
-        status: "todo",
+        columnId: "column-todo",
         title: "First task",
         codeNumber: 1,
       },

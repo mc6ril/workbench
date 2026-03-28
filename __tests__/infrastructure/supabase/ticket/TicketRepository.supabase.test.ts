@@ -14,7 +14,7 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     project_id: projectId,
     title: "Active ticket",
     description: null,
-    status: "todo",
+    column_id: "column-todo",
     position: 0,
     code_number: 1,
     priority: null,
@@ -56,17 +56,17 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     expect(ticketsQuery.eq).toHaveBeenCalledWith("priority", "urgent");
   });
 
-  it("filters archived tickets out of status queries by default", async () => {
+  it("filters archived tickets out of column queries by default", async () => {
     const ticketsQuery = createQueryBuilderMock<TicketRow[]>([baseRow]);
     const client = {
       from: jest.fn(() => ticketsQuery),
     } as unknown as SupabaseClient;
 
     const repository = createTicketRepository(client);
-    await repository.listByStatus(projectId, "todo");
+    await repository.listByColumnId(projectId, "column-todo");
 
     expect(ticketsQuery.eq).toHaveBeenCalledWith("project_id", projectId);
-    expect(ticketsQuery.eq).toHaveBeenCalledWith("status", "todo");
+    expect(ticketsQuery.eq).toHaveBeenCalledWith("column_id", "column-todo");
     expect(ticketsQuery.is).toHaveBeenCalledWith("archived_at", null);
   });
 

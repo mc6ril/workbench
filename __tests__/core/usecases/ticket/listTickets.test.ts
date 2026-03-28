@@ -12,7 +12,7 @@ describe("listTickets", () => {
     projectId,
     title: "Ticket 1",
     description: "First ticket description",
-    status: "todo",
+    columnId: "323e4567-e89b-12d3-a456-426614174000",
     position: 0,
     codeNumber: 1,
     priority: null,
@@ -31,7 +31,7 @@ describe("listTickets", () => {
     projectId,
     title: "Ticket 2",
     description: "Second ticket description",
-    status: "in-progress",
+    columnId: "423e4567-e89b-12d3-a456-426614174001",
     position: 1,
     codeNumber: 2,
     priority: null,
@@ -168,7 +168,7 @@ describe("listTickets", () => {
   it("should pass filters to repository when provided", async () => {
     // Arrange
     const tickets: Ticket[] = [mockTicket1];
-    const filters = { status: "todo" };
+    const filters = { columnId: mockTicket1.columnId };
     const repository = createTicketRepositoryMock({
       listByProject: jest.fn<
         Promise<Ticket[]>,

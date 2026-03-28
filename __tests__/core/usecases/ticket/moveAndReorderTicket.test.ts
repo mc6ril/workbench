@@ -16,6 +16,9 @@ describe("moveAndReorderTicket", () => {
   const ticketId = "123e4567-e89b-12d3-a456-426614174000";
   const projectId = "223e4567-e89b-12d3-a456-426614174000";
   const boardId = "323e4567-e89b-12d3-a456-426614174000";
+  const todoColumnId = "423e4567-e89b-12d3-a456-426614174000";
+  const doingColumnId = "523e4567-e89b-12d3-a456-426614174000";
+  const doneColumnId = "623e4567-e89b-12d3-a456-426614174000";
   const board: Board = {
     id: boardId,
     projectId,
@@ -24,10 +27,10 @@ describe("moveAndReorderTicket", () => {
   };
   const columns: Column[] = [
     {
-      id: "todo-column",
+      id: todoColumnId,
       boardId,
       name: "Todo",
-      status: "todo",
+      key: "todo",
       state: "todo",
       position: 0,
       visible: true,
@@ -35,12 +38,23 @@ describe("moveAndReorderTicket", () => {
       updatedAt: new Date("2024-01-01T00:00:00Z"),
     },
     {
-      id: "done-column",
+      id: doingColumnId,
+      boardId,
+      name: "In Progress",
+      key: "in-progress",
+      state: "in_progress",
+      position: 1,
+      visible: true,
+      createdAt: new Date("2024-01-01T00:00:00Z"),
+      updatedAt: new Date("2024-01-01T00:00:00Z"),
+    },
+    {
+      id: doneColumnId,
       boardId,
       name: "Done",
-      status: "completed",
+      key: "completed",
       state: "done",
-      position: 1,
+      position: 2,
       visible: true,
       createdAt: new Date("2024-01-01T00:00:00Z"),
       updatedAt: new Date("2024-01-01T00:00:00Z"),
@@ -52,7 +66,7 @@ describe("moveAndReorderTicket", () => {
     projectId,
     title: "Test Ticket",
     description: "Test description",
-    status: "todo",
+    columnId: todoColumnId,
     position: 0,
     codeNumber: 1,
     priority: null,
@@ -76,7 +90,7 @@ describe("moveAndReorderTicket", () => {
 
   type RepositoryMoveAndReorderInput = {
     ticketId: string;
-    status: string;
+    columnId: string;
     position: number;
     completedAt: Date | null;
     ticketPositions: Array<{ id: string; position: number }>;
@@ -86,14 +100,14 @@ describe("moveAndReorderTicket", () => {
     const now = new Date("2026-03-25T11:00:00.000Z");
     const input: MoveAndReorderTicketInput = {
       ticketId,
-      status: "completed",
+      columnId: doneColumnId,
       position: 1,
       ticketPositions: [{ id: ticketId, position: 1 }],
     };
     const updatedTickets: Ticket[] = [
       {
         ...mockTicket,
-        status: "completed",
+        columnId: doneColumnId,
         position: 1,
         completedAt: now,
       },
@@ -125,7 +139,7 @@ describe("moveAndReorderTicket", () => {
   it("should allow empty ticketPositions", async () => {
     const input: MoveAndReorderTicketInput = {
       ticketId,
-      status: "in-progress",
+      columnId: doingColumnId,
       position: 1,
       ticketPositions: [],
     };
@@ -142,7 +156,7 @@ describe("moveAndReorderTicket", () => {
         async () => [
           {
             ...mockTicket,
-            status: "in-progress",
+            columnId: doingColumnId,
             position: 1,
           },
         ]
@@ -154,7 +168,7 @@ describe("moveAndReorderTicket", () => {
     ).resolves.toEqual([
       {
         ...mockTicket,
-        status: "in-progress",
+        columnId: doingColumnId,
         position: 1,
       },
     ]);
@@ -168,7 +182,7 @@ describe("moveAndReorderTicket", () => {
     await expect(
       moveAndReorderTicket(repository, boardRepository, {
         ticketId: "invalid-id",
-        status: "in-progress",
+        columnId: doingColumnId,
         position: 1,
         ticketPositions: [],
       })
@@ -194,7 +208,7 @@ describe("moveAndReorderTicket", () => {
     await expect(
       moveAndReorderTicket(repository, boardRepository, {
         ticketId,
-        status: "in-progress",
+        columnId: doingColumnId,
         position: 1,
         ticketPositions: [{ id: ticketId, position: 1 }],
       })
@@ -215,7 +229,7 @@ describe("moveAndReorderTicket", () => {
     await expect(
       moveAndReorderTicket(repository, boardRepository, {
         ticketId,
-        status: "completed",
+        columnId: doneColumnId,
         position: 1,
         ticketPositions: [],
       })

@@ -9,6 +9,8 @@ describe("updateTicket completedAt workflow logic", () => {
   const ticketId = "123e4567-e89b-12d3-a456-426614174000";
   const projectId = "223e4567-e89b-12d3-a456-426614174000";
   const boardId = "323e4567-e89b-12d3-a456-426614174000";
+  const todoColumnId = "423e4567-e89b-12d3-a456-426614174000";
+  const doneColumnId = "523e4567-e89b-12d3-a456-426614174000";
   const board: Board = {
     id: boardId,
     projectId,
@@ -17,10 +19,10 @@ describe("updateTicket completedAt workflow logic", () => {
   };
   const columns: Column[] = [
     {
-      id: "todo-column",
+      id: todoColumnId,
       boardId,
       name: "Todo",
-      status: "todo",
+      key: "todo",
       state: "todo",
       position: 0,
       visible: true,
@@ -28,10 +30,10 @@ describe("updateTicket completedAt workflow logic", () => {
       updatedAt: new Date("2024-01-01T00:00:00Z"),
     },
     {
-      id: "done-column",
+      id: doneColumnId,
       boardId,
       name: "Done",
-      status: "completed",
+      key: "completed",
       state: "done",
       position: 1,
       visible: true,
@@ -45,7 +47,7 @@ describe("updateTicket completedAt workflow logic", () => {
     projectId,
     title: "Test Ticket",
     description: null,
-    status: "todo",
+    columnId: todoColumnId,
     position: 0,
     codeNumber: 1,
     priority: null,
@@ -78,18 +80,21 @@ describe("updateTicket completedAt workflow logic", () => {
       update: jest.fn<Promise<Ticket>, [string, UpdateTicketInput]>(
         async (_id, input) => ({
           ...baseTicket,
-          status: input.status ?? baseTicket.status,
-          completedAt: input.completedAt ?? baseTicket.completedAt,
+          columnId: input.columnId ?? baseTicket.columnId,
+          completedAt:
+            input.completedAt !== undefined
+              ? input.completedAt
+              : baseTicket.completedAt,
         })
       ),
     });
 
     await updateTicket(repository, boardRepository, ticketId, {
-      status: "completed",
+      columnId: doneColumnId,
     });
 
     expect(repository.update).toHaveBeenCalledWith(ticketId, {
-      status: "completed",
+      columnId: doneColumnId,
       completedAt: now,
     });
   });
@@ -97,7 +102,7 @@ describe("updateTicket completedAt workflow logic", () => {
   it("clears completedAt when a ticket leaves a done column", async () => {
     const completedTicket: Ticket = {
       ...baseTicket,
-      status: "completed",
+      columnId: doneColumnId,
       completedAt: new Date("2026-03-24T08:00:00.000Z"),
     };
     const boardRepository = createBoardRepositoryMock({
@@ -111,18 +116,21 @@ describe("updateTicket completedAt workflow logic", () => {
       update: jest.fn<Promise<Ticket>, [string, UpdateTicketInput]>(
         async (_id, input) => ({
           ...completedTicket,
-          status: input.status ?? completedTicket.status,
-          completedAt: input.completedAt ?? completedTicket.completedAt,
+          columnId: input.columnId ?? completedTicket.columnId,
+          completedAt:
+            input.completedAt !== undefined
+              ? input.completedAt
+              : completedTicket.completedAt,
         })
       ),
     });
 
     await updateTicket(repository, boardRepository, ticketId, {
-      status: "todo",
+      columnId: todoColumnId,
     });
 
     expect(repository.update).toHaveBeenCalledWith(ticketId, {
-      status: "todo",
+      columnId: todoColumnId,
       completedAt: null,
     });
   });
@@ -130,7 +138,7 @@ describe("updateTicket completedAt workflow logic", () => {
   it("preserves completedAt when status is unchanged", async () => {
     const completedTicket: Ticket = {
       ...baseTicket,
-      status: "completed",
+      columnId: doneColumnId,
       completedAt: new Date("2026-03-24T08:00:00.000Z"),
     };
     const boardRepository = createBoardRepositoryMock();

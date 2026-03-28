@@ -6,14 +6,14 @@ import {
 } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
-import { resolveCompletedAtForProjectStatusChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
+import { resolveCompletedAtForProjectColumnChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
 
 export const moveAndReorderTicket = async (
   repository: TicketRepository,
   boardRepository: BoardRepository,
   input: {
     ticketId: string;
-    status: string;
+    columnId: string;
     position: number;
     ticketPositions: Array<{ id: string; position: number }>;
   }
@@ -25,13 +25,13 @@ export const moveAndReorderTicket = async (
     throw createNotFoundError("Ticket", validatedInput.ticketId);
   }
 
-  const completedAt = await resolveCompletedAtForProjectStatusChange(
+  const completedAt = await resolveCompletedAtForProjectColumnChange(
     boardRepository,
     ticket.projectId,
     {
-      previousStatus: ticket.status,
+      previousColumnId: ticket.columnId,
       previousCompletedAt: ticket.completedAt,
-      nextStatus: validatedInput.status,
+      nextColumnId: validatedInput.columnId,
     }
   );
 

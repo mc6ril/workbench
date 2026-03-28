@@ -12,10 +12,10 @@ import type { TicketDetailStatusOption } from "@/modules/board/presentation/hook
 
 type Props = {
   canEditTicket: boolean;
-  effectiveStatus: string;
+  effectiveColumnId: string;
   effectivePriority: TicketPriority | "";
   statusOptions: TicketDetailStatusOption[];
-  onStatusChange: (value: string) => void;
+  onColumnChange: (value: string) => void;
   onPriorityChange: (value: TicketPriority | "") => void;
 };
 
@@ -46,16 +46,16 @@ const getPriorityChipClassName = (priority: TicketPriority | ""): string | null 
 
 const TicketStatusBar = ({
   canEditTicket,
-  effectiveStatus,
+  effectiveColumnId,
   effectivePriority,
   statusOptions,
-  onStatusChange,
+  onColumnChange,
   onPriorityChange,
 }: Props) => {
   const t = useTranslation("pages.ticketDetail.page");
 
   const selectedStatus =
-    statusOptions.find((option) => option.value === effectiveStatus) ?? null;
+    statusOptions.find((option) => option.value === effectiveColumnId) ?? null;
 
   return (
     <div className={styles["ticket-detail__status-bar"]}>
@@ -83,7 +83,7 @@ const TicketStatusBar = ({
         {({ close }) => (
           <div className={styles["ticket-detail__popover-list"]}>
             {statusOptions.map((option) => {
-              const isSelected = option.value === effectiveStatus;
+              const isSelected = option.value === effectiveColumnId;
 
               return (
                 <button
@@ -97,7 +97,7 @@ const TicketStatusBar = ({
                     .filter(Boolean)
                     .join(" ")}
                   onClick={() => {
-                    onStatusChange(option.value);
+                    onColumnChange(option.value);
                     close();
                   }}
                 >

@@ -5,7 +5,7 @@ export type TicketRow = {
   project_id: string;
   title: string;
   description: string | null;
-  status: string;
+  column_id: string;
   position: number;
   code_number: number;
   priority: TicketPriority | null;

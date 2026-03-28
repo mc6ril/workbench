@@ -52,7 +52,7 @@ export const mapColumnRowToDomain = (row: ColumnRow): Column => {
     id: row.id,
     boardId: row.board_id,
     name: row.name,
-    status: row.status,
+    key: row.key,
     state: ColumnWorkflowStateSchema.parse(row.state),
     position: row.position,
     visible: row.visible,

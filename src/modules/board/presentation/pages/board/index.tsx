@@ -128,7 +128,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     effectiveSearch
   );
   const hasActiveFilters = useMemo(() => {
-    return Boolean(filters.status || filters.priority);
+    return Boolean(filters.columnId || filters.priority);
   }, [filters]);
   const shouldLoadProjectWideTicketsForProgress =
     hasActiveFilters || effectiveSearch.trim() !== "";
@@ -264,7 +264,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   const statusOptions = useMemo(() => {
     const currentColumns = boardConfiguration?.columns ?? [];
     return currentColumns.map((column) => ({
-      value: column.status,
+      value: column.id,
       label: column.name,
     }));
   }, [boardConfiguration?.columns]);
@@ -421,9 +421,9 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
         projectId,
         title: values.title,
         description: values.description ?? null,
-        status: values.status,
+        columnId: values.columnId,
         position: ticketsForCreatePosition.filter(
-          (ticket) => ticket.status === values.status
+          (ticket) => ticket.columnId === values.columnId
         ).length,
       });
 
@@ -525,7 +525,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
           <Text variant="small">{tCreateForm("readOnlyHint")}</Text>
         ) : (
           <CreateTicketForm
-            statusOptions={statusOptions}
+            columnOptions={statusOptions}
             isSubmitting={createTicketMutation.isPending}
             errorMessage={createTicketErrorMessage}
             onCancel={closeCreateTicketModal}

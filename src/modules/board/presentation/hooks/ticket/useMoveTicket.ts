@@ -11,21 +11,27 @@ import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 type MoveTicketVariables = {
   projectId: string;
   ticketId: string;
-  status: string;
+  columnId: string;
   position: number;
 };
 
 /**
- * Hook for moving a ticket to a new status and position.
+ * Hook for moving a ticket to a new column and position.
  * Invalidates the project tickets root and the ticket detail on success.
  */
 export const useMoveTicket = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ ticketId, status, position }: MoveTicketVariables) =>
-      moveTicket(ticketRepository, boardRepository, ticketId, status, position),
-    onMutate: async ({ projectId, ticketId, status, position }) => {
+    mutationFn: ({ ticketId, columnId, position }: MoveTicketVariables) =>
+      moveTicket(
+        ticketRepository,
+        boardRepository,
+        ticketId,
+        columnId,
+        position
+      ),
+    onMutate: async ({ projectId, ticketId, columnId, position }) => {
       await queryClient.cancelQueries({
         queryKey: queryKeys.projects.ticketsRoot(projectId),
       });
@@ -53,17 +59,20 @@ export const useMoveTicket = () => {
 
             return {
               ...ticket,
-              status,
+              columnId,
               position,
             };
           });
 
-          const statusesToNormalize = new Set([movedTicket.status, status]);
+          const columnIdsToNormalize = new Set([
+            movedTicket.columnId,
+            columnId,
+          ]);
           let normalizedTickets = nextTickets;
 
-          for (const targetStatus of statusesToNormalize) {
+          for (const targetColumnId of columnIdsToNormalize) {
             const ticketsInStatus = normalizedTickets
-              .filter((ticket) => ticket.status === targetStatus)
+              .filter((ticket) => ticket.columnId === targetColumnId)
               .sort((a, b) => a.position - b.position)
               .map((ticket, index) => ({
                 ...ticket,

@@ -1,5 +1,5 @@
+import { buildMissingDefaultColumnCreates } from "@/modules/board/core/domain/board.defaults";
 import {
-  buildMissingDefaultColumnCreates,
   validateBoardColumnRelationship,
   validateBoardHasActiveDoneState,
   validateBoardWithColumns,
@@ -17,7 +17,7 @@ describe("Board Business Rules", () => {
     id: "column-1",
     boardId: "board-1",
     name: "To Do",
-    status: "todo",
+    key: "todo",
     state: "todo",
     position: 0,
     visible: true,
@@ -183,7 +183,7 @@ describe("Board Business Rules", () => {
       const columnInput: CreateColumnInput = {
         boardId: "board-1",
         name: "To Do",
-        status: "todo",
+        key: "todo",
         state: "todo",
         position: 0,
       };
@@ -218,21 +218,21 @@ describe("Board Business Rules", () => {
           id: "col-1",
           boardId: "board-1",
           position: 0,
-          status: "todo",
+          key: "todo",
           state: "todo",
         }),
         createMockColumn({
           id: "col-2",
           boardId: "board-1",
           position: 1,
-          status: "in-progress",
+          key: "in-progress",
           state: "in_progress",
         }),
         createMockColumn({
           id: "col-3",
           boardId: "board-1",
           position: 2,
-          status: "done",
+          key: "done",
           state: "done",
         }),
       ];
@@ -288,14 +288,14 @@ describe("Board Business Rules", () => {
           id: "col-1",
           boardId: "board-1",
           position: 0,
-          status: "todo",
+          key: "todo",
           state: "todo",
         }),
         createMockColumn({
           id: "col-2",
           boardId: "board-1",
           position: 1,
-          status: "in-progress",
+          key: "in-progress",
           state: "in_progress",
         }),
       ];
@@ -320,14 +320,14 @@ describe("Board Business Rules", () => {
           id: "col-1",
           boardId: "board-1",
           position: 0,
-          status: "todo",
+          key: "todo",
           state: "todo",
         }),
         createMockColumn({
           id: "col-2",
           boardId: "board-1",
           position: 1,
-          status: "completed",
+          key: "completed",
           state: "done",
         }),
       ];

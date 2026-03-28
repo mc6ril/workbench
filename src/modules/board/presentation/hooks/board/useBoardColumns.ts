@@ -8,7 +8,7 @@ type BoardConfigurationLike = {
   columns?: {
     id: string;
     name: string;
-    status?: string;
+    key?: string;
     state?: "todo" | "in_progress" | "done";
     visible?: boolean;
   }[];
@@ -20,7 +20,7 @@ export const useBoardColumns = (boardConfiguration?: BoardConfigurationLike) => 
       boardConfiguration?.columns?.map((column) => ({
         id: column.id,
         title: column.name,
-        status: column.status,
+        key: column.key,
         state: column.state ?? "todo",
         isVisible: column.visible,
       })) ?? []

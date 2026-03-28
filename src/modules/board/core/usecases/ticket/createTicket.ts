@@ -5,7 +5,7 @@ import {
 } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
-import { resolveCompletedAtForProjectStatusChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
+import { resolveCompletedAtForProjectColumnChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
 
 /**
  * Create a new ticket.
@@ -28,13 +28,13 @@ export const createTicket = async (
   const codeNumber = await repository.getNextCodeNumberForProject(
     validatedInput.projectId
   );
-  const completedAt = await resolveCompletedAtForProjectStatusChange(
+  const completedAt = await resolveCompletedAtForProjectColumnChange(
     boardRepository,
     validatedInput.projectId,
     {
-      previousStatus: null,
+      previousColumnId: null,
       previousCompletedAt: null,
-      nextStatus: validatedInput.status,
+      nextColumnId: validatedInput.columnId,
     }
   );
 

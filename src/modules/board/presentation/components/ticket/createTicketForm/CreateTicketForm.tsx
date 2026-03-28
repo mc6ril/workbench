@@ -17,7 +17,7 @@ export type { CreateTicketFormValues } from "./CreateTicketForm.types";
 
 type Props = {
   initialValues?: Partial<CreateTicketFormValues>;
-  statusOptions: Option[];
+  columnOptions: Option[];
   onSubmit: (values: CreateTicketFormValues) => void;
   onCancel?: () => void;
   isSubmitting?: boolean;
@@ -27,7 +27,7 @@ type Props = {
 
 const CreateTicketForm = ({
   initialValues,
-  statusOptions,
+  columnOptions,
   onSubmit,
   onCancel,
   isSubmitting = false,
@@ -41,8 +41,8 @@ const CreateTicketForm = ({
   const [description, setDescription] = useState(
     initialValues?.description ?? ""
   );
-  const [status, setStatus] = useState(
-    initialValues?.status ?? statusOptions[0]?.value ?? ""
+  const [columnId, setColumnId] = useState(
+    initialValues?.columnId ?? columnOptions[0]?.value ?? ""
   );
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
@@ -52,7 +52,7 @@ const CreateTicketForm = ({
       buildCreateTicketFormValues({
         title,
         description,
-        status,
+        columnId,
       })
     );
   };
@@ -70,13 +70,13 @@ const CreateTicketForm = ({
       <CreateTicketFormFields
         title={title}
         description={description}
-        status={status}
-        statusOptions={statusOptions}
+        columnId={columnId}
+        columnOptions={columnOptions}
         titleLabel={t("fields.title")}
         statusLabel={t("fields.status")}
         descriptionLabel={t("fields.notes")}
         onTitleChange={setTitle}
-        onStatusChange={setStatus}
+        onColumnChange={setColumnId}
         onDescriptionChange={setDescription}
       />
 

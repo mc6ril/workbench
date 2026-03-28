@@ -177,8 +177,8 @@ export const createTicketRepository = (
           .is("archived_at", null);
 
         // Apply filters if provided
-        if (filters?.status) {
-          query = query.eq("status", filters.status);
+        if (filters?.columnId) {
+          query = query.eq("column_id", filters.columnId);
         }
 
         if (filters?.priority) {
@@ -261,13 +261,13 @@ export const createTicketRepository = (
       }
     },
 
-    async listByStatus(projectId: string, status: string): Promise<Ticket[]> {
+    async listByColumnId(projectId: string, columnId: string): Promise<Ticket[]> {
       try {
         const { data, error } = await client
           .from("tickets")
           .select("*")
           .eq("project_id", projectId)
-          .eq("status", status)
+          .eq("column_id", columnId)
           .is("archived_at", null)
           .order("position", { ascending: true });
 
@@ -293,7 +293,7 @@ export const createTicketRepository = (
             project_id: input.projectId,
             title: input.title,
             description: input.description ?? null,
-            status: input.status,
+            column_id: input.columnId,
             position: input.position ?? 0,
             priority: input.priority ?? null,
             due_date: input.dueDate ?? null,
@@ -332,8 +332,8 @@ export const createTicketRepository = (
         if (input.description !== undefined) {
           updateData.description = input.description;
         }
-        if (input.status !== undefined) {
-          updateData.status = input.status;
+        if (input.columnId !== undefined) {
+          updateData.column_id = input.columnId;
         }
         if (input.position !== undefined) {
           updateData.position = input.position;
@@ -414,13 +414,13 @@ export const createTicketRepository = (
 
     async moveTicket(
       id: string,
-      status: string,
+      columnId: string,
       position: number,
       completedAt: Date | null
     ): Promise<Ticket> {
       try {
         const updateData = {
-          status,
+          column_id: columnId,
           position,
           completed_at: completedAt?.toISOString() ?? null,
         };
@@ -452,7 +452,7 @@ export const createTicketRepository = (
 
     async moveAndReorderTicket(input: {
       ticketId: string;
-      status: string;
+      columnId: string;
       position: number;
       completedAt: Date | null;
       ticketPositions: Array<{ id: string; position: number }>;
@@ -460,7 +460,7 @@ export const createTicketRepository = (
       try {
         const { data, error } = await client.rpc("move_and_reorder_ticket", {
           p_ticket_id: input.ticketId,
-          p_status: input.status,
+          p_column_id: input.columnId,
           p_position: input.position,
           p_completed_at: input.completedAt?.toISOString() ?? null,
           p_positions: input.ticketPositions,

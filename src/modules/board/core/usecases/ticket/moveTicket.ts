@@ -6,16 +6,16 @@ import {
 } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
-import { resolveCompletedAtForProjectStatusChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
+import { resolveCompletedAtForProjectColumnChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
 
 /**
- * Move a ticket to a new status/column and position.
- * Updates both status and position in a single atomic operation.
+ * Move a ticket to a new column and position.
+ * Updates both column assignment and position in a single atomic operation.
  * Used for drag-and-drop operations on the board.
  *
  * @param repository - Ticket repository
  * @param id - Ticket ID (UUID)
- * @param status - New status/column
+ * @param columnId - New target column
  * @param position - New position within the column
  * @returns Updated ticket
  * @throws ZodError if input validation fails
@@ -27,10 +27,10 @@ export const moveTicket = async (
   repository: TicketRepository,
   boardRepository: BoardRepository,
   id: string,
-  status: string,
+  columnId: string,
   position: number
 ): Promise<Ticket> => {
-  const validatedInput = MoveTicketInputSchema.parse({ id, status, position });
+  const validatedInput = MoveTicketInputSchema.parse({ id, columnId, position });
 
   // Check if ticket exists
   const ticket = await repository.findById(validatedInput.id);
@@ -38,20 +38,19 @@ export const moveTicket = async (
     throw createNotFoundError("Ticket", validatedInput.id);
   }
 
-  const completedAt = await resolveCompletedAtForProjectStatusChange(
+  const completedAt = await resolveCompletedAtForProjectColumnChange(
     boardRepository,
     ticket.projectId,
     {
-      previousStatus: ticket.status,
+      previousColumnId: ticket.columnId,
       previousCompletedAt: ticket.completedAt,
-      nextStatus: validatedInput.status,
+      nextColumnId: validatedInput.columnId,
     }
   );
 
-  // Move ticket
   return repository.moveTicket(
     validatedInput.id,
-    validatedInput.status,
+    validatedInput.columnId,
     validatedInput.position,
     completedAt
   );

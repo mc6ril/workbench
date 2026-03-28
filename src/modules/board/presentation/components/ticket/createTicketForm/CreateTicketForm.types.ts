@@ -6,5 +6,5 @@ export type Option = {
 export type CreateTicketFormValues = {
   title: string;
   description?: string;
-  status: string;
+  columnId: string;
 };

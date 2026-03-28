@@ -8,6 +8,8 @@ import { createTicket } from "@/modules/board/core/usecases/ticket/createTicket"
 describe("createTicket completedAt workflow logic", () => {
   const projectId = "223e4567-e89b-12d3-a456-426614174000";
   const boardId = "323e4567-e89b-12d3-a456-426614174000";
+  const todoColumnId = "423e4567-e89b-12d3-a456-426614174000";
+  const doneColumnId = "523e4567-e89b-12d3-a456-426614174000";
   const board: Board = {
     id: boardId,
     projectId,
@@ -16,10 +18,10 @@ describe("createTicket completedAt workflow logic", () => {
   };
   const columns: Column[] = [
     {
-      id: "todo-column",
+      id: todoColumnId,
       boardId,
       name: "Todo",
-      status: "todo",
+      key: "todo",
       state: "todo",
       position: 0,
       visible: true,
@@ -27,10 +29,10 @@ describe("createTicket completedAt workflow logic", () => {
       updatedAt: new Date("2024-01-01T00:00:00Z"),
     },
     {
-      id: "done-column",
+      id: doneColumnId,
       boardId,
       name: "Done",
-      status: "completed",
+      key: "completed",
       state: "done",
       position: 1,
       visible: true,
@@ -52,7 +54,7 @@ describe("createTicket completedAt workflow logic", () => {
     const input: CreateTicketInput = {
       projectId,
       title: "Done from create",
-      status: "completed",
+      columnId: doneColumnId,
       position: 0,
     };
     const boardRepository = createBoardRepositoryMock({
@@ -68,7 +70,7 @@ describe("createTicket completedAt workflow logic", () => {
         projectId: value.projectId,
         title: value.title,
         description: value.description ?? null,
-        status: value.status,
+        columnId: value.columnId,
         position: value.position ?? 0,
         codeNumber: value.codeNumber ?? 7,
         priority: value.priority ?? null,
@@ -96,7 +98,7 @@ describe("createTicket completedAt workflow logic", () => {
     const input: CreateTicketInput = {
       projectId,
       title: "Todo from create",
-      status: "todo",
+      columnId: todoColumnId,
       position: 0,
     };
     const boardRepository = createBoardRepositoryMock({
