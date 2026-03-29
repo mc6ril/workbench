@@ -829,6 +829,8 @@
         "modalTitle": "Task",
         "ticketCode": "Ref. {code}",
         "actions": {
+          "back": "Back",
+          "close": "Close",
           "save": "Save",
           "delete": "Delete task",
           "deleteModal": {

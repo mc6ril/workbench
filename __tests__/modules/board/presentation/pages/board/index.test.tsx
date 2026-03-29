@@ -12,12 +12,14 @@ import { useTicketAssigneesByProjectId } from "@/modules/board/presentation/hook
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
 import BoardPage from "@/modules/board/presentation/pages/board";
 
+const mockPush = jest.fn();
 const mockReplace = jest.fn();
 const mockPathname = "/projects/project-1/board";
 let mockSearchParams = new URLSearchParams();
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({
+    push: mockPush,
     replace: mockReplace,
   }),
   usePathname: () => mockPathname,
@@ -348,12 +350,22 @@ describe("BoardPage onboarding", () => {
       })
     );
 
-    expect(mockReplace).toHaveBeenCalledWith(
-      `${mockPathname}?ticket=ticket-1`,
-      {
-        scroll: false,
-      }
-    );
+    expect(mockPush).toHaveBeenCalledWith("/project-1/board/tickets/ticket-1");
+  });
+
+  it("redirects legacy ticket query params to the ticket detail page", async () => {
+    mockSearchParams = new URLSearchParams("ticket=ticket-1");
+
+    render(<BoardPage projectId="project-1" />);
+
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith(
+        "/project-1/board/tickets/ticket-1",
+        {
+          scroll: false,
+        }
+      );
+    });
   });
 
   it("does not render the onboarding panel when auto-open is disabled", () => {

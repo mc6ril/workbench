@@ -5,6 +5,7 @@ export type DashboardShellProps = {
   sidebar?: ReactNode;
   sidebarAriaLabel?: string;
   header?: ReactNode;
+  hideHeader?: boolean;
   footer?: ReactNode;
   children: ReactNode;
   className?: string;

@@ -21,6 +21,7 @@ const DashboardShellInner = ({
   sidebar,
   sidebarAriaLabel,
   header,
+  hideHeader = false,
   footer,
   children,
   className,
@@ -260,6 +261,7 @@ const DashboardShellInner = ({
 
   const contentClasses = joinDashboardShellClasses(
     styles["dashboard-shell__content"],
+    hideHeader && styles["dashboard-shell__content--no-header"],
     isFooterEmpty && styles["dashboard-shell__content--no-footer"]
   );
 
@@ -321,40 +323,48 @@ const DashboardShellInner = ({
       </nav>
 
       <div className={contentClasses}>
-        <div
-          className={styles["dashboard-shell__header"]}
-          aria-hidden={
-            isHeaderRegionEmpty
-              ? ARIA_HIDDEN_VALUES.TRUE
-              : ARIA_HIDDEN_VALUES.FALSE
-          }
-        >
-          <div className={styles["dashboard-shell__header-bar"]}>
-            {!isSidebarEmpty ? (
-              <button
-                type="button"
-                ref={menuTriggerRef}
-                className={styles["dashboard-shell__menu-trigger"]}
-                onClick={openMobileSidebar}
-                aria-label={openMenuLabel}
-                aria-controls={mobileSidebarId}
-                aria-expanded={isMobileSidebarOpen}
-              >
-                <span
-                  className={styles["dashboard-shell__menu-icon"]}
-                  aria-hidden="true"
+        {!hideHeader ? (
+          <div
+            className={styles["dashboard-shell__header"]}
+            aria-hidden={
+              isHeaderRegionEmpty
+                ? ARIA_HIDDEN_VALUES.TRUE
+                : ARIA_HIDDEN_VALUES.FALSE
+            }
+          >
+            <div className={styles["dashboard-shell__header-bar"]}>
+              {!isSidebarEmpty ? (
+                <button
+                  type="button"
+                  ref={menuTriggerRef}
+                  className={styles["dashboard-shell__menu-trigger"]}
+                  onClick={openMobileSidebar}
+                  aria-label={openMenuLabel}
+                  aria-controls={mobileSidebarId}
+                  aria-expanded={isMobileSidebarOpen}
                 >
-                  <span className={styles["dashboard-shell__menu-icon-line"]} />
-                  <span className={styles["dashboard-shell__menu-icon-line"]} />
-                  <span className={styles["dashboard-shell__menu-icon-line"]} />
-                </span>
-              </button>
-            ) : null}
-            <div className={styles["dashboard-shell__header-content"]}>
-              {header}
+                  <span
+                    className={styles["dashboard-shell__menu-icon"]}
+                    aria-hidden="true"
+                  >
+                    <span
+                      className={styles["dashboard-shell__menu-icon-line"]}
+                    />
+                    <span
+                      className={styles["dashboard-shell__menu-icon-line"]}
+                    />
+                    <span
+                      className={styles["dashboard-shell__menu-icon-line"]}
+                    />
+                  </span>
+                </button>
+              ) : null}
+              <div className={styles["dashboard-shell__header-content"]}>
+                {header}
+              </div>
             </div>
           </div>
-        </div>
+        ) : null}
 
         <main id={mainId} className={styles["dashboard-shell__main"]}>
           {children}

@@ -9,6 +9,7 @@ import Loader from "@/shared/design-system/loader";
 import Modal from "@/shared/design-system/modal";
 import Text from "@/shared/design-system/text";
 import { useTranslation } from "@/shared/i18n";
+import { buildTicketDetailRoute } from "@/shared/utils/routes";
 
 import { getBoardOnboardingProgress } from "./boardOnboardingProgress";
 import styles from "./styles.module.scss";
@@ -26,7 +27,6 @@ import CreateTicketForm, {
   type CreateTicketFormValues,
 } from "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm";
 import TicketCard from "@/modules/board/presentation/components/ticket/ticketCard/TicketCard";
-import TicketDetailView from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView";
 import { useBoardColumns } from "@/modules/board/presentation/hooks/board/useBoardColumns";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { useBoardDnD } from "@/modules/board/presentation/hooks/board/useBoardDnD";
@@ -37,10 +37,7 @@ import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCr
 import { useTicketAssigneesByProjectId } from "@/modules/board/presentation/hooks/ticket/useTicketAssigneesByProjectId";
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
-import {
-  buildTicketCode,
-  normalizeTicketSearch,
-} from "@/modules/board/utils/ticketUtils";
+import { normalizeTicketSearch } from "@/modules/board/utils/ticketUtils";
 
 const BoardLayout = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
@@ -49,8 +46,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   const layoutId = useMemo(() => getAccessibilityId("board-layout"), []);
   const tBoard = useTranslation("pages.board");
   const tOnboarding = useTranslation("pages.board.onboarding");
-  const tTicket = useTranslation("pages.ticketDetail.page");
-  const selectedTicketId = searchParams.get("ticket");
+  const legacyTicketId = searchParams.get("ticket");
   const tCreateForm = useTranslation("pages.board.createTicketForm");
   const isCreateTicketModalOpen = searchParams.get("createTicket") === "1";
   const isOnboardingReviewRequested = searchParams.get("onboarding") === "1";
@@ -92,20 +88,11 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     [pathname, router, searchParams]
   );
 
-  const updateSearchParam = useCallback(
-    (ticketId: string | null) => {
-      replaceSearchParams({
-        ticket: ticketId,
-      });
-    },
-    [replaceSearchParams]
-  );
-
-  const handleEditTicket = useCallback(
+  const handleOpenTicketDetail = useCallback(
     (ticketId: string) => {
-      updateSearchParam(ticketId);
+      router.push(buildTicketDetailRoute(projectId, ticketId));
     },
-    [updateSearchParam]
+    [projectId, router]
   );
 
   const {
@@ -190,40 +177,15 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     columnById,
   });
 
-  const selectedTicket = useMemo(() => {
-    if (!selectedTicketId) {
-      return null;
-    }
-
-    return tickets.find((ticket) => ticket.id === selectedTicketId) ?? null;
-  }, [selectedTicketId, tickets]);
-
-  const modalTitle = useMemo(() => {
-    const baseTitle = tTicket("title");
-    if (!selectedTicket) {
-      return baseTitle;
-    }
-
-    const humanReadableCode =
-      buildTicketCode(projectShortCode, selectedTicket.codeNumber) ??
-      selectedTicket.codeNumber;
-
-    const ticketCode = tTicket("ticketCode", {
-      code: humanReadableCode,
-    });
-
-    return `${ticketCode} ${selectedTicket.title}`;
-  }, [projectShortCode, selectedTicket, tTicket]);
-
   const renderColumnProps = useMemo(() => {
     return (column: BoardColumnConfig) => {
       const ticketsForColumn = boardColumnTickets.get(column.id) ?? [];
       return {
         tickets: ticketsForColumn,
-        onTicketClick: handleEditTicket,
+        onTicketClick: handleOpenTicketDetail,
       };
     };
-  }, [boardColumnTickets, handleEditTicket]);
+  }, [boardColumnTickets, handleOpenTicketDetail]);
 
   const closeCreateTicketModal = useCallback(() => {
     replaceSearchParams({
@@ -242,8 +204,8 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
       return;
     }
 
-    updateSearchParam(onboardingTargetTicket.id);
-  }, [onboardingTargetTicket, updateSearchParam]);
+    handleOpenTicketDetail(onboardingTargetTicket.id);
+  }, [handleOpenTicketDetail, onboardingTargetTicket]);
 
   const openOnboardingReview = useCallback(() => {
     replaceSearchParams({
@@ -372,6 +334,16 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   ]);
 
   useEffect(() => {
+    if (!legacyTicketId) {
+      return;
+    }
+
+    router.replace(buildTicketDetailRoute(projectId, legacyTicketId), {
+      scroll: false,
+    });
+  }, [legacyTicketId, projectId, router]);
+
+  useEffect(() => {
     if (gettingStartedStatus !== "pending") {
       completionTriggeredRef.current = false;
       return;
@@ -438,6 +410,10 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     return <Loader variant="full-page" />;
   }
 
+  if (legacyTicketId) {
+    return <Loader variant="full-page" />;
+  }
+
   return (
     <section className={styles["board-layout"]} aria-labelledby={layoutId}>
       {isOnboardingExpanded && (
@@ -490,26 +466,6 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
           ) : null}
         </DragOverlay>
       </DndContext>
-      <Modal
-        isOpen={Boolean(selectedTicketId)}
-        onClose={() => {
-          updateSearchParam(null);
-        }}
-        title={modalTitle}
-        size="full"
-        hideHeader
-      >
-        {selectedTicketId && (
-          <TicketDetailView
-            key={selectedTicketId}
-            projectId={projectId}
-            ticketId={selectedTicketId}
-            onClose={() => {
-              updateSearchParam(null);
-            }}
-          />
-        )}
-      </Modal>
       <Modal
         isOpen={isCreateTicketModalOpen}
         onClose={closeCreateTicketModal}

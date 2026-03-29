@@ -47,14 +47,6 @@ const TicketDetailCommentsSection = ({
   const t = useTranslation("pages.ticketDetail.page");
   const tCommon = useTranslation("common");
   const intlLocale = getIntlLocale();
-  const currentMember =
-    projectMembers.find((projectMember) => projectMember.userId === sessionUserId) ??
-    null;
-  const currentUserName =
-    currentMember?.profile.displayName ??
-    currentMember?.profile.email ??
-    t("comments.unknownAuthor");
-  const currentUserAvatarUrl = currentMember?.profile.avatarUrl ?? null;
   const commentDateFormatter = new Intl.DateTimeFormat(intlLocale, {
     dateStyle: "medium",
     timeStyle: "short",
@@ -179,12 +171,6 @@ const TicketDetailCommentsSection = ({
       </div>
 
       <div className={styles["ticket-detail__comment-composer"]}>
-        <Avatar
-          src={currentUserAvatarUrl}
-          name={currentUserName}
-          size="sm"
-          aria-label={currentUserName}
-        />
         <div className={styles["ticket-detail__comment-composer-body"]}>
           <textarea
             className={styles["ticket-detail__comment-input"]}

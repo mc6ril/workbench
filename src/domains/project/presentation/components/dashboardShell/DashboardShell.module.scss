@@ -207,6 +207,14 @@
     minmax(0, 0);
 }
 
+.dashboard-shell__content--no-header {
+  grid-template-rows: minmax(0, 1fr) $layout-dashboard-footer-height;
+}
+
+.dashboard-shell__content--no-header.dashboard-shell__content--no-footer {
+  grid-template-rows: minmax(0, 1fr) minmax(0, 0);
+}
+
 .dashboard-shell__content--no-footer .dashboard-shell__footer {
   min-height: 0;
   overflow: hidden;

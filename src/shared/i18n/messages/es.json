@@ -829,6 +829,8 @@
         "modalTitle": "Tarea",
         "ticketCode": "Ref. {code}",
         "actions": {
+          "back": "Volver",
+          "close": "Cerrar",
           "save": "Guardar",
           "delete": "Eliminar tarea",
           "deleteModal": {
