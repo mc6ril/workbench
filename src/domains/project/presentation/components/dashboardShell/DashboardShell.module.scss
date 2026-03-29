@@ -200,11 +200,25 @@
   grid-template-rows: minmax($layout-dashboard-header-height, auto) minmax(0, 1fr) $layout-dashboard-footer-height;
 }
 
+.dashboard-shell__content--no-footer {
+  grid-template-rows:
+    minmax($layout-dashboard-header-height, auto)
+    minmax(0, 1fr)
+    minmax(0, 0);
+}
+
+.dashboard-shell__content--no-footer .dashboard-shell__footer {
+  min-height: 0;
+  overflow: hidden;
+}
+
 .dashboard-shell__header {
   width: 100%;
   min-height: $layout-dashboard-header-height;
   border-bottom: $border-width solid $color-border;
   background-color: $color-background;
+  position: relative;
+  z-index: $layout-dashboard-header-z-index;
 }
 
 .dashboard-shell__header-bar {
@@ -265,6 +279,8 @@
   overscroll-behavior-y: contain;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  position: relative;
+  z-index: $layout-dashboard-main-z-index;
 }
 
 .dashboard-shell__footer {

@@ -66,6 +66,12 @@ $layout-dashboard-footer-height: $spacing-unit * 10; // 2.5rem (40px)
 $layout-dashboard-content-min-height: 100vh;
 $layout-dashboard-main-min-height: 0;
 $layout-dashboard-main-padding: $spacing-lg;
+// Stacking: header must paint above main so toolbar search suggestions overlay the board.
+$layout-dashboard-header-z-index: 10;
+$layout-dashboard-main-z-index: 0;
+
+// Board: on narrow viewports, column width is slightly less than the main area so the next column peeks (horizontal scroll affordance).
+$board-column-mobile-adjacent-peek: $spacing-4xl;
 
 // Accent bar (decorative bar used in section titles)
 $accent-bar-width: 4px;

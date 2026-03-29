@@ -64,15 +64,10 @@
     "navbar": {
       "filter": "Filter",
       "filterAriaLabel": "Open filters",
-      "sort": "Sort",
-      "sortAriaLabel": "Open sort",
       "reviewGuide": "Review guide",
       "reviewGuideAriaLabel": "Restart the onboarding guide",
       "addTicket": "Add task",
-      "addTicketAriaLabel": "Create a new task",
-      "sortDirectionLabel": "Sort direction",
-      "sortDirectionAsc": "Ascending",
-      "sortDirectionDesc": "Descending"
+      "addTicketAriaLabel": "Create a new task"
     }
   },
   "layout": {
@@ -569,7 +564,9 @@
         "searchPlaceholder": "Search by title or notes",
         "statusLabel": "Status",
         "resetLabel": "Reset filters",
-        "assigneeLabel": "Assignee"
+        "assigneeLabel": "Assignee",
+        "assigneeUnassignedLabel": "Unassigned",
+        "allAssigneesLabel": "All"
       },
       "ticketCard": {
         "ticketAriaLabel": "Task",
@@ -594,18 +591,6 @@
         "moveDownLabel": "Move down",
         "moveUpAriaLabel": "Move column {title} up",
         "moveDownAriaLabel": "Move column {title} down"
-      },
-      "sort": {
-        "label": "Sort by",
-        "fieldCreatedAt": "Creation date",
-        "fieldTitle": "Title",
-        "fieldStatus": "Status",
-        "fieldPosition": "Board position",
-        "fieldDueDate": "Due date",
-        "sortDirectionLabel": "Sort direction",
-        "directionAsc": "Ascending",
-        "directionDesc": "Descending",
-        "resetLabel": "Reset sort"
       },
       "createTicketForm": {
         "title": "Create task",

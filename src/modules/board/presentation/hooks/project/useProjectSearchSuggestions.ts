@@ -45,7 +45,6 @@ export const useProjectSearchSuggestions = ({
   const { data: ticketsData } = useTickets(
     projectId,
     undefined,
-    undefined,
     effectiveSearch,
     { enabled: isTicketView && hasEffectiveSearchTerm, limit: 20 }
   );

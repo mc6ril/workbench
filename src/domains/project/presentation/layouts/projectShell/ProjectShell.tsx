@@ -3,7 +3,6 @@
 import React from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import AppFooter from "@/shared/design-system/app_footer";
 import SkipLink from "@/shared/design-system/skip_link";
 import { useTranslation } from "@/shared/i18n";
 
@@ -13,9 +12,7 @@ import {
   ProjectShellContributionProvider,
   useProjectShellContribution,
 } from "@/domains/project/presentation/layouts/projectShell/ProjectShellContributionContext";
-import {
-  ProjectPermissionsProvider,
-} from "@/domains/project/presentation/providers/permissions";
+import { ProjectPermissionsProvider } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 
 type Props = {
   projectId: string;
@@ -39,7 +36,6 @@ const ProjectShellContent = ({ projectId, children, shellAdapter }: Props) => {
         sidebar={<SidebarNavigation projectId={projectId} />}
         sidebarAriaLabel={tSidebar("ariaLabel")}
         header={toolbar}
-        footer={<AppFooter />}
       >
         {children}
       </DashboardShell>

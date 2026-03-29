@@ -8,10 +8,10 @@ type Props = {
 };
 
 /**
- * Sort icon SVG component (horizontal lines for sort order).
- * Used for sort actions in navbar and sort controls.
+ * Search icon SVG component.
+ * Used for search actions and search field affordances.
  */
-const SortIcon = ({ className, size = 16 }: Props) => (
+const SearchIcon = ({ className, size = 16 }: Props) => (
   <svg
     className={className}
     width={size}
@@ -21,8 +21,15 @@ const SortIcon = ({ className, size = 16 }: Props) => (
     xmlns="http://www.w3.org/2000/svg"
     aria-hidden
   >
+    <circle
+      cx="7"
+      cy="7"
+      r="4.25"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
     <path
-      d="M2 4h12M4 8h8M6 12h4"
+      d="M10.25 10.25L13.25 13.25"
       stroke="currentColor"
       strokeWidth="1.5"
       strokeLinecap="round"
@@ -30,4 +37,4 @@ const SortIcon = ({ className, size = 16 }: Props) => (
   </svg>
 );
 
-export default SortIcon;
+export default SearchIcon;

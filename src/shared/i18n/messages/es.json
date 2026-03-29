@@ -64,15 +64,10 @@
     "navbar": {
       "filter": "Filtrar",
       "filterAriaLabel": "Abrir filtros",
-      "sort": "Ordenar",
-      "sortAriaLabel": "Abrir ordenación",
       "reviewGuide": "Volver a ver la guia",
       "reviewGuideAriaLabel": "Relanzar la guia de onboarding",
       "addTicket": "Añadir tarea",
-      "addTicketAriaLabel": "Crear una nueva tarea",
-      "sortDirectionLabel": "Dirección de orden",
-      "sortDirectionAsc": "Ascendente",
-      "sortDirectionDesc": "Descendente"
+      "addTicketAriaLabel": "Crear una nueva tarea"
     }
   },
   "layout": {
@@ -569,7 +564,9 @@
         "searchPlaceholder": "Buscar por titulo o notas",
         "statusLabel": "Estado",
         "resetLabel": "Restablecer filtros",
-        "assigneeLabel": "Asignado a"
+        "assigneeLabel": "Asignado a",
+        "assigneeUnassignedLabel": "Sin asignar",
+        "allAssigneesLabel": "Todos"
       },
       "ticketCard": {
         "ticketAriaLabel": "Tarea",
@@ -594,18 +591,6 @@
         "moveDownLabel": "Bajar",
         "moveUpAriaLabel": "Mover columna {title} hacia arriba",
         "moveDownAriaLabel": "Mover columna {title} hacia abajo"
-      },
-      "sort": {
-        "label": "Ordenar por",
-        "fieldCreatedAt": "Fecha de creación",
-        "fieldTitle": "Título",
-        "fieldStatus": "Estado",
-        "fieldPosition": "Posición en tablero",
-        "fieldDueDate": "Fecha de vencimiento",
-        "sortDirectionLabel": "Dirección de orden",
-        "directionAsc": "Ascendente",
-        "directionDesc": "Descendente",
-        "resetLabel": "Restablecer orden"
       },
       "createTicketForm": {
         "title": "Crear tarea",

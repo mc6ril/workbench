@@ -90,6 +90,8 @@ html {
   background-color: var(--color-background);
   background-image: $color-background-gradient;
   background-repeat: no-repeat;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

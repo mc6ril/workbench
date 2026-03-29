@@ -16,7 +16,7 @@ import { useProjectMembers } from "@/domains/project/presentation/hooks/member/u
 import { useRemoveMember } from "@/domains/project/presentation/hooks/member/useRemoveMember";
 import { useUpdateMemberRole } from "@/domains/project/presentation/hooks/member/useUpdateMemberRole";
 import ProjectPeopleSettingsSection from "@/domains/project/presentation/pages/settings/components/ProjectPeopleSettingsSection";
-import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 const replaceMock = jest.fn();
@@ -32,9 +32,12 @@ jest.mock("@/domains/session/presentation/hooks/useSession", () => ({
   useSession: jest.fn(),
 }));
 
-jest.mock("@/domains/project/presentation/providers/permissions", () => ({
-  useProjectPermissions: jest.fn(),
-}));
+jest.mock(
+  "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider",
+  () => ({
+    useProjectPermissions: jest.fn(),
+  })
+);
 
 jest.mock(
   "@/domains/project/presentation/hooks/member/useProjectMembers",

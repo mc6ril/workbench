@@ -64,15 +64,10 @@
     "navbar": {
       "filter": "Filtrer",
       "filterAriaLabel": "Ouvrir les filtres",
-      "sort": "Trier",
-      "sortAriaLabel": "Ouvrir le tri",
       "reviewGuide": "Revoir le guide",
       "reviewGuideAriaLabel": "Relancer le guide d'onboarding",
       "addTicket": "Ajouter une tâche",
-      "addTicketAriaLabel": "Créer une nouvelle tâche",
-      "sortDirectionLabel": "Sens du tri",
-      "sortDirectionAsc": "Croissant",
-      "sortDirectionDesc": "Décroissant"
+      "addTicketAriaLabel": "Créer une nouvelle tâche"
     }
   },
   "layout": {
@@ -569,7 +564,9 @@
         "searchPlaceholder": "Rechercher par titre ou notes",
         "statusLabel": "Statut",
         "resetLabel": "Réinitialiser les filtres",
-        "assigneeLabel": "Assigné à"
+        "assigneeLabel": "Assigné à",
+        "assigneeUnassignedLabel": "Sans assignation",
+        "allAssigneesLabel": "Tous"
       },
       "ticketCard": {
         "ticketAriaLabel": "Tâche",
@@ -594,18 +591,6 @@
         "moveDownLabel": "Descendre",
         "moveUpAriaLabel": "Déplacer la colonne {title} vers le haut",
         "moveDownAriaLabel": "Déplacer la colonne {title} vers le bas"
-      },
-      "sort": {
-        "label": "Trier par",
-        "fieldCreatedAt": "Date de création",
-        "fieldTitle": "Titre",
-        "fieldStatus": "Statut",
-        "fieldPosition": "Position du tableau",
-        "fieldDueDate": "Date d'échéance",
-        "sortDirectionLabel": "Sens du tri",
-        "directionAsc": "Ascendant",
-        "directionDesc": "Descendant",
-        "resetLabel": "Réinitialiser le tri"
       },
       "createTicketForm": {
         "title": "Créer une tâche",

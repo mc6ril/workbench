@@ -8,13 +8,15 @@ import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 /**
  * Hook for fetching assignees for all tickets in a project.
  *
- * @param projectId - Project ID
+ * @param projectId - Project ID (query disabled when undefined)
  * @returns Record keyed by ticketId
  */
-export const useTicketAssigneesByProjectId = (projectId: string) => {
+export const useTicketAssigneesByProjectId = (
+  projectId: string | undefined
+) => {
   return useQuery<Record<string, TicketAssignee[]>>({
-    queryKey: queryKeys.tickets.assigneesByProjectId(projectId),
-    queryFn: () => getTicketAssigneesByProjectId(ticketRepository, projectId),
+    queryKey: queryKeys.tickets.assigneesByProjectId(projectId ?? ""),
+    queryFn: () => getTicketAssigneesByProjectId(ticketRepository, projectId!),
     enabled: !!projectId,
   });
 };

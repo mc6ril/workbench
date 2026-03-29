@@ -4,6 +4,7 @@
 @use "@/styles/variables/borders" as *;
 @use "@/styles/variables/typography" as *;
 @use "@/styles/variables/animations" as *;
+@use "@/styles/variables/breakpoints" as *;
 
 .board-column {
   position: relative;
@@ -19,6 +20,20 @@
   background-color: $color-surface;
   border: $border-width solid $color-border;
   box-shadow: $shadow-base;
+}
+
+@media (max-width: $breakpoint-md) {
+  .board-column {
+    $board-column-mobile-width: calc(
+      100vw - (#{$layout-dashboard-main-padding} * 2) -
+        #{$board-column-mobile-adjacent-peek}
+    );
+    width: $board-column-mobile-width;
+    min-width: $board-column-mobile-width;
+    max-width: $board-column-mobile-width;
+    gap: $spacing-sm;
+    padding: $spacing-sm;
+  }
 }
 
 .board-column__header {
@@ -40,6 +55,12 @@
   color: $color-text-primary;
 }
 
+@media (max-width: $breakpoint-md) {
+  .board-column__title {
+    font-size: $font-size-base;
+  }
+}
+
 .board-column__list {
   list-style: none;
   margin: 0;
@@ -54,6 +75,12 @@
 
   &[data-over="true"] {
     background-color: $color-surface-subtle;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .board-column__list {
+    padding-right: 0;
   }
 }
 

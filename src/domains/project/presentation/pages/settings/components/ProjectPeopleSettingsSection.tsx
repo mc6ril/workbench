@@ -38,7 +38,7 @@ import { useRevokeInvitation } from "@/domains/project/presentation/hooks/invita
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useRemoveMember } from "@/domains/project/presentation/hooks/member/useRemoveMember";
 import { useUpdateMemberRole } from "@/domains/project/presentation/hooks/member/useUpdateMemberRole";
-import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import { buildInvitationRoute } from "@/domains/project/utils/invitationUtils";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 

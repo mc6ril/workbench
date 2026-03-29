@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
-import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { useBoardDnD } from "@/modules/board/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/modules/board/presentation/hooks/board/useBoardTickets";
@@ -110,7 +110,7 @@ jest.mock("@/modules/board/presentation/components/ticket/ticketCard/TicketCard"
   default: () => <div data-testid="ticket-card" />,
 }));
 
-jest.mock("@/domains/project/presentation/providers/permissions", () => ({
+jest.mock("@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider", () => ({
   useProjectPermissions: jest.fn(),
 }));
 
@@ -166,15 +166,6 @@ jest.mock("@/modules/board/presentation/stores/useFilterStore", () => ({
     selector({
       filters: {},
       search: "",
-    }),
-}));
-
-jest.mock("@/modules/board/presentation/stores/useSortStore", () => ({
-  useSortStore: (
-    selector: (state: { sort: undefined }) => unknown
-  ) =>
-    selector({
-      sort: undefined,
     }),
 }));
 

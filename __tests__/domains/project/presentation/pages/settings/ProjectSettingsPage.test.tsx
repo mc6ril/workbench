@@ -5,7 +5,7 @@ import { useDeleteProject } from "@/domains/project/presentation/hooks/useDelete
 import { useProject } from "@/domains/project/presentation/hooks/useProject";
 import { useUpdateProject } from "@/domains/project/presentation/hooks/useUpdateProject";
 import ProjectSettingsPage from "@/domains/project/presentation/pages/settings/ProjectSettingsPage";
-import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 
 const replaceMock = jest.fn();
 
@@ -19,9 +19,12 @@ jest.mock("@/domains/project/presentation/hooks/useProject", () => ({
   useProject: jest.fn(),
 }));
 
-jest.mock("@/domains/project/presentation/providers/permissions", () => ({
-  useProjectPermissions: jest.fn(),
-}));
+jest.mock(
+  "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider",
+  () => ({
+    useProjectPermissions: jest.fn(),
+  })
+);
 
 jest.mock("@/domains/project/presentation/hooks/useUpdateProject", () => ({
   useUpdateProject: jest.fn(),

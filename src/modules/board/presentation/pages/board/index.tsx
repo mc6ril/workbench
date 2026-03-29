@@ -14,7 +14,7 @@ import { getBoardOnboardingProgress } from "./boardOnboardingProgress";
 import styles from "./styles.module.scss";
 
 import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
-import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import type { BoardColumnConfig } from "@/modules/board/core/domain/types/board.types";
 import BoardView from "@/modules/board/presentation/components/board/boardView/BoardView";
 import BoardOnboardingPanel from "@/modules/board/presentation/components/boardOnboardingPanel/BoardOnboardingPanel";
@@ -37,7 +37,6 @@ import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCr
 import { useTicketAssigneesByProjectId } from "@/modules/board/presentation/hooks/ticket/useTicketAssigneesByProjectId";
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
-import { useSortStore } from "@/modules/board/presentation/stores/useSortStore";
 import {
   buildTicketCode,
   normalizeTicketSearch,
@@ -116,25 +115,23 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   } = useBoardConfiguration(projectId);
   const { data: projectShortCode } = useProjectShortCode(projectId);
   const filters = useFilterStore((state) => state.filters);
-  const sort = useSortStore((state) => state.sort);
   const search = useFilterStore((state) => state.search);
   const effectiveSearch = useMemo(() => {
     return normalizeTicketSearch(search, projectShortCode);
   }, [projectShortCode, search]);
-  const { data: tickets = [] } = useTickets(
-    projectId,
-    filters,
-    sort,
-    effectiveSearch
-  );
+  const { data: tickets = [] } = useTickets(projectId, filters, effectiveSearch);
   const hasActiveFilters = useMemo(() => {
-    return Boolean(filters.columnId || filters.priority);
+    return Boolean(
+      filters.columnId ||
+        filters.priority ||
+        filters.assigneeUserId ||
+        filters.unassignedOnly
+    );
   }, [filters]);
   const shouldLoadProjectWideTicketsForProgress =
     hasActiveFilters || effectiveSearch.trim() !== "";
   const { data: projectWideOnboardingTickets = [] } = useTickets(
     projectId,
-    undefined,
     undefined,
     "",
     {
@@ -146,7 +143,6 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     isCreateTicketModalOpen && shouldLoadProjectWideTicketsForProgress;
   const { data: projectWideTickets = [] } = useTickets(
     projectId,
-    undefined,
     undefined,
     "",
     {

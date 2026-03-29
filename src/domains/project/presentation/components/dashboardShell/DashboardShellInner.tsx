@@ -258,6 +258,11 @@ const DashboardShellInner = ({
     isMobileSidebarOpen && styles["dashboard-shell__sidebar--open"]
   );
 
+  const contentClasses = joinDashboardShellClasses(
+    styles["dashboard-shell__content"],
+    isFooterEmpty && styles["dashboard-shell__content--no-footer"]
+  );
+
   return (
     <div id={shellId} className={containerClasses}>
       {!isSidebarEmpty ? (
@@ -315,7 +320,7 @@ const DashboardShellInner = ({
         </div>
       </nav>
 
-      <div className={styles["dashboard-shell__content"]}>
+      <div className={contentClasses}>
         <div
           className={styles["dashboard-shell__header"]}
           aria-hidden={
