@@ -1,27 +1,23 @@
 "use client";
 
-import type { MouseEvent } from "react";
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import {
-  FEATURE_KEYS,
   HERO_PROOF_KEYS,
   IMPACT_KEYS,
   PREVIEW_COLUMNS,
   RHYTHM_KEYS,
-  TRUST_ITEM_KEYS,
   VALUE_KEYS,
 } from "@/shared/constants/landing";
-import type { FeatureKey } from "@/shared/constants/landing.types";
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/button";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
-import { buildFeaturePreviewContent, isFeatureKey } from "@/shared/utils";
+import { buildFeaturePreviewContent } from "@/shared/utils";
 
 import styles from "./styles.module.scss";
 
@@ -36,12 +32,9 @@ const LandingPageContent = () => {
   const tExamples = useTranslation("pages.landing.examples");
   const tImpact = useTranslation("pages.landing.impact");
   const tRhythm = useTranslation("pages.landing.rhythm");
-  const tTrust = useTranslation("pages.landing.trust");
   const tCta = useTranslation("pages.landing.cta");
   const tFooter = useTranslation("pages.landing.footer");
   const { data: isBillingVisible } = useBillingVisibility();
-  const [selectedFeatureKey, setSelectedFeatureKey] =
-    useState<FeatureKey>("board");
 
   // Supabase redirects to /?code=... instead of dedicated pages
   useEffect(() => {
@@ -83,19 +76,7 @@ const LandingPageContent = () => {
     }
   }, []);
 
-  const handleFeatureSelect = useCallback(
-    (event: MouseEvent<HTMLButtonElement>) => {
-      const nextFeatureKey = event.currentTarget.dataset.featureKey;
-      if (nextFeatureKey && isFeatureKey(nextFeatureKey)) {
-        setSelectedFeatureKey(nextFeatureKey);
-      }
-    },
-    []
-  );
-
-  const selectedFeaturePreview = useMemo(() => {
-    return buildFeaturePreviewContent(selectedFeatureKey, tExamples);
-  }, [selectedFeatureKey, tExamples]);
+  const featurePreview = buildFeaturePreviewContent("board", tExamples);
 
   return (
     <main className={styles["landing-page"]}>
@@ -190,15 +171,8 @@ const LandingPageContent = () => {
                 <span className={styles["value-card__icon"]} aria-hidden="true">
                   {tValues(`${key}.icon`)}
                 </span>
-                <Title variant="h3" className={styles["value-card__title"]}>
-                  {tValues(`${key}.title`)}
-                </Title>
-                <Text
-                  variant="body"
-                  className={styles["value-card__description"]}
-                >
-                  {tValues(`${key}.description`)}
-                </Text>
+                <Title variant="h3">{tValues(`${key}.title`)}</Title>
+                <Text variant="body">{tValues(`${key}.description`)}</Text>
               </article>
             ))}
           </div>
@@ -216,50 +190,6 @@ const LandingPageContent = () => {
           >
             {tFeatures("title")}
           </Title>
-          <div className={styles["features-grid"]} role="list">
-            {FEATURE_KEYS.map((key) => (
-              <article
-                key={key}
-                className={[
-                  styles["feature-card"],
-                  selectedFeatureKey === key
-                    ? styles["feature-card--active"]
-                    : "",
-                ].join(" ")}
-                role="listitem"
-              >
-                <button
-                  type="button"
-                  className={styles["feature-card__button"]}
-                  data-feature-key={key}
-                  onClick={handleFeatureSelect}
-                  aria-pressed={selectedFeatureKey === key}
-                  aria-controls={getAccessibilityId("landing-example-preview")}
-                >
-                  <span
-                    className={styles["feature-card__icon"]}
-                    aria-hidden="true"
-                  >
-                    {tFeatures(`${key}.icon`)}
-                  </span>
-                  <div className={styles["feature-card__content"]}>
-                    <Title
-                      variant="h3"
-                      className={styles["feature-card__title"]}
-                    >
-                      {tFeatures(`${key}.title`)}
-                    </Title>
-                    <Text
-                      variant="body"
-                      className={styles["feature-card__description"]}
-                    >
-                      {tFeatures(`${key}.description`)}
-                    </Text>
-                  </div>
-                </button>
-              </article>
-            ))}
-          </div>
           <section
             id={getAccessibilityId("landing-example-preview")}
             className={styles["landing-example-preview"]}
@@ -278,8 +208,7 @@ const LandingPageContent = () => {
               variant="body"
               className={styles["landing-example-preview__description"]}
             >
-              {selectedFeaturePreview.title} -{" "}
-              {selectedFeaturePreview.description}
+              {featurePreview.title} - {featurePreview.description}
             </Text>
             <div className={styles["landing-example-preview__surface"]}>
               <div className={styles["landing-example-preview__toolbar"]}>
@@ -318,7 +247,7 @@ const LandingPageContent = () => {
                       {tExamples(`columns.${columnKey}`)}
                     </Title>
                     <ul className={styles["landing-example-preview__items"]}>
-                      {selectedFeaturePreview.columns[columnKey].map((item) => (
+                      {featurePreview.columns[columnKey].map((item) => (
                         <li
                           key={item}
                           className={styles["landing-example-preview__item"]}
@@ -367,18 +296,9 @@ const LandingPageContent = () => {
                 className={styles["impact-card"]}
                 role="listitem"
               >
-                <p className={styles["impact-card__metric"]}>
-                  {tImpact(`${key}.value`)}
-                </p>
-                <Title variant="h3" className={styles["impact-card__title"]}>
-                  {tImpact(`${key}.title`)}
-                </Title>
-                <Text
-                  variant="body"
-                  className={styles["impact-card__description"]}
-                >
-                  {tImpact(`${key}.description`)}
-                </Text>
+                <Text variant="metric">{tImpact(`${key}.value`)}</Text>
+                <Title variant="h3">{tImpact(`${key}.title`)}</Title>
+                <Text variant="body">{tImpact(`${key}.description`)}</Text>
               </article>
             ))}
           </div>
@@ -414,50 +334,9 @@ const LandingPageContent = () => {
                     {tRhythm(`${key}.icon`)}
                   </span>
                 </div>
-                <Title variant="h3" className={styles["rhythm-card__title"]}>
-                  {tRhythm(`${key}.title`)}
-                </Title>
-                <Text
-                  variant="body"
-                  className={styles["rhythm-card__description"]}
-                >
-                  {tRhythm(`${key}.description`)}
-                </Text>
+                <Title variant="h3">{tRhythm(`${key}.title`)}</Title>
+                <Text variant="body">{tRhythm(`${key}.description`)}</Text>
               </article>
-            ))}
-          </div>
-        </section>
-
-        {/* Trust */}
-        <section
-          className={styles["trust-section"]}
-          aria-labelledby={getAccessibilityId("landing-trust-title")}
-        >
-          <Title
-            variant="h2"
-            className={styles["trust-section__title"]}
-            id={getAccessibilityId("landing-trust-title")}
-          >
-            {tTrust("title")}
-          </Title>
-          <Text variant="body" className={styles["trust-section__description"]}>
-            {tTrust("description")}
-          </Text>
-          <div className={styles["trust-badges"]} role="list">
-            {TRUST_ITEM_KEYS.map(({ iconKey, labelKey }) => (
-              <span
-                key={labelKey}
-                className={styles["trust-badge"]}
-                role="listitem"
-              >
-                <span
-                  className={styles["trust-badge__icon"]}
-                  aria-hidden="true"
-                >
-                  {tTrust(iconKey)}
-                </span>
-                {tTrust(labelKey)}
-              </span>
             ))}
           </div>
         </section>
@@ -474,9 +353,6 @@ const LandingPageContent = () => {
           >
             {tCta("title")}
           </Title>
-          <Text variant="body" className={styles["cta-section__description"]}>
-            {tCta("description")}
-          </Text>
           <Button
             label={tCta("button")}
             onClick={handleSignUp}
@@ -512,13 +388,7 @@ const LandingPageContent = () => {
 };
 
 const LandingPage = () => {
-  const tCommon = useTranslation("common");
-
-  return (
-    <Suspense fallback={<div>{tCommon("loading")}</div>}>
-      <LandingPageContent />
-    </Suspense>
-  );
+  return <LandingPageContent />;
 };
 
 export default LandingPage;

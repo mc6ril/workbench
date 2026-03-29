@@ -14,8 +14,10 @@
 .legal-page {
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   padding: 0;
-  background: $color-workspace-page-gradient;
+  background-color: $color-background;
+  background-image: $color-workspace-page-gradient;
   display: flex;
   flex-direction: column;
 }

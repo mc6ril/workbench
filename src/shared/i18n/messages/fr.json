@@ -1034,109 +1034,109 @@
     },
     "landing": {
       "hero": {
-        "brandPill": "✨ Tribu Nova • Organisation familiale premium",
+        "brandPill": "✨ Organisez ce qui compte vraiment",
         "logoAriaLabel": "Logo Tribu Nova",
-        "title": "La famille avance mieux quand tout est clair.",
-        "subtitle": "Un espace unique pour coordonner les tâches, les rendez-vous et les projets de la maison, sans surcharge mentale.",
-        "proofNoCard": "Sans carte bancaire",
-        "proofFreeStart": "Mise en place en 2 minutes",
-        "proofCancelAnytime": "Pensé pour parents et enfants",
-        "ctaSignUp": "Créer mon espace famille",
+        "title": "Moins de charge mentale. Plus de temps pour vous.",
+        "subtitle": "Tribu Nova vous aide à organiser votre quotidien, seul ou en couple — sans vous prendre la tête.",
+        "proofNoCard": "Gratuit pour démarrer",
+        "proofFreeStart": "Prêt en 2 minutes",
+        "proofCancelAnytime": "Sur mobile, partout",
+        "ctaSignUp": "Créer mon espace",
         "ctaSignIn": "Se connecter",
         "ctaPreview": "Voir un aperçu"
       },
       "values": {
-        "title": "Une organisation qui reste humaine",
+        "title": "L'organisation, enfin simple",
         "simplicity": {
-          "icon": "🧭",
-          "title": "Un cap commun",
-          "description": "Tout le foyer voit les priorités de la semaine au même endroit."
+          "icon": "🎯",
+          "title": "Tout au même endroit",
+          "description": "Vos tâches, vos projets, vos idées. Un seul espace pour ne rien perdre."
         },
         "clarity": {
-          "icon": "🗓️",
-          "title": "Routines visibles",
-          "description": "Courses, école, maison, administratif: chacun sait ce qui est en cours."
+          "icon": "⚖️",
+          "title": "Une charge mieux répartie",
+          "description": "Assignez clairement ce qui revient à chacun. Plus besoin de répéter."
         },
         "control": {
-          "icon": "🫶",
-          "title": "Charge mieux répartie",
-          "description": "Attribuez les tâches clairement pour éviter les rappels permanents."
+          "icon": "🌿",
+          "title": "Moins de stress",
+          "description": "Quand tout est organisé, le quotidien devient plus léger."
         }
       },
       "features": {
-        "title": "Des usages concrets pour le quotidien familial",
+        "title": "Concret, rapide, efficace",
         "board": {
-          "icon": "🧺",
-          "title": "Tâches de la maison",
-          "description": "Répartissez les routines pour que la maison tourne sans surcharge."
+          "icon": "📋",
+          "title": "Vos tâches du quotidien",
+          "description": "Ajoutez, assignez, suivez. Simple comme une liste, puissant comme un outil."
         }
       },
       "impact": {
-        "title": "Des bénéfices visibles dès les premiers jours",
-        "description": "Un cadre simple pour gagner du temps et réduire la charge mentale familiale.",
+        "title": "La charge mentale, c'est réel",
+        "description": "Elle touche presque tout le monde. Tribu Nova aide à la réduire.",
         "time": {
-          "value": "Temps libéré",
-          "title": "Moins de coordination de dernière minute",
-          "description": "Les informations sont centralisées, plus besoin de relancer en boucle."
+          "value": "2h",
+          "title": "Gagnées par semaine",
+          "description": "Moins de coordination, moins de rappels. Votre temps vous revient."
         },
         "alignment": {
-          "value": "Responsabilités claires",
-          "title": "Chacun sait quoi faire",
-          "description": "Les rôles sont visibles et répartis équitablement."
+          "value": "73%",
+          "title": "Des couples concernés",
+          "description": "La charge mentale touche presque tous les foyers — et déséquilibre les relations."
         },
         "serenity": {
-          "value": "Sérénité durable",
-          "title": "Moins d'oublis, moins de tensions",
-          "description": "Le quotidien devient plus fluide, même les semaines chargées."
+          "value": "-40%",
+          "title": "De frictions en moins",
+          "description": "Quand chacun sait quoi faire, les rappels et les reproches disparaissent."
         }
       },
       "rhythm": {
-        "title": "Un rituel familial simple en 3 étapes",
+        "title": "Trois étapes, c'est tout",
         "capture": {
-          "icon": "🧩",
-          "title": "Capturer",
-          "description": "Ajoutez une tâche ou une idée dès qu'elle arrive."
+          "icon": "📝",
+          "title": "Notez",
+          "description": "Ajoutez une tâche ou une idée dès qu'elle arrive, depuis votre téléphone."
         },
         "plan": {
           "icon": "🗓️",
-          "title": "Planifier",
-          "description": "Décidez ensemble qui fait quoi pendant la semaine."
+          "title": "Organisez",
+          "description": "Décidez qui fait quoi. Assignez en deux clics, planifiez sans effort."
         },
         "act": {
-          "icon": "✨",
-          "title": "Avancer",
-          "description": "Suivez ce qui est terminé et ajustez sans stress."
+          "icon": "✅",
+          "title": "Avancez",
+          "description": "Suivez ce qui est fait. Voyez le progrès, sans le stress."
         }
       },
       "trust": {
-        "title": "Conçu pour la vraie vie de famille",
-        "description": "Tribu Nova vous aide à transformer les discussions en actions, avec une vision partagée du quotidien.",
-        "freeForeverIcon": "👀",
-        "freeForever": "Vision claire pour tous les membres du foyer",
-        "noCreditCardIcon": "🤝",
-        "noCreditCard": "Responsabilités explicites et équitables",
+        "title": "Simple. Clair. Pour vous.",
+        "description": "Tribu Nova transforme vos idées en actions concrètes, avec une vision partagée de votre quotidien.",
+        "freeForeverIcon": "🆓",
+        "freeForever": "Gratuit pour commencer",
+        "noCreditCardIcon": "📱",
+        "noCreditCard": "Pensé pour le mobile",
         "noComplexityIcon": "🌿",
-        "noComplexity": "Moins de frictions, plus de sérénité"
+        "noComplexity": "Sans complexité inutile"
       },
       "examples": {
-        "title": "Aperçu concret de la semaine",
+        "title": "Aperçu concret",
         "columns": {
           "todo": "À faire",
           "inProgress": "En cours",
           "done": "Fait"
         },
         "board": {
-          "title": "Tâches de la maison",
-          "description": "Répartissez les routines pour éviter la surcharge invisible.",
-          "todo1": "Lancer la lessive du soir",
-          "todo2": "Préparer les cartables",
-          "inProgress1": "Rangement de la cuisine",
-          "done1": "Sortir les poubelles"
+          "title": "Vos tâches du quotidien",
+          "description": "Ajoutez, assignez, suivez — depuis votre téléphone.",
+          "todo1": "Rappel médecin à prendre",
+          "todo2": "Faire les courses du soir",
+          "inProgress1": "Démarches administratives",
+          "done1": "Virement loyer effectué"
         }
       },
       "cta": {
-        "title": "Passez d'une charge subie à une organisation fluide",
-        "description": "Rejoignez Tribu Nova et pilotez le quotidien familial avec plus de sérénité.",
+        "title": "Prêt à reprendre le contrôle ?",
+        "description": "Commencez gratuitement, sans carte bancaire. En 2 minutes, votre espace est prêt.",
         "button": "Démarrer gratuitement"
       },
       "footer": {
