@@ -32,6 +32,8 @@
     },
     "sidebar": {
       "ariaLabel": "Navegación del proyecto",
+      "openMenu": "Abrir el menu del proyecto",
+      "closeMenu": "Cerrar el menu del proyecto",
       "addTab": "Añadir pestaña",
       "addTabAriaLabel": "Añadir pestaña (próximamente)",
       "items": {

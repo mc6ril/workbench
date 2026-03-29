@@ -32,6 +32,8 @@
     },
     "sidebar": {
       "ariaLabel": "Project navigation",
+      "openMenu": "Open project menu",
+      "closeMenu": "Close project menu",
       "addTab": "Add tab",
       "addTabAriaLabel": "Add tab (coming soon)",
       "items": {

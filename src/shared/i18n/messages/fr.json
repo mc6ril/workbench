@@ -32,6 +32,8 @@
     },
     "sidebar": {
       "ariaLabel": "Navigation du projet",
+      "openMenu": "Ouvrir le menu du projet",
+      "closeMenu": "Fermer le menu du projet",
       "addTab": "Ajouter un onglet",
       "addTabAriaLabel": "Ajouter un onglet (à venir)",
       "items": {
