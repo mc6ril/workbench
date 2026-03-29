@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { sanitizeInternalRedirectPath } from "@/shared/utils/authRedirect";
 
 import { exchangeCodeForSession } from "@/domains/auth/core/usecases/exchangeCodeForSession";
 import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
@@ -15,13 +16,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const nextParam = searchParams.get("next") ?? PAGE_ROUTES.HOME;
-
-  // Security: reject protocol-relative URLs (//evil.com) and absolute URLs
-  // to prevent open redirect attacks via crafted callback links.
-  const next =
-    nextParam.startsWith("/") && !nextParam.startsWith("//")
-      ? nextParam
-      : PAGE_ROUTES.HOME;
+  const next = sanitizeInternalRedirectPath(nextParam, PAGE_ROUTES.HOME);
 
   if (code) {
     try {

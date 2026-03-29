@@ -16,6 +16,7 @@ describe("parseVerifyEmailParams", () => {
       },
       redirectError: null,
       isMissingToken: false,
+      shouldRecoverSession: false,
     });
   });
 
@@ -31,6 +32,7 @@ describe("parseVerifyEmailParams", () => {
       },
       redirectError: null,
       isMissingToken: false,
+      shouldRecoverSession: false,
     });
   });
 
@@ -49,6 +51,20 @@ describe("parseVerifyEmailParams", () => {
       },
       redirectError: null,
       isMissingToken: false,
+      shouldRecoverSession: false,
+    });
+  });
+
+  it("marks callback redirects as session recovery flows", () => {
+    const result = parseVerifyEmailParams(
+      new URLSearchParams("verified=1")
+    );
+
+    expect(result).toEqual({
+      input: null,
+      redirectError: null,
+      isMissingToken: false,
+      shouldRecoverSession: true,
     });
   });
 
@@ -65,6 +81,7 @@ describe("parseVerifyEmailParams", () => {
         description: "Email link is invalid or has expired",
       },
       isMissingToken: false,
+      shouldRecoverSession: false,
     });
   });
 
@@ -75,6 +92,7 @@ describe("parseVerifyEmailParams", () => {
       input: null,
       redirectError: null,
       isMissingToken: true,
+      shouldRecoverSession: false,
     });
   });
 });

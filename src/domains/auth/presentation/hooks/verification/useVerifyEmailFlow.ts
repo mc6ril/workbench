@@ -4,6 +4,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import {
+  buildAuthCallbackPath,
+  VERIFIED_EMAIL_REDIRECT_PATH,
+} from "@/shared/utils/authRedirect";
 
 import { useVerifyEmail } from "@/domains/auth/presentation/hooks/verification/useVerifyEmail";
 import {
@@ -30,10 +34,9 @@ export const useVerifyEmailFlow = () => {
       locationHash
     );
   }, [locationHash, searchParamsValue]);
-  const hasVerificationAttempt =
-    !!parsedParams.input || !!parsedParams.redirectError;
+  const shouldExchangeCode = !!parsedParams.input?.code;
   const recoverySessionQuery = useOptionalSession({
-    enabled: hasVerificationAttempt,
+    enabled: parsedParams.shouldRecoverSession,
     queryKeySuffix: [
       "verify-email-recovery",
       searchParamsValue,
@@ -41,11 +44,28 @@ export const useVerifyEmailFlow = () => {
     ],
   });
   const hasRecoveredSession =
-    hasVerificationAttempt && !!recoverySessionQuery.data;
+    parsedParams.shouldRecoverSession && !!recoverySessionQuery.data;
+  const hasSessionRecoveryError =
+    parsedParams.shouldRecoverSession &&
+    !recoverySessionQuery.isPending &&
+    !recoverySessionQuery.data;
+
+  useEffect(() => {
+    if (parsedParams.input?.code) {
+      router.replace(
+        buildAuthCallbackPath({
+          code: parsedParams.input.code,
+          nextPath: VERIFIED_EMAIL_REDIRECT_PATH,
+          fallbackPath: VERIFIED_EMAIL_REDIRECT_PATH,
+        })
+      );
+    }
+  }, [parsedParams.input?.code, router]);
 
   useEffect(() => {
     if (
       parsedParams.input &&
+      !parsedParams.input.code &&
       !verifyEmailMutation.isPending &&
       !verifyEmailMutation.isSuccess &&
       !verifyEmailMutation.isError
@@ -82,17 +102,24 @@ export const useVerifyEmailFlow = () => {
             verifyEmailMutation.error as { code?: string },
             tErrors
           )
+        : hasSessionRecoveryError
+          ? tErrors("auth.EMAIL_VERIFICATION_ERROR")
         : undefined;
 
   return {
     isMissingToken: parsedParams.isMissingToken,
-    isPending: verifyEmailMutation.isPending || recoverySessionQuery.isPending,
+    isPending:
+      shouldExchangeCode ||
+      verifyEmailMutation.isPending ||
+      recoverySessionQuery.isPending,
     isSuccess:
       hasRecoveredSession ||
       (verifyEmailMutation.isSuccess && !!verifyEmailMutation.data?.session),
     isError:
       !hasRecoveredSession &&
-      (!!parsedParams.redirectError || verifyEmailMutation.isError),
+      (!!parsedParams.redirectError ||
+        verifyEmailMutation.isError ||
+        hasSessionRecoveryError),
     errorMessage,
   };
 };
