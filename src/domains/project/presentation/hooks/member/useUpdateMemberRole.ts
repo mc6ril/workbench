@@ -22,8 +22,8 @@ export const useUpdateMemberRole = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ memberId, role }: UpdateMemberRoleVariables) =>
-      updateMemberRole(memberRepository, memberId, role),
+    mutationFn: ({ memberId, role, projectId }: UpdateMemberRoleVariables) =>
+      updateMemberRole(memberRepository, projectId, memberId, role),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.members.byProject(variables.projectId),

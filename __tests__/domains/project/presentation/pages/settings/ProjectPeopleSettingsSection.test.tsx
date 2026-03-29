@@ -16,7 +16,7 @@ import { useProjectMembers } from "@/domains/project/presentation/hooks/member/u
 import { useRemoveMember } from "@/domains/project/presentation/hooks/member/useRemoveMember";
 import { useUpdateMemberRole } from "@/domains/project/presentation/hooks/member/useUpdateMemberRole";
 import ProjectPeopleSettingsSection from "@/domains/project/presentation/pages/settings/components/ProjectPeopleSettingsSection";
-import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 const replaceMock = jest.fn();
@@ -32,9 +32,12 @@ jest.mock("@/domains/session/presentation/hooks/useSession", () => ({
   useSession: jest.fn(),
 }));
 
-jest.mock("@/domains/project/presentation/providers/permissions", () => ({
-  useProjectPermissions: jest.fn(),
-}));
+jest.mock(
+  "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider",
+  () => ({
+    useProjectPermissions: jest.fn(),
+  })
+);
 
 jest.mock(
   "@/domains/project/presentation/hooks/member/useProjectMembers",
@@ -411,7 +414,7 @@ describe("ProjectPeopleSettingsSection", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders clean empty states when there are no members or invitations", () => {
+  it("hides the active invitation links block when there are no pending invitations", () => {
     jest.mocked(useProjectMembers).mockReturnValue(
       asMockedReturn<ReturnType<typeof useProjectMembers>>({
         data: [],
@@ -436,8 +439,8 @@ describe("ProjectPeopleSettingsSection", () => {
 
     expect(screen.getByText("Aucun membre à afficher")).toBeInTheDocument();
     expect(
-      screen.getByText("Aucune invitation en attente")
-    ).toBeInTheDocument();
+      screen.queryByText("Aucune invitation en attente")
+    ).not.toBeInTheDocument();
   });
 
   it("renders retry states when members or invitations fail to load", () => {
@@ -541,6 +544,14 @@ describe("ProjectPeopleSettingsSection", () => {
 
     render(<ProjectPeopleSettingsSection projectId={PROJECT_ID} />);
 
+    expect(
+      screen.queryByText("Invitations en attente")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        "Seul un administrateur peut inviter, changer les rôles ou retirer un membre du projet."
+      )
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByLabelText("Changer le rôle de Marie")
     ).not.toBeInTheDocument();

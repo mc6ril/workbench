@@ -23,10 +23,19 @@ jest.mock("next/navigation", () => ({
   useSearchParams: () => searchParamsMock,
 }));
 
-jest.mock("@/domains/project/presentation/providers/permissions", () => ({
-  useProjectPermissions: () => ({
-    canCreateTicket: true,
-    isLoading: false,
+jest.mock(
+  "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider",
+  () => ({
+    useProjectPermissions: () => ({
+      canCreateTicket: true,
+      isLoading: false,
+    }),
+  })
+);
+
+jest.mock("@/domains/project/presentation/hooks/member/useProjectMembers", () => ({
+  useProjectMembers: () => ({
+    data: undefined,
   }),
 }));
 

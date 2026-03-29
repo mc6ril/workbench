@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
-import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { useBoardDnD } from "@/modules/board/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/modules/board/presentation/hooks/board/useBoardTickets";
@@ -12,12 +12,14 @@ import { useTicketAssigneesByProjectId } from "@/modules/board/presentation/hook
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
 import BoardPage from "@/modules/board/presentation/pages/board";
 
+const mockPush = jest.fn();
 const mockReplace = jest.fn();
 const mockPathname = "/projects/project-1/board";
 let mockSearchParams = new URLSearchParams();
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({
+    push: mockPush,
     replace: mockReplace,
   }),
   usePathname: () => mockPathname,
@@ -110,7 +112,7 @@ jest.mock("@/modules/board/presentation/components/ticket/ticketCard/TicketCard"
   default: () => <div data-testid="ticket-card" />,
 }));
 
-jest.mock("@/domains/project/presentation/providers/permissions", () => ({
+jest.mock("@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider", () => ({
   useProjectPermissions: jest.fn(),
 }));
 
@@ -166,15 +168,6 @@ jest.mock("@/modules/board/presentation/stores/useFilterStore", () => ({
     selector({
       filters: {},
       search: "",
-    }),
-}));
-
-jest.mock("@/modules/board/presentation/stores/useSortStore", () => ({
-  useSortStore: (
-    selector: (state: { sort: undefined }) => unknown
-  ) =>
-    selector({
-      sort: undefined,
     }),
 }));
 
@@ -357,12 +350,22 @@ describe("BoardPage onboarding", () => {
       })
     );
 
-    expect(mockReplace).toHaveBeenCalledWith(
-      `${mockPathname}?ticket=ticket-1`,
-      {
-        scroll: false,
-      }
-    );
+    expect(mockPush).toHaveBeenCalledWith("/project-1/board/tickets/ticket-1");
+  });
+
+  it("redirects legacy ticket query params to the ticket detail page", async () => {
+    mockSearchParams = new URLSearchParams("ticket=ticket-1");
+
+    render(<BoardPage projectId="project-1" />);
+
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith(
+        "/project-1/board/tickets/ticket-1",
+        {
+          scroll: false,
+        }
+      );
+    });
   });
 
   it("does not render the onboarding panel when auto-open is disabled", () => {

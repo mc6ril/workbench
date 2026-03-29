@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 
+import Text from "@/shared/design-system/text";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
@@ -9,7 +10,7 @@ type Props = {
   ticketCode: string;
   canEditTicket: boolean;
   onTitleChange: (value: string) => void;
-  onClose: () => void;
+  onBack: () => void;
 };
 
 const TicketDetailHeader = ({
@@ -17,10 +18,9 @@ const TicketDetailHeader = ({
   ticketCode,
   canEditTicket,
   onTitleChange,
-  onClose,
+  onBack,
 }: Props) => {
   const t = useTranslation("pages.ticketDetail.page");
-  const tCommon = useTranslation("common");
   const titleRef = useRef<HTMLTextAreaElement | null>(null);
 
   useLayoutEffect(() => {
@@ -36,32 +36,40 @@ const TicketDetailHeader = ({
   return (
     <header className={styles["ticket-detail__header"]}>
       <div className={styles["ticket-detail__header-copy"]}>
-        <span className={styles["ticket-detail__code"]}>{ticketCode}</span>
-        <textarea
-          ref={titleRef}
-          rows={1}
-          value={title}
-          className={styles["ticket-detail__title-input"]}
-          aria-label={t("fields.title")}
-          disabled={!canEditTicket}
-          onInput={(event) => {
-            event.currentTarget.style.height = "0";
-            event.currentTarget.style.height = `${event.currentTarget.scrollHeight}px`;
-          }}
-          onChange={(event) => {
-            onTitleChange(event.target.value);
-          }}
-        />
+        <Text
+          as="span"
+          variant="caption"
+          className={styles["ticket-detail__code"]}
+        >
+          {ticketCode}
+        </Text>
+        <button
+          type="button"
+          className={styles["ticket-detail__close-button"]}
+          onClick={onBack}
+          aria-label={t("actions.close")}
+        >
+          <span
+            aria-hidden="true"
+            className={styles["ticket-detail__close-button-icon"]}
+          />
+        </button>
       </div>
-
-      <button
-        type="button"
-        className={styles["ticket-detail__close-button"]}
-        onClick={onClose}
-        aria-label={tCommon("dismiss")}
-      >
-        ✕
-      </button>
+      <textarea
+        ref={titleRef}
+        rows={1}
+        value={title}
+        className={styles["ticket-detail__title-input"]}
+        aria-label={t("fields.title")}
+        disabled={!canEditTicket}
+        onInput={(event) => {
+          event.currentTarget.style.height = "0";
+          event.currentTarget.style.height = `${event.currentTarget.scrollHeight}px`;
+        }}
+        onChange={(event) => {
+          onTitleChange(event.target.value);
+        }}
+      />
     </header>
   );
 };

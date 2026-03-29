@@ -1,8 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
-import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
+import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import { useAddUserToProject } from "@/domains/project/presentation/hooks/useAddUserToProject";
 import { useCreateProject } from "@/domains/project/presentation/hooks/useCreateProject";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
@@ -33,11 +33,6 @@ jest.mock("@/domains/viewer/presentation/hooks/useViewer", () => ({
   useViewer: jest.fn(),
 }));
 
-jest.mock(
-  "@/domains/workspace/presentation/components/workspace/projectCard/ProjectCardActions",
-  () => () => null
-);
-
 jest.mock("@/domains/workspace/presentation/hooks/useLastActivitySubtitle", () => ({
   useLastActivitySubtitle: jest.fn(),
 }));
@@ -52,10 +47,6 @@ jest.mock("@/domains/workspace/presentation/hooks/useReclaimableProjects", () =>
 
 jest.mock("@/domains/billing/presentation/hooks/useBillingVisibility", () => ({
   useBillingVisibility: jest.fn(),
-}));
-
-jest.mock("@/domains/billing/presentation/hooks/useSubscription", () => ({
-  useSubscription: jest.fn(),
 }));
 
 const asMockedReturn = <T,>(value: unknown): T => value as T;
@@ -112,13 +103,6 @@ describe("WorkspacePage onboarding", () => {
     jest.mocked(useBillingVisibility).mockReturnValue(
       asMockedReturn<ReturnType<typeof useBillingVisibility>>({
         data: false,
-      })
-    );
-
-    jest.mocked(useSubscription).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useSubscription>>({
-        data: undefined,
-        isLoading: false,
       })
     );
 
@@ -183,5 +167,53 @@ describe("WorkspacePage onboarding", () => {
         name: "Créer mon premier espace de travail",
       })
     ).toBeInTheDocument();
+  });
+
+  it("does not render a project actions menu on workspace cards anymore", () => {
+    jest.mocked(useTicketGettingStartedStatus).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useTicketGettingStartedStatus>>({
+        status: "completed",
+        canAutoOpen: false,
+        isLoading: false,
+        isPending: false,
+        error: null,
+        setStatus: jest.fn(),
+        setStatusAsync: jest.fn(),
+        markSkipped,
+        markCompleted: jest.fn(),
+      })
+    );
+
+    jest.mocked(useProjectsWithStats).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useProjectsWithStats>>({
+        data: [
+          {
+            id: "project-1",
+            name: "Maison",
+            shortCode: "MA",
+            createdAt: new Date("2024-01-01T00:00:00Z"),
+            updatedAt: new Date("2024-01-02T00:00:00Z"),
+            role: ProjectRole.ADMIN,
+            memberCount: 2,
+            ticketCount: 4,
+            inProgressCount: 2,
+            completedCount: 2,
+          },
+        ],
+        isLoading: false,
+        isFetching: false,
+        error: null,
+        refetch: jest.fn(),
+      })
+    );
+
+    render(<WorkspacePage />);
+
+    expect(screen.getByText("Maison")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", {
+        name: /menu d'actions|ouvrir le menu/i,
+      })
+    ).not.toBeInTheDocument();
   });
 });

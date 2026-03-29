@@ -38,7 +38,7 @@ import { useRevokeInvitation } from "@/domains/project/presentation/hooks/invita
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useRemoveMember } from "@/domains/project/presentation/hooks/member/useRemoveMember";
 import { useUpdateMemberRole } from "@/domains/project/presentation/hooks/member/useUpdateMemberRole";
-import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import { buildInvitationRoute } from "@/domains/project/utils/invitationUtils";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
@@ -46,10 +46,7 @@ type ProjectPeopleSettingsSectionProps = {
   projectId: string;
 };
 
-const MANAGEABLE_ROLES = Object.freeze([
-  ProjectRole.MEMBER,
-  ProjectRole.ADMIN,
-]);
+const MANAGEABLE_ROLES = Object.freeze([ProjectRole.MEMBER, ProjectRole.ADMIN]);
 
 const getMemberDisplayName = (member: ProjectMember): string => {
   return member.profile.displayName?.trim() || member.profile.email;
@@ -72,6 +69,7 @@ const ProjectPeopleSettingsSection = ({
   const router = useRouter();
   const { data: session } = useSession();
   const { canManageMembers } = useProjectPermissions();
+  const showInvitationCard = canManageMembers;
   const {
     data: members = [],
     isLoading: isMembersLoading,
@@ -85,8 +83,10 @@ const ProjectPeopleSettingsSection = ({
     isFetching: isInvitationsFetching,
     error: invitationsError,
     refetch: refetchInvitations,
-  } = useProjectInvitations(projectId);
-  const membersLimitAccess = useFeatureAccess(PlanFeature.MEMBERS_PER_WORKSPACE);
+  } = useProjectInvitations(projectId, showInvitationCard);
+  const membersLimitAccess = useFeatureAccess(
+    PlanFeature.MEMBERS_PER_WORKSPACE
+  );
   const advancedRolesAccess = useFeatureAccess(PlanFeature.ADVANCED_ROLES);
   const inviteMutation = useInviteMember();
   const revokeInvitationMutation = useRevokeInvitation();
@@ -135,6 +135,11 @@ const ProjectPeopleSettingsSection = ({
   const pendingInvitations = useMemo(() => {
     return invitations.filter(isActiveInvitation);
   }, [invitations]);
+  const showActiveInvitationLinksSection =
+    showInvitationCard &&
+    (isInvitationsLoading ||
+      invitationsError != null ||
+      pendingInvitations.length > 0);
   const memberLimit = membersLimitAccess.limit;
   const occupiedSeats = members.length + pendingInvitations.length;
   const hasUnlimitedSeats = memberLimit === undefined;
@@ -382,290 +387,295 @@ const ProjectPeopleSettingsSection = ({
         <Title variant="h2" className={styles["people-settings__title"]}>
           {tPeople("title")}
         </Title>
-        <Text
-          variant="caption"
-          className={styles["people-settings__subtitle"]}
-        >
+        <Text variant="caption" className={styles["people-settings__subtitle"]}>
           {tPeople("subtitle")}
         </Text>
       </div>
 
-      {!canManageMembers && (
-        <div
-          className={`${styles["people-settings__notice"]} ${styles["people-settings__notice--info"]}`}
-        >
-          <Text variant="small">{tPeople("adminOnly")}</Text>
-        </div>
-      )}
-
       <div className={styles["people-settings__grid"]}>
-        <Card className={styles["people-settings__card"]}>
-          <div className={styles["people-settings__section-header"]}>
-            <Title variant="h3" className={styles["people-settings__section-title"]}>
-              {tInvitations("title")}
-            </Title>
-            <Text
-              variant="caption"
-              className={styles["people-settings__section-subtitle"]}
-            >
-              {tInvitations("subtitle")}
-            </Text>
-          </div>
-
-          <div className={styles["people-settings__pills"]}>
-            <span className={styles["people-settings__pill"]}>
-              {tInvitations("activeCount", {
-                count: pendingInvitations.length,
-              })}
-            </span>
-            <span className={styles["people-settings__pill"]}>
-              {hasUnlimitedSeats
-                ? tPeople("memberLimit.unlimited", {
-                    count: occupiedSeats,
-                  })
-                : tPeople("memberLimit.limited", {
-                    count: occupiedSeats,
-                    limit: memberLimit!,
-                  })}
-            </span>
-            <span className={styles["people-settings__pill"]}>
-              {tPeople("currentPlan", { plan: currentPlanLabel })}
-            </span>
-          </div>
-
-          {canManageMembers && !advancedRolesAccess.hasAccess && (
-            <div
-              className={`${styles["people-settings__notice"]} ${styles["people-settings__notice--info"]}`}
-            >
-              <Text variant="small">
-                {tPeople("advancedRolesLocked", {
-                  plan: tUpgrade(
-                    `planBadges.${advancedRolesAccess.minimumPlan}`
-                  ),
-                })}
-              </Text>
-            </div>
-          )}
-
-          {canManageMembers && isMemberLimitReached && (
-            <div
-              className={`${styles["people-settings__notice"]} ${styles["people-settings__notice--warning"]}`}
-            >
-              <Text variant="small">
-                {tPeople("memberLimit.reached", {
-                  limit: memberLimit!,
-                  plan: currentPlanLabel,
-                })}
-              </Text>
-            </div>
-          )}
-
-          {inviteActionErrorMessage && (
-            <ErrorMessage message={inviteActionErrorMessage} />
-          )}
-
-          {revokeActionErrorMessage && (
-            <ErrorMessage message={revokeActionErrorMessage} />
-          )}
-
-          <div className={styles["people-settings__form"]}>
-            <div className={styles["people-settings__form-header"]}>
-              <Title variant="h3" className={styles["people-settings__block-title"]}>
-                {tInvitations("createTitle")}
+        {showInvitationCard && (
+          <Card className={styles["people-settings__card"]}>
+            <div className={styles["people-settings__section-header"]}>
+              <Title
+                variant="h3"
+                className={styles["people-settings__section-title"]}
+              >
+                {tInvitations("title")}
               </Title>
               <Text
-                variant="small"
-                className={styles["people-settings__block-subtitle"]}
+                variant="caption"
+                className={styles["people-settings__section-subtitle"]}
               >
-                {tInvitations("createDescription")}
+                {tInvitations("subtitle")}
               </Text>
             </div>
 
-            <Select
-              label={tInvitations("roleLabel")}
-              aria-label={tInvitations("roleLabel")}
-              options={inviteRoleOptions}
-              value={inviteRole}
-              disabled={
-                !canManageMembers ||
-                inviteMutation.isPending ||
-                membersLimitAccess.isLoading
-              }
-              helperText={selectedRoleDescription}
-              onChange={(event) => {
-                setInviteRole(event.target.value as ProjectRole);
-                setInvitationLink("");
-                inviteMutation.reset();
-              }}
-            />
+            <div className={styles["people-settings__pills"]}>
+              <span className={styles["people-settings__pill"]}>
+                {tInvitations("activeCount", {
+                  count: pendingInvitations.length,
+                })}
+              </span>
+              <span className={styles["people-settings__pill"]}>
+                {hasUnlimitedSeats
+                  ? tPeople("memberLimit.unlimited", {
+                      count: occupiedSeats,
+                    })
+                  : tPeople("memberLimit.limited", {
+                      count: occupiedSeats,
+                      limit: memberLimit!,
+                    })}
+              </span>
+              <span className={styles["people-settings__pill"]}>
+                {tPeople("currentPlan", { plan: currentPlanLabel })}
+              </span>
+            </div>
 
-            {hasInvitationLink && (
-              <Input
-                label={tInvitations("linkLabel")}
-                aria-label={tInvitations("linkLabel")}
-                value={invitationLink}
-                helperText={tInvitations("linkHelper")}
-                readOnly
-              />
+            {canManageMembers && !advancedRolesAccess.hasAccess && (
+              <div
+                className={`${styles["people-settings__notice"]} ${styles["people-settings__notice--info"]}`}
+              >
+                <Text variant="small">
+                  {tPeople("advancedRolesLocked", {
+                    plan: tUpgrade(
+                      `planBadges.${advancedRolesAccess.minimumPlan}`
+                    ),
+                  })}
+                </Text>
+              </div>
             )}
 
-            <div className={styles["people-settings__actions"]}>
-              {hasInvitationLink && (
-                <Button
-                  label={tInvitations("copyLink")}
-                  variant="secondary"
-                  onClick={handleCopyInvitationLink}
-                />
-              )}
-              <Button
-                label={
-                  inviteMutation.isPending
-                    ? tInvitations("creating")
-                    : tInvitations("create")
-                }
-                onClick={() => void handleCreateInvitation()}
+            {canManageMembers && isMemberLimitReached && (
+              <div
+                className={`${styles["people-settings__notice"]} ${styles["people-settings__notice--warning"]}`}
+              >
+                <Text variant="small">
+                  {tPeople("memberLimit.reached", {
+                    limit: memberLimit!,
+                    plan: currentPlanLabel,
+                  })}
+                </Text>
+              </div>
+            )}
+
+            {inviteActionErrorMessage && (
+              <ErrorMessage message={inviteActionErrorMessage} />
+            )}
+
+            {revokeActionErrorMessage && (
+              <ErrorMessage message={revokeActionErrorMessage} />
+            )}
+
+            <div className={styles["people-settings__form"]}>
+              <div className={styles["people-settings__form-header"]}>
+                <Title
+                  variant="h3"
+                  className={styles["people-settings__block-title"]}
+                >
+                  {tInvitations("createTitle")}
+                </Title>
+                <Text
+                  variant="small"
+                  className={styles["people-settings__block-subtitle"]}
+                >
+                  {tInvitations("createDescription")}
+                </Text>
+              </div>
+
+              <Select
+                label={tInvitations("roleLabel")}
+                aria-label={tInvitations("roleLabel")}
+                options={inviteRoleOptions}
+                value={inviteRole}
                 disabled={
                   !canManageMembers ||
                   inviteMutation.isPending ||
-                  membersLimitAccess.isLoading ||
-                  isMemberLimitReached
+                  membersLimitAccess.isLoading
                 }
-              />
-            </div>
-          </div>
-
-          <div className={styles["people-settings__divider"]} />
-
-          <div className={styles["people-settings__form-header"]}>
-            <Title variant="h3" className={styles["people-settings__block-title"]}>
-              {tInvitations("listTitle")}
-            </Title>
-            <Text
-              variant="small"
-              className={styles["people-settings__block-subtitle"]}
-            >
-              {tInvitations("listDescription")}
-            </Text>
-          </div>
-
-          {isInvitationsLoading ? (
-            <div className={styles["people-settings__loading"]}>
-              <Loader
-                variant="inline"
-                message={tInvitations("loading")}
-                ariaLabel={tInvitations("loading")}
-              />
-            </div>
-          ) : invitationsError ? (
-            <div className={styles["people-settings__empty"]}>
-              <div className={styles["people-settings__empty-title"]}>
-                {tInvitations("loadErrorTitle")}
-              </div>
-              <Text
-                variant="small"
-                className={styles["people-settings__empty-description"]}
-              >
-                {invitationErrorMessage ?? tErrors("generic")}
-              </Text>
-              <Button
-                label={tErrors("retry")}
-                variant="secondary"
-                onClick={() => {
-                  void refetchInvitations();
+                helperText={selectedRoleDescription}
+                onChange={(event) => {
+                  setInviteRole(event.target.value as ProjectRole);
+                  setInvitationLink("");
+                  inviteMutation.reset();
                 }}
-                aria-label={tErrors("retryAriaLabel")}
               />
-            </div>
-          ) : pendingInvitations.length === 0 ? (
-            <div className={styles["people-settings__empty"]}>
-              <div className={styles["people-settings__empty-title"]}>
-                {tInvitations("emptyTitle")}
+
+              {hasInvitationLink && (
+                <Input
+                  label={tInvitations("linkLabel")}
+                  aria-label={tInvitations("linkLabel")}
+                  value={invitationLink}
+                  helperText={tInvitations("linkHelper")}
+                  readOnly
+                />
+              )}
+
+              <div className={styles["people-settings__actions"]}>
+                {hasInvitationLink && (
+                  <Button
+                    label={tInvitations("copyLink")}
+                    variant="secondary"
+                    onClick={handleCopyInvitationLink}
+                  />
+                )}
+                <Button
+                  label={
+                    inviteMutation.isPending
+                      ? tInvitations("creating")
+                      : tInvitations("create")
+                  }
+                  onClick={() => void handleCreateInvitation()}
+                  disabled={
+                    !canManageMembers ||
+                    inviteMutation.isPending ||
+                    membersLimitAccess.isLoading ||
+                    isMemberLimitReached
+                  }
+                />
               </div>
-              <Text
-                variant="small"
-                className={styles["people-settings__empty-description"]}
-              >
-                {tInvitations("emptyDescription")}
-              </Text>
             </div>
-          ) : (
-            <div
-              className={styles["people-settings__list"]}
-              role="list"
-              aria-label={tInvitations("listAriaLabel")}
-            >
-              {pendingInvitations.map((invitation) => {
-                const isRevoking = revokingInvitationId === invitation.id;
 
-                return (
-                  <article
-                    key={invitation.id}
-                    className={styles["people-settings__item"]}
-                    role="listitem"
+            {showActiveInvitationLinksSection && (
+              <>
+                <div className={styles["people-settings__divider"]} />
+
+                <div className={styles["people-settings__form-header"]}>
+                  <Title
+                    variant="h3"
+                    className={styles["people-settings__block-title"]}
                   >
-                    <div className={styles["people-settings__item-copy"]}>
-                      <div className={styles["people-settings__name-row"]}>
-                        <span className={styles["people-settings__name"]}>
-                          {tInvitations("pendingLinkTitle")}
-                        </span>
-                        <span
-                          className={`${styles["people-settings__tag"]} ${
-                            styles[`people-settings__tag--${invitation.role}`]
-                          }`}
+                    {tInvitations("listTitle")}
+                  </Title>
+                  <Text
+                    variant="small"
+                    className={styles["people-settings__block-subtitle"]}
+                  >
+                    {tInvitations("listDescription")}
+                  </Text>
+                </div>
+
+                {isInvitationsLoading ? (
+                  <div className={styles["people-settings__loading"]}>
+                    <Loader
+                      variant="inline"
+                      message={tInvitations("loading")}
+                      ariaLabel={tInvitations("loading")}
+                    />
+                  </div>
+                ) : invitationsError ? (
+                  <div className={styles["people-settings__empty"]}>
+                    <div className={styles["people-settings__empty-title"]}>
+                      {tInvitations("loadErrorTitle")}
+                    </div>
+                    <Text
+                      variant="small"
+                      className={styles["people-settings__empty-description"]}
+                    >
+                      {invitationErrorMessage ?? tErrors("generic")}
+                    </Text>
+                    <Button
+                      label={tErrors("retry")}
+                      variant="secondary"
+                      onClick={() => {
+                        void refetchInvitations();
+                      }}
+                      aria-label={tErrors("retryAriaLabel")}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className={styles["people-settings__list"]}
+                    role="list"
+                    aria-label={tInvitations("listAriaLabel")}
+                  >
+                    {pendingInvitations.map((invitation) => {
+                      const isRevoking = revokingInvitationId === invitation.id;
+
+                      return (
+                        <article
+                          key={invitation.id}
+                          className={styles["people-settings__item"]}
+                          role="listitem"
                         >
-                          {tWorkspace(getRoleLabelKey(invitation.role))}
-                        </span>
-                        {isInvitationsFetching && (
-                          <span
-                            className={`${styles["people-settings__tag"]} ${styles["people-settings__tag--muted"]}`}
+                          <div className={styles["people-settings__item-copy"]}>
+                            <div
+                              className={styles["people-settings__name-row"]}
+                            >
+                              <span className={styles["people-settings__name"]}>
+                                {tInvitations("pendingLinkTitle")}
+                              </span>
+                              <span
+                                className={`${styles["people-settings__tag"]} ${
+                                  styles[
+                                    `people-settings__tag--${invitation.role}`
+                                  ]
+                                }`}
+                              >
+                                {tWorkspace(getRoleLabelKey(invitation.role))}
+                              </span>
+                              {isInvitationsFetching && (
+                                <span
+                                  className={`${styles["people-settings__tag"]} ${styles["people-settings__tag--muted"]}`}
+                                >
+                                  {tInvitations("syncing")}
+                                </span>
+                              )}
+                            </div>
+
+                            <Text
+                              variant="small"
+                              className={styles["people-settings__meta"]}
+                            >
+                              {tInvitations("createdAt", {
+                                date: formatDate(invitation.createdAt),
+                              })}
+                            </Text>
+                            <Text
+                              variant="small"
+                              className={styles["people-settings__meta"]}
+                            >
+                              {tInvitations("expiresAt", {
+                                date: formatDate(invitation.expiresAt),
+                              })}
+                            </Text>
+                          </div>
+
+                          <div
+                            className={styles["people-settings__item-actions"]}
                           >
-                            {tInvitations("syncing")}
-                          </span>
-                        )}
-                      </div>
+                            <Button
+                              label={tInvitations("revoke")}
+                              variant="secondary"
+                              onClick={() => {
+                                revokeInvitationMutation.reset();
+                                setInvitationPendingRevoke(invitation);
+                              }}
+                              disabled={!canManageMembers || isRevoking}
+                              aria-label={tInvitations("revokeAriaLabel", {
+                                date: formatDate(invitation.expiresAt),
+                              })}
+                            />
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            )}
+          </Card>
+        )}
 
-                      <Text
-                        variant="small"
-                        className={styles["people-settings__meta"]}
-                      >
-                        {tInvitations("createdAt", {
-                          date: formatDate(invitation.createdAt),
-                        })}
-                      </Text>
-                      <Text
-                        variant="small"
-                        className={styles["people-settings__meta"]}
-                      >
-                        {tInvitations("expiresAt", {
-                          date: formatDate(invitation.expiresAt),
-                        })}
-                      </Text>
-                    </div>
-
-                    <div className={styles["people-settings__item-actions"]}>
-                      <Button
-                        label={tInvitations("revoke")}
-                        variant="secondary"
-                        onClick={() => {
-                          revokeInvitationMutation.reset();
-                          setInvitationPendingRevoke(invitation);
-                        }}
-                        disabled={!canManageMembers || isRevoking}
-                        aria-label={tInvitations("revokeAriaLabel", {
-                          date: formatDate(invitation.expiresAt),
-                        })}
-                      />
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          )}
-        </Card>
-
-        <Card className={styles["people-settings__card"]}>
+        <Card
+          className={`${styles["people-settings__card"]} ${
+            !showInvitationCard ? styles["people-settings__card--full"] : ""
+          }`}
+        >
           <div className={styles["people-settings__section-header"]}>
-            <Title variant="h3" className={styles["people-settings__section-title"]}>
+            <Title
+              variant="h3"
+              className={styles["people-settings__section-title"]}
+            >
               {tMembers("title")}
             </Title>
             <Text
@@ -688,7 +698,9 @@ const ProjectPeopleSettingsSection = ({
             </span>
           </div>
 
-          {memberActionError && <ErrorMessage message={memberActionErrorMessage} />}
+          {memberActionError && (
+            <ErrorMessage message={memberActionErrorMessage} />
+          )}
 
           {isMembersLoading ? (
             <div className={styles["people-settings__loading"]}>
@@ -800,9 +812,15 @@ const ProjectPeopleSettingsSection = ({
                     </div>
 
                     {shouldShowMemberActions && (
-                      <div className={styles["people-settings__member-actions"]}>
-                        <label className={styles["people-settings__role-field"]}>
-                          <span className={styles["people-settings__role-label"]}>
+                      <div
+                        className={styles["people-settings__member-actions"]}
+                      >
+                        <label
+                          className={styles["people-settings__role-field"]}
+                        >
+                          <span
+                            className={styles["people-settings__role-label"]}
+                          >
                             {tMembers("roleFieldLabel")}
                           </span>
                           <select
@@ -832,7 +850,9 @@ const ProjectPeopleSettingsSection = ({
                         <button
                           type="button"
                           className={styles["people-settings__remove"]}
-                          disabled={!canManageMembers || isUpdating || isRemoving}
+                          disabled={
+                            !canManageMembers || isUpdating || isRemoving
+                          }
                           aria-label={tMembersGlobal("removeAriaLabel", {
                             name: displayName,
                           })}
@@ -887,7 +907,9 @@ const ProjectPeopleSettingsSection = ({
                 void handleRemoveMember(memberPendingRemoval);
               }
             }}
-            disabled={memberPendingRemoval == null || removeMemberMutation.isPending}
+            disabled={
+              memberPendingRemoval == null || removeMemberMutation.isPending
+            }
           />
         </div>
       </Modal>
@@ -922,7 +944,8 @@ const ProjectPeopleSettingsSection = ({
               }
             }}
             disabled={
-              invitationPendingRevoke == null || revokeInvitationMutation.isPending
+              invitationPendingRevoke == null ||
+              revokeInvitationMutation.isPending
             }
           />
         </div>

@@ -182,4 +182,38 @@ describe("Button Component", () => {
     const button = screen.getByRole("button");
     expect(button).toHaveAttribute("role", "button");
   });
+
+  it("should render children instead of label text when children are provided", () => {
+    // Arrange & Act
+    render(
+      <Button label="Hidden label" onClick={() => {}}>
+        <span data-testid="icon-slot">icon</span>
+      </Button>
+    );
+
+    // Assert
+    expect(screen.getByTestId("icon-slot")).toBeInTheDocument();
+    expect(screen.queryByText("Hidden label")).not.toBeInTheDocument();
+    const button = screen.getByRole("button", { name: /hidden label/i });
+    expect(button).toBeInTheDocument();
+  });
+
+  it("should pass optional ARIA attributes for disclosure-style controls", () => {
+    // Arrange & Act
+    render(
+      <Button
+        label="Toggle"
+        onClick={() => {}}
+        aria-controls="panel-id"
+        aria-expanded
+        aria-pressed
+      />
+    );
+
+    // Assert
+    const button = screen.getByRole("button");
+    expect(button).toHaveAttribute("aria-controls", "panel-id");
+    expect(button).toHaveAttribute("aria-expanded", "true");
+    expect(button).toHaveAttribute("aria-pressed", "true");
+  });
 });

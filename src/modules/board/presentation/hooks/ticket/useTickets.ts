@@ -1,9 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import type {
-  TicketFilters,
-  TicketSort,
-} from "@/modules/board/core/domain/schema/ticket.schema";
+import type { TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 import { ticketRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
@@ -13,14 +10,12 @@ import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
  *
  * @param projectId - Project ID
  * @param filters - Optional filters (status, priority)
- * @param sort - Optional sort configuration
  * @param search - Optional server-side search term
  * @param options - Query options (enabled, limit)
  */
 export const useTickets = (
   projectId: string,
   filters?: TicketFilters,
-  sort?: TicketSort,
   search?: string,
   options?: {
     enabled?: boolean;
@@ -33,19 +28,10 @@ export const useTickets = (
     queryKey: queryKeys.projects.ticketsList(
       projectId,
       filters,
-      sort,
       search,
       limit
     ),
-    queryFn: () =>
-      listTickets(
-        ticketRepository,
-        projectId,
-        filters,
-        sort,
-        search,
-        limit
-      ),
+    queryFn: () => listTickets(ticketRepository, projectId, filters, search, limit),
     enabled: !!projectId && (options?.enabled ?? true),
   });
 };

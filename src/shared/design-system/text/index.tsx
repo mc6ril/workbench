@@ -2,7 +2,7 @@ import React, { memo } from "react";
 
 import styles from "./text.module.scss";
 
-type TextVariant = "body" | "small" | "caption";
+type TextVariant = "body" | "small" | "caption" | "metric";
 
 type Props = {
   children: React.ReactNode;

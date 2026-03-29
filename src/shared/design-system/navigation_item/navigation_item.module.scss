@@ -15,24 +15,13 @@
   display: flex;
   align-items: center;
   gap: $spacing-sm;
+  width: 100%;
+  min-height: $spacing-button-height;
   padding: $spacing-sm $spacing-md;
-  border-radius: 0;
+  border-radius: $border-radius-md;
   position: relative;
   color: $color-text-muted;
   transition: $transition-background, $transition-color, $transition-border;
-
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: $spacing-2xs;
-    bottom: $spacing-2xs;
-    width: $border-width-thick;
-    border-radius: 0 $border-radius-2xs $border-radius-2xs 0;
-    background: $color-accent;
-    opacity: 0;
-    transition: $transition-opacity;
-  }
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;

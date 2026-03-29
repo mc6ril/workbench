@@ -3,7 +3,6 @@ import type {
   Ticket,
   TicketAssignee,
   TicketFilters,
-  TicketSort,
   UpdateTicketInput,
 } from "@/modules/board/core/domain/schema/ticket.schema";
 
@@ -42,7 +41,6 @@ export type TicketRepository = {
    * Get all tickets for a project.
    * @param projectId - Project ID
    * @param filters - Optional filters for ticket filtering
-   * @param sort - Optional sorting applied at the database level
    * @param search - Optional search term (title, description, code number)
    * @param limit - Optional max number of rows
    * @returns Array of tickets
@@ -51,7 +49,6 @@ export type TicketRepository = {
   listByProject(
     projectId: string,
     filters?: TicketFilters,
-    sort?: TicketSort,
     search?: string,
     limit?: number
   ): Promise<Ticket[]>;

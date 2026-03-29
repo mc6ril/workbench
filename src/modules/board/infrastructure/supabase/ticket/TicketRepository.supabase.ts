@@ -16,7 +16,6 @@ import type {
   Ticket,
   TicketAssignee,
   TicketFilters,
-  TicketSort,
   UpdateTicketInput,
 } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
@@ -165,16 +164,59 @@ export const createTicketRepository = (
     async listByProject(
       projectId: string,
       filters?: TicketFilters,
-      sort?: TicketSort,
       search?: string,
       limit?: number
     ): Promise<Ticket[]> {
       try {
+        const hasUserAssigneeFilter = Boolean(filters?.assigneeUserId);
+        const effectiveUnassignedOnly =
+          Boolean(filters?.unassignedOnly) && !filters?.assigneeUserId;
+
+        let assignedTicketIdsForExclusion: string[] = [];
+        if (effectiveUnassignedOnly) {
+          const { data: assigneeRows, error: assigneeIdsError } = await client
+            .from("ticket_assignees")
+            .select("ticket_id, tickets!inner(project_id, archived_at)")
+            .eq("tickets.project_id", projectId)
+            .is("tickets.archived_at", null);
+
+          if (assigneeIdsError) {
+            return handleRepositoryError(assigneeIdsError, "Ticket");
+          }
+
+          assignedTicketIdsForExclusion = [
+            ...new Set(
+              (assigneeRows ?? []).map(
+                (row: { ticket_id: string }) => row.ticket_id
+              )
+            ),
+          ];
+        }
+
+        const hasAssigneeFilter = hasUserAssigneeFilter;
         let query = client
           .from("tickets")
-          .select("*")
+          .select(
+            hasAssigneeFilter
+              ? `
+                *,
+                ticket_assignees!inner(user_id)
+              `
+              : "*"
+          )
           .eq("project_id", projectId)
           .is("archived_at", null);
+
+        if (
+          effectiveUnassignedOnly &&
+          assignedTicketIdsForExclusion.length > 0
+        ) {
+          query = query.not(
+            "id",
+            "in",
+            `(${assignedTicketIdsForExclusion.join(",")})`
+          );
+        }
 
         // Apply filters if provided
         if (filters?.columnId) {
@@ -183,6 +225,10 @@ export const createTicketRepository = (
 
         if (filters?.priority) {
           query = query.eq("priority", filters.priority);
+        }
+
+        if (filters?.assigneeUserId) {
+          query = query.eq("ticket_assignees.user_id", filters.assigneeUserId);
         }
 
         const searchTerm = search?.trim();
@@ -226,18 +272,8 @@ export const createTicketRepository = (
           query = query.or(searchClauses.join(","));
         }
 
-        const sortField = sort?.field ?? "createdAt";
-        const sortDirection = sort?.direction ?? "desc";
-        const sortFieldMap: Record<string, string> = {
-          createdAt: "created_at",
-          position: "position",
-          title: "title",
-          dueDate: "due_date",
-        };
-        const orderColumn = sortFieldMap[sortField] ?? "created_at";
-
-        query = query.order(orderColumn, {
-          ascending: sortDirection === "asc",
+        query = query.order("created_at", {
+          ascending: false,
         });
 
         if (typeof limit === "number" && limit > 0) {
@@ -261,7 +297,10 @@ export const createTicketRepository = (
       }
     },
 
-    async listByColumnId(projectId: string, columnId: string): Promise<Ticket[]> {
+    async listByColumnId(
+      projectId: string,
+      columnId: string
+    ): Promise<Ticket[]> {
       try {
         const { data, error } = await client
           .from("tickets")

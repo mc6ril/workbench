@@ -1,9 +1,7 @@
-import type {
-  CreateProjectInput,
-  Project,
-} from "@/domains/project/core/domain/schema/project.schema";
+import type { Project } from "@/domains/project/core/domain/schema/project.schema";
 import {
   GetProjectInputSchema,
+  type UpdateProjectInput,
   UpdateProjectInputSchema,
 } from "@/domains/project/core/domain/schema/project.schema";
 import type { ProjectRepository } from "@/domains/project/core/ports/projectRepository";
@@ -14,7 +12,7 @@ import type { ProjectRepository } from "@/domains/project/core/ports/projectRepo
 export const updateProject = async (
   repository: ProjectRepository,
   projectId: string,
-  input: Partial<CreateProjectInput>
+  input: UpdateProjectInput
 ): Promise<Project> => {
   GetProjectInputSchema.parse({ id: projectId });
   const normalizedInput = UpdateProjectInputSchema.parse(input);

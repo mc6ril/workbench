@@ -32,6 +32,8 @@
     },
     "sidebar": {
       "ariaLabel": "Project navigation",
+      "openMenu": "Open project menu",
+      "closeMenu": "Close project menu",
       "addTab": "Add tab",
       "addTabAriaLabel": "Add tab (coming soon)",
       "items": {
@@ -62,15 +64,10 @@
     "navbar": {
       "filter": "Filter",
       "filterAriaLabel": "Open filters",
-      "sort": "Sort",
-      "sortAriaLabel": "Open sort",
       "reviewGuide": "Review guide",
       "reviewGuideAriaLabel": "Restart the onboarding guide",
       "addTicket": "Add task",
-      "addTicketAriaLabel": "Create a new task",
-      "sortDirectionLabel": "Sort direction",
-      "sortDirectionAsc": "Ascending",
-      "sortDirectionDesc": "Descending"
+      "addTicketAriaLabel": "Create a new task"
     }
   },
   "layout": {
@@ -447,64 +444,9 @@
       "welcomeGuideSkipCta": "Skip for now",
       "welcomeGuideSkipCtaAriaLabel": "Stop opening the getting started guide automatically",
       "actions": {
-        "openMenuAriaLabel": "Open actions menu for {name}",
-        "menuAriaLabel": "Workspace actions menu for {name}",
-        "manageMembers": "Manage members",
-        "inviteProject": "Invite someone",
-        "membersModalTitle": "Manage members",
-        "membersModalDescription": "Review access for {name}, adjust roles, and remove a member when needed.",
-        "membersHeroEyebrow": "Access management",
-        "membersAdminsCount": "{count} administrator",
-        "membersAdminsCount_other": "{count} administrators",
-        "membersSyncing": "Sync in progress",
-        "membersLive": "Access is current",
-        "membersSectionTitle": "Project team",
-        "membersSectionDescription": "Role changes apply immediately. The last administrator cannot be removed.",
-        "membersLoading": "Loading members...",
-        "membersLoadingAriaLabel": "Loading project members",
-        "membersUnavailableTitle": "Unable to load the team",
-        "membersUnavailableDescription": "The members list could not be retrieved right now. You can retry without closing this panel.",
-        "membersEmptyDescription": "Invite your first collaborator from this menu to start sharing access to the project.",
-        "membersRoleLabel": "Access",
-        "membersModalClose": "Close",
-        "membersModalCloseAriaLabel": "Close member management",
-        "inviteModalTitle": "Invite to this space",
-        "inviteModalDescription": "Create a one-time invitation link for {name}. Once used or expired, it becomes obsolete.",
-        "inviteHeroEyebrow": "Secure invitation",
-        "invitePillSingleUse": "Single-use",
-        "invitePillExpiring": "Auto-expiring",
-        "inviteStatusDraft": "Link not generated",
-        "inviteStatusReady": "Ready to share",
-        "inviteRoleSectionTitle": "Access level",
-        "inviteRoleSectionDescription": "Choose which permissions will be granted once the link is used.",
-        "inviteRoleLabel": "Role",
-        "inviteRoleAriaLabel": "Role to assign through this invitation link",
         "inviteRoleViewerDescription": "Can browse the project without changing its content.",
         "inviteRoleMemberDescription": "Can collaborate on tickets and everyday project work.",
-        "inviteRoleAdminDescription": "Can manage members, settings, and project structure.",
-        "inviteCreateLink": "Create link",
-        "inviteCreateLinkAriaLabel": "Create invitation link",
-        "inviteLinkSectionTitle": "Sharing",
-        "inviteLinkSectionDescription": "The link already carries the selected role and becomes obsolete after use or expiry.",
-        "inviteLinkPlaceholderTitle": "Link ready to generate",
-        "inviteLinkPlaceholderDescription": "Generate the link when you are ready to send it. If you change the role, a new link will be created.",
-        "inviteLinkReadyTitle": "Link ready",
-        "inviteLinkReadyDescription": "The recipient will join the space with the selected role as soon as the invitation is accepted.",
-        "inviteLinkLabel": "Invitation link",
-        "inviteLinkAriaLabel": "Generated invitation link",
-        "inviteLinkHelper": "Share this link directly. It cannot be reused once consumed.",
-        "inviteCopyLink": "Copy link",
-        "inviteCopyLinkAriaLabel": "Copy invitation link",
-        "inviteCopySuccess": "Invitation link copied",
-        "inviteModalClose": "Close",
-        "inviteModalCloseAriaLabel": "Close invitation modal",
-        "deleteProject": "Delete project",
-        "deleteModalTitle": "Delete project",
-        "deleteModalDescription": "Do you really want to delete {name}? This action is permanent.",
-        "deleteModalConfirm": "Delete permanently",
-        "deleteModalConfirmAriaLabel": "Confirm project deletion",
-        "deleteModalCancel": "Cancel",
-        "deleteModalCancelAriaLabel": "Cancel project deletion"
+        "inviteRoleAdminDescription": "Can manage members, settings, and project structure."
       },
       "reclaimable": {
         "sectionTitle": "Projects to recover",
@@ -567,7 +509,9 @@
         "searchPlaceholder": "Search by title or notes",
         "statusLabel": "Status",
         "resetLabel": "Reset filters",
-        "assigneeLabel": "Assignee"
+        "assigneeLabel": "Assignee",
+        "assigneeUnassignedLabel": "Unassigned",
+        "allAssigneesLabel": "All"
       },
       "ticketCard": {
         "ticketAriaLabel": "Task",
@@ -592,18 +536,6 @@
         "moveDownLabel": "Move down",
         "moveUpAriaLabel": "Move column {title} up",
         "moveDownAriaLabel": "Move column {title} down"
-      },
-      "sort": {
-        "label": "Sort by",
-        "fieldCreatedAt": "Creation date",
-        "fieldTitle": "Title",
-        "fieldStatus": "Status",
-        "fieldPosition": "Board position",
-        "fieldDueDate": "Due date",
-        "sortDirectionLabel": "Sort direction",
-        "directionAsc": "Ascending",
-        "directionDesc": "Descending",
-        "resetLabel": "Reset sort"
       },
       "createTicketForm": {
         "title": "Create task",
@@ -677,8 +609,12 @@
       },
       "project": {
         "title": "Project information",
-        "subtitle": "Update the visible project name. Changes apply immediately.",
+        "subtitle": "Pick a board icon and project name. The project code stays two letters, without emoji.",
         "fields": {
+          "boardEmoji": {
+            "label": "Board icon",
+            "choiceAriaLabel": "Choose board emoji"
+          },
           "projectName": {
             "label": "Project name",
             "placeholder": "Enter the project name"
@@ -699,15 +635,12 @@
           "saving": "Saving...",
           "reset": "Reset"
         },
-        "permissions": {
-          "editable": "Your current role allows you to rename the project.",
-          "readOnly": "Your current role only allows you to view this information."
-        },
         "status": {
-          "saved": "Project name saved"
+          "saved": "Changes saved"
         },
         "validation": {
-          "projectNameRequired": "Project name is required."
+          "projectNameRequired": "Project name is required.",
+          "projectNameContainsEmoji": "The project name must not contain emoji."
         }
       },
       "access": {
@@ -720,7 +653,14 @@
           "viewer": "Viewer"
         },
         "fallbackRole": "Unknown access",
+        "statuses": {
+          "allowed": "Allowed",
+          "blocked": "Not allowed"
+        },
         "capabilities": {
+          "projectEdit": "Project editing",
+          "invitation": "Invitations",
+          "roleManagement": "Role changes",
           "renameAllowed": "You can rename the project.",
           "renameBlocked": "You can view the project, but not rename it.",
           "deleteAllowed": "You can delete the project.",
@@ -842,6 +782,8 @@
         "modalTitle": "Task",
         "ticketCode": "Ref. {code}",
         "actions": {
+          "back": "Back",
+          "close": "Close",
           "save": "Save",
           "delete": "Delete task",
           "deleteModal": {
@@ -1034,109 +976,109 @@
     },
     "landing": {
       "hero": {
-        "brandPill": "✨ Tribu Nova • Premium family planner",
+        "brandPill": "✨ Organize what actually matters",
         "logoAriaLabel": "Tribu Nova logo",
-        "title": "Family life runs better when everything is clear.",
-        "subtitle": "One shared space to coordinate chores, appointments, and home projects without constant mental overload.",
-        "proofNoCard": "No credit card",
-        "proofFreeStart": "Set up in 2 minutes",
-        "proofCancelAnytime": "Built for parents and kids",
-        "ctaSignUp": "Create my family space",
+        "title": "Less mental load. More time for you.",
+        "subtitle": "Tribu Nova helps you organize your daily life, alone or as a couple — without overthinking it.",
+        "proofNoCard": "Free to start",
+        "proofFreeStart": "Ready in 2 minutes",
+        "proofCancelAnytime": "Works on mobile, anywhere",
+        "ctaSignUp": "Create my space",
         "ctaSignIn": "Sign in",
         "ctaPreview": "See preview"
       },
       "values": {
-        "title": "Organization that still feels human",
+        "title": "Organization, finally simple",
         "simplicity": {
-          "icon": "🧭",
-          "title": "One shared direction",
-          "description": "Everyone in the household sees the week's priorities in one place."
+          "icon": "🎯",
+          "title": "Everything in one place",
+          "description": "Your tasks, projects, and ideas. One space so nothing gets lost."
         },
         "clarity": {
-          "icon": "🗓️",
-          "title": "Visible routines",
-          "description": "Groceries, school, home, admin: everyone knows what is in motion."
+          "icon": "⚖️",
+          "title": "A better-balanced load",
+          "description": "Assign what belongs to each person. No more repeating yourself."
         },
         "control": {
-          "icon": "🫶",
-          "title": "Better load sharing",
-          "description": "Assign ownership clearly so reminders do not fall on one person."
+          "icon": "🌿",
+          "title": "Less stress",
+          "description": "When everything is organized, daily life becomes lighter."
         }
       },
       "features": {
-        "title": "Practical use cases for everyday family life",
+        "title": "Concrete, fast, effective",
         "board": {
-          "icon": "🧺",
-          "title": "Home routines",
-          "description": "Distribute recurring chores so the house runs smoothly."
+          "icon": "📋",
+          "title": "Your daily tasks",
+          "description": "Add, assign, track. As simple as a list, as powerful as a tool."
         }
       },
       "impact": {
-        "title": "Visible benefits from the first days",
-        "description": "A simple structure that saves time and lowers family mental load.",
+        "title": "Mental load is real",
+        "description": "It affects almost everyone. Tribu Nova helps reduce it.",
         "time": {
-          "value": "Time back",
-          "title": "Less last-minute coordination",
-          "description": "Everything stays in one shared timeline, so no more message loops."
+          "value": "2h",
+          "title": "Saved every week",
+          "description": "Less coordination, fewer reminders. Your time comes back to you."
         },
         "alignment": {
-          "value": "Clear ownership",
-          "title": "Everyone knows what to do",
-          "description": "Responsibilities are explicit and distributed fairly."
+          "value": "73%",
+          "title": "Of couples affected",
+          "description": "Mental load touches almost every household — and strains relationships."
         },
         "serenity": {
-          "value": "Lasting calm",
-          "title": "Fewer misses, fewer tensions",
-          "description": "Daily life feels smoother, even during packed weeks."
+          "value": "-40%",
+          "title": "Less friction",
+          "description": "When everyone knows what to do, unnecessary reminders disappear."
         }
       },
       "rhythm": {
-        "title": "A simple 3-step family rhythm",
+        "title": "Three steps. That's it.",
         "capture": {
-          "icon": "🧩",
-          "title": "Capture",
-          "description": "Add a task or idea as soon as it appears."
+          "icon": "📝",
+          "title": "Note it",
+          "description": "Add a task or idea as soon as it comes up, from your phone."
         },
         "plan": {
           "icon": "🗓️",
-          "title": "Plan",
-          "description": "Decide together who handles what for the week."
+          "title": "Organize",
+          "description": "Decide who does what. Assign in two taps, plan without effort."
         },
         "act": {
-          "icon": "✨",
+          "icon": "✅",
           "title": "Move forward",
-          "description": "Track what is done and adjust without stress."
+          "description": "Track what is done. See progress, without the stress."
         }
       },
       "trust": {
-        "title": "Built for real family life",
-        "description": "Tribu Nova helps you turn family discussions into clear actions with shared visibility.",
-        "freeForeverIcon": "👀",
-        "freeForever": "Shared clarity for everyone at home",
-        "noCreditCardIcon": "🤝",
-        "noCreditCard": "Fair and explicit responsibilities",
+        "title": "Simple. Clear. For you.",
+        "description": "Tribu Nova turns your ideas into concrete actions, with a shared view of your daily life.",
+        "freeForeverIcon": "🆓",
+        "freeForever": "Free to get started",
+        "noCreditCardIcon": "📱",
+        "noCreditCard": "Built for mobile",
         "noComplexityIcon": "🌿",
-        "noComplexity": "Less friction, more calm"
+        "noComplexity": "No unnecessary complexity"
       },
       "examples": {
-        "title": "A concrete week snapshot",
+        "title": "A concrete snapshot",
         "columns": {
           "todo": "To do",
           "inProgress": "In progress",
           "done": "Done"
         },
         "board": {
-          "title": "Home routines",
-          "description": "Distribute recurring chores before overload builds up.",
-          "todo1": "Start evening laundry",
-          "todo2": "Prepare school bags",
-          "inProgress1": "Kitchen reset",
-          "done1": "Take out trash"
+          "title": "Your daily tasks",
+          "description": "Add, assign, track — from your phone.",
+          "todo1": "Book doctor appointment",
+          "todo2": "Groceries for tonight",
+          "inProgress1": "Administrative paperwork",
+          "done1": "Rent transfer done"
         }
       },
       "cta": {
-        "title": "Move from constant load to smooth family flow",
-        "description": "Join Tribu Nova and run daily family life with more clarity and calm.",
+        "title": "Ready to take back control?",
+        "description": "Start for free, no credit card needed. Your space is ready in 2 minutes.",
         "button": "Start for free"
       },
       "footer": {
@@ -1421,6 +1363,7 @@
     "domain": {
       "TICKET_PROJECT_MISMATCH": "The ticket does not belong to the same project",
       "LAST_ADMIN_REQUIRED": "The project must keep at least one administrator",
+      "MEMBER_ROLE_CHANGE_ADMIN_REQUIRED": "Only an administrator can change a project member's role",
       "INVITATION_ALREADY_USED": "This invitation link is no longer available",
       "INVITATION_EXPIRED": "This invitation link has expired",
       "INVITATION_ALREADY_MEMBER": "You are already a member of this project",

@@ -20,7 +20,8 @@ export const mapProjectRowToDomain = (row: ProjectRow): Project => {
   return {
     id: row.id,
     name: row.name,
-    shortCode: row.short_code,
+    shortCode: row.short_code.trim().toUpperCase(),
+    boardEmoji: row.board_emoji,
     createdAt: toDate(row.created_at),
     updatedAt: toDate(row.updated_at),
   };

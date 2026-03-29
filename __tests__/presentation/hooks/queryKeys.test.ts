@@ -9,10 +9,6 @@ describe("queryKeys ticket list mapper", () => {
         columnId: "column-todo",
         priority: "urgent",
       },
-      {
-        field: "createdAt",
-        direction: "desc",
-      },
       "  search me  ",
       25
     );
@@ -20,39 +16,10 @@ describe("queryKeys ticket list mapper", () => {
     expect(mapTicketListQueryKey(queryKey)).toEqual({
       projectId: "project-1",
       filters: {
+        assigneeUserId: null,
         columnId: "column-todo",
         priority: "urgent",
-      },
-      sort: {
-        field: "createdAt",
-        direction: "desc",
-      },
-      search: "search me",
-      limit: 25,
-    });
-  });
-
-  it("maps legacy ticket list query keys", () => {
-    expect(
-      mapTicketListQueryKey([
-        "projects",
-        "project-1",
-        "tickets",
-        "list",
-        ["column-todo", "urgent"],
-        ["createdAt", "desc"],
-        "search me",
-        25,
-      ])
-    ).toEqual({
-      projectId: "project-1",
-      filters: {
-        columnId: "column-todo",
-        priority: "urgent",
-      },
-      sort: {
-        field: "createdAt",
-        direction: "desc",
+        unassignedOnly: false,
       },
       search: "search me",
       limit: 25,
@@ -61,5 +28,17 @@ describe("queryKeys ticket list mapper", () => {
 
   it("returns null for non ticket-list query keys", () => {
     expect(mapTicketListQueryKey(queryKeys.projects.detail("project-1"))).toBeNull();
+  });
+
+  it("returns null for malformed ticket list query keys", () => {
+    expect(
+      mapTicketListQueryKey([
+        "projects",
+        "project-1",
+        "tickets",
+        "list",
+        ["column-todo", "urgent"],
+      ])
+    ).toBeNull();
   });
 });

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import { PROJECT_VIEWS, type ProjectView } from "@/shared/constants/routes";
-import { buildProjectRoute } from "@/shared/utils/routes";
+import { buildTicketDetailRoute } from "@/shared/utils/routes";
 
 import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
@@ -45,7 +45,6 @@ export const useProjectSearchSuggestions = ({
   const { data: ticketsData } = useTickets(
     projectId,
     undefined,
-    undefined,
     effectiveSearch,
     { enabled: isTicketView && hasEffectiveSearchTerm, limit: 20 }
   );
@@ -60,7 +59,7 @@ export const useProjectSearchSuggestions = ({
       return tickets.slice(0, 6).map((ticket) => ({
         id: ticket.id,
         label: `${buildTicketCode(projectShortCode, ticket.codeNumber) ?? ticket.codeNumber} ${ticket.title}`,
-        href: `${buildProjectRoute(projectId, viewKey)}?ticket=${ticket.id}`,
+        href: buildTicketDetailRoute(projectId, ticket.id),
       }));
     }
 
@@ -71,6 +70,5 @@ export const useProjectSearchSuggestions = ({
     projectShortCode,
     searchTerm,
     tickets,
-    viewKey,
   ]);
 };

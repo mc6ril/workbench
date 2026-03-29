@@ -25,6 +25,7 @@ export type ProjectMember = z.infer<typeof ProjectMemberSchema>;
  * Only admins can change roles; a project must keep at least one admin.
  */
 export const UpdateMemberRoleInputSchema = z.object({
+  projectId: z.string().uuid(),
   memberId: z.string().uuid(),
   role: z.nativeEnum(ProjectRole),
 });
