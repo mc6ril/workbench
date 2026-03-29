@@ -1,5 +1,7 @@
 import type { NextRequest } from "next/server";
 
+import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
+
 jest.mock("next/server", () => ({
   NextResponse: {
     json: (
@@ -141,5 +143,38 @@ describe("DELETE /api/auth/delete-user", () => {
       adminClient
     );
     expect(deleteUser).toHaveBeenCalledWith(authRepository);
+  });
+
+  it("returns 500 when the auth provider fails server-side", async () => {
+    const serverClient = {} as Awaited<
+      ReturnType<typeof createSupabaseServerClient>
+    >;
+    const adminClient = {} as ReturnType<typeof createSupabaseAdminClient>;
+    const sessionRepository = {} as ReturnType<typeof createSessionRepository>;
+    const authRepository = {} as ReturnType<typeof createAuthRepository>;
+
+    jest.mocked(createSupabaseServerClient).mockResolvedValue(serverClient);
+    jest.mocked(createSessionRepository).mockReturnValue(sessionRepository);
+    jest.mocked(getCurrentSession).mockResolvedValue({
+      userId: "user-123",
+      loginEmail: "user@example.com",
+      accessToken: "",
+      isSuperuser: false,
+    });
+    jest.mocked(createSupabaseAdminClient).mockReturnValue(adminClient);
+    jest.mocked(createAuthRepository).mockReturnValue(authRepository);
+    jest.mocked(deleteUser).mockRejectedValue({
+      code: AUTH_ERROR_CODE.AUTH_PROVIDER_SERVER_ERROR,
+      debugMessage: "Database error deleting user",
+    });
+
+    const response = (await DELETE(
+      createRequest()
+    )) as unknown as MockNextResponse;
+
+    expect(response.status).toBe(500);
+    await expect(response.json()).resolves.toEqual({
+      error: "Failed to delete user",
+    });
   });
 });

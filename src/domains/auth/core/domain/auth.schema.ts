@@ -145,6 +145,14 @@ export type AuthenticationError = AuthError & {
 };
 
 /**
+ * Error when Supabase Auth fails server-side while processing the request.
+ */
+export type AuthProviderServerError = AuthError & {
+  code: "AUTH_PROVIDER_SERVER_ERROR";
+  originalError?: unknown;
+};
+
+/**
  * Authentication result for signup/signin operations.
  * When email verification is required, session will be null and requiresEmailVerification will be true.
  */
@@ -307,6 +315,7 @@ export type AuthenticationFailure =
   | WeakPasswordError
   | InvalidEmailError
   | AuthenticationError
+  | AuthProviderServerError
   | EmailVerificationError
   | PasswordResetError
   | InvalidTokenError
