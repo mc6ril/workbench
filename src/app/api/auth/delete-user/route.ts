@@ -68,6 +68,13 @@ export const DELETE = async (request: NextRequest): Promise<NextResponse> => {
       { status: 200 }
     );
   } catch (error) {
+    if (hasErrorCode(error, [AUTH_ERROR_CODE.AUTH_PROVIDER_SERVER_ERROR])) {
+      return NextResponse.json(
+        { error: API_MESSAGES_AUTH.DELETE_FAILED },
+        { status: 500 }
+      );
+    }
+
     if (hasErrorCode(error, [AUTH_ERROR_CODE.AUTHENTICATION_ERROR])) {
       return NextResponse.json(
         { error: API_MESSAGES_COMMON.NOT_AUTHENTICATED },

@@ -206,6 +206,14 @@ export const mapSupabaseAuthError = (error: unknown): AuthenticationFailure => {
     ) {
       return createInvalidTokenError(authError.message);
     }
+
+    if (typeof authError.status === "number" && authError.status >= 500) {
+      return {
+        code: AUTH_ERROR_CODE.AUTH_PROVIDER_SERVER_ERROR,
+        debugMessage: authError.message,
+        originalError: error,
+      };
+    }
   }
 
   // Handle generic Error objects

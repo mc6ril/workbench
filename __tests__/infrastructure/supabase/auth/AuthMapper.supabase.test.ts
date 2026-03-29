@@ -772,18 +772,12 @@ describe("AuthMapper.supabase", () => {
         expect(result).toHaveProperty("debugMessage");
       });
 
-      it("should map unknown Supabase auth error to AuthenticationError", () => {
-        // Arrange
+      it("should map Supabase auth HTTP 5xx to AuthProviderServerError", () => {
         const authError = createSupabaseAuthError.generic("Unknown error", 500);
-        const expectedError = createAuthError.authentication(
-          "An unknown authentication error occurred"
-        );
 
-        // Act
         const result = mapSupabaseAuthError(authError);
 
-        // Assert - Should fall through to fallback since no matching pattern
-        expect(result).toHaveProperty("code", expectedError.code);
+        expect(result).toHaveProperty("code", "AUTH_PROVIDER_SERVER_ERROR");
         expect(result).toHaveProperty("debugMessage");
         expect(result).toHaveProperty("originalError", authError);
       });
