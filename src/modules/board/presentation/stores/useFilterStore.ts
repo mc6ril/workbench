@@ -22,6 +22,10 @@ type FilterActions = {
   setColumnId: (columnId: string) => void;
   clearColumnId: () => void;
 
+  setAssigneeUserId: (userId: string) => void;
+  setUnassignedOnly: () => void;
+  clearAssigneeUserId: () => void;
+
   /**
    * Resets domain-aligned filters only. Does NOT reset search.
    */
@@ -55,6 +59,39 @@ export const useFilterStore = create<FilterStore>((set) => ({
   clearColumnId: (): void => {
     set((state) => {
       const { columnId: _columnId, ...rest } = state.filters;
+      return { filters: rest };
+    });
+  },
+
+  setAssigneeUserId: (assigneeUserId: string): void => {
+    set((state) => {
+      const { unassignedOnly: _u, ...rest } = state.filters;
+      return {
+        filters: {
+          ...rest,
+          assigneeUserId,
+        },
+      };
+    });
+  },
+  setUnassignedOnly: (): void => {
+    set((state) => {
+      const { assigneeUserId: _a, unassignedOnly: _u, ...rest } = state.filters;
+      return {
+        filters: {
+          ...rest,
+          unassignedOnly: true,
+        },
+      };
+    });
+  },
+  clearAssigneeUserId: (): void => {
+    set((state) => {
+      const {
+        assigneeUserId: _assigneeUserId,
+        unassignedOnly: _unassignedOnly,
+        ...rest
+      } = state.filters;
       return { filters: rest };
     });
   },

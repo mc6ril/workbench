@@ -1,42 +1,243 @@
+@use "@/styles/variables/animations" as *;
 @use "@/styles/variables/borders" as *;
 @use "@/styles/variables/breakpoints" as *;
 @use "@/styles/variables/colors" as *;
+@use "@/styles/variables/shadows" as *;
 @use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
 
 .dashboard-shell {
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 100dvh;
+  position: relative;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: $layout-dashboard-sidebar-height minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   background-color: $color-background;
+  overflow: hidden;
+
+  // Mobile: three DOM children (backdrop, sidebar, content) must share one grid
+  // cell. Otherwise implicit rows break the 1fr main track and page scroll stops.
+  > .dashboard-shell__sidebar-backdrop,
+  > .dashboard-shell__sidebar,
+  > .dashboard-shell__content {
+    grid-row: 1;
+    grid-column: 1;
+    align-self: stretch;
+    min-height: 0;
+  }
 
   @media (min-width: $breakpoint-md) {
     grid-template-columns: $layout-dashboard-sidebar-width 1fr;
     grid-template-rows: minmax(0, 1fr);
+
+    > .dashboard-shell__sidebar-backdrop,
+    > .dashboard-shell__sidebar,
+    > .dashboard-shell__content {
+      grid-row: auto;
+      grid-column: auto;
+      align-self: stretch;
+      min-height: 0;
+    }
   }
 }
 
+.dashboard-shell__sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  border: 0;
+  background: rgba(var(--shadow-color), 0.42);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity $animation-duration-base $easing-ease-out;
+  z-index: 89;
+
+  @media (min-width: $breakpoint-md) {
+    display: none;
+  }
+}
+
+.dashboard-shell__sidebar-backdrop--open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
 .dashboard-shell__sidebar {
-  width: 100%;
-  min-height: $layout-dashboard-sidebar-height;
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: min(
+    #{$layout-dashboard-sidebar-width},
+    calc(100vw - #{$spacing-xl} - env(safe-area-inset-right))
+  );
+  max-width: calc(100vw - #{$spacing-md});
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  border-right: none;
+  border-radius: 0;
+  background-color: $color-secondary;
+  background-image: linear-gradient(
+    180deg,
+    rgba(var(--shadow-color), 0.04) 0%,
+    rgba(var(--shadow-color), 0) 12%
+  );
+  box-shadow: $shadow-xl;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  transform: translate3d(-100%, 0, 0);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  will-change: transform, opacity;
+  transition:
+    transform $animation-duration-slow $easing-smooth,
+    opacity $animation-duration-base $easing-ease-out,
+    visibility 0s linear $animation-duration-base;
+  z-index: 90;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  @media (min-width: $breakpoint-md) {
+    position: static;
+    inset: auto;
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    border-right: $border-width solid $color-border;
+    border-radius: 0;
+    box-shadow: none;
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+.dashboard-shell__sidebar--open {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.dashboard-shell__sidebar-inner {
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: inherit;
+  overflow: hidden;
+}
+
+.dashboard-shell__sidebar-mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  padding:
+    calc(#{$spacing-lg} + env(safe-area-inset-top))
+    $spacing-md
+    $spacing-md;
   border-bottom: $border-width solid $color-border;
   background-color: $color-secondary;
 
   @media (min-width: $breakpoint-md) {
-    min-height: 100vh;
-    border-bottom: none;
-    border-right: $border-width solid $color-border;
+    display: none;
+  }
+}
+
+.dashboard-shell__sidebar-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $spacing-button-height;
+  height: $spacing-button-height;
+  min-height: $spacing-button-height;
+  padding: 0;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-full;
+  background-color: $color-secondary;
+  color: $color-text;
+
+  &:focus {
+    outline: none;
+    box-shadow: $shadow-focus;
+  }
+
+  @media (min-width: $breakpoint-md) {
+    display: none;
+  }
+}
+
+.dashboard-shell__sidebar-close-icon {
+  position: relative;
+  width: $spacing-lg;
+  height: $spacing-lg;
+}
+
+.dashboard-shell__sidebar-close-line {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: $spacing-lg;
+  height: 2px;
+  border-radius: $border-radius-full;
+  background-color: currentColor;
+
+  &:first-child {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  &:last-child {
+    transform: translate(-50%, -50%) rotate(-45deg);
   }
 }
 
 .dashboard-shell__content {
   width: 100%;
+  min-width: 0;
   min-height: 0;
   height: 100%;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: $layout-dashboard-header-height minmax(0, 1fr) $layout-dashboard-footer-height;
+  grid-template-rows: minmax($layout-dashboard-header-height, auto) minmax(0, 1fr) $layout-dashboard-footer-height;
+}
+
+.dashboard-shell__content--no-footer {
+  grid-template-rows:
+    minmax($layout-dashboard-header-height, auto)
+    minmax(0, 1fr)
+    minmax(0, 0);
+}
+
+.dashboard-shell__content--no-header {
+  grid-template-rows: minmax(0, 1fr) $layout-dashboard-footer-height;
+}
+
+.dashboard-shell__content--no-header.dashboard-shell__content--no-footer {
+  grid-template-rows: minmax(0, 1fr) minmax(0, 0);
+}
+
+.dashboard-shell__content--no-footer .dashboard-shell__footer {
+  min-height: 0;
+  overflow: hidden;
 }
 
 .dashboard-shell__header {
@@ -44,13 +245,70 @@
   min-height: $layout-dashboard-header-height;
   border-bottom: $border-width solid $color-border;
   background-color: $color-background;
+  position: relative;
+  z-index: $layout-dashboard-header-z-index;
+}
+
+.dashboard-shell__header-bar {
+  min-height: $layout-dashboard-header-height;
+  display: flex;
+  align-items: stretch;
+  gap: $spacing-sm;
+  min-width: 0;
+}
+
+.dashboard-shell__menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  width: $spacing-button-height;
+  height: $spacing-button-height;
+  margin-left: $spacing-sm;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-full;
+  background-color: $color-secondary;
+  color: $color-text;
+  flex-shrink: 0;
+
+  &:focus {
+    outline: none;
+    box-shadow: $shadow-focus;
+  }
+
+  @media (min-width: $breakpoint-md) {
+    display: none;
+  }
+}
+
+.dashboard-shell__menu-icon {
+  display: inline-flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+}
+
+.dashboard-shell__menu-icon-line {
+  display: block;
+  width: $spacing-lg;
+  height: 2px;
+  border-radius: $border-radius-full;
+  background-color: currentColor;
+}
+
+.dashboard-shell__header-content {
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .dashboard-shell__main {
   width: 100%;
   min-height: 0;
   padding: $layout-dashboard-main-padding;
+  overscroll-behavior-y: contain;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  z-index: $layout-dashboard-main-z-index;
 }
 
 .dashboard-shell__footer {

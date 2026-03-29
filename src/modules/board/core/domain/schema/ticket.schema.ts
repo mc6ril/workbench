@@ -24,7 +24,10 @@ export const TicketSchema = z.object({
   priority: TicketPrioritySchema.nullable(),
   dueDate: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Due date must be a calendar date (YYYY-MM-DD)")
+    .regex(
+      /^\d{4}-\d{2}-\d{2}$/,
+      "Due date must be a calendar date (YYYY-MM-DD)"
+    )
     .nullable(),
   storyPoints: z.number().int().positive().nullable(),
   createdBy: z.string().uuid().nullable(),
@@ -52,7 +55,10 @@ export const CreateTicketInputSchema = z.object({
   priority: TicketPrioritySchema.nullable().optional(),
   dueDate: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Due date must be a calendar date (YYYY-MM-DD)")
+    .regex(
+      /^\d{4}-\d{2}-\d{2}$/,
+      "Due date must be a calendar date (YYYY-MM-DD)"
+    )
     .nullable()
     .optional(),
   storyPoints: z.number().int().positive().nullable().optional(),
@@ -69,15 +75,15 @@ export type CreateTicketInput = z.infer<typeof CreateTicketInputSchema>;
 export const UpdateTicketInputSchema = z.object({
   title: z.string().min(1, "Ticket title must not be empty").optional(),
   description: z.string().nullable().optional(),
-  columnId: z
-    .string()
-    .uuid("Ticket column ID must be a valid UUID")
-    .optional(),
+  columnId: z.string().uuid("Ticket column ID must be a valid UUID").optional(),
   position: z.number().int().nonnegative().optional(),
   priority: TicketPrioritySchema.nullable().optional(),
   dueDate: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Due date must be a calendar date (YYYY-MM-DD)")
+    .regex(
+      /^\d{4}-\d{2}-\d{2}$/,
+      "Due date must be a calendar date (YYYY-MM-DD)"
+    )
     .nullable()
     .optional(),
   storyPoints: z.number().int().positive().nullable().optional(),
@@ -132,29 +138,13 @@ export type MoveAndReorderTicketInput = z.infer<
 export type TicketFilters = {
   columnId?: string;
   priority?: TicketPriority;
+  /** When set, only tickets assigned to this user (join on ticket_assignees). */
+  assigneeUserId?: string;
+  /**
+   * When true, only tickets with no assignees. Mutually exclusive with assigneeUserId in UI/store.
+   */
+  unassignedOnly?: boolean;
 };
-
-/**
- * Sorting options for ticket queries.
- * Sorting is applied at the repository level (database ordering), not in hooks.
- */
-export const TicketSortFieldSchema = z.enum([
-  "createdAt",
-  "position",
-  "title",
-  "dueDate",
-]);
-export type TicketSortField = z.infer<typeof TicketSortFieldSchema>;
-
-export const SortDirectionSchema = z.enum(["asc", "desc"]);
-export type SortDirection = z.infer<typeof SortDirectionSchema>;
-
-export const TicketSortSchema = z.object({
-  field: TicketSortFieldSchema,
-  direction: SortDirectionSchema,
-});
-
-export type TicketSort = z.infer<typeof TicketSortSchema>;
 
 /**
  * Input for getting a ticket by project short code and code number.

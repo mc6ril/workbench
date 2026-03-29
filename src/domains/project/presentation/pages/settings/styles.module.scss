@@ -1,6 +1,8 @@
+@use "@/styles/variables/animations" as *;
 @use "@/styles/variables/borders" as *;
 @use "@/styles/variables/breakpoints" as *;
 @use "@/styles/variables/colors" as *;
+@use "@/styles/variables/shadows" as *;
 @use "@/styles/variables/spacing" as *;
 @use "@/styles/variables/typography" as *;
 
@@ -63,6 +65,69 @@
   gap: $spacing-lg;
 }
 
+.settings-page__emoji-field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.settings-page__emoji-label {
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.settings-page__emoji-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.settings-page__emoji-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $spacing-3xl;
+  height: $spacing-3xl;
+  min-width: $spacing-3xl;
+  min-height: $spacing-3xl;
+  padding: 0;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-md;
+  background: $color-secondary;
+  font-size: $font-size-xl;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    border-color $animation-duration-base $easing-ease-out,
+    background-color $animation-duration-base $easing-ease-out,
+    box-shadow $animation-duration-base $easing-ease-out;
+
+  &:hover:not(:disabled) {
+    border-color: $color-accent;
+    background: $color-surface-subtle;
+  }
+
+  &:focus-visible {
+    outline: $border-width-thick solid $color-focus;
+    outline-offset: $border-width-thick;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.settings-page__emoji-option--selected {
+  border-color: $color-accent;
+  box-shadow: $shadow-focus;
+  background: $color-surface-subtle;
+}
+
+.settings-page__emoji-helper {
+  color: $color-text-secondary;
+}
+
 .settings-page__status {
   padding: $spacing-md $spacing-lg;
   border-radius: $border-radius-md;
@@ -116,34 +181,30 @@
   margin-left: auto;
 }
 
-// ─── Capabilities list ───────────────────────────────────────────────────────
-
-.settings-page__capabilities {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xs;
-  padding: $spacing-md $spacing-lg;
-  margin: 0;
-  border-radius: $border-radius-sm;
-  background: $color-surface-subtle;
-  border: $border-width solid $color-border-subtle;
-  list-style: none;
+.settings-page__permission-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
-.settings-page__capability {
-  display: flex;
-  align-items: flex-start;
-  gap: $spacing-sm;
-  color: $color-text-secondary;
-  font-size: $font-size-sm;
+.settings-page__permission-badge--allowed {
+  color: $color-sage-text;
+}
 
-  &::before {
-    content: "·";
-    flex-shrink: 0;
-    font-weight: $font-weight-bold;
-    color: $color-accent;
-    margin-top: 1px;
-  }
+.settings-page__permission-badge--blocked {
+  color: $color-warning-text;
+}
+
+.settings-page__permission-icon {
+  width: 1rem;
+  height: 1rem;
+  stroke: currentColor;
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
 }
 
 // ─── Danger zone ─────────────────────────────────────────────────────────────
@@ -181,12 +242,6 @@
   flex-shrink: 0;
 }
 
-.settings-page__danger-hint {
-  color: $color-text-muted;
-  text-align: right;
-  max-width: 16rem;
-}
-
 // ─── Modal ───────────────────────────────────────────────────────────────────
 
 .settings-page__confirmation-copy {
@@ -214,6 +269,10 @@
 }
 
 @media (max-width: $breakpoint-sm) {
+  .settings-page__name-field :global(#settings-project-name-input) {
+    font-size: $font-size-lg;
+  }
+
   .settings-page__actions,
   .settings-page__modal-actions {
     flex-direction: column-reverse;
@@ -230,6 +289,10 @@
     margin-left: 0;
   }
 
+  .settings-page__permission-badge {
+    margin-left: 0;
+  }
+
   .settings-page__danger-body {
     flex-direction: column;
     align-items: stretch;
@@ -238,10 +301,5 @@
 
   .settings-page__danger-side {
     align-items: stretch;
-  }
-
-  .settings-page__danger-hint {
-    text-align: left;
-    max-width: none;
   }
 }

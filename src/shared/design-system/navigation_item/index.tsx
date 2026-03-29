@@ -87,6 +87,7 @@ const NavigationItem = ({
       <li id={navItemId} className={navItemClasses} role="none">
         <span
           className={styles["navigation-item__link"]}
+          data-sidebar-dismiss="true"
           aria-disabled="true"
           aria-label={displayAriaLabel}
           role="link"
@@ -136,6 +137,7 @@ const NavigationItem = ({
       <Link
         href={href}
         className={styles["navigation-item__link"]}
+        data-sidebar-dismiss="true"
         aria-label={displayAriaLabel}
         onClick={onClick}
         onMouseEnter={onMouseEnter}

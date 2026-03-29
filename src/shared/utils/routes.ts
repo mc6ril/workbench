@@ -1,4 +1,8 @@
-import { PROTECTED_ROUTES, PUBLIC_ROUTES } from "@/shared/constants/routes";
+import {
+  PROJECT_VIEWS,
+  PROTECTED_ROUTES,
+  PUBLIC_ROUTES,
+} from "@/shared/constants/routes";
 
 const UUID_PATH_SEGMENT =
   "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
@@ -89,13 +93,13 @@ export const buildProjectRoute = (projectId: string, view: string): string => {
  *
  * @param projectId - The project UUID
  * @param ticketId - The ticket UUID
- * @returns The canonical ticket detail route pathname (board modal)
+ * @returns The canonical ticket detail page pathname
  */
 export const buildTicketDetailRoute = (
   projectId: string,
   ticketId: string
 ): string => {
-  return `/${projectId}/board?ticket=${ticketId}`;
+  return `${buildProjectRoute(projectId, PROJECT_VIEWS.BOARD)}/tickets/${ticketId}`;
 };
 
 /**

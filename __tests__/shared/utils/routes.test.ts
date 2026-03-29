@@ -1,5 +1,6 @@
 import {
   buildProjectRoute,
+  buildTicketDetailRoute,
   extractProjectId,
   extractProjectView,
   isActiveHref,
@@ -117,6 +118,17 @@ describe("buildProjectRoute", () => {
     const uuid = "123e4567-e89b-12d3-a456-426614174000";
     expect(buildProjectRoute(uuid, "board")).toBe(`/${uuid}/board`);
     expect(buildProjectRoute(uuid, "settings")).toBe(`/${uuid}/settings`);
+  });
+});
+
+describe("buildTicketDetailRoute", () => {
+  it("should build the canonical ticket detail page route", () => {
+    const uuid = "123e4567-e89b-12d3-a456-426614174000";
+    const ticketId = "987e6543-e21b-45d3-a456-426614174999";
+
+    expect(buildTicketDetailRoute(uuid, ticketId)).toBe(
+      `/${uuid}/board/tickets/${ticketId}`
+    );
   });
 });
 

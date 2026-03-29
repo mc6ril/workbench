@@ -90,6 +90,7 @@ const SidebarProfileMenu = ({
             prefetch={false}
             role="menuitem"
             className={styles["sidebar-navigation__profile-menu-item"]}
+            data-sidebar-dismiss="true"
             onMouseEnter={onWorkspacePrefetch}
             onFocus={onWorkspacePrefetch}
             onClick={onWorkspaceLinkClick}
@@ -101,6 +102,7 @@ const SidebarProfileMenu = ({
             prefetch={false}
             role="menuitem"
             className={styles["sidebar-navigation__profile-menu-item"]}
+            data-sidebar-dismiss="true"
             onClick={onAccountLinkClick}
           >
             {accountLabel}
@@ -109,6 +111,7 @@ const SidebarProfileMenu = ({
             type="button"
             role="menuitem"
             className={styles["sidebar-navigation__profile-menu-item"]}
+            data-sidebar-dismiss="true"
             onClick={onLogout}
             disabled={isSignOutPending}
           >

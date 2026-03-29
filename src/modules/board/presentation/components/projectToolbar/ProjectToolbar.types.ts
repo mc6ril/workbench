@@ -13,20 +13,36 @@ export type ProjectToolbarExtraTool = {
   isActive?: boolean;
 };
 
+/** Sentinel id for the "no assignees" filter (not a user UUID). */
+export const PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID = "unassigned" as const;
+
+export type ProjectToolbarAssigneeFilter =
+  | {
+      type: "member";
+      userId: string;
+      label: string;
+      avatarUrl: string | null;
+    }
+  | {
+      type: "unassigned";
+      label: string;
+    };
+
 export type ProjectToolbarProps = {
   pageTitle: string;
   showSearch?: boolean;
-  showFilterSort?: boolean;
+  hideTitleOnMobile?: boolean;
   addActionType?: ProjectToolbarAddActionType | null;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
-  onFilterClick?: () => void;
-  onSortClick?: () => void;
-  isFilterActive?: boolean;
-  isSortActive?: boolean;
   onAddClick?: () => void;
   canAddAction?: boolean;
   isPermissionsLoading?: boolean;
   searchSuggestions?: ProjectSearchSuggestion[];
   extraTools?: ProjectToolbarExtraTool[];
+  assigneeFilters?: ProjectToolbarAssigneeFilter[];
+  /** Selected member user id, {@link PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID}, or null. */
+  selectedAssigneeFilterId?: string | null;
+  assigneeFiltersLabel?: string;
+  onAssigneeFilterChange?: (filterId: string | null) => void;
 };

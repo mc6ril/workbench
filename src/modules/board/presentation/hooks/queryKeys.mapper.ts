@@ -1,24 +1,17 @@
 import { isNumber, isObject, isString } from "@/shared/utils";
 
-import type {
-  TicketFilters,
-  TicketSort,
-} from "@/modules/board/core/domain/schema/ticket.schema";
+import type { TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
 import { TICKET_PRIORITY_VALUES } from "@/modules/board/core/domain/schema/ticket.schema";
 
 export type TicketListFilterKey = readonly [
   columnId: TicketFilters["columnId"] | null,
   priority: TicketFilters["priority"] | null,
-];
-
-export type TicketListSortKey = readonly [
-  field: TicketSort["field"],
-  direction: TicketSort["direction"],
+  assigneeUserId: TicketFilters["assigneeUserId"] | null,
+  unassignedOnly: true | null,
 ];
 
 export type TicketListQueryParamsKey = Readonly<{
   filters: TicketListFilterKey | null;
-  sort: TicketListSortKey | null;
   search: string | null;
   limit: number | null;
 }>;
@@ -28,8 +21,9 @@ export type TicketListQueryKeyDescriptor = {
   filters: {
     columnId: TicketFilters["columnId"] | null;
     priority: TicketFilters["priority"] | null;
+    assigneeUserId: TicketFilters["assigneeUserId"] | null;
+    unassignedOnly: boolean;
   } | null;
-  sort: TicketSort | null;
   search: string | null;
   limit: number | null;
 };
@@ -41,24 +35,21 @@ export const createTicketListFilterKey = (
     return null;
   }
 
-  return [filters.columnId ?? null, filters.priority ?? null] as const;
-};
-
-export const createTicketListSortKey = (
-  sort?: TicketSort
-): TicketListSortKey | null => {
-  return sort ? ([sort.field, sort.direction] as const) : null;
+  return [
+    filters.columnId ?? null,
+    filters.priority ?? null,
+    filters.assigneeUserId ?? null,
+    filters.unassignedOnly === true ? true : null,
+  ] as const;
 };
 
 export const createTicketListQueryParamsKey = (
   filters?: TicketFilters,
-  sort?: TicketSort,
   search?: string,
   limit?: number
 ): TicketListQueryParamsKey => {
   return {
     filters: createTicketListFilterKey(filters),
-    sort: createTicketListSortKey(sort),
     search: search?.trim() || null,
     limit: limit ?? null,
   };
@@ -80,30 +71,13 @@ const mapTicketListFilterKey = (
     return null;
   }
 
-  const [columnId, priority] = filterKey;
+  const [columnId, priority, assigneeUserId, unassignedOnly] = filterKey;
 
   return {
     columnId: isString(columnId) ? columnId : null,
     priority: isTicketPriority(priority) ? priority : null,
-  };
-};
-
-const mapTicketListSortKey = (
-  sortKey: unknown
-): TicketListQueryKeyDescriptor["sort"] => {
-  if (!Array.isArray(sortKey) || sortKey.length !== 2) {
-    return null;
-  }
-
-  const [field, direction] = sortKey;
-
-  if (!isString(field) || !isString(direction)) {
-    return null;
-  }
-
-  return {
-    field: field as TicketSort["field"],
-    direction: direction as TicketSort["direction"],
+    assigneeUserId: isString(assigneeUserId) ? assigneeUserId : null,
+    unassignedOnly: unassignedOnly === true,
   };
 };
 
@@ -113,7 +87,6 @@ const mapTicketListQueryParamsKey = (
   if (!isObject(paramsKey)) {
     return {
       filters: null,
-      sort: null,
       search: null,
       limit: null,
     };
@@ -121,63 +94,28 @@ const mapTicketListQueryParamsKey = (
 
   return {
     filters: mapTicketListFilterKey(paramsKey.filters),
-    sort: mapTicketListSortKey(paramsKey.sort),
     search: isString(paramsKey.search) ? paramsKey.search : null,
     limit: isNumber(paramsKey.limit) ? paramsKey.limit : null,
-  };
-};
-
-const mapLegacyTicketListQueryParamsKey = (
-  filterKey: unknown,
-  sortKey: unknown,
-  search: unknown,
-  limit: unknown
-): Omit<TicketListQueryKeyDescriptor, "projectId"> => {
-  return {
-    filters: mapTicketListFilterKey(filterKey),
-    sort: mapTicketListSortKey(sortKey),
-    search: isString(search) ? search : null,
-    limit: isNumber(limit) ? limit : null,
   };
 };
 
 export const mapTicketListQueryKey = (
   queryKey: readonly unknown[]
 ): TicketListQueryKeyDescriptor | null => {
-  const [
-    scope,
-    projectId,
-    resource,
-    operation,
-    paramsKey,
-    legacySortKey,
-    legacySearch,
-    legacyLimit,
-  ] = queryKey;
+  const [scope, projectId, resource, operation, paramsKey] = queryKey;
 
   if (
     scope !== "projects" ||
     !isString(projectId) ||
     resource !== "tickets" ||
-    operation !== "list"
+    operation !== "list" ||
+    !isObject(paramsKey)
   ) {
     return null;
   }
 
-  if (isObject(paramsKey)) {
-    return {
-      projectId,
-      ...mapTicketListQueryParamsKey(paramsKey),
-    };
-  }
-
   return {
     projectId,
-    ...mapLegacyTicketListQueryParamsKey(
-      paramsKey,
-      legacySortKey,
-      legacySearch,
-      legacyLimit
-    ),
+    ...mapTicketListQueryParamsKey(paramsKey),
   };
 };

@@ -1,11 +1,10 @@
- 
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
 import type { ProjectWithRole } from "@/domains/project/core/domain/schema/project.schema";
 import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
-import type { Ticket, TicketFilters, TicketSort } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { Ticket, TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 
 describe("Ticket Flow Tests", () => {
@@ -15,6 +14,7 @@ describe("Ticket Flow Tests", () => {
     id: projectId,
     name: "Test Project",
     shortCode: "TP",
+    boardEmoji: "📋",
     createdAt: new Date("2024-01-01T00:00:00Z"),
     updatedAt: new Date("2024-01-01T00:00:00Z"),
     role: ProjectRole.ADMIN,
@@ -71,7 +71,7 @@ describe("Ticket Flow Tests", () => {
       const ticketRepository = createTicketRepositoryMock({
         listByProject: jest.fn<
           Promise<Ticket[]>,
-          [string, TicketFilters?, TicketSort?, string?, number?]
+          [string, TicketFilters?, string?, number?]
         >(
           async () => tickets
         ),
@@ -96,7 +96,6 @@ describe("Ticket Flow Tests", () => {
         projectId,
         undefined,
         undefined,
-        undefined,
         undefined
       );
       expect(ticketsResult).toEqual(tickets);
@@ -116,7 +115,7 @@ describe("Ticket Flow Tests", () => {
       const ticketRepository = createTicketRepositoryMock({
         listByProject: jest.fn<
           Promise<Ticket[]>,
-          [string, TicketFilters?, TicketSort?, string?, number?]
+          [string, TicketFilters?, string?, number?]
         >(
           async () => []
         ),
@@ -133,7 +132,6 @@ describe("Ticket Flow Tests", () => {
       expect(ticketRepository.listByProject).toHaveBeenCalledTimes(1);
       expect(ticketRepository.listByProject).toHaveBeenCalledWith(
         projectId,
-        undefined,
         undefined,
         undefined,
         undefined
@@ -155,7 +153,7 @@ describe("Ticket Flow Tests", () => {
       const ticketRepository = createTicketRepositoryMock({
         listByProject: jest.fn<
           Promise<Ticket[]>,
-          [string, TicketFilters?, TicketSort?, string?, number?]
+          [string, TicketFilters?, string?, number?]
         >(
           async () => []
         ),
@@ -183,7 +181,7 @@ describe("Ticket Flow Tests", () => {
       const ticketRepository = createTicketRepositoryMock({
         listByProject: jest.fn<
           Promise<Ticket[]>,
-          [string, TicketFilters?, TicketSort?, string?, number?]
+          [string, TicketFilters?, string?, number?]
         >(
           async () => {
             throw repositoryError;
@@ -204,7 +202,6 @@ describe("Ticket Flow Tests", () => {
         projectId,
         undefined,
         undefined,
-        undefined,
         undefined
       );
     });
@@ -216,6 +213,7 @@ describe("Ticket Flow Tests", () => {
         id: differentProjectId,
         name: "Different Project",
         shortCode: "DP",
+        boardEmoji: "📋",
         createdAt: new Date("2024-01-02T00:00:00Z"),
         updatedAt: new Date("2024-01-02T00:00:00Z"),
         role: ProjectRole.MEMBER,
@@ -230,7 +228,7 @@ describe("Ticket Flow Tests", () => {
       const ticketRepository = createTicketRepositoryMock({
         listByProject: jest.fn<
           Promise<Ticket[]>,
-          [string, TicketFilters?, TicketSort?, string?, number?]
+          [string, TicketFilters?, string?, number?]
         >(
           async () => tickets
         ),
@@ -250,7 +248,6 @@ describe("Ticket Flow Tests", () => {
       expect(ticketRepository.listByProject).toHaveBeenCalledTimes(1);
       expect(ticketRepository.listByProject).toHaveBeenCalledWith(
         differentProjectId,
-        undefined,
         undefined,
         undefined,
         undefined

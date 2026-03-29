@@ -4,16 +4,29 @@
 @use "@/styles/variables/borders" as *;
 @use "@/styles/variables/animations" as *;
 @use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/breakpoints" as *;
 
 .signup-page {
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: $spacing-lg;
+  align-items: stretch;
+  justify-content: flex-start;
+  overflow-y: auto;
+  padding:
+    calc(#{$spacing-4xl} + env(safe-area-inset-top))
+    calc(#{$spacing-lg} + env(safe-area-inset-right))
+    calc(#{$spacing-3xl} + env(safe-area-inset-bottom))
+    calc(#{$spacing-lg} + env(safe-area-inset-left));
   background-color: $color-background;
   animation: fadeIn $animation-duration-base $easing-ease-out;
+
+  @media (min-width: $breakpoint-md) {
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-4xl $spacing-2xl;
+  }
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
@@ -34,6 +47,7 @@
 .signup-container {
   width: 100%;
   max-width: $container-max-width;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: $spacing-lg;
@@ -75,8 +89,13 @@
 
 .signup-terms {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
   gap: $spacing-xs;
+
+  @media (min-width: $breakpoint-md) {
+    align-items: center;
+  }
 }
 
 .signup-terms__label {
@@ -84,6 +103,7 @@
   line-height: $line-height-normal;
   color: $color-text-secondary;
   margin: 0;
+  min-width: 0;
 }
 
 .signup-terms__link {

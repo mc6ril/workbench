@@ -14,7 +14,6 @@ export type NavbarAddActionType = "ticket";
 
 export type ProjectViewNavbarConfig = {
   showSearch: boolean;
-  showFilterSort: boolean;
   addActionType: NavbarAddActionType | null;
 };
 
@@ -40,10 +39,10 @@ const PROJECT_VIEW_CONFIG_INPUTS: Record<
   ProjectViewConfigInput
 > = Object.freeze({
   [PROJECT_VIEWS.BOARD]: {
-    navbar: { showSearch: true, showFilterSort: true, addActionType: "ticket" },
+    navbar: { showSearch: true, addActionType: "ticket" },
   },
   [PROJECT_VIEWS.SETTINGS]: {
-    navbar: { showSearch: false, showFilterSort: false, addActionType: null },
+    navbar: { showSearch: false, addActionType: null },
   },
 });
 

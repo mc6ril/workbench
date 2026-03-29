@@ -1,10 +1,5 @@
-import type {
-  TicketFilters,
-  TicketSort,
-} from "@/modules/board/core/domain/schema/ticket.schema";
-import {
-  createTicketListQueryParamsKey,
-} from "@/modules/board/presentation/hooks/queryKeys.mapper";
+import type { TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
+import { createTicketListQueryParamsKey } from "@/modules/board/presentation/hooks/queryKeys.mapper";
 
 /**
  * Centralized query key factory for React Query.
@@ -35,7 +30,6 @@ const queryKeysObject = {
     ticketsList: (
       projectId: string,
       filters?: TicketFilters,
-      sort?: TicketSort,
       search?: string,
       limit?: number
     ) => {
@@ -44,7 +38,7 @@ const queryKeysObject = {
         projectId,
         "tickets",
         "list",
-        createTicketListQueryParamsKey(filters, sort, search, limit),
+        createTicketListQueryParamsKey(filters, search, limit),
       ] as const;
     },
     boardConfiguration: (projectId: string) =>

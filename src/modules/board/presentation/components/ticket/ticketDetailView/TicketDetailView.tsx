@@ -42,7 +42,9 @@ const getAssigneeName = (
     return assignee.displayName;
   }
 
-  const member = members.find((projectMember) => projectMember.userId === assignee.userId);
+  const member = members.find(
+    (projectMember) => projectMember.userId === assignee.userId
+  );
   return member ? getMemberName(member) : fallbackLabel;
 };
 
@@ -80,7 +82,11 @@ const isDueDateOverdue = (value: string | null): boolean => {
     return false;
   }
 
-  const dueDay = new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate());
+  const dueDay = new Date(
+    dueDate.getFullYear(),
+    dueDate.getMonth(),
+    dueDate.getDate()
+  );
   const today = new Date();
   const currentDate = new Date(
     today.getFullYear(),
@@ -164,7 +170,8 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
   }
 
   const ticketCode =
-    buildTicketCode(projectShortCode, ticket.codeNumber) ?? String(ticket.codeNumber);
+    buildTicketCode(projectShortCode, ticket.codeNumber) ??
+    String(ticket.codeNumber);
 
   const visibleAssignees = assignees.slice(0, 4);
   const extraAssigneeCount = Math.max(assignees.length - 4, 0);
@@ -181,7 +188,7 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
         ticketCode={ticketCode}
         canEditTicket={canEditTicket}
         onTitleChange={setTitleDraft}
-        onClose={onClose}
+        onBack={onClose}
       />
 
       <TicketStatusBar
@@ -225,9 +232,7 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
 
           <div className={styles["ticket-detail__meta-list"]}>
             <div className={styles["ticket-detail__meta-row"]}>
-              <span className={styles["ticket-detail__meta-key"]}>
-                {t("fields.assignee")}
-              </span>
+              <Text variant="caption">{t("fields.assignee")}</Text>
 
               <TicketDetailInlinePopover
                 panelAriaLabel={t("fields.assignee")}
@@ -262,13 +267,17 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
                           );
                         })}
                         {extraAssigneeCount > 0 ? (
-                          <span className={styles["ticket-detail__assignee-extra"]}>
+                          <span
+                            className={styles["ticket-detail__assignee-extra"]}
+                          >
                             +{extraAssigneeCount}
                           </span>
                         ) : null}
                       </div>
                     ) : (
-                      <span className={styles["ticket-detail__meta-value--empty"]}>
+                      <span
+                        className={styles["ticket-detail__meta-value--empty"]}
+                      >
                         {t("fields.none")}
                       </span>
                     )}
@@ -315,11 +324,17 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
                             size="sm"
                             aria-label={getMemberName(member)}
                           />
-                          <span className={styles["ticket-detail__popover-option-copy"]}>
+                          <span
+                            className={
+                              styles["ticket-detail__popover-option-copy"]
+                            }
+                          >
                             {getMemberName(member)}
                           </span>
                           {isAssigned ? (
-                            <span className={styles["ticket-detail__popover-check"]}>
+                            <span
+                              className={styles["ticket-detail__popover-check"]}
+                            >
                               ✓
                             </span>
                           ) : null}
@@ -332,9 +347,7 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
             </div>
 
             <div className={styles["ticket-detail__meta-row"]}>
-              <span className={styles["ticket-detail__meta-key"]}>
-                {t("fields.dueDate")}
-              </span>
+              <Text variant="caption">{t("fields.dueDate")}</Text>
 
               <TicketDetailInlinePopover
                 panelAriaLabel={t("fields.dueDate")}
@@ -353,7 +366,8 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
                     <span
                       className={[
                         styles["ticket-detail__date-badge"],
-                        isOverdue && styles["ticket-detail__date-badge--overdue"],
+                        isOverdue &&
+                          styles["ticket-detail__date-badge--overdue"],
                         !effectiveDueDate &&
                           styles["ticket-detail__date-badge--empty"],
                       ]
@@ -373,7 +387,9 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
                       aria-label={t("fields.dueDate")}
                       value={formatDateInputValue(effectiveDueDate)}
                       onChange={(event) => {
-                        setDueDateDraft(parseDateInputValue(event.target.value));
+                        setDueDateDraft(
+                          parseDateInputValue(event.target.value)
+                        );
                         close();
                       }}
                     />
@@ -401,7 +417,6 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
                 )}
               </TicketDetailInlinePopover>
             </div>
-
           </div>
         </div>
 

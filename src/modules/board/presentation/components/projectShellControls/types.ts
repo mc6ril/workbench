@@ -1,7 +1,4 @@
-import {
-  TicketFilters,
-  TicketSort,
-} from "@/modules/board/core/domain/schema/ticket.schema";
+import { TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
 
 type Option = {
   value: string;
@@ -14,11 +11,4 @@ export type TicketFilterControlsProps = {
   onSetStatus: (value: string) => void;
   onClearStatus: () => void;
   onResetFilters: () => void;
-};
-
-export type TicketSortControlsProps = {
-  sort: TicketSort;
-  onSetField: (field: TicketSort["field"]) => void;
-  onSetDirection: (direction: TicketSort["direction"]) => void;
-  onResetSort: () => void;
 };

@@ -1,18 +1,24 @@
- 
 import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";
 
 import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import { updateMemberRole } from "@/domains/project/core/usecases/member/updateMemberRole";
 
 describe("updateMemberRole", () => {
+  const projectId = "123e4567-e89b-12d3-a456-426614174000";
   const memberId = "456e7890-e89b-12d3-a456-426614174001";
 
   it("should update role successfully", async () => {
     const repository = createMemberRepositoryMock({
+      getCurrentRole: jest.fn().mockResolvedValue(ProjectRole.ADMIN),
       updateRole: jest.fn<Promise<void>, [string, ProjectRole]>(async () => {}),
     });
 
-    await updateMemberRole(repository, memberId, ProjectRole.VIEWER);
+    await updateMemberRole(
+      repository,
+      projectId,
+      memberId,
+      ProjectRole.VIEWER
+    );
 
     expect(repository.updateRole).toHaveBeenCalledWith(
       memberId,
@@ -22,10 +28,11 @@ describe("updateMemberRole", () => {
 
   it("should allow promoting to admin without checking count", async () => {
     const repository = createMemberRepositoryMock({
+      getCurrentRole: jest.fn().mockResolvedValue(ProjectRole.ADMIN),
       updateRole: jest.fn<Promise<void>, [string, ProjectRole]>(async () => {}),
     });
 
-    await updateMemberRole(repository, memberId, ProjectRole.ADMIN);
+    await updateMemberRole(repository, projectId, memberId, ProjectRole.ADMIN);
 
     expect(repository.updateRole).toHaveBeenCalledWith(
       memberId,
@@ -33,16 +40,31 @@ describe("updateMemberRole", () => {
     );
   });
 
+  it("should reject role changes from non-admin members", async () => {
+    const repository = createMemberRepositoryMock({
+      getCurrentRole: jest.fn().mockResolvedValue(ProjectRole.MEMBER),
+    });
+
+    await expect(
+      updateMemberRole(repository, projectId, memberId, ProjectRole.ADMIN)
+    ).rejects.toMatchObject({
+      code: "MEMBER_ROLE_CHANGE_ADMIN_REQUIRED",
+    });
+
+    expect(repository.updateRole).not.toHaveBeenCalled();
+  });
+
   it("should propagate repository errors", async () => {
     const error = new Error("Database error");
     const repository = createMemberRepositoryMock({
+      getCurrentRole: jest.fn().mockResolvedValue(ProjectRole.ADMIN),
       updateRole: jest.fn<Promise<void>, [string, ProjectRole]>(async () => {
         throw error;
       }),
     });
 
     await expect(
-      updateMemberRole(repository, memberId, ProjectRole.MEMBER)
+      updateMemberRole(repository, projectId, memberId, ProjectRole.MEMBER)
     ).rejects.toThrow(error);
   });
 
@@ -50,7 +72,7 @@ describe("updateMemberRole", () => {
     const repository = createMemberRepositoryMock();
 
     await expect(
-      updateMemberRole(repository, "not-a-uuid", ProjectRole.MEMBER)
+      updateMemberRole(repository, projectId, "not-a-uuid", ProjectRole.MEMBER)
     ).rejects.toThrow();
   });
 });

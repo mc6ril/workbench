@@ -11,37 +11,37 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { GuideIcon } from "@/shared/design-system/icons";
-import Modal from "@/shared/design-system/modal";
 import { useTranslation } from "@/shared/i18n";
 import { buildProjectRoute, normalizePath } from "@/shared/utils/routes";
 
+import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
 import type { ProjectViewContribution } from "@/domains/project/core/domain/shell/projectViewContribution";
+import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useRegisterProjectViewContribution } from "@/domains/project/presentation/layouts/projectShell/ProjectShellContributionContext";
 import {
   getProjectViewConfig,
   getProjectViewKeyFromPath,
 } from "@/domains/project/presentation/navigation/projectViews.config";
-import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions";
-import {
-  SORT_DIRECTION_VALUES,
-  TICKET_SORT_FIELD_VALUES,
-} from "@/modules/board/constants/filterSort";
-import TicketFilterControls from "@/modules/board/presentation/components/projectShellControls/TicketFilterControls";
-import TicketSortControls from "@/modules/board/presentation/components/projectShellControls/TicketSortControls";
+import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import ProjectToolbar from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar";
-import type { ProjectToolbarExtraTool } from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.types";
+import {
+  PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID,
+  type ProjectToolbarAssigneeFilter,
+  type ProjectToolbarExtraTool,
+} from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.types";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { usePrefetchProjectViews } from "@/modules/board/presentation/hooks/project/usePrefetchProjectViews";
 import { useProjectSearchSuggestions } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useProjectRealtime } from "@/modules/board/presentation/hooks/realtime/useProjectRealtime";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
-import { useSortStore } from "@/modules/board/presentation/stores/useSortStore";
 import { normalizeTicketSearch } from "@/modules/board/utils/ticketUtils";
 
 type Props = {
   projectId: string;
 };
+
+const EMPTY_PROJECT_MEMBERS: ProjectMember[] = [];
 
 const BoardShellAdapter = ({ projectId }: Props) => {
   const router = useRouter();
@@ -50,12 +50,10 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const searchParamsString = searchParams.toString();
   const tSidebar = useTranslation("navigation.sidebar");
   const tNavbar = useTranslation("navigation.navbar");
+  const tBoardFilters = useTranslation("pages.board.filters");
   const tBoardOnboarding = useTranslation("pages.board.onboarding");
   const { canCreateTicket, isLoading: isPermissionsLoading } =
     useProjectPermissions();
-
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [isSortModalOpen, setIsSortModalOpen] = useState(false);
 
   const currentViewKey = useMemo(() => {
     return getProjectViewKeyFromPath(normalizePath(pathname), projectId);
@@ -69,14 +67,13 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const setSearch = useFilterStore((state) => state.setSearch);
   const [searchInput, setSearchInput] = useState(search);
   const filters = useFilterStore((state) => state.filters);
-  const setColumnId = useFilterStore((state) => state.setColumnId);
-  const clearColumnId = useFilterStore((state) => state.clearColumnId);
+  const setAssigneeUserId = useFilterStore((state) => state.setAssigneeUserId);
+  const setUnassignedOnly = useFilterStore((state) => state.setUnassignedOnly);
+  const clearAssigneeUserId = useFilterStore(
+    (state) => state.clearAssigneeUserId
+  );
   const resetSearch = useFilterStore((state) => state.resetSearch);
   const resetFilters = useFilterStore((state) => state.resetFilters);
-  const sort = useSortStore((state) => state.sort);
-  const setField = useSortStore((state) => state.setField);
-  const setDirection = useSortStore((state) => state.setDirection);
-  const resetSort = useSortStore((state) => state.resetSort);
 
   const { data: projectShortCode } = useProjectShortCode(projectId);
   const effectiveSearch = useMemo(() => {
@@ -86,7 +83,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const { prefetchBoardView } = usePrefetchProjectViews({
     projectId,
     filters,
-    sort,
     search: effectiveSearch,
   });
   const prefetchRef = useRef({
@@ -112,6 +108,10 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const { data: boardConfiguration } = useBoardConfiguration(projectId, {
     enabled: isBoardShellView,
   });
+  const { data: projectMembersData } = useProjectMembers(
+    isBoardShellView ? projectId : undefined
+  );
+  const projectMembers = projectMembersData ?? EMPTY_PROJECT_MEMBERS;
 
   useProjectRealtime(projectId, boardConfiguration?.board.id, {
     enabled: isBoardShellView,
@@ -142,17 +142,7 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   useEffect(() => {
     resetSearch();
     resetFilters();
-    resetSort();
-  }, [projectId, resetFilters, resetSearch, resetSort]);
-
-  useEffect(() => {
-    if (isBoardShellView) {
-      return;
-    }
-
-    setIsFilterModalOpen(false);
-    setIsSortModalOpen(false);
-  }, [isBoardShellView]);
+  }, [projectId, resetFilters, resetSearch]);
 
   const updateQueryParams = useCallback(
     (updates: Record<string, string | null>) => {
@@ -175,26 +165,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
 
   const isOnboardingReviewRequested =
     isBoardShellView && searchParams.get("onboarding") === "1";
-  const isFilterActive = Object.keys(filters).length > 0;
-  const isSortActive =
-    sort.field !== TICKET_SORT_FIELD_VALUES.CREATED_AT ||
-    sort.direction !== SORT_DIRECTION_VALUES.DESC;
-
-  const statusOptions = useMemo(() => {
-    const columns = boardConfiguration?.columns ?? [];
-    return columns.map((column) => ({
-      value: column.id,
-      label: column.name,
-    }));
-  }, [boardConfiguration?.columns]);
-
-  const handleFilterClick = useCallback(() => {
-    setIsFilterModalOpen(true);
-  }, []);
-
-  const handleSortClick = useCallback(() => {
-    setIsSortModalOpen(true);
-  }, []);
 
   const handleReviewGuideClick = useCallback(() => {
     updateQueryParams({
@@ -202,25 +172,36 @@ const BoardShellAdapter = ({ projectId }: Props) => {
     });
   }, [isOnboardingReviewRequested, updateQueryParams]);
 
-  const handleResetTicketFilters = useCallback(() => {
-    resetFilters();
-    setIsFilterModalOpen(false);
-  }, [resetFilters]);
+  const handleAssigneeFilterChange = useCallback(
+    (filterId: string | null) => {
+      if (!filterId) {
+        clearAssigneeUserId();
+        return;
+      }
 
-  const handleResetTicketSort = useCallback(() => {
-    resetSort();
-    setIsSortModalOpen(false);
-  }, [resetSort]);
+      if (filterId === PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID) {
+        setUnassignedOnly();
+        return;
+      }
+
+      setAssigneeUserId(filterId);
+    },
+    [clearAssigneeUserId, setAssigneeUserId, setUnassignedOnly]
+  );
 
   const handleAddClick = useCallback(() => {
     if (!canCreateTicket) {
       return;
     }
 
-    router.push(`${buildProjectRoute(projectId, PROJECT_VIEWS.BOARD)}?createTicket=1`);
+    router.push(
+      `${buildProjectRoute(projectId, PROJECT_VIEWS.BOARD)}?createTicket=1`
+    );
   }, [canCreateTicket, projectId, router]);
 
-  const currentViewLabel = tSidebar(`items.${currentViewConfig.sidebarLabelKey}`);
+  const currentViewLabel = tSidebar(
+    `items.${currentViewConfig.sidebarLabelKey}`
+  );
 
   const onboardingAriaLabels = useMemo(() => {
     return {
@@ -228,6 +209,28 @@ const BoardShellAdapter = ({ projectId }: Props) => {
       hideAriaLabel: tBoardOnboarding("hideCtaAriaLabel"),
     };
   }, [tBoardOnboarding]);
+
+  const assigneeFilters = useMemo<ProjectToolbarAssigneeFilter[]>(() => {
+    if (!isBoardShellView) {
+      return [];
+    }
+
+    const unassignedFilter: ProjectToolbarAssigneeFilter = {
+      type: "unassigned",
+      label: tBoardFilters("assigneeUnassignedLabel"),
+    };
+
+    const memberFilters: ProjectToolbarAssigneeFilter[] = projectMembers.map(
+      (member) => ({
+        type: "member" as const,
+        userId: member.userId,
+        label: member.profile.displayName?.trim() || member.profile.email,
+        avatarUrl: member.profile.avatarUrl ?? null,
+      })
+    );
+
+    return [unassignedFilter, ...memberFilters];
+  }, [isBoardShellView, projectMembers, tBoardFilters]);
 
   const toolbarExtraTools = useMemo<ProjectToolbarExtraTool[]>(() => {
     if (!isBoardShellView) {
@@ -260,7 +263,7 @@ const BoardShellAdapter = ({ projectId }: Props) => {
       <ProjectToolbar
         pageTitle={currentViewLabel}
         showSearch={currentViewConfig.navbar.showSearch}
-        showFilterSort={currentViewConfig.navbar.showFilterSort}
+        hideTitleOnMobile={isBoardShellView}
         addActionType={currentViewConfig.navbar.addActionType}
         searchValue={currentViewConfig.navbar.showSearch ? searchInput : ""}
         searchSuggestions={
@@ -269,95 +272,44 @@ const BoardShellAdapter = ({ projectId }: Props) => {
         onSearchChange={
           currentViewConfig.navbar.showSearch ? setSearchInput : undefined
         }
-        onFilterClick={handleFilterClick}
-        onSortClick={handleSortClick}
-        isFilterActive={isFilterActive}
-        isSortActive={isSortActive}
         onAddClick={handleAddClick}
         canAddAction={canCreateTicket}
         isPermissionsLoading={isPermissionsLoading}
         extraTools={toolbarExtraTools}
+        assigneeFilters={assigneeFilters}
+        selectedAssigneeFilterId={
+          filters.unassignedOnly
+            ? PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID
+            : (filters.assigneeUserId ?? null)
+        }
+        assigneeFiltersLabel={tBoardFilters("assigneeLabel")}
+        onAssigneeFilterChange={handleAssigneeFilterChange}
       />
     );
   }, [
+    assigneeFilters,
     canCreateTicket,
     currentViewLabel,
     currentViewConfig.navbar.addActionType,
-    currentViewConfig.navbar.showFilterSort,
     currentViewConfig.navbar.showSearch,
     handleAddClick,
-    handleFilterClick,
-    handleSortClick,
-    isFilterActive,
+    handleAssigneeFilterChange,
+    isBoardShellView,
     isPermissionsLoading,
-    isSortActive,
+    filters.assigneeUserId,
+    filters.unassignedOnly,
     searchInput,
     searchSuggestions,
+    tBoardFilters,
     toolbarExtraTools,
-  ]);
-
-  const filtersContent = useMemo(() => {
-    if (!isBoardShellView) {
-      return null;
-    }
-
-    return (
-      <>
-        <Modal
-          isOpen={isFilterModalOpen}
-          onClose={() => {
-            setIsFilterModalOpen(false);
-          }}
-          title={tNavbar("filter")}
-        >
-          <TicketFilterControls
-            filters={filters}
-            statusOptions={statusOptions}
-            onSetStatus={setColumnId}
-            onClearStatus={clearColumnId}
-            onResetFilters={handleResetTicketFilters}
-          />
-        </Modal>
-
-        <Modal
-          isOpen={isSortModalOpen}
-          onClose={() => {
-            setIsSortModalOpen(false);
-          }}
-          title={tNavbar("sort")}
-        >
-          <TicketSortControls
-            sort={sort}
-            onSetField={setField}
-            onSetDirection={setDirection}
-            onResetSort={handleResetTicketSort}
-          />
-        </Modal>
-      </>
-    );
-  }, [
-    clearColumnId,
-    filters,
-    handleResetTicketFilters,
-    handleResetTicketSort,
-    isBoardShellView,
-    isFilterModalOpen,
-    isSortModalOpen,
-    setDirection,
-    setField,
-    setColumnId,
-    sort,
-    statusOptions,
-    tNavbar,
   ]);
 
   const contribution = useMemo<ProjectViewContribution>(() => {
     return {
       toolbar,
-      filters: filtersContent,
       onMount: isBoardShellView ? onMount : undefined,
     };
-  }, [filtersContent, isBoardShellView, onMount, toolbar]);
+  }, [isBoardShellView, onMount, toolbar]);
 
   useRegisterProjectViewContribution(contribution);
 

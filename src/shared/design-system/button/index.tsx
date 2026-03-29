@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { type ReactNode,useCallback } from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { isEnterKey, isSpaceKey } from "@/shared/a11y/utilities";
@@ -29,7 +29,7 @@ type ButtonVariant =
   | "delete";
 
 type Props = {
-  /** Button label text */
+  /** Button label text (visible when `children` is not set; always used for accessible naming fallback) */
   label: string;
   /** Click handler function */
   onClick?: () => void;
@@ -43,6 +43,18 @@ type Props = {
   type?: "button" | "submit" | "reset";
   /** Custom ARIA label for accessibility (falls back to label if not provided) */
   "aria-label"?: string;
+  /** Optional content (e.g. icon); when set, replaces visible `label` text */
+  children?: ReactNode;
+  /** Additional CSS module classes (merged after variant classes) */
+  className?: string;
+  /** Optional `title` attribute (tooltip) */
+  title?: string;
+  /** Optional ARIA relationship for controlled regions (e.g. disclosure) */
+  "aria-controls"?: string;
+  /** Optional expanded state for disclosure-like controls */
+  "aria-expanded"?: boolean;
+  /** Optional pressed state for toggle-like controls */
+  "aria-pressed"?: boolean;
 };
 
 /**
@@ -77,6 +89,12 @@ const Button = ({
   fullWidth = false,
   type = "button",
   "aria-label": ariaLabel,
+  children,
+  className,
+  title,
+  "aria-controls": ariaControls,
+  "aria-expanded": ariaExpanded,
+  "aria-pressed": ariaPressed,
 }: Props) => {
   const buttonId = getAccessibilityId(`button-${label}`);
 
@@ -107,6 +125,7 @@ const Button = ({
     styles.button,
     styles[`button--${variant}`],
     fullWidth && styles["button--full-width"],
+    className,
   ]
     .filter(Boolean)
     .join(" ");
@@ -121,9 +140,13 @@ const Button = ({
       className={buttonClasses}
       aria-label={ariaLabel || label}
       aria-disabled={disabled}
+      aria-controls={ariaControls}
+      aria-expanded={ariaExpanded}
+      aria-pressed={ariaPressed}
+      title={title}
       role="button"
     >
-      {label}
+      {children ?? label}
     </button>
   );
 };

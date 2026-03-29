@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 import { getIntlLocale, getTranslationValue } from "@/shared/i18n";
 import { getMessages } from "@/shared/i18n/messages";
@@ -34,6 +34,14 @@ const getAppMetadata = async (): Promise<Metadata> => {
 
 export const generateMetadata = async (): Promise<Metadata> => {
   return getAppMetadata();
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#faf7f4" },
+    { media: "(prefers-color-scheme: dark)", color: "#2a1f1a" },
+  ],
+  viewportFit: "cover",
 };
 
 const RootLayout = async ({
