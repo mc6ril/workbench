@@ -2,6 +2,7 @@ import type {
   CreateProjectInput,
   Project,
   ProjectWithRole,
+  UpdateProjectInput,
 } from "@/domains/project/core/domain/schema/project.schema";
 
 /**
@@ -50,7 +51,7 @@ export type ProjectRepository = {
    * @throws ConstraintError if constraint violation occurs
    * @throws DatabaseError if database operation fails
    */
-  update(id: string, input: Partial<CreateProjectInput>): Promise<Project>;
+  update(id: string, input: UpdateProjectInput): Promise<Project>;
 
   /**
    * Delete a project by ID.

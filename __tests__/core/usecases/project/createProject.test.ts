@@ -10,6 +10,7 @@ describe("createProject", () => {
     id: "123e4567-e89b-12d3-a456-426614174000",
     name: "Test Project",
     shortCode: "TP",
+    boardEmoji: "📋",
     createdAt: new Date("2024-01-01T00:00:00Z"),
     updatedAt: new Date("2024-01-01T00:00:00Z"),
   };
@@ -42,6 +43,14 @@ describe("createProject", () => {
     expect(repository.create).not.toHaveBeenCalled();
   });
 
+  it("should reject names that contain emoji", async () => {
+    const input = { name: "Board 📋" };
+    const repository = createProjectRepositoryMock();
+
+    await expect(createProject(repository, input)).rejects.toThrow(z.ZodError);
+    expect(repository.create).not.toHaveBeenCalled();
+  });
+
   it("should propagate repository errors", async () => {
     // Arrange
     const input = { name: "Test Project" };
@@ -66,6 +75,7 @@ describe("createProject", () => {
       id: "456e7890-e89b-12d3-a456-426614174001",
       name: "My New Project",
       shortCode: "NP",
+      boardEmoji: "📋",
       createdAt: new Date("2024-01-02T00:00:00Z"),
       updatedAt: new Date("2024-01-02T00:00:00Z"),
     };

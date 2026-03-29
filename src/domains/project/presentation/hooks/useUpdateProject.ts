@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateProjectInput } from "@/domains/project/core/domain/schema/project.schema";
+import type { UpdateProjectInput } from "@/domains/project/core/domain/schema/project.schema";
 import { updateProject } from "@/domains/project/core/usecases/project/updateProject";
 import { projectRepository } from "@/domains/project/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
@@ -8,7 +8,7 @@ import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentatio
 
 type UpdateProjectMutationInput = {
   projectId: string;
-  input: Partial<CreateProjectInput>;
+  input: UpdateProjectInput;
 };
 
 /**

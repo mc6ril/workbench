@@ -13,6 +13,7 @@ describe("deleteProject", () => {
       id: projectId,
       name: "Workspace",
       shortCode: "WS",
+      boardEmoji: "📋",
       createdAt: new Date(),
       updatedAt: new Date(),
     });

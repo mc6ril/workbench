@@ -444,64 +444,9 @@
       "welcomeGuideSkipCta": "Passer pour l'instant",
       "welcomeGuideSkipCtaAriaLabel": "Ne plus ouvrir automatiquement le guide de demarrage",
       "actions": {
-        "openMenuAriaLabel": "Ouvrir le menu d'actions pour {name}",
-        "menuAriaLabel": "Menu d'actions de l'espace {name}",
-        "manageMembers": "Gérer les membres",
-        "inviteProject": "Inviter",
-        "membersModalTitle": "Gérer les membres",
-        "membersModalDescription": "Consultez les accès pour {name}, ajustez les rôles et retirez un membre si nécessaire.",
-        "membersHeroEyebrow": "Gestion des accès",
-        "membersAdminsCount": "{count} administrateur",
-        "membersAdminsCount_other": "{count} administrateurs",
-        "membersSyncing": "Synchronisation en cours",
-        "membersLive": "Accès à jour",
-        "membersSectionTitle": "Équipe du projet",
-        "membersSectionDescription": "Les changements de rôle sont appliqués immédiatement. Le dernier administrateur ne peut pas être retiré.",
-        "membersLoading": "Chargement des membres...",
-        "membersLoadingAriaLabel": "Chargement des membres du projet",
-        "membersUnavailableTitle": "Impossible de charger l'équipe",
-        "membersUnavailableDescription": "La liste des membres n'a pas pu être récupérée pour le moment. Vous pouvez réessayer sans fermer ce panneau.",
-        "membersEmptyDescription": "Invitez votre premier collaborateur depuis ce menu pour commencer à partager l'accès au projet.",
-        "membersRoleLabel": "Accès",
-        "membersModalClose": "Fermer",
-        "membersModalCloseAriaLabel": "Fermer la gestion des membres",
-        "inviteModalTitle": "Inviter dans cet espace",
-        "inviteModalDescription": "Créez un lien d'invitation à usage unique pour {name}. Une fois utilisé ou expiré, il devient obsolète.",
-        "inviteHeroEyebrow": "Invitation sécurisée",
-        "invitePillSingleUse": "Usage unique",
-        "invitePillExpiring": "Expiration automatique",
-        "inviteStatusDraft": "Lien non généré",
-        "inviteStatusReady": "Prêt à partager",
-        "inviteRoleSectionTitle": "Niveau d'accès",
-        "inviteRoleSectionDescription": "Choisissez les permissions accordées quand le lien sera utilisé.",
-        "inviteRoleLabel": "Rôle",
-        "inviteRoleAriaLabel": "Rôle attribué via ce lien d'invitation",
         "inviteRoleViewerDescription": "Peut consulter le projet sans modifier son contenu.",
         "inviteRoleMemberDescription": "Peut collaborer sur les tickets et le travail courant.",
-        "inviteRoleAdminDescription": "Peut gérer les membres, les réglages et la structure du projet.",
-        "inviteCreateLink": "Créer le lien",
-        "inviteCreateLinkAriaLabel": "Créer le lien d'invitation",
-        "inviteLinkSectionTitle": "Partage",
-        "inviteLinkSectionDescription": "Le lien reprend déjà le rôle sélectionné et devient obsolète après utilisation ou expiration.",
-        "inviteLinkPlaceholderTitle": "Lien prêt à être généré",
-        "inviteLinkPlaceholderDescription": "Générez le lien quand vous êtes prêt à l'envoyer. Si vous changez le rôle, un nouveau lien sera créé.",
-        "inviteLinkReadyTitle": "Lien prêt",
-        "inviteLinkReadyDescription": "Le destinataire rejoindra l'espace avec le rôle sélectionné dès qu'il acceptera l'invitation.",
-        "inviteLinkLabel": "Lien d'invitation",
-        "inviteLinkAriaLabel": "Lien d'invitation généré",
-        "inviteLinkHelper": "Partagez ce lien directement. Il ne pourra plus être réutilisé une fois consommé.",
-        "inviteCopyLink": "Copier le lien",
-        "inviteCopyLinkAriaLabel": "Copier le lien d'invitation",
-        "inviteCopySuccess": "Lien d'invitation copié",
-        "inviteModalClose": "Fermer",
-        "inviteModalCloseAriaLabel": "Fermer la fenêtre d'invitation",
-        "deleteProject": "Supprimer le projet",
-        "deleteModalTitle": "Supprimer le projet",
-        "deleteModalDescription": "Voulez-vous vraiment supprimer {name} ? Cette action est définitive.",
-        "deleteModalConfirm": "Supprimer définitivement",
-        "deleteModalConfirmAriaLabel": "Confirmer la suppression du projet",
-        "deleteModalCancel": "Annuler",
-        "deleteModalCancelAriaLabel": "Annuler la suppression du projet"
+        "inviteRoleAdminDescription": "Peut gérer les membres, les réglages et la structure du projet."
       },
       "reclaimable": {
         "sectionTitle": "Projets à récupérer",
@@ -664,8 +609,12 @@
       },
       "project": {
         "title": "Informations du projet",
-        "subtitle": "Mettez à jour le nom visible du projet. Les changements sont appliqués immédiatement.",
+        "subtitle": "Choisissez l’icône du board et le nom du projet. Le code projet reste deux lettres, sans emoji.",
         "fields": {
+          "boardEmoji": {
+            "label": "Icône du board",
+            "choiceAriaLabel": "Choisir l’emoji du board"
+          },
           "projectName": {
             "label": "Nom du projet",
             "placeholder": "Entrez le nom du projet"
@@ -686,15 +635,12 @@
           "saving": "Enregistrement...",
           "reset": "Réinitialiser"
         },
-        "permissions": {
-          "editable": "Votre rôle actuel permet de renommer le projet.",
-          "readOnly": "Votre rôle actuel permet uniquement de consulter ces informations."
-        },
         "status": {
-          "saved": "Nom du projet enregistré"
+          "saved": "Modifications enregistrées"
         },
         "validation": {
-          "projectNameRequired": "Le nom du projet est requis."
+          "projectNameRequired": "Le nom du projet est requis.",
+          "projectNameContainsEmoji": "Le nom du projet ne doit pas contenir d’emoji."
         }
       },
       "access": {
@@ -707,7 +653,14 @@
           "viewer": "Lecteur"
         },
         "fallbackRole": "Accès inconnu",
+        "statuses": {
+          "allowed": "Autorisé",
+          "blocked": "Non autorisé"
+        },
         "capabilities": {
+          "projectEdit": "Modification du projet",
+          "invitation": "Invitation",
+          "roleManagement": "Modification du rôle",
           "renameAllowed": "Vous pouvez renommer le projet.",
           "renameBlocked": "Vous pouvez consulter le projet, mais pas le renommer.",
           "deleteAllowed": "Vous pouvez supprimer le projet.",

@@ -3,10 +3,16 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { getAccessibilityId } from "@/shared/a11y/constants";
+import {
+  PROJECT_BOARD_EMOJI_PRESETS,
+  stripProjectBoardEmojiPrefix,
+} from "@/shared/constants/projectBoardEmoji";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/button";
 import Card from "@/shared/design-system/card";
 import ErrorMessage from "@/shared/design-system/error_message";
+import { PermissionStatusIcon } from "@/shared/design-system/icons";
 import Input from "@/shared/design-system/input";
 import Loader from "@/shared/design-system/loader";
 import Modal from "@/shared/design-system/modal";
@@ -18,6 +24,8 @@ import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import ProjectPeopleSettingsSection from "./components/ProjectPeopleSettingsSection";
 import styles from "./styles.module.scss";
 
+import { containsEmoji } from "@/domains/project/core/domain/rules/projectName.rules";
+import type { UpdateProjectInput } from "@/domains/project/core/domain/schema/project.schema";
 import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import { useDeleteProject } from "@/domains/project/presentation/hooks/useDeleteProject";
 import { useProject } from "@/domains/project/presentation/hooks/useProject";
@@ -47,14 +55,18 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
     role,
     isLoading: isPermissionsLoading,
     canEditProject,
-    canDeleteProject,
+    canManageMembers,
   } = useProjectPermissions();
+  const isAdmin = role === ProjectRole.ADMIN;
 
   const updateProjectMutation = useUpdateProject();
   const deleteProjectMutation = useDeleteProject();
 
   const lastProjectIdRef = useRef<string | null>(null);
   const [projectName, setProjectName] = useState("");
+  const [boardEmoji, setBoardEmoji] = useState<string>(
+    PROJECT_BOARD_EMOJI_PRESETS[0]
+  );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteConfirmationName, setDeleteConfirmationName] = useState("");
 
@@ -64,11 +76,24 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
     }
 
     const projectChanged = lastProjectIdRef.current !== project.id;
+    const normalizedProjectName = stripProjectBoardEmojiPrefix(project.name);
     lastProjectIdRef.current = project.id;
 
     setProjectName((current) => {
-      if (projectChanged || current === "" || current === project.name) {
-        return project.name;
+      if (
+        projectChanged ||
+        current === "" ||
+        current === normalizedProjectName
+      ) {
+        return normalizedProjectName;
+      }
+
+      return current;
+    });
+
+    setBoardEmoji((current) => {
+      if (projectChanged || current === project.boardEmoji) {
+        return project.boardEmoji;
       }
 
       return current;
@@ -77,9 +102,14 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
 
   const trimmedProjectName = projectName.trim();
   const isProjectLoaded = Boolean(project);
-  const savedProjectName = project?.name ?? "";
-  const isDirty = project != null && trimmedProjectName !== savedProjectName;
-  const isProjectNameInvalid = trimmedProjectName.length === 0;
+  const savedProjectName = stripProjectBoardEmojiPrefix(project?.name ?? "");
+  const savedBoardEmoji = project?.boardEmoji ?? PROJECT_BOARD_EMOJI_PRESETS[0];
+  const nameContainsEmoji = containsEmoji(trimmedProjectName);
+  const isDirty =
+    project != null &&
+    (trimmedProjectName !== savedProjectName || boardEmoji !== savedBoardEmoji);
+  const isProjectNameInvalid =
+    trimmedProjectName.length === 0 || nameContainsEmoji;
   const isSaveDisabled =
     !canEditProject ||
     !isProjectLoaded ||
@@ -87,11 +117,23 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
     !isDirty ||
     updateProjectMutation.isPending;
   const isDeleteConfirmationValid =
-    project != null && deleteConfirmationName.trim() === project.name;
+    project != null && deleteConfirmationName.trim() === savedProjectName;
   const roleLabel =
-    role != null
-      ? tAccess(`roles.${role}`)
-      : tAccess("fallbackRole");
+    role != null ? tAccess(`roles.${role}`) : tAccess("fallbackRole");
+  const permissionRows = [
+    {
+      label: tAccess("capabilities.projectEdit"),
+      isAllowed: canEditProject,
+    },
+    {
+      label: tAccess("capabilities.invitation"),
+      isAllowed: canManageMembers,
+    },
+    {
+      label: tAccess("capabilities.roleManagement"),
+      isAllowed: canManageMembers,
+    },
+  ];
   const createdAtLabel = project
     ? new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(
         project.createdAt
@@ -102,16 +144,10 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
     ? getErrorMessage(projectError as { code?: string }, tErrors)
     : null;
   const updateErrorMessage = updateProjectMutation.error
-    ? getErrorMessage(
-        updateProjectMutation.error as { code?: string },
-        tErrors
-      )
+    ? getErrorMessage(updateProjectMutation.error as { code?: string }, tErrors)
     : null;
   const deleteErrorMessage = deleteProjectMutation.error
-    ? getErrorMessage(
-        deleteProjectMutation.error as { code?: string },
-        tErrors
-      )
+    ? getErrorMessage(deleteProjectMutation.error as { code?: string }, tErrors)
     : null;
 
   const handleProjectNameChange = (value: string) => {
@@ -119,7 +155,15 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
       updateProjectMutation.reset();
     }
 
-    setProjectName(value);
+    setProjectName(stripProjectBoardEmojiPrefix(value));
+  };
+
+  const handleBoardEmojiChange = (value: string) => {
+    if (updateProjectMutation.isSuccess || updateProjectMutation.error) {
+      updateProjectMutation.reset();
+    }
+
+    setBoardEmoji(value);
   };
 
   const handleProjectSave = async (event: FormEvent<HTMLFormElement>) => {
@@ -129,10 +173,24 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
       return;
     }
 
+    const input: UpdateProjectInput = {};
+
+    if (trimmedProjectName !== savedProjectName) {
+      input.name = trimmedProjectName;
+    }
+
+    if (boardEmoji !== savedBoardEmoji) {
+      input.boardEmoji = boardEmoji;
+    }
+
+    if (Object.keys(input).length === 0) {
+      return;
+    }
+
     try {
       await updateProjectMutation.mutateAsync({
         projectId: project.id,
-        input: { name: trimmedProjectName },
+        input,
       });
     } catch {
       // Error state is rendered in the form.
@@ -145,7 +203,8 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
     }
 
     updateProjectMutation.reset();
-    setProjectName(project.name);
+    setProjectName(savedProjectName);
+    setBoardEmoji(savedBoardEmoji);
   };
 
   const openDeleteModal = () => {
@@ -161,7 +220,7 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
   };
 
   const handleDeleteProject = async () => {
-    if (!project || !canDeleteProject || !isDeleteConfirmationValid) {
+    if (!project || !isAdmin || !isDeleteConfirmationValid) {
       return;
     }
 
@@ -223,25 +282,106 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
               className={styles["settings-page__form"]}
               onSubmit={(event) => void handleProjectSave(event)}
             >
-              <Input
-                label={tProject("fields.projectName.label")}
-                placeholder={tProject("fields.projectName.placeholder")}
-                value={projectName}
-                onChange={(event) => handleProjectNameChange(event.target.value)}
-                disabled={!canEditProject || updateProjectMutation.isPending}
-                error={
-                  isProjectNameInvalid
-                    ? tProject("validation.projectNameRequired")
-                    : undefined
-                }
-                helperText={
-                  canEditProject
-                    ? tProject("permissions.editable")
-                    : tProject("permissions.readOnly")
-                }
-              />
+              <div className={styles["settings-page__emoji-field"]}>
+                <Text
+                  variant="caption"
+                  className={styles["settings-page__emoji-label"]}
+                  id={getAccessibilityId("settings-project-board-emoji-label")}
+                >
+                  {tProject("fields.boardEmoji.label")}
+                </Text>
+                <div
+                  className={styles["settings-page__emoji-grid"]}
+                  role="group"
+                  aria-labelledby={getAccessibilityId(
+                    "settings-project-board-emoji-label"
+                  )}
+                >
+                  {PROJECT_BOARD_EMOJI_PRESETS.map((emoji, index) => {
+                    const isSelected = boardEmoji === emoji;
 
-              {updateErrorMessage && <ErrorMessage message={updateErrorMessage} />}
+                    return (
+                      <button
+                        key={emoji}
+                        type="button"
+                        className={`${styles["settings-page__emoji-option"]} ${
+                          isSelected
+                            ? styles["settings-page__emoji-option--selected"]
+                            : ""
+                        }`}
+                        aria-label={`${tProject("fields.boardEmoji.choiceAriaLabel")} ${emoji}`}
+                        aria-pressed={isSelected}
+                        disabled={
+                          !canEditProject || updateProjectMutation.isPending
+                        }
+                        onClick={() => {
+                          handleBoardEmojiChange(emoji);
+                        }}
+                        id={getAccessibilityId(
+                          `settings-project-board-emoji-${index}`
+                        )}
+                      >
+                        <span aria-hidden="true">{emoji}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className={styles["settings-page__name-field"]}>
+                <Input
+                  id="settings-project-name-input"
+                  label={tProject("fields.projectName.label")}
+                  placeholder={tProject("fields.projectName.placeholder")}
+                  value={projectName}
+                  onChange={(event) =>
+                    handleProjectNameChange(event.target.value)
+                  }
+                  disabled={!canEditProject || updateProjectMutation.isPending}
+                  error={
+                    trimmedProjectName.length === 0
+                      ? tProject("validation.projectNameRequired")
+                      : nameContainsEmoji
+                        ? tProject("validation.projectNameContainsEmoji")
+                        : undefined
+                  }
+                />
+              </div>
+
+              <div className={styles["settings-page__meta-list"]}>
+                <div className={styles["settings-page__meta-row"]}>
+                  <Text
+                    variant="caption"
+                    className={styles["settings-page__meta-label"]}
+                  >
+                    {tProject("fields.shortCode.label")}
+                  </Text>
+                  <Text
+                    variant="body"
+                    className={styles["settings-page__meta-value"]}
+                  >
+                    {project.shortCode}
+                  </Text>
+                </div>
+                <div className={styles["settings-page__meta-row"]}>
+                  <Text
+                    variant="caption"
+                    className={styles["settings-page__meta-label"]}
+                  >
+                    {tProject("fields.createdAt.label")}
+                  </Text>
+                  <Text
+                    variant="body"
+                    className={styles["settings-page__meta-value"]}
+                  >
+                    {createdAtLabel}
+                  </Text>
+                </div>
+              </div>
+
+              {updateErrorMessage && (
+                <ErrorMessage message={updateErrorMessage} />
+              )}
 
               {updateProjectMutation.isSuccess && !isDirty && (
                 <Text
@@ -252,23 +392,26 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
                 </Text>
               )}
 
-              <div className={styles["settings-page__actions"]}>
-                <Button
-                  label={tProject("actions.reset")}
-                  variant="secondary"
-                  onClick={handleProjectReset}
-                  disabled={!isDirty || updateProjectMutation.isPending}
-                />
-                <Button
-                  label={
-                    updateProjectMutation.isPending
-                      ? tProject("actions.saving")
-                      : tProject("actions.save")
-                  }
-                  type="submit"
-                  disabled={isSaveDisabled}
-                />
-              </div>
+              {isDirty && (
+                <div className={styles["settings-page__actions"]}>
+                  <Button
+                    label={tProject("actions.reset")}
+                    variant="secondary"
+                    type="button"
+                    onClick={handleProjectReset}
+                    disabled={updateProjectMutation.isPending}
+                  />
+                  <Button
+                    label={
+                      updateProjectMutation.isPending
+                        ? tProject("actions.saving")
+                        : tProject("actions.save")
+                    }
+                    type="submit"
+                    disabled={isSaveDisabled}
+                  />
+                </div>
+              )}
             </form>
           </Card>
 
@@ -303,143 +446,125 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
                   {roleLabel}
                 </Text>
               </div>
-              <div className={styles["settings-page__meta-row"]}>
-                <Text
-                  variant="caption"
-                  className={styles["settings-page__meta-label"]}
+              {permissionRows.map((permission) => (
+                <div
+                  key={permission.label}
+                  className={styles["settings-page__meta-row"]}
                 >
-                  {tProject("fields.shortCode.label")}
-                </Text>
-                <Text
-                  variant="body"
-                  className={styles["settings-page__meta-value"]}
-                >
-                  {project.shortCode}
-                </Text>
-              </div>
-              <div className={styles["settings-page__meta-row"]}>
-                <Text
-                  variant="caption"
-                  className={styles["settings-page__meta-label"]}
-                >
-                  {tProject("fields.createdAt.label")}
-                </Text>
-                <Text
-                  variant="body"
-                  className={styles["settings-page__meta-value"]}
-                >
-                  {createdAtLabel}
-                </Text>
-              </div>
+                  <Text
+                    variant="caption"
+                    className={styles["settings-page__meta-label"]}
+                  >
+                    {permission.label}
+                  </Text>
+                  <span
+                    className={`${styles["settings-page__permission-badge"]} ${
+                      permission.isAllowed
+                        ? styles["settings-page__permission-badge--allowed"]
+                        : styles["settings-page__permission-badge--blocked"]
+                    }`}
+                  >
+                    <PermissionStatusIcon isAllowed={permission.isAllowed} />
+                    <span className="visually-hidden">
+                      {permission.isAllowed
+                        ? tAccess("statuses.allowed")
+                        : tAccess("statuses.blocked")}
+                    </span>
+                  </span>
+                </div>
+              ))}
             </div>
-
-            <ul className={styles["settings-page__capabilities"]}>
-              <li className={styles["settings-page__capability"]}>
-                <Text as="span" variant="small">
-                  {canEditProject
-                    ? tAccess("capabilities.renameAllowed")
-                    : tAccess("capabilities.renameBlocked")}
-                </Text>
-              </li>
-              <li className={styles["settings-page__capability"]}>
-                <Text as="span" variant="small">
-                  {canDeleteProject
-                    ? tAccess("capabilities.deleteAllowed")
-                    : tAccess("capabilities.deleteBlocked")}
-                </Text>
-              </li>
-            </ul>
           </Card>
         </div>
 
         <ProjectPeopleSettingsSection projectId={project.id} />
 
-        <Card
-          className={`${styles["settings-page__card"]} ${styles["settings-page__card--danger"]}`}
-        >
-          <div className={styles["settings-page__danger-body"]}>
-            <div className={styles["settings-page__danger-content"]}>
-              <Title
-                variant="h2"
-                className={styles["settings-page__danger-title"]}
-              >
-                {tDanger("title")}
-              </Title>
-              <Text
-                variant="small"
-                className={styles["settings-page__danger-copy"]}
-              >
-                {tDanger("description")}
+        {isAdmin && (
+          <>
+            <Card
+              className={`${styles["settings-page__card"]} ${styles["settings-page__card--danger"]}`}
+            >
+              <div className={styles["settings-page__danger-body"]}>
+                <div className={styles["settings-page__danger-content"]}>
+                  <Title
+                    variant="h2"
+                    className={styles["settings-page__danger-title"]}
+                  >
+                    {tDanger("title")}
+                  </Title>
+                  <Text
+                    variant="small"
+                    className={styles["settings-page__danger-copy"]}
+                  >
+                    {tDanger("description")}
+                  </Text>
+                </div>
+
+                <div className={styles["settings-page__danger-side"]}>
+                  <Button
+                    label={tDelete("open")}
+                    variant="danger"
+                    onClick={openDeleteModal}
+                    aria-label={tDelete("openAriaLabel")}
+                  />
+                </div>
+              </div>
+            </Card>
+
+            <Modal
+              isOpen={isDeleteModalOpen}
+              onClose={closeDeleteModal}
+              title={tDelete("modalTitle")}
+              size="medium"
+            >
+              <Text className={styles["settings-page__confirmation-copy"]}>
+                {tDelete("modalDescription")}
               </Text>
-            </div>
 
-            <div className={styles["settings-page__danger-side"]}>
-              <Button
-                label={tDelete("open")}
-                variant="danger"
-                onClick={openDeleteModal}
-                disabled={!canDeleteProject}
-                aria-label={tDelete("openAriaLabel")}
+              <Input
+                label={tDelete("confirmationLabel")}
+                placeholder={tDelete("confirmationPlaceholder", {
+                  name: savedProjectName,
+                })}
+                value={deleteConfirmationName}
+                onChange={(event) =>
+                  setDeleteConfirmationName(event.target.value)
+                }
+                helperText={tDelete("confirmationHelper", {
+                  name: savedProjectName,
+                })}
+                disabled={deleteProjectMutation.isPending}
               />
-              {!canDeleteProject && (
-                <Text
-                  variant="small"
-                  className={styles["settings-page__danger-hint"]}
-                >
-                  {role === ProjectRole.VIEWER
-                    ? tDanger("readOnly")
-                    : tDanger("adminOnly")}
-                </Text>
+
+              {deleteErrorMessage && (
+                <ErrorMessage message={deleteErrorMessage} />
               )}
-            </div>
-          </div>
-        </Card>
+
+              <div className={styles["settings-page__modal-actions"]}>
+                <Button
+                  label={tDelete("cancel")}
+                  variant="secondary"
+                  onClick={closeDeleteModal}
+                  disabled={deleteProjectMutation.isPending}
+                />
+                <Button
+                  label={
+                    deleteProjectMutation.isPending
+                      ? tDelete("deleting")
+                      : tDelete("confirm")
+                  }
+                  variant="danger"
+                  onClick={() => void handleDeleteProject()}
+                  disabled={
+                    !isDeleteConfirmationValid ||
+                    deleteProjectMutation.isPending
+                  }
+                />
+              </div>
+            </Modal>
+          </>
+        )}
       </section>
-
-      <Modal
-        isOpen={isDeleteModalOpen}
-        onClose={closeDeleteModal}
-        title={tDelete("modalTitle")}
-        size="medium"
-      >
-        <Text className={styles["settings-page__confirmation-copy"]}>
-          {tDelete("modalDescription")}
-        </Text>
-
-        <Input
-          label={tDelete("confirmationLabel")}
-          placeholder={tDelete("confirmationPlaceholder", {
-            name: project.name,
-          })}
-          value={deleteConfirmationName}
-          onChange={(event) => setDeleteConfirmationName(event.target.value)}
-          helperText={tDelete("confirmationHelper", {
-            name: project.name,
-          })}
-          disabled={deleteProjectMutation.isPending}
-        />
-
-        {deleteErrorMessage && <ErrorMessage message={deleteErrorMessage} />}
-
-        <div className={styles["settings-page__modal-actions"]}>
-          <Button
-            label={tDelete("cancel")}
-            variant="secondary"
-            onClick={closeDeleteModal}
-            disabled={deleteProjectMutation.isPending}
-          />
-          <Button
-            label={
-              deleteProjectMutation.isPending
-                ? tDelete("deleting")
-                : tDelete("confirm")
-            }
-            variant="danger"
-            onClick={() => void handleDeleteProject()}
-            disabled={!isDeleteConfirmationValid || deleteProjectMutation.isPending}
-          />
-        </div>
-      </Modal>
     </>
   );
 };

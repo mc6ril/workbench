@@ -49,6 +49,7 @@ const PROJECT = {
   id: PROJECT_ID,
   name: "Projet Alpha",
   shortCode: "PA",
+  boardEmoji: "📋",
   createdAt: new Date("2024-01-01T00:00:00Z"),
   updatedAt: new Date("2024-01-02T00:00:00Z"),
 };
@@ -100,6 +101,7 @@ describe("ProjectSettingsPage", () => {
         isLoading: false,
         canEditProject: false,
         canDeleteProject: false,
+        canManageMembers: false,
       })
     );
 
@@ -107,11 +109,16 @@ describe("ProjectSettingsPage", () => {
 
     expect(screen.queryByText("Gouvernance")).not.toBeInTheDocument();
     expect(screen.getByLabelText("Nom du projet")).toBeDisabled();
+    expect(screen.getByText("Code projet")).toBeInTheDocument();
+    expect(screen.getByText("Créé le")).toBeInTheDocument();
+    expect(screen.getByText("Modification du projet")).toBeInTheDocument();
+    expect(screen.getByText("Invitation")).toBeInTheDocument();
+    expect(screen.getByText("Modification du rôle")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", {
+      screen.queryByRole("button", {
         name: "Ouvrir la confirmation de suppression du projet",
       })
-    ).toBeDisabled();
+    ).not.toBeInTheDocument();
     expect(screen.getByText("Lecteur")).toBeInTheDocument();
   });
 
@@ -127,14 +134,30 @@ describe("ProjectSettingsPage", () => {
         isLoading: false,
         canEditProject: true,
         canDeleteProject: false,
+        canManageMembers: false,
       })
     );
 
     render(<ProjectSettingsPage projectId={PROJECT_ID} />);
 
+    expect(
+      screen.queryByRole("button", { name: "Réinitialiser" })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Enregistrer" })
+    ).not.toBeInTheDocument();
+
     fireEvent.change(screen.getByLabelText("Nom du projet"), {
       target: { value: "Projet Beta" },
     });
+
+    expect(
+      screen.getByRole("button", { name: "Réinitialiser" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Enregistrer" })
+    ).toBeInTheDocument();
+
     fireEvent.click(screen.getByRole("button", { name: "Enregistrer" }));
 
     await waitFor(() => {
@@ -143,6 +166,107 @@ describe("ProjectSettingsPage", () => {
         input: { name: "Projet Beta" },
       });
     });
+  });
+
+  it("strips a shared board emoji prefix from the project name in settings", async () => {
+    updateMutateAsync.mockResolvedValue({
+      ...PROJECT,
+      name: "Projet Beta",
+    });
+
+    jest.mocked(useProject).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useProject>>({
+        data: {
+          ...PROJECT,
+          name: "📋 Projet Alpha",
+        },
+        isLoading: false,
+        error: null,
+        refetch: jest.fn(),
+      })
+    );
+
+    jest.mocked(useProjectPermissions).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useProjectPermissions>>({
+        role: ProjectRole.MEMBER,
+        isLoading: false,
+        canEditProject: true,
+        canDeleteProject: false,
+        canManageMembers: false,
+      })
+    );
+
+    render(<ProjectSettingsPage projectId={PROJECT_ID} />);
+
+    expect(screen.getByLabelText("Nom du projet")).toHaveValue("Projet Alpha");
+
+    fireEvent.change(screen.getByLabelText("Nom du projet"), {
+      target: { value: "🚀 Projet Beta" },
+    });
+
+    expect(screen.getByLabelText("Nom du projet")).toHaveValue("Projet Beta");
+
+    fireEvent.click(screen.getByRole("button", { name: "Enregistrer" }));
+
+    await waitFor(() => {
+      expect(updateMutateAsync).toHaveBeenCalledWith({
+        projectId: PROJECT_ID,
+        input: { name: "Projet Beta" },
+      });
+    });
+  });
+
+  it("resets the local project form to the saved database state", () => {
+    jest.mocked(useProjectPermissions).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useProjectPermissions>>({
+        role: ProjectRole.ADMIN,
+        isLoading: false,
+        canEditProject: true,
+        canDeleteProject: true,
+        canManageMembers: true,
+      })
+    );
+
+    render(<ProjectSettingsPage projectId={PROJECT_ID} />);
+
+    expect(
+      screen.queryByRole("button", { name: "Réinitialiser" })
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Choisir l’emoji du board 🚀",
+      })
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Réinitialiser" })
+    ).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Nom du projet"), {
+      target: { value: "Projet Temporaire" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Réinitialiser" }));
+
+    expect(updateMutateAsync).not.toHaveBeenCalled();
+    expect(updateReset).toHaveBeenCalled();
+    expect(screen.getByLabelText("Nom du projet")).toHaveValue(PROJECT.name);
+    expect(
+      screen.getByRole("button", {
+        name: "Choisir l’emoji du board 📋",
+      })
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(
+      screen.getByRole("button", {
+        name: "Choisir l’emoji du board 🚀",
+      })
+    ).toHaveAttribute("aria-pressed", "false");
+    expect(
+      screen.queryByRole("button", { name: "Réinitialiser" })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Enregistrer" })
+    ).not.toBeInTheDocument();
   });
 
   it("requires an exact confirmation before deleting the project", async () => {
@@ -154,6 +278,7 @@ describe("ProjectSettingsPage", () => {
         isLoading: false,
         canEditProject: true,
         canDeleteProject: true,
+        canManageMembers: true,
       })
     );
 

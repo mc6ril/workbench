@@ -39,6 +39,10 @@
   height: 100%;
 }
 
+.people-settings__card--full {
+  grid-column: 1 / -1;
+}
+
 // ─── Section headers ─────────────────────────────────────────────────────────
 
 .people-settings__section-header,

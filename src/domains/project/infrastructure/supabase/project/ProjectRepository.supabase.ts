@@ -17,6 +17,7 @@ import type {
   CreateProjectInput,
   Project,
   ProjectWithRole,
+  UpdateProjectInput,
 } from "@/domains/project/core/domain/schema/project.schema";
 import { isProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import type { ProjectRepository } from "@/domains/project/core/ports/projectRepository";
@@ -97,7 +98,7 @@ export const createProjectRepository = (
       const { data, error } = await client
         .from("projects")
         .select("*")
-        .eq("short_code", shortCode)
+        .eq("short_code", shortCode.trim().toUpperCase())
         .maybeSingle();
 
       if (error) {
@@ -224,12 +225,9 @@ export const createProjectRepository = (
     }
   },
 
-  async update(
-    id: string,
-    input: Partial<CreateProjectInput>
-  ): Promise<Project> {
+  async update(id: string, input: UpdateProjectInput): Promise<Project> {
     try {
-      const updateData: Partial<{ name: string }> = {};
+      const updateData: Partial<{ name: string; board_emoji: string }> = {};
 
       if (input.name !== undefined) {
         if (!isNonEmptyString(input.name)) {
@@ -244,6 +242,10 @@ export const createProjectRepository = (
         }
 
         updateData.name = input.name;
+      }
+
+      if (input.boardEmoji !== undefined) {
+        updateData.board_emoji = input.boardEmoji;
       }
 
       if (Object.keys(updateData).length === 0) {

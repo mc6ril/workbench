@@ -2,6 +2,7 @@ import type {
   CreateProjectInput,
   Project,
   ProjectWithRole,
+  UpdateProjectInput,
 } from "@/domains/project/core/domain/schema/project.schema";
 import type {
   ProjectWithStats,
@@ -20,7 +21,7 @@ export type ProjectRepositoryMock = {
   listWithStats: jest.Mock<Promise<ProjectWithStats[]>, []>;
   listProjectsWithStats: jest.Mock<Promise<ProjectWithStats[]>, []>;
   create: jest.Mock<Promise<Project>, [CreateProjectInput]>;
-  update: jest.Mock<Promise<Project>, [string, Partial<CreateProjectInput>]>;
+  update: jest.Mock<Promise<Project>, [string, UpdateProjectInput]>;
   delete: jest.Mock<Promise<void>, [string]>;
   addCurrentUserAsMember: jest.Mock<
     Promise<Project>,
@@ -65,7 +66,7 @@ export const createProjectRepositoryMock = (
     listWithStats: listWithStatsMock,
     listProjectsWithStats: listWithStatsMock,
     create: jest.fn<Promise<Project>, [CreateProjectInput]>(),
-    update: jest.fn<Promise<Project>, [string, Partial<CreateProjectInput>]>(),
+    update: jest.fn<Promise<Project>, [string, UpdateProjectInput]>(),
     delete: jest.fn<Promise<void>, [string]>(),
     addCurrentUserAsMember: jest.fn<
       Promise<Project>,

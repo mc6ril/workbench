@@ -444,64 +444,9 @@
       "welcomeGuideSkipCta": "Omitir por ahora",
       "welcomeGuideSkipCtaAriaLabel": "Dejar de abrir automaticamente la guia de inicio",
       "actions": {
-        "openMenuAriaLabel": "Abrir menu de acciones para {name}",
-        "menuAriaLabel": "Menu de acciones del espacio {name}",
-        "manageMembers": "Gestionar miembros",
-        "inviteProject": "Invitar",
-        "membersModalTitle": "Gestionar miembros",
-        "membersModalDescription": "Consulta los accesos de {name}, ajusta los roles y elimina un miembro si hace falta.",
-        "membersHeroEyebrow": "Gestion de accesos",
-        "membersAdminsCount": "{count} administrador",
-        "membersAdminsCount_other": "{count} administradores",
-        "membersSyncing": "Sincronizacion en curso",
-        "membersLive": "Accesos al dia",
-        "membersSectionTitle": "Equipo del proyecto",
-        "membersSectionDescription": "Los cambios de rol se aplican al instante. No se puede eliminar al último administrador.",
-        "membersLoading": "Cargando miembros...",
-        "membersLoadingAriaLabel": "Cargando miembros del proyecto",
-        "membersUnavailableTitle": "No se pudo cargar el equipo",
-        "membersUnavailableDescription": "No se ha podido recuperar la lista de miembros por ahora. Puedes reintentar sin cerrar este panel.",
-        "membersEmptyDescription": "Invita a tu primer colaborador desde este menu para empezar a compartir el acceso al proyecto.",
-        "membersRoleLabel": "Acceso",
-        "membersModalClose": "Cerrar",
-        "membersModalCloseAriaLabel": "Cerrar la gestion de miembros",
-        "inviteModalTitle": "Invitar a este espacio",
-        "inviteModalDescription": "Crea un enlace de invitacion de un solo uso para {name}. Una vez usado o caducado, queda obsoleto.",
-        "inviteHeroEyebrow": "Invitacion segura",
-        "invitePillSingleUse": "Un solo uso",
-        "invitePillExpiring": "Caduca automaticamente",
-        "inviteStatusDraft": "Enlace no generado",
-        "inviteStatusReady": "Listo para compartir",
-        "inviteRoleSectionTitle": "Nivel de acceso",
-        "inviteRoleSectionDescription": "Elige los permisos que se concederan cuando se use el enlace.",
-        "inviteRoleLabel": "Rol",
-        "inviteRoleAriaLabel": "Rol asignado mediante este enlace de invitacion",
         "inviteRoleViewerDescription": "Puede consultar el proyecto sin modificar su contenido.",
         "inviteRoleMemberDescription": "Puede colaborar en tickets y en el trabajo diario del proyecto.",
-        "inviteRoleAdminDescription": "Puede gestionar miembros, ajustes y la estructura del proyecto.",
-        "inviteCreateLink": "Crear enlace",
-        "inviteCreateLinkAriaLabel": "Crear enlace de invitacion",
-        "inviteLinkSectionTitle": "Compartir",
-        "inviteLinkSectionDescription": "El enlace ya incluye el rol seleccionado y queda obsoleto tras usarse o caducar.",
-        "inviteLinkPlaceholderTitle": "Enlace listo para generar",
-        "inviteLinkPlaceholderDescription": "Genera el enlace cuando estes listo para enviarlo. Si cambias el rol, se creara un nuevo enlace.",
-        "inviteLinkReadyTitle": "Enlace listo",
-        "inviteLinkReadyDescription": "La persona se unira al espacio con el rol seleccionado en cuanto acepte la invitacion.",
-        "inviteLinkLabel": "Enlace de invitacion",
-        "inviteLinkAriaLabel": "Enlace de invitacion generado",
-        "inviteLinkHelper": "Comparte este enlace directamente. No podra reutilizarse una vez consumido.",
-        "inviteCopyLink": "Copiar enlace",
-        "inviteCopyLinkAriaLabel": "Copiar enlace de invitacion",
-        "inviteCopySuccess": "Enlace de invitacion copiado",
-        "inviteModalClose": "Cerrar",
-        "inviteModalCloseAriaLabel": "Cerrar modal de invitacion",
-        "deleteProject": "Eliminar proyecto",
-        "deleteModalTitle": "Eliminar proyecto",
-        "deleteModalDescription": "¿Seguro que quieres eliminar {name}? Esta accion es permanente.",
-        "deleteModalConfirm": "Eliminar definitivamente",
-        "deleteModalConfirmAriaLabel": "Confirmar eliminacion del proyecto",
-        "deleteModalCancel": "Cancelar",
-        "deleteModalCancelAriaLabel": "Cancelar eliminacion del proyecto"
+        "inviteRoleAdminDescription": "Puede gestionar miembros, ajustes y la estructura del proyecto."
       },
       "reclaimable": {
         "sectionTitle": "Proyectos para recuperar",
@@ -664,8 +609,12 @@
       },
       "project": {
         "title": "Información del proyecto",
-        "subtitle": "Actualiza el nombre visible del proyecto. Los cambios se aplican inmediatamente.",
+        "subtitle": "Elige el icono del tablero y el nombre del proyecto. El código sigue siendo dos letras, sin emoji.",
         "fields": {
+          "boardEmoji": {
+            "label": "Icono del tablero",
+            "choiceAriaLabel": "Elegir emoji del tablero"
+          },
           "projectName": {
             "label": "Nombre del proyecto",
             "placeholder": "Introduce el nombre del proyecto"
@@ -686,15 +635,12 @@
           "saving": "Guardando...",
           "reset": "Restablecer"
         },
-        "permissions": {
-          "editable": "Tu rol actual te permite renombrar el proyecto.",
-          "readOnly": "Tu rol actual solo te permite consultar esta información."
-        },
         "status": {
-          "saved": "Nombre del proyecto guardado"
+          "saved": "Cambios guardados"
         },
         "validation": {
-          "projectNameRequired": "El nombre del proyecto es obligatorio."
+          "projectNameRequired": "El nombre del proyecto es obligatorio.",
+          "projectNameContainsEmoji": "El nombre del proyecto no debe contener emoji."
         }
       },
       "access": {
@@ -707,7 +653,14 @@
           "viewer": "Lector"
         },
         "fallbackRole": "Acceso desconocido",
+        "statuses": {
+          "allowed": "Permitido",
+          "blocked": "No permitido"
+        },
         "capabilities": {
+          "projectEdit": "Modificación del proyecto",
+          "invitation": "Invitación",
+          "roleManagement": "Cambio de rol",
           "renameAllowed": "Puedes renombrar el proyecto.",
           "renameBlocked": "Puedes consultar el proyecto, pero no renombrarlo.",
           "deleteAllowed": "Puedes eliminar el proyecto.",

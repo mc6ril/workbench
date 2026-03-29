@@ -40,3 +40,9 @@ export {
   API_MESSAGES_COMMON,
   API_MESSAGES_STRIPE,
 } from "./apiMessages";
+
+// Re-export project constants
+export {
+  PROJECT_BOARD_EMOJI_PRESETS,
+  stripProjectBoardEmojiPrefix,
+} from "./projectBoardEmoji";

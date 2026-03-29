@@ -444,64 +444,9 @@
       "welcomeGuideSkipCta": "Skip for now",
       "welcomeGuideSkipCtaAriaLabel": "Stop opening the getting started guide automatically",
       "actions": {
-        "openMenuAriaLabel": "Open actions menu for {name}",
-        "menuAriaLabel": "Workspace actions menu for {name}",
-        "manageMembers": "Manage members",
-        "inviteProject": "Invite someone",
-        "membersModalTitle": "Manage members",
-        "membersModalDescription": "Review access for {name}, adjust roles, and remove a member when needed.",
-        "membersHeroEyebrow": "Access management",
-        "membersAdminsCount": "{count} administrator",
-        "membersAdminsCount_other": "{count} administrators",
-        "membersSyncing": "Sync in progress",
-        "membersLive": "Access is current",
-        "membersSectionTitle": "Project team",
-        "membersSectionDescription": "Role changes apply immediately. The last administrator cannot be removed.",
-        "membersLoading": "Loading members...",
-        "membersLoadingAriaLabel": "Loading project members",
-        "membersUnavailableTitle": "Unable to load the team",
-        "membersUnavailableDescription": "The members list could not be retrieved right now. You can retry without closing this panel.",
-        "membersEmptyDescription": "Invite your first collaborator from this menu to start sharing access to the project.",
-        "membersRoleLabel": "Access",
-        "membersModalClose": "Close",
-        "membersModalCloseAriaLabel": "Close member management",
-        "inviteModalTitle": "Invite to this space",
-        "inviteModalDescription": "Create a one-time invitation link for {name}. Once used or expired, it becomes obsolete.",
-        "inviteHeroEyebrow": "Secure invitation",
-        "invitePillSingleUse": "Single-use",
-        "invitePillExpiring": "Auto-expiring",
-        "inviteStatusDraft": "Link not generated",
-        "inviteStatusReady": "Ready to share",
-        "inviteRoleSectionTitle": "Access level",
-        "inviteRoleSectionDescription": "Choose which permissions will be granted once the link is used.",
-        "inviteRoleLabel": "Role",
-        "inviteRoleAriaLabel": "Role to assign through this invitation link",
         "inviteRoleViewerDescription": "Can browse the project without changing its content.",
         "inviteRoleMemberDescription": "Can collaborate on tickets and everyday project work.",
-        "inviteRoleAdminDescription": "Can manage members, settings, and project structure.",
-        "inviteCreateLink": "Create link",
-        "inviteCreateLinkAriaLabel": "Create invitation link",
-        "inviteLinkSectionTitle": "Sharing",
-        "inviteLinkSectionDescription": "The link already carries the selected role and becomes obsolete after use or expiry.",
-        "inviteLinkPlaceholderTitle": "Link ready to generate",
-        "inviteLinkPlaceholderDescription": "Generate the link when you are ready to send it. If you change the role, a new link will be created.",
-        "inviteLinkReadyTitle": "Link ready",
-        "inviteLinkReadyDescription": "The recipient will join the space with the selected role as soon as the invitation is accepted.",
-        "inviteLinkLabel": "Invitation link",
-        "inviteLinkAriaLabel": "Generated invitation link",
-        "inviteLinkHelper": "Share this link directly. It cannot be reused once consumed.",
-        "inviteCopyLink": "Copy link",
-        "inviteCopyLinkAriaLabel": "Copy invitation link",
-        "inviteCopySuccess": "Invitation link copied",
-        "inviteModalClose": "Close",
-        "inviteModalCloseAriaLabel": "Close invitation modal",
-        "deleteProject": "Delete project",
-        "deleteModalTitle": "Delete project",
-        "deleteModalDescription": "Do you really want to delete {name}? This action is permanent.",
-        "deleteModalConfirm": "Delete permanently",
-        "deleteModalConfirmAriaLabel": "Confirm project deletion",
-        "deleteModalCancel": "Cancel",
-        "deleteModalCancelAriaLabel": "Cancel project deletion"
+        "inviteRoleAdminDescription": "Can manage members, settings, and project structure."
       },
       "reclaimable": {
         "sectionTitle": "Projects to recover",
@@ -664,8 +609,12 @@
       },
       "project": {
         "title": "Project information",
-        "subtitle": "Update the visible project name. Changes apply immediately.",
+        "subtitle": "Pick a board icon and project name. The project code stays two letters, without emoji.",
         "fields": {
+          "boardEmoji": {
+            "label": "Board icon",
+            "choiceAriaLabel": "Choose board emoji"
+          },
           "projectName": {
             "label": "Project name",
             "placeholder": "Enter the project name"
@@ -686,15 +635,12 @@
           "saving": "Saving...",
           "reset": "Reset"
         },
-        "permissions": {
-          "editable": "Your current role allows you to rename the project.",
-          "readOnly": "Your current role only allows you to view this information."
-        },
         "status": {
-          "saved": "Project name saved"
+          "saved": "Changes saved"
         },
         "validation": {
-          "projectNameRequired": "Project name is required."
+          "projectNameRequired": "Project name is required.",
+          "projectNameContainsEmoji": "The project name must not contain emoji."
         }
       },
       "access": {
@@ -707,7 +653,14 @@
           "viewer": "Viewer"
         },
         "fallbackRole": "Unknown access",
+        "statuses": {
+          "allowed": "Allowed",
+          "blocked": "Not allowed"
+        },
         "capabilities": {
+          "projectEdit": "Project editing",
+          "invitation": "Invitations",
+          "roleManagement": "Role changes",
           "renameAllowed": "You can rename the project.",
           "renameBlocked": "You can view the project, but not rename it.",
           "deleteAllowed": "You can delete the project.",
