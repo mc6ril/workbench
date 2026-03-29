@@ -390,10 +390,34 @@
   }
 
   .people-settings__member-actions {
+    width: 100%;
     min-width: 0;
+    gap: $spacing-sm;
+    padding: $spacing-sm;
+    border: $border-width solid $color-border-subtle;
+    border-radius: $border-radius-lg;
+    background: linear-gradient(
+      145deg,
+      rgba($color-surface-subtle, 0.96) 0%,
+      rgba($color-secondary, 0.98) 100%
+    );
   }
 
   .people-settings__role-field {
+    width: 100%;
     min-width: 0;
+  }
+
+  .people-settings__role-select,
+  .people-settings__remove {
+    width: 100%;
+  }
+
+  .people-settings__remove {
+    min-height: 2.75rem;
+    padding: 0 $spacing-lg;
+    border-color: rgba($color-error, 0.18);
+    border-radius: $border-radius-input;
+    background: $color-error-background;
   }
 }

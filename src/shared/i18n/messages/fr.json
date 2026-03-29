@@ -1410,6 +1410,7 @@
     "domain": {
       "TICKET_PROJECT_MISMATCH": "La tâche n'appartient pas au même projet",
       "LAST_ADMIN_REQUIRED": "Le projet doit conserver au moins un administrateur",
+      "MEMBER_ROLE_CHANGE_ADMIN_REQUIRED": "Seul un administrateur peut modifier le rôle d'un membre du projet",
       "INVITATION_ALREADY_USED": "Ce lien d'invitation n'est plus disponible",
       "INVITATION_EXPIRED": "Ce lien d'invitation a expiré",
       "INVITATION_ALREADY_MEMBER": "Vous faites déjà partie de ce projet",

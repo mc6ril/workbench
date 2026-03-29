@@ -1410,6 +1410,7 @@
     "domain": {
       "TICKET_PROJECT_MISMATCH": "El ticket no pertenece al mismo proyecto",
       "LAST_ADMIN_REQUIRED": "El proyecto debe conservar al menos un administrador",
+      "MEMBER_ROLE_CHANGE_ADMIN_REQUIRED": "Solo un administrador puede cambiar el rol de un miembro del proyecto",
       "INVITATION_ALREADY_USED": "Este enlace de invitacion ya no esta disponible",
       "INVITATION_EXPIRED": "Este enlace de invitacion ha caducado",
       "INVITATION_ALREADY_MEMBER": "Ya formas parte de este proyecto",

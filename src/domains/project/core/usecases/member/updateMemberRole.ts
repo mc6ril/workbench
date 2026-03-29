@@ -1,27 +1,42 @@
+import { createDomainRuleError } from "@/shared/errors/domainRuleError";
+
 import { UpdateMemberRoleInputSchema } from "@/domains/project/core/domain/schema/projectMember.schema";
 import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
 
 /**
  * Update a project member's role.
- * Validates input and delegates invariant enforcement to the database layer.
+ * Validates input, ensures the current user is an admin, and delegates
+ * row-level invariant enforcement to the database layer.
  *
  * Business rules:
- * - Only admins can change roles (enforced by RLS)
+ * - Only admins can change roles
  * - The database prevents demoting the last admin of a project
  *
  * @param repository - Member repository
+ * @param projectId - ID of the project that owns the member row
  * @param memberId - ID of the project_members row
  * @param role - New role to assign
  * @throws ZodError if input is invalid
+ * @throws DomainRuleError if the current user is not an admin of the project
  * @throws DatabaseError if database operation fails
  */
 export const updateMemberRole = async (
   repository: MemberRepository,
+  projectId: string,
   memberId: string,
   role: ProjectRole
 ): Promise<void> => {
-  UpdateMemberRoleInputSchema.parse({ memberId, role });
+  const parsed = UpdateMemberRoleInputSchema.parse({ projectId, memberId, role });
 
-  return repository.updateRole(memberId, role);
+  const currentRole = await repository.getCurrentRole(parsed.projectId);
+
+  if (currentRole !== ProjectRole.ADMIN) {
+    throw createDomainRuleError(
+      "MEMBER_ROLE_CHANGE_ADMIN_REQUIRED",
+      "Only project administrators can change a member role"
+    );
+  }
+
+  return repository.updateRole(parsed.memberId, parsed.role);
 };
