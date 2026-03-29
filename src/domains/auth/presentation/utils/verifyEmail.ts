@@ -12,6 +12,7 @@ export type ParsedVerifyEmailParams = {
   input: VerifyEmailInput | null;
   redirectError: VerifyEmailRedirectError | null;
   isMissingToken: boolean;
+  shouldRecoverSession: boolean;
 };
 
 const ALLOWED_VERIFY_EMAIL_TYPES = new Set<VerifyEmailLinkType>([
@@ -66,12 +67,23 @@ export const parseVerifyEmailParams = (
   hash?: string
 ): ParsedVerifyEmailParams => {
   const redirectError = readRedirectError(searchParams, hash);
+  const verified = searchParams.get("verified") === "1";
 
   if (redirectError) {
     return {
       input: null,
       redirectError,
       isMissingToken: false,
+      shouldRecoverSession: false,
+    };
+  }
+
+  if (verified) {
+    return {
+      input: null,
+      redirectError: null,
+      isMissingToken: false,
+      shouldRecoverSession: true,
     };
   }
 
@@ -89,6 +101,7 @@ export const parseVerifyEmailParams = (
       },
       redirectError: null,
       isMissingToken: false,
+      shouldRecoverSession: false,
     };
   }
 
@@ -100,6 +113,7 @@ export const parseVerifyEmailParams = (
       },
       redirectError: null,
       isMissingToken: false,
+      shouldRecoverSession: false,
     };
   }
 
@@ -112,6 +126,7 @@ export const parseVerifyEmailParams = (
       },
       redirectError: null,
       isMissingToken: false,
+      shouldRecoverSession: false,
     };
   }
 
@@ -119,6 +134,7 @@ export const parseVerifyEmailParams = (
     input: null,
     redirectError: null,
     isMissingToken: true,
+    shouldRecoverSession: false,
   };
 };
 

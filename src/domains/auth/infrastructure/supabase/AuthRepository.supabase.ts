@@ -3,6 +3,11 @@ import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
 import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { getLocale } from "@/shared/i18n/config";
+import {
+  buildAuthCallbackPath,
+  sanitizeInternalRedirectPath,
+  VERIFIED_EMAIL_REDIRECT_PATH,
+} from "@/shared/utils/authRedirect";
 
 import type {
   AuthenticationError,
@@ -91,7 +96,9 @@ export const createAuthRepository = (
       const baseOrigin =
         typeof window !== "undefined" ? window.location.origin : "";
       const emailRedirectTo = baseOrigin
-        ? `${baseOrigin}${AUTH_PAGE_ROUTES.VERIFY_EMAIL}`
+        ? `${baseOrigin}${buildAuthCallbackPath({
+            nextPath: VERIFIED_EMAIL_REDIRECT_PATH,
+          })}`
         : undefined;
       const signUpOptions: {
         data?: Record<string, unknown>;
@@ -195,13 +202,14 @@ export const createAuthRepository = (
     try {
       const baseOrigin =
         typeof window !== "undefined" ? window.location.origin : "";
-      const safeNext =
-        redirectPath &&
-        redirectPath.startsWith("/") &&
-        !redirectPath.startsWith("//")
-          ? redirectPath
-          : PAGE_ROUTES.WORKSPACE;
-      const redirectTo = `${baseOrigin}${AUTH_PAGE_ROUTES.CALLBACK}?next=${encodeURIComponent(safeNext)}`;
+      const safeNext = sanitizeInternalRedirectPath(
+        redirectPath,
+        PAGE_ROUTES.WORKSPACE
+      );
+      const redirectTo = `${baseOrigin}${buildAuthCallbackPath({
+        nextPath: safeNext,
+        fallbackPath: PAGE_ROUTES.WORKSPACE,
+      })}`;
 
       const { data, error } = await client.auth.signInWithOAuth({
         provider: "google",
@@ -247,7 +255,10 @@ export const createAuthRepository = (
     try {
       const redirectTo =
         typeof window !== "undefined"
-          ? `${window.location.origin}${AUTH_PAGE_ROUTES.CALLBACK}?next=${AUTH_PAGE_ROUTES.UPDATE_PASSWORD}`
+          ? `${window.location.origin}${buildAuthCallbackPath({
+              nextPath: AUTH_PAGE_ROUTES.UPDATE_PASSWORD,
+              fallbackPath: AUTH_PAGE_ROUTES.UPDATE_PASSWORD,
+            })}`
           : undefined;
 
       const { error } = await client.auth.resetPasswordForEmail(input.email, {

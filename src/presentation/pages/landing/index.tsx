@@ -1,7 +1,6 @@
 "use client";
 
-import type { MouseEvent } from "react";
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { type MouseEvent, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -22,6 +21,11 @@ import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 import { buildFeaturePreviewContent, isFeatureKey } from "@/shared/utils";
+import {
+  buildAuthCallbackPath,
+  getAuthCodeRedirectTarget,
+  sanitizeInternalRedirectPath,
+} from "@/shared/utils/authRedirect";
 
 import styles from "./styles.module.scss";
 
@@ -43,26 +47,27 @@ const LandingPageContent = () => {
   const [selectedFeatureKey, setSelectedFeatureKey] =
     useState<FeatureKey>("board");
 
-  // Supabase redirects to /?code=... instead of dedicated pages
+  // Some Supabase flows can still bounce through the site root with ?code=...
+  // Route them back through the server callback so the session is exchanged
+  // before we land on the final client page.
   useEffect(() => {
     const code = searchParams.get("code");
     const type = searchParams.get("type");
+    const next = searchParams.get("next");
 
     if (code) {
-      if (type === "recovery") {
-        const email = searchParams.get("email");
-        const params = new URLSearchParams({ code, type });
-        if (email) {
-          params.set("email", email);
-        }
-        router.replace(
-          `${AUTH_PAGE_ROUTES.UPDATE_PASSWORD}?${params.toString()}`
-        );
-      } else {
-        router.replace(
-          `${AUTH_PAGE_ROUTES.VERIFY_EMAIL}?code=${encodeURIComponent(code)}`
-        );
-      }
+      const nextPath = sanitizeInternalRedirectPath(
+        next,
+        getAuthCodeRedirectTarget(type)
+      );
+
+      router.replace(
+        buildAuthCallbackPath({
+          code,
+          nextPath,
+          fallbackPath: getAuthCodeRedirectTarget(type),
+        })
+      );
     }
   }, [searchParams, router]);
 
