@@ -11,30 +11,33 @@ import {
 
 import type {
   AuthenticationError,
-  AuthResult,
   EmailAlreadyExistsError,
   EmailVerificationError,
   InvalidTokenError,
   PasswordUpdateNotAllowedError,
+} from "@/domains/auth/core/domain/auth.errors";
+import type {
+  AuthResult,
   ResetPasswordInput,
   SignInInput,
   SignUpInput,
+  UpdateCredentialsInput,
   UpdatePasswordInput,
   VerifyEmailInput,
-} from "@/domains/auth/core/domain/auth.schema";
-import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
+} from "@/domains/auth/core/domain/auth.types";
+import type { AuthGateway } from "@/domains/auth/core/ports/auth.gateway";
 import { handleAuthError } from "@/domains/auth/infrastructure/errors/authErrorHandler";
-import { mapSupabaseSessionToCurrentSession } from "@/domains/session/infrastructure/supabase/SessionMapper.supabase";
-import { canUpdatePasswordFromAppMetadata } from "@/domains/session/infrastructure/supabase/sessionProviderCapabilities";
+import { mapSupabaseSessionToCurrentSession } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
+import { canUpdatePasswordFromAppMetadata } from "@/domains/auth/infrastructure/supabase/providerCapabilities";
 
 /**
- * Create an AuthRepository implementation using the provided Supabase client.
+ * Create an AuthGateway implementation using the provided Supabase client.
  * This allows using different clients (browser/server) based on context.
  *
  * @param client - Supabase client instance to use
  * @param adminClient - Optional Supabase admin client (service_role) for privileged operations like user deletion.
  *                      Must be provided for server-side contexts that need admin operations.
- * @returns AuthRepository implementation
+ * @returns AuthGateway implementation
  */
 const redirectToOAuthUrl = (url: string): void => {
   if (typeof window === "undefined") {
@@ -76,10 +79,10 @@ const createPasswordUpdateAuthRequiredError = (): AuthenticationError => ({
   debugMessage: "User must be authenticated to update password",
 });
 
-export const createAuthRepository = (
+export const createAuthGateway = (
   client: SupabaseClient,
   adminClient?: SupabaseClient
-): AuthRepository => ({
+): AuthGateway => ({
   async signUp(input: SignUpInput): Promise<AuthResult> {
     try {
       // `locale` is available in Supabase email templates as `{{ .Data.locale }}` (user_metadata).
@@ -499,10 +502,7 @@ export const createAuthRepository = (
     }
   },
 
-  async updateUser(input: {
-    email?: string;
-    password?: string;
-  }): Promise<void> {
+  async updateCredentials(input: UpdateCredentialsInput): Promise<void> {
     try {
       const updateData: { email?: string; password?: string } = {};
 
@@ -541,7 +541,7 @@ export const createAuthRepository = (
     }
   },
 
-  async deleteUser(): Promise<void> {
+  async deleteAccount(): Promise<void> {
     try {
       // Admin client is required for user deletion (service_role key)
       if (!adminClient) {

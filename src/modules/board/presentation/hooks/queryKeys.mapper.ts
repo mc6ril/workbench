@@ -1,7 +1,7 @@
 import { isNumber, isObject, isString } from "@/shared/utils";
 
-import type { TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
-import { TICKET_PRIORITY_VALUES } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { TicketFilters } from "@/modules/board/core/domain/ticket.types";
+import { TICKET_PRIORITY_VALUES } from "@/modules/board/core/domain/ticket.types";
 
 export type TicketListFilterKey = readonly [
   columnId: TicketFilters["columnId"] | null,

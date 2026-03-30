@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { signInWithGoogle } from "@/domains/auth/core/usecases/user/signInWithGoogle";
-import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { authGateway } from "@/domains/auth/infrastructure/supabase/repositories";
 import { invalidatePostAuthMutation } from "@/domains/auth/presentation/utils/invalidatePostAuthMutation";
 
 /**
@@ -12,7 +12,7 @@ export const useSignInWithGoogle = () => {
 
   return useMutation({
     mutationFn: (redirectPath?: string) =>
-      signInWithGoogle(authRepository, redirectPath),
+      signInWithGoogle(authGateway, redirectPath),
     onSuccess: async () => {
       await invalidatePostAuthMutation(queryClient);
     },

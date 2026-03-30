@@ -15,7 +15,7 @@ import type {
   CommentWithAuthor,
   CreateCommentInput,
   UpdateCommentInput,
-} from "@/modules/board/core/domain/schema/comment.schema";
+} from "@/modules/board/core/domain/comment.types";
 import type { CommentRepository } from "@/modules/board/core/ports/commentRepository";
 import type { CommentWithAuthorRow } from "@/modules/board/infrastructure/supabase/comment/types";
 

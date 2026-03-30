@@ -1,12 +1,12 @@
 import { z } from "zod";
 
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
 
-import type {
-  Project,
-  UpdateProjectInput,
-} from "@/domains/project/core/domain/schema/project.schema";
-import { updateProject } from "@/domains/project/core/usecases/project/updateProject";
+import type { Project } from "@/domains/project/core/domain/project.types";
+import {
+  updateProject,
+  type UpdateProjectInput,
+} from "@/domains/project/core/usecases/project/updateProject";
 
 describe("updateProject", () => {
   const projectId = "123e4567-e89b-12d3-a456-426614174000";
@@ -21,7 +21,7 @@ describe("updateProject", () => {
   };
 
   it("updates a project with valid input", async () => {
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       update: jest.fn<Promise<Project>, [string, UpdateProjectInput]>(
         async () => updatedProject
       ),
@@ -38,7 +38,7 @@ describe("updateProject", () => {
   });
 
   it("trims the project name before updating", async () => {
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       update: jest.fn<Promise<Project>, [string, UpdateProjectInput]>(
         async () => updatedProject
       ),
@@ -54,7 +54,7 @@ describe("updateProject", () => {
   });
 
   it("throws on invalid project id", async () => {
-    const repository = createProjectRepositoryMock();
+    const repository = createProjectGatewayMock();
 
     await expect(
       updateProject(repository, "invalid-id", { name: "Updated Project" })
@@ -64,7 +64,7 @@ describe("updateProject", () => {
   });
 
   it("throws on empty project name", async () => {
-    const repository = createProjectRepositoryMock();
+    const repository = createProjectGatewayMock();
 
     await expect(
       updateProject(repository, projectId, { name: "   " })
@@ -74,7 +74,7 @@ describe("updateProject", () => {
   });
 
   it("updates board emoji only", async () => {
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       update: jest.fn<Promise<Project>, [string, UpdateProjectInput]>(
         async () => ({
           ...updatedProject,
@@ -94,7 +94,7 @@ describe("updateProject", () => {
   });
 
   it("rejects names that contain emoji", async () => {
-    const repository = createProjectRepositoryMock();
+    const repository = createProjectGatewayMock();
 
     await expect(
       updateProject(repository, projectId, { name: "Bad 📋" })

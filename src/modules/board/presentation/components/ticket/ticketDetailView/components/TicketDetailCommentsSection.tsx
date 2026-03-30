@@ -1,8 +1,8 @@
 import Avatar from "@/shared/design-system/avatar";
 import { getIntlLocale, useTranslation } from "@/shared/i18n";
 
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import type { CommentWithAuthor } from "@/modules/board/core/domain/schema/comment.schema";
+import type { ProjectMember } from "@/domains/project/core/domain/project.types";
+import type { CommentWithAuthor } from "@/modules/board/core/domain/comment.types";
 import styles from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 
 type Props = {

@@ -1,11 +1,11 @@
 import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
 
-import { createSessionRepository } from "./SessionRepository.supabase";
+import { createSessionGateway } from "./SessionGateway.supabase";
 
 // Browser instance for session hooks (Client Components)
-export const sessionRepository = createSessionRepository(
+export const sessionGateway = createSessionGateway(
   createSupabaseBrowserClient()
 );
 
 // Factory function for server contexts (Server Components, Route Handlers)
-export { createSessionRepository } from "./SessionRepository.supabase";
+export { createSessionGateway } from "./SessionGateway.supabase";

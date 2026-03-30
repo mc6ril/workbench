@@ -1,12 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
-import type { CreateInvitationInput } from "@/domains/project/core/domain/schema/invitation.schema";
-import { inviteToProject } from "@/domains/project/core/usecases/invitation/inviteToProject";
+import type { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import {
-  invitationRepository,
-  memberRepository,
-} from "@/domains/project/infrastructure/supabase/repositories";
+  inviteToProject,
+  type InviteToProjectInput,
+} from "@/domains/project/core/usecases/invitation/inviteToProject";
+import {
+  projectInvitationGateway,
+  projectMemberGateway,
+} from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 
 /**
@@ -23,12 +25,12 @@ export const useInviteMember = () => {
       input,
       currentPlan,
     }: {
-      input: CreateInvitationInput;
+      input: InviteToProjectInput;
       currentPlan: SubscriptionPlan;
     }) =>
       inviteToProject(
-        invitationRepository,
-        memberRepository,
+        projectInvitationGateway,
+        projectMemberGateway,
         input,
         currentPlan
       ),

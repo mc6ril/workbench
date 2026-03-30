@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { deleteProject } from "@/domains/project/core/usecases/project/deleteProject";
-import { projectRepository } from "@/domains/project/infrastructure/supabase/repositories";
+import { projectGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
@@ -13,7 +13,7 @@ export const useDeleteProject = () => {
 
   return useMutation({
     mutationFn: (projectId: string) =>
-      deleteProject(projectRepository, projectId),
+      deleteProject(projectGateway, projectId),
     onSuccess: (_data, projectId) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.detail(projectId),

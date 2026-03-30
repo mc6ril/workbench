@@ -1,9 +1,9 @@
 import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
-import type { Subscription } from "@/domains/billing/core/domain/subscription.schema";
+import type { Subscription } from "@/domains/billing/core/domain/subscription.types";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
-} from "@/domains/billing/core/domain/subscription.schema";
+} from "@/domains/billing/core/domain/subscription.types";
 import { checkFeatureAccess } from "@/domains/billing/core/usecases/checkFeatureAccess";
 
 describe("checkFeatureAccess", () => {
@@ -14,8 +14,8 @@ describe("checkFeatureAccess", () => {
     userId: "user-1",
     plan: SubscriptionPlan.FREE,
     status: SubscriptionStatus.ACTIVE,
-    stripeCustomerId: null,
-    stripeSubscriptionId: null,
+    customerId: null,
+    subscriptionId: null,
     currentPeriodStart: null,
     currentPeriodEnd: null,
     cancelAtPeriodEnd: false,

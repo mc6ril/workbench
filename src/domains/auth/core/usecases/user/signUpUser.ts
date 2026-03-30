@@ -1,9 +1,36 @@
-import type { AuthResult } from "@/domains/auth/core/domain/auth.schema";
-import {
-  type SignUpInput,
-  SignUpSchema,
-} from "@/domains/auth/core/domain/auth.schema";
-import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
+import { z } from "zod";
+
+import type {
+  AuthResult,
+  SignUpInput,
+} from "@/domains/auth/core/domain/auth.types";
+import { PASSWORD_LIMITS } from "@/domains/auth/core/domain/password.policy";
+import type { AuthGateway } from "@/domains/auth/core/ports/auth.gateway";
+
+const PasswordSchema = z
+  .string()
+  .min(
+    PASSWORD_LIMITS.MIN_LENGTH,
+    `Password must be at least ${PASSWORD_LIMITS.MIN_LENGTH} characters`
+  )
+  .max(
+    PASSWORD_LIMITS.MAX_LENGTH,
+    `Password must be less than ${PASSWORD_LIMITS.MAX_LENGTH} characters`
+  );
+
+export const SignUpSchema = z.object({
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email({ message: "Invalid email format" }),
+  password: PasswordSchema,
+  displayName: z
+    .string()
+    .trim()
+    .max(100, "Display name must be less than 100 characters")
+    .optional(),
+  termsAcceptedAt: z.string().optional(),
+});
 
 /**
  * Sign up a new user.
@@ -15,14 +42,9 @@ import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
  * @throws AuthenticationFailure if signup fails (email already exists, weak password, etc.)
  */
 export const signUpUser = async (
-  repository: AuthRepository,
+  gateway: AuthGateway,
   input: SignUpInput
 ): Promise<AuthResult> => {
-  // Validate input with Zod schema
   const validatedInput = SignUpSchema.parse(input);
-
-  // Call repository to create user
-  // Repository will return session if user is automatically logged in,
-  // or null session with requiresEmailVerification: true if email verification is required
-  return repository.signUp(validatedInput);
+  return gateway.signUp(validatedInput);
 };

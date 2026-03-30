@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import type { TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { TicketFilters } from "@/modules/board/core/domain/ticket.types";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 import { ticketRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";

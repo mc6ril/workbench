@@ -7,8 +7,8 @@ import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
-import type { ResetPasswordInput } from "@/domains/auth/core/domain/auth.schema";
-import { ResetPasswordSchema } from "@/domains/auth/core/domain/auth.schema";
+import type { ResetPasswordInput } from "@/domains/auth/core/domain/auth.types";
+import { ResetPasswordSchema } from "@/domains/auth/core/usecases/password/resetPasswordForEmail";
 import { useResetPassword } from "@/domains/auth/presentation/hooks/password/useResetPassword";
 
 export const useResetPasswordForm = () => {

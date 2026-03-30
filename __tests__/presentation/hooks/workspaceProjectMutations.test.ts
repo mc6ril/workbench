@@ -19,9 +19,9 @@ jest.mock("@/domains/project/core/usecases/membership/joinProject", () => ({
   joinProject: jest.fn(),
 }));
 
-jest.mock("@/domains/project/infrastructure/supabase/repositories", () => ({
-  projectRepository: {},
-  memberRepository: {},
+jest.mock("@/domains/project/infrastructure/supabase/gateways", () => ({
+  projectGateway: {},
+  projectMemberGateway: {},
 }));
 
 import { queryKeys as projectQueryKeys } from "@/domains/project/presentation/hooks/queryKeys";

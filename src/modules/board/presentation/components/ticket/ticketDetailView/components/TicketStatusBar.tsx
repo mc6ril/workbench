@@ -5,7 +5,7 @@ import TicketDetailInlinePopover from "./TicketDetailInlinePopover";
 import {
   TICKET_PRIORITY_VALUES,
   type TicketPriority,
-} from "@/modules/board/core/domain/schema/ticket.schema";
+} from "@/modules/board/core/domain/ticket.types";
 import styles from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 import TicketPriorityDot from "@/modules/board/presentation/components/ticket/ticketShared/TicketPriorityDot";
 import type { TicketDetailStatusOption } from "@/modules/board/presentation/hooks/ticket/useTicketDetailController";

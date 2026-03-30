@@ -3,9 +3,10 @@ import type {
   ResetPasswordInput,
   SignInInput,
   SignUpInput,
+  UpdateCredentialsInput,
   UpdatePasswordInput,
   VerifyEmailInput,
-} from "@/domains/auth/core/domain/auth.schema";
+} from "@/domains/auth/core/domain/auth.types";
 
 /**
  * Mock type for AuthRepository.
@@ -19,8 +20,8 @@ export type AuthRepositoryMock = {
   updatePassword: jest.Mock<Promise<AuthResult>, [UpdatePasswordInput]>;
   verifyEmail: jest.Mock<Promise<AuthResult>, [VerifyEmailInput]>;
   resendVerificationEmail: jest.Mock<Promise<void>, [string]>;
-  updateUser: jest.Mock<Promise<void>, [{ email?: string; password?: string }]>;
-  deleteUser: jest.Mock<Promise<void>, []>;
+  updateCredentials: jest.Mock<Promise<void>, [UpdateCredentialsInput]>;
+  deleteAccount: jest.Mock<Promise<void>, []>;
   exchangeCodeForSession: jest.Mock<Promise<void>, [string]>;
 };
 
@@ -45,11 +46,8 @@ export const createAuthRepositoryMock = (
     updatePassword: jest.fn<Promise<AuthResult>, [UpdatePasswordInput]>(),
     verifyEmail: jest.fn<Promise<AuthResult>, [VerifyEmailInput]>(),
     resendVerificationEmail: jest.fn<Promise<void>, [string]>(),
-    updateUser: jest.fn<
-      Promise<void>,
-      [{ email?: string; password?: string }]
-    >(),
-    deleteUser: jest.fn<Promise<void>, []>(),
+    updateCredentials: jest.fn<Promise<void>, [UpdateCredentialsInput]>(),
+    deleteAccount: jest.fn<Promise<void>, []>(),
     exchangeCodeForSession: jest.fn<Promise<void>, [string]>(),
   };
 

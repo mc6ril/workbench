@@ -1,4 +1,4 @@
-import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
+import type { AuthGateway } from "@/domains/auth/core/ports/auth.gateway";
 
 /**
  * Start Google OAuth sign-in flow.
@@ -8,12 +8,12 @@ import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
  * @param redirectPath - Internal path to redirect after auth callback
  */
 export const signInWithGoogle = async (
-  repository: AuthRepository,
+  gateway: AuthGateway,
   redirectPath?: string
 ): Promise<void> => {
-  if (!repository.signInWithGoogle) {
-    throw new Error("Google OAuth is not available in this auth repository.");
+  if (!gateway.signInWithGoogle) {
+    throw new Error("Google OAuth is not available in this auth gateway.");
   }
 
-  await repository.signInWithGoogle(redirectPath);
+  await gateway.signInWithGoogle(redirectPath);
 };

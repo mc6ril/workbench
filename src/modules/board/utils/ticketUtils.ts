@@ -1,4 +1,15 @@
-import { type BuildTicketAriaLabelParams } from "@/modules/board/core/domain/types/ticket.types";
+type BuildTicketAriaLabelParams = {
+  ticketAriaLabel: string;
+  title: string;
+  ticketCode?: string | null;
+  status?: string;
+  statusLabel?: string;
+  assigneeName?: string | null;
+  assigneeLabel?: string;
+  priority?: string | null;
+  priorityLabel?: string;
+  storyPointsLabel?: string;
+};
 
 /**
  * Builds a human-readable ticket code from project short code and ticket number.

@@ -1,5 +1,5 @@
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
+import type { ProjectMember } from "@/domains/project/core/domain/project.types";
+import type { ProjectMemberGateway } from "@/domains/project/core/ports/project-member.gateway";
 
 /**
  * List all members of a project with their profile information.
@@ -11,8 +11,8 @@ import type { MemberRepository } from "@/domains/project/core/ports/memberReposi
  * @throws DatabaseError if database operation fails
  */
 export const listProjectMembers = async (
-  repository: MemberRepository,
+  gateway: ProjectMemberGateway,
   projectId: string
 ): Promise<ProjectMember[]> => {
-  return repository.listByProject(projectId);
+  return gateway.listByProject(projectId);
 };

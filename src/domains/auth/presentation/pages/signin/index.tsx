@@ -19,8 +19,8 @@ import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
 import styles from "./styles.module.scss";
 
-import type { SignInInput } from "@/domains/auth/core/domain/auth.schema";
-import { SignInSchema } from "@/domains/auth/core/domain/auth.schema";
+import type { SignInInput } from "@/domains/auth/core/domain/auth.types";
+import { SignInSchema } from "@/domains/auth/core/usecases/user/signInUser";
 import { useSignIn } from "@/domains/auth/presentation/hooks/user/useSignIn";
 import { useSignInWithGoogle } from "@/domains/auth/presentation/hooks/user/useSignInWithGoogle";
 import { useResendVerification } from "@/domains/auth/presentation/hooks/verification/useResendVerification";

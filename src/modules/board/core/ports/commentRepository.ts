@@ -2,7 +2,7 @@ import type {
   CommentWithAuthor,
   CreateCommentInput,
   UpdateCommentInput,
-} from "@/modules/board/core/domain/schema/comment.schema";
+} from "@/modules/board/core/domain/comment.types";
 
 /**
  * Repository contract for Comment operations.

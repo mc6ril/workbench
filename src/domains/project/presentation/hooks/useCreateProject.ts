@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateProjectInput } from "@/domains/project/core/domain/schema/project.schema";
-import { createProject } from "@/domains/project/core/usecases/project/createProject";
-import { projectRepository } from "@/domains/project/infrastructure/supabase/repositories";
+import {
+  createProject,
+  type CreateProjectInput,
+} from "@/domains/project/core/usecases/project/createProject";
+import { projectGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
@@ -17,7 +19,7 @@ export const useCreateProject = () => {
 
   return useMutation({
     mutationFn: (input: CreateProjectInput) =>
-      createProject(projectRepository, input),
+      createProject(projectGateway, input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.projects.all() });
       queryClient.invalidateQueries({

@@ -1,10 +1,13 @@
+import { z } from "zod";
+
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 
-import {
-  type Ticket,
-  TicketIdInputSchema,
-} from "@/modules/board/core/domain/schema/ticket.schema";
+import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
+
+const TicketIdInputSchema = z.object({
+  id: z.string().uuid("Ticket ID must be a valid UUID"),
+});
 
 /**
  * Get a ticket by ID.

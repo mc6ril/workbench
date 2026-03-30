@@ -1,4 +1,4 @@
-import type { CommentWithAuthor } from "@/modules/board/core/domain/schema/comment.schema";
+import type { CommentWithAuthor } from "@/modules/board/core/domain/comment.types";
 import type { CommentRepository } from "@/modules/board/core/ports/commentRepository";
 
 /**

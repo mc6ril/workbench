@@ -2,9 +2,13 @@ import { useMemo } from "react";
 
 import { useTranslation } from "@/shared/i18n";
 
-import { getEffectivePlan } from "@/domains/billing/core/domain/planFeatures.rules";
-import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
-import { computeFeatureLockState } from "@/domains/billing/core/usecases/computeFeatureLockState";
+import {
+  canAccessFeature,
+  getEffectivePlan,
+  getMinimumPlanForFeature,
+  type PlanFeature,
+} from "@/domains/billing/core/domain/planFeatures.rules";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 import type { SidebarItem } from "@/domains/project/presentation/components/sidebarNavigation/SidebarNavigation.types";
@@ -13,6 +17,29 @@ import {
   getProjectViewConfigsForSidebar,
 } from "@/domains/project/presentation/navigation/projectViews.config";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
+
+type FeatureLockState = {
+  locked: boolean;
+  minimumPlan?: SubscriptionPlan;
+};
+
+const computeFeatureLockState = (
+  requiredFeature: PlanFeature | undefined,
+  effectivePlan: SubscriptionPlan
+): FeatureLockState => {
+  if (!requiredFeature) {
+    return { locked: false };
+  }
+
+  if (canAccessFeature(effectivePlan, requiredFeature)) {
+    return { locked: false };
+  }
+
+  return {
+    locked: true,
+    minimumPlan: getMinimumPlanForFeature(requiredFeature),
+  };
+};
 
 export const useSidebarItems = (projectId: string): SidebarItem[] => {
   const t = useTranslation("navigation.sidebar");

@@ -5,11 +5,11 @@ import { createNotFoundError } from "@/shared/errors/repositoryError";
 import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
-import type { Board, Column } from "@/modules/board/core/domain/schema/board.schema";
+import type { Board, Column } from "@/modules/board/core/domain/board.types";
 import type {
   MoveAndReorderTicketInput,
   Ticket,
-} from "@/modules/board/core/domain/schema/ticket.schema";
+} from "@/modules/board/core/domain/ticket.types";
 import { moveAndReorderTicket } from "@/modules/board/core/usecases/ticket/moveAndReorderTicket";
 
 describe("moveAndReorderTicket", () => {

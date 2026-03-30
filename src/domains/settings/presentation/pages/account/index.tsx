@@ -32,22 +32,22 @@ import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
 
-import type { ChangePasswordFormInput } from "@/domains/auth/core/domain/auth.schema";
-import { ChangePasswordFormSchema } from "@/domains/auth/core/domain/auth.schema";
+import type { ChangePasswordFormInput } from "@/domains/auth/presentation/forms/authForms.schema";
+import { ChangePasswordFormSchema } from "@/domains/auth/presentation/forms/authForms.schema";
 import { useChangePassword } from "@/domains/auth/presentation/hooks/password/useChangePassword";
 import { useDeleteUser } from "@/domains/auth/presentation/hooks/user/useDeleteUser";
 import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
-} from "@/domains/billing/core/domain/subscription.schema";
+} from "@/domains/billing/core/domain/subscription.types";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 import {
   DEFAULT_USER_PREFERENCES,
   type Theme,
   ThemeValues,
-} from "@/domains/profile/core/domain/profilePreferences.schema";
+} from "@/domains/profile/core/domain/profile.types";
 import AvatarUpload from "@/domains/profile/presentation/components/AvatarUpload";
 import {
   useRemoveAvatar,
@@ -55,9 +55,9 @@ import {
 } from "@/domains/profile/presentation/hooks/useAvatarUpload";
 import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
 import { useUpdatePreferences } from "@/domains/profile/presentation/hooks/useUpdatePreferences";
-import { useUpdateProfile } from "@/domains/profile/presentation/hooks/useUpdateProfile";
 import { useCanUpdatePassword } from "@/domains/session/presentation/hooks/useCanUpdatePassword";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
+import { useUpdateAccountIdentity } from "@/domains/settings/presentation/hooks/useUpdateAccountIdentity";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 
 const LANGUAGE_SELECT_OPTIONS = supportedLocaleOptions.map((locale) => ({
@@ -75,7 +75,7 @@ const AccountPage = () => {
   const { data: canUpdatePassword, isLoading: isPasswordCapabilityLoading } =
     useCanUpdatePassword(!!session?.userId);
   const { data: profile, isLoading: isProfileLoading } = useMyProfile();
-  const updateProfileMutation = useUpdateProfile();
+  const updateAccountIdentityMutation = useUpdateAccountIdentity();
   const changePasswordMutation = useChangePassword();
   const uploadAvatarMutation = useUploadAvatar();
   const removeAvatarMutation = useRemoveAvatar();
@@ -141,15 +141,15 @@ const AccountPage = () => {
     setLanguagePreference(profileLanguage);
   }, [profileLanguage]);
 
-  const profileErrorMessage = useMemo(
+  const accountIdentityErrorMessage = useMemo(
     () =>
-      updateProfileMutation.error
+      updateAccountIdentityMutation.error
         ? getErrorMessage(
-            updateProfileMutation.error as { code?: string },
+            updateAccountIdentityMutation.error as { code?: string },
             tErrors
           )
         : null,
-    [updateProfileMutation.error, tErrors]
+    [updateAccountIdentityMutation.error, tErrors]
   );
 
   const passwordErrorMessage = useMemo(
@@ -184,9 +184,33 @@ const AccountPage = () => {
     mode: "onBlur",
   });
 
-  const handleProfileSave = useCallback(async () => {
-    await updateProfileMutation.mutateAsync({ displayName: name, email });
-  }, [updateProfileMutation, name, email]);
+  const handleAccountIdentitySave = useCallback(async () => {
+    const currentDisplayName = viewer?.displayName ?? "";
+    const currentEmail = viewer?.loginEmail ?? "";
+    const nextDisplayName = name.trim();
+    const nextEmail = email.trim();
+    const updates: { displayName?: string; email?: string } = {};
+
+    if (nextDisplayName !== currentDisplayName) {
+      updates.displayName = nextDisplayName;
+    }
+
+    if (nextEmail !== currentEmail) {
+      updates.email = nextEmail;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return;
+    }
+
+    await updateAccountIdentityMutation.mutateAsync(updates);
+  }, [
+    updateAccountIdentityMutation,
+    viewer?.displayName,
+    viewer?.loginEmail,
+    name,
+    email,
+  ]);
 
   const getAvatarErrorMessage = useCallback(
     (error: unknown) => {
@@ -456,7 +480,7 @@ const AccountPage = () => {
               }}
             />
 
-            {updateProfileMutation.isSuccess && (
+            {updateAccountIdentityMutation.isSuccess && (
               <div
                 className={styles["success-message"]}
                 role="status"
@@ -466,9 +490,9 @@ const AccountPage = () => {
               </div>
             )}
 
-            {profileErrorMessage && (
+            {accountIdentityErrorMessage && (
               <div role="alert" aria-live="assertive">
-                <Text variant="small">{profileErrorMessage}</Text>
+                <Text variant="small">{accountIdentityErrorMessage}</Text>
               </div>
             )}
 
@@ -492,12 +516,12 @@ const AccountPage = () => {
               <div className={styles["form-actions"]}>
                 <Button
                   label={
-                    updateProfileMutation.isPending
+                    updateAccountIdentityMutation.isPending
                       ? t("personalInfo.savingButton")
                       : t("personalInfo.saveButton")
                   }
-                  onClick={handleProfileSave}
-                  disabled={updateProfileMutation.isPending}
+                  onClick={handleAccountIdentitySave}
+                  disabled={updateAccountIdentityMutation.isPending}
                   aria-label={t("personalInfo.saveButtonAriaLabel")}
                 />
               </div>

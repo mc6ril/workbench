@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from "react";
 import { renderHook } from "@testing-library/react";
 
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import { ProjectRole } from "@/domains/project/core/domain/project.types";
 import { useProjectRole } from "@/domains/project/presentation/hooks/member/useProjectRole";
 import {
   ProjectPermissionsProvider,

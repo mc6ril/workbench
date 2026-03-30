@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { getProject } from "@/domains/project/core/usecases/project/getProject";
-import { projectRepository } from "@/domains/project/infrastructure/supabase/repositories";
+import { projectGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 
 /**
@@ -13,7 +13,7 @@ import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 export const useProject = (id: string, options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: queryKeys.projects.detail(id),
-    queryFn: () => getProject(projectRepository, id),
+    queryFn: () => getProject(projectGateway, id),
     enabled: !!id && (options?.enabled ?? true),
   });
 };

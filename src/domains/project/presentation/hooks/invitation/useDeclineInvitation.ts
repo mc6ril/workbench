@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 
 import { declineInvitation } from "@/domains/project/core/usecases/invitation/declineInvitation";
-import { invitationRepository } from "@/domains/project/infrastructure/supabase/repositories";
+import { projectInvitationGateway } from "@/domains/project/infrastructure/supabase/gateways";
 
 /**
  * Hook for declining a project invitation.
@@ -12,6 +12,6 @@ import { invitationRepository } from "@/domains/project/infrastructure/supabase/
 export const useDeclineInvitation = () => {
   return useMutation({
     mutationFn: (token: string) =>
-      declineInvitation(invitationRepository, token),
+      declineInvitation(projectInvitationGateway, token),
   });
 };

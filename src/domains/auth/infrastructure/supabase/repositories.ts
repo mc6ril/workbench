@@ -1,11 +1,11 @@
 import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
 
-import { createAuthRepository } from "./AuthRepository.supabase";
+import { createAuthGateway } from "./AuthRepository.supabase";
 
 // Browser instance for auth hooks (Client Components)
-export const authRepository = createAuthRepository(
+export const authGateway = createAuthGateway(
   createSupabaseBrowserClient()
 );
 
 // Factory function for server contexts (Server Components, Route Handlers)
-export { createAuthRepository } from "./AuthRepository.supabase";
+export { createAuthGateway } from "./AuthRepository.supabase";

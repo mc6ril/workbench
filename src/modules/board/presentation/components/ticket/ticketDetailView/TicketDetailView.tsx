@@ -17,8 +17,8 @@ import TicketDetailInlinePopover from "./components/TicketDetailInlinePopover";
 import TicketStatusBar from "./components/TicketStatusBar";
 import styles from "./TicketDetailView.module.scss";
 
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { ProjectMember } from "@/domains/project/core/domain/project.types";
+import type { TicketAssignee } from "@/modules/board/core/domain/ticket.types";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useTicketDetailController } from "@/modules/board/presentation/hooks/ticket";
 import { buildTicketCode } from "@/modules/board/utils/ticketUtils";

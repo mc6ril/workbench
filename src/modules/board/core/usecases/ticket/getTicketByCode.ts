@@ -1,10 +1,16 @@
-import {
-  type GetTicketByCodeInput,
-  GetTicketByCodeInputSchema,
-  type Ticket,
-} from "@/modules/board/core/domain/schema/ticket.schema";
+import { z } from "zod";
+
+import type { GetTicketByCodeInput, Ticket } from "@/modules/board/core/domain/ticket.types";
 import type { ProjectLookupRepository } from "@/modules/board/core/ports/projectLookupRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
+
+const GetTicketByCodeInputSchema = z.object({
+  projectShortCode: z.string().min(1, "Project short code must not be empty"),
+  codeNumber: z
+    .number()
+    .int()
+    .positive("Code number must be a positive integer"),
+});
 
 /**
  * Get a ticket by its project short code and code number.

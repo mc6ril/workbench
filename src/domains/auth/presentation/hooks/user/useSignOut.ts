@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 
 import { signOutUser } from "@/domains/auth/core/usecases/user/signOutUser";
-import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { authGateway } from "@/domains/auth/infrastructure/supabase/repositories";
 import { invalidatePostAuthMutation } from "@/domains/auth/presentation/utils/invalidatePostAuthMutation";
 
 /**
@@ -16,7 +16,7 @@ export const useSignOut = () => {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: () => signOutUser(authRepository),
+    mutationFn: () => signOutUser(authGateway),
     onSuccess: async () => {
       await invalidatePostAuthMutation(queryClient);
       queryClient.clear();

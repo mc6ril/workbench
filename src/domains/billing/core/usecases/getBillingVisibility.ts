@@ -1,14 +1,14 @@
-import type { BillingConfigRepository } from "@/domains/billing/core/ports/BillingConfigRepository";
+import type { BillingVisibilityPort } from "@/domains/billing/core/ports/billingVisibility.port";
 
 /**
  * Returns whether billing surfaces should be visible.
  * Fails closed to `false` to avoid exposing billing flows when config is unavailable.
  */
 export const getBillingVisibility = async (
-  billingConfigRepository: BillingConfigRepository
+  billingVisibilityPort: BillingVisibilityPort
 ): Promise<boolean> => {
   try {
-    return await billingConfigRepository.getBillingVisibility();
+    return await billingVisibilityPort.getBillingVisibility();
   } catch {
     return false;
   }

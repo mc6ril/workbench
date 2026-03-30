@@ -1,5 +1,10 @@
-import { ResendVerificationEmailSchema } from "@/domains/auth/core/domain/auth.schema";
-import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
+import { z } from "zod";
+
+import type { AuthGateway } from "@/domains/auth/core/ports/auth.gateway";
+
+export const ResendVerificationEmailSchema = z.object({
+  email: z.string().min(1, "Email is required").email("Invalid email format"),
+});
 
 /**
  * Resend verification email to a user.
@@ -12,12 +17,9 @@ import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
  * @throws AuthenticationFailure for other authentication errors
  */
 export const resendVerificationEmail = async (
-  repository: AuthRepository,
+  gateway: AuthGateway,
   email: string
 ): Promise<void> => {
-  // Validate input with Zod schema
   const validatedInput = ResendVerificationEmailSchema.parse({ email });
-
-  // Call repository to resend verification email
-  return repository.resendVerificationEmail(validatedInput.email);
+  return gateway.resendVerificationEmail(validatedInput.email);
 };

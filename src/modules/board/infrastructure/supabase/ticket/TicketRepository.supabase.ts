@@ -17,7 +17,7 @@ import type {
   TicketAssignee,
   TicketFilters,
   UpdateTicketInput,
-} from "@/modules/board/core/domain/schema/ticket.schema";
+} from "@/modules/board/core/domain/ticket.types";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 import type { TicketRow } from "@/modules/board/infrastructure/supabase/ticket/types";
 

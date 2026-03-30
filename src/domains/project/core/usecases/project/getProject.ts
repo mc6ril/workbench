@@ -1,10 +1,13 @@
+import { z } from "zod";
+
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 
-import {
-  GetProjectInputSchema,
-  type Project,
-} from "@/domains/project/core/domain/schema/project.schema";
-import type { ProjectRepository } from "@/domains/project/core/ports/projectRepository";
+import type { Project } from "@/domains/project/core/domain/project.types";
+import type { ProjectGateway } from "@/domains/project/core/ports/project.gateway";
+
+const GetProjectInputSchema = z.object({
+  id: z.string().uuid("Project ID must be a valid UUID"),
+});
 
 /**
  * Get a project by ID.
@@ -18,12 +21,12 @@ import type { ProjectRepository } from "@/domains/project/core/ports/projectRepo
  * @throws DatabaseError if database operation fails
  */
 export const getProject = async (
-  repository: ProjectRepository,
+  gateway: ProjectGateway,
   id: string
 ): Promise<Project> => {
   GetProjectInputSchema.parse({ id });
 
-  const project = await repository.findById(id);
+  const project = await gateway.findById(id);
 
   if (!project) {
     throw createNotFoundError("Project", id);

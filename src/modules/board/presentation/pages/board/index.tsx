@@ -16,7 +16,6 @@ import styles from "./styles.module.scss";
 
 import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
-import type { BoardColumnConfig } from "@/modules/board/core/domain/types/board.types";
 import BoardView from "@/modules/board/presentation/components/board/boardView/BoardView";
 import BoardOnboardingPanel from "@/modules/board/presentation/components/boardOnboardingPanel/BoardOnboardingPanel";
 import {
@@ -37,6 +36,7 @@ import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCr
 import { useTicketAssigneesByProjectId } from "@/modules/board/presentation/hooks/ticket/useTicketAssigneesByProjectId";
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
+import type { BoardColumnConfig } from "@/modules/board/presentation/types/boardView.types";
 import { normalizeTicketSearch } from "@/modules/board/utils/ticketUtils";
 
 const BoardLayout = ({ projectId }: { projectId: string }) => {

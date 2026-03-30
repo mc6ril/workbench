@@ -8,7 +8,7 @@ import type {
   ConfigureColumnsInput,
   CreateColumnInput,
   UpdateColumnInput,
-} from "@/modules/board/core/domain/schema/board.schema";
+} from "@/modules/board/core/domain/board.types";
 import { configureColumns } from "@/modules/board/core/usecases/board/configuration/configureColumns";
 
 describe("configureColumns", () => {
@@ -314,7 +314,7 @@ describe("configureColumns", () => {
           name: input.name,
           key: input.key,
           state: input.state,
-          position: input.position,
+          position: input.position ?? 0,
           visible: input.visible ?? true,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -389,7 +389,7 @@ describe("configureColumns", () => {
           name: input.name,
           key: input.key,
           state: input.state,
-          position: input.position,
+          position: input.position ?? 0,
           visible: input.visible ?? true,
           createdAt: new Date(),
           updatedAt: new Date(),

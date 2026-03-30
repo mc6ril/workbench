@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { acceptInvitation } from "@/domains/project/core/usecases/invitation/acceptInvitation";
-import { invitationRepository } from "@/domains/project/infrastructure/supabase/repositories";
+import { projectInvitationGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
@@ -16,7 +16,7 @@ export const useAcceptInvitation = () => {
 
   return useMutation({
     mutationFn: (token: string) =>
-      acceptInvitation(invitationRepository, token),
+      acceptInvitation(projectInvitationGateway, token),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.all(),

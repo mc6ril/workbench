@@ -5,7 +5,7 @@ import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/cli
 import { sanitizeInternalRedirectPath } from "@/shared/utils/authRedirect";
 
 import { exchangeCodeForSession } from "@/domains/auth/core/usecases/exchangeCodeForSession";
-import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { createAuthGateway } from "@/domains/auth/infrastructure/supabase/repositories";
 
 /**
  * Auth callback route handler for Supabase PKCE flow.
@@ -21,8 +21,8 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
   if (code) {
     try {
       const supabaseClient = await createSupabaseServerClient();
-      const authRepo = createAuthRepository(supabaseClient);
-      await exchangeCodeForSession(authRepo, code);
+      const authGateway = createAuthGateway(supabaseClient);
+      await exchangeCodeForSession(authGateway, code);
 
       return NextResponse.redirect(`${origin}${next}`);
     } catch {

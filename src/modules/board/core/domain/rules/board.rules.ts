@@ -1,10 +1,10 @@
-import { normalizeColumnKey } from "@/modules/board/core/domain/columnKey.policy";
 import type {
   Board,
   Column,
   CreateBoardInput,
   CreateColumnInput,
-} from "@/modules/board/core/domain/schema/board.schema";
+} from "@/modules/board/core/domain/board.types";
+import { normalizeColumnKey } from "@/modules/board/core/domain/columnKey.policy";
 
 /**
  * Validation result type for business rules.

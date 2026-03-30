@@ -16,7 +16,7 @@ export { AUTH_ERROR_CODES, REPOSITORY_ERROR_CODES } from "./errorCodes";
 export { APP_LIMITS, STORAGE_KEYS } from "./app";
 
 // Re-export types derived from app-level constants
-export type { PaginationLimits, PasswordLimits, StorageKey } from "./app.types";
+export type { PaginationLimits, StorageKey } from "./app.types";
 
 // Re-export legal page constants
 export type { LegalSection } from "./legal";

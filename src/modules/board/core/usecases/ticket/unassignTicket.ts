@@ -1,5 +1,13 @@
-import { UnassignUsersFromTicketInputSchema } from "@/modules/board/core/domain/schema/ticket.schema";
+import { z } from "zod";
+
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
+
+const UnassignUsersFromTicketInputSchema = z.object({
+  ticketId: z.string().uuid("Ticket ID must be a valid UUID"),
+  userIds: z
+    .array(z.string().uuid("User ID must be a valid UUID"))
+    .min(1, "At least one user ID is required"),
+});
 
 /**
  * Unassign one or more users from a ticket.
@@ -16,6 +24,9 @@ export const unassignTicket = async (
   ticketId: string,
   userIds: string[]
 ): Promise<void> => {
-  UnassignUsersFromTicketInputSchema.parse({ ticketId, userIds });
-  return repository.unassignUsers(ticketId, userIds);
+  const validated = UnassignUsersFromTicketInputSchema.parse({
+    ticketId,
+    userIds,
+  });
+  return repository.unassignUsers(validated.ticketId, validated.userIds);
 };

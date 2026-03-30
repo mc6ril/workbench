@@ -1,4 +1,4 @@
-import type { InvitationRepository } from "@/domains/project/core/ports/invitationRepository";
+import type { ProjectInvitationGateway } from "@/domains/project/core/ports/project-invitation.gateway";
 
 /**
  * Revoke (delete) a pending invitation.
@@ -9,8 +9,8 @@ import type { InvitationRepository } from "@/domains/project/core/ports/invitati
  * @throws DatabaseError if operation fails or permission denied
  */
 export const revokeInvitation = async (
-  repository: InvitationRepository,
+  gateway: ProjectInvitationGateway,
   invitationId: string
 ): Promise<void> => {
-  return repository.revoke(invitationId);
+  return gateway.revoke(invitationId);
 };

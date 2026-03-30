@@ -24,9 +24,9 @@ import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import ProjectPeopleSettingsSection from "./components/ProjectPeopleSettingsSection";
 import styles from "./styles.module.scss";
 
+import { ProjectRole } from "@/domains/project/core/domain/project.types";
 import { containsEmoji } from "@/domains/project/core/domain/rules/projectName.rules";
-import type { UpdateProjectInput } from "@/domains/project/core/domain/schema/project.schema";
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import type { UpdateProjectInput } from "@/domains/project/core/usecases/project/updateProject";
 import { useDeleteProject } from "@/domains/project/presentation/hooks/useDeleteProject";
 import { useProject } from "@/domains/project/presentation/hooks/useProject";
 import { useUpdateProject } from "@/domains/project/presentation/hooks/useUpdateProject";

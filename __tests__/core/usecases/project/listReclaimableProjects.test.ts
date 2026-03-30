@@ -1,6 +1,6 @@
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
 
-import type { ReclaimableProject } from "@/domains/workspace/core/domain/workspaceProjectCatalog.schema";
+import type { ReclaimableProject } from "@/domains/workspace/core/domain/workspace.types";
 import { listReclaimableProjects } from "@/domains/workspace/core/usecases/project/listReclaimableProjects";
 
 describe("listReclaimableProjects", () => {
@@ -13,7 +13,7 @@ describe("listReclaimableProjects", () => {
 
   it("should return reclaimable projects", async () => {
     const projects: ReclaimableProject[] = [mockReclaimableProject];
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       listReclaimableProjects: jest.fn<Promise<ReclaimableProject[]>, []>(
         async () => projects
       ),
@@ -32,7 +32,7 @@ describe("listReclaimableProjects", () => {
   });
 
   it("should return empty array when no reclaimable projects", async () => {
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       listReclaimableProjects: jest.fn<Promise<ReclaimableProject[]>, []>(
         async () => []
       ),
@@ -46,7 +46,7 @@ describe("listReclaimableProjects", () => {
 
   it("should propagate repository errors", async () => {
     const repositoryError = new Error("Database connection failed");
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       listReclaimableProjects: jest.fn<Promise<ReclaimableProject[]>, []>(
         async () => {
           throw repositoryError;
@@ -70,7 +70,7 @@ describe("listReclaimableProjects", () => {
         orphanedAt: new Date("2026-02-10T00:00:00Z"),
       },
     ];
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       listReclaimableProjects: jest.fn<Promise<ReclaimableProject[]>, []>(
         async () => projects
       ),

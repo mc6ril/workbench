@@ -1,4 +1,3 @@
- 
 import {
   createAuthError,
   mockAuthResult,
@@ -6,14 +5,16 @@ import {
 } from "../../../../__mocks__/core/domain/authMocks";
 import { mockCurrentSession } from "../../../../__mocks__/core/domain/sessionMocks";
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
-import { createSessionRepositoryMock } from "../../../../__mocks__/core/ports/sessionRepository";
+import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
+import { createSessionGatewayMock } from "../../../../__mocks__/core/ports/sessionGateway";
 
-import type { AuthResult } from "@/domains/auth/core/domain/auth.schema";
+import type { AuthResult } from "@/domains/auth/core/domain/auth.types";
 import { signInUser } from "@/domains/auth/core/usecases/user/signInUser";
 import { signUpUser } from "@/domains/auth/core/usecases/user/signUpUser";
-import type { ProjectWithRole } from "@/domains/project/core/domain/schema/project.schema";
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import {
+  ProjectRole,
+  type ProjectWithRole,
+} from "@/domains/project/core/domain/project.types";
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 
@@ -40,7 +41,7 @@ describe("Auth Flow Tests", () => {
           async () => mockAuthResultWithEmailVerification
         ),
       });
-      const sessionRepository = createSessionRepositoryMock({
+      const sessionGateway = createSessionGatewayMock({
         getCurrentSession: jest.fn(async () => null),
       });
 
@@ -55,13 +56,13 @@ describe("Auth Flow Tests", () => {
       expect(signUpResult.session).toBeNull();
 
       // Act & Assert - Step 2: Get current session (should throw NotFoundError as email not verified)
-      await expect(getCurrentSession(sessionRepository)).rejects.toMatchObject({
+      await expect(getCurrentSession(sessionGateway)).rejects.toMatchObject({
         code: "NOT_FOUND",
         entityType: "Session",
         entityId: "",
       });
-      expect(sessionRepository.getCurrentSession).toHaveBeenCalledTimes(1);
-      expect(sessionRepository.getCurrentSession).toHaveBeenCalledWith();
+      expect(sessionGateway.getCurrentSession).toHaveBeenCalledTimes(1);
+      expect(sessionGateway.getCurrentSession).toHaveBeenCalledWith();
     });
 
     it("should handle error propagation in signup flow", async () => {
@@ -105,12 +106,12 @@ describe("Auth Flow Tests", () => {
           async () => mockAuthResult
         ),
       });
-      const sessionRepository = createSessionRepositoryMock({
+      const sessionGateway = createSessionGatewayMock({
         getCurrentSession: jest.fn(async () => mockCurrentSession),
       });
 
-      const projectRepository = createProjectRepositoryMock({
-        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+      const projectRepository = createProjectGatewayMock({
+        listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => mockProjects
         ),
       });
@@ -125,11 +126,11 @@ describe("Auth Flow Tests", () => {
       expect(signInResult.session).not.toBeNull();
 
       // Act - Step 2: Get current session
-      const sessionResult = await getCurrentSession(sessionRepository);
+      const sessionResult = await getCurrentSession(sessionGateway);
 
       // Assert - Step 2: Session should be available
-      expect(sessionRepository.getCurrentSession).toHaveBeenCalledTimes(1);
-      expect(sessionRepository.getCurrentSession).toHaveBeenCalledWith();
+      expect(sessionGateway.getCurrentSession).toHaveBeenCalledTimes(1);
+      expect(sessionGateway.getCurrentSession).toHaveBeenCalledWith();
       expect(sessionResult).toEqual(mockCurrentSession);
       expect(sessionResult.loginEmail).toBe(mockCurrentSession.loginEmail);
 
@@ -137,8 +138,8 @@ describe("Auth Flow Tests", () => {
       const projectsResult = await listProjects(projectRepository);
 
       // Assert - Step 3: Projects should be listed
-      expect(projectRepository.listAccessibleProjects).toHaveBeenCalledTimes(1);
-      expect(projectRepository.listAccessibleProjects).toHaveBeenCalledWith();
+      expect(projectRepository.listProjects).toHaveBeenCalledTimes(1);
+      expect(projectRepository.listProjects).toHaveBeenCalledWith();
       expect(projectsResult).toEqual(mockProjects);
       expect(projectsResult).toHaveLength(1);
       expect(projectsResult[0].name).toBe("Test Project");
@@ -171,14 +172,14 @@ describe("Auth Flow Tests", () => {
           async () => mockAuthResult
         ),
       });
-      const sessionRepository = createSessionRepositoryMock({
+      const sessionGateway = createSessionGatewayMock({
         getCurrentSession: jest.fn(async () => {
           throw createAuthError.authentication("Session retrieval failed");
         }),
       });
 
-      const projectRepository = createProjectRepositoryMock({
-        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+      const projectRepository = createProjectGatewayMock({
+        listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => mockProjects
         ),
       });
@@ -187,13 +188,13 @@ describe("Auth Flow Tests", () => {
       await signInUser(authRepository, mockSignInInput);
 
       // Act & Assert - Step 2: Get session (should fail)
-      await expect(getCurrentSession(sessionRepository)).rejects.toMatchObject({
+      await expect(getCurrentSession(sessionGateway)).rejects.toMatchObject({
         code: "AUTHENTICATION_ERROR",
       });
 
       // Note: In a real flow, listProjects wouldn't be called if getCurrentSession fails,
       // but we verify that projectRepository was not called
-      expect(projectRepository.listAccessibleProjects).not.toHaveBeenCalled();
+      expect(projectRepository.listProjects).not.toHaveBeenCalled();
     });
   });
 });

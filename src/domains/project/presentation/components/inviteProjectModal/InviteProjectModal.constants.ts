@@ -1,4 +1,4 @@
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import { ProjectRole } from "@/domains/project/core/domain/project.types";
 
 export const DEFAULT_INVITE_ROLE = ProjectRole.MEMBER;
 

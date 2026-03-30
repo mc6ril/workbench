@@ -1,5 +1,13 @@
-import { AssignUsersToTicketInputSchema } from "@/modules/board/core/domain/schema/ticket.schema";
+import { z } from "zod";
+
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
+
+const AssignUsersToTicketInputSchema = z.object({
+  ticketId: z.string().uuid("Ticket ID must be a valid UUID"),
+  userIds: z
+    .array(z.string().uuid("User ID must be a valid UUID"))
+    .min(1, "At least one user ID is required"),
+});
 
 /**
  * Assign one or more users to a ticket.
@@ -21,6 +29,9 @@ export const assignTicket = async (
   ticketId: string,
   userIds: string[]
 ): Promise<void> => {
-  AssignUsersToTicketInputSchema.parse({ ticketId, userIds });
-  return repository.assignUsers(ticketId, userIds);
+  const validated = AssignUsersToTicketInputSchema.parse({
+    ticketId,
+    userIds,
+  });
+  return repository.assignUsers(validated.ticketId, validated.userIds);
 };

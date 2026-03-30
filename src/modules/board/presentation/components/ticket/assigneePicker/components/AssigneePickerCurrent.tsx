@@ -1,8 +1,8 @@
 import Avatar from "@/shared/design-system/avatar";
 import Button from "@/shared/design-system/button";
 
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { ProjectMember } from "@/domains/project/core/domain/project.types";
+import type { TicketAssignee } from "@/modules/board/core/domain/ticket.types";
 import styles from "@/modules/board/presentation/components/ticket/assigneePicker/AssigneePicker.module.scss";
 import { resolveAssigneeIdentity } from "@/modules/board/utils/assigneeUtils";
 

@@ -10,7 +10,7 @@ import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authR
 import type {
   AuthResult,
   SignUpInput,
-} from "@/domains/auth/core/domain/auth.schema";
+} from "@/domains/auth/core/domain/auth.types";
 import { signUpUser } from "@/domains/auth/core/usecases/user/signUpUser";
 
 describe("signUpUser", () => {

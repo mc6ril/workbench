@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import { ProjectRole } from "@/domains/project/core/domain/project.types";
 import { useAddUserToProject } from "@/domains/project/presentation/hooks/useAddUserToProject";
 import { useCreateProject } from "@/domains/project/presentation/hooks/useCreateProject";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";

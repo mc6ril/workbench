@@ -1,8 +1,15 @@
+import { z } from "zod";
+
 import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 
-import { UpdateMemberRoleInputSchema } from "@/domains/project/core/domain/schema/projectMember.schema";
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
-import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
+import { ProjectRole } from "@/domains/project/core/domain/project.types";
+import type { ProjectMemberGateway } from "@/domains/project/core/ports/project-member.gateway";
+
+const UpdateMemberRoleInputSchema = z.object({
+  projectId: z.string().uuid(),
+  memberId: z.string().uuid(),
+  role: z.nativeEnum(ProjectRole),
+});
 
 /**
  * Update a project member's role.
@@ -22,14 +29,14 @@ import type { MemberRepository } from "@/domains/project/core/ports/memberReposi
  * @throws DatabaseError if database operation fails
  */
 export const updateMemberRole = async (
-  repository: MemberRepository,
+  gateway: ProjectMemberGateway,
   projectId: string,
   memberId: string,
   role: ProjectRole
 ): Promise<void> => {
   const parsed = UpdateMemberRoleInputSchema.parse({ projectId, memberId, role });
 
-  const currentRole = await repository.getCurrentRole(parsed.projectId);
+  const currentRole = await gateway.getCurrentRole(parsed.projectId);
 
   if (currentRole !== ProjectRole.ADMIN) {
     throw createDomainRuleError(
@@ -38,5 +45,5 @@ export const updateMemberRole = async (
     );
   }
 
-  return repository.updateRole(parsed.memberId, parsed.role);
+  return gateway.updateRole(parsed.memberId, parsed.role);
 };

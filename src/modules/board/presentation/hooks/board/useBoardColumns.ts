@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 
-import type { BoardColumnConfig } from "@/modules/board/core/domain/types/board.types";
+import type { BoardColumnConfig } from "@/modules/board/presentation/types/boardView.types";
 
 type BoardConfigurationLike = {
   columns?: {

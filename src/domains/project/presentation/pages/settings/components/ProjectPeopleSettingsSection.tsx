@@ -25,9 +25,9 @@ import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatur
 import {
   InvitationStatus,
   type ProjectInvitation,
-} from "@/domains/project/core/domain/schema/invitation.schema";
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+  type ProjectMember,
+  ProjectRole,
+} from "@/domains/project/core/domain/project.types";
 import {
   DEFAULT_INVITE_ROLE,
   INVITE_ROLE_DESCRIPTION_KEYS,

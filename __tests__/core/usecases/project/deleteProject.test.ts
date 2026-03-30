@@ -1,6 +1,6 @@
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
 
 import { deleteProject } from "@/domains/project/core/usecases/project/deleteProject";
 
@@ -8,7 +8,7 @@ describe("deleteProject", () => {
   const projectId = "123e4567-e89b-12d3-a456-426614174000";
 
   it("deletes an existing project", async () => {
-    const repository = createProjectRepositoryMock();
+    const repository = createProjectGatewayMock();
     repository.findById.mockResolvedValue({
       id: projectId,
       name: "Workspace",
@@ -25,7 +25,7 @@ describe("deleteProject", () => {
   });
 
   it("throws when the project does not exist", async () => {
-    const repository = createProjectRepositoryMock();
+    const repository = createProjectGatewayMock();
     repository.findById.mockResolvedValue(null);
 
     await expect(deleteProject(repository, projectId)).rejects.toEqual(

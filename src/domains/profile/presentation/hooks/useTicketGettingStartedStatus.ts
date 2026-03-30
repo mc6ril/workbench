@@ -3,7 +3,7 @@ import { useCallback, useMemo } from "react";
 import {
   DEFAULT_USER_PREFERENCES,
   type GettingStartedStatus,
-} from "@/domains/profile/core/domain/profilePreferences.schema";
+} from "@/domains/profile/core/domain/profile.types";
 import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
 import { useUpdatePreferences } from "@/domains/profile/presentation/hooks/useUpdatePreferences";
 

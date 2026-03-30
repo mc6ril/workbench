@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
 
-import type { Project } from "@/domains/project/core/domain/schema/project.schema";
+import type { Project } from "@/domains/project/core/domain/project.types";
 import { getProject } from "@/domains/project/core/usecases/project/getProject";
 
 describe("getProject", () => {
@@ -19,7 +19,7 @@ describe("getProject", () => {
 
   it("should get project by ID when exists", async () => {
     // Arrange
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       findById: jest.fn<Promise<Project | null>, [string]>(
         async () => mockProject
       ),
@@ -38,7 +38,7 @@ describe("getProject", () => {
 
   it("should throw NotFoundError when project not found", async () => {
     // Arrange
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       findById: jest.fn<Promise<Project | null>, [string]>(async () => null),
     });
 
@@ -55,7 +55,7 @@ describe("getProject", () => {
   it("should throw ZodError on invalid input (non-UUID)", async () => {
     // Arrange
     const invalidId = "invalid-uuid";
-    const repository = createProjectRepositoryMock();
+    const repository = createProjectGatewayMock();
 
     // Act & Assert
     await expect(getProject(repository, invalidId)).rejects.toThrow(z.ZodError);
@@ -65,7 +65,7 @@ describe("getProject", () => {
   it("should propagate repository errors", async () => {
     // Arrange
     const repositoryError = new Error("Database connection failed");
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       findById: jest.fn<Promise<Project | null>, [string]>(async () => {
         throw repositoryError;
       }),
@@ -89,7 +89,7 @@ describe("getProject", () => {
       createdAt: new Date("2024-01-02T00:00:00Z"),
       updatedAt: new Date("2024-01-02T00:00:00Z"),
     };
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       findById: jest.fn<Promise<Project | null>, [string]>(
         async (id: string) => {
           if (id === differentProjectId) {

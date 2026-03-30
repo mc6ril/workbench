@@ -1,16 +1,22 @@
+import { z } from "zod";
+
 import {
-  type UpdatePreferencesInput,
   type UserPreferences,
   UserPreferencesSchema,
-} from "@/domains/profile/core/domain/profilePreferences.schema";
-import type { UserProfileRepository } from "@/domains/profile/core/ports/userProfileRepository";
+} from "@/domains/profile/core/domain/profile.types";
+import type { ProfileGateway } from "@/domains/profile/core/ports/profile.gateway";
+
+export const UpdatePreferencesInputSchema = UserPreferencesSchema.partial();
+export type UpdatePreferencesInput = z.infer<
+  typeof UpdatePreferencesInputSchema
+>;
 
 /**
  * Update the current user's preferences.
  * Merges partial input with current preferences, validates the result,
  * and persists to user_profiles.preferences.
  *
- * @param repository - UserProfile repository
+ * @param gateway - Profile gateway
  * @param userId - Authenticated user ID
  * @param currentPreferences - User's current full preferences (for merging)
  * @param input - Partial preferences to merge
@@ -18,12 +24,12 @@ import type { UserProfileRepository } from "@/domains/profile/core/ports/userPro
  * @throws DatabaseError if update fails
  */
 export const updatePreferences = async (
-  repository: UserProfileRepository,
+  gateway: ProfileGateway,
   userId: string,
   currentPreferences: UserPreferences,
   input: UpdatePreferencesInput
 ): Promise<void> => {
-  const merged = { ...currentPreferences, ...input };
-  const validated = UserPreferencesSchema.parse(merged);
-  return repository.updatePreferences(userId, validated);
+  const mergedPreferences = { ...currentPreferences, ...input };
+  const validatedPreferences = UserPreferencesSchema.parse(mergedPreferences);
+  return gateway.updatePreferences(userId, validatedPreferences);
 };
