@@ -57,7 +57,7 @@ import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile"
 import { useUpdatePreferences } from "@/domains/profile/presentation/hooks/useUpdatePreferences";
 import { useCanUpdatePassword } from "@/domains/session/presentation/hooks/useCanUpdatePassword";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
-import { useUpdateAccountProfile } from "@/domains/settings/presentation/hooks/useUpdateAccountProfile";
+import { useUpdateAccountIdentity } from "@/domains/settings/presentation/hooks/useUpdateAccountIdentity";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 
 const LANGUAGE_SELECT_OPTIONS = supportedLocaleOptions.map((locale) => ({
@@ -75,7 +75,7 @@ const AccountPage = () => {
   const { data: canUpdatePassword, isLoading: isPasswordCapabilityLoading } =
     useCanUpdatePassword(!!session?.userId);
   const { data: profile, isLoading: isProfileLoading } = useMyProfile();
-  const updateProfileMutation = useUpdateAccountProfile();
+  const updateAccountIdentityMutation = useUpdateAccountIdentity();
   const changePasswordMutation = useChangePassword();
   const uploadAvatarMutation = useUploadAvatar();
   const removeAvatarMutation = useRemoveAvatar();
@@ -141,15 +141,15 @@ const AccountPage = () => {
     setLanguagePreference(profileLanguage);
   }, [profileLanguage]);
 
-  const profileErrorMessage = useMemo(
+  const accountIdentityErrorMessage = useMemo(
     () =>
-      updateProfileMutation.error
+      updateAccountIdentityMutation.error
         ? getErrorMessage(
-            updateProfileMutation.error as { code?: string },
+            updateAccountIdentityMutation.error as { code?: string },
             tErrors
           )
         : null,
-    [updateProfileMutation.error, tErrors]
+    [updateAccountIdentityMutation.error, tErrors]
   );
 
   const passwordErrorMessage = useMemo(
@@ -184,7 +184,7 @@ const AccountPage = () => {
     mode: "onBlur",
   });
 
-  const handleProfileSave = useCallback(async () => {
+  const handleAccountIdentitySave = useCallback(async () => {
     const currentDisplayName = viewer?.displayName ?? "";
     const currentEmail = viewer?.loginEmail ?? "";
     const nextDisplayName = name.trim();
@@ -203,9 +203,9 @@ const AccountPage = () => {
       return;
     }
 
-    await updateProfileMutation.mutateAsync(updates);
+    await updateAccountIdentityMutation.mutateAsync(updates);
   }, [
-    updateProfileMutation,
+    updateAccountIdentityMutation,
     viewer?.displayName,
     viewer?.loginEmail,
     name,
@@ -480,7 +480,7 @@ const AccountPage = () => {
               }}
             />
 
-            {updateProfileMutation.isSuccess && (
+            {updateAccountIdentityMutation.isSuccess && (
               <div
                 className={styles["success-message"]}
                 role="status"
@@ -490,9 +490,9 @@ const AccountPage = () => {
               </div>
             )}
 
-            {profileErrorMessage && (
+            {accountIdentityErrorMessage && (
               <div role="alert" aria-live="assertive">
-                <Text variant="small">{profileErrorMessage}</Text>
+                <Text variant="small">{accountIdentityErrorMessage}</Text>
               </div>
             )}
 
@@ -516,12 +516,12 @@ const AccountPage = () => {
               <div className={styles["form-actions"]}>
                 <Button
                   label={
-                    updateProfileMutation.isPending
+                    updateAccountIdentityMutation.isPending
                       ? t("personalInfo.savingButton")
                       : t("personalInfo.saveButton")
                   }
-                  onClick={handleProfileSave}
-                  disabled={updateProfileMutation.isPending}
+                  onClick={handleAccountIdentitySave}
+                  disabled={updateAccountIdentityMutation.isPending}
                   aria-label={t("personalInfo.saveButtonAriaLabel")}
                 />
               </div>
