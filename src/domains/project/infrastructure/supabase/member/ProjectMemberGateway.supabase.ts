@@ -10,11 +10,13 @@ import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandl
 import { mapMemberRowsToDomain } from "./MemberMapper.supabase";
 
 import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
-import type { Project } from "@/domains/project/core/domain/schema/project.schema";
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
-import { isProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
-import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
+import type {
+  Project,
+  ProjectMember,
+  ProjectRole,
+} from "@/domains/project/core/domain/project.types";
+import { isProjectRole } from "@/domains/project/core/domain/project.types";
+import type { ProjectMemberGateway } from "@/domains/project/core/ports/project-member.gateway";
 import { mapProjectRowToDomain } from "@/domains/project/infrastructure/supabase/project/ProjectMapper.supabase";
 import type { ProjectRow } from "@/domains/project/infrastructure/supabase/types";
 import type { ProjectMemberRow } from "@/domains/project/infrastructure/supabase/types";
@@ -37,14 +39,14 @@ const extractProjectRow = (data: unknown): ProjectRow | null => {
 };
 
 /**
- * Create a MemberRepository implementation using the provided Supabase client.
+ * Create a ProjectMemberGateway implementation using the provided Supabase client.
  *
  * @param client - Supabase client instance to use
- * @returns MemberRepository implementation
+ * @returns ProjectMemberGateway implementation
  */
-export const createMemberRepository = (
+export const createProjectMemberGateway = (
   client: SupabaseClient
-): MemberRepository => ({
+): ProjectMemberGateway => ({
   async addCurrentUserAsMember(
     projectId: string,
     _role?: ProjectRole

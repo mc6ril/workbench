@@ -1,9 +1,11 @@
-import type { Project } from "@/domains/project/core/domain/schema/project.schema";
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import type {
+  Project,
+  ProjectMember,
+  ProjectRole,
+} from "@/domains/project/core/domain/project.types";
 
 /**
- * Repository contract for project member operations.
+ * Gateway contract for project member operations.
  *
  * Members are linked to projects via the project_members table.
  * RLS policies enforce that only admins can modify membership.
@@ -13,7 +15,7 @@ import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRo
  * - Each user can only have one role per project
  * - Role changes and removals require admin permission
  */
-export type MemberRepository = {
+export type ProjectMemberGateway = {
   /**
    * Reclaim an orphaned project for the current authenticated user.
    * Uses the database RPC that validates reclaim eligibility server-side.

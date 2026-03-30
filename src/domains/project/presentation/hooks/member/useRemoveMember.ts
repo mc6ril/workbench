@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { removeMember } from "@/domains/project/core/usecases/member/removeMember";
-import { memberRepository } from "@/domains/project/infrastructure/supabase/repositories";
+import { projectMemberGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
@@ -21,7 +21,7 @@ export const useRemoveMember = () => {
 
   return useMutation({
     mutationFn: ({ memberId }: RemoveMemberVariables) =>
-      removeMember(memberRepository, memberId),
+      removeMember(projectMemberGateway, memberId),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.members.byProject(variables.projectId),

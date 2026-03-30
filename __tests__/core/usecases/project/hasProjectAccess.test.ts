@@ -1,12 +1,11 @@
- 
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
 
 import { hasProjectAccess } from "@/domains/workspace/core/usecases/project/hasProjectAccess";
 
 describe("hasProjectAccess", () => {
   it("should return true when user has project access", async () => {
     // Arrange
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       hasAnyProjectAccess: jest.fn<Promise<boolean>, []>(async () => true),
     });
 
@@ -21,7 +20,7 @@ describe("hasProjectAccess", () => {
 
   it("should return false when user has no project access", async () => {
     // Arrange
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       hasAnyProjectAccess: jest.fn<Promise<boolean>, []>(async () => false),
     });
 
@@ -37,7 +36,7 @@ describe("hasProjectAccess", () => {
   it("should propagate repository errors", async () => {
     // Arrange
     const repositoryError = new Error("Database error");
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       hasAnyProjectAccess: jest.fn<Promise<boolean>, []>(async () => {
         throw repositoryError;
       }),

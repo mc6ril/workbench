@@ -1,9 +1,20 @@
-import {
-  type CreateProjectInput,
-  CreateProjectInputSchema,
-  type Project,
-} from "@/domains/project/core/domain/schema/project.schema";
-import type { ProjectRepository } from "@/domains/project/core/ports/projectRepository";
+import { z } from "zod";
+
+import type { Project } from "@/domains/project/core/domain/project.types";
+import { containsEmoji } from "@/domains/project/core/domain/rules/projectName.rules";
+import type { ProjectGateway } from "@/domains/project/core/ports/project.gateway";
+
+export const CreateProjectInputSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "Project name must not be empty")
+    .refine((value) => !containsEmoji(value), {
+      message: "PROJECT_NAME_CONTAINS_EMOJI",
+    }),
+});
+
+export type CreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
 
 /**
  * Create a new project.
@@ -18,12 +29,12 @@ import type { ProjectRepository } from "@/domains/project/core/ports/projectRepo
  * @throws DatabaseError if database operation fails
  */
 export const createProject = async (
-  repository: ProjectRepository,
+  gateway: ProjectGateway,
   input: CreateProjectInput
 ): Promise<Project> => {
   const validatedInput = CreateProjectInputSchema.parse(input);
 
-  return repository.create({
+  return gateway.create({
     name: validatedInput.name,
   });
 };

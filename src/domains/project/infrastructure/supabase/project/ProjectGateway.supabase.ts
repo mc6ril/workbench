@@ -14,13 +14,11 @@ import {
 } from "./ProjectMapper.supabase";
 
 import type {
-  CreateProjectInput,
   Project,
   ProjectWithRole,
-  UpdateProjectInput,
-} from "@/domains/project/core/domain/schema/project.schema";
-import { isProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
-import type { ProjectRepository } from "@/domains/project/core/ports/projectRepository";
+} from "@/domains/project/core/domain/project.types";
+import { isProjectRole } from "@/domains/project/core/domain/project.types";
+import type { ProjectGateway } from "@/domains/project/core/ports/project.gateway";
 import type { ProjectRow } from "@/domains/project/infrastructure/supabase/types";
 
 /**
@@ -85,14 +83,14 @@ const fetchProjectById = async (
 };
 
 /**
- * Create a ProjectRepository implementation using the provided Supabase client.
+ * Create a ProjectGateway implementation using the provided Supabase client.
  *
  * @param client - Supabase client instance to use
- * @returns ProjectRepository implementation
+ * @returns ProjectGateway implementation
  */
-export const createProjectRepository = (
+export const createProjectGateway = (
   client: SupabaseClient
-): ProjectRepository => ({
+): ProjectGateway => ({
   async findByShortCode(shortCode: string): Promise<Project | null> {
     try {
       const { data, error } = await client
@@ -193,7 +191,7 @@ export const createProjectRepository = (
     }
   },
 
-  async create(input: CreateProjectInput): Promise<Project> {
+  async create(input: { name: string }): Promise<Project> {
     try {
       const { data: rpcData, error: rpcError } = await client.rpc(
         "create_project",
@@ -225,7 +223,10 @@ export const createProjectRepository = (
     }
   },
 
-  async update(id: string, input: UpdateProjectInput): Promise<Project> {
+  async update(
+    id: string,
+    input: { name?: string; boardEmoji?: string }
+  ): Promise<Project> {
     try {
       const updateData: Partial<{ name: string; board_emoji: string }> = {};
 

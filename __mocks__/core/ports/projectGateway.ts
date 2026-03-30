@@ -1,19 +1,19 @@
 import type {
-  CreateProjectInput,
   Project,
   ProjectWithRole,
-  UpdateProjectInput,
-} from "@/domains/project/core/domain/schema/project.schema";
+} from "@/domains/project/core/domain/project.types";
+import type { CreateProjectInput } from "@/domains/project/core/usecases/project/createProject";
+import type { UpdateProjectInput } from "@/domains/project/core/usecases/project/updateProject";
 import type {
   ProjectWithStats,
   ReclaimableProject,
 } from "@/domains/workspace/core/domain/workspaceProjectCatalog.schema";
 
 /**
- * Mock type for ProjectRepository.
+ * Mock type for ProjectGateway.
  * Used for type-safe mock creation in tests.
  */
-export type ProjectRepositoryMock = {
+export type ProjectGatewayMock = {
   findByShortCode: jest.Mock<Promise<Project | null>, [string]>;
   findById: jest.Mock<Promise<Project | null>, [string]>;
   list: jest.Mock<Promise<ProjectWithRole[]>, []>;
@@ -32,19 +32,19 @@ export type ProjectRepositoryMock = {
   listReclaimableProjects: jest.Mock<Promise<ReclaimableProject[]>, []>;
 };
 
-type ProjectRepositoryMockOverrides = Partial<ProjectRepositoryMock>;
+type ProjectGatewayMockOverrides = Partial<ProjectGatewayMock>;
 
 /**
- * Factory for creating a mock ProjectRepository.
+ * Factory for creating a mock ProjectGateway.
  *
  * Tests can override only the methods they need while keeping the rest as jest.fn().
  *
  * @param overrides - Partial mock to override specific methods
- * @returns A mock ProjectRepository
+ * @returns A mock ProjectGateway
  */
-export const createProjectRepositoryMock = (
-  overrides: ProjectRepositoryMockOverrides = {}
-): ProjectRepositoryMock => {
+export const createProjectGatewayMock = (
+  overrides: ProjectGatewayMockOverrides = {}
+): ProjectGatewayMock => {
   const listMock =
     overrides.listAccessibleProjects ??
     overrides.list ??
@@ -58,7 +58,7 @@ export const createProjectRepositoryMock = (
     overrides.hasProjectAccess ??
     jest.fn<Promise<boolean>, []>();
 
-  const base: ProjectRepositoryMock = {
+  const base: ProjectGatewayMock = {
     findByShortCode: jest.fn<Promise<Project | null>, [string]>(),
     findById: jest.fn<Promise<Project | null>, [string]>(),
     list: listMock,

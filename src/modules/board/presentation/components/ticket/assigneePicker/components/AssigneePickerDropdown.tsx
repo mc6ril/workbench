@@ -1,6 +1,6 @@
 import Avatar from "@/shared/design-system/avatar";
 
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
+import type { ProjectMember } from "@/domains/project/core/domain/project.types";
 import styles from "@/modules/board/presentation/components/ticket/assigneePicker/AssigneePicker.module.scss";
 
 type AssigneePickerDropdownProps = {

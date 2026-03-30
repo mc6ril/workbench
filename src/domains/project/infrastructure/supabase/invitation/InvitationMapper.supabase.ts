@@ -1,8 +1,10 @@
 import { toDate } from "@/shared/utils/guards";
 
-import type { ProjectInvitation } from "@/domains/project/core/domain/schema/invitation.schema";
-import { InvitationStatus } from "@/domains/project/core/domain/schema/invitation.schema";
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import {
+  InvitationStatus,
+  type ProjectInvitation,
+  ProjectRole,
+} from "@/domains/project/core/domain/project.types";
 import type { InvitationRow } from "@/domains/project/infrastructure/supabase/types";
 
 /**

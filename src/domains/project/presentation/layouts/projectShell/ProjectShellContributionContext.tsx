@@ -14,7 +14,7 @@ import {
 import {
   EMPTY_PROJECT_VIEW_CONTRIBUTION,
   type ProjectViewContribution,
-} from "@/domains/project/core/domain/shell/projectViewContribution";
+} from "@/domains/project/presentation/layouts/projectShell/projectViewContribution";
 
 type ProjectShellContributionContextValue = {
   contribution: ProjectViewContribution;

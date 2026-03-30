@@ -1,4 +1,4 @@
-import type { ProjectWithRole } from "@/domains/project/core/domain/schema/project.schema";
+import type { ProjectWithRole } from "@/domains/project/core/domain/project.types";
 
 /**
  * Statistics for a project (member counts, ticket counts).

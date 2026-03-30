@@ -12,7 +12,7 @@ import {
   isString,
 } from "@/shared/utils/guards";
 
-import { isProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import { isProjectRole } from "@/domains/project/core/domain/project.types";
 
 describe("guards", () => {
   describe("isObject", () => {

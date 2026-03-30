@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { ProjectRole } from "@/domains/project/core/domain/schema/project.schema";
+import { ProjectRole } from "@/domains/project/core/domain/project.types";
 import { joinProject } from "@/domains/project/core/usecases/membership/joinProject";
-import { memberRepository } from "@/domains/project/infrastructure/supabase/repositories";
+import { projectMemberGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
@@ -21,7 +21,7 @@ export const useAddUserToProject = () => {
     }: {
       projectId: string;
       role?: ProjectRole;
-    }) => joinProject(memberRepository, projectId, role),
+    }) => joinProject(projectMemberGateway, projectId, role),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.projects.all() });
       queryClient.invalidateQueries({

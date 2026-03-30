@@ -1,10 +1,9 @@
- 
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
 
 import {
+  ProjectRole,
   type ProjectWithRole,
-} from "@/domains/project/core/domain/schema/project.schema";
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+} from "@/domains/project/core/domain/project.types";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 
 describe("listProjects", () => {
@@ -34,7 +33,7 @@ describe("listProjects", () => {
       mockProjectWithRole1,
       mockProjectWithRole2,
     ];
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
         async () => projects
       ),
@@ -62,7 +61,7 @@ describe("listProjects", () => {
 
   it("should return empty array when no projects", async () => {
     // Arrange
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
         async () => []
       ),
@@ -81,7 +80,7 @@ describe("listProjects", () => {
   it("should propagate repository errors", async () => {
     // Arrange
     const repositoryError = new Error("Database connection failed");
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
         async () => {
           throw repositoryError;
@@ -109,7 +108,7 @@ describe("listProjects", () => {
         role: ProjectRole.VIEWER,
       },
     ];
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
         async () => projects
       ),

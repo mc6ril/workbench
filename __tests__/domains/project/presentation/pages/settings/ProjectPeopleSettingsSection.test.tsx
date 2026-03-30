@@ -6,9 +6,9 @@ import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatur
 import {
   InvitationStatus,
   type ProjectInvitation,
-} from "@/domains/project/core/domain/schema/invitation.schema";
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+  type ProjectMember,
+  ProjectRole,
+} from "@/domains/project/core/domain/project.types";
 import { useInviteMember } from "@/domains/project/presentation/hooks/invitation/useInviteMember";
 import { useProjectInvitations } from "@/domains/project/presentation/hooks/invitation/useProjectInvitations";
 import { useRevokeInvitation } from "@/domains/project/presentation/hooks/invitation/useRevokeInvitation";

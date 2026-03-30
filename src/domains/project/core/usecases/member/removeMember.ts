@@ -1,5 +1,10 @@
-import { RemoveMemberInputSchema } from "@/domains/project/core/domain/schema/projectMember.schema";
-import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
+import { z } from "zod";
+
+import type { ProjectMemberGateway } from "@/domains/project/core/ports/project-member.gateway";
+
+const RemoveMemberInputSchema = z.object({
+  memberId: z.string().uuid(),
+});
 
 /**
  * Remove a member from a project.
@@ -17,10 +22,10 @@ import type { MemberRepository } from "@/domains/project/core/ports/memberReposi
  * @throws DatabaseError if database operation fails
  */
 export const removeMember = async (
-  repository: MemberRepository,
+  gateway: ProjectMemberGateway,
   memberId: string
 ): Promise<void> => {
   RemoveMemberInputSchema.parse({ memberId });
 
-  return repository.remove(memberId);
+  return gateway.remove(memberId);
 };

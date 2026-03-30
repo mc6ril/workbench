@@ -1,19 +1,19 @@
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 
-import type { ProjectRepository } from "@/domains/project/core/ports/projectRepository";
+import type { ProjectGateway } from "@/domains/project/core/ports/project.gateway";
 
 /**
  * Delete a project by its identifier.
  * Ensures the project exists before delegating the delete to the repository.
  */
 export const deleteProject = async (
-  repository: ProjectRepository,
+  gateway: ProjectGateway,
   projectId: string
 ): Promise<void> => {
-  const project = await repository.findById(projectId);
+  const project = await gateway.findById(projectId);
   if (!project) {
     throw createNotFoundError("Project", projectId);
   }
 
-  await repository.delete(projectId);
+  await gateway.delete(projectId);
 };

@@ -2,13 +2,15 @@ import { getFeatureLimit } from "@/domains/billing/core/domain/planFeatures.rule
 import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
 import {
-  type CreateInvitationInput,
   InvitationStatus,
   type ProjectInvitation,
-} from "@/domains/project/core/domain/schema/invitation.schema";
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
-import { inviteToProject } from "@/domains/project/core/usecases/invitation/inviteToProject";
+  type ProjectMember,
+  ProjectRole,
+} from "@/domains/project/core/domain/project.types";
+import {
+  inviteToProject,
+  type InviteToProjectInput,
+} from "@/domains/project/core/usecases/invitation/inviteToProject";
 
 jest.mock("@/domains/billing/core/domain/planFeatures.rules", () => ({
   ...jest.requireActual("@/domains/billing/core/domain/planFeatures.rules"),
@@ -22,8 +24,8 @@ const mockedGetFeatureLimit = getFeatureLimit as jest.MockedFunction<
   typeof getFeatureLimit
 >;
 
-import { createInvitationRepositoryMock } from "../../../../__mocks__/core/ports/invitationRepository";
-import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";
+import { createProjectInvitationGatewayMock } from "../../../../__mocks__/core/ports/projectInvitationGateway";
+import { createProjectMemberGatewayMock } from "../../../../__mocks__/core/ports/projectMemberGateway";
 
 describe("inviteToProject", () => {
   const projectId = "123e4567-e89b-12d3-a456-426614174000";
@@ -60,13 +62,13 @@ describe("inviteToProject", () => {
   });
 
   it("should create invitation when under limit", async () => {
-    const invitationRepo = createInvitationRepositoryMock({
+    const invitationRepo = createProjectInvitationGatewayMock({
       countPending: jest.fn<Promise<number>, [string]>(async () => 0),
-      create: jest.fn<Promise<ProjectInvitation>, [CreateInvitationInput]>(
+      create: jest.fn<Promise<ProjectInvitation>, [InviteToProjectInput]>(
         async () => mockInvitation
       ),
     });
-    const memberRepo = createMemberRepositoryMock({
+    const memberRepo = createProjectMemberGatewayMock({
       listByProject: jest.fn<Promise<ProjectMember[]>, [string]>(async () => [
         makeMember("1"),
       ]),
@@ -84,10 +86,10 @@ describe("inviteToProject", () => {
   });
 
   it("should throw when plan limit is reached", async () => {
-    const invitationRepo = createInvitationRepositoryMock({
+    const invitationRepo = createProjectInvitationGatewayMock({
       countPending: jest.fn<Promise<number>, [string]>(async () => 1),
     });
-    const memberRepo = createMemberRepositoryMock({
+    const memberRepo = createProjectMemberGatewayMock({
       listByProject: jest.fn<Promise<ProjectMember[]>, [string]>(async () => [
         makeMember("1"),
         makeMember("2"),
@@ -107,13 +109,13 @@ describe("inviteToProject", () => {
   });
 
   it("should allow invite when under higher plan limit", async () => {
-    const invitationRepo = createInvitationRepositoryMock({
+    const invitationRepo = createProjectInvitationGatewayMock({
       countPending: jest.fn<Promise<number>, [string]>(async () => 0),
-      create: jest.fn<Promise<ProjectInvitation>, [CreateInvitationInput]>(
+      create: jest.fn<Promise<ProjectInvitation>, [InviteToProjectInput]>(
         async () => mockInvitation
       ),
     });
-    const memberRepo = createMemberRepositoryMock({
+    const memberRepo = createProjectMemberGatewayMock({
       listByProject: jest.fn<Promise<ProjectMember[]>, [string]>(async () => [
         makeMember("1"),
         makeMember("2"),
@@ -135,12 +137,12 @@ describe("inviteToProject", () => {
   it("should skip limit check when plan has unlimited members", async () => {
     mockedGetFeatureLimit.mockReturnValueOnce(-1);
 
-    const invitationRepo = createInvitationRepositoryMock({
-      create: jest.fn<Promise<ProjectInvitation>, [CreateInvitationInput]>(
+    const invitationRepo = createProjectInvitationGatewayMock({
+      create: jest.fn<Promise<ProjectInvitation>, [InviteToProjectInput]>(
         async () => mockInvitation
       ),
     });
-    const memberRepo = createMemberRepositoryMock();
+    const memberRepo = createProjectMemberGatewayMock();
 
     const result = await inviteToProject(
       invitationRepo,
@@ -156,8 +158,8 @@ describe("inviteToProject", () => {
   });
 
   it("should throw ZodError for invalid project id", async () => {
-    const invitationRepo = createInvitationRepositoryMock();
-    const memberRepo = createMemberRepositoryMock();
+    const invitationRepo = createProjectInvitationGatewayMock();
+    const memberRepo = createProjectMemberGatewayMock();
 
     await expect(
       inviteToProject(

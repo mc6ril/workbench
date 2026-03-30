@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { revokeInvitation } from "@/domains/project/core/usecases/invitation/revokeInvitation";
-import { invitationRepository } from "@/domains/project/infrastructure/supabase/repositories";
+import { projectInvitationGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 
 type RevokeInvitationVariables = {
@@ -17,7 +17,7 @@ export const useRevokeInvitation = () => {
 
   return useMutation({
     mutationFn: ({ invitationId }: RevokeInvitationVariables) =>
-      revokeInvitation(invitationRepository, invitationId),
+      revokeInvitation(projectInvitationGateway, invitationId),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.invitations.byProject(variables.projectId),

@@ -1,15 +1,13 @@
 import type {
-  CreateProjectInput,
   Project,
   ProjectWithRole,
-  UpdateProjectInput,
-} from "@/domains/project/core/domain/schema/project.schema";
+} from "@/domains/project/core/domain/project.types";
 
 /**
- * Repository contract for project-owned Project operations.
+ * Gateway contract for project-owned project operations.
  * Hides infrastructure details and exposes domain-shaped operations.
  */
-export type ProjectRepository = {
+export type ProjectGateway = {
   /**
    * Get a project by its short code.
    * @param shortCode - 2-letter project short code (e.g. 'WB')
@@ -40,7 +38,7 @@ export type ProjectRepository = {
    * @throws ConstraintError if constraint violation occurs
    * @throws DatabaseError if database operation fails
    */
-  create(input: CreateProjectInput): Promise<Project>;
+  create(input: { name: string }): Promise<Project>;
 
   /**
    * Update an existing project.
@@ -51,7 +49,7 @@ export type ProjectRepository = {
    * @throws ConstraintError if constraint violation occurs
    * @throws DatabaseError if database operation fails
    */
-  update(id: string, input: UpdateProjectInput): Promise<Project>;
+  update(id: string, input: { name?: string; boardEmoji?: string }): Promise<Project>;
 
   /**
    * Delete a project by ID.

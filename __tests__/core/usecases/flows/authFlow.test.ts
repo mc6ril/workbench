@@ -6,14 +6,16 @@ import {
 } from "../../../../__mocks__/core/domain/authMocks";
 import { mockCurrentSession } from "../../../../__mocks__/core/domain/sessionMocks";
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
 import { createSessionRepositoryMock } from "../../../../__mocks__/core/ports/sessionRepository";
 
 import type { AuthResult } from "@/domains/auth/core/domain/auth.types";
 import { signInUser } from "@/domains/auth/core/usecases/user/signInUser";
 import { signUpUser } from "@/domains/auth/core/usecases/user/signUpUser";
-import type { ProjectWithRole } from "@/domains/project/core/domain/schema/project.schema";
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import {
+  ProjectRole,
+  type ProjectWithRole,
+} from "@/domains/project/core/domain/project.types";
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 
@@ -109,7 +111,7 @@ describe("Auth Flow Tests", () => {
         getCurrentSession: jest.fn(async () => mockCurrentSession),
       });
 
-      const projectRepository = createProjectRepositoryMock({
+      const projectRepository = createProjectGatewayMock({
         listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => mockProjects
         ),
@@ -177,7 +179,7 @@ describe("Auth Flow Tests", () => {
         }),
       });
 
-      const projectRepository = createProjectRepositoryMock({
+      const projectRepository = createProjectGatewayMock({
         listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => mockProjects
         ),

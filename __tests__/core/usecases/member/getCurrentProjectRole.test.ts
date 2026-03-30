@@ -1,14 +1,13 @@
- 
-import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";
+import { createProjectMemberGatewayMock } from "../../../../__mocks__/core/ports/projectMemberGateway";
 
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import { ProjectRole } from "@/domains/project/core/domain/project.types";
 import { getCurrentProjectRole } from "@/domains/project/core/usecases/member/getCurrentProjectRole";
 
 describe("getCurrentProjectRole", () => {
   const projectId = "123e4567-e89b-12d3-a456-426614174000";
 
   it("returns current role", async () => {
-    const repository = createMemberRepositoryMock({
+    const repository = createProjectMemberGatewayMock({
       getCurrentRole: jest.fn<Promise<ProjectRole | null>, [string]>(
         async () => ProjectRole.MEMBER
       ),
@@ -21,7 +20,7 @@ describe("getCurrentProjectRole", () => {
   });
 
   it("returns null when user is not member", async () => {
-    const repository = createMemberRepositoryMock({
+    const repository = createProjectMemberGatewayMock({
       getCurrentRole: jest.fn<Promise<ProjectRole | null>, [string]>(
         async () => null
       ),
@@ -33,7 +32,7 @@ describe("getCurrentProjectRole", () => {
   });
 
   it("throws on invalid project id", async () => {
-    const repository = createMemberRepositoryMock();
+    const repository = createProjectMemberGatewayMock();
 
     await expect(
       getCurrentProjectRole(repository, "invalid-project-id")

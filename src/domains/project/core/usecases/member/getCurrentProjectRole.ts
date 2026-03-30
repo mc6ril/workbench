@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
+import type { ProjectMemberGateway } from "@/domains/project/core/ports/project-member.gateway";
 
 const GetCurrentProjectRoleInputSchema = z.object({
   projectId: z.string().uuid("Project ID must be a valid UUID"),
@@ -11,9 +11,9 @@ const GetCurrentProjectRoleInputSchema = z.object({
  * Returns null when the user is not a member.
  */
 export const getCurrentProjectRole = async (
-  repository: MemberRepository,
+  gateway: ProjectMemberGateway,
   projectId: string
 ) => {
   GetCurrentProjectRoleInputSchema.parse({ projectId });
-  return repository.getCurrentRole(projectId);
+  return gateway.getCurrentRole(projectId);
 };

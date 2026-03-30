@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import { ProjectRole } from "@/domains/project/core/domain/project.types";
 import { useDeleteProject } from "@/domains/project/presentation/hooks/useDeleteProject";
 import { useProject } from "@/domains/project/presentation/hooks/useProject";
 import { useUpdateProject } from "@/domains/project/presentation/hooks/useUpdateProject";

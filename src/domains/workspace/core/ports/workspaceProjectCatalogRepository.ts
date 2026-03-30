@@ -1,4 +1,4 @@
-import type { ProjectWithRole } from "@/domains/project/core/domain/schema/project.schema";
+import type { ProjectWithRole } from "@/domains/project/core/domain/project.types";
 import type {
   ProjectWithStats,
   ReclaimableProject,

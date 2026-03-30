@@ -3,14 +3,14 @@ import {
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
 
-import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
+import { createProjectMemberGatewayMock } from "../../../../__mocks__/core/ports/projectMemberGateway";
 
 import {
   type Project,
+  ProjectRole,
   type ProjectWithRole,
-} from "@/domains/project/core/domain/schema/project.schema";
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+} from "@/domains/project/core/domain/project.types";
 import { joinProject } from "@/domains/project/core/usecases/membership/joinProject";
 import { getProject } from "@/domains/project/core/usecases/project/getProject";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
@@ -36,17 +36,17 @@ describe("Project Flow Tests", () => {
     it("should complete project access flow successfully", async () => {
       // Arrange
       const projects: ProjectWithRole[] = [mockProjectWithRole];
-      const catalogRepository = createProjectRepositoryMock({
+      const catalogRepository = createProjectGatewayMock({
         listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => projects
         ),
       });
-      const projectRepository = createProjectRepositoryMock({
+      const projectRepository = createProjectGatewayMock({
         findById: jest.fn<Promise<Project | null>, [string]>(
           async () => mockProject
         ),
       });
-      const memberRepository = createMemberRepositoryMock({
+      const memberRepository = createProjectMemberGatewayMock({
         addCurrentUserAsMember: jest.fn<
           Promise<Project>,
           [string, ("admin" | "member" | "viewer")?]
@@ -94,15 +94,15 @@ describe("Project Flow Tests", () => {
       // Arrange
       const projects: ProjectWithRole[] = [mockProjectWithRole];
       const notFoundProjectId = "999e9999-e89b-12d3-a456-426614174999";
-      const catalogRepository = createProjectRepositoryMock({
+      const catalogRepository = createProjectGatewayMock({
         listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => projects
         ),
       });
-      const projectRepository = createProjectRepositoryMock({
+      const projectRepository = createProjectGatewayMock({
         findById: jest.fn<Promise<Project | null>, [string]>(async () => null),
       });
-      const memberRepository = createMemberRepositoryMock({
+      const memberRepository = createProjectMemberGatewayMock({
         addCurrentUserAsMember: jest.fn<
           Promise<Project>,
           [string, ("admin" | "member" | "viewer")?]
@@ -149,17 +149,17 @@ describe("Project Flow Tests", () => {
     it("should handle constraint error when user already member", async () => {
       // Arrange
       const projects: ProjectWithRole[] = [mockProjectWithRole];
-      const catalogRepository = createProjectRepositoryMock({
+      const catalogRepository = createProjectGatewayMock({
         listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => projects
         ),
       });
-      const projectRepository = createProjectRepositoryMock({
+      const projectRepository = createProjectGatewayMock({
         findById: jest.fn<Promise<Project | null>, [string]>(
           async () => mockProject
         ),
       });
-      const memberRepository = createMemberRepositoryMock({
+      const memberRepository = createProjectMemberGatewayMock({
         addCurrentUserAsMember: jest.fn<
           Promise<Project>,
           [string, ("admin" | "member" | "viewer")?]
@@ -192,19 +192,19 @@ describe("Project Flow Tests", () => {
     it("should handle error propagation through the flow", async () => {
       // Arrange
       const repositoryError = new Error("Database connection failed");
-      const catalogRepository = createProjectRepositoryMock({
+      const catalogRepository = createProjectGatewayMock({
         listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => {
           throw repositoryError;
           }
         ),
       });
-      const projectRepository = createProjectRepositoryMock({
+      const projectRepository = createProjectGatewayMock({
         findById: jest.fn<Promise<Project | null>, [string]>(
           async () => mockProject
         ),
       });
-      const memberRepository = createMemberRepositoryMock({
+      const memberRepository = createProjectMemberGatewayMock({
         addCurrentUserAsMember: jest.fn<
           Promise<Project>,
           [string, ("admin" | "member" | "viewer")?]

@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { UpdateProjectInput } from "@/domains/project/core/domain/schema/project.schema";
-import { updateProject } from "@/domains/project/core/usecases/project/updateProject";
-import { projectRepository } from "@/domains/project/infrastructure/supabase/repositories";
+import {
+  updateProject,
+  type UpdateProjectInput,
+} from "@/domains/project/core/usecases/project/updateProject";
+import { projectGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
@@ -19,7 +21,7 @@ export const useUpdateProject = () => {
 
   return useMutation({
     mutationFn: ({ projectId, input }: UpdateProjectMutationInput) =>
-      updateProject(projectRepository, projectId, input),
+      updateProject(projectGateway, projectId, input),
     onSuccess: (project) => {
       queryClient.setQueryData(queryKeys.projects.detail(project.id), project);
       queryClient.invalidateQueries({ queryKey: queryKeys.projects.all() });

@@ -1,11 +1,13 @@
-import type { Project } from "@/domains/project/core/domain/schema/project.schema";
-import type { ProjectRole } from "@/domains/project/core/domain/schema/project.schema";
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
+import type {
+  Project,
+  ProjectMember,
+  ProjectRole,
+} from "@/domains/project/core/domain/project.types";
 
 /**
- * Mock type for MemberRepository.
+ * Mock type for ProjectMemberGateway.
  */
-export type MemberRepositoryMock = {
+export type ProjectMemberGatewayMock = {
   addCurrentUserAsMember: jest.Mock<
     Promise<Project>,
     [string, ("admin" | "member" | "viewer")?]
@@ -17,15 +19,15 @@ export type MemberRepositoryMock = {
   countAdmins: jest.Mock<Promise<number>, [string]>;
 };
 
-type MemberRepositoryMockOverrides = Partial<MemberRepositoryMock>;
+type ProjectMemberGatewayMockOverrides = Partial<ProjectMemberGatewayMock>;
 
 /**
- * Factory for creating a mock MemberRepository.
+ * Factory for creating a mock ProjectMemberGateway.
  */
-export const createMemberRepositoryMock = (
-  overrides: MemberRepositoryMockOverrides = {}
-): MemberRepositoryMock => {
-  const base: MemberRepositoryMock = {
+export const createProjectMemberGatewayMock = (
+  overrides: ProjectMemberGatewayMockOverrides = {}
+): ProjectMemberGatewayMock => {
+  const base: ProjectMemberGatewayMock = {
     addCurrentUserAsMember: jest.fn<
       Promise<Project>,
       [string, ("admin" | "member" | "viewer")?]

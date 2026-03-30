@@ -1,4 +1,4 @@
-import type { InvitationRepository } from "@/domains/project/core/ports/invitationRepository";
+import type { ProjectInvitationGateway } from "@/domains/project/core/ports/project-invitation.gateway";
 
 /**
  * Decline a project invitation using its token.
@@ -8,8 +8,8 @@ import type { InvitationRepository } from "@/domains/project/core/ports/invitati
  * @throws Error if token is invalid or invitation is not pending
  */
 export const declineInvitation = async (
-  repository: InvitationRepository,
+  gateway: ProjectInvitationGateway,
   token: string
 ): Promise<void> => {
-  return repository.decline(token);
+  return gateway.decline(token);
 };

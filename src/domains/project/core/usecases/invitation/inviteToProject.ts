@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 
 import {
@@ -6,12 +8,18 @@ import {
 } from "@/domains/billing/core/domain/planFeatures.rules";
 import type { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import {
-  type CreateInvitationInput,
-  CreateInvitationInputSchema,
   type ProjectInvitation,
-} from "@/domains/project/core/domain/schema/invitation.schema";
-import type { InvitationRepository } from "@/domains/project/core/ports/invitationRepository";
-import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
+  ProjectRole,
+} from "@/domains/project/core/domain/project.types";
+import type { ProjectInvitationGateway } from "@/domains/project/core/ports/project-invitation.gateway";
+import type { ProjectMemberGateway } from "@/domains/project/core/ports/project-member.gateway";
+
+export const InviteToProjectInputSchema = z.object({
+  projectId: z.string().uuid(),
+  role: z.nativeEnum(ProjectRole).default(ProjectRole.MEMBER),
+});
+
+export type InviteToProjectInput = z.infer<typeof InviteToProjectInputSchema>;
 
 /**
  * Invite a user to join a project.
@@ -30,19 +38,19 @@ import type { MemberRepository } from "@/domains/project/core/ports/memberReposi
  * @throws DomainRuleError if plan limit would be exceeded
  */
 export const inviteToProject = async (
-  invitationRepo: InvitationRepository,
-  memberRepo: MemberRepository,
-  input: CreateInvitationInput,
+  invitationGateway: ProjectInvitationGateway,
+  memberGateway: ProjectMemberGateway,
+  input: InviteToProjectInput,
   currentPlan: SubscriptionPlan
 ): Promise<ProjectInvitation> => {
-  const parsed = CreateInvitationInputSchema.parse(input);
+  const parsed = InviteToProjectInputSchema.parse(input);
 
   const limit = getFeatureLimit(currentPlan, PlanFeature.MEMBERS_PER_WORKSPACE);
 
   // -1 means unlimited
   if (limit !== -1) {
-    const currentMembers = await memberRepo.listByProject(parsed.projectId);
-    const pendingCount = await invitationRepo.countPending(parsed.projectId);
+    const currentMembers = await memberGateway.listByProject(parsed.projectId);
+    const pendingCount = await invitationGateway.countPending(parsed.projectId);
     const total = currentMembers.length + pendingCount;
 
     if (total >= limit) {
@@ -53,5 +61,5 @@ export const inviteToProject = async (
     }
   }
 
-  return invitationRepo.create(parsed);
+  return invitationGateway.create(parsed);
 };

@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import type { ProjectRole } from "@/domains/project/core/domain/project.types";
 import { updateMemberRole } from "@/domains/project/core/usecases/member/updateMemberRole";
-import { memberRepository } from "@/domains/project/infrastructure/supabase/repositories";
+import { projectMemberGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
@@ -23,7 +23,7 @@ export const useUpdateMemberRole = () => {
 
   return useMutation({
     mutationFn: ({ memberId, role, projectId }: UpdateMemberRoleVariables) =>
-      updateMemberRole(memberRepository, projectId, memberId, role),
+      updateMemberRole(projectMemberGateway, projectId, memberId, role),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.members.byProject(variables.projectId),

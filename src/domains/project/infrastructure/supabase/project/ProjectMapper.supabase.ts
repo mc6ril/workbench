@@ -4,7 +4,7 @@ import type {
   Project,
   ProjectRole,
   ProjectWithRole,
-} from "@/domains/project/core/domain/schema/project.schema";
+} from "@/domains/project/core/domain/project.types";
 import type { ProjectRow } from "@/domains/project/infrastructure/supabase/types";
 
 /**

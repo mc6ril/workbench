@@ -7,8 +7,8 @@ import {
   mapReclaimableProjectRowToDomain,
 } from "./Mapper.supabase";
 
-import type { ProjectWithRole } from "@/domains/project/core/domain/schema/project.schema";
-import { createProjectRepository } from "@/domains/project/infrastructure/supabase/project/ProjectRepository.supabase";
+import type { ProjectWithRole } from "@/domains/project/core/domain/project.types";
+import { createProjectGateway } from "@/domains/project/infrastructure/supabase/project/ProjectGateway.supabase";
 import type {
   ProjectWithStats,
   ReclaimableProject,
@@ -39,11 +39,11 @@ const mapProjectWithRoleToStats = (
 export const createWorkspaceProjectCatalogRepository = (
   client: SupabaseClient
 ): WorkspaceProjectCatalogRepository => {
-  const projectRepository = createProjectRepository(client);
+  const projectGateway = createProjectGateway(client);
 
   const repository: WorkspaceProjectCatalogRepository = {
     async listAccessibleProjects(): Promise<ProjectWithRole[]> {
-      return projectRepository.list();
+      return projectGateway.list();
     },
 
     async listProjectsWithStats(): Promise<ProjectWithStats[]> {

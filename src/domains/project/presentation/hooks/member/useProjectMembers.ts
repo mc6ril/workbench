@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { listProjectMembers } from "@/domains/project/core/usecases/member/listProjectMembers";
-import { memberRepository } from "@/domains/project/infrastructure/supabase/repositories";
+import { projectMemberGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 
 /**
@@ -14,7 +14,7 @@ import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 export const useProjectMembers = (projectId: string | undefined) => {
   return useQuery({
     queryKey: queryKeys.members.byProject(projectId ?? ""),
-    queryFn: () => listProjectMembers(memberRepository, projectId!),
+    queryFn: () => listProjectMembers(projectMemberGateway, projectId!),
     enabled: !!projectId,
   });
 };

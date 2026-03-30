@@ -1,25 +1,30 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import { createDatabaseError } from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 
 import { mapInvitationRowToDomain } from "./InvitationMapper.supabase";
 
 import type {
-  CreateInvitationInput,
   ProjectInvitation,
-} from "@/domains/project/core/domain/schema/invitation.schema";
-import type { InvitationRepository } from "@/domains/project/core/ports/invitationRepository";
+  ProjectRole,
+} from "@/domains/project/core/domain/project.types";
+import { isProjectRole } from "@/domains/project/core/domain/project.types";
+import type {
+  AcceptedProjectInvitation,
+  ProjectInvitationGateway,
+} from "@/domains/project/core/ports/project-invitation.gateway";
 import type { InvitationRow } from "@/domains/project/infrastructure/supabase/types";
 
 /**
- * Create an InvitationRepository implementation using the provided Supabase client.
+ * Create a ProjectInvitationGateway implementation using the provided Supabase client.
  *
  * @param client - Supabase client instance to use
- * @returns InvitationRepository implementation
+ * @returns ProjectInvitationGateway implementation
  */
-export const createInvitationRepository = (
+export const createProjectInvitationGateway = (
   client: SupabaseClient
-): InvitationRepository => ({
+): ProjectInvitationGateway => ({
   async listByProject(projectId: string): Promise<ProjectInvitation[]> {
     const { data, error } = await client
       .from("project_invitations")
@@ -34,7 +39,10 @@ export const createInvitationRepository = (
     return ((data ?? []) as InvitationRow[]).map(mapInvitationRowToDomain);
   },
 
-  async create(input: CreateInvitationInput): Promise<ProjectInvitation> {
+  async create(input: {
+    projectId: string;
+    role: ProjectRole;
+  }): Promise<ProjectInvitation> {
     const { data, error } = await client
       .from("project_invitations")
       .insert({
@@ -52,9 +60,7 @@ export const createInvitationRepository = (
     return mapInvitationRowToDomain(data as InvitationRow);
   },
 
-  async accept(
-    token: string
-  ): Promise<{ projectId: string; projectName: string; role: string }> {
+  async accept(token: string): Promise<AcceptedProjectInvitation> {
     const { data, error } = await client.rpc("accept_invitation", {
       invitation_token: token,
     });
@@ -64,10 +70,25 @@ export const createInvitationRepository = (
     }
 
     const row = Array.isArray(data) ? data[0] : data;
+    if (!row || typeof row !== "object") {
+      return handleRepositoryError(
+        createDatabaseError("Invalid invitation acceptance payload"),
+        "ProjectInvitation"
+      );
+    }
+
+    const role = (row as { role?: string }).role;
+    if (!role || !isProjectRole(role)) {
+      return handleRepositoryError(
+        createDatabaseError(`Invalid project role: ${String(role)}`),
+        "ProjectInvitation"
+      );
+    }
+
     return {
-      projectId: row.project_id,
-      projectName: row.project_name,
-      role: row.role,
+      projectId: (row as { project_id: string }).project_id,
+      projectName: (row as { project_name: string }).project_name,
+      role,
     };
   },
 

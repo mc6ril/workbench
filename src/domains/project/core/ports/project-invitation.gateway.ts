@@ -1,10 +1,16 @@
 import type {
-  CreateInvitationInput,
   ProjectInvitation,
-} from "@/domains/project/core/domain/schema/invitation.schema";
+  ProjectRole,
+} from "@/domains/project/core/domain/project.types";
+
+export type AcceptedProjectInvitation = {
+  projectId: string;
+  projectName: string;
+  role: ProjectRole;
+};
 
 /**
- * Repository contract for project invitation operations.
+ * Gateway contract for project invitation operations.
  *
  * Invitations use token-based acceptance (no login required to view the invite page,
  * but authentication is required to accept).
@@ -14,7 +20,7 @@ import type {
  * - Invitations expire after 7 days
  * - Accepting an invitation adds the user to project_members
  */
-export type InvitationRepository = {
+export type ProjectInvitationGateway = {
   /**
    * List invitations currently stored for a project.
    * @returns Invitations ordered by creation date (newest first)
@@ -26,7 +32,7 @@ export type InvitationRepository = {
    * Create a new invitation link for a project.
    * @throws DatabaseError if database operation fails or permission denied
    */
-  create(input: CreateInvitationInput): Promise<ProjectInvitation>;
+  create(input: { projectId: string; role: ProjectRole }): Promise<ProjectInvitation>;
 
   /**
    * Accept a pending invitation using its token.
@@ -35,9 +41,7 @@ export type InvitationRepository = {
    * @throws NotFoundError if token is invalid or invitation is not pending
    * @throws Error if invitation has expired
    */
-  accept(
-    token: string
-  ): Promise<{ projectId: string; projectName: string; role: string }>;
+  accept(token: string): Promise<AcceptedProjectInvitation>;
 
   /**
    * Decline a pending invitation using its token.
