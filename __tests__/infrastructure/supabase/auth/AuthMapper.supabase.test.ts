@@ -7,8 +7,8 @@ import {
 
 import {
   mapSupabaseAuthError,
+  mapSupabaseSessionToCurrentSession,
 } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
-import { mapSupabaseSessionToCurrentSession } from "@/domains/session/infrastructure/supabase/SessionMapper.supabase";
 
 describe("AuthMapper.supabase", () => {
   describe("mapSupabaseSessionToCurrentSession", () => {

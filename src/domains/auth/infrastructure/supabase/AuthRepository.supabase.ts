@@ -24,8 +24,8 @@ import type {
 } from "@/domains/auth/core/domain/auth.schema";
 import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
 import { handleAuthError } from "@/domains/auth/infrastructure/errors/authErrorHandler";
-import { mapSupabaseSessionToCurrentSession } from "@/domains/session/infrastructure/supabase/SessionMapper.supabase";
-import { canUpdatePasswordFromAppMetadata } from "@/domains/session/infrastructure/supabase/sessionProviderCapabilities";
+import { mapSupabaseSessionToCurrentSession } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
+import { canUpdatePasswordFromAppMetadata } from "@/domains/auth/infrastructure/supabase/providerCapabilities";
 
 /**
  * Create an AuthRepository implementation using the provided Supabase client.

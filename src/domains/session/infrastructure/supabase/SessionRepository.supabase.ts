@@ -3,9 +3,9 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
 
 import { handleAuthError } from "@/domains/auth/infrastructure/errors/authErrorHandler";
+import { canUpdatePasswordFromAppMetadata } from "@/domains/auth/infrastructure/supabase/providerCapabilities";
 import type { SessionRepository } from "@/domains/session/core/ports/sessionRepository";
 import { mapSupabaseSessionToCurrentSession } from "@/domains/session/infrastructure/supabase/SessionMapper.supabase";
-import { canUpdatePasswordFromAppMetadata } from "@/domains/session/infrastructure/supabase/sessionProviderCapabilities";
 
 const createAuthenticationError = (debugMessage: string) => ({
   code: AUTH_ERROR_CODE.AUTHENTICATION_ERROR,

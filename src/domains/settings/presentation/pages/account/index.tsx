@@ -55,9 +55,9 @@ import {
 } from "@/domains/profile/presentation/hooks/useAvatarUpload";
 import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
 import { useUpdatePreferences } from "@/domains/profile/presentation/hooks/useUpdatePreferences";
-import { useUpdateProfile } from "@/domains/profile/presentation/hooks/useUpdateProfile";
 import { useCanUpdatePassword } from "@/domains/session/presentation/hooks/useCanUpdatePassword";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
+import { useUpdateAccountProfile } from "@/domains/settings/presentation/hooks/useUpdateAccountProfile";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 
 const LANGUAGE_SELECT_OPTIONS = supportedLocaleOptions.map((locale) => ({
@@ -75,7 +75,7 @@ const AccountPage = () => {
   const { data: canUpdatePassword, isLoading: isPasswordCapabilityLoading } =
     useCanUpdatePassword(!!session?.userId);
   const { data: profile, isLoading: isProfileLoading } = useMyProfile();
-  const updateProfileMutation = useUpdateProfile();
+  const updateProfileMutation = useUpdateAccountProfile();
   const changePasswordMutation = useChangePassword();
   const uploadAvatarMutation = useUploadAvatar();
   const removeAvatarMutation = useRemoveAvatar();
@@ -185,8 +185,26 @@ const AccountPage = () => {
   });
 
   const handleProfileSave = useCallback(async () => {
-    await updateProfileMutation.mutateAsync({ displayName: name, email });
-  }, [updateProfileMutation, name, email]);
+    const currentDisplayName = viewer?.displayName ?? "";
+    const currentEmail = viewer?.loginEmail ?? "";
+    const nextDisplayName = name.trim();
+    const nextEmail = email.trim();
+    const updates: { displayName?: string; email?: string } = {};
+
+    if (nextDisplayName !== currentDisplayName) {
+      updates.displayName = nextDisplayName;
+    }
+
+    if (nextEmail !== currentEmail) {
+      updates.email = nextEmail;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return;
+    }
+
+    await updateProfileMutation.mutateAsync(updates);
+  }, [updateProfileMutation, viewer?.displayName, viewer?.loginEmail, name, email]);
 
   const getAvatarErrorMessage = useCallback(
     (error: unknown) => {
