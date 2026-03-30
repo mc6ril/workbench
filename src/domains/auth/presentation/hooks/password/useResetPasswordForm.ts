@@ -3,6 +3,8 @@ import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { getAppErrorCode } from "@/shared/errors/appError";
+import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
@@ -28,12 +30,12 @@ export const useResetPasswordForm = () => {
 
   useEffect(() => {
     if (resetPasswordMutation.error) {
-      const error = resetPasswordMutation.error as { code?: string };
-      const errorMessage = getErrorMessage(error, tErrors);
+      const code = getAppErrorCode(resetPasswordMutation.error);
+      const errorMessage = getErrorMessage(resetPasswordMutation.error, tErrors);
 
       if (
-        error.code === "INVALID_EMAIL" ||
-        error.code === "PASSWORD_RESET_ERROR"
+        code === AUTH_ERROR_CODE.INVALID_EMAIL ||
+        code === AUTH_ERROR_CODE.PASSWORD_RESET_ERROR
       ) {
         setError("email", { type: "server", message: errorMessage });
       } else {

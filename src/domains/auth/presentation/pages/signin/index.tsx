@@ -13,6 +13,8 @@ import Form from "@/shared/design-system/form";
 import Input from "@/shared/design-system/input";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
+import { getAppErrorCode } from "@/shared/errors/appError";
+import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
@@ -75,20 +77,20 @@ const SigninPage = () => {
 
   useEffect(() => {
     if (signInMutation.error) {
-      const error = signInMutation.error as { code?: string };
-      const errorMessage = getErrorMessage(error, tErrors);
+      const code = getAppErrorCode(signInMutation.error);
+      const errorMessage = getErrorMessage(signInMutation.error, tErrors);
 
-      if (error.code === "EMAIL_VERIFICATION_ERROR") {
+      if (code === AUTH_ERROR_CODE.EMAIL_VERIFICATION_ERROR) {
         setError("root", {
           type: "server",
           message: errorMessage,
         });
-      } else if (error.code === "INVALID_CREDENTIALS") {
+      } else if (code === AUTH_ERROR_CODE.INVALID_CREDENTIALS) {
         setError("root", {
           type: "server",
           message: errorMessage,
         });
-      } else if (error.code === "INVALID_EMAIL") {
+      } else if (code === AUTH_ERROR_CODE.INVALID_EMAIL) {
         setError("email", {
           type: "server",
           message: errorMessage,
@@ -115,10 +117,7 @@ const SigninPage = () => {
     if (signInWithGoogleMutation.error) {
       setError("root", {
         type: "server",
-        message: getErrorMessage(
-          signInWithGoogleMutation.error as { code?: string },
-          tErrors
-        ),
+        message: getErrorMessage(signInWithGoogleMutation.error, tErrors),
       });
     }
   }, [signInWithGoogleMutation.error, setError, tErrors]);
@@ -159,9 +158,8 @@ const SigninPage = () => {
 
   const isEmailVerificationError =
     isUnverifiedRedirect ||
-    (signInMutation.error &&
-      (signInMutation.error as { code?: string }).code ===
-        "EMAIL_VERIFICATION_ERROR");
+    getAppErrorCode(signInMutation.error) ===
+      AUTH_ERROR_CODE.EMAIL_VERIFICATION_ERROR;
 
   return (
     <div className={styles["signin-page"]}>

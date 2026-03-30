@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
+import { throwProgrammingError } from "@/shared/errors/programmingError";
 import { createLoggerFactory } from "@/shared/observability";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
@@ -24,7 +25,7 @@ const validateEnvironmentVariables = (): void => {
 
   if (missingVariables.length > 0) {
     const variablesList = missingVariables.join(", ");
-    throw new Error(
+    throwProgrammingError(
       `Missing required environment variable(s): ${variablesList}\n` +
         `Please add them to your .env.local file.\n` +
         `See .env.local.example for reference.`

@@ -98,10 +98,7 @@ export const useVerifyEmailFlow = () => {
         ? getErrorMessage({ code: redirectErrorCode }, tErrors)
         : tErrors("auth.EMAIL_VERIFICATION_ERROR")
       : verifyEmailMutation.error
-        ? getErrorMessage(
-            verifyEmailMutation.error as { code?: string },
-            tErrors
-          )
+        ? getErrorMessage(verifyEmailMutation.error, tErrors)
         : hasSessionRecoveryError
           ? tErrors("auth.EMAIL_VERIFICATION_ERROR")
         : undefined;

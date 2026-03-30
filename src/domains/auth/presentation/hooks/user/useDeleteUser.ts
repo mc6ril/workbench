@@ -2,6 +2,8 @@ import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { API_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
+import { createAppError } from "@/shared/errors/appError";
+import { INFRA_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 
 import { invalidatePostAuthMutation } from "@/domains/auth/presentation/utils/invalidatePostAuthMutation";
 
@@ -21,7 +23,12 @@ export const useDeleteUser = () => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Failed to delete user account");
+        throw createAppError(INFRA_ERROR_CODE.DELETE_ACCOUNT_FAILED, {
+          debugMessage:
+            typeof errorData.error === "string"
+              ? errorData.error
+              : "Failed to delete user account",
+        });
       }
     },
     onSuccess: async () => {

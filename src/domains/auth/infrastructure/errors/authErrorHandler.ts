@@ -1,4 +1,4 @@
-import { AUTH_ERROR_CODES } from "@/shared/constants/errorCodes";
+import { AUTH_ERROR_CODES } from "@/shared/errors/appErrorCodes";
 import { createLoggerFactory } from "@/shared/observability";
 import { hasErrorCode } from "@/shared/utils/guards";
 
@@ -15,7 +15,7 @@ export const handleAuthError = (error: unknown): never => {
   if (hasErrorCode(error, [...AUTH_ERROR_CODES])) {
     logger.warn("Authentication error", {
       error,
-      errorCode: (error as { code?: string }).code,
+      errorCode: error.code,
     });
     throw error;
   }

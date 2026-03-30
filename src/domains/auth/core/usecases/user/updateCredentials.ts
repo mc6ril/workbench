@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DOMAIN_RULE_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 
 import type { UpdateCredentialsInput } from "@/domains/auth/core/domain/auth.types";
@@ -38,7 +39,7 @@ export const updateCredentials = async (
 
   if (!validatedInput.email && !validatedInput.password) {
     throw createDomainRuleError(
-      "UPDATE_CREDENTIALS_NO_FIELDS",
+      DOMAIN_RULE_ERROR_CODE.UPDATE_CREDENTIALS_NO_FIELDS,
       "At least one field (email or password) must be provided"
     );
   }

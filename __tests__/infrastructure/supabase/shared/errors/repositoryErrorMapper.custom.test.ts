@@ -12,7 +12,9 @@ describe("mapSupabaseError custom business cases", () => {
     const result = mapSupabaseError(supabaseError, "ProjectMember");
 
     expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
-    expect(result).toHaveProperty("constraint", "LAST_ADMIN_REQUIRED");
+    expect(result).toMatchObject({
+      context: { constraint: "LAST_ADMIN_REQUIRED" },
+    });
   });
 
   it("maps expired invitation RPC errors to a named constraint", () => {
@@ -26,7 +28,9 @@ describe("mapSupabaseError custom business cases", () => {
     const result = mapSupabaseError(supabaseError, "ProjectInvitation");
 
     expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
-    expect(result).toHaveProperty("constraint", "INVITATION_EXPIRED");
+    expect(result).toMatchObject({
+      context: { constraint: "INVITATION_EXPIRED" },
+    });
   });
 
   it("maps already-member invitation RPC errors to a named constraint", () => {
@@ -40,6 +44,8 @@ describe("mapSupabaseError custom business cases", () => {
     const result = mapSupabaseError(supabaseError, "ProjectInvitation");
 
     expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
-    expect(result).toHaveProperty("constraint", "INVITATION_ALREADY_MEMBER");
+    expect(result).toMatchObject({
+      context: { constraint: "INVITATION_ALREADY_MEMBER" },
+    });
   });
 });

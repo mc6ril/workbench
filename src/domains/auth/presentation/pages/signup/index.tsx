@@ -14,6 +14,8 @@ import Form from "@/shared/design-system/form";
 import Input from "@/shared/design-system/input";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
+import { getAppErrorCode } from "@/shared/errors/appError";
+import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
@@ -80,18 +82,18 @@ const SignupPage = () => {
 
   useEffect(() => {
     if (signUpMutation.error) {
-      const error = signUpMutation.error as { code?: string };
-      const errorMessage = getErrorMessage(error, tErrors);
+      const code = getAppErrorCode(signUpMutation.error);
+      const errorMessage = getErrorMessage(signUpMutation.error, tErrors);
 
       if (
-        error.code === "EMAIL_ALREADY_EXISTS" ||
-        error.code === "INVALID_EMAIL"
+        code === AUTH_ERROR_CODE.EMAIL_ALREADY_EXISTS ||
+        code === AUTH_ERROR_CODE.INVALID_EMAIL
       ) {
         setError("email", {
           type: "server",
           message: errorMessage,
         });
-      } else if (error.code === "WEAK_PASSWORD") {
+      } else if (code === AUTH_ERROR_CODE.WEAK_PASSWORD) {
         setError("password", {
           type: "server",
           message: errorMessage,
@@ -121,10 +123,7 @@ const SignupPage = () => {
     if (signInWithGoogleMutation.error) {
       setError("root", {
         type: "server",
-        message: getErrorMessage(
-          signInWithGoogleMutation.error as { code?: string },
-          tErrors
-        ),
+        message: getErrorMessage(signInWithGoogleMutation.error, tErrors),
       });
     }
   }, [signInWithGoogleMutation.error, setError, tErrors]);

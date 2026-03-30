@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
+import { throwProgrammingError } from "@/shared/errors/programmingError";
 import { getIntlLocale, getTranslationValue } from "@/shared/i18n";
 import { getMessages } from "@/shared/i18n/messages";
 import { getRequestLocale } from "@/shared/i18n/requestLocale";
@@ -19,11 +20,11 @@ const getAppMetadata = async (): Promise<Metadata> => {
   );
 
   if (!appTitle) {
-    throw new Error("Missing translation: app.metadata.title");
+    throwProgrammingError("Missing translation: app.metadata.title");
   }
 
   if (!appDescription) {
-    throw new Error("Missing translation: app.metadata.description");
+    throwProgrammingError("Missing translation: app.metadata.description");
   }
 
   return {

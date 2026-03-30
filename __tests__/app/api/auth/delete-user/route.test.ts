@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
+import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 
 jest.mock("next/server", () => ({
   NextResponse: {

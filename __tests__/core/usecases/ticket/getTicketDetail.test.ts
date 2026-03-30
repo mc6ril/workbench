@@ -53,8 +53,10 @@ describe("getTicketDetail", () => {
     // Act & Assert
     await expect(getTicketDetail(repository, ticketId)).rejects.toMatchObject({
       code: "NOT_FOUND",
-      entityType: "Ticket",
-      entityId: ticketId,
+      context: {
+        entityType: "Ticket",
+        entityId: ticketId,
+      },
     });
     expect(repository.findById).toHaveBeenCalledTimes(1);
     expect(repository.findById).toHaveBeenCalledWith(ticketId);
