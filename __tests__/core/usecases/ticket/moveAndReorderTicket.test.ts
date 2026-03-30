@@ -214,8 +214,10 @@ describe("moveAndReorderTicket", () => {
       })
     ).rejects.toMatchObject({
       code: "NOT_FOUND",
-      entityType: "Ticket",
-      entityId: ticketId,
+      context: {
+        entityType: "Ticket",
+        entityId: ticketId,
+      },
     });
     expect(repository.moveAndReorderTicket).toHaveBeenCalledTimes(1);
   });
@@ -235,8 +237,10 @@ describe("moveAndReorderTicket", () => {
       })
     ).rejects.toMatchObject({
       code: "NOT_FOUND",
-      entityType: "Ticket",
-      entityId: ticketId,
+      context: {
+        entityType: "Ticket",
+        entityId: ticketId,
+      },
     });
     expect(repository.moveAndReorderTicket).not.toHaveBeenCalled();
   });

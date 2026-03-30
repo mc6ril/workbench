@@ -22,6 +22,8 @@ import Loader from "@/shared/design-system/loader";
 import Modal from "@/shared/design-system/modal";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
+import { getAppErrorCode } from "@/shared/errors/appError";
+import { REPOSITORY_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { markNavigationStart } from "@/shared/navigationPerf";
@@ -134,9 +136,12 @@ const WorkspacePage = () => {
 
   useEffect(() => {
     if (createProjectMutation.error) {
-      const error = createProjectMutation.error as { code?: string };
-      const errorMessage = getErrorMessage(error, tErrors);
-      if (error.code === "CONSTRAINT_VIOLATION") {
+      const code = getAppErrorCode(createProjectMutation.error);
+      const errorMessage = getErrorMessage(
+        createProjectMutation.error,
+        tErrors
+      );
+      if (code === REPOSITORY_ERROR_CODE.CONSTRAINT_VIOLATION) {
         setFormError("name", { type: "server", message: errorMessage });
       } else {
         setFormError("root", { type: "server", message: errorMessage });
@@ -222,7 +227,7 @@ const WorkspacePage = () => {
   const hasProjects = Array.isArray(projects) && projects.length > 0;
   const showWelcomeGuide = !hasProjects && canAutoOpenGettingStarted;
   const gettingStartedErrorMessage = gettingStartedError
-    ? getErrorMessage(gettingStartedError as { code?: string }, tErrors)
+    ? getErrorMessage(gettingStartedError, tErrors)
     : null;
 
   return (
@@ -253,10 +258,7 @@ const WorkspacePage = () => {
       <div className={styles["workspace-container"]}>
         {projectsError && (
           <ErrorMessage
-            message={getErrorMessage(
-              projectsError as { code?: string },
-              tErrors
-            )}
+            message={getErrorMessage(projectsError, tErrors)}
           />
         )}
 

@@ -11,6 +11,8 @@ import {
   useState,
 } from "react";
 
+import { assertDefined } from "@/shared/errors/programmingError";
+
 import {
   EMPTY_PROJECT_VIEW_CONTRIBUTION,
   type ProjectViewContribution,
@@ -58,11 +60,10 @@ export const ProjectShellContributionProvider = ({
 export const useProjectShellContribution = (): ProjectViewContribution => {
   const context = useContext(ProjectShellContributionContext);
 
-  if (!context) {
-    throw new Error(
-      "useProjectShellContribution must be used within ProjectShellContributionProvider"
-    );
-  }
+  assertDefined(
+    context,
+    "useProjectShellContribution must be used within ProjectShellContributionProvider"
+  );
 
   return context.contribution;
 };
@@ -72,11 +73,10 @@ export const useRegisterProjectViewContribution = (
 ) => {
   const context = useContext(ProjectShellContributionContext);
 
-  if (!context) {
-    throw new Error(
-      "useRegisterProjectViewContribution must be used within ProjectShellContributionProvider"
-    );
-  }
+  assertDefined(
+    context,
+    "useRegisterProjectViewContribution must be used within ProjectShellContributionProvider"
+  );
 
   const { setContribution } = context;
   const onMount = contribution.onMount;

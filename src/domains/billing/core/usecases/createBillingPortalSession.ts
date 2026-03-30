@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+import { createAppError } from "@/shared/errors/appError";
+import { INFRA_ERROR_CODE } from "@/shared/errors/appErrorCodes";
+
 import type { PaymentGateway } from "@/domains/billing/core/ports/payment.gateway";
 import type { SubscriptionRepository } from "@/domains/billing/core/ports/subscription.repository";
 
@@ -25,7 +28,9 @@ export const createBillingPortalSession = async (
   const subscription = await subscriptionRepository.getByUserId(params.userId);
 
   if (!subscription?.customerId) {
-    throw new Error("No billing customer found for this user.");
+    throw createAppError(INFRA_ERROR_CODE.BILLING_NO_CUSTOMER, {
+      debugMessage: "No billing customer found for this user.",
+    });
   }
 
   return paymentGateway.createBillingPortalSession({

@@ -1,3 +1,5 @@
+import { createAppError } from "@/shared/errors/appError";
+import { INFRA_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { toDate } from "@/shared/utils/guards";
 
 import {
@@ -18,7 +20,9 @@ const parseColumnWorkflowState = (raw: string): ColumnWorkflowState => {
     return raw as ColumnWorkflowState;
   }
 
-  throw new Error(`Invalid column workflow state: ${raw}`);
+  throw createAppError(INFRA_ERROR_CODE.BOARD_INVALID_COLUMN_WORKFLOW_STATE, {
+    debugMessage: `Invalid column workflow state: ${raw}`,
+  });
 };
 
 /**

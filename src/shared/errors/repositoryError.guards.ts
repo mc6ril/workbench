@@ -1,32 +1,23 @@
+import { isAppError } from "@/shared/errors/appError";
+import { REPOSITORY_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import type {
   ConstraintError,
   DatabaseError,
   NotFoundError,
   RepositoryError,
-} from "./repositoryError";
+} from "@/shared/errors/repositoryError";
 
 /**
- * Type guard to check if an error is a RepositoryError.
- * Validates that the error has a code property and matches repository error structure.
+ * Type guard to check if an error is a repository-layer {@link AppError}.
  */
 export const isRepositoryError = (error: unknown): error is RepositoryError => {
-  if (!error || typeof error !== "object") {
+  if (!isAppError(error)) {
     return false;
   }
-
-  const err = error as Record<string, unknown>;
-
-  // Must have a code property
-  if (!("code" in err) || typeof err.code !== "string") {
-    return false;
-  }
-
-  // Check if code matches known repository error codes
-  const code = err.code;
   return (
-    code === "NOT_FOUND" ||
-    code === "CONSTRAINT_VIOLATION" ||
-    code === "DATABASE_ERROR"
+    error.code === REPOSITORY_ERROR_CODE.NOT_FOUND ||
+    error.code === REPOSITORY_ERROR_CODE.CONSTRAINT_VIOLATION ||
+    error.code === REPOSITORY_ERROR_CODE.DATABASE_ERROR
   );
 };
 
@@ -36,11 +27,10 @@ export const isRepositoryError = (error: unknown): error is RepositoryError => {
 export const isNotFoundError = (error: unknown): error is NotFoundError => {
   return (
     isRepositoryError(error) &&
-    error.code === "NOT_FOUND" &&
-    "entityType" in error &&
-    "entityId" in error &&
-    typeof (error as NotFoundError).entityType === "string" &&
-    typeof (error as NotFoundError).entityId === "string"
+    error.code === REPOSITORY_ERROR_CODE.NOT_FOUND &&
+    error.context !== undefined &&
+    typeof error.context.entityType === "string" &&
+    typeof error.context.entityId === "string"
   );
 };
 
@@ -50,9 +40,9 @@ export const isNotFoundError = (error: unknown): error is NotFoundError => {
 export const isConstraintError = (error: unknown): error is ConstraintError => {
   return (
     isRepositoryError(error) &&
-    error.code === "CONSTRAINT_VIOLATION" &&
-    "constraint" in error &&
-    typeof (error as ConstraintError).constraint === "string"
+    error.code === REPOSITORY_ERROR_CODE.CONSTRAINT_VIOLATION &&
+    error.context !== undefined &&
+    typeof error.context.constraint === "string"
   );
 };
 
@@ -60,5 +50,8 @@ export const isConstraintError = (error: unknown): error is ConstraintError => {
  * Type guard to check if an error is a DatabaseError.
  */
 export const isDatabaseError = (error: unknown): error is DatabaseError => {
-  return isRepositoryError(error) && error.code === "DATABASE_ERROR";
+  return (
+    isRepositoryError(error) &&
+    error.code === REPOSITORY_ERROR_CODE.DATABASE_ERROR
+  );
 };

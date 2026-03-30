@@ -1,94 +1,65 @@
-import { isDomainRuleError } from "@/shared/errors/domainRuleError.guards";
-import type { ConstraintError } from "@/shared/errors/repositoryError";
-import type { NotFoundError } from "@/shared/errors/repositoryError";
-import { isRepositoryError } from "@/shared/errors/repositoryError.guards";
+import type { AppError } from "@/shared/errors/appError";
+import { normalizeToAppError } from "@/shared/errors/appError";
+import { APP_ERROR_MESSAGE_KEY } from "@/shared/i18n/appErrorMessageKeys";
+
+const DOMAIN_CONSTRAINT_TO_I18N_KEY: Record<string, string> = {
+  LAST_ADMIN_REQUIRED: "domain.LAST_ADMIN_REQUIRED",
+  INVITATION_ALREADY_USED: "domain.INVITATION_ALREADY_USED",
+  INVITATION_EXPIRED: "domain.INVITATION_EXPIRED",
+  INVITATION_ALREADY_MEMBER: "domain.INVITATION_ALREADY_MEMBER",
+};
 
 /**
- * Gets a user-facing error message from an error object.
- * Maps error codes to i18n translation keys using type guards.
- * Supports RepositoryError, DomainRuleError, and generic errors.
+ * Maps a normalized {@link AppError} to a translated user-facing string.
+ */
+export const getErrorMessageFromAppError = (
+  appError: AppError,
+  tErrors: (key: string, params?: Record<string, string | number>) => string
+): string => {
+  if (appError.code === "CONSTRAINT_VIOLATION" && appError.context?.constraint) {
+    const mappedKey =
+      DOMAIN_CONSTRAINT_TO_I18N_KEY[appError.context.constraint];
+    if (mappedKey) {
+      return tErrors(mappedKey);
+    }
+  }
+
+  if (
+    appError.code === "NOT_FOUND" &&
+    appError.context?.entityType &&
+    appError.context?.entityId
+  ) {
+    return tErrors("repository.NOT_FOUND_WITH_ENTITY", {
+      entityType: appError.context.entityType,
+      entityId: appError.context.entityId,
+    });
+  }
+
+  const translationKey = APP_ERROR_MESSAGE_KEY[appError.code];
+  if (translationKey) {
+    return tErrors(translationKey);
+  }
+
+  return tErrors("generic");
+};
+
+/**
+ * Gets a user-facing error message from an error value.
+ * Resolves stable {@link AppError} codes to translated strings via the `errors` namespace.
  *
- * @param error - The error object with a code property
- * @param tErrors - Translation function for errors namespace
+ * @param error - Unknown error (typically from a mutation or query)
+ * @param tErrors - Translation function for the `errors` namespace
  * @returns Translated error message
  */
 export const getErrorMessage = (
-  error: { code?: string } | null | undefined,
+  error: unknown,
   tErrors: (key: string, params?: Record<string, string | number>) => string
 ): string => {
-  if (!error || !error.code) {
+  const appError = normalizeToAppError(error);
+
+  if (!appError) {
     return tErrors("generic");
   }
 
-  // Handle RepositoryError using type guard
-  if (isRepositoryError(error)) {
-    // Special handling for NOT_FOUND with entity info
-    if (error.code === "NOT_FOUND") {
-      const notFoundError = error as NotFoundError;
-      if (notFoundError.entityType && notFoundError.entityId) {
-        return tErrors("repository.NOT_FOUND_WITH_ENTITY", {
-          entityType: notFoundError.entityType,
-          entityId: notFoundError.entityId,
-        });
-      }
-    }
-
-    if (error.code === "CONSTRAINT_VIOLATION") {
-      const constraintError = error as ConstraintError;
-      const domainConstraintKeyMap: Record<string, string> = {
-        LAST_ADMIN_REQUIRED: "domain.LAST_ADMIN_REQUIRED",
-        INVITATION_ALREADY_USED: "domain.INVITATION_ALREADY_USED",
-        INVITATION_EXPIRED: "domain.INVITATION_EXPIRED",
-        INVITATION_ALREADY_MEMBER: "domain.INVITATION_ALREADY_MEMBER",
-      };
-
-      const domainConstraintKey =
-        domainConstraintKeyMap[constraintError.constraint];
-
-      if (domainConstraintKey) {
-        return tErrors(domainConstraintKey);
-      }
-    }
-
-    // Map repository error codes to i18n keys
-    const repositoryKeyMap: Record<string, string> = {
-      NOT_FOUND: "repository.NOT_FOUND",
-      CONSTRAINT_VIOLATION: "repository.CONSTRAINT_VIOLATION",
-      DATABASE_ERROR: "repository.DATABASE_ERROR",
-    };
-
-    const translationKey = repositoryKeyMap[error.code];
-    if (translationKey) {
-      return tErrors(translationKey);
-    }
-  }
-
-  // Handle auth errors before domain rule errors, because the domain rule
-  // guard is a catch-all that would incorrectly match auth error codes
-  const authKeyMap: Record<string, string> = {
-    INVALID_CREDENTIALS: "auth.INVALID_CREDENTIALS",
-    EMAIL_ALREADY_EXISTS: "auth.EMAIL_ALREADY_EXISTS",
-    WEAK_PASSWORD: "auth.WEAK_PASSWORD",
-    INVALID_EMAIL: "auth.INVALID_EMAIL",
-    AUTHENTICATION_ERROR: "auth.AUTHENTICATION_ERROR",
-    EMAIL_VERIFICATION_ERROR: "auth.EMAIL_VERIFICATION_ERROR",
-    PASSWORD_RESET_ERROR: "auth.PASSWORD_RESET_ERROR",
-    INVALID_TOKEN: "auth.INVALID_TOKEN",
-    SAME_PASSWORD: "auth.SAME_PASSWORD",
-    PASSWORD_UPDATE_NOT_ALLOWED: "auth.PASSWORD_UPDATE_NOT_ALLOWED",
-  };
-
-  const authTranslationKey = authKeyMap[error.code];
-  if (authTranslationKey) {
-    return tErrors(authTranslationKey);
-  }
-
-  // Handle DomainRuleError using type guard
-  if (isDomainRuleError(error)) {
-    const domainKey = `domain.${error.code}`;
-    return tErrors(domainKey);
-  }
-
-  // Fallback for unknown error codes
-  return tErrors("generic");
+  return getErrorMessageFromAppError(appError, tErrors);
 };

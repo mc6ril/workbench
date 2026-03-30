@@ -1,7 +1,8 @@
 import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
 
-import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
+import { createAppError } from "@/shared/errors/appError";
+import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { getLocale } from "@/shared/i18n/config";
 import {
   buildAuthCallbackPath,
@@ -69,15 +70,16 @@ const mapVerifiedSessionToAuthResult = (
 };
 
 const createPasswordUpdateNotAllowedError =
-  (): PasswordUpdateNotAllowedError => ({
-    code: AUTH_ERROR_CODE.PASSWORD_UPDATE_NOT_ALLOWED,
-    debugMessage: "Password updates are not available for OAuth-only accounts",
-  });
+  (): PasswordUpdateNotAllowedError =>
+    createAppError(AUTH_ERROR_CODE.PASSWORD_UPDATE_NOT_ALLOWED, {
+      debugMessage:
+        "Password updates are not available for OAuth-only accounts",
+    }) as PasswordUpdateNotAllowedError;
 
-const createPasswordUpdateAuthRequiredError = (): AuthenticationError => ({
-  code: "AUTHENTICATION_ERROR",
-  debugMessage: "User must be authenticated to update password",
-});
+const createPasswordUpdateAuthRequiredError = (): AuthenticationError =>
+  createAppError(AUTH_ERROR_CODE.AUTHENTICATION_ERROR, {
+    debugMessage: "User must be authenticated to update password",
+  }) as AuthenticationError;
 
 export const createAuthGateway = (
   client: SupabaseClient,
@@ -137,10 +139,10 @@ export const createAuthGateway = (
 
         // If user has confirmed email OR has empty identities, they already exist
         if (hasConfirmedEmail || hasEmptyIdentities) {
-          const emailAlreadyExistsError: EmailAlreadyExistsError = {
-            code: "EMAIL_ALREADY_EXISTS",
-            debugMessage: "User with this email already exists",
-          };
+          const emailAlreadyExistsError: EmailAlreadyExistsError =
+            createAppError(AUTH_ERROR_CODE.EMAIL_ALREADY_EXISTS, {
+              debugMessage: "User with this email already exists",
+            }) as EmailAlreadyExistsError;
           handleAuthError(emailAlreadyExistsError);
         }
       }
@@ -155,10 +157,12 @@ export const createAuthGateway = (
 
       // Session exists: user is automatically logged in (email verification not required or already verified)
       if (!data.user || !data.session) {
-        const error: AuthenticationError = {
-          code: "AUTHENTICATION_ERROR",
-          debugMessage: "User data or session not returned from signup",
-        };
+        const error: AuthenticationError = createAppError(
+          AUTH_ERROR_CODE.AUTHENTICATION_ERROR,
+          {
+            debugMessage: "User data or session not returned from signup",
+          }
+        ) as AuthenticationError;
         handleAuthError(error);
       }
 
@@ -184,10 +188,12 @@ export const createAuthGateway = (
       }
 
       if (!data.session || !data.user) {
-        const error: AuthenticationError = {
-          code: "AUTHENTICATION_ERROR",
-          debugMessage: "No session or user returned from signin",
-        };
+        const error: AuthenticationError = createAppError(
+          AUTH_ERROR_CODE.AUTHENTICATION_ERROR,
+          {
+            debugMessage: "No session or user returned from signin",
+          }
+        ) as AuthenticationError;
         handleAuthError(error);
       }
 
@@ -229,10 +235,13 @@ export const createAuthGateway = (
       const oauthUrl = data?.url ?? "";
 
       if (!oauthUrl) {
-        const error: AuthenticationError = {
-          code: "AUTHENTICATION_ERROR",
-          debugMessage: "No OAuth URL returned from Supabase Google signin",
-        };
+        const error: AuthenticationError = createAppError(
+          AUTH_ERROR_CODE.AUTHENTICATION_ERROR,
+          {
+            debugMessage:
+              "No OAuth URL returned from Supabase Google signin",
+          }
+        ) as AuthenticationError;
         return handleAuthError(error);
       }
 
@@ -307,10 +316,13 @@ export const createAuthGateway = (
         }
 
         if (!verifyData.session || !verifyData.user) {
-          const error: InvalidTokenError = {
-            code: "INVALID_TOKEN",
-            debugMessage: "No session or user returned from token verification",
-          };
+          const error: InvalidTokenError = createAppError(
+            AUTH_ERROR_CODE.INVALID_TOKEN,
+            {
+              debugMessage:
+                "No session or user returned from token verification",
+            }
+          ) as InvalidTokenError;
           handleAuthError(error);
         }
 
@@ -341,11 +353,13 @@ export const createAuthGateway = (
       }
 
       if (!sessionData.session) {
-        const error: InvalidTokenError = {
-          code: "INVALID_TOKEN",
-          debugMessage:
-            "No active session. The reset link may be invalid or expired. Please request a new password reset email.",
-        };
+        const error: InvalidTokenError = createAppError(
+          AUTH_ERROR_CODE.INVALID_TOKEN,
+          {
+            debugMessage:
+              "No active session. The reset link may be invalid or expired. Please request a new password reset email.",
+          }
+        ) as InvalidTokenError;
         return handleAuthError(error);
       }
 
@@ -369,10 +383,12 @@ export const createAuthGateway = (
       }
 
       if (!user) {
-        const error: InvalidTokenError = {
-          code: "INVALID_TOKEN",
-          debugMessage: "User not found after password update",
-        };
+        const error: InvalidTokenError = createAppError(
+          AUTH_ERROR_CODE.INVALID_TOKEN,
+          {
+            debugMessage: "User not found after password update",
+          }
+        ) as InvalidTokenError;
         return handleAuthError(error);
       }
 
@@ -404,10 +420,13 @@ export const createAuthGateway = (
         }
 
         if (!session) {
-          const error: EmailVerificationError = {
-            code: "EMAIL_VERIFICATION_ERROR",
-            debugMessage: "No session returned after PKCE email verification",
-          };
+          const error: EmailVerificationError = createAppError(
+            AUTH_ERROR_CODE.EMAIL_VERIFICATION_ERROR,
+            {
+              debugMessage:
+                "No session returned after PKCE email verification",
+            }
+          ) as EmailVerificationError;
           return handleAuthError(error);
         }
 
@@ -425,11 +444,13 @@ export const createAuthGateway = (
         }
 
         if (!data.session || !data.user) {
-          const error: EmailVerificationError = {
-            code: "EMAIL_VERIFICATION_ERROR",
-            debugMessage:
-              "No session or user returned from email verification token hash",
-          };
+          const error: EmailVerificationError = createAppError(
+            AUTH_ERROR_CODE.EMAIL_VERIFICATION_ERROR,
+            {
+              debugMessage:
+                "No session or user returned from email verification token hash",
+            }
+          ) as EmailVerificationError;
           handleAuthError(error);
         }
 
@@ -440,19 +461,23 @@ export const createAuthGateway = (
       }
 
       if (!hasLegacyToken) {
-        const error: EmailVerificationError = {
-          code: "EMAIL_VERIFICATION_ERROR",
-          debugMessage:
-            "Missing verification token, token hash, or code for email verification",
-        };
+        const error: EmailVerificationError = createAppError(
+          AUTH_ERROR_CODE.EMAIL_VERIFICATION_ERROR,
+          {
+            debugMessage:
+              "Missing verification token, token hash, or code for email verification",
+          }
+        ) as EmailVerificationError;
         return handleAuthError(error);
       }
 
       if (!input.email || input.email.trim() === "") {
-        const error: EmailVerificationError = {
-          code: "EMAIL_VERIFICATION_ERROR",
-          debugMessage: "Email is required for legacy email verification",
-        };
+        const error: EmailVerificationError = createAppError(
+          AUTH_ERROR_CODE.EMAIL_VERIFICATION_ERROR,
+          {
+            debugMessage: "Email is required for legacy email verification",
+          }
+        ) as EmailVerificationError;
         return handleAuthError(error);
       }
 
@@ -467,10 +492,13 @@ export const createAuthGateway = (
       }
 
       if (!data.session || !data.user) {
-        const error: EmailVerificationError = {
-          code: "EMAIL_VERIFICATION_ERROR",
-          debugMessage: "No session or user returned from email verification",
-        };
+        const error: EmailVerificationError = createAppError(
+          AUTH_ERROR_CODE.EMAIL_VERIFICATION_ERROR,
+          {
+            debugMessage:
+              "No session or user returned from email verification",
+          }
+        ) as EmailVerificationError;
         handleAuthError(error);
       }
 
@@ -545,11 +573,13 @@ export const createAuthGateway = (
     try {
       // Admin client is required for user deletion (service_role key)
       if (!adminClient) {
-        const error: AuthenticationError = {
-          code: "AUTHENTICATION_ERROR",
-          debugMessage:
-            "Admin client required for user deletion. This operation must be performed server-side.",
-        };
+        const error: AuthenticationError = createAppError(
+          AUTH_ERROR_CODE.AUTHENTICATION_ERROR,
+          {
+            debugMessage:
+              "Admin client required for user deletion. This operation must be performed server-side.",
+          }
+        ) as AuthenticationError;
         return handleAuthError(error);
       }
 
@@ -560,10 +590,12 @@ export const createAuthGateway = (
       } = await client.auth.getUser();
 
       if (userError || !user) {
-        const error: AuthenticationError = {
-          code: "AUTHENTICATION_ERROR",
-          debugMessage: "User must be authenticated to delete account",
-        };
+        const error: AuthenticationError = createAppError(
+          AUTH_ERROR_CODE.AUTHENTICATION_ERROR,
+          {
+            debugMessage: "User must be authenticated to delete account",
+          }
+        ) as AuthenticationError;
         return handleAuthError(error);
       }
 

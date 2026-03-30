@@ -1,6 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { APP_LIMITS } from "@/shared/constants/app";
+import { createAppError } from "@/shared/errors/appError";
+import { INFRA_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 
 import { prepareAvatarUploadFile } from "./avatarUploadTransform.browser";
@@ -68,7 +70,9 @@ export const createProfileGateway = (
 
   async uploadAvatar(userId: string, file: File): Promise<string> {
     if (file.size > APP_LIMITS.AVATAR.MAX_INPUT_SIZE_BYTES) {
-      throw new Error("Avatar file is too large to process");
+      throw createAppError(INFRA_ERROR_CODE.AVATAR_FILE_TOO_LARGE, {
+        debugMessage: "Avatar file is too large to process",
+      });
     }
 
     if (
@@ -76,7 +80,9 @@ export const createProfileGateway = (
         file.type as (typeof APP_LIMITS.AVATAR.ALLOWED_MIME_TYPES)[number]
       )
     ) {
-      throw new Error("Avatar must be a JPEG, PNG, or WebP image");
+      throw createAppError(INFRA_ERROR_CODE.AVATAR_INVALID_MIME_TYPE, {
+        debugMessage: "Avatar must be a JPEG, PNG, or WebP image",
+      });
     }
 
     const { data: existingFiles, error: listError } = await client.storage

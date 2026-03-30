@@ -1,22 +1,22 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { type CookieOptions, createServerClient } from "@supabase/ssr";
 
+import { requireNonEmptyEnv } from "@/shared/errors/programmingError";
 import { isProtectedRoute } from "@/shared/utils/routes";
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY =
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 
 /**
  * Create Supabase client for Edge Runtime (middleware).
  * Uses @supabase/ssr to handle sessions via cookies.
  */
 const createSupabaseClientForMiddleware = (request: NextRequest) => {
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-    throw new Error(
-      "Missing required environment variables for Supabase client"
-    );
-  }
+  const supabaseUrl = requireNonEmptyEnv(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    "Missing NEXT_PUBLIC_SUPABASE_URL for Supabase middleware client"
+  );
+  const supabasePublishableKey = requireNonEmptyEnv(
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY,
+    "Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY for Supabase middleware client"
+  );
 
   // Create an unmodified response
   let supabaseResponse = NextResponse.next({
@@ -25,7 +25,7 @@ const createSupabaseClientForMiddleware = (request: NextRequest) => {
     },
   });
 
-  const supabase = createServerClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  const supabase = createServerClient(supabaseUrl, supabasePublishableKey, {
     cookies: {
       getAll() {
         return request.cookies.getAll();

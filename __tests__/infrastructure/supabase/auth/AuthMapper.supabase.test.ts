@@ -680,7 +680,7 @@ describe("AuthMapper.supabase", () => {
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
         expect(result).toHaveProperty("debugMessage");
-        expect(result).toHaveProperty("originalError", error);
+        expect(result).toMatchObject({ context: { originalError: error } });
       });
     });
 
@@ -698,7 +698,9 @@ describe("AuthMapper.supabase", () => {
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
         expect(result).toHaveProperty("debugMessage");
-        expect(result).toHaveProperty("originalError", unknownError);
+        expect(result).toMatchObject({
+          context: { originalError: unknownError },
+        });
       });
 
       it("should map string error to AuthenticationError with fallback message", () => {
@@ -714,7 +716,9 @@ describe("AuthMapper.supabase", () => {
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
         expect(result).toHaveProperty("debugMessage");
-        expect(result).toHaveProperty("originalError", unknownError);
+        expect(result).toMatchObject({
+          context: { originalError: unknownError },
+        });
       });
 
       it("should map object without status to AuthenticationError with fallback message", () => {
@@ -733,7 +737,9 @@ describe("AuthMapper.supabase", () => {
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
         expect(result).toHaveProperty("debugMessage");
-        expect(result).toHaveProperty("originalError", unknownError);
+        expect(result).toMatchObject({
+          context: { originalError: unknownError },
+        });
       });
 
       it("should map object without message to AuthenticationError with fallback message", () => {
@@ -752,7 +758,9 @@ describe("AuthMapper.supabase", () => {
         // Assert
         expect(result).toHaveProperty("code", expectedError.code);
         expect(result).toHaveProperty("debugMessage");
-        expect(result).toHaveProperty("originalError", unknownError);
+        expect(result).toMatchObject({
+          context: { originalError: unknownError },
+        });
       });
     });
 
@@ -779,7 +787,9 @@ describe("AuthMapper.supabase", () => {
 
         expect(result).toHaveProperty("code", "AUTH_PROVIDER_SERVER_ERROR");
         expect(result).toHaveProperty("debugMessage");
-        expect(result).toHaveProperty("originalError", authError);
+        expect(result).toMatchObject({
+          context: { originalError: authError },
+        });
       });
 
       it("should handle status 400 with non-matching message", () => {
@@ -798,7 +808,9 @@ describe("AuthMapper.supabase", () => {
         // Assert - Should fall through to fallback
         expect(result).toHaveProperty("code", expectedError.code);
         expect(result).toHaveProperty("debugMessage");
-        expect(result).toHaveProperty("originalError", authError);
+        expect(result).toMatchObject({
+          context: { originalError: authError },
+        });
       });
     });
   });

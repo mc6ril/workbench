@@ -1,6 +1,7 @@
 import { createBrowserClient } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import { throwProgrammingError } from "@/shared/errors/programmingError";
 import { createInstrumentedSupabaseFetch } from "@/shared/navigationPerf";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -22,7 +23,7 @@ const validateEnvironmentVariables = (): void => {
 
   if (missingVariables.length > 0) {
     const variablesList = missingVariables.join(", ");
-    throw new Error(
+    throwProgrammingError(
       `Missing required environment variable(s): ${variablesList}\n` +
         `Please add them to your .env.local file.\n` +
         `See .env.local.example for reference.`

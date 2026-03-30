@@ -118,8 +118,10 @@ describe("Project Flow Tests", () => {
         getProject(projectRepository, notFoundProjectId)
       ).rejects.toMatchObject({
         code: "NOT_FOUND",
-        entityType: "Project",
-        entityId: notFoundProjectId,
+        context: {
+          entityType: "Project",
+          entityId: notFoundProjectId,
+        },
       });
       expect(projectRepository.findById).toHaveBeenCalledTimes(1);
       expect(projectRepository.findById).toHaveBeenCalledWith(
@@ -142,8 +144,10 @@ describe("Project Flow Tests", () => {
       } catch (error) {
         expect(error).toMatchObject({
           code: "NOT_FOUND",
-          entityType: "Project",
-          entityId: notFoundProjectId,
+          context: {
+            entityType: "Project",
+            entityId: notFoundProjectId,
+          },
         });
       }
     });
@@ -186,7 +190,9 @@ describe("Project Flow Tests", () => {
       } catch (error) {
         expect(error).toMatchObject({
           code: "CONSTRAINT_VIOLATION",
-          constraint: "unique_project_member",
+          context: {
+            constraint: "unique_project_member",
+          },
         });
       }
     });

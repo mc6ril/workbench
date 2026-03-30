@@ -18,6 +18,8 @@ import Select from "@/shared/design-system/select";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import Toggle from "@/shared/design-system/toggle";
+import { getAppErrorCode } from "@/shared/errors/appError";
+import { INFRA_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import {
   getIntlLocale,
   persistLocaleCookie,
@@ -144,10 +146,7 @@ const AccountPage = () => {
   const accountIdentityErrorMessage = useMemo(
     () =>
       updateAccountIdentityMutation.error
-        ? getErrorMessage(
-            updateAccountIdentityMutation.error as { code?: string },
-            tErrors
-          )
+        ? getErrorMessage(updateAccountIdentityMutation.error, tErrors)
         : null,
     [updateAccountIdentityMutation.error, tErrors]
   );
@@ -155,10 +154,7 @@ const AccountPage = () => {
   const passwordErrorMessage = useMemo(
     () =>
       changePasswordMutation.error
-        ? getErrorMessage(
-            changePasswordMutation.error as { code?: string },
-            tErrors
-          )
+        ? getErrorMessage(changePasswordMutation.error, tErrors)
         : null,
     [changePasswordMutation.error, tErrors]
   );
@@ -166,10 +162,7 @@ const AccountPage = () => {
   const preferencesErrorMessage = useMemo(
     () =>
       updatePreferencesMutation.error
-        ? getErrorMessage(
-            updatePreferencesMutation.error as { code?: string },
-            tErrors
-          )
+        ? getErrorMessage(updatePreferencesMutation.error, tErrors)
         : null,
     [updatePreferencesMutation.error, tErrors]
   );
@@ -214,28 +207,18 @@ const AccountPage = () => {
 
   const getAvatarErrorMessage = useCallback(
     (error: unknown) => {
-      if (
-        error instanceof Error &&
-        error.message.includes("Avatar file is too large to process")
-      ) {
+      const code = getAppErrorCode(error);
+      if (code === INFRA_ERROR_CODE.AVATAR_FILE_TOO_LARGE) {
         return tAvatar("errorTooLarge");
       }
-
-      if (
-        error instanceof Error &&
-        error.message.includes("Avatar must be a JPEG, PNG, or WebP image")
-      ) {
+      if (code === INFRA_ERROR_CODE.AVATAR_INVALID_MIME_TYPE) {
         return tAvatar("errorInvalidType");
       }
-
-      if (
-        error instanceof Error &&
-        error.message.includes("Avatar image could not be processed")
-      ) {
+      if (code === INFRA_ERROR_CODE.AVATAR_PROCESSING_FAILED) {
         return tAvatar("errorProcessing");
       }
 
-      return getErrorMessage(error as { code?: string }, tErrors);
+      return getErrorMessage(error, tErrors);
     },
     [tAvatar, tErrors]
   );

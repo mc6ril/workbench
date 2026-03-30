@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DOMAIN_RULE_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 
 import {
@@ -55,7 +56,7 @@ export const inviteToProject = async (
 
     if (total >= limit) {
       throw createDomainRuleError(
-        "INVITATION_LIMIT_REACHED",
+        DOMAIN_RULE_ERROR_CODE.INVITATION_LIMIT_REACHED,
         `Cannot create invitation link: workspace member limit reached (${limit})`
       );
     }
