@@ -1,4 +1,4 @@
-import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profilePreferences.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
 import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
 import { mapUserProfileRowToDomain } from "@/domains/profile/infrastructure/UserProfileMapper.supabase";
 

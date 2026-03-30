@@ -5,8 +5,8 @@ import {
   isGettingStartedStatus,
   type UserPreferences,
   UserPreferencesSchema,
-} from "@/domains/profile/core/domain/profilePreferences.schema";
-import type { UserProfile } from "@/domains/profile/core/domain/userProfile.schema";
+  type UserProfile,
+} from "@/domains/profile/core/domain/profile.types";
 import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
 
 /**

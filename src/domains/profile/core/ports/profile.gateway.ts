@@ -1,11 +1,10 @@
-import type { UserPreferences } from "@/domains/profile/core/domain/profilePreferences.schema";
 import type {
-  UpdateProfileInput,
+  UserPreferences,
   UserProfile,
-} from "@/domains/profile/core/domain/userProfile.schema.ts";
+} from "@/domains/profile/core/domain/profile.types";
 
 /**
- * Repository contract for UserProfile operations.
+ * Gateway contract for profile persistence and asset storage operations.
  *
  * user_profiles is the single source of truth for applicative user data.
  * Profile rows are created on signup via a database trigger.
@@ -15,7 +14,7 @@ import type {
  * - Only the owning user can update their own profile
  * - All authenticated users can read any profile (needed for teammate display)
  */
-export type UserProfileRepository = {
+export type ProfileGateway = {
   /**
    * Get a user profile by user ID.
    * @returns Profile or null if not found
@@ -24,27 +23,12 @@ export type UserProfileRepository = {
   getById(userId: string): Promise<UserProfile | null>;
 
   /**
-   * Get multiple user profiles by their IDs.
-   * Returns only found profiles (missing IDs are silently skipped).
-   * @returns Array of profiles (order not guaranteed)
-   * @throws DatabaseError if database operation fails
-   */
-  getByIds(userIds: string[]): Promise<UserProfile[]>;
-
-  /**
-   * Get a user profile by email address.
-   * @returns Profile or null if not found
-   * @throws DatabaseError if database operation fails
-   */
-  getByEmail(email: string): Promise<UserProfile | null>;
-
-  /**
    * Update the user's profile (display name).
    * @param userId - User ID (must match authenticated user)
    * @param input - Fields to update
    * @throws DatabaseError if update fails
    */
-  updateProfile(userId: string, input: UpdateProfileInput): Promise<void>;
+  updateProfile(userId: string, input: { displayName?: string }): Promise<void>;
 
   /**
    * Update the user's preferences (theme, language, notifications).

@@ -4,28 +4,24 @@ import { APP_LIMITS } from "@/shared/constants/app";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 
 import { prepareAvatarUploadFile } from "./avatarUploadTransform.browser";
-import {
-  mapUserProfileRowsToDomain,
-  mapUserProfileRowToDomain,
-} from "./UserProfileMapper.supabase";
+import { mapUserProfileRowToDomain } from "./UserProfileMapper.supabase";
 
-import type { UserPreferences } from "@/domains/profile/core/domain/profilePreferences.schema";
 import type {
-  UpdateProfileInput,
+  UserPreferences,
   UserProfile,
-} from "@/domains/profile/core/domain/userProfile.schema";
-import type { UserProfileRepository } from "@/domains/profile/core/ports/userProfileRepository";
+} from "@/domains/profile/core/domain/profile.types";
+import type { ProfileGateway } from "@/domains/profile/core/ports/profile.gateway";
 import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
 
 /**
- * Create a UserProfileRepository implementation using the provided Supabase client.
+ * Create a Supabase-backed profile gateway using the provided client.
  *
  * @param client - Supabase client instance to use
- * @returns UserProfileRepository implementation
+ * @returns ProfileGateway implementation
  */
-export const createUserProfileRepository = (
+export const createProfileGateway = (
   client: SupabaseClient
-): UserProfileRepository => ({
+): ProfileGateway => ({
   async getById(userId: string): Promise<UserProfile | null> {
     const { data, error } = await client
       .from("user_profiles")
@@ -44,44 +40,9 @@ export const createUserProfileRepository = (
     return mapUserProfileRowToDomain(data as UserProfileRow);
   },
 
-  async getByIds(userIds: string[]): Promise<UserProfile[]> {
-    if (userIds.length === 0) {
-      return [];
-    }
-
-    const { data, error } = await client
-      .from("user_profiles")
-      .select("*")
-      .in("id", userIds);
-
-    if (error) {
-      return handleRepositoryError(error, "UserProfile");
-    }
-
-    return mapUserProfileRowsToDomain((data ?? []) as UserProfileRow[]);
-  },
-
-  async getByEmail(email: string): Promise<UserProfile | null> {
-    const { data, error } = await client
-      .from("user_profiles")
-      .select("*")
-      .eq("email", email)
-      .maybeSingle();
-
-    if (error) {
-      return handleRepositoryError(error, "UserProfile");
-    }
-
-    if (!data) {
-      return null;
-    }
-
-    return mapUserProfileRowToDomain(data as UserProfileRow);
-  },
-
   async updateProfile(
     userId: string,
-    input: UpdateProfileInput
+    input: { displayName?: string }
   ): Promise<void> {
     const { error } = await client.rpc("update_user_profile", {
       new_display_name: input.displayName ?? null,

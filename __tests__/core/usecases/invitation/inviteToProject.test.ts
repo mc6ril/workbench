@@ -1,6 +1,6 @@
 import { getFeatureLimit } from "@/domains/billing/core/domain/planFeatures.rules";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
-import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profilePreferences.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
 import {
   type CreateInvitationInput,
   InvitationStatus,

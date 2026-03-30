@@ -47,7 +47,7 @@ import {
   DEFAULT_USER_PREFERENCES,
   type Theme,
   ThemeValues,
-} from "@/domains/profile/core/domain/profilePreferences.schema";
+} from "@/domains/profile/core/domain/profile.types";
 import AvatarUpload from "@/domains/profile/presentation/components/AvatarUpload";
 import {
   useRemoveAvatar,
@@ -204,7 +204,13 @@ const AccountPage = () => {
     }
 
     await updateProfileMutation.mutateAsync(updates);
-  }, [updateProfileMutation, viewer?.displayName, viewer?.loginEmail, name, email]);
+  }, [
+    updateProfileMutation,
+    viewer?.displayName,
+    viewer?.loginEmail,
+    name,
+    email,
+  ]);
 
   const getAvatarErrorMessage = useCallback(
     (error: unknown) => {

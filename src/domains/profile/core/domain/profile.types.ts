@@ -2,21 +2,14 @@ import { z } from "zod";
 
 import { defaultLocale } from "@/shared/i18n/config";
 
-/**
- * Allowed theme values: light, dark, or system (follows OS preference).
- */
 export const ThemeValues = ["light", "dark", "system"] as const;
 export type Theme = (typeof ThemeValues)[number];
 
-/**
- * Allowed getting-started states for the onboarding experience.
- */
-export const GettingStartedStatusValues = Object.freeze([
+export const GettingStartedStatusValues = [
   "pending",
   "skipped",
   "completed",
-]);
-
+] as const;
 export type GettingStartedStatus = (typeof GettingStartedStatusValues)[number];
 
 export const isThemePreference = (value: string): value is Theme => {
@@ -40,9 +33,6 @@ export const resolveThemePreference = (
   return isThemePreference(value) ? value : fallback;
 };
 
-/**
- * Zod schema for user preferences stored in user_profiles.preferences.
- */
 export const UserPreferencesSchema = z.object({
   theme: z.enum(ThemeValues),
   emailNotifications: z.boolean(),
@@ -50,14 +40,8 @@ export const UserPreferencesSchema = z.object({
   gettingStartedStatus: z.enum(GettingStartedStatusValues),
 });
 
-/**
- * User preferences (theme, notifications, language).
- */
 export type UserPreferences = z.infer<typeof UserPreferencesSchema>;
 
-/**
- * Default preferences applied to new users or when stored preferences are missing/invalid.
- */
 export const DEFAULT_USER_PREFERENCES: UserPreferences = {
   theme: "system",
   emailNotifications: true,
@@ -65,11 +49,15 @@ export const DEFAULT_USER_PREFERENCES: UserPreferences = {
   gettingStartedStatus: "pending",
 };
 
-/**
- * Input for partial preference updates.
- * Only the fields provided will be merged with existing preferences.
- */
-export const UpdatePreferencesInputSchema = UserPreferencesSchema.partial();
-export type UpdatePreferencesInput = z.infer<
-  typeof UpdatePreferencesInputSchema
->;
+export const UserProfileSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string(),
+  displayName: z.string().nullable(),
+  avatarUrl: z.string().nullable(),
+  preferences: UserPreferencesSchema,
+  termsAcceptedAt: z.coerce.date().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
+
+export type UserProfile = z.infer<typeof UserProfileSchema>;

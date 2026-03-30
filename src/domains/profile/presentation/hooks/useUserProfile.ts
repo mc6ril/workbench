@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { getProfile } from "@/domains/profile/core/usecases/getProfile";
-import { userProfileRepository } from "@/domains/profile/infrastructure/userProfileRepository.browser";
+import { profileGateway } from "@/domains/profile/infrastructure/profileGateway.browser";
 import { queryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
 
 /**
@@ -10,7 +10,7 @@ import { queryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
 export const useUserProfile = (userId: string | undefined) => {
   return useQuery({
     queryKey: queryKeys.userProfiles.detail(userId ?? ""),
-    queryFn: () => getProfile(userProfileRepository, userId!),
+    queryFn: () => getProfile(profileGateway, userId!),
     enabled: !!userId,
   });
 };

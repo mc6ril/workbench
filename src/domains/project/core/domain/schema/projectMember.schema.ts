@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { UserProfileSchema } from "@/domains/profile/core/domain/userProfile.schema";
+import { UserProfileSchema } from "@/domains/profile/core/domain/profile.types";
 import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
 
 /**

@@ -2,9 +2,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { updateCredentials } from "@/domains/auth/core/usecases/user/updateCredentials";
 import { authGateway } from "@/domains/auth/infrastructure/supabase/repositories";
-import type { UpdateProfileInput } from "@/domains/profile/core/domain/userProfile.schema";
-import { updateProfile } from "@/domains/profile/core/usecases/updateProfile";
-import { userProfileRepository } from "@/domains/profile/infrastructure/userProfileRepository.browser";
+import {
+  updateProfile,
+  type UpdateProfileInput,
+} from "@/domains/profile/core/usecases/updateProfile";
+import { profileGateway } from "@/domains/profile/infrastructure/profileGateway.browser";
 import { queryKeys as profileQueryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
 import { queryKeys as sessionQueryKeys } from "@/domains/session/presentation/hooks/queryKeys";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
@@ -23,7 +25,7 @@ export const useUpdateAccountProfile = () => {
   return useMutation({
     mutationFn: async (input: UpdateAccountProfileInput) => {
       if (input.displayName !== undefined && session) {
-        await updateProfile(userProfileRepository, session.userId, {
+        await updateProfile(profileGateway, session.userId, {
           displayName: input.displayName,
         });
       }

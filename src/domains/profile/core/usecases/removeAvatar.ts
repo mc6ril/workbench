@@ -1,19 +1,22 @@
-import { UploadAvatarInputSchema } from "@/domains/profile/core/domain/userProfile.schema";
-import type { UserProfileRepository } from "@/domains/profile/core/ports/userProfileRepository";
+import { z } from "zod";
+
+import type { ProfileGateway } from "@/domains/profile/core/ports/profile.gateway";
+
+const AvatarOwnerIdSchema = z.string().uuid();
 
 /**
  * Remove the avatar for the current user.
  * Deletes the file from storage and clears the profile's avatar_url.
  *
- * @param repository - UserProfile repository
+ * @param gateway - Profile gateway
  * @param userId - User ID (must match authenticated user)
  * @throws ZodError if userId is invalid
  * @throws DatabaseError if deletion fails
  */
 export const removeAvatar = async (
-  repository: UserProfileRepository,
+  gateway: ProfileGateway,
   userId: string
 ): Promise<void> => {
-  UploadAvatarInputSchema.parse({ userId });
-  return repository.deleteAvatar(userId);
+  AvatarOwnerIdSchema.parse(userId);
+  return gateway.deleteAvatar(userId);
 };

@@ -3,7 +3,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import * as i18nConfig from "@/shared/i18n/config";
 import { LocaleProvider } from "@/shared/i18n/LocaleProvider";
 
-import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profilePreferences.schema";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
 import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
 import { useProfileRuntimeSync } from "@/domains/profile/presentation/providers/useProfileRuntimeSync";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";

@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { UpdateProfileInput } from "@/domains/profile/core/domain/userProfile.schema";
-import { updateProfile } from "@/domains/profile/core/usecases/updateProfile";
-import { userProfileRepository } from "@/domains/profile/infrastructure/userProfileRepository.browser";
+import {
+  updateProfile,
+  type UpdateProfileInput,
+} from "@/domains/profile/core/usecases/updateProfile";
+import { profileGateway } from "@/domains/profile/infrastructure/profileGateway.browser";
 import { queryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
@@ -16,7 +18,7 @@ export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: async (input: UpdateProfileInput) => {
       if (input.displayName !== undefined && session) {
-        await updateProfile(userProfileRepository, session.userId, {
+        await updateProfile(profileGateway, session.userId, {
           displayName: input.displayName,
         });
       }

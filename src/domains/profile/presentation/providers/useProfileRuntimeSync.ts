@@ -11,7 +11,7 @@ import {
 import type { Locale } from "@/shared/i18n/types";
 import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
 
-import { resolveThemePreference } from "@/domains/profile/core/domain/profilePreferences.schema";
+import { resolveThemePreference } from "@/domains/profile/core/domain/profile.types";
 import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 

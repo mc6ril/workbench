@@ -3,7 +3,7 @@ import {
   isGettingStartedStatus,
   isThemePreference,
   resolveThemePreference,
-} from "@/domains/profile/core/domain/profilePreferences.schema";
+} from "@/domains/profile/core/domain/profile.types";
 
 describe("profile theme preferences", () => {
   it("recognizes supported theme values", () => {

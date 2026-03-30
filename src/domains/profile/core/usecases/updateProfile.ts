@@ -1,24 +1,32 @@
-import {
-  type UpdateProfileInput,
-  UpdateProfileInputSchema,
-} from "@/domains/profile/core/domain/userProfile.schema";
-import type { UserProfileRepository } from "@/domains/profile/core/ports/userProfileRepository";
+import { z } from "zod";
+
+import type { ProfileGateway } from "@/domains/profile/core/ports/profile.gateway";
+
+export const UpdateProfileInputSchema = z.object({
+  displayName: z
+    .string()
+    .trim()
+    .max(100, "Display name must be less than 100 characters")
+    .optional(),
+});
+
+export type UpdateProfileInput = z.infer<typeof UpdateProfileInputSchema>;
 
 /**
  * Update the current user's profile (display name).
- * Validates input then delegates to the repository.
+ * Validates input then delegates to the gateway.
  *
- * @param repository - UserProfile repository
+ * @param gateway - Profile gateway
  * @param userId - Authenticated user ID
  * @param input - Fields to update (displayName)
  * @throws ZodError if input is invalid
  * @throws DatabaseError if update fails
  */
 export const updateProfile = async (
-  repository: UserProfileRepository,
+  gateway: ProfileGateway,
   userId: string,
   input: UpdateProfileInput
 ): Promise<void> => {
-  const validated = UpdateProfileInputSchema.parse(input);
-  return repository.updateProfile(userId, validated);
+  const validatedInput = UpdateProfileInputSchema.parse(input);
+  return gateway.updateProfile(userId, validatedInput);
 };
