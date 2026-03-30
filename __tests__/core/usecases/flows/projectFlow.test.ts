@@ -37,7 +37,7 @@ describe("Project Flow Tests", () => {
       // Arrange
       const projects: ProjectWithRole[] = [mockProjectWithRole];
       const catalogRepository = createProjectGatewayMock({
-        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+        listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => projects
         ),
       });
@@ -57,8 +57,8 @@ describe("Project Flow Tests", () => {
       const projectsResult = await listProjects(catalogRepository);
 
       // Assert - Step 1: Projects should be listed
-      expect(catalogRepository.listAccessibleProjects).toHaveBeenCalledTimes(1);
-      expect(catalogRepository.listAccessibleProjects).toHaveBeenCalledWith();
+      expect(catalogRepository.listProjects).toHaveBeenCalledTimes(1);
+      expect(catalogRepository.listProjects).toHaveBeenCalledWith();
       expect(projectsResult).toEqual(projects);
       expect(projectsResult).toHaveLength(1);
       expect(projectsResult[0].id).toBe(projectId);
@@ -95,7 +95,7 @@ describe("Project Flow Tests", () => {
       const projects: ProjectWithRole[] = [mockProjectWithRole];
       const notFoundProjectId = "999e9999-e89b-12d3-a456-426614174999";
       const catalogRepository = createProjectGatewayMock({
-        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+        listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => projects
         ),
       });
@@ -122,7 +122,9 @@ describe("Project Flow Tests", () => {
         entityId: notFoundProjectId,
       });
       expect(projectRepository.findById).toHaveBeenCalledTimes(1);
-      expect(projectRepository.findById).toHaveBeenCalledWith(notFoundProjectId);
+      expect(projectRepository.findById).toHaveBeenCalledWith(
+        notFoundProjectId
+      );
 
       // Act - Step 3: Try to join a non-existent project (should throw)
       const notFoundError = createNotFoundError("Project", notFoundProjectId);
@@ -150,7 +152,7 @@ describe("Project Flow Tests", () => {
       // Arrange
       const projects: ProjectWithRole[] = [mockProjectWithRole];
       const catalogRepository = createProjectGatewayMock({
-        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+        listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => projects
         ),
       });
@@ -193,11 +195,9 @@ describe("Project Flow Tests", () => {
       // Arrange
       const repositoryError = new Error("Database connection failed");
       const catalogRepository = createProjectGatewayMock({
-        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
-          async () => {
+        listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(async () => {
           throw repositoryError;
-          }
-        ),
+        }),
       });
       const projectRepository = createProjectGatewayMock({
         findById: jest.fn<Promise<Project | null>, [string]>(

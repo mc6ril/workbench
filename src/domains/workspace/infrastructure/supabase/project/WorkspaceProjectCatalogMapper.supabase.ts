@@ -2,7 +2,7 @@ import { ProjectRole } from "@/domains/project/core/domain/project.types";
 import type {
   ProjectWithStats,
   ReclaimableProject,
-} from "@/domains/workspace/core/domain/workspaceProjectCatalog.schema";
+} from "@/domains/workspace/core/domain/workspace.types";
 import type {
   ProjectWithStatsRow,
   ReclaimableProjectRow,

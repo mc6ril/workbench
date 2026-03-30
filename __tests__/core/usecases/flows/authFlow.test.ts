@@ -111,7 +111,7 @@ describe("Auth Flow Tests", () => {
       });
 
       const projectRepository = createProjectGatewayMock({
-        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+        listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => mockProjects
         ),
       });
@@ -138,8 +138,8 @@ describe("Auth Flow Tests", () => {
       const projectsResult = await listProjects(projectRepository);
 
       // Assert - Step 3: Projects should be listed
-      expect(projectRepository.listAccessibleProjects).toHaveBeenCalledTimes(1);
-      expect(projectRepository.listAccessibleProjects).toHaveBeenCalledWith();
+      expect(projectRepository.listProjects).toHaveBeenCalledTimes(1);
+      expect(projectRepository.listProjects).toHaveBeenCalledWith();
       expect(projectsResult).toEqual(mockProjects);
       expect(projectsResult).toHaveLength(1);
       expect(projectsResult[0].name).toBe("Test Project");
@@ -179,7 +179,7 @@ describe("Auth Flow Tests", () => {
       });
 
       const projectRepository = createProjectGatewayMock({
-        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+        listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => mockProjects
         ),
       });
@@ -194,7 +194,7 @@ describe("Auth Flow Tests", () => {
 
       // Note: In a real flow, listProjects wouldn't be called if getCurrentSession fails,
       // but we verify that projectRepository was not called
-      expect(projectRepository.listAccessibleProjects).not.toHaveBeenCalled();
+      expect(projectRepository.listProjects).not.toHaveBeenCalled();
     });
   });
 });

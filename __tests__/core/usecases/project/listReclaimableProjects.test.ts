@@ -1,6 +1,6 @@
 import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
 
-import type { ReclaimableProject } from "@/domains/workspace/core/domain/workspaceProjectCatalog.schema";
+import type { ReclaimableProject } from "@/domains/workspace/core/domain/workspace.types";
 import { listReclaimableProjects } from "@/domains/workspace/core/usecases/project/listReclaimableProjects";
 
 describe("listReclaimableProjects", () => {

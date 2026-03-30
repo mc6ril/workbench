@@ -5,15 +5,15 @@ import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandl
 import {
   mapProjectWithStatsRowToDomain,
   mapReclaimableProjectRowToDomain,
-} from "./Mapper.supabase";
+} from "./WorkspaceProjectCatalogMapper.supabase";
 
 import type { ProjectWithRole } from "@/domains/project/core/domain/project.types";
 import { createProjectGateway } from "@/domains/project/infrastructure/supabase/project/ProjectGateway.supabase";
 import type {
   ProjectWithStats,
   ReclaimableProject,
-} from "@/domains/workspace/core/domain/workspaceProjectCatalog.schema";
-import type { WorkspaceProjectCatalogRepository } from "@/domains/workspace/core/ports/workspaceProjectCatalogRepository";
+} from "@/domains/workspace/core/domain/workspace.types";
+import type { WorkspaceProjectCatalogGateway } from "@/domains/workspace/core/ports/workspace-project-catalog.gateway";
 import type {
   ProjectWithStatsRow,
   ReclaimableProjectRow,
@@ -30,19 +30,19 @@ const mapProjectWithRoleToStats = (
 });
 
 /**
- * Create a WorkspaceProjectCatalogRepository implementation using the provided
+ * Create a WorkspaceProjectCatalogGateway implementation using the provided
  * Supabase client.
  *
  * @param client - Supabase client instance to use
- * @returns WorkspaceProjectCatalogRepository implementation
+ * @returns WorkspaceProjectCatalogGateway implementation
  */
-export const createWorkspaceProjectCatalogRepository = (
+export const createWorkspaceProjectCatalogGateway = (
   client: SupabaseClient
-): WorkspaceProjectCatalogRepository => {
+): WorkspaceProjectCatalogGateway => {
   const projectGateway = createProjectGateway(client);
 
-  const repository: WorkspaceProjectCatalogRepository = {
-    async listAccessibleProjects(): Promise<ProjectWithRole[]> {
+  const gateway: WorkspaceProjectCatalogGateway = {
+    async listProjects(): Promise<ProjectWithRole[]> {
       return projectGateway.list();
     },
 
@@ -59,19 +59,19 @@ export const createWorkspaceProjectCatalogRepository = (
         // In some sessions the stats RPC can return an empty result even when
         // the user still has project access. Fallback to the regular catalog
         // listing to keep the workspace usable.
-        const hasAccess = await repository.hasAnyProjectAccess();
+        const hasAccess = await gateway.hasProjectAccess();
         if (!hasAccess) {
           return [];
         }
 
-        const projects = await repository.listAccessibleProjects();
+        const projects = await gateway.listProjects();
         return projects.map(mapProjectWithRoleToStats);
       } catch (error) {
         return handleRepositoryError(error, "Project");
       }
     },
 
-    async hasAnyProjectAccess(): Promise<boolean> {
+    async hasProjectAccess(): Promise<boolean> {
       try {
         const { data, error } = await client.rpc("has_any_project_access");
 
@@ -106,5 +106,5 @@ export const createWorkspaceProjectCatalogRepository = (
     },
   };
 
-  return repository;
+  return gateway;
 };

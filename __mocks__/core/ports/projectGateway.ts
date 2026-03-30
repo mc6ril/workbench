@@ -7,7 +7,7 @@ import type { UpdateProjectInput } from "@/domains/project/core/usecases/project
 import type {
   ProjectWithStats,
   ReclaimableProject,
-} from "@/domains/workspace/core/domain/workspaceProjectCatalog.schema";
+} from "@/domains/workspace/core/domain/workspace.types";
 
 /**
  * Mock type for ProjectGateway.
@@ -17,7 +17,7 @@ export type ProjectGatewayMock = {
   findByShortCode: jest.Mock<Promise<Project | null>, [string]>;
   findById: jest.Mock<Promise<Project | null>, [string]>;
   list: jest.Mock<Promise<ProjectWithRole[]>, []>;
-  listAccessibleProjects: jest.Mock<Promise<ProjectWithRole[]>, []>;
+  listProjects: jest.Mock<Promise<ProjectWithRole[]>, []>;
   listWithStats: jest.Mock<Promise<ProjectWithStats[]>, []>;
   listProjectsWithStats: jest.Mock<Promise<ProjectWithStats[]>, []>;
   create: jest.Mock<Promise<Project>, [CreateProjectInput]>;
@@ -28,7 +28,6 @@ export type ProjectGatewayMock = {
     [string, ("admin" | "member" | "viewer")?]
   >;
   hasProjectAccess: jest.Mock<Promise<boolean>, []>;
-  hasAnyProjectAccess: jest.Mock<Promise<boolean>, []>;
   listReclaimableProjects: jest.Mock<Promise<ReclaimableProject[]>, []>;
 };
 
@@ -45,8 +44,8 @@ type ProjectGatewayMockOverrides = Partial<ProjectGatewayMock>;
 export const createProjectGatewayMock = (
   overrides: ProjectGatewayMockOverrides = {}
 ): ProjectGatewayMock => {
-  const listMock =
-    overrides.listAccessibleProjects ??
+  const listProjectsMock =
+    overrides.listProjects ??
     overrides.list ??
     jest.fn<Promise<ProjectWithRole[]>, []>();
   const listWithStatsMock =
@@ -54,15 +53,13 @@ export const createProjectGatewayMock = (
     overrides.listWithStats ??
     jest.fn<Promise<ProjectWithStats[]>, []>();
   const hasAccessMock =
-    overrides.hasAnyProjectAccess ??
-    overrides.hasProjectAccess ??
-    jest.fn<Promise<boolean>, []>();
+    overrides.hasProjectAccess ?? jest.fn<Promise<boolean>, []>();
 
   const base: ProjectGatewayMock = {
     findByShortCode: jest.fn<Promise<Project | null>, [string]>(),
     findById: jest.fn<Promise<Project | null>, [string]>(),
-    list: listMock,
-    listAccessibleProjects: listMock,
+    list: listProjectsMock,
+    listProjects: listProjectsMock,
     listWithStats: listWithStatsMock,
     listProjectsWithStats: listWithStatsMock,
     create: jest.fn<Promise<Project>, [CreateProjectInput]>(),
@@ -73,7 +70,6 @@ export const createProjectGatewayMock = (
       [string, ("admin" | "member" | "viewer")?]
     >(),
     hasProjectAccess: hasAccessMock,
-    hasAnyProjectAccess: hasAccessMock,
     listReclaimableProjects: jest.fn<Promise<ReclaimableProject[]>, []>(),
   };
 
