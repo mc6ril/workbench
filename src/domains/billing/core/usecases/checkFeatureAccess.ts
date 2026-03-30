@@ -8,7 +8,7 @@ import {
   getFeatureLimit,
   getMinimumPlanForFeature,
 } from "@/domains/billing/core/domain/planFeatures.rules";
-import type { Subscription } from "@/domains/billing/core/domain/subscription.schema";
+import type { Subscription } from "@/domains/billing/core/domain/subscription.types";
 
 /**
  * Check whether a subscription grants access to a given feature.

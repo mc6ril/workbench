@@ -9,18 +9,18 @@ import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
 import { createLoggerFactory } from "@/shared/observability";
 import { hasErrorCode } from "@/shared/utils/guards";
 
-import { deleteUser } from "@/domains/auth/core/usecases/user/deleteUser";
-import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { deleteAccount } from "@/domains/auth/core/usecases/user/deleteAccount";
+import { createAuthGateway } from "@/domains/auth/infrastructure/supabase/repositories";
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
-import { createSessionRepository } from "@/domains/session/infrastructure/supabase/repositories";
+import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("API.DeleteUser");
 
 /**
  * DELETE /api/auth/delete-user
  *
- * Thin controller that delegates to the deleteUser usecase.
- * Provides the admin-enabled auth repository required for user deletion.
+ * Thin controller that delegates to the deleteAccount usecase.
+ * Provides the admin-enabled auth gateway required for user deletion.
  *
  * Requires:
  * - Authenticated user session
@@ -47,10 +47,10 @@ export const DELETE = async (request: NextRequest): Promise<NextResponse> => {
 
   try {
     const supabaseClient = await createSupabaseServerClient();
-    const sessionRepository = createSessionRepository(supabaseClient);
+    const sessionGateway = createSessionGateway(supabaseClient);
 
     try {
-      await getCurrentSession(sessionRepository);
+      await getCurrentSession(sessionGateway);
     } catch {
       return NextResponse.json(
         { error: API_MESSAGES_COMMON.NOT_AUTHENTICATED },
@@ -59,9 +59,9 @@ export const DELETE = async (request: NextRequest): Promise<NextResponse> => {
     }
 
     const supabaseAdmin = createSupabaseAdminClient();
-    const authRepository = createAuthRepository(supabaseClient, supabaseAdmin);
+    const authGateway = createAuthGateway(supabaseClient, supabaseAdmin);
 
-    await deleteUser(authRepository);
+    await deleteAccount(authGateway);
 
     return NextResponse.json(
       { success: true, message: API_MESSAGES_AUTH.USER_DELETED },

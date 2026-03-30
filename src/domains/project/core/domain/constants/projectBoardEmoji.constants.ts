@@ -1,10 +1,8 @@
-import { PROJECT_BOARD_EMOJI_PRESETS as SHARED_PROJECT_BOARD_EMOJI_PRESETS } from "@/shared/constants/projectBoardEmoji";
+import { PROJECT_BOARD_EMOJI_PRESETS } from "@/shared/constants/projectBoardEmoji";
 
 /**
  * Preset emojis allowed for the project board icon (stored separately from name and short code).
  */
-export const PROJECT_BOARD_EMOJI_PRESETS = SHARED_PROJECT_BOARD_EMOJI_PRESETS;
-
 export type ProjectBoardEmojiPreset = (typeof PROJECT_BOARD_EMOJI_PRESETS)[number];
 
 const PRESET_SET = new Set<string>(PROJECT_BOARD_EMOJI_PRESETS);

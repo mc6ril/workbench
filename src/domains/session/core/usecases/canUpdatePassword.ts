@@ -1,10 +1,10 @@
-import type { SessionRepository } from "@/domains/session/core/ports/sessionRepository";
+import type { SessionGateway } from "@/domains/session/core/ports/session.gateway";
 
 /**
  * Returns whether the current authenticated user can update a password.
  */
 export const canUpdatePassword = async (
-  repository: SessionRepository
+  gateway: SessionGateway
 ): Promise<boolean> => {
-  return repository.canUpdatePassword();
+  return gateway.canUpdatePassword();
 };

@@ -1,9 +1,15 @@
+import { z } from "zod";
+
 import {
-  AddUserToProjectInputSchema,
   type Project,
   ProjectRole,
-} from "@/domains/project/core/domain/schema/project.schema";
-import type { MemberRepository } from "@/domains/project/core/ports/memberRepository";
+} from "@/domains/project/core/domain/project.types";
+import type { ProjectMemberGateway } from "@/domains/project/core/ports/project-member.gateway";
+
+const JoinProjectInputSchema = z.object({
+  projectId: z.string().uuid("Project ID must be a valid UUID"),
+  role: z.nativeEnum(ProjectRole).optional(),
+});
 
 /**
  * Reclaim an orphaned project for the current authenticated user.
@@ -16,13 +22,17 @@ import type { MemberRepository } from "@/domains/project/core/ports/memberReposi
  * @returns The reclaimed project
  */
 export const joinProject = async (
-  repository: MemberRepository,
+  gateway: ProjectMemberGateway,
   projectId: string,
   role: ProjectRole = ProjectRole.VIEWER
 ): Promise<Project> => {
-  const { projectId: validatedProjectId } = AddUserToProjectInputSchema.parse({
+  const parsed = JoinProjectInputSchema.parse({
     projectId,
+    role,
   });
 
-  return repository.addCurrentUserAsMember(validatedProjectId, role);
+  return gateway.addCurrentUserAsMember(
+    parsed.projectId,
+    parsed.role ?? ProjectRole.VIEWER
+  );
 };

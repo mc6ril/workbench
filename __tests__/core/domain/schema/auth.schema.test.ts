@@ -1,9 +1,7 @@
 import { z } from "zod";
 
-import {
-  SignUpFormSchema,
-  SignUpSchema,
-} from "@/domains/auth/core/domain/auth.schema";
+import { SignUpSchema } from "@/domains/auth/core/usecases/user/signUpUser";
+import { SignUpFormSchema } from "@/domains/auth/presentation/forms/authForms.schema";
 
 describe("SignUpSchema", () => {
   const validInput = {

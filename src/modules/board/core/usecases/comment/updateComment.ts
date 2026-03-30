@@ -1,9 +1,14 @@
+import { z } from "zod";
+
 import type {
   CommentWithAuthor,
   UpdateCommentInput,
-} from "@/modules/board/core/domain/schema/comment.schema";
-import { UpdateCommentInputSchema } from "@/modules/board/core/domain/schema/comment.schema";
+} from "@/modules/board/core/domain/comment.types";
 import type { CommentRepository } from "@/modules/board/core/ports/commentRepository";
+
+const UpdateCommentInputSchema = z.object({
+  content: z.string().min(1, "Comment content must not be empty"),
+});
 
 /**
  * Update a comment's content.

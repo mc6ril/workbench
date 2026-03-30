@@ -1,14 +1,14 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
-import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
 import {
   InvitationStatus,
   type ProjectInvitation,
-} from "@/domains/project/core/domain/schema/invitation.schema";
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+  type ProjectMember,
+  ProjectRole,
+} from "@/domains/project/core/domain/project.types";
 import { useInviteMember } from "@/domains/project/presentation/hooks/invitation/useInviteMember";
 import { useProjectInvitations } from "@/domains/project/presentation/hooks/invitation/useProjectInvitations";
 import { useRevokeInvitation } from "@/domains/project/presentation/hooks/invitation/useRevokeInvitation";

@@ -3,9 +3,12 @@ import {
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
 
-import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";
+import { createProjectMemberGatewayMock } from "../../../../__mocks__/core/ports/projectMemberGateway";
 
-import { type Project, ProjectRole } from "@/domains/project/core/domain/schema/project.schema";
+import {
+  type Project,
+  ProjectRole,
+} from "@/domains/project/core/domain/project.types";
 import { joinProject } from "@/domains/project/core/usecases/membership/joinProject";
 
 describe("joinProject", () => {
@@ -22,7 +25,7 @@ describe("joinProject", () => {
 
   it("should add user to project successfully with default role", async () => {
     // Arrange
-    const repository = createMemberRepositoryMock({
+    const repository = createProjectMemberGatewayMock({
       addCurrentUserAsMember: jest.fn<
         Promise<Project>,
         [string, ("admin" | "member" | "viewer")?]
@@ -44,7 +47,7 @@ describe("joinProject", () => {
 
   it("should add user to project successfully with specified role", async () => {
     // Arrange
-    const repository = createMemberRepositoryMock({
+    const repository = createProjectMemberGatewayMock({
       addCurrentUserAsMember: jest.fn<
         Promise<Project>,
         [string, ("admin" | "member" | "viewer")?]
@@ -65,7 +68,7 @@ describe("joinProject", () => {
 
   it("should add user to project successfully with admin role", async () => {
     // Arrange
-    const repository = createMemberRepositoryMock({
+    const repository = createProjectMemberGatewayMock({
       addCurrentUserAsMember: jest.fn<
         Promise<Project>,
         [string, ("admin" | "member" | "viewer")?]
@@ -87,7 +90,7 @@ describe("joinProject", () => {
   it("should throw NotFoundError when project not found", async () => {
     // Arrange
     const notFoundError = createNotFoundError("Project", projectId);
-    const repository = createMemberRepositoryMock({
+    const repository = createProjectMemberGatewayMock({
       addCurrentUserAsMember: jest.fn<
         Promise<Project>,
         [string, ("admin" | "member" | "viewer")?]
@@ -116,7 +119,7 @@ describe("joinProject", () => {
       "unique_project_member",
       "User is already a member of this project"
     );
-    const repository = createMemberRepositoryMock({
+    const repository = createProjectMemberGatewayMock({
       addCurrentUserAsMember: jest.fn<
         Promise<Project>,
         [string, ("admin" | "member" | "viewer")?]
@@ -141,7 +144,7 @@ describe("joinProject", () => {
   it("should propagate repository errors", async () => {
     // Arrange
     const repositoryError = new Error("Database connection failed");
-    const repository = createMemberRepositoryMock({
+    const repository = createProjectMemberGatewayMock({
       addCurrentUserAsMember: jest.fn<
         Promise<Project>,
         [string, ("admin" | "member" | "viewer")?]

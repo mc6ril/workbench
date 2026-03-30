@@ -4,7 +4,7 @@ import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/clie
 import { createLoggerFactory } from "@/shared/observability";
 
 import { WEEKLY_TICKET_ARCHIVE_TIME_ZONE } from "@/modules/board/core/domain/rules/ticketArchival.rules";
-import { archiveCompletedTicketsBatch } from "@/modules/board/core/usecases/ticket";
+import { archiveCompletedTicketsBatch } from "@/modules/board/core/usecases/ticket/archiveCompletedTicketsBatch";
 import { createTicketRepository } from "@/modules/board/infrastructure/supabase/ticket/TicketRepository.supabase";
 
 const logger = createLoggerFactory().forScope("API.ArchiveCompletedTickets");

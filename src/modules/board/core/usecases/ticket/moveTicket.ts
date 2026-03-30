@@ -1,12 +1,17 @@
+import { z } from "zod";
+
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 
-import {
-  MoveTicketInputSchema,
-  type Ticket,
-} from "@/modules/board/core/domain/schema/ticket.schema";
+import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 import { resolveCompletedAtForProjectColumnChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
+
+const MoveTicketInputSchema = z.object({
+  id: z.string().uuid("Ticket ID must be a valid UUID"),
+  columnId: z.string().uuid("Column ID must be a valid UUID"),
+  position: z.number().int().nonnegative("Position must be non-negative"),
+});
 
 /**
  * Move a ticket to a new column and position.
@@ -32,7 +37,6 @@ export const moveTicket = async (
 ): Promise<Ticket> => {
   const validatedInput = MoveTicketInputSchema.parse({ id, columnId, position });
 
-  // Check if ticket exists
   const ticket = await repository.findById(validatedInput.id);
   if (!ticket) {
     throw createNotFoundError("Ticket", validatedInput.id);

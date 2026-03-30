@@ -14,7 +14,6 @@ process.env.NEXT_PUBLIC_SUPABASE_URL =
 process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ?? "test-key";
 
-import { useProjects } from "@/domains/project/presentation/hooks/useProjects";
 import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
 import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
@@ -62,7 +61,6 @@ describe("query hook gating", () => {
       isLoading: true,
     });
 
-    useProjects();
     useProjectsWithStats();
     useReclaimableProjects();
 
@@ -74,12 +72,6 @@ describe("query hook gating", () => {
     );
     expect(useQueryMock).toHaveBeenNthCalledWith(
       2,
-      expect.objectContaining({
-        enabled: false,
-      })
-    );
-    expect(useQueryMock).toHaveBeenNthCalledWith(
-      3,
       expect.objectContaining({
         enabled: false,
       })
@@ -87,7 +79,6 @@ describe("query hook gating", () => {
   });
 
   it("keeps workspace queries enabled once the authenticated session is ready", () => {
-    useProjects();
     useProjectsWithStats();
     useReclaimableProjects();
 
@@ -103,16 +94,9 @@ describe("query hook gating", () => {
         enabled: true,
       })
     );
-    expect(useQueryMock).toHaveBeenNthCalledWith(
-      3,
-      expect.objectContaining({
-        enabled: true,
-      })
-    );
   });
 
   it("respects an explicit disabled flag for workspace queries", () => {
-    useProjects(false);
     useProjectsWithStats(false);
     useReclaimableProjects(false);
 
@@ -124,12 +108,6 @@ describe("query hook gating", () => {
     );
     expect(useQueryMock).toHaveBeenNthCalledWith(
       2,
-      expect.objectContaining({
-        enabled: false,
-      })
-    );
-    expect(useQueryMock).toHaveBeenNthCalledWith(
-      3,
       expect.objectContaining({
         enabled: false,
       })

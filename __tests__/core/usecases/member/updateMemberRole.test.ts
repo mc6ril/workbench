@@ -1,6 +1,6 @@
-import { createMemberRepositoryMock } from "../../../../__mocks__/core/ports/memberRepository";
+import { createProjectMemberGatewayMock } from "../../../../__mocks__/core/ports/projectMemberGateway";
 
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import { ProjectRole } from "@/domains/project/core/domain/project.types";
 import { updateMemberRole } from "@/domains/project/core/usecases/member/updateMemberRole";
 
 describe("updateMemberRole", () => {
@@ -8,7 +8,7 @@ describe("updateMemberRole", () => {
   const memberId = "456e7890-e89b-12d3-a456-426614174001";
 
   it("should update role successfully", async () => {
-    const repository = createMemberRepositoryMock({
+    const repository = createProjectMemberGatewayMock({
       getCurrentRole: jest.fn().mockResolvedValue(ProjectRole.ADMIN),
       updateRole: jest.fn<Promise<void>, [string, ProjectRole]>(async () => {}),
     });
@@ -27,7 +27,7 @@ describe("updateMemberRole", () => {
   });
 
   it("should allow promoting to admin without checking count", async () => {
-    const repository = createMemberRepositoryMock({
+    const repository = createProjectMemberGatewayMock({
       getCurrentRole: jest.fn().mockResolvedValue(ProjectRole.ADMIN),
       updateRole: jest.fn<Promise<void>, [string, ProjectRole]>(async () => {}),
     });
@@ -41,7 +41,7 @@ describe("updateMemberRole", () => {
   });
 
   it("should reject role changes from non-admin members", async () => {
-    const repository = createMemberRepositoryMock({
+    const repository = createProjectMemberGatewayMock({
       getCurrentRole: jest.fn().mockResolvedValue(ProjectRole.MEMBER),
     });
 
@@ -56,7 +56,7 @@ describe("updateMemberRole", () => {
 
   it("should propagate repository errors", async () => {
     const error = new Error("Database error");
-    const repository = createMemberRepositoryMock({
+    const repository = createProjectMemberGatewayMock({
       getCurrentRole: jest.fn().mockResolvedValue(ProjectRole.ADMIN),
       updateRole: jest.fn<Promise<void>, [string, ProjectRole]>(async () => {
         throw error;
@@ -69,7 +69,7 @@ describe("updateMemberRole", () => {
   });
 
   it("should throw ZodError for invalid memberId", async () => {
-    const repository = createMemberRepositoryMock();
+    const repository = createProjectMemberGatewayMock();
 
     await expect(
       updateMemberRole(repository, projectId, "not-a-uuid", ProjectRole.MEMBER)

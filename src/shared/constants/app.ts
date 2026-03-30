@@ -26,15 +26,9 @@ export const STORAGE_KEYS = Object.freeze({
  * Application limits and constraints.
  * Use these constants for validation, pagination, and UI constraints.
  *
- * Password limits enforce a minimum of 8 characters for stronger security.
- * All Zod schemas in `core/domain/auth.schema.ts` use these constants.
  * Pagination defaults can be adjusted if product requirements change.
  */
 export const APP_LIMITS = Object.freeze({
-  PASSWORD: {
-    MIN_LENGTH: 8,
-    MAX_LENGTH: 100,
-  },
   PAGINATION: {
     DEFAULT_PAGE_SIZE: 20,
     MAX_PAGE_SIZE: 100,

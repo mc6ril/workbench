@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { removeAvatar } from "@/domains/profile/core/usecases/removeAvatar";
 import { uploadAvatar } from "@/domains/profile/core/usecases/uploadAvatar";
-import { userProfileRepository } from "@/domains/profile/infrastructure/userProfileRepository.browser";
+import { profileGateway } from "@/domains/profile/infrastructure/profileGateway.browser";
 import { queryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
 import { queryKeys as boardQueryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 
@@ -16,7 +16,7 @@ export const useUploadAvatar = () => {
 
   return useMutation({
     mutationFn: ({ userId, file }: { userId: string; file: File }) =>
-      uploadAvatar(userProfileRepository, userId, file),
+      uploadAvatar(profileGateway, userId, file),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.userProfiles.detail(variables.userId),
@@ -44,7 +44,7 @@ export const useRemoveAvatar = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (userId: string) => removeAvatar(userProfileRepository, userId),
+    mutationFn: (userId: string) => removeAvatar(profileGateway, userId),
     onSuccess: (_data, userId) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.userProfiles.detail(userId),

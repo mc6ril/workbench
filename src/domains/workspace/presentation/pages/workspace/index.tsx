@@ -35,7 +35,7 @@ import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/ho
 import {
   type CreateProjectInput,
   CreateProjectInputSchema,
-} from "@/domains/project/core/domain/schema/project.schema";
+} from "@/domains/project/core/usecases/project/createProject";
 import { useAddUserToProject } from "@/domains/project/presentation/hooks/useAddUserToProject";
 import { useCreateProject } from "@/domains/project/presentation/hooks/useCreateProject";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";

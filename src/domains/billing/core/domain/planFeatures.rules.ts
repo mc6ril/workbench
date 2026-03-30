@@ -1,9 +1,9 @@
-import type { Subscription } from "@/domains/billing/core/domain/subscription.schema";
+import type { Subscription } from "@/domains/billing/core/domain/subscription.types";
 import {
   PLAN_RANK,
   SubscriptionPlan,
   SubscriptionStatus,
-} from "@/domains/billing/core/domain/subscription.schema";
+} from "@/domains/billing/core/domain/subscription.types";
 
 /**
  * All gatable features in the application.

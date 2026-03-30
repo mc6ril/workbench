@@ -1,5 +1,5 @@
-import type { ReclaimableProject } from "@/domains/workspace/core/domain/workspaceProjectCatalog.schema";
-import type { WorkspaceProjectCatalogRepository } from "@/domains/workspace/core/ports/workspaceProjectCatalogRepository";
+import type { ReclaimableProject } from "@/domains/workspace/core/domain/workspace.types";
+import type { WorkspaceProjectCatalogGateway } from "@/domains/workspace/core/ports/workspace-project-catalog.gateway";
 
 /**
  * List orphaned projects that the current user can reclaim.
@@ -7,11 +7,11 @@ import type { WorkspaceProjectCatalogRepository } from "@/domains/workspace/core
  * Matching is done server-side by comparing orphaned_by_email
  * with the current user's email.
  *
- * @param projectRepository - Project repository
+ * @param gateway - Workspace project catalog gateway
  * @returns Array of reclaimable projects (empty if none found)
  */
 export const listReclaimableProjects = async (
-  projectRepository: WorkspaceProjectCatalogRepository
+  gateway: WorkspaceProjectCatalogGateway
 ): Promise<ReclaimableProject[]> => {
-  return projectRepository.listReclaimableProjects();
+  return gateway.listReclaimableProjects();
 };

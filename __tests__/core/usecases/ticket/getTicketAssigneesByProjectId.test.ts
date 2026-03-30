@@ -1,7 +1,7 @@
  
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
-import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { TicketAssignee } from "@/modules/board/core/domain/ticket.types";
 import { getTicketAssigneesByProjectId } from "@/modules/board/core/usecases/ticket/getTicketAssigneesByProjectId";
 
 describe("getTicketAssigneesByProjectId", () => {

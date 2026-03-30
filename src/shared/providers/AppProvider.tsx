@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { ThemeProvider } from "next-themes";
 
+import Loader from "@/shared/design-system/loader";
 import Toast from "@/shared/design-system/toast";
 import { registerLocaleGetter } from "@/shared/i18n/config";
 import { LocaleProvider } from "@/shared/i18n/LocaleProvider";
@@ -14,8 +15,7 @@ import { markNavigationSettled } from "@/shared/navigationPerf";
 import AppErrorBoundary from "./AppErrorBoundary";
 import ReactQueryProvider from "./ReactQueryProvider";
 
-import { useLocaleSync } from "@/domains/profile/presentation/providers/useLocaleSync";
-import { useThemeSync } from "@/domains/profile/presentation/providers/useThemeSync";
+import { useProfileRuntimeSync } from "@/domains/profile/presentation/providers/useProfileRuntimeSync";
 
 type AppProviderProps = {
   initialLocale: Locale;
@@ -32,28 +32,18 @@ const NavigationPerfTracker = () => {
   return null;
 };
 
-/**
- * Syncs locale from the current profile preferences into the active locale
- * provider and keeps the shared locale getter aligned with the current value.
- * Must be a child of ReactQueryProvider so profile queries are available.
- */
-const LocaleSyncProvider = ({ children }: { children: React.ReactNode }) => {
+const RuntimeSyncProvider = ({ children }: { children: React.ReactNode }) => {
   const locale = useLocaleStore((state) => state.locale);
+  const isRuntimeReady = useProfileRuntimeSync();
 
   useEffect(() => {
     registerLocaleGetter(() => locale);
   }, [locale]);
 
-  useLocaleSync();
-  return <>{children}</>;
-};
+  if (!isRuntimeReady) {
+    return <Loader variant="full-page" />;
+  }
 
-/**
- * Syncs theme from the current profile preferences into next-themes.
- * Must be a child of both ReactQueryProvider and ThemeProvider so profile queries can run.
- */
-const ThemeSyncProvider = ({ children }: { children: React.ReactNode }) => {
-  useThemeSync();
   return <>{children}</>;
 };
 
@@ -67,13 +57,11 @@ const AppProvider = ({ children, initialLocale }: AppProviderProps) => {
       <LocaleProvider key={initialLocale} initialLocale={initialLocale}>
         <AppErrorBoundary>
           <ReactQueryProvider>
-            <LocaleSyncProvider>
-              <ThemeSyncProvider>
-                <NavigationPerfTracker />
-                {children}
-                <Toast />
-              </ThemeSyncProvider>
-            </LocaleSyncProvider>
+            <RuntimeSyncProvider>
+              <NavigationPerfTracker />
+              {children}
+              <Toast />
+            </RuntimeSyncProvider>
           </ReactQueryProvider>
         </AppErrorBoundary>
       </LocaleProvider>

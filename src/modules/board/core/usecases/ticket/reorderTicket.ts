@@ -1,6 +1,18 @@
-import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
-import { ReorderTicketInputSchema } from "@/modules/board/core/domain/schema/ticket.schema";
+import { z } from "zod";
+
+import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
+
+const ReorderTicketInputSchema = z.object({
+  ticketPositions: z
+    .array(
+      z.object({
+        id: z.string().uuid(),
+        position: z.number().int().nonnegative(),
+      })
+    )
+    .min(1, "At least one ticket position is required"),
+});
 
 /**
  * Reorder tickets within a column or board.
@@ -18,9 +30,7 @@ export const reorderTicket = async (
   repository: TicketRepository,
   input: { ticketPositions: Array<{ id: string; position: number }> }
 ): Promise<Ticket[]> => {
-  // Validate input with Zod schema
   const validatedInput = ReorderTicketInputSchema.parse(input);
 
-  // Bulk update positions
   return repository.updatePositions(validatedInput.ticketPositions);
 };

@@ -1,6 +1,6 @@
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
-import type { Ticket, TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { Ticket, TicketFilters } from "@/modules/board/core/domain/ticket.types";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 
 describe("listTickets", () => {

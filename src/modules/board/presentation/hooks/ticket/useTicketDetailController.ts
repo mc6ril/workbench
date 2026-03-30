@@ -7,7 +7,7 @@ import { buildProjectRoute } from "@/shared/utils/routes";
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
-import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { TicketPriority } from "@/modules/board/core/domain/ticket.types";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import {
   useComments,

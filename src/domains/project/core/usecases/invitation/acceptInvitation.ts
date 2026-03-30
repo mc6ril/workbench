@@ -1,4 +1,7 @@
-import type { InvitationRepository } from "@/domains/project/core/ports/invitationRepository";
+import type {
+  AcceptedProjectInvitation,
+  ProjectInvitationGateway,
+} from "@/domains/project/core/ports/project-invitation.gateway";
 
 /**
  * Accept a project invitation using its token.
@@ -11,8 +14,8 @@ import type { InvitationRepository } from "@/domains/project/core/ports/invitati
  * @throws Error if token is invalid or expired
  */
 export const acceptInvitation = async (
-  repository: InvitationRepository,
+  gateway: ProjectInvitationGateway,
   token: string
-): Promise<{ projectId: string; projectName: string; role: string }> => {
-  return repository.accept(token);
+): Promise<AcceptedProjectInvitation> => {
+  return gateway.accept(token);
 };

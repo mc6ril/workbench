@@ -1,11 +1,14 @@
-import { UploadAvatarInputSchema } from "@/domains/profile/core/domain/userProfile.schema";
-import type { UserProfileRepository } from "@/domains/profile/core/ports/userProfileRepository";
+import { z } from "zod";
+
+import type { ProfileGateway } from "@/domains/profile/core/ports/profile.gateway";
+
+const AvatarOwnerIdSchema = z.string().uuid();
 
 /**
  * Upload an avatar image for the current user.
  * Validates the input, uploads to storage, and updates the profile.
  *
- * @param repository - UserProfile repository
+ * @param gateway - Profile gateway
  * @param userId - User ID (must match authenticated user)
  * @param file - Image file to upload
  * @returns Public URL of the uploaded avatar
@@ -14,10 +17,10 @@ import type { UserProfileRepository } from "@/domains/profile/core/ports/userPro
  * @throws DatabaseError if upload or profile update fails
  */
 export const uploadAvatar = async (
-  repository: UserProfileRepository,
+  gateway: ProfileGateway,
   userId: string,
   file: File
 ): Promise<string> => {
-  UploadAvatarInputSchema.parse({ userId });
-  return repository.uploadAvatar(userId, file);
+  AvatarOwnerIdSchema.parse(userId);
+  return gateway.uploadAvatar(userId, file);
 };

@@ -7,9 +7,11 @@ import { mapSubscriptionRowToDomain } from "./SubscriptionMapper.supabase";
 
 import type {
   Subscription,
-  UpsertSubscriptionInput,
-} from "@/domains/billing/core/domain/subscription.schema";
-import type { SubscriptionRepository } from "@/domains/billing/core/ports/subscriptionRepository";
+} from "@/domains/billing/core/domain/subscription.types";
+import type {
+  SaveSubscriptionInput,
+  SubscriptionRepository,
+} from "@/domains/billing/core/ports/subscription.repository";
 import type { SubscriptionRow } from "@/domains/billing/infrastructure/supabase/types";
 
 /**
@@ -22,27 +24,6 @@ export const createSubscriptionRepository = (
   browserClient: SupabaseClient,
   adminClient: SupabaseClient
 ): SubscriptionRepository => ({
-  async getCurrent(): Promise<Subscription | null> {
-    try {
-      const { data, error } = await browserClient
-        .from("subscriptions")
-        .select("*")
-        .maybeSingle();
-
-      if (error) {
-        return handleRepositoryError(error, "Subscription");
-      }
-
-      if (!data) {
-        return null;
-      }
-
-      return mapSubscriptionRowToDomain(data as SubscriptionRow);
-    } catch (error) {
-      return handleRepositoryError(error, "Subscription");
-    }
-  },
-
   async getByUserId(userId: string): Promise<Subscription | null> {
     try {
       const { data, error } = await browserClient
@@ -65,7 +46,7 @@ export const createSubscriptionRepository = (
     }
   },
 
-  async upsert(input: UpsertSubscriptionInput): Promise<Subscription> {
+  async save(input: SaveSubscriptionInput): Promise<Subscription> {
     try {
       const row: Record<string, unknown> = {
         user_id: input.userId,
@@ -73,11 +54,11 @@ export const createSubscriptionRepository = (
         status: input.status,
       };
 
-      if (input.stripeCustomerId !== undefined) {
-        row.stripe_customer_id = input.stripeCustomerId;
+      if (input.customerId !== undefined) {
+        row.stripe_customer_id = input.customerId;
       }
-      if (input.stripeSubscriptionId !== undefined) {
-        row.stripe_subscription_id = input.stripeSubscriptionId;
+      if (input.subscriptionId !== undefined) {
+        row.stripe_subscription_id = input.subscriptionId;
       }
       if (input.currentPeriodStart !== undefined) {
         row.current_period_start =
@@ -113,14 +94,12 @@ export const createSubscriptionRepository = (
     }
   },
 
-  async getByStripeCustomerId(
-    stripeCustomerId: string
-  ): Promise<Subscription | null> {
+  async getByCustomerId(customerId: string): Promise<Subscription | null> {
     try {
       const { data, error } = await adminClient
         .from("subscriptions")
         .select("*")
-        .eq("stripe_customer_id", stripeCustomerId)
+        .eq("stripe_customer_id", customerId)
         .maybeSingle();
 
       if (error) {

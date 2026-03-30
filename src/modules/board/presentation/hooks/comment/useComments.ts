@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { listComments } from "@/modules/board/core/usecases/comment";
+import { listComments } from "@/modules/board/core/usecases/comment/listComments";
 import { commentRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 

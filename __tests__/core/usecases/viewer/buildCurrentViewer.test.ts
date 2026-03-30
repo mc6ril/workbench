@@ -1,7 +1,9 @@
 import { mockCurrentSession } from "../../../../__mocks__/core/domain/sessionMocks";
 
-import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profilePreferences.schema";
-import type { UserProfile } from "@/domains/profile/core/domain/userProfile.schema";
+import {
+  DEFAULT_USER_PREFERENCES,
+  type UserProfile,
+} from "@/domains/profile/core/domain/profile.types";
 import { buildCurrentViewer } from "@/domains/viewer/core/usecases/buildCurrentViewer";
 
 describe("buildCurrentViewer", () => {

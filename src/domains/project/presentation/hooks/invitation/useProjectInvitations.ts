@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { listProjectInvitations } from "@/domains/project/core/usecases/invitation/listProjectInvitations";
-import { invitationRepository } from "@/domains/project/infrastructure/supabase/repositories";
+import { projectInvitationGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 
 /**
@@ -17,7 +17,7 @@ export const useProjectInvitations = (
 ) => {
   return useQuery({
     queryKey: queryKeys.invitations.byProject(projectId ?? ""),
-    queryFn: () => listProjectInvitations(invitationRepository, projectId!),
+    queryFn: () => listProjectInvitations(projectInvitationGateway, projectId!),
     enabled: Boolean(projectId) && enabled,
   });
 };

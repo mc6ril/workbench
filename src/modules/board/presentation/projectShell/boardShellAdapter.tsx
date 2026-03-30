@@ -14,10 +14,10 @@ import { GuideIcon } from "@/shared/design-system/icons";
 import { useTranslation } from "@/shared/i18n";
 import { buildProjectRoute, normalizePath } from "@/shared/utils/routes";
 
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import type { ProjectViewContribution } from "@/domains/project/core/domain/shell/projectViewContribution";
+import type { ProjectMember } from "@/domains/project/core/domain/project.types";
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useRegisterProjectViewContribution } from "@/domains/project/presentation/layouts/projectShell/ProjectShellContributionContext";
+import type { ProjectViewContribution } from "@/domains/project/presentation/layouts/projectShell/projectViewContribution";
 import {
   getProjectViewConfig,
   getProjectViewKeyFromPath,

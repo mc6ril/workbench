@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { sessionRepository } from "@/domains/session/infrastructure/supabase/repositories";
+import { sessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/session/presentation/hooks/queryKeys";
 
 type UseOptionalSessionOptions = {
@@ -12,14 +12,12 @@ type UseOptionalSessionOptions = {
  * Reads the current session without throwing when the user is unauthenticated.
  * This is useful for flows that need to detect session recovery.
  */
-export const useOptionalSession = (
-  options: UseOptionalSessionOptions = {}
-) => {
+export const useOptionalSession = (options: UseOptionalSessionOptions = {}) => {
   const { enabled = true, queryKeySuffix = [] } = options;
 
   return useQuery({
     queryKey: [...queryKeys.session.current(), ...queryKeySuffix],
-    queryFn: () => sessionRepository.getCurrentSession(),
+    queryFn: () => sessionGateway.getCurrentSession(),
     enabled,
     retry: false,
   });

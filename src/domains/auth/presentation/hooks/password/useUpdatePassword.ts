@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { UpdatePasswordInput } from "@/domains/auth/core/domain/auth.schema";
+import type { UpdatePasswordInput } from "@/domains/auth/core/domain/auth.types";
 import { updatePassword } from "@/domains/auth/core/usecases/password/updatePassword";
-import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { authGateway } from "@/domains/auth/infrastructure/supabase/repositories";
 import { invalidatePostAuthMutation } from "@/domains/auth/presentation/utils/invalidatePostAuthMutation";
 
 /**
@@ -13,7 +13,7 @@ export const useUpdatePassword = () => {
 
   return useMutation({
     mutationFn: (input: UpdatePasswordInput) =>
-      updatePassword(authRepository, input),
+      updatePassword(authGateway, input),
     retry: false,
     onSuccess: async () => {
       await invalidatePostAuthMutation(queryClient, { includeProjects: true });

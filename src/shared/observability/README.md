@@ -18,10 +18,10 @@ Usecases receive `loggerFactory` as a parameter:
 
 ```typescript
 import type { LoggerFactory } from "@/shared/observability/logger.port";
-import type { ProjectRepository } from "@/domains/project/core/ports/projectRepository";
+import type { ProjectGateway } from "@/domains/project/core/ports/project.gateway";
 
 export async function createProject(
-  repo: ProjectRepository,
+  repo: ProjectGateway,
   loggerFactory: LoggerFactory,
   input: CreateProjectInput
 ): Promise<Project> {

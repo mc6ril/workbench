@@ -1,7 +1,7 @@
 import type {
   Column,
   CreateColumnInput,
-} from "@/modules/board/core/domain/schema/board.schema";
+} from "@/modules/board/core/domain/board.types";
 
 /**
  * Returns default board configuration (Todo, In Progress, Done).
@@ -87,7 +87,7 @@ export const buildMissingDefaultColumnCreates = (
 
     const position = allocateDistinctPosition(
       occupiedPositions,
-      template.position
+      template.position ?? 0
     );
 
     creates.push({

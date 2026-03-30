@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { PROJECT_VIEWS, type ProjectView } from "@/shared/constants/routes";
 import { buildTicketDetailRoute } from "@/shared/utils/routes";
 
-import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
 import {

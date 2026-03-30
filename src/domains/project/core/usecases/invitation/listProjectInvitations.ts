@@ -1,5 +1,5 @@
-import type { ProjectInvitation } from "@/domains/project/core/domain/schema/invitation.schema";
-import type { InvitationRepository } from "@/domains/project/core/ports/invitationRepository";
+import type { ProjectInvitation } from "@/domains/project/core/domain/project.types";
+import type { ProjectInvitationGateway } from "@/domains/project/core/ports/project-invitation.gateway";
 
 /**
  * List invitations currently stored for a project.
@@ -10,8 +10,8 @@ import type { InvitationRepository } from "@/domains/project/core/ports/invitati
  * @returns Invitations ordered by creation date (newest first)
  */
 export const listProjectInvitations = async (
-  repository: InvitationRepository,
+  gateway: ProjectInvitationGateway,
   projectId: string
 ): Promise<ProjectInvitation[]> => {
-  return repository.listByProject(projectId);
+  return gateway.listByProject(projectId);
 };

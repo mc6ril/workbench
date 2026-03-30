@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { ResetPasswordInput } from "@/domains/auth/core/domain/auth.schema";
+import type { ResetPasswordInput } from "@/domains/auth/core/domain/auth.types";
 import { resetPasswordForEmail } from "@/domains/auth/core/usecases/password/resetPasswordForEmail";
-import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { authGateway } from "@/domains/auth/infrastructure/supabase/repositories";
 import { invalidatePostAuthMutation } from "@/domains/auth/presentation/utils/invalidatePostAuthMutation";
 
 /**
@@ -13,7 +13,7 @@ export const useResetPassword = () => {
 
   return useMutation({
     mutationFn: (input: ResetPasswordInput) =>
-      resetPasswordForEmail(authRepository, input),
+      resetPasswordForEmail(authGateway, input),
     retry: false,
     onSuccess: async () => {
       await invalidatePostAuthMutation(queryClient);

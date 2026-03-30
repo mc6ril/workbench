@@ -1,4 +1,4 @@
-import type { CurrentSession } from "@/domains/session/core/domain/currentSession.schema";
+import type { CurrentSession } from "@/domains/session/core/domain/session.types";
 
 /**
  * Mock current session for testing.

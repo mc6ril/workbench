@@ -1,4 +1,4 @@
-import { TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { TicketFilters } from "@/modules/board/core/domain/ticket.types";
 
 type Option = {
   value: string;

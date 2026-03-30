@@ -3,9 +3,9 @@
 import { useMemo } from "react";
 
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
-import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
-import type { BoardTicketViewModel } from "@/modules/board/core/domain/types/board.types";
+import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 import { useTicketAssigneesByProjectId } from "@/modules/board/presentation/hooks/ticket/useTicketAssigneesByProjectId";
+import type { BoardTicketViewModel } from "@/modules/board/presentation/types/boardView.types";
 import { resolveAssigneeIdentity } from "@/modules/board/utils/assigneeUtils";
 import { buildTicketCode } from "@/modules/board/utils/ticketUtils";
 

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { TicketAssignee } from "@/modules/board/core/domain/ticket.types";
 import { assignTicket } from "@/modules/board/core/usecases/ticket/assignTicket";
 import { unassignTicket } from "@/modules/board/core/usecases/ticket/unassignTicket";
 import { ticketRepository } from "@/modules/board/infrastructure/supabase/repositories";

@@ -1,8 +1,8 @@
-import type { Subscription } from "@/domains/billing/core/domain/subscription.schema";
+import type { Subscription } from "@/domains/billing/core/domain/subscription.types";
 import {
   SubscriptionPlan,
   SubscriptionStatus,
-} from "@/domains/billing/core/domain/subscription.schema";
+} from "@/domains/billing/core/domain/subscription.types";
 import type { SubscriptionRow } from "@/domains/billing/infrastructure/supabase/types";
 
 /**
@@ -16,8 +16,8 @@ export const mapSubscriptionRowToDomain = (
   userId: row.user_id,
   plan: row.plan as SubscriptionPlan,
   status: row.status as SubscriptionStatus,
-  stripeCustomerId: row.stripe_customer_id,
-  stripeSubscriptionId: row.stripe_subscription_id,
+  customerId: row.stripe_customer_id,
+  subscriptionId: row.stripe_subscription_id,
   currentPeriodStart: row.current_period_start
     ? new Date(row.current_period_start)
     : null,

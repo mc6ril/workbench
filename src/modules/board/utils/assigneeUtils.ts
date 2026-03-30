@@ -1,5 +1,5 @@
-import type { ProjectMember } from "@/domains/project/core/domain/schema/projectMember.schema";
-import type { TicketAssignee } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { ProjectMember } from "@/domains/project/core/domain/project.types";
+import type { TicketAssignee } from "@/modules/board/core/domain/ticket.types";
 
 type AssigneeIdentity = {
   displayName: string | null;

@@ -4,7 +4,7 @@ import type {
   TicketAssignee,
   TicketFilters,
   UpdateTicketInput,
-} from "@/modules/board/core/domain/schema/ticket.schema";
+} from "@/modules/board/core/domain/ticket.types";
 
 /**
  * Mock type for TicketRepository.

@@ -1,0 +1,64 @@
+import { render, screen } from "@testing-library/react";
+
+import AppProvider from "@/shared/providers/AppProvider";
+
+import { useProfileRuntimeSync } from "@/domains/profile/presentation/providers/useProfileRuntimeSync";
+
+jest.mock("next/navigation", () => ({
+  usePathname: () => "/workspace",
+}));
+
+jest.mock("next-themes", () => ({
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+jest.mock("@/shared/providers/AppErrorBoundary", () => ({
+  __esModule: true,
+  default: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+jest.mock("@/shared/providers/ReactQueryProvider", () => ({
+  __esModule: true,
+  default: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+jest.mock("@/shared/design-system/toast", () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
+jest.mock("@/domains/profile/presentation/providers/useProfileRuntimeSync", () => ({
+  useProfileRuntimeSync: jest.fn(),
+}));
+
+describe("AppProvider", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("shows the full-page loader until runtime preferences are synchronized", () => {
+    jest.mocked(useProfileRuntimeSync).mockReturnValue(false);
+
+    render(
+      <AppProvider initialLocale="en">
+        <div>app content</div>
+      </AppProvider>
+    );
+
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(screen.queryByText("app content")).not.toBeInTheDocument();
+  });
+
+  it("renders the application once runtime preferences are ready", () => {
+    jest.mocked(useProfileRuntimeSync).mockReturnValue(true);
+
+    render(
+      <AppProvider initialLocale="en">
+        <div>app content</div>
+      </AppProvider>
+    );
+
+    expect(screen.getByText("app content")).toBeInTheDocument();
+    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+  });
+});

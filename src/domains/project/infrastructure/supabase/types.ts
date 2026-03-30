@@ -1,4 +1,4 @@
-import type { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import type { ProjectRole } from "@/domains/project/core/domain/project.types";
 
 export type ProjectRow = {
   id: string;

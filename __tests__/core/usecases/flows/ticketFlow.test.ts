@@ -1,10 +1,15 @@
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
-import type { ProjectWithRole } from "@/domains/project/core/domain/schema/project.schema";
-import { ProjectRole } from "@/domains/project/core/domain/schema/projectRole.schema";
+import {
+  ProjectRole,
+  type ProjectWithRole,
+} from "@/domains/project/core/domain/project.types";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
-import type { Ticket, TicketFilters } from "@/modules/board/core/domain/schema/ticket.schema";
+import type {
+  Ticket,
+  TicketFilters,
+} from "@/modules/board/core/domain/ticket.types";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 
 describe("Ticket Flow Tests", () => {
@@ -63,8 +68,8 @@ describe("Ticket Flow Tests", () => {
       // Arrange
       const projects: ProjectWithRole[] = [mockProjectWithRole];
       const tickets: Ticket[] = [mockTicket1, mockTicket2];
-      const projectRepository = createProjectRepositoryMock({
-        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+      const projectRepository = createProjectGatewayMock({
+        listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => projects
         ),
       });
@@ -72,17 +77,15 @@ describe("Ticket Flow Tests", () => {
         listByProject: jest.fn<
           Promise<Ticket[]>,
           [string, TicketFilters?, string?, number?]
-        >(
-          async () => tickets
-        ),
+        >(async () => tickets),
       });
 
       // Act - Step 1: List projects
       const projectsResult = await listProjects(projectRepository);
 
       // Assert - Step 1: Projects should be listed
-      expect(projectRepository.listAccessibleProjects).toHaveBeenCalledTimes(1);
-      expect(projectRepository.listAccessibleProjects).toHaveBeenCalledWith();
+      expect(projectRepository.listProjects).toHaveBeenCalledTimes(1);
+      expect(projectRepository.listProjects).toHaveBeenCalledWith();
       expect(projectsResult).toEqual(projects);
       expect(projectsResult).toHaveLength(1);
       expect(projectsResult[0].id).toBe(projectId);
@@ -107,8 +110,8 @@ describe("Ticket Flow Tests", () => {
     it("should handle empty tickets list", async () => {
       // Arrange
       const projects: ProjectWithRole[] = [mockProjectWithRole];
-      const projectRepository = createProjectRepositoryMock({
-        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+      const projectRepository = createProjectGatewayMock({
+        listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => projects
         ),
       });
@@ -116,9 +119,7 @@ describe("Ticket Flow Tests", () => {
         listByProject: jest.fn<
           Promise<Ticket[]>,
           [string, TicketFilters?, string?, number?]
-        >(
-          async () => []
-        ),
+        >(async () => []),
       });
 
       // Act - Step 1: List projects
@@ -143,20 +144,16 @@ describe("Ticket Flow Tests", () => {
     it("should handle error when listing projects fails", async () => {
       // Arrange
       const repositoryError = new Error("Database connection failed");
-      const projectRepository = createProjectRepositoryMock({
-        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
-          async () => {
+      const projectRepository = createProjectGatewayMock({
+        listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(async () => {
           throw repositoryError;
-          }
-        ),
+        }),
       });
       const ticketRepository = createTicketRepositoryMock({
         listByProject: jest.fn<
           Promise<Ticket[]>,
           [string, TicketFilters?, string?, number?]
-        >(
-          async () => []
-        ),
+        >(async () => []),
       });
 
       // Act & Assert - Step 1: List projects (should fail)
@@ -173,8 +170,8 @@ describe("Ticket Flow Tests", () => {
       // Arrange
       const projects: ProjectWithRole[] = [mockProjectWithRole];
       const repositoryError = new Error("Database connection failed");
-      const projectRepository = createProjectRepositoryMock({
-        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+      const projectRepository = createProjectGatewayMock({
+        listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => projects
         ),
       });
@@ -182,11 +179,9 @@ describe("Ticket Flow Tests", () => {
         listByProject: jest.fn<
           Promise<Ticket[]>,
           [string, TicketFilters?, string?, number?]
-        >(
-          async () => {
-            throw repositoryError;
-          }
-        ),
+        >(async () => {
+          throw repositoryError;
+        }),
       });
 
       // Act - Step 1: List projects (should succeed)
@@ -220,8 +215,8 @@ describe("Ticket Flow Tests", () => {
       };
       const projects: ProjectWithRole[] = [differentProject];
       const tickets: Ticket[] = [mockTicket1];
-      const projectRepository = createProjectRepositoryMock({
-        listAccessibleProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
+      const projectRepository = createProjectGatewayMock({
+        listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => projects
         ),
       });
@@ -229,9 +224,7 @@ describe("Ticket Flow Tests", () => {
         listByProject: jest.fn<
           Promise<Ticket[]>,
           [string, TicketFilters?, string?, number?]
-        >(
-          async () => tickets
-        ),
+        >(async () => tickets),
       });
 
       // Act - Step 1: List projects

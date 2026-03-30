@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { getCurrentProjectRole } from "@/domains/project/core/usecases/member/getCurrentProjectRole";
-import { memberRepository } from "@/domains/project/infrastructure/supabase/repositories";
+import { projectMemberGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 
 /**
@@ -10,7 +10,7 @@ import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 export const useProjectRole = (projectId: string | undefined) => {
   return useQuery({
     queryKey: queryKeys.projects.currentRole(projectId ?? ""),
-    queryFn: () => getCurrentProjectRole(memberRepository, projectId!),
+    queryFn: () => getCurrentProjectRole(projectMemberGateway, projectId!),
     enabled: Boolean(projectId),
   });
 };

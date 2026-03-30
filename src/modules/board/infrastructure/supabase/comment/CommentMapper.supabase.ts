@@ -1,6 +1,6 @@
 import { toDate } from "@/shared/utils/guards";
 
-import type { CommentWithAuthor } from "@/modules/board/core/domain/schema/comment.schema";
+import type { CommentWithAuthor } from "@/modules/board/core/domain/comment.types";
 import type { CommentWithAuthorRow } from "@/modules/board/infrastructure/supabase/comment/types";
 
 /**

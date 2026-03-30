@@ -1,11 +1,8 @@
- 
-import {
-  createAuthError,
-} from "../../../../__mocks__/core/domain/authMocks";
+import { createAuthError } from "../../../../__mocks__/core/domain/authMocks";
 import { mockCurrentSession } from "../../../../__mocks__/core/domain/sessionMocks";
-import { createSessionRepositoryMock } from "../../../../__mocks__/core/ports/sessionRepository";
+import { createSessionGatewayMock } from "../../../../__mocks__/core/ports/sessionGateway";
 
-import type { CurrentSession } from "@/domains/session/core/domain/currentSession.schema";
+import type { CurrentSession } from "@/domains/session/core/domain/session.types";
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
 
 describe("getCurrentSession", () => {
@@ -13,55 +10,55 @@ describe("getCurrentSession", () => {
 
   it("should return session when user is authenticated", async () => {
     // Arrange
-    const repository = createSessionRepositoryMock({
+    const gateway = createSessionGatewayMock({
       getCurrentSession: jest.fn<Promise<CurrentSession | null>, []>(
         async () => mockSession
       ),
     });
 
     // Act
-    const result = await getCurrentSession(repository);
+    const result = await getCurrentSession(gateway);
 
     // Assert
-    expect(repository.getCurrentSession).toHaveBeenCalledTimes(1);
-    expect(repository.getCurrentSession).toHaveBeenCalledWith();
+    expect(gateway.getCurrentSession).toHaveBeenCalledTimes(1);
+    expect(gateway.getCurrentSession).toHaveBeenCalledWith();
     expect(result).toEqual(mockSession);
   });
 
   it("should throw NotFoundError when no session exists", async () => {
     // Arrange
-    const repository = createSessionRepositoryMock({
+    const gateway = createSessionGatewayMock({
       getCurrentSession: jest.fn<Promise<CurrentSession | null>, []>(
         async () => null
       ),
     });
 
     // Act & Assert
-    await expect(getCurrentSession(repository)).rejects.toMatchObject({
+    await expect(getCurrentSession(gateway)).rejects.toMatchObject({
       code: "NOT_FOUND",
       entityType: "Session",
       entityId: "",
     });
-    expect(repository.getCurrentSession).toHaveBeenCalledTimes(1);
-    expect(repository.getCurrentSession).toHaveBeenCalledWith();
+    expect(gateway.getCurrentSession).toHaveBeenCalledTimes(1);
+    expect(gateway.getCurrentSession).toHaveBeenCalledWith();
   });
 
-  it("should propagate authentication error from repository", async () => {
+  it("should propagate authentication error from gateway", async () => {
     // Arrange
-    const repositoryError = createAuthError.authentication(
+    const gatewayError = createAuthError.authentication(
       "Session retrieval failed"
     );
-    const repository = createSessionRepositoryMock({
+    const gateway = createSessionGatewayMock({
       getCurrentSession: jest.fn<Promise<CurrentSession | null>, []>(
         async () => {
-          throw repositoryError;
+          throw gatewayError;
         }
       ),
     });
 
     // Act & Assert
     try {
-      await getCurrentSession(repository);
+      await getCurrentSession(gateway);
       expect(true).toBe(false); // Should not reach here
     } catch (error) {
       expect(error).toMatchObject({
@@ -69,6 +66,6 @@ describe("getCurrentSession", () => {
       });
       expect(error).toHaveProperty("debugMessage");
     }
-    expect(repository.getCurrentSession).toHaveBeenCalledTimes(1);
+    expect(gateway.getCurrentSession).toHaveBeenCalledTimes(1);
   });
 });

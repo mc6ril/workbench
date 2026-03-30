@@ -1,7 +1,7 @@
 import {
   canUpdatePasswordFromAppMetadata,
   extractAuthProviders,
-} from "@/domains/session/infrastructure/supabase/sessionProviderCapabilities";
+} from "@/domains/auth/infrastructure/supabase/providerCapabilities";
 
 describe("authProviderCapabilities", () => {
   describe("extractAuthProviders", () => {

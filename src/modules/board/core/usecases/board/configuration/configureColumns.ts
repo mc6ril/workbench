@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import {
   applyConfigureColumnsPlan,
   assertColumnsCanBeDeleted,
@@ -8,10 +10,28 @@ import {
 
 import {
   type BoardConfiguration,
+  COLUMN_WORKFLOW_STATE_VALUES,
   type ConfigureColumnsInput,
-  ConfigureColumnsInputSchema,
-} from "@/modules/board/core/domain/schema/board.schema";
+} from "@/modules/board/core/domain/board.types";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
+
+const ColumnWorkflowStateSchema = z.enum(COLUMN_WORKFLOW_STATE_VALUES);
+
+const ConfigureColumnsInputSchema = z.object({
+  projectId: z.string().uuid(),
+  columns: z
+    .array(
+      z.object({
+        id: z.string().uuid().optional(),
+        name: z.string().min(1, "Column name must not be empty"),
+        key: z.string().min(1, "Column key must not be empty").optional(),
+        state: ColumnWorkflowStateSchema,
+        position: z.number().int().nonnegative(),
+        visible: z.boolean().default(true),
+      })
+    )
+    .min(1, "At least one column is required"),
+});
 
 /**
  * Configure board columns for a project.

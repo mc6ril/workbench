@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
+import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
 
-import type { Project } from "@/domains/project/core/domain/schema/project.schema";
+import type { Project } from "@/domains/project/core/domain/project.types";
 import { createProject } from "@/domains/project/core/usecases/project/createProject";
 
 describe("createProject", () => {
@@ -18,7 +18,7 @@ describe("createProject", () => {
   it("should create project with valid input", async () => {
     // Arrange
     const input = { name: "Test Project" };
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       create: jest.fn<Promise<Project>, [typeof input]>(
         async () => mockProject
       ),
@@ -36,7 +36,7 @@ describe("createProject", () => {
   it("should throw error on invalid input (empty name)", async () => {
     // Arrange
     const input = { name: "" };
-    const repository = createProjectRepositoryMock();
+    const repository = createProjectGatewayMock();
 
     // Act & Assert
     await expect(createProject(repository, input)).rejects.toThrow(z.ZodError);
@@ -45,7 +45,7 @@ describe("createProject", () => {
 
   it("should reject names that contain emoji", async () => {
     const input = { name: "Board 📋" };
-    const repository = createProjectRepositoryMock();
+    const repository = createProjectGatewayMock();
 
     await expect(createProject(repository, input)).rejects.toThrow(z.ZodError);
     expect(repository.create).not.toHaveBeenCalled();
@@ -55,7 +55,7 @@ describe("createProject", () => {
     // Arrange
     const input = { name: "Test Project" };
     const repositoryError = new Error("Database error");
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       create: jest.fn<Promise<Project>, [typeof input]>(async () => {
         throw repositoryError;
       }),
@@ -79,7 +79,7 @@ describe("createProject", () => {
       createdAt: new Date("2024-01-02T00:00:00Z"),
       updatedAt: new Date("2024-01-02T00:00:00Z"),
     };
-    const repository = createProjectRepositoryMock({
+    const repository = createProjectGatewayMock({
       create: jest.fn<Promise<Project>, [typeof input]>(
         async () => createdProject
       ),
