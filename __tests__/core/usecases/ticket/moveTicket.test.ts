@@ -3,8 +3,8 @@ import { z } from "zod";
 import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
-import type { Board, Column } from "@/modules/board/core/domain/schema/board.schema";
-import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { Board, Column } from "@/modules/board/core/domain/board.types";
+import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 import { moveTicket } from "@/modules/board/core/usecases/ticket/moveTicket";
 
 describe("moveTicket", () => {

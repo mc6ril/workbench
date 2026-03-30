@@ -1,16 +1,16 @@
 import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 import { isString } from "@/shared/utils";
 
+import type {
+  Board,
+  Column,
+  ConfigureColumnsInput,
+} from "@/modules/board/core/domain/board.types";
 import {
   generateColumnKey,
   normalizeColumnKey,
 } from "@/modules/board/core/domain/columnKey.policy";
 import { validateBoardWithColumns } from "@/modules/board/core/domain/rules/board.rules";
-import type {
-  Board,
-  Column,
-  ConfigureColumnsInput,
-} from "@/modules/board/core/domain/schema/board.schema";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 
 type ConfigureColumnInputItem = ConfigureColumnsInput["columns"][number];

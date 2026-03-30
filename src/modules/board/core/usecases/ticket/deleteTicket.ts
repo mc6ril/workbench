@@ -1,7 +1,12 @@
+import { z } from "zod";
+
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 
-import { TicketIdInputSchema } from "@/modules/board/core/domain/schema/ticket.schema";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
+
+const TicketIdInputSchema = z.object({
+  id: z.string().uuid("Ticket ID must be a valid UUID"),
+});
 
 /**
  * Delete a ticket by ID.
@@ -18,12 +23,10 @@ export const deleteTicket = async (
 ): Promise<void> => {
   const { id: validatedId } = TicketIdInputSchema.parse({ id });
 
-  // Fetch existing ticket
   const ticket = await repository.findById(validatedId);
   if (!ticket) {
     throw createNotFoundError("Ticket", validatedId);
   }
 
-  // Call repository to delete ticket
   await repository.delete(validatedId);
 };

@@ -1,6 +1,6 @@
 import { toDate } from "@/shared/utils/guards";
 
-import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 import type { TicketRow } from "@/modules/board/infrastructure/supabase/ticket/types";
 
 /**

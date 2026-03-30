@@ -6,7 +6,7 @@ import type {
   BoardConfiguration,
   Column,
   CreateColumnInput,
-} from "@/modules/board/core/domain/schema/board.schema";
+} from "@/modules/board/core/domain/board.types";
 import { getBoardConfiguration } from "@/modules/board/core/usecases/board/getBoardConfiguration";
 
 describe("getBoardConfiguration", () => {

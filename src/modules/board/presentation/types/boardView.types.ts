@@ -1,6 +1,9 @@
-import type { ColumnWorkflowState } from "@/modules/board/core/domain/schema/board.schema";
-import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { ColumnWorkflowState } from "@/modules/board/core/domain/board.types";
+import type { TicketPriority } from "@/modules/board/core/domain/ticket.types";
 
+/**
+ * Column configuration as consumed by board UI and DnD helpers (read model).
+ */
 export type BoardColumnConfig = {
   id: string;
   title: string;
@@ -9,6 +12,9 @@ export type BoardColumnConfig = {
   isVisible?: boolean;
 };
 
+/**
+ * Ticket summary for board column rendering (presentation).
+ */
 export type BoardTicketViewModel = {
   id: string;
   title: string;

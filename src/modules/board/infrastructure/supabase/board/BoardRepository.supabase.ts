@@ -18,7 +18,7 @@ import type {
   CreateBoardInput,
   CreateColumnInput,
   UpdateColumnInput,
-} from "@/modules/board/core/domain/schema/board.schema";
+} from "@/modules/board/core/domain/board.types";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type {
   BoardRow,

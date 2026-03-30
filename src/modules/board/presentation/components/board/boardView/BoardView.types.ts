@@ -1,5 +1,5 @@
-import type { BoardColumnConfig } from "@/modules/board/core/domain/types/board.types";
 import type { BoardColumnProps } from "@/modules/board/presentation/components/board/boardColumn/BoardColumn.types";
+import type { BoardColumnConfig } from "@/modules/board/presentation/types/boardView.types";
 
 export type BoardViewProps = {
   columns: BoardColumnConfig[];

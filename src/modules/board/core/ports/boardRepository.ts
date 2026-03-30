@@ -4,7 +4,7 @@ import type {
   CreateBoardInput,
   CreateColumnInput,
   UpdateColumnInput,
-} from "@/modules/board/core/domain/schema/board.schema";
+} from "@/modules/board/core/domain/board.types";
 
 /**
  * Repository contract for Board and Column operations.

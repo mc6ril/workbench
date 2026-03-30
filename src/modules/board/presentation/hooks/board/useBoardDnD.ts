@@ -22,11 +22,7 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
 import type { BoardColumnTickets } from "./types";
 
-import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
-import type {
-  BoardColumnConfig,
-  BoardTicketViewModel,
-} from "@/modules/board/core/domain/types/board.types";
+import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 import type { BoardTicketIds } from "@/modules/board/core/usecases/board/boardDnD";
 import {
   buildBoardTicketIds,
@@ -36,6 +32,10 @@ import {
 } from "@/modules/board/core/usecases/board/boardDnD";
 import { useMoveAndReorderTicket } from "@/modules/board/presentation/hooks/ticket/useMoveAndReorderTicket";
 import { useReorderTicket } from "@/modules/board/presentation/hooks/ticket/useReorderTicket";
+import type {
+  BoardColumnConfig,
+  BoardTicketViewModel,
+} from "@/modules/board/presentation/types/boardView.types";
 
 const areIdArraysEqual = (first: string[], second: string[]): boolean => {
   if (first.length !== second.length) {

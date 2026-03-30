@@ -5,8 +5,8 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { isNonEmptyString, isObject, isString } from "@/shared/utils";
 
-import type { CommentWithAuthor } from "@/modules/board/core/domain/schema/comment.schema";
-import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { CommentWithAuthor } from "@/modules/board/core/domain/comment.types";
+import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 import type { RealtimeRepository } from "@/modules/board/core/ports/realtimeRepository";
 import { getRealtimeRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";

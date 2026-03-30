@@ -1,14 +1,25 @@
 import { toDate } from "@/shared/utils/guards";
 
-import type {
-  Board,
-  Column,
-} from "@/modules/board/core/domain/schema/board.schema";
-import { ColumnWorkflowStateSchema } from "@/modules/board/core/domain/schema/board.schema";
+import {
+  type Board,
+  type Column,
+  COLUMN_WORKFLOW_STATE_VALUES,
+  type ColumnWorkflowState,
+} from "@/modules/board/core/domain/board.types";
 import type {
   BoardRow,
   ColumnRow,
 } from "@/modules/board/infrastructure/supabase/board/types";
+
+const parseColumnWorkflowState = (raw: string): ColumnWorkflowState => {
+  if (
+    (COLUMN_WORKFLOW_STATE_VALUES as readonly string[]).includes(raw)
+  ) {
+    return raw as ColumnWorkflowState;
+  }
+
+  throw new Error(`Invalid column workflow state: ${raw}`);
+};
 
 /**
  * Maps a Supabase row to a domain Board entity.
@@ -53,7 +64,7 @@ export const mapColumnRowToDomain = (row: ColumnRow): Column => {
     boardId: row.board_id,
     name: row.name,
     key: row.key,
-    state: ColumnWorkflowStateSchema.parse(row.state),
+    state: parseColumnWorkflowState(row.state),
     position: row.position,
     visible: row.visible,
     createdAt: toDate(row.created_at),

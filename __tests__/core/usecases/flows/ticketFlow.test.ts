@@ -9,7 +9,7 @@ import { listProjects } from "@/domains/workspace/core/usecases/project/listProj
 import type {
   Ticket,
   TicketFilters,
-} from "@/modules/board/core/domain/schema/ticket.schema";
+} from "@/modules/board/core/domain/ticket.types";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 
 describe("Ticket Flow Tests", () => {

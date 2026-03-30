@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
-import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 import { reorderTicket } from "@/modules/board/core/usecases/ticket/reorderTicket";
 
 describe("reorderTicket", () => {

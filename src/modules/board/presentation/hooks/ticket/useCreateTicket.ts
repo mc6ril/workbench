@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateTicketInput } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { CreateTicketInput } from "@/modules/board/core/domain/ticket.types";
 import { createTicket } from "@/modules/board/core/usecases/ticket/createTicket";
 import {
   boardRepository,

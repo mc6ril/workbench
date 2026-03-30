@@ -1,7 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { CreateCommentInput } from "@/modules/board/core/domain/schema/comment.schema";
-import { createComment } from "@/modules/board/core/usecases/comment";
+import type {
+  CommentWithAuthor,
+  CreateCommentInput,
+} from "@/modules/board/core/domain/comment.types";
+import { createComment } from "@/modules/board/core/usecases/comment/createComment";
 import { commentRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 
@@ -11,7 +14,7 @@ import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 export const useCreateComment = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<CommentWithAuthor, Error, CreateCommentInput>({
     mutationFn: (input: CreateCommentInput) =>
       createComment(input, commentRepository),
     onSuccess: (comment) => {

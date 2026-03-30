@@ -1,13 +1,37 @@
+import { z } from "zod";
+
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 
 import {
   type Ticket,
+  TICKET_PRIORITY_VALUES,
   type UpdateTicketInput,
-  UpdateTicketInputSchema,
-} from "@/modules/board/core/domain/schema/ticket.schema";
+} from "@/modules/board/core/domain/ticket.types";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 import { resolveCompletedAtForProjectColumnChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
+
+const TicketPrioritySchema = z.enum(TICKET_PRIORITY_VALUES);
+
+const UpdateTicketInputSchema = z.object({
+  title: z.string().min(1, "Ticket title must not be empty").optional(),
+  description: z.string().nullable().optional(),
+  columnId: z.string().uuid("Ticket column ID must be a valid UUID").optional(),
+  position: z.number().int().nonnegative().optional(),
+  priority: TicketPrioritySchema.nullable().optional(),
+  dueDate: z
+    .string()
+    .regex(
+      /^\d{4}-\d{2}-\d{2}$/,
+      "Due date must be a calendar date (YYYY-MM-DD)"
+    )
+    .nullable()
+    .optional(),
+  storyPoints: z.number().int().positive().nullable().optional(),
+  completedAt: z.coerce.date().nullable().optional(),
+  archivedAt: z.coerce.date().nullable().optional(),
+  archivedWeekStart: z.coerce.date().nullable().optional(),
+});
 
 /**
  * Update an existing ticket.
@@ -27,10 +51,8 @@ export const updateTicket = async (
   id: string,
   input: UpdateTicketInput
 ): Promise<Ticket> => {
-  // Validate input with Zod schema
   const validatedInput = UpdateTicketInputSchema.parse(input);
 
-  // Fetch existing ticket
   const existingTicket = await repository.findById(id);
   if (!existingTicket) {
     throw createNotFoundError("Ticket", id);
@@ -49,7 +71,6 @@ export const updateTicket = async (
           }
         );
 
-  // Call repository to update ticket
   return repository.update(id, {
     ...validatedInput,
     completedAt,

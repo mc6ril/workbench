@@ -2,7 +2,7 @@ import React from "react";
 
 import styles from "./TicketPriorityDot.module.scss";
 
-import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { TicketPriority } from "@/modules/board/core/domain/ticket.types";
 
 type Props = {
   priority: TicketPriority;

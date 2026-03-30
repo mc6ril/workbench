@@ -17,9 +17,9 @@ import { useTranslation } from "@/shared/i18n";
 import styles from "./BoardColumn.module.scss";
 
 import { BOARD_COLUMN_DROP_PREFIX } from "@/modules/board/constants/board";
-import type { BoardTicketViewModel } from "@/modules/board/core/domain/types/board.types";
 import type { BoardColumnProps } from "@/modules/board/presentation/components/board/boardColumn/BoardColumn.types";
 import TicketCard from "@/modules/board/presentation/components/ticket/ticketCard/TicketCard";
+import type { BoardTicketViewModel } from "@/modules/board/presentation/types/boardView.types";
 
 const SORTABLE_TRANSITION = Object.freeze({
   duration: 160,

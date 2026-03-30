@@ -9,7 +9,7 @@ import { useTranslation } from "@/shared/i18n";
 
 import styles from "./TicketCard.module.scss";
 
-import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { TicketPriority } from "@/modules/board/core/domain/ticket.types";
 import TicketMeta from "@/modules/board/presentation/components/ticket/ticketShared/TicketMeta";
 import { buildTicketAriaLabel } from "@/modules/board/utils/ticketUtils";
 

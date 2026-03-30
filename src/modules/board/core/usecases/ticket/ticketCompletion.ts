@@ -1,4 +1,4 @@
-import type { Column } from "@/modules/board/core/domain/schema/board.schema";
+import type { Column } from "@/modules/board/core/domain/board.types";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import { getBoardConfiguration } from "@/modules/board/core/usecases/board/getBoardConfiguration";
 

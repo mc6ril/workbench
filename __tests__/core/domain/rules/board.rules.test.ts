@@ -1,16 +1,16 @@
 import { buildMissingDefaultColumnCreates } from "@/modules/board/core/domain/board.defaults";
+import type {
+  Board,
+  Column,
+  CreateBoardInput,
+  CreateColumnInput,
+} from "@/modules/board/core/domain/board.types";
 import {
   validateBoardColumnRelationship,
   validateBoardHasActiveDoneState,
   validateBoardWithColumns,
   validateColumnOrder,
 } from "@/modules/board/core/domain/rules/board.rules";
-import type {
-  Board,
-  Column,
-  CreateBoardInput,
-  CreateColumnInput,
-} from "@/modules/board/core/domain/schema/board.schema";
 
 describe("Board Business Rules", () => {
   const createMockColumn = (overrides?: Partial<Column>): Column => ({

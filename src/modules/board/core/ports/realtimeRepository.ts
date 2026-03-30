@@ -1,4 +1,4 @@
-import type { Ticket } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 
 export type RealtimePostgresChangesFilter = {
   event: "*";

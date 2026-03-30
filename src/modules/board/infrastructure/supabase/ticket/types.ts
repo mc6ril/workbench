@@ -1,4 +1,4 @@
-import type { TicketPriority } from "@/modules/board/core/domain/schema/ticket.schema";
+import type { TicketPriority } from "@/modules/board/core/domain/ticket.types";
 
 export type TicketRow = {
   id: string;
