@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { isAllowedProjectBoardEmoji } from "@/domains/project/core/domain/constants/projectBoardEmoji.constants";
 import type { Project } from "@/domains/project/core/domain/project.types";
 import { containsEmoji } from "@/domains/project/core/domain/rules/projectName.rules";
 import type { ProjectGateway } from "@/domains/project/core/ports/project.gateway";
@@ -12,6 +13,12 @@ export const CreateProjectInputSchema = z.object({
     .refine((value) => !containsEmoji(value), {
       message: "PROJECT_NAME_CONTAINS_EMOJI",
     }),
+  boardEmoji: z
+    .string()
+    .refine((value) => isAllowedProjectBoardEmoji(value), {
+      message: "INVALID_BOARD_EMOJI",
+    })
+    .optional(),
 });
 
 export type CreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
@@ -36,5 +43,6 @@ export const createProject = async (
 
   return gateway.create({
     name: validatedInput.name,
+    boardEmoji: validatedInput.boardEmoji,
   });
 };

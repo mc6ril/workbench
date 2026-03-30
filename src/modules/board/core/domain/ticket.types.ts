@@ -78,8 +78,13 @@ export type MoveAndReorderTicketInput = {
   }>;
 };
 
-export type GetTicketByCodeInput = {
-  projectShortCode: string;
+/**
+ * Input for looking up a ticket by its code number within a specific project.
+ * The functional key of a ticket is (projectId, codeNumber); short codes are
+ * never used as a global project identifier.
+ */
+export type GetTicketByCodeInProjectInput = {
+  projectId: string;
   codeNumber: number;
 };
 

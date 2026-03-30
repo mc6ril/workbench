@@ -191,7 +191,7 @@ export const createProjectGateway = (
     }
   },
 
-  async create(input: { name: string }): Promise<Project> {
+  async create(input: { name: string; boardEmoji?: string }): Promise<Project> {
     try {
       const { data: rpcData, error: rpcError } = await client.rpc(
         "create_project",
@@ -203,21 +203,28 @@ export const createProjectGateway = (
       }
 
       const projectRow = extractProjectRow(rpcData);
+      let project: Project;
       if (projectRow) {
-        return mapProjectRowToDomain(projectRow);
+        project = mapProjectRowToDomain(projectRow);
+      } else {
+        const projectId = extractProjectId(rpcData);
+        if (!projectId) {
+          return handleRepositoryError(
+            createDatabaseError(
+              "No project data returned from create_project function"
+            ),
+            "Project"
+          );
+        }
+
+        project = await fetchProjectById(client, projectId);
       }
 
-      const projectId = extractProjectId(rpcData);
-      if (projectId) {
-        return fetchProjectById(client, projectId);
+      if (input.boardEmoji !== undefined) {
+        return this.update(project.id, { boardEmoji: input.boardEmoji });
       }
 
-      return handleRepositoryError(
-        createDatabaseError(
-          "No project data returned from create_project function"
-        ),
-        "Project"
-      );
+      return project;
     } catch (error) {
       return handleRepositoryError(error, "Project");
     }

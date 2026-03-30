@@ -181,11 +181,10 @@ const WorkspacePage = () => {
     }
     isSubmittingRef.current = true;
     try {
-      const normalizedName = stripProjectBoardEmojiPrefix(data.name);
-      const prefixedName = `${selectedEmoji} ${normalizedName}`.trim();
+      const normalizedName = stripProjectBoardEmojiPrefix(data.name).trim();
       await createProjectMutation.mutateAsync({
-        ...data,
-        name: prefixedName,
+        name: normalizedName,
+        boardEmoji: selectedEmoji,
       });
     } finally {
       submitTimerRef.current = setTimeout(() => {
@@ -257,9 +256,7 @@ const WorkspacePage = () => {
 
       <div className={styles["workspace-container"]}>
         {projectsError && (
-          <ErrorMessage
-            message={getErrorMessage(projectsError, tErrors)}
-          />
+          <ErrorMessage message={getErrorMessage(projectsError, tErrors)} />
         )}
 
         {Array.isArray(reclaimableProjects) &&

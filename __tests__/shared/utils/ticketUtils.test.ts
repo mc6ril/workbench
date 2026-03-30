@@ -2,6 +2,7 @@ import {
   buildTicketAriaLabel,
   buildTicketCode,
   normalizeTicketSearch,
+  parseTicketCodeForProject,
 } from "@/modules/board/utils/ticketUtils";
 
 describe("buildTicketCode", () => {
@@ -87,3 +88,65 @@ describe("buildTicketAriaLabel", () => {
     expect(result).toBe("Ticket: Write tests, 5 points");
   });
 });
+
+describe("parseTicketCodeForProject", () => {
+  it("parses matching project code and returns code number", () => {
+    expect(parseTicketCodeForProject("WB-42", "WB")).toEqual({
+      matchesProject: true,
+      codeNumber: 42,
+    });
+    expect(parseTicketCodeForProject(" wb-7 ", "WB")).toEqual({
+      matchesProject: true,
+      codeNumber: 7,
+    });
+    expect(parseTicketCodeForProject("PRJ-1", "prj")).toEqual({
+      matchesProject: true,
+      codeNumber: 1,
+    });
+  });
+
+  it("returns no match when project short code is missing", () => {
+    expect(parseTicketCodeForProject("WB-42", undefined)).toEqual({
+      matchesProject: false,
+      codeNumber: null,
+    });
+    expect(parseTicketCodeForProject("WB-42", null)).toEqual({
+      matchesProject: false,
+      codeNumber: null,
+    });
+  });
+
+  it("returns no match when input does not follow shortCode-number pattern", () => {
+    expect(parseTicketCodeForProject("WB", "WB")).toEqual({
+      matchesProject: false,
+      codeNumber: null,
+    });
+    expect(parseTicketCodeForProject("WB-", "WB")).toEqual({
+      matchesProject: false,
+      codeNumber: null,
+    });
+    expect(parseTicketCodeForProject("42", "WB")).toEqual({
+      matchesProject: false,
+      codeNumber: null,
+    });
+  });
+
+  it("returns no match when short code does not match project", () => {
+    expect(parseTicketCodeForProject("TE-3", "WB")).toEqual({
+      matchesProject: false,
+      codeNumber: null,
+    });
+  });
+
+  it("returns null codeNumber when number part is not a positive integer", () => {
+    expect(parseTicketCodeForProject("WB-0", "WB")).toEqual({
+      matchesProject: true,
+      codeNumber: null,
+    });
+    expect(parseTicketCodeForProject("WB--1", "WB")).toEqual({
+      matchesProject: false,
+      codeNumber: null,
+    });
+  });
+});
+
