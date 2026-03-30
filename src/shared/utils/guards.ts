@@ -3,6 +3,8 @@
  * Provides simple, reusable functions for common validation patterns.
  */
 
+import { throwProgrammingError } from "@/shared/errors/programmingError";
+
 /**
  * Type guard to check if a value is an object (not null, not array).
  */
@@ -120,12 +122,12 @@ export const isPlainObject = (
  *
  * @param value - Date object or date string
  * @returns Date object
- * @throws Error if value cannot be converted to a valid date
+ * @throws ProgrammingError if value cannot be converted to a valid date
  */
 export const toDate = (value: unknown): Date => {
   const date = value instanceof Date ? value : new Date(String(value));
   if (Number.isNaN(date.getTime())) {
-    throw new Error(`Invalid date value: ${String(value)}`);
+    throwProgrammingError(`Invalid date value: ${String(value)}`);
   }
   return date;
 };

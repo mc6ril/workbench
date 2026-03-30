@@ -106,8 +106,10 @@ describe("joinProject", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "NOT_FOUND",
-        entityType: "Project",
-        entityId: projectId,
+        context: {
+          entityType: "Project",
+          entityId: projectId,
+        },
       });
     }
     expect(repository.addCurrentUserAsMember).toHaveBeenCalledTimes(1);
@@ -135,7 +137,9 @@ describe("joinProject", () => {
     } catch (error) {
       expect(error).toMatchObject({
         code: "CONSTRAINT_VIOLATION",
-        constraint: "unique_project_member",
+        context: {
+          constraint: "unique_project_member",
+        },
       });
     }
     expect(repository.addCurrentUserAsMember).toHaveBeenCalledTimes(1);

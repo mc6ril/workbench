@@ -1,37 +1,22 @@
 /**
- * Domain rule error types for business rule violations.
- * These errors are returned by domain validation functions and can be handled by usecases.
+ * Domain rule violations expressed as {@link AppError}.
  */
 
-/**
- * Base domain rule error type.
- * Errors contain only codes and metadata - no user-facing messages.
- * User-facing messages are translated in the presentation layer using i18n.
- */
-export type DomainRuleError = {
-  code: string;
-  /**
-   * Optional debug message for logging purposes only.
-   * Never shown to users - use error.code with i18n for user-facing messages.
-   */
-  debugMessage?: string;
-  /**
-   * Optional field name for field-specific validation errors.
-   */
-  field?: string;
-};
+import type { AppError } from "@/shared/errors/appError";
+import { createAppError } from "@/shared/errors/appError";
+import type { AppErrorCode } from "@/shared/errors/appErrorCodes";
 
 /**
- * Error factory function for domain rule violations.
- * Creates errors with codes and metadata only.
- * User-facing messages are translated in the presentation layer using i18n.
+ * @deprecated Use {@link AppError} directly; kept for call-site clarity.
  */
+export type DomainRuleError = AppError;
+
 export const createDomainRuleError = (
-  code: string,
+  code: AppErrorCode,
   debugMessage?: string,
   field?: string
-): DomainRuleError => ({
-  code,
-  debugMessage,
-  field,
-});
+): AppError =>
+  createAppError(code, {
+    debugMessage,
+    ...(field !== undefined ? { context: { field } } : {}),
+  });

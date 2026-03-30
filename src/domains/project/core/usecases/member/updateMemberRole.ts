@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { DOMAIN_RULE_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 
 import { ProjectRole } from "@/domains/project/core/domain/project.types";
@@ -40,7 +41,7 @@ export const updateMemberRole = async (
 
   if (currentRole !== ProjectRole.ADMIN) {
     throw createDomainRuleError(
-      "MEMBER_ROLE_CHANGE_ADMIN_REQUIRED",
+      DOMAIN_RULE_ERROR_CODE.MEMBER_ROLE_CHANGE_ADMIN_REQUIRED,
       "Only project administrators can change a member role"
     );
   }

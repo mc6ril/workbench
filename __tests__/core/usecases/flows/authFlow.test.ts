@@ -58,8 +58,10 @@ describe("Auth Flow Tests", () => {
       // Act & Assert - Step 2: Get current session (should throw NotFoundError as email not verified)
       await expect(getCurrentSession(sessionGateway)).rejects.toMatchObject({
         code: "NOT_FOUND",
-        entityType: "Session",
-        entityId: "",
+        context: {
+          entityType: "Session",
+          entityId: "",
+        },
       });
       expect(sessionGateway.getCurrentSession).toHaveBeenCalledTimes(1);
       expect(sessionGateway.getCurrentSession).toHaveBeenCalledWith();

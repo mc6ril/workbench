@@ -38,7 +38,7 @@ export type ProjectGateway = {
    * @throws ConstraintError if constraint violation occurs
    * @throws DatabaseError if database operation fails
    */
-  create(input: { name: string }): Promise<Project>;
+  create(input: { name: string; boardEmoji?: string }): Promise<Project>;
 
   /**
    * Update an existing project.

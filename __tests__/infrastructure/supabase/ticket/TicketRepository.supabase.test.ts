@@ -84,6 +84,20 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     expect(ticketQuery.is).toHaveBeenCalledWith("archived_at", null);
   });
 
+  it("includes archived tickets when using findByCodeIncludingArchived", async () => {
+    const ticketQuery = createQueryBuilderMock<TicketRow>(baseRow);
+    const client = {
+      from: jest.fn(() => ticketQuery),
+    } as unknown as SupabaseClient;
+
+    const repository = createTicketRepository(client);
+    await repository.findByCodeIncludingArchived(projectId, 1);
+
+    expect(ticketQuery.eq).toHaveBeenCalledWith("project_id", projectId);
+    expect(ticketQuery.eq).toHaveBeenCalledWith("code_number", 1);
+    expect(ticketQuery.is).not.toHaveBeenCalledWith("archived_at", null);
+  });
+
   it("keeps project assignee fallback scoped to active ticket ids", async () => {
     const ticketIdsQuery = createQueryBuilderMock<Array<{ id: string }>>([
       { id: ticketId },

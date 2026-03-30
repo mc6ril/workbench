@@ -1,25 +1,22 @@
 import type { Session } from "@supabase/supabase-js";
 
-import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
+import type { AppError } from "@/shared/errors/appError";
+import { createAppError } from "@/shared/errors/appError";
+import type { AuthErrorCode } from "@/shared/errors/appErrorCodes";
+import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 
 import { isSuperuserFromAppMetadata } from "@/domains/auth/infrastructure/supabase/providerCapabilities";
 import type { CurrentSession } from "@/domains/session/core/domain/session.types";
 
-type AuthInfrastructureError = {
-  code: string;
-  debugMessage?: string;
-  originalError?: unknown;
-};
-
 const createAuthInfrastructureError = (
-  code: string,
+  code: AuthErrorCode,
   debugMessage?: string,
   originalError?: unknown
-): AuthInfrastructureError => ({
-  code,
-  debugMessage,
-  originalError,
-});
+): AppError =>
+  createAppError(code, {
+    debugMessage,
+    ...(originalError !== undefined ? { context: { originalError } } : {}),
+  });
 
 /**
  * Maps Supabase Session to the stable session shape returned by auth flows.
@@ -39,9 +36,7 @@ export const mapSupabaseSessionToCurrentSession = (
 /**
  * Maps Supabase Auth errors to stable application auth error codes.
  */
-export const mapSupabaseAuthError = (
-  error: unknown
-): AuthInfrastructureError => {
+export const mapSupabaseAuthError = (error: unknown): AppError => {
   if (
     error &&
     typeof error === "object" &&

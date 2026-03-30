@@ -1,3 +1,6 @@
+import { createAppError } from "@/shared/errors/appError";
+import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
+
 import { mockCurrentSession } from "./sessionMocks";
 
 import type {
@@ -96,88 +99,88 @@ export const createAuthError = {
    */
   authentication: (
     debugMessage: string = "Authentication failed"
-  ): AuthenticationError => ({
-    code: "AUTHENTICATION_ERROR",
-    debugMessage,
-  }),
+  ): AuthenticationError =>
+    createAppError(AUTH_ERROR_CODE.AUTHENTICATION_ERROR, {
+      debugMessage,
+    }) as AuthenticationError,
 
   /**
    * Create an EmailAlreadyExistsError.
    */
   emailAlreadyExists: (
     debugMessage: string = "Email already registered"
-  ): EmailAlreadyExistsError => ({
-    code: "EMAIL_ALREADY_EXISTS",
-    debugMessage,
-  }),
+  ): EmailAlreadyExistsError =>
+    createAppError(AUTH_ERROR_CODE.EMAIL_ALREADY_EXISTS, {
+      debugMessage,
+    }) as EmailAlreadyExistsError,
 
   /**
    * Create an EmailVerificationError.
    */
   emailVerification: (
     debugMessage: string = "Email verification failed"
-  ): EmailVerificationError => ({
-    code: "EMAIL_VERIFICATION_ERROR",
-    debugMessage,
-  }),
+  ): EmailVerificationError =>
+    createAppError(AUTH_ERROR_CODE.EMAIL_VERIFICATION_ERROR, {
+      debugMessage,
+    }) as EmailVerificationError,
 
   /**
    * Create an InvalidCredentialsError.
    */
   invalidCredentials: (
     debugMessage: string = "Invalid email or password"
-  ): InvalidCredentialsError => ({
-    code: "INVALID_CREDENTIALS",
-    debugMessage,
-  }),
+  ): InvalidCredentialsError =>
+    createAppError(AUTH_ERROR_CODE.INVALID_CREDENTIALS, {
+      debugMessage,
+    }) as InvalidCredentialsError,
 
   /**
    * Create an InvalidTokenError.
    */
   invalidToken: (
     debugMessage: string = "Token is invalid or expired"
-  ): InvalidTokenError => ({
-    code: "INVALID_TOKEN",
-    debugMessage,
-  }),
+  ): InvalidTokenError =>
+    createAppError(AUTH_ERROR_CODE.INVALID_TOKEN, {
+      debugMessage,
+    }) as InvalidTokenError,
 
   /**
    * Create a PasswordResetError.
    */
   passwordReset: (
     debugMessage: string = "Password reset failed"
-  ): PasswordResetError => ({
-    code: "PASSWORD_RESET_ERROR",
-    debugMessage,
-  }),
+  ): PasswordResetError =>
+    createAppError(AUTH_ERROR_CODE.PASSWORD_RESET_ERROR, {
+      debugMessage,
+    }) as PasswordResetError,
 
   /**
    * Create a WeakPasswordError.
    */
   weakPassword: (
     debugMessage: string = "Password is too weak"
-  ): WeakPasswordError => ({
-    code: "WEAK_PASSWORD",
-    debugMessage,
-  }),
+  ): WeakPasswordError =>
+    createAppError(AUTH_ERROR_CODE.WEAK_PASSWORD, {
+      debugMessage,
+    }) as WeakPasswordError,
 
   /**
    * Create a SamePasswordError.
    */
   samePassword: (
     debugMessage: string = "New password should be different"
-  ): SamePasswordError => ({
-    code: "SAME_PASSWORD",
-    debugMessage,
-  }),
+  ): SamePasswordError =>
+    createAppError(AUTH_ERROR_CODE.SAME_PASSWORD, {
+      debugMessage,
+    }) as SamePasswordError,
 
   /**
    * Create a PasswordUpdateNotAllowedError.
    */
   passwordUpdateNotAllowed: (
     debugMessage: string = "Password updates are not available for this account"
-  ): PasswordUpdateNotAllowedError => ({
-    code: "PASSWORD_UPDATE_NOT_ALLOWED",
-    debugMessage,
-  }),
+  ): PasswordUpdateNotAllowedError =>
+    createAppError(AUTH_ERROR_CODE.PASSWORD_UPDATE_NOT_ALLOWED, {
+      debugMessage,
+    }) as PasswordUpdateNotAllowedError,
 };

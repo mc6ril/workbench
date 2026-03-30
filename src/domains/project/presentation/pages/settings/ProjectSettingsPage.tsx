@@ -141,13 +141,13 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
     : "";
 
   const projectErrorMessage = projectError
-    ? getErrorMessage(projectError as { code?: string }, tErrors)
+    ? getErrorMessage(projectError, tErrors)
     : null;
   const updateErrorMessage = updateProjectMutation.error
-    ? getErrorMessage(updateProjectMutation.error as { code?: string }, tErrors)
+    ? getErrorMessage(updateProjectMutation.error, tErrors)
     : null;
   const deleteErrorMessage = deleteProjectMutation.error
-    ? getErrorMessage(deleteProjectMutation.error as { code?: string }, tErrors)
+    ? getErrorMessage(deleteProjectMutation.error, tErrors)
     : null;
 
   const handleProjectNameChange = (value: string) => {

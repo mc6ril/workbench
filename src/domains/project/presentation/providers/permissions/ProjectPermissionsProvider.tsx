@@ -7,6 +7,8 @@ import {
   useMemo,
 } from "react";
 
+import { assertDefined } from "@/shared/errors/programmingError";
+
 import { useProjectRole } from "@/domains/project/presentation/hooks/member/useProjectRole";
 import { resolveProjectPermissions } from "@/domains/project/presentation/providers/permissions/resolveProjectPermissions";
 import type { ProjectPermissions } from "@/domains/project/presentation/providers/permissions/types";
@@ -43,11 +45,10 @@ export const ProjectPermissionsProvider = ({
 export const useProjectPermissions = (): ProjectPermissions => {
   const context = useContext(ProjectPermissionsContext);
 
-  if (!context) {
-    throw new Error(
-      "useProjectPermissions must be used within ProjectPermissionsProvider"
-    );
-  }
+  assertDefined(
+    context,
+    "useProjectPermissions must be used within ProjectPermissionsProvider"
+  );
 
   return context;
 };

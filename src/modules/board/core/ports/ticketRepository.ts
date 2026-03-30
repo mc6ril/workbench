@@ -30,6 +30,24 @@ export type TicketRepository = {
   findByCode(projectId: string, codeNumber: number): Promise<Ticket | null>;
 
   /**
+   * Get a ticket by its code number within a project, including archived
+   * tickets.
+   *
+   * Implementations must look up tickets by the functional key
+   * (projectId, codeNumber) without relying on project short codes or any
+   * global short code uniqueness.
+   *
+   * @param projectId - Project ID
+   * @param codeNumber - Ticket code number (positive integer)
+   * @returns Ticket or null if not found
+   * @throws DatabaseError if database operation fails
+   */
+  findByCodeIncludingArchived(
+    projectId: string,
+    codeNumber: number
+  ): Promise<Ticket | null>;
+
+  /**
    * Get a ticket by ID.
    * @param id - Ticket ID
    * @returns Ticket or null if not found

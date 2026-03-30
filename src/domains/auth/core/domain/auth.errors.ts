@@ -1,7 +1,10 @@
-export type AuthError = {
-  code: string;
-  debugMessage?: string;
-};
+import type { AppError } from "@/shared/errors/appError";
+import type { AuthErrorCode } from "@/shared/errors/appErrorCodes";
+
+/**
+ * Authentication-related failures use {@link AppError} with an auth {@link AppError.code}.
+ */
+export type AuthError = AppError & { code: AuthErrorCode };
 
 export type InvalidCredentialsError = AuthError & {
   code: "INVALID_CREDENTIALS";
@@ -21,12 +24,10 @@ export type InvalidEmailError = AuthError & {
 
 export type AuthenticationError = AuthError & {
   code: "AUTHENTICATION_ERROR";
-  originalError?: unknown;
 };
 
 export type AuthProviderServerError = AuthError & {
   code: "AUTH_PROVIDER_SERVER_ERROR";
-  originalError?: unknown;
 };
 
 export type EmailVerificationError = AuthError & {

@@ -161,26 +161,22 @@ const ProjectPeopleSettingsSection = ({
     }));
   }, [advancedRolesAccess.hasAccess, tWorkspace]);
   const invitationErrorMessage = invitationsError
-    ? getErrorMessage(invitationsError as { code?: string }, tErrors)
+    ? getErrorMessage(invitationsError, tErrors)
     : null;
   const memberErrorMessage = membersError
-    ? getErrorMessage(membersError as { code?: string }, tErrors)
+    ? getErrorMessage(membersError, tErrors)
     : null;
   const inviteActionErrorMessage = inviteMutation.error
-    ? getErrorMessage(inviteMutation.error as { code?: string }, tErrors)
+    ? getErrorMessage(inviteMutation.error, tErrors)
     : null;
   const revokeActionErrorMessage = revokeInvitationMutation.error
-    ? getErrorMessage(
-        revokeInvitationMutation.error as { code?: string },
-        tErrors
-      )
+    ? getErrorMessage(revokeInvitationMutation.error, tErrors)
     : null;
   const memberActionError =
     updateMemberRoleMutation.error ?? removeMemberMutation.error ?? null;
-  const memberActionErrorMessage = getErrorMessage(
-    memberActionError as { code?: string } | null,
-    tErrors
-  );
+  const memberActionErrorMessage = memberActionError
+    ? getErrorMessage(memberActionError, tErrors)
+    : null;
 
   const formatDate = useCallback(
     (value: Date) => {
@@ -698,7 +694,7 @@ const ProjectPeopleSettingsSection = ({
             </span>
           </div>
 
-          {memberActionError && (
+          {memberActionError && memberActionErrorMessage !== null && (
             <ErrorMessage message={memberActionErrorMessage} />
           )}
 

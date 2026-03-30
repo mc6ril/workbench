@@ -45,8 +45,10 @@ describe("getProject", () => {
     // Act & Assert
     await expect(getProject(repository, projectId)).rejects.toMatchObject({
       code: "NOT_FOUND",
-      entityType: "Project",
-      entityId: projectId,
+      context: {
+        entityType: "Project",
+        entityId: projectId,
+      },
     });
     expect(repository.findById).toHaveBeenCalledTimes(1);
     expect(repository.findById).toHaveBeenCalledWith(projectId);

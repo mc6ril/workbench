@@ -1,11 +1,10 @@
 import { z } from "zod";
 
-import type { GetTicketByCodeInput, Ticket } from "@/modules/board/core/domain/ticket.types";
-import type { ProjectLookupRepository } from "@/modules/board/core/ports/projectLookupRepository";
+import type { GetTicketByCodeInProjectInput, Ticket } from "@/modules/board/core/domain/ticket.types";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
-const GetTicketByCodeInputSchema = z.object({
-  projectShortCode: z.string().min(1, "Project short code must not be empty"),
+const GetTicketByCodeInProjectInputSchema = z.object({
+  projectId: z.string().uuid("Project id must be a valid UUID"),
   codeNumber: z
     .number()
     .int()
@@ -13,30 +12,26 @@ const GetTicketByCodeInputSchema = z.object({
 });
 
 /**
- * Get a ticket by its project short code and code number.
- * Validates input, resolves the project, then fetches the ticket.
+ * Get a ticket by its code number within a specific project.
  *
- * @param projectLookupRepository - Minimal project lookup (short code → id)
+ * The functional key of a ticket is (projectId, codeNumber). Project short
+ * codes are never used here to resolve a project globally, which keeps the
+ * lookup safe even when short codes are not unique.
+ *
  * @param ticketRepository - Ticket repository
- * @param input - Project short code and ticket code number
+ * @param input - Project id and ticket code number
  * @returns Ticket or null if not found
  * @throws ZodError if input validation fails
  * @throws DatabaseError if database operation fails
  */
-export const getTicketByCode = async (
-  projectLookupRepository: ProjectLookupRepository,
+export const getTicketByCodeInProject = async (
   ticketRepository: TicketRepository,
-  input: GetTicketByCodeInput
+  input: GetTicketByCodeInProjectInput
 ): Promise<Ticket | null> => {
-  const validatedInput = GetTicketByCodeInputSchema.parse(input);
+  const validatedInput = GetTicketByCodeInProjectInputSchema.parse(input);
 
-  const shortCode = validatedInput.projectShortCode.trim().toUpperCase();
-
-  const projectId = await projectLookupRepository.findIdByShortCode(shortCode);
-
-  if (!projectId) {
-    return null;
-  }
-
-  return ticketRepository.findByCode(projectId, validatedInput.codeNumber);
+  return ticketRepository.findByCode(
+    validatedInput.projectId,
+    validatedInput.codeNumber
+  );
 };

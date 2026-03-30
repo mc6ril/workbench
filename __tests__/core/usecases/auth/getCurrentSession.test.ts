@@ -36,8 +36,10 @@ describe("getCurrentSession", () => {
     // Act & Assert
     await expect(getCurrentSession(gateway)).rejects.toMatchObject({
       code: "NOT_FOUND",
-      entityType: "Session",
-      entityId: "",
+      context: {
+        entityType: "Session",
+        entityId: "",
+      },
     });
     expect(gateway.getCurrentSession).toHaveBeenCalledTimes(1);
     expect(gateway.getCurrentSession).toHaveBeenCalledWith();

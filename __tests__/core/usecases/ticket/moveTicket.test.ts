@@ -228,8 +228,10 @@ describe("moveTicket", () => {
       moveTicket(repository, boardRepository, ticketId, doingColumnId, 1)
     ).rejects.toMatchObject({
       code: "NOT_FOUND",
-      entityType: "Ticket",
-      entityId: ticketId,
+      context: {
+        entityType: "Ticket",
+        entityId: ticketId,
+      },
     });
     expect(repository.findById).toHaveBeenCalledTimes(1);
     expect(repository.moveTicket).not.toHaveBeenCalled();

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { API_MESSAGES_AUTH, API_MESSAGES_COMMON } from "@/shared/constants";
-import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
+import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";

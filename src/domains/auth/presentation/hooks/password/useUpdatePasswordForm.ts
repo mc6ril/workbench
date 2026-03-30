@@ -44,10 +44,9 @@ export const useUpdatePasswordForm = () => {
 
   useEffect(() => {
     if (updatePasswordMutation.error) {
-      const error = updatePasswordMutation.error as { code?: string };
       setError("root", {
         type: "server",
-        message: getErrorMessage(error, tErrors),
+        message: getErrorMessage(updatePasswordMutation.error, tErrors),
       });
     }
   }, [updatePasswordMutation.error, setError, tErrors]);

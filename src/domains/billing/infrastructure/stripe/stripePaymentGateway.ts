@@ -1,5 +1,7 @@
 import Stripe from "stripe";
 
+import { createAppError } from "@/shared/errors/appError";
+import { INFRA_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { getStripeClient } from "@/shared/infrastructure/stripe/stripeClient";
 
 import { mapStripeEventToDomain, STRIPE_PRICE_IDS } from "./StripeMapper";
@@ -19,10 +21,11 @@ export const stripePaymentGateway: PaymentGateway = {
     const priceId = STRIPE_PRICE_IDS[params.plan];
 
     if (!priceId) {
-      throw new Error(
-        `No Stripe Price ID configured for plan "${params.plan}". ` +
-          "Check STRIPE_PRO_PRICE_ID and STRIPE_TEAM_PRICE_ID environment variables."
-      );
+      throw createAppError(INFRA_ERROR_CODE.STRIPE_PRICE_NOT_CONFIGURED, {
+        debugMessage:
+          `No Stripe Price ID configured for plan "${params.plan}". ` +
+          "Check STRIPE_PRO_PRICE_ID and STRIPE_TEAM_PRICE_ID environment variables.",
+      });
     }
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
@@ -46,7 +49,9 @@ export const stripePaymentGateway: PaymentGateway = {
     const session = await stripe.checkout.sessions.create(sessionParams);
 
     if (!session.url) {
-      throw new Error("Stripe checkout session did not return a URL");
+      throw createAppError(INFRA_ERROR_CODE.STRIPE_CHECKOUT_NO_URL, {
+        debugMessage: "Stripe checkout session did not return a URL",
+      });
     }
 
     return { url: session.url };
@@ -84,10 +89,11 @@ export const stripePaymentGateway: PaymentGateway = {
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     if (!webhookSecret) {
-      throw new Error(
-        "STRIPE_WEBHOOK_SECRET is not configured. " +
-          "Please add it to your .env.local file."
-      );
+      throw createAppError(INFRA_ERROR_CODE.STRIPE_WEBHOOK_NOT_CONFIGURED, {
+        debugMessage:
+          "STRIPE_WEBHOOK_SECRET is not configured. " +
+          "Please add it to your .env.local file.",
+      });
     }
 
     const event = stripe.webhooks.constructEvent(

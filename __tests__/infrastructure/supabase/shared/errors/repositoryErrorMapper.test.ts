@@ -14,9 +14,13 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(supabaseError, "Project");
 
     // Assert
-    expect(result).toHaveProperty("code", "NOT_FOUND");
-    expect(result).toHaveProperty("entityType", "Project");
-    expect(result).toHaveProperty("entityId", "unknown");
+    expect(result).toMatchObject({
+      code: "NOT_FOUND",
+      context: {
+        entityType: "Project",
+        entityId: "unknown",
+      },
+    });
     expect(result).toHaveProperty("debugMessage");
   });
 
@@ -33,8 +37,10 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(supabaseError, "Project");
 
     // Assert
-    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
-    expect(result).toHaveProperty("constraint", "23505");
+    expect(result).toMatchObject({
+      code: "CONSTRAINT_VIOLATION",
+      context: { constraint: "23505" },
+    });
     expect(result).toHaveProperty("debugMessage");
   });
 
@@ -51,8 +57,10 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(supabaseError, "Ticket");
 
     // Assert
-    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
-    expect(result).toHaveProperty("constraint", "23503");
+    expect(result).toMatchObject({
+      code: "CONSTRAINT_VIOLATION",
+      context: { constraint: "23503" },
+    });
     expect(result).toHaveProperty("debugMessage");
   });
 
@@ -69,8 +77,10 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(supabaseError, "Project");
 
     // Assert
-    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
-    expect(result).toHaveProperty("constraint", "23514");
+    expect(result).toMatchObject({
+      code: "CONSTRAINT_VIOLATION",
+      context: { constraint: "23514" },
+    });
     expect(result).toHaveProperty("debugMessage");
   });
 
@@ -112,8 +122,10 @@ describe("mapSupabaseError", () => {
 
     const result = mapSupabaseError(supabaseError, "Project");
 
-    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
-    expect(result).toHaveProperty("constraint", "23505");
+    expect(result).toMatchObject({
+      code: "CONSTRAINT_VIOLATION",
+      context: { constraint: "23505" },
+    });
   });
 
   it("should use details when message is missing for constraint errors", () => {
@@ -146,9 +158,11 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(supabaseError, "Project");
 
     // Assert
-    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result).toMatchObject({
+      code: "DATABASE_ERROR",
+      context: { originalError: supabaseError },
+    });
     expect(result).toHaveProperty("debugMessage");
-    expect(result).toHaveProperty("originalError", supabaseError);
   });
 
   it("should map Supabase error with code but no message to DatabaseError", () => {
@@ -164,9 +178,11 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(supabaseError, "Project");
 
     // Assert
-    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result).toMatchObject({
+      code: "DATABASE_ERROR",
+      context: { originalError: supabaseError },
+    });
     expect(result).toHaveProperty("debugMessage");
-    expect(result).toHaveProperty("originalError", supabaseError);
   });
 
   it("should map network errors to DatabaseError", () => {
@@ -177,11 +193,13 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(networkError, "Project");
 
     // Assert
-    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result).toMatchObject({
+      code: "DATABASE_ERROR",
+      context: { originalError: networkError },
+    });
     expect(result).toHaveProperty("debugMessage");
     expect(result.debugMessage).toContain("Network error");
     expect(result.debugMessage).toContain("Failed to fetch");
-    expect(result).toHaveProperty("originalError", networkError);
   });
 
   it("should map network connection timeout errors to DatabaseError", () => {
@@ -192,11 +210,13 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(timeoutError, "Ticket");
 
     // Assert
-    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result).toMatchObject({
+      code: "DATABASE_ERROR",
+      context: { originalError: timeoutError },
+    });
     expect(result).toHaveProperty("debugMessage");
     expect(result.debugMessage).toContain("Network error");
     expect(result.debugMessage).toContain("Network request failed");
-    expect(result).toHaveProperty("originalError", timeoutError);
   });
 
   it("should prioritize network error detection over Supabase error detection", () => {
@@ -235,9 +255,11 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(error, "Project");
 
     // Assert
-    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result).toMatchObject({
+      code: "DATABASE_ERROR",
+      context: { originalError: error },
+    });
     expect(result).toHaveProperty("debugMessage", "Generic database error");
-    expect(result).toHaveProperty("originalError", error);
   });
 
   it("should handle unknown error types with fallback", () => {
@@ -248,9 +270,11 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(unknownError, "Ticket");
 
     // Assert
-    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result).toMatchObject({
+      code: "DATABASE_ERROR",
+      context: { originalError: unknownError },
+    });
     expect(result).toHaveProperty("debugMessage");
-    expect(result).toHaveProperty("originalError", unknownError);
   });
 
   it("should handle null error with fallback", () => {
@@ -261,9 +285,11 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(nullError, "Project");
 
     // Assert
-    expect(result).toHaveProperty("code", "DATABASE_ERROR");
+    expect(result).toMatchObject({
+      code: "DATABASE_ERROR",
+      context: { originalError: nullError },
+    });
     expect(result).toHaveProperty("debugMessage");
-    expect(result).toHaveProperty("originalError", nullError);
   });
 
   it("should use default entityType when not provided", () => {
@@ -295,9 +321,13 @@ describe("mapSupabaseError", () => {
     );
 
     // Assert
-    expect(result).toHaveProperty("code", "NOT_FOUND");
-    expect(result).toHaveProperty("entityType", "CustomEntity");
-    expect(result).toHaveProperty("entityId", "custom-id-123");
+    expect(result).toMatchObject({
+      code: "NOT_FOUND",
+      context: {
+        entityType: "CustomEntity",
+        entityId: "custom-id-123",
+      },
+    });
     expect(result).toHaveProperty("debugMessage");
   });
 
@@ -315,8 +345,10 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(supabaseError, "Project");
 
     // Assert
-    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
-    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    expect(result).toMatchObject({
+      code: "CONSTRAINT_VIOLATION",
+      context: { constraint: "RLS_POLICY_VIOLATION" },
+    });
     // Debug message should contain the original Supabase message for logging
     expect(result).toHaveProperty("debugMessage");
   });
@@ -335,8 +367,10 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(supabaseError, "Project");
 
     // Assert
-    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
-    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    expect(result).toMatchObject({
+      code: "CONSTRAINT_VIOLATION",
+      context: { constraint: "RLS_POLICY_VIOLATION" },
+    });
     // Debug message should contain the original Supabase message for logging
     expect(result).toHaveProperty("debugMessage");
   });
@@ -354,8 +388,10 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(supabaseError, "Project");
 
     // Assert
-    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
-    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    expect(result).toMatchObject({
+      code: "CONSTRAINT_VIOLATION",
+      context: { constraint: "RLS_POLICY_VIOLATION" },
+    });
     // Debug message should contain details when message is missing
     expect(result).toHaveProperty("debugMessage");
   });
@@ -373,8 +409,10 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(supabaseError, "Project");
 
     // Assert
-    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
-    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    expect(result).toMatchObject({
+      code: "CONSTRAINT_VIOLATION",
+      context: { constraint: "RLS_POLICY_VIOLATION" },
+    });
     // Debug message should contain default message from createConstraintError when both message and details are missing
     expect(result).toHaveProperty("debugMessage");
   });
@@ -392,8 +430,10 @@ describe("mapSupabaseError", () => {
     const result = mapSupabaseError(supabaseError, "Ticket");
 
     // Assert
-    expect(result).toHaveProperty("code", "CONSTRAINT_VIOLATION");
-    expect(result).toHaveProperty("constraint", "RLS_POLICY_VIOLATION");
+    expect(result).toMatchObject({
+      code: "CONSTRAINT_VIOLATION",
+      context: { constraint: "RLS_POLICY_VIOLATION" },
+    });
     // Debug message should contain the original message for logging
     expect(result).toHaveProperty("debugMessage");
   });

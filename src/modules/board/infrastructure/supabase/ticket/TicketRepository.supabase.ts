@@ -575,6 +575,32 @@ export const createTicketRepository = (
       }
     },
 
+    async findByCodeIncludingArchived(
+      projectId: string,
+      codeNumber: number
+    ): Promise<Ticket | null> {
+      try {
+        const { data, error } = await client
+          .from("tickets")
+          .select("*")
+          .eq("project_id", projectId)
+          .eq("code_number", codeNumber)
+          .single();
+
+        if (error) {
+          return handleRepositoryError(error, "Ticket");
+        }
+
+        if (!data) {
+          return null;
+        }
+
+        return mapTicketRowToDomain(data as TicketRow);
+      } catch (error) {
+        return handleRepositoryError(error, "Ticket");
+      }
+    },
+
     async assignUsers(ticketId: string, userIds: string[]): Promise<void> {
       if (userIds.length === 0) {
         return;

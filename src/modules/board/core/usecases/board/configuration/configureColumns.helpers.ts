@@ -1,3 +1,5 @@
+import type { AppErrorCode } from "@/shared/errors/appErrorCodes";
+import { DOMAIN_RULE_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { createDomainRuleError } from "@/shared/errors/domainRuleError";
 import { isString } from "@/shared/utils";
 
@@ -117,7 +119,7 @@ const assertDraftColumnsAreValid = (
   }
 
   throw createDomainRuleError(
-    validationResult.error.code,
+    validationResult.error.code as AppErrorCode,
     validationResult.error.message,
     validationResult.error.field
   );
@@ -288,7 +290,7 @@ export const assertColumnsCanBeDeleted = async (
   }
 
   throw createDomainRuleError(
-    "COLUMN_IN_USE",
+    DOMAIN_RULE_ERROR_CODE.COLUMN_IN_USE,
     `Column ${blockedColumn.id} cannot be deleted while tickets still reference it`,
     "columns"
   );

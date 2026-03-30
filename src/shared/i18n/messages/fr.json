@@ -1371,7 +1371,20 @@
       "INVALID_COLUMN_ORDER": "Ordre de colonnes invalide",
       "DUPLICATE_COLUMN_KEY": "Clé de colonne en double",
       "INVALID_BOARD_COLUMN_RELATIONSHIP": "La colonne n'appartient pas au tableau spécifié",
-      "MIXED_BOARD_COLUMNS": "Colonnes de plusieurs tableaux mélangées"
+      "MIXED_BOARD_COLUMNS": "Colonnes de plusieurs tableaux mélangées",
+      "MISSING_DONE_COLUMN": "Le tableau doit avoir au moins une colonne terminale visible",
+      "COLUMN_IN_USE": "Impossible de supprimer cette colonne tant qu'elle contient des tâches",
+      "UPDATE_CREDENTIALS_NO_FIELDS": "Indiquez au moins un nouvel email ou un nouveau mot de passe"
+    },
+    "infra": {
+      "avatarFileTooLarge": "Le fichier est trop volumineux pour être traité",
+      "avatarInvalidMimeType": "Format non supporté. Utilisez JPEG, PNG ou WebP",
+      "avatarProcessingFailed": "Impossible de préparer l'image. Essayez un autre fichier.",
+      "stripeWebhookNotConfigured": "Le paiement en ligne n'est pas configuré correctement. Contactez le support.",
+      "billingNoCustomer": "Aucun compte de facturation n'est associé à votre profil.",
+      "boardInvalidColumnWorkflowState": "Données de colonne incohérentes. Actualisez la page.",
+      "googleOauthNotAvailable": "La connexion Google n'est pas disponible pour le moment.",
+      "deleteAccountFailed": "Impossible de supprimer le compte. Réessayez plus tard."
     },
     "stripe": {
       "checkoutFailed": "Impossible de lancer le paiement. Veuillez réessayer.",

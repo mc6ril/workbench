@@ -1,4 +1,6 @@
 import { APP_LIMITS } from "@/shared/constants/app";
+import { createAppError } from "@/shared/errors/appError";
+import { INFRA_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 
 const resizeDimensions = (width: number, height: number) => {
   const maxDimension = Math.max(width, height);
@@ -63,7 +65,9 @@ export const prepareAvatarUploadFile = async (file: File): Promise<File> => {
   const context = canvas.getContext("2d");
 
   if (!context) {
-    throw new Error("Avatar image could not be processed");
+    throw createAppError(INFRA_ERROR_CODE.AVATAR_PROCESSING_FAILED, {
+      debugMessage: "Avatar image could not be processed",
+    });
   }
 
   context.drawImage(image, 0, 0, width, height);

@@ -1,6 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
+import type { AppError } from "@/shared/errors/appError";
+import { createAppError } from "@/shared/errors/appError";
+import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 
 import { handleAuthError } from "@/domains/auth/infrastructure/errors/authErrorHandler";
 import {
@@ -10,10 +12,8 @@ import {
 import type { SessionGateway } from "@/domains/session/core/ports/session.gateway";
 import { mapSupabaseSessionToCurrentSession } from "@/domains/session/infrastructure/supabase/SessionMapper.supabase";
 
-const createAuthenticationError = (debugMessage: string) => ({
-  code: AUTH_ERROR_CODE.AUTHENTICATION_ERROR,
-  debugMessage,
-});
+const createAuthenticationError = (debugMessage: string): AppError =>
+  createAppError(AUTH_ERROR_CODE.AUTHENTICATION_ERROR, { debugMessage });
 
 const isAuthSessionMissingError = (error: unknown): boolean => {
   return (
