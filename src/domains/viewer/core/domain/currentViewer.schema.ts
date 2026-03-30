@@ -1,18 +1,16 @@
 import { z } from "zod";
 
 import { UserProfileSchema } from "@/domains/profile/core/domain/profile.types";
-import { CurrentSessionSchema } from "@/domains/session/core/domain/currentSession.schema";
 
 /**
  * Read-model for the current authenticated user.
  * It composes session identity data with reusable profile data, without
  * exposing low-level auth tokens.
  */
-export const CurrentViewerSchema = CurrentSessionSchema.pick({
-  userId: true,
-  loginEmail: true,
-  isSuperuser: true,
-}).extend({
+export const CurrentViewerSchema = z.object({
+  userId: z.string().uuid(),
+  loginEmail: z.string().email(),
+  isSuperuser: z.boolean(),
   displayName: UserProfileSchema.shape.displayName,
   avatarUrl: UserProfileSchema.shape.avatarUrl,
   preferences: UserProfileSchema.shape.preferences,

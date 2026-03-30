@@ -14,7 +14,7 @@ import { stripePaymentGateway } from "@/domains/billing/infrastructure/stripe/st
 import { createBillingVisibilityPort } from "@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase";
 import { createSubscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
-import { createSessionRepository } from "@/domains/session/infrastructure/supabase/repositories";
+import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("API.Checkout");
 
@@ -41,11 +41,8 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
   try {
     const supabaseClient = await createSupabaseServerClient();
-    const billingVisibilityPort =
-      createBillingVisibilityPort(supabaseClient);
-    const isBillingVisible = await getBillingVisibility(
-      billingVisibilityPort
-    );
+    const billingVisibilityPort = createBillingVisibilityPort(supabaseClient);
+    const isBillingVisible = await getBillingVisibility(billingVisibilityPort);
 
     if (!isBillingVisible) {
       return NextResponse.json(
@@ -54,11 +51,11 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       );
     }
 
-    const sessionRepository = createSessionRepository(supabaseClient);
+    const sessionGateway = createSessionGateway(supabaseClient);
 
     let session;
     try {
-      session = await getCurrentSession(sessionRepository);
+      session = await getCurrentSession(sessionGateway);
     } catch {
       return NextResponse.json(
         { error: API_MESSAGES_COMMON.NOT_AUTHENTICATED },

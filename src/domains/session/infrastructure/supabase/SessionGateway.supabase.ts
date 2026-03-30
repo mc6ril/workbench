@@ -3,8 +3,11 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
 
 import { handleAuthError } from "@/domains/auth/infrastructure/errors/authErrorHandler";
-import { canUpdatePasswordFromAppMetadata } from "@/domains/auth/infrastructure/supabase/providerCapabilities";
-import type { SessionRepository } from "@/domains/session/core/ports/sessionRepository";
+import {
+  canUpdatePasswordFromAppMetadata,
+  isSuperuserFromAppMetadata,
+} from "@/domains/auth/infrastructure/supabase/providerCapabilities";
+import type { SessionGateway } from "@/domains/session/core/ports/session.gateway";
 import { mapSupabaseSessionToCurrentSession } from "@/domains/session/infrastructure/supabase/SessionMapper.supabase";
 
 const createAuthenticationError = (debugMessage: string) => ({
@@ -24,11 +27,11 @@ const isAuthSessionMissingError = (error: unknown): boolean => {
 };
 
 /**
- * Create a SessionRepository implementation using the provided Supabase client.
+ * Create a SessionGateway implementation using the provided Supabase client.
  */
-export const createSessionRepository = (
+export const createSessionGateway = (
   client: SupabaseClient
-): SessionRepository => ({
+): SessionGateway => ({
   async canUpdatePassword(): Promise<boolean> {
     try {
       const {
@@ -89,7 +92,7 @@ export const createSessionRepository = (
           userId: user.id,
           loginEmail: userEmail!,
           accessToken: "",
-          isSuperuser: user.app_metadata?.is_superuser === true,
+          isSuperuser: isSuperuserFromAppMetadata(user.app_metadata),
         };
       }
 

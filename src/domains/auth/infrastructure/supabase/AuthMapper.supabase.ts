@@ -2,7 +2,8 @@ import type { Session } from "@supabase/supabase-js";
 
 import { AUTH_ERROR_CODE } from "@/shared/constants/errorCodes";
 
-import type { CurrentSession } from "@/domains/session/core/domain/currentSession.schema";
+import { isSuperuserFromAppMetadata } from "@/domains/auth/infrastructure/supabase/providerCapabilities";
+import type { CurrentSession } from "@/domains/session/core/domain/session.types";
 
 type AuthInfrastructureError = {
   code: string;
@@ -20,12 +21,6 @@ const createAuthInfrastructureError = (
   originalError,
 });
 
-const extractSuperuserFlag = (
-  appMetadata: Record<string, unknown> | undefined
-): boolean => {
-  return appMetadata?.is_superuser === true;
-};
-
 /**
  * Maps Supabase Session to the stable session shape returned by auth flows.
  */
@@ -37,7 +32,7 @@ export const mapSupabaseSessionToCurrentSession = (
     userId: session.user.id,
     loginEmail: userEmail,
     accessToken: session.access_token,
-    isSuperuser: extractSuperuserFlag(session.user.app_metadata),
+    isSuperuser: isSuperuserFromAppMetadata(session.user.app_metadata),
   };
 };
 

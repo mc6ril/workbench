@@ -6,7 +6,7 @@ import { createLoggerFactory } from "@/shared/observability";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
-import { createSessionRepository } from "@/domains/session/infrastructure/supabase/repositories";
+import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("AuthLayout");
 
@@ -23,11 +23,11 @@ const AuthLayout = async ({
   try {
     // Create server client with cookie handling
     const supabaseClient = await createSupabaseServerClient();
-    const sessionRepository = createSessionRepository(supabaseClient);
+    const sessionGateway = createSessionGateway(supabaseClient);
 
     // Load session using server client (throws NotFoundError if no session)
     // If user not authenticated, NotFoundError is thrown and caught below
-    await getCurrentSession(sessionRepository);
+    await getCurrentSession(sessionGateway);
   } catch (error) {
     // Next.js redirect() throws a special error that must be re-thrown
     if (

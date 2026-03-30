@@ -1,5 +1,5 @@
 import type { UserProfile } from "@/domains/profile/core/domain/profile.types";
-import type { CurrentSession } from "@/domains/session/core/domain/currentSession.schema";
+import type { CurrentSession } from "@/domains/session/core/domain/session.types";
 import type { CurrentViewer } from "@/domains/viewer/core/domain/currentViewer.schema";
 
 type BuildCurrentViewerInput = {

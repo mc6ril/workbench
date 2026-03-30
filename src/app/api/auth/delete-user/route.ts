@@ -12,7 +12,7 @@ import { hasErrorCode } from "@/shared/utils/guards";
 import { deleteAccount } from "@/domains/auth/core/usecases/user/deleteAccount";
 import { createAuthGateway } from "@/domains/auth/infrastructure/supabase/repositories";
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
-import { createSessionRepository } from "@/domains/session/infrastructure/supabase/repositories";
+import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("API.DeleteUser");
 
@@ -47,10 +47,10 @@ export const DELETE = async (request: NextRequest): Promise<NextResponse> => {
 
   try {
     const supabaseClient = await createSupabaseServerClient();
-    const sessionRepository = createSessionRepository(supabaseClient);
+    const sessionGateway = createSessionGateway(supabaseClient);
 
     try {
-      await getCurrentSession(sessionRepository);
+      await getCurrentSession(sessionGateway);
     } catch {
       return NextResponse.json(
         { error: API_MESSAGES_COMMON.NOT_AUTHENTICATED },

@@ -1,9 +1,9 @@
-import type { CurrentSession } from "@/domains/session/core/domain/currentSession.schema";
+import type { CurrentSession } from "@/domains/session/core/domain/session.types";
 
 /**
- * Repository contract for current identity/session read operations.
+ * Gateway contract for current identity/session read operations.
  */
-export type SessionRepository = {
+export type SessionGateway = {
   /**
    * Returns the current authenticated session, or null when unauthenticated.
    */
