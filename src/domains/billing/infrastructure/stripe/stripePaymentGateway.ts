@@ -6,8 +6,8 @@ import { mapStripeEventToDomain, STRIPE_PRICE_IDS } from "./StripeMapper";
 
 import type {
   PaymentGateway,
-  WebhookEvent,
-} from "@/domains/billing/core/ports/paymentGateway";
+  PaymentWebhookEvent,
+} from "@/domains/billing/core/ports/payment.gateway";
 
 /**
  * Stripe implementation of the PaymentGateway port.
@@ -37,8 +37,8 @@ export const stripePaymentGateway: PaymentGateway = {
       },
     };
 
-    if (params.stripeCustomerId) {
-      sessionParams.customer = params.stripeCustomerId;
+    if (params.customerId) {
+      sessionParams.customer = params.customerId;
     } else {
       sessionParams.customer_email = params.email;
     }
@@ -52,22 +52,22 @@ export const stripePaymentGateway: PaymentGateway = {
     return { url: session.url };
   },
 
-  async createPortalSession(params) {
+  async createBillingPortalSession(params) {
     const stripe = getStripeClient();
 
     const session = await stripe.billingPortal.sessions.create({
-      customer: params.stripeCustomerId,
+      customer: params.customerId,
       return_url: params.returnUrl,
     });
 
     return { url: session.url };
   },
 
-  async cancelSubscription(stripeSubscriptionId: string): Promise<void> {
+  async cancelSubscription(subscriptionId: string): Promise<void> {
     const stripe = getStripeClient();
 
     try {
-      await stripe.subscriptions.cancel(stripeSubscriptionId);
+      await stripe.subscriptions.cancel(subscriptionId);
     } catch (error) {
       if (
         error instanceof Stripe.errors.StripeInvalidRequestError &&
@@ -79,7 +79,7 @@ export const stripePaymentGateway: PaymentGateway = {
     }
   },
 
-  constructWebhookEvent(body: string, signature: string): WebhookEvent {
+  parseWebhookEvent(body: string, signature: string): PaymentWebhookEvent {
     const stripe = getStripeClient();
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 

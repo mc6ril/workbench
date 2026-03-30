@@ -5,7 +5,7 @@ import type {
   PlanFeature,
 } from "@/domains/billing/core/domain/planFeatures.rules";
 import { getMinimumPlanForFeature } from "@/domains/billing/core/domain/planFeatures.rules";
-import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import { checkFeatureAccess } from "@/domains/billing/core/usecases/checkFeatureAccess";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 

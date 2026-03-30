@@ -1,7 +1,10 @@
 import type Stripe from "stripe";
 
-import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
-import type { WebhookEvent } from "@/domains/billing/core/ports/paymentGateway";
+import {
+  SubscriptionPlan,
+  SubscriptionStatus,
+} from "@/domains/billing/core/domain/subscription.types";
+import type { PaymentWebhookEvent } from "@/domains/billing/core/ports/payment.gateway";
 
 /** Maps paid SubscriptionPlan values to their Stripe Price IDs from env. */
 export const STRIPE_PRICE_IDS: Partial<Record<SubscriptionPlan, string>> = {
@@ -32,12 +35,31 @@ const extractCustomerId = (
   return typeof customer === "string" ? customer : customer.id;
 };
 
+const mapStripeStatusToDomain = (
+  status: Stripe.Subscription.Status
+): SubscriptionStatus => {
+  switch (status) {
+    case "active":
+      return SubscriptionStatus.ACTIVE;
+    case "canceled":
+      return SubscriptionStatus.CANCELED;
+    case "past_due":
+      return SubscriptionStatus.PAST_DUE;
+    case "trialing":
+      return SubscriptionStatus.TRIALING;
+    default:
+      return SubscriptionStatus.ACTIVE;
+  }
+};
+
 /**
  * Maps a raw Stripe event to a domain WebhookEvent.
  * Translates Stripe-specific types into domain-meaningful events
  * that the usecase layer can process without knowing Stripe internals.
  */
-export const mapStripeEventToDomain = (event: Stripe.Event): WebhookEvent => {
+export const mapStripeEventToDomain = (
+  event: Stripe.Event
+): PaymentWebhookEvent => {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
@@ -53,11 +75,11 @@ export const mapStripeEventToDomain = (event: Stripe.Event): WebhookEvent => {
         userId,
         email: session.customer_email ?? "",
         plan,
-        stripeCustomerId:
+        customerId:
           typeof session.customer === "string"
             ? session.customer
             : (session.customer?.id ?? ""),
-        stripeSubscriptionId:
+        subscriptionId:
           typeof session.subscription === "string"
             ? session.subscription
             : (session.subscription?.id ?? ""),
@@ -74,10 +96,10 @@ export const mapStripeEventToDomain = (event: Stripe.Event): WebhookEvent => {
 
       return {
         type: "customer.subscription.updated",
-        stripeSubscriptionId: subscription.id,
-        stripeCustomerId: extractCustomerId(subscription.customer),
+        subscriptionId: subscription.id,
+        customerId: extractCustomerId(subscription.customer),
         plan: getPlanFromPriceId(extractPriceId(subscription)),
-        status: subscription.status,
+        status: mapStripeStatusToDomain(subscription.status),
         currentPeriodStart: new Date(firstItem.current_period_start * 1000),
         currentPeriodEnd: new Date(firstItem.current_period_end * 1000),
         cancelAtPeriodEnd: subscription.cancel_at_period_end,
@@ -89,8 +111,8 @@ export const mapStripeEventToDomain = (event: Stripe.Event): WebhookEvent => {
 
       return {
         type: "customer.subscription.deleted",
-        stripeSubscriptionId: subscription.id,
-        stripeCustomerId: extractCustomerId(subscription.customer),
+        subscriptionId: subscription.id,
+        customerId: extractCustomerId(subscription.customer),
       };
     }
 
@@ -100,9 +122,9 @@ export const mapStripeEventToDomain = (event: Stripe.Event): WebhookEvent => {
 
       return {
         type: "invoice.payment_failed",
-        stripeSubscriptionId:
+        subscriptionId:
           typeof parentSub === "string" ? parentSub : (parentSub?.id ?? ""),
-        stripeCustomerId:
+        customerId:
           typeof invoice.customer === "string"
             ? invoice.customer
             : (invoice.customer?.id ?? ""),

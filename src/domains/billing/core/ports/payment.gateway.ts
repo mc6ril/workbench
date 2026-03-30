@@ -1,37 +1,40 @@
-import type { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
+import type {
+  SubscriptionPlan,
+  SubscriptionStatus,
+} from "@/domains/billing/core/domain/subscription.types";
 
 /**
  * Parsed webhook event from the payment provider.
  * Abstracts Stripe-specific event types into domain-meaningful events.
  */
-export type WebhookEvent =
+export type PaymentWebhookEvent =
   | {
       type: "checkout.session.completed";
       userId: string;
       email: string;
       plan: SubscriptionPlan;
-      stripeCustomerId: string;
-      stripeSubscriptionId: string;
+      customerId: string;
+      subscriptionId: string;
     }
   | {
       type: "customer.subscription.updated";
-      stripeSubscriptionId: string;
-      stripeCustomerId: string;
+      subscriptionId: string;
+      customerId: string;
       plan: SubscriptionPlan;
-      status: string;
+      status: SubscriptionStatus;
       currentPeriodStart: Date;
       currentPeriodEnd: Date;
       cancelAtPeriodEnd: boolean;
     }
   | {
       type: "customer.subscription.deleted";
-      stripeSubscriptionId: string;
-      stripeCustomerId: string;
+      subscriptionId: string;
+      customerId: string;
     }
   | {
       type: "invoice.payment_failed";
-      stripeSubscriptionId: string;
-      stripeCustomerId: string;
+      subscriptionId: string;
+      customerId: string;
     }
   | {
       type: "unknown";
@@ -55,7 +58,7 @@ export type PaymentGateway = {
     userId: string;
     email: string;
     plan: SubscriptionPlan;
-    stripeCustomerId?: string;
+    customerId?: string;
     successUrl: string;
     cancelUrl: string;
   }): Promise<{ url: string }>;
@@ -64,8 +67,8 @@ export type PaymentGateway = {
    * Create a billing portal session for managing an existing subscription.
    * @returns Object with the portal URL to redirect the user to
    */
-  createPortalSession(params: {
-    stripeCustomerId: string;
+  createBillingPortalSession(params: {
+    customerId: string;
     returnUrl: string;
   }): Promise<{ url: string }>;
 
@@ -75,11 +78,11 @@ export type PaymentGateway = {
    * No-op if the subscription is already canceled.
    * @throws Error if the cancellation fails
    */
-  cancelSubscription(stripeSubscriptionId: string): Promise<void>;
+  cancelSubscription(subscriptionId: string): Promise<void>;
 
   /**
    * Verify webhook signature and parse raw body into a domain event.
    * @throws Error if signature verification fails
    */
-  constructWebhookEvent(body: string, signature: string): WebhookEvent;
+  parseWebhookEvent(body: string, signature: string): PaymentWebhookEvent;
 };

@@ -1,11 +1,6 @@
-import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import {
-  SubscriptionPlan,
-  SubscriptionStatus,
-} from "@/domains/billing/core/domain/subscription.schema";
-import { getCurrentUserSubscription } from "@/domains/billing/core/usecases/getCurrentUserSubscription";
+import { getUserSubscription } from "@/domains/billing/core/usecases/getUserSubscription";
 import { subscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/billing/presentation/hooks/queryKeys";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
@@ -18,40 +13,13 @@ import { useSession } from "@/domains/session/presentation/hooks/useSession";
  */
 export const useSubscription = () => {
   const { data: session } = useSession();
-  const queryResult = useQuery({
+  return useQuery({
     queryKey: queryKeys.subscription.current(),
-    queryFn: () => getCurrentUserSubscription(subscriptionRepository),
+    queryFn: () =>
+      getUserSubscription(subscriptionRepository, {
+        userId: session!.userId,
+        isSuperuser: session?.isSuperuser,
+      }),
     enabled: !!session?.userId,
   });
-  const { data: queryData } = queryResult;
-
-  const data = useMemo(() => {
-    if (!session || !queryData) {
-      return undefined;
-    }
-
-    if (session.isSuperuser) {
-      return {
-        ...queryData,
-        userId: session.userId,
-        plan: SubscriptionPlan.TEAM,
-        status: SubscriptionStatus.ACTIVE,
-        isSuperuser: true,
-      };
-    }
-
-    if (queryData.userId === "") {
-      return {
-        ...queryData,
-        userId: session.userId,
-      };
-    }
-
-    return queryData;
-  }, [queryData, session]);
-
-  return {
-    ...queryResult,
-    data,
-  };
 };

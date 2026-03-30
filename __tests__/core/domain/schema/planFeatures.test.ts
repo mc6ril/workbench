@@ -8,7 +8,7 @@ import {
 import {
   SubscriptionPlan,
   SubscriptionStatus,
-} from "@/domains/billing/core/domain/subscription.schema";
+} from "@/domains/billing/core/domain/subscription.types";
 
 describe("Plan Features Domain Rules", () => {
   describe("canAccessFeature", () => {
@@ -140,8 +140,8 @@ describe("Plan Features Domain Rules", () => {
       userId: "223e4567-e89b-12d3-a456-426614174000",
       plan: overrides?.plan ?? SubscriptionPlan.PRO,
       status: overrides?.status ?? SubscriptionStatus.ACTIVE,
-      stripeCustomerId: null,
-      stripeSubscriptionId: null,
+      customerId: null,
+      subscriptionId: null,
       currentPeriodStart: null,
       currentPeriodEnd: null,
       cancelAtPeriodEnd: false,

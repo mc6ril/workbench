@@ -1,7 +1,19 @@
 import type {
   Subscription,
-  UpsertSubscriptionInput,
-} from "@/domains/billing/core/domain/subscription.schema";
+  SubscriptionPlan,
+  SubscriptionStatus,
+} from "@/domains/billing/core/domain/subscription.types";
+
+export type SaveSubscriptionInput = {
+  userId: string;
+  plan: SubscriptionPlan;
+  status: SubscriptionStatus;
+  customerId?: string | null;
+  subscriptionId?: string | null;
+  currentPeriodStart?: Date | null;
+  currentPeriodEnd?: Date | null;
+  cancelAtPeriodEnd?: boolean;
+};
 
 /**
  * Repository contract for Subscription operations.
@@ -9,13 +21,6 @@ import type {
  * Write operations require service role (called from webhook handler).
  */
 export type SubscriptionRepository = {
-  /**
-   * Get the current authenticated user's subscription using auth context (RLS).
-   * @returns Subscription or null if user has no subscription (= free plan)
-   * @throws DatabaseError if database operation fails
-   */
-  getCurrent(): Promise<Subscription | null>;
-
   /**
    * Get a subscription by user ID.
    * @returns Subscription or null if user has no subscription (= free plan)
@@ -28,16 +33,16 @@ export type SubscriptionRepository = {
    * Must be called with service role client (bypasses RLS).
    * @throws DatabaseError if database operation fails
    */
-  upsert(data: UpsertSubscriptionInput): Promise<Subscription>;
+  save(data: SaveSubscriptionInput): Promise<Subscription>;
 
   /**
-   * Find a subscription by Stripe customer ID.
-   * Used by webhook handlers to look up subscriptions from Stripe events.
+   * Find a subscription by billing customer ID.
+   * Used by webhook handlers to look up subscriptions from payment events.
    * Must be called with service role client (bypasses RLS).
    * @returns Subscription or null if not found
    * @throws DatabaseError if database operation fails
    */
-  getByStripeCustomerId(stripeCustomerId: string): Promise<Subscription | null>;
+  getByCustomerId(customerId: string): Promise<Subscription | null>;
 
   /**
    * Delete a subscription by user ID (user falls back to free plan).

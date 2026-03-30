@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
-import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
 import {
   InvitationStatus,

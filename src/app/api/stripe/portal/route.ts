@@ -9,7 +9,7 @@ import { createLoggerFactory } from "@/shared/observability";
 import { createBillingPortalSession } from "@/domains/billing/core/usecases/createBillingPortalSession";
 import { getBillingVisibility } from "@/domains/billing/core/usecases/getBillingVisibility";
 import { stripePaymentGateway } from "@/domains/billing/infrastructure/stripe/stripePaymentGateway";
-import { createBillingConfigRepository } from "@/domains/billing/infrastructure/supabase/BillingConfigRepository.supabase";
+import { createBillingVisibilityPort } from "@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase";
 import { createSubscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
 import { createSessionRepository } from "@/domains/session/infrastructure/supabase/repositories";
@@ -39,8 +39,8 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
   try {
     const supabaseClient = await createSupabaseServerClient();
-    const billingConfigRepository = createBillingConfigRepository(supabaseClient);
-    const isBillingVisible = await getBillingVisibility(billingConfigRepository);
+    const billingVisibilityPort = createBillingVisibilityPort(supabaseClient);
+    const isBillingVisible = await getBillingVisibility(billingVisibilityPort);
 
     if (!isBillingVisible) {
       return NextResponse.json(

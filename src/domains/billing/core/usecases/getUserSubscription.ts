@@ -1,10 +1,18 @@
-import type { Subscription } from "@/domains/billing/core/domain/subscription.schema";
+import { z } from "zod";
+
+import type { Subscription } from "@/domains/billing/core/domain/subscription.types";
 import {
-  DEFAULT_FREE_SUBSCRIPTION,
-  SubscriptionPlan,
-  SubscriptionStatus,
-} from "@/domains/billing/core/domain/subscription.schema";
-import type { SubscriptionRepository } from "@/domains/billing/core/ports/subscriptionRepository";
+  createFreeSubscription,
+  createSuperuserSubscription,
+} from "@/domains/billing/core/domain/subscription.types";
+import type { SubscriptionRepository } from "@/domains/billing/core/ports/subscription.repository";
+
+const GetUserSubscriptionSchema = z.object({
+  userId: z.string().min(1, "User ID is required"),
+  isSuperuser: z.boolean().optional(),
+});
+
+type GetUserSubscriptionInput = z.infer<typeof GetUserSubscriptionSchema>;
 
 /**
  * Get the current user's subscription.
@@ -12,33 +20,22 @@ import type { SubscriptionRepository } from "@/domains/billing/core/ports/subscr
  * If isSuperuser is true, returns a virtual TEAM/ACTIVE subscription with full access.
  */
 export const getUserSubscription = async (
-  repo: SubscriptionRepository,
-  userId: string,
-  isSuperuser: boolean = false
+  subscriptionRepository: SubscriptionRepository,
+  input: GetUserSubscriptionInput
 ): Promise<Subscription> => {
+  const { userId, isSuperuser = false } = GetUserSubscriptionSchema.parse(input);
+
   if (isSuperuser) {
-    return {
-      ...DEFAULT_FREE_SUBSCRIPTION,
-      id: "superuser",
-      userId,
-      plan: SubscriptionPlan.TEAM,
-      status: SubscriptionStatus.ACTIVE,
-      isSuperuser: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    return createSuperuserSubscription(userId);
   }
 
-  const subscription = await repo.getByUserId(userId);
+  const subscription = await subscriptionRepository.getByUserId(userId);
 
   if (!subscription) {
-    return {
-      ...DEFAULT_FREE_SUBSCRIPTION,
+    return createFreeSubscription({
       id: "default-free",
       userId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    });
   }
 
   return subscription;

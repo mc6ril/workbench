@@ -7,11 +7,11 @@ import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
 import { createLoggerFactory } from "@/shared/observability";
 
-import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import { createCheckoutSession } from "@/domains/billing/core/usecases/createCheckoutSession";
 import { getBillingVisibility } from "@/domains/billing/core/usecases/getBillingVisibility";
 import { stripePaymentGateway } from "@/domains/billing/infrastructure/stripe/stripePaymentGateway";
-import { createBillingConfigRepository } from "@/domains/billing/infrastructure/supabase/BillingConfigRepository.supabase";
+import { createBillingVisibilityPort } from "@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase";
 import { createSubscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
 import { createSessionRepository } from "@/domains/session/infrastructure/supabase/repositories";
@@ -41,10 +41,10 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
   try {
     const supabaseClient = await createSupabaseServerClient();
-    const billingConfigRepository =
-      createBillingConfigRepository(supabaseClient);
+    const billingVisibilityPort =
+      createBillingVisibilityPort(supabaseClient);
     const isBillingVisible = await getBillingVisibility(
-      billingConfigRepository
+      billingVisibilityPort
     );
 
     if (!isBillingVisible) {

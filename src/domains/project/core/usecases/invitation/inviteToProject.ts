@@ -4,7 +4,7 @@ import {
   getFeatureLimit,
   PlanFeature,
 } from "@/domains/billing/core/domain/planFeatures.rules";
-import type { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.schema";
+import type { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import {
   type CreateInvitationInput,
   CreateInvitationInputSchema,
