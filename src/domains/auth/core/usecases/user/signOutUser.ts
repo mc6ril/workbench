@@ -1,4 +1,4 @@
-import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
+import type { AuthGateway } from "@/domains/auth/core/ports/auth.gateway";
 
 /**
  * Sign out the current user.
@@ -8,7 +8,7 @@ import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
  * @throws AuthenticationFailure if signout fails
  */
 export const signOutUser = async (
-  repository: AuthRepository
+  gateway: AuthGateway
 ): Promise<void> => {
-  return repository.signOut();
+  return gateway.signOut();
 };

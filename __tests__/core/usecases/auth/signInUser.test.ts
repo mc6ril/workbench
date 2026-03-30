@@ -7,7 +7,7 @@ import {
 } from "../../../../__mocks__/core/domain/authMocks";
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
 
-import type { AuthResult } from "@/domains/auth/core/domain/auth.schema";
+import type { AuthResult } from "@/domains/auth/core/domain/auth.types";
 import { signInUser } from "@/domains/auth/core/usecases/user/signInUser";
 
 describe("signInUser", () => {

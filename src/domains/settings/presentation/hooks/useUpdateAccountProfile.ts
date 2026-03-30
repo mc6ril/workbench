@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { updateUser } from "@/domains/auth/core/usecases/user/updateUser";
-import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { updateCredentials } from "@/domains/auth/core/usecases/user/updateCredentials";
+import { authGateway } from "@/domains/auth/infrastructure/supabase/repositories";
 import type { UpdateProfileInput } from "@/domains/profile/core/domain/userProfile.schema";
 import { updateProfile } from "@/domains/profile/core/usecases/updateProfile";
 import { userProfileRepository } from "@/domains/profile/infrastructure/userProfileRepository.browser";
@@ -29,7 +29,7 @@ export const useUpdateAccountProfile = () => {
       }
 
       if (input.email) {
-        await updateUser(authRepository, { email: input.email });
+        await updateCredentials(authGateway, { email: input.email });
       }
     },
     onSuccess: (_data, variables) => {

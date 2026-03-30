@@ -1,4 +1,4 @@
-import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
+import type { AuthGateway } from "@/domains/auth/core/ports/auth.gateway";
 
 /**
  * Exchange an authorization code for a session (PKCE flow).
@@ -9,8 +9,8 @@ import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
  * @throws AuthenticationFailure if code exchange fails
  */
 export const exchangeCodeForSession = async (
-  repository: AuthRepository,
+  gateway: AuthGateway,
   code: string
 ): Promise<void> => {
-  await repository.exchangeCodeForSession(code);
+  await gateway.exchangeCodeForSession(code);
 };

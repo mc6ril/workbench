@@ -2,23 +2,23 @@
 import { createAuthError } from "../../../../__mocks__/core/domain/authMocks";
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
 
-import { deleteUser } from "@/domains/auth/core/usecases/user/deleteUser";
+import { deleteAccount } from "@/domains/auth/core/usecases/user/deleteAccount";
 
-describe("deleteUser", () => {
+describe("deleteAccount", () => {
   it("should delete user successfully", async () => {
     // Arrange
     const repository = createAuthRepositoryMock({
-      deleteUser: jest.fn<Promise<void>, []>(async () => {
+      deleteAccount: jest.fn<Promise<void>, []>(async () => {
         // Success - no return value
       }),
     });
 
     // Act
-    await deleteUser(repository);
+    await deleteAccount(repository);
 
     // Assert
-    expect(repository.deleteUser).toHaveBeenCalledTimes(1);
-    expect(repository.deleteUser).toHaveBeenCalledWith();
+    expect(repository.deleteAccount).toHaveBeenCalledTimes(1);
+    expect(repository.deleteAccount).toHaveBeenCalledWith();
   });
 
   it("should propagate authentication error from repository", async () => {
@@ -26,14 +26,14 @@ describe("deleteUser", () => {
     const repositoryError =
       createAuthError.authentication("Delete user failed");
     const repository = createAuthRepositoryMock({
-      deleteUser: jest.fn<Promise<void>, []>(async () => {
+      deleteAccount: jest.fn<Promise<void>, []>(async () => {
         throw repositoryError;
       }),
     });
 
     // Act & Assert
     try {
-      await deleteUser(repository);
+      await deleteAccount(repository);
       expect(true).toBe(false); // Should not reach here
     } catch (error) {
       expect(error).toMatchObject({
@@ -41,6 +41,6 @@ describe("deleteUser", () => {
       });
       expect(error).toHaveProperty("debugMessage");
     }
-    expect(repository.deleteUser).toHaveBeenCalledTimes(1);
+    expect(repository.deleteAccount).toHaveBeenCalledTimes(1);
   });
 });

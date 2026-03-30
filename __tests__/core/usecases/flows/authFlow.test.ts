@@ -9,7 +9,7 @@ import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authR
 import { createProjectRepositoryMock } from "../../../../__mocks__/core/ports/projectRepository";
 import { createSessionRepositoryMock } from "../../../../__mocks__/core/ports/sessionRepository";
 
-import type { AuthResult } from "@/domains/auth/core/domain/auth.schema";
+import type { AuthResult } from "@/domains/auth/core/domain/auth.types";
 import { signInUser } from "@/domains/auth/core/usecases/user/signInUser";
 import { signUpUser } from "@/domains/auth/core/usecases/user/signUpUser";
 import type { ProjectWithRole } from "@/domains/project/core/domain/schema/project.schema";

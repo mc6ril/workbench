@@ -14,11 +14,6 @@ import { APP_LIMITS, STORAGE_KEYS } from "./app";
 export type StorageKey = keyof typeof STORAGE_KEYS;
 
 /**
- * Type for password limits shape.
- */
-export type PasswordLimits = typeof APP_LIMITS.PASSWORD;
-
-/**
  * Type for pagination limits shape.
  */
 export type PaginationLimits = typeof APP_LIMITS.PAGINATION;

@@ -32,8 +32,8 @@ import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
 
-import type { ChangePasswordFormInput } from "@/domains/auth/core/domain/auth.schema";
-import { ChangePasswordFormSchema } from "@/domains/auth/core/domain/auth.schema";
+import type { ChangePasswordFormInput } from "@/domains/auth/presentation/forms/authForms.schema";
+import { ChangePasswordFormSchema } from "@/domains/auth/presentation/forms/authForms.schema";
 import { useChangePassword } from "@/domains/auth/presentation/hooks/password/useChangePassword";
 import { useDeleteUser } from "@/domains/auth/presentation/hooks/user/useDeleteUser";
 import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";

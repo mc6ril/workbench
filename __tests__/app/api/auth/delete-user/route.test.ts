@@ -32,7 +32,7 @@ jest.mock("@/shared/infrastructure/supabase/client-admin", () => ({
 }));
 
 jest.mock("@/domains/auth/infrastructure/supabase/repositories", () => ({
-  createAuthRepository: jest.fn(),
+  createAuthGateway: jest.fn(),
 }));
 
 jest.mock("@/domains/session/infrastructure/supabase/repositories", () => ({
@@ -43,8 +43,8 @@ jest.mock("@/domains/session/core/usecases/getCurrentSession", () => ({
   getCurrentSession: jest.fn(),
 }));
 
-jest.mock("@/domains/auth/core/usecases/user/deleteUser", () => ({
-  deleteUser: jest.fn(),
+jest.mock("@/domains/auth/core/usecases/user/deleteAccount", () => ({
+  deleteAccount: jest.fn(),
 }));
 
 jest.mock("@/shared/observability", () => ({
@@ -60,8 +60,8 @@ import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/clie
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
 import { DELETE } from "@/app/api/auth/delete-user/route";
-import { deleteUser } from "@/domains/auth/core/usecases/user/deleteUser";
-import { createAuthRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { deleteAccount } from "@/domains/auth/core/usecases/user/deleteAccount";
+import { createAuthGateway } from "@/domains/auth/infrastructure/supabase/repositories";
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
 import { createSessionRepository } from "@/domains/session/infrastructure/supabase/repositories";
 
@@ -106,7 +106,7 @@ describe("DELETE /api/auth/delete-user", () => {
       error: "Authentication required",
     });
     expect(createSupabaseAdminClient).not.toHaveBeenCalled();
-    expect(deleteUser).not.toHaveBeenCalled();
+    expect(deleteAccount).not.toHaveBeenCalled();
   });
 
   it("deletes the authenticated user with the admin-enabled repository", async () => {
@@ -115,7 +115,7 @@ describe("DELETE /api/auth/delete-user", () => {
     >;
     const adminClient = {} as ReturnType<typeof createSupabaseAdminClient>;
     const sessionRepository = {} as ReturnType<typeof createSessionRepository>;
-    const authRepository = {} as ReturnType<typeof createAuthRepository>;
+    const authGateway = {} as ReturnType<typeof createAuthGateway>;
 
     jest.mocked(createSupabaseServerClient).mockResolvedValue(serverClient);
     jest.mocked(createSessionRepository).mockReturnValue(sessionRepository);
@@ -126,8 +126,8 @@ describe("DELETE /api/auth/delete-user", () => {
       isSuperuser: false,
     });
     jest.mocked(createSupabaseAdminClient).mockReturnValue(adminClient);
-    jest.mocked(createAuthRepository).mockReturnValue(authRepository);
-    jest.mocked(deleteUser).mockResolvedValue(undefined);
+    jest.mocked(createAuthGateway).mockReturnValue(authGateway);
+    jest.mocked(deleteAccount).mockResolvedValue(undefined);
 
     const response = (await DELETE(
       createRequest()
@@ -138,11 +138,11 @@ describe("DELETE /api/auth/delete-user", () => {
       success: true,
       message: "User deleted successfully",
     });
-    expect(createAuthRepository).toHaveBeenCalledWith(
+    expect(createAuthGateway).toHaveBeenCalledWith(
       serverClient,
       adminClient
     );
-    expect(deleteUser).toHaveBeenCalledWith(authRepository);
+    expect(deleteAccount).toHaveBeenCalledWith(authGateway);
   });
 
   it("returns 500 when the auth provider fails server-side", async () => {
@@ -151,7 +151,7 @@ describe("DELETE /api/auth/delete-user", () => {
     >;
     const adminClient = {} as ReturnType<typeof createSupabaseAdminClient>;
     const sessionRepository = {} as ReturnType<typeof createSessionRepository>;
-    const authRepository = {} as ReturnType<typeof createAuthRepository>;
+    const authGateway = {} as ReturnType<typeof createAuthGateway>;
 
     jest.mocked(createSupabaseServerClient).mockResolvedValue(serverClient);
     jest.mocked(createSessionRepository).mockReturnValue(sessionRepository);
@@ -162,8 +162,8 @@ describe("DELETE /api/auth/delete-user", () => {
       isSuperuser: false,
     });
     jest.mocked(createSupabaseAdminClient).mockReturnValue(adminClient);
-    jest.mocked(createAuthRepository).mockReturnValue(authRepository);
-    jest.mocked(deleteUser).mockRejectedValue({
+    jest.mocked(createAuthGateway).mockReturnValue(authGateway);
+    jest.mocked(deleteAccount).mockRejectedValue({
       code: AUTH_ERROR_CODE.AUTH_PROVIDER_SERVER_ERROR,
       debugMessage: "Database error deleting user",
     });

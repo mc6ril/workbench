@@ -3,25 +3,25 @@ import { z } from "zod";
 import { createAuthError } from "../../../../__mocks__/core/domain/authMocks";
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
 
-import { updateUser } from "@/domains/auth/core/usecases/user/updateUser";
+import { updateCredentials } from "@/domains/auth/core/usecases/user/updateCredentials";
 
-describe("updateUser", () => {
+describe("updateCredentials", () => {
   it("should update user with email only", async () => {
     // Arrange
     const input = { email: "newemail@example.com" };
     const repository = createAuthRepositoryMock({
-      updateUser: jest.fn<
+      updateCredentials: jest.fn<
         Promise<void>,
         [{ email?: string; password?: string }]
       >(async () => {}),
     });
 
     // Act
-    await updateUser(repository, input);
+    await updateCredentials(repository, input);
 
     // Assert
-    expect(repository.updateUser).toHaveBeenCalledTimes(1);
-    expect(repository.updateUser).toHaveBeenCalledWith({
+    expect(repository.updateCredentials).toHaveBeenCalledTimes(1);
+    expect(repository.updateCredentials).toHaveBeenCalledWith({
       email: "newemail@example.com",
     });
   });
@@ -30,18 +30,18 @@ describe("updateUser", () => {
     // Arrange
     const input = { password: "newpassword123" };
     const repository = createAuthRepositoryMock({
-      updateUser: jest.fn<
+      updateCredentials: jest.fn<
         Promise<void>,
         [{ email?: string; password?: string }]
       >(async () => {}),
     });
 
     // Act
-    await updateUser(repository, input);
+    await updateCredentials(repository, input);
 
     // Assert
-    expect(repository.updateUser).toHaveBeenCalledTimes(1);
-    expect(repository.updateUser).toHaveBeenCalledWith({
+    expect(repository.updateCredentials).toHaveBeenCalledTimes(1);
+    expect(repository.updateCredentials).toHaveBeenCalledWith({
       password: "newpassword123",
     });
   });
@@ -53,18 +53,18 @@ describe("updateUser", () => {
       password: "newpassword123",
     };
     const repository = createAuthRepositoryMock({
-      updateUser: jest.fn<
+      updateCredentials: jest.fn<
         Promise<void>,
         [{ email?: string; password?: string }]
       >(async () => {}),
     });
 
     // Act
-    await updateUser(repository, input);
+    await updateCredentials(repository, input);
 
     // Assert
-    expect(repository.updateUser).toHaveBeenCalledTimes(1);
-    expect(repository.updateUser).toHaveBeenCalledWith({
+    expect(repository.updateCredentials).toHaveBeenCalledTimes(1);
+    expect(repository.updateCredentials).toHaveBeenCalledWith({
       email: "newemail@example.com",
       password: "newpassword123",
     });
@@ -77,15 +77,15 @@ describe("updateUser", () => {
 
     // Act & Assert
     try {
-      await updateUser(repository, input);
+      await updateCredentials(repository, input);
       expect(true).toBe(false);
     } catch (error) {
       expect(error).toMatchObject({
-        code: "UPDATE_USER_NO_FIELDS",
+        code: "UPDATE_CREDENTIALS_NO_FIELDS",
         debugMessage: "At least one field (email or password) must be provided",
       });
     }
-    expect(repository.updateUser).not.toHaveBeenCalled();
+    expect(repository.updateCredentials).not.toHaveBeenCalled();
   });
 
   it("should throw ZodError on invalid email format", async () => {
@@ -94,10 +94,10 @@ describe("updateUser", () => {
     const repository = createAuthRepositoryMock();
 
     // Act & Assert
-    await expect(updateUser(repository, invalidInput)).rejects.toThrow(
+    await expect(updateCredentials(repository, invalidInput)).rejects.toThrow(
       z.ZodError
     );
-    expect(repository.updateUser).not.toHaveBeenCalled();
+    expect(repository.updateCredentials).not.toHaveBeenCalled();
   });
 
   it("should throw ZodError on password too short", async () => {
@@ -106,10 +106,10 @@ describe("updateUser", () => {
     const repository = createAuthRepositoryMock();
 
     // Act & Assert
-    await expect(updateUser(repository, invalidInput)).rejects.toThrow(
+    await expect(updateCredentials(repository, invalidInput)).rejects.toThrow(
       z.ZodError
     );
-    expect(repository.updateUser).not.toHaveBeenCalled();
+    expect(repository.updateCredentials).not.toHaveBeenCalled();
   });
 
   it("should throw ZodError on password too long", async () => {
@@ -118,10 +118,10 @@ describe("updateUser", () => {
     const repository = createAuthRepositoryMock();
 
     // Act & Assert
-    await expect(updateUser(repository, invalidInput)).rejects.toThrow(
+    await expect(updateCredentials(repository, invalidInput)).rejects.toThrow(
       z.ZodError
     );
-    expect(repository.updateUser).not.toHaveBeenCalled();
+    expect(repository.updateCredentials).not.toHaveBeenCalled();
   });
 
   it("should propagate authentication error from repository", async () => {
@@ -130,7 +130,7 @@ describe("updateUser", () => {
     const repositoryError =
       createAuthError.authentication("Update user failed");
     const repository = createAuthRepositoryMock({
-      updateUser: jest.fn<
+      updateCredentials: jest.fn<
         Promise<void>,
         [{ email?: string; password?: string }]
       >(async () => {
@@ -140,7 +140,7 @@ describe("updateUser", () => {
 
     // Act & Assert
     try {
-      await updateUser(repository, input);
+      await updateCredentials(repository, input);
       expect(true).toBe(false);
     } catch (error) {
       expect(error).toMatchObject({
@@ -148,6 +148,6 @@ describe("updateUser", () => {
       });
       expect(error).toHaveProperty("debugMessage");
     }
-    expect(repository.updateUser).toHaveBeenCalledTimes(1);
+    expect(repository.updateCredentials).toHaveBeenCalledTimes(1);
   });
 });

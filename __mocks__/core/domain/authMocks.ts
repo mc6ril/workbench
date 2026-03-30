@@ -2,7 +2,6 @@ import { mockCurrentSession } from "./sessionMocks";
 
 import type {
   AuthenticationError,
-  AuthResult,
   EmailAlreadyExistsError,
   EmailVerificationError,
   InvalidCredentialsError,
@@ -10,10 +9,13 @@ import type {
   PasswordResetError,
   PasswordUpdateNotAllowedError,
   SamePasswordError,
+  WeakPasswordError,
+} from "@/domains/auth/core/domain/auth.errors";
+import type {
+  AuthResult,
   SignInInput,
   SignUpInput,
-  WeakPasswordError,
-} from "@/domains/auth/core/domain/auth.schema";
+} from "@/domains/auth/core/domain/auth.types";
 
 /**
  * Mock authentication result for testing.

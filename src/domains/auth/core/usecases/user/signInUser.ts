@@ -1,9 +1,18 @@
-import type { AuthResult } from "@/domains/auth/core/domain/auth.schema";
-import {
-  type SignInInput,
-  SignInSchema,
-} from "@/domains/auth/core/domain/auth.schema";
-import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
+import { z } from "zod";
+
+import type {
+  AuthResult,
+  SignInInput,
+} from "@/domains/auth/core/domain/auth.types";
+import type { AuthGateway } from "@/domains/auth/core/ports/auth.gateway";
+
+export const SignInSchema = z.object({
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email({ message: "Invalid email format" }),
+  password: z.string().min(1, "Password is required"),
+});
 
 /**
  * Sign in an existing user.
@@ -16,12 +25,9 @@ import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
  * @throws AuthenticationFailure for other authentication errors
  */
 export const signInUser = async (
-  repository: AuthRepository,
+  gateway: AuthGateway,
   input: SignInInput
 ): Promise<AuthResult> => {
-  // Validate input with Zod schema
   const validatedInput = SignInSchema.parse(input);
-
-  // Call repository to authenticate user
-  return repository.signIn(validatedInput);
+  return gateway.signIn(validatedInput);
 };

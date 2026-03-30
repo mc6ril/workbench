@@ -3,15 +3,16 @@ import type {
   ResetPasswordInput,
   SignInInput,
   SignUpInput,
+  UpdateCredentialsInput,
   UpdatePasswordInput,
   VerifyEmailInput,
-} from "@/domains/auth/core/domain/auth.schema";
+} from "@/domains/auth/core/domain/auth.types";
 
 /**
- * Repository contract for Authentication operations.
- * Hides infrastructure details (Supabase) and exposes domain-shaped operations.
+ * Gateway contract for auth-provider operations.
+ * Hides infrastructure details (Supabase) behind an application-facing boundary.
  */
-export type AuthRepository = {
+export type AuthGateway = {
   /**
    * Sign up a new user.
    * @param input - Signup credentials (email, password)
@@ -87,14 +88,14 @@ export type AuthRepository = {
    * @param input - Auth credential update (email and/or password)
    * @throws AuthenticationFailure if update fails
    */
-  updateUser(input: { email?: string; password?: string }): Promise<void>;
+  updateCredentials(input: UpdateCredentialsInput): Promise<void>;
 
   /**
    * Delete the current user account.
    * Permanently deletes the user account and all associated data.
    * @throws AuthenticationFailure if deletion fails
    */
-  deleteUser(): Promise<void>;
+  deleteAccount(): Promise<void>;
 
   /**
    * Exchange an authorization code for a session (PKCE flow).

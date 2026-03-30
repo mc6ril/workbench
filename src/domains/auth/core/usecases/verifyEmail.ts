@@ -1,9 +1,34 @@
-import type { AuthResult } from "@/domains/auth/core/domain/auth.schema";
-import {
-  type VerifyEmailInput,
-  VerifyEmailSchema,
-} from "@/domains/auth/core/domain/auth.schema";
-import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
+import { z } from "zod";
+
+import type {
+  AuthResult,
+  VerifyEmailInput,
+  VerifyEmailLinkType,
+} from "@/domains/auth/core/domain/auth.types";
+import type { AuthGateway } from "@/domains/auth/core/ports/auth.gateway";
+
+export const VerifyEmailLinkTypeSchema = z.enum(["email", "signup"]);
+
+export const VerifyEmailSchema = z
+  .object({
+    email: z
+      .union([
+        z.string().email({ message: "Invalid email format" }),
+        z.literal(""),
+      ])
+      .optional(),
+    token: z.string().min(1, "Token is required").optional(),
+    tokenHash: z.string().min(1, "Token hash is required").optional(),
+    code: z.string().min(1, "Code is required").optional(),
+    type: VerifyEmailLinkTypeSchema.optional(),
+  })
+  .refine(
+    (input) => Boolean(input.token || input.tokenHash || input.code),
+    {
+      message: "A verification token, token hash, or code is required",
+      path: ["token"],
+    }
+  );
 
 /**
  * Verify email address using a verification token.
@@ -17,12 +42,11 @@ import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
  * @throws AuthenticationFailure for other authentication errors
  */
 export const verifyEmail = async (
-  repository: AuthRepository,
+  gateway: AuthGateway,
   input: VerifyEmailInput
 ): Promise<AuthResult> => {
-  // Validate input with Zod schema
-  const validatedInput = VerifyEmailSchema.parse(input);
-
-  // Call repository to verify email token
-  return repository.verifyEmail(validatedInput);
+  const validatedInput = VerifyEmailSchema.parse(input) as VerifyEmailInput & {
+    type?: VerifyEmailLinkType;
+  };
+  return gateway.verifyEmail(validatedInput);
 };

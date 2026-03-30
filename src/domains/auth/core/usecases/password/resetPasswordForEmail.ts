@@ -1,8 +1,14 @@
-import {
-  type ResetPasswordInput,
-  ResetPasswordSchema,
-} from "@/domains/auth/core/domain/auth.schema";
-import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
+import { z } from "zod";
+
+import type { ResetPasswordInput } from "@/domains/auth/core/domain/auth.types";
+import type { AuthGateway } from "@/domains/auth/core/ports/auth.gateway";
+
+export const ResetPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email({ message: "Invalid email format" }),
+});
 
 /**
  * Request a password reset email.
@@ -14,12 +20,9 @@ import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
  * @throws AuthenticationFailure for other authentication errors
  */
 export const resetPasswordForEmail = async (
-  repository: AuthRepository,
+  gateway: AuthGateway,
   input: ResetPasswordInput
 ): Promise<void> => {
-  // Validate input with Zod schema
   const validatedInput = ResetPasswordSchema.parse(input);
-
-  // Call repository to send password reset email
-  return repository.resetPasswordForEmail(validatedInput);
+  return gateway.resetPasswordForEmail(validatedInput);
 };

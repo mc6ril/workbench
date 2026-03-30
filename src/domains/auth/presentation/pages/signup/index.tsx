@@ -20,15 +20,15 @@ import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
 import styles from "./styles.module.scss";
 
-import type {
-  SignUpFormInput,
-  SignUpInput,
-} from "@/domains/auth/core/domain/auth.schema";
-import { SignUpFormSchema } from "@/domains/auth/core/domain/auth.schema";
-import { getNextUnmetCriterion } from "@/domains/auth/core/domain/passwordStrength";
+import type { SignUpInput } from "@/domains/auth/core/domain/auth.types";
 import PasswordStrengthIndicator from "@/domains/auth/presentation/components/PasswordStrengthIndicator";
+import {
+  type SignUpFormInput,
+  SignUpFormSchema,
+} from "@/domains/auth/presentation/forms/authForms.schema";
 import { useSignInWithGoogle } from "@/domains/auth/presentation/hooks/user/useSignInWithGoogle";
 import { useSignUp } from "@/domains/auth/presentation/hooks/user/useSignUp";
+import { getNextUnmetCriterion } from "@/domains/auth/presentation/password/passwordStrength";
 import { isUnsupportedGoogleOAuthContext } from "@/domains/auth/presentation/utils/googleOAuth";
 
 const SignupPage = () => {

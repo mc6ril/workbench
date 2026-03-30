@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { SignInInput } from "@/domains/auth/core/domain/auth.schema";
+import type { SignInInput } from "@/domains/auth/core/domain/auth.types";
 import { signInUser } from "@/domains/auth/core/usecases/user/signInUser";
-import { authRepository } from "@/domains/auth/infrastructure/supabase/repositories";
+import { authGateway } from "@/domains/auth/infrastructure/supabase/repositories";
 import { invalidatePostAuthMutation } from "@/domains/auth/presentation/utils/invalidatePostAuthMutation";
 
 /**
@@ -14,7 +14,7 @@ export const useSignIn = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: SignInInput) => signInUser(authRepository, input),
+    mutationFn: (input: SignInInput) => signInUser(authGateway, input),
     retry: false,
     onSuccess: async () => {
       await invalidatePostAuthMutation(queryClient, { includeProjects: true });

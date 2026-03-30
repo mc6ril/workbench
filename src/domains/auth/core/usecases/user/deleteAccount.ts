@@ -1,4 +1,4 @@
-import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
+import type { AuthGateway } from "@/domains/auth/core/ports/auth.gateway";
 
 /**
  * Delete the current user account.
@@ -7,6 +7,6 @@ import type { AuthRepository } from "@/domains/auth/core/ports/authRepository";
  * @param repository - Auth repository
  * @throws AuthenticationFailure if deletion fails
  */
-export const deleteUser = async (repository: AuthRepository): Promise<void> => {
-  return repository.deleteUser();
+export const deleteAccount = async (gateway: AuthGateway): Promise<void> => {
+  return gateway.deleteAccount();
 };

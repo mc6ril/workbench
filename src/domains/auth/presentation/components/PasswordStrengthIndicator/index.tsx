@@ -9,7 +9,7 @@ import {
   getPasswordStrengthLevel,
   MAX_STRENGTH_LEVEL,
   PasswordStrength,
-} from "@/domains/auth/core/domain/passwordStrength";
+} from "@/domains/auth/presentation/password/passwordStrength";
 
 type Props = {
   password: string;
