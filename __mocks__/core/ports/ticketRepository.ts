@@ -13,6 +13,10 @@ import type {
 export type TicketRepositoryMock = {
   getNextCodeNumberForProject: jest.Mock<Promise<number>, [string]>;
   findByCode: jest.Mock<Promise<Ticket | null>, [string, number]>;
+  findByCodeIncludingArchived: jest.Mock<
+    Promise<Ticket | null>,
+    [string, number]
+  >;
   findById: jest.Mock<Promise<Ticket | null>, [string]>;
   listByProject: jest.Mock<Promise<Ticket[]>, [string, TicketFilters?, string?, number?]>;
   listByColumnId: jest.Mock<Promise<Ticket[]>, [string, string]>;
@@ -77,6 +81,10 @@ export const createTicketRepositoryMock = (
   const base: TicketRepositoryMock = {
     getNextCodeNumberForProject: jest.fn<Promise<number>, [string]>(),
     findByCode: jest.fn<Promise<Ticket | null>, [string, number]>(),
+    findByCodeIncludingArchived: jest.fn<
+      Promise<Ticket | null>,
+      [string, number]
+    >(),
     findById: jest.fn<Promise<Ticket | null>, [string]>(),
     listByProject: jest.fn<
       Promise<Ticket[]>,

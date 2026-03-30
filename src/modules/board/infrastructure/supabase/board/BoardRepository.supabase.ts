@@ -70,15 +70,9 @@ export const createBoardRepository = (
         .from("boards")
         .select("*")
         .eq("project_id", projectId)
-        .single();
+        .maybeSingle();
 
       if (error) {
-        // PGRST116 = 0 rows with .single(): no board exists yet for this project.
-        // The board usecase is responsible for creating a default board when null is returned,
-        // so we intentionally return null instead of treating this as an error.
-        if (getPostgrestErrorCode(error) === "PGRST116") {
-          return null;
-        }
         return handleRepositoryError(error, "Board");
       }
 

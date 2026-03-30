@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { GetTicketByCodeInProjectInput, Ticket } from "@/modules/board/core/domain/ticket.types";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
-const GetTicketByCodeInProjectInputSchema = z.object({
+const GetTicketByCodeInProjectIncludingArchivedInputSchema = z.object({
   projectId: z.string().uuid("Project id must be a valid UUID"),
   codeNumber: z
     .number()
@@ -12,11 +12,13 @@ const GetTicketByCodeInProjectInputSchema = z.object({
 });
 
 /**
- * Get a ticket by its code number within a specific project.
+ * Get a ticket by its code number within a specific project, including
+ * archived tickets.
  *
- * The functional key of a ticket is (projectId, codeNumber). Project short
- * codes are never used here to resolve a project globally, which keeps the
- * lookup safe even when short codes are not unique.
+ * This usecase mirrors {@link getTicketByCodeInProject} but delegates to a
+ * repository method that does not filter archived records. The functional key
+ * remains (projectId, codeNumber); short codes are not used to resolve
+ * projects.
  *
  * @param ticketRepository - Ticket repository
  * @param input - Project id and ticket code number
@@ -24,14 +26,16 @@ const GetTicketByCodeInProjectInputSchema = z.object({
  * @throws ZodError if input validation fails
  * @throws DatabaseError if database operation fails
  */
-export const getTicketByCodeInProject = async (
+export const getTicketByCodeInProjectIncludingArchived = async (
   ticketRepository: TicketRepository,
   input: GetTicketByCodeInProjectInput
 ): Promise<Ticket | null> => {
-  const validatedInput = GetTicketByCodeInProjectInputSchema.parse(input);
+  const validatedInput =
+    GetTicketByCodeInProjectIncludingArchivedInputSchema.parse(input);
 
-  return ticketRepository.findByCode(
+  return ticketRepository.findByCodeIncludingArchived(
     validatedInput.projectId,
     validatedInput.codeNumber
   );
 };
+

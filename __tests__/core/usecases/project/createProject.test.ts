@@ -3,7 +3,10 @@ import { z } from "zod";
 import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
 
 import type { Project } from "@/domains/project/core/domain/project.types";
-import { createProject } from "@/domains/project/core/usecases/project/createProject";
+import {
+  createProject,
+  type CreateProjectInput,
+} from "@/domains/project/core/usecases/project/createProject";
 
 describe("createProject", () => {
   const mockProject: Project = {
@@ -29,7 +32,9 @@ describe("createProject", () => {
 
     // Assert
     expect(repository.create).toHaveBeenCalledTimes(1);
-    expect(repository.create).toHaveBeenCalledWith(input);
+    expect(repository.create).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "Test Project" })
+    );
     expect(result).toEqual(mockProject);
   });
 
@@ -49,6 +54,21 @@ describe("createProject", () => {
 
     await expect(createProject(repository, input)).rejects.toThrow(z.ZodError);
     expect(repository.create).not.toHaveBeenCalled();
+  });
+
+  it("should pass boardEmoji to the gateway when provided", async () => {
+    const input: CreateProjectInput = { name: "Rocket", boardEmoji: "🚀" };
+    const repository = createProjectGatewayMock({
+      create: jest.fn<Promise<Project>, [CreateProjectInput]>(
+        async () => ({ ...mockProject, name: "Rocket", boardEmoji: "🚀" })
+      ),
+    });
+
+    await createProject(repository, input);
+
+    expect(repository.create).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "Rocket", boardEmoji: "🚀" })
+    );
   });
 
   it("should propagate repository errors", async () => {
