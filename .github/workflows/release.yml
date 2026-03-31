@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout main-dev
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: main-dev
           fetch-depth: 0
