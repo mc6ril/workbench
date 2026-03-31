@@ -27,6 +27,30 @@ const supabaseRemotePattern = (() => {
 })();
 
 const nextConfig: NextConfig = {
+  /**
+   * Public SEO URLs use `/{locale}` (`/fr`, `/en`, `/es`).
+   * Files live under `app/marketing/[locale]/…` to avoid clashing with `app/(protected)/[projectId]`.
+   */
+  rewrites: async () => {
+    return [
+      {
+        source: "/:locale(fr|en|es)",
+        destination: "/marketing/:locale",
+      },
+      {
+        source: "/:locale(fr|en|es)/pricing",
+        destination: "/marketing/:locale/pricing",
+      },
+      {
+        source: "/:locale(fr|en|es)/legal",
+        destination: "/marketing/:locale/legal",
+      },
+      {
+        source: "/:locale(fr|en|es)/legal/:path*",
+        destination: "/marketing/:locale/legal/:path*",
+      },
+    ];
+  },
   sassOptions: {
     includePaths: [path.join(__dirname, "./src/styles")],
   },

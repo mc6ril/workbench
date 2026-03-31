@@ -2,13 +2,25 @@ import { type NextRequest, NextResponse } from "next/server";
 import { type CookieOptions, createServerClient } from "@supabase/ssr";
 
 import { requireNonEmptyEnv } from "@/shared/errors/programmingError";
+import {
+  isSupportedLocale,
+  localeCookieMaxAgeSeconds,
+  localeCookieName,
+  requestLocaleHeaderName,
+  resolveLocale,
+} from "@/shared/i18n/config";
+import { getMarketingLocaleFromPathname } from "@/shared/i18n/marketingPaths";
 import { isProtectedRoute } from "@/shared/utils/routes";
 
 /**
  * Create Supabase client for Edge Runtime (middleware).
  * Uses @supabase/ssr to handle sessions via cookies.
+ * Forwards `forwardHeaders` on every `NextResponse.next` so locale injection is preserved.
  */
-const createSupabaseClientForMiddleware = (request: NextRequest) => {
+const createSupabaseClientForMiddleware = (
+  request: NextRequest,
+  forwardHeaders: Headers
+) => {
   const supabaseUrl = requireNonEmptyEnv(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     "Missing NEXT_PUBLIC_SUPABASE_URL for Supabase middleware client"
@@ -18,10 +30,9 @@ const createSupabaseClientForMiddleware = (request: NextRequest) => {
     "Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY for Supabase middleware client"
   );
 
-  // Create an unmodified response
   let supabaseResponse = NextResponse.next({
     request: {
-      headers: request.headers,
+      headers: forwardHeaders,
     },
   });
 
@@ -37,20 +48,38 @@ const createSupabaseClientForMiddleware = (request: NextRequest) => {
           options?: CookieOptions;
         }>
       ) {
-        cookiesToSet.forEach(({ name, value }) =>
-          request.cookies.set(name, value)
-        );
-        supabaseResponse = NextResponse.next({
-          request,
+        cookiesToSet.forEach(({ name, value }) => {
+          request.cookies.set(name, value);
         });
-        cookiesToSet.forEach(({ name, value, options }) =>
-          supabaseResponse.cookies.set(name, value, options)
-        );
+        supabaseResponse = NextResponse.next({
+          request: {
+            headers: forwardHeaders,
+          },
+        });
+        cookiesToSet.forEach(({ name, value, options }) => {
+          supabaseResponse.cookies.set(name, value, options);
+        });
       },
     },
   });
 
   return { supabase, response: supabaseResponse };
+};
+
+const appendLocaleResponseCookies = (
+  response: NextResponse,
+  pathname: string
+): NextResponse => {
+  const fromPath = getMarketingLocaleFromPathname(pathname);
+  if (fromPath && isSupportedLocale(fromPath)) {
+    response.cookies.set(localeCookieName, fromPath, {
+      path: "/",
+      sameSite: "lax",
+      maxAge: localeCookieMaxAgeSeconds,
+    });
+  }
+
+  return response;
 };
 
 /**
@@ -61,6 +90,7 @@ const createSupabaseClientForMiddleware = (request: NextRequest) => {
  * - RLS policies at the database level are the ultimate source of truth
  *
  * This middleware provides:
+ * - Locale-prefixed marketing URLs and `x-next-locale` for Server Components
  * - UX optimization: early redirects for better user experience
  * - Route filtering: prevents loading unnecessary pages
  * - Email verification checks: redirects unverified users
@@ -72,31 +102,66 @@ export const middleware = async (
 ): Promise<NextResponse> => {
   const { pathname } = request.nextUrl;
 
-  // Check if this is an auth page (signin/signup)
-  const isAuthPage = pathname === "/auth/signin" || pathname === "/auth/signup";
+  // Canonical public URLs are `/{locale}`; files live under `/marketing/{locale}` (see next.config rewrites).
+  if (pathname === "/marketing" || pathname.startsWith("/marketing/")) {
+    const suffix = pathname === "/marketing" ? "/" : pathname.slice("/marketing".length);
+    return NextResponse.redirect(new URL(suffix, request.url));
+  }
+
+  const cookieLocale = request.cookies.get(localeCookieName)?.value;
+  const acceptLanguage = request.headers.get("accept-language");
+  const resolvedFromPreferences = resolveLocale({
+    cookieLocale,
+    acceptLanguage,
+  });
+
+  // Legacy marketing URLs without locale prefix → locale-prefixed URLs
+  if (pathname === "/") {
+    return NextResponse.redirect(
+      new URL(`/${resolvedFromPreferences}`, request.url)
+    );
+  }
+
+  if (pathname === "/pricing" || pathname === "/legal") {
+    return NextResponse.redirect(
+      new URL(`/${resolvedFromPreferences}${pathname}`, request.url)
+    );
+  }
+
+  const pathLocale = getMarketingLocaleFromPathname(pathname);
+  const resolvedLocale = pathLocale ?? resolvedFromPreferences;
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set(requestLocaleHeaderName, resolvedLocale);
+
+  const isAuthPage =
+    pathname === "/auth/signin" || pathname === "/auth/signup";
   const isProtected = isProtectedRoute(pathname);
 
-  // Skip auth checks for routes that don't need middleware auth decisions.
   if (!isAuthPage && !isProtected) {
-    return NextResponse.next();
+    const response = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+    return appendLocaleResponseCookies(response, pathname);
   }
 
   try {
-    // Create Supabase client for Edge Runtime with cookie handling
-    const { supabase, response } = createSupabaseClientForMiddleware(request);
+    const { supabase, response } = createSupabaseClientForMiddleware(
+      request,
+      requestHeaders
+    );
 
-    // Security-first middleware path: validate auth with Supabase.
     const {
       data: { user },
       error,
     } = await supabase.auth.getUser();
 
-    // If user is authenticated and trying to access auth pages, redirect to workspace
     if (user && isAuthPage) {
       return NextResponse.redirect(new URL("/workspace", request.url));
     }
 
-    // If this is a protected route and user is not authenticated, redirect to signin
     if (isProtected) {
       if (error || !user) {
         const signInUrl = new URL("/auth/signin", request.url);
@@ -111,41 +176,24 @@ export const middleware = async (
       }
     }
 
-    // Allow access for all other cases
-    return response;
+    return appendLocaleResponseCookies(response, pathname);
   } catch (error) {
-    // On error, fail open (allow access) to prevent lockout
-    // This is safe because:
-    // 1. AuthLayout will check authentication again (server component)
-    // 2. ProjectLayout will check project access via RLS (server component)
-    // 3. RLS policies at database level are the ultimate source of truth
-    // Middleware is optimization only, not security
     console.error("[Middleware] Authentication error:", error);
-    return NextResponse.next();
+    const response = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+    return appendLocaleResponseCookies(response, pathname);
   }
 };
 
 /**
  * Middleware configuration.
- * Matches only protected routes to avoid unnecessary processing.
- * The middleware function itself will skip public routes, but we optimize
- * the matcher to reduce middleware execution for static assets.
+ * Matches request paths except static assets and API (see matcher).
  */
 export const config = {
   matcher: [
-    /*
-     * Match request paths except:
-     * - api routes (/api/*)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - static files (images, etc.)
-     * - public folder files
-     *
-     * Note: Public routes (/, /signin, /signup) are matched but will be
-     * skipped by the middleware logic using isProtectedRoute().
-     * - monitoring: Sentry tunnel route (withSentryConfig tunnelRoute); must not run Supabase auth.
-     */
     "/((?!api|_next/static|_next/image|favicon.ico|monitoring|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

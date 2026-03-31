@@ -2,9 +2,12 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { PAGE_ROUTES } from "@/shared/constants/routes";
 import Loader from "@/shared/design-system/loader";
 import { assertDefined } from "@/shared/errors/programmingError";
+import {
+  buildMarketingHomePath,
+  buildMarketingPricingPath,
+} from "@/shared/i18n/marketingPaths";
 import { getMessages } from "@/shared/i18n/messages";
 import { getRequestLocale } from "@/shared/i18n/requestLocale";
 import { getTranslationValue } from "@/shared/i18n/utils";
@@ -35,7 +38,8 @@ export const generateMetadata = async (): Promise<Metadata> => {
     locale,
     title,
     description,
-    pathname: PAGE_ROUTES.PRICING,
+    pathname: buildMarketingPricingPath(locale),
+    buildPathForLocale: buildMarketingPricingPath,
   });
 };
 
@@ -45,7 +49,8 @@ const Pricing = async () => {
   const isBillingVisible = await getBillingVisibility(billingVisibilityPort);
 
   if (!isBillingVisible) {
-    redirect(PAGE_ROUTES.HOME);
+    const locale = await getRequestLocale();
+    redirect(buildMarketingHomePath(locale));
   }
 
   return (

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 
-import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { assertDefined } from "@/shared/errors/programmingError";
+import { buildMarketingLegalPath } from "@/shared/i18n/marketingPaths";
 import { getMessages } from "@/shared/i18n/messages";
 import { getRequestLocale } from "@/shared/i18n/requestLocale";
 import { getTranslationValue } from "@/shared/i18n/utils";
@@ -28,7 +28,8 @@ export const generateMetadata = async (): Promise<Metadata> => {
     locale,
     title,
     description,
-    pathname: PAGE_ROUTES.LEGAL,
+    pathname: buildMarketingLegalPath(locale),
+    buildPathForLocale: buildMarketingLegalPath,
   });
 };
 

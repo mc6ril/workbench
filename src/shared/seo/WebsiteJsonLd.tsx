@@ -1,3 +1,4 @@
+import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
 import { getMessages } from "@/shared/i18n/messages";
 import { getRequestLocale } from "@/shared/i18n/requestLocale";
 import { getTranslationValue } from "@/shared/i18n/utils";
@@ -11,7 +12,9 @@ const WebsiteJsonLd = async () => {
   const messages = getMessages(locale);
   const name = getTranslationValue(messages, "app.metadata", "title");
   const description = getTranslationValue(messages, "app.metadata", "description");
-  const siteUrl = getSiteUrl().origin;
+  const base = getSiteUrl();
+  const siteUrl = base.origin;
+  const homeUrl = new URL(buildMarketingHomePath(locale), base).toString();
 
   if (!name || !description) {
     return null;
@@ -22,15 +25,15 @@ const WebsiteJsonLd = async () => {
     "@graph": [
       {
         "@type": "WebSite",
-        "@id": `${siteUrl}/#website`,
+        "@id": `${homeUrl}#website`,
         name,
         description,
-        url: siteUrl,
+        url: homeUrl,
         inLanguage: locale,
         publisher: { "@id": `${siteUrl}/#organization` },
         potentialAction: {
           "@type": "ReadAction",
-          target: siteUrl,
+          target: homeUrl,
         },
       },
       {
@@ -41,10 +44,10 @@ const WebsiteJsonLd = async () => {
       },
       {
         "@type": "WebApplication",
-        "@id": `${siteUrl}/#webapp`,
+        "@id": `${homeUrl}#webapp`,
         name,
         description,
-        url: siteUrl,
+        url: homeUrl,
         applicationCategory: "LifestyleApplication",
         operatingSystem: "Web",
         inLanguage: locale,

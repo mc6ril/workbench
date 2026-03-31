@@ -26,6 +26,7 @@ import { getAppErrorCode } from "@/shared/errors/appError";
 import { REPOSITORY_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { markNavigationStart } from "@/shared/navigationPerf";
 import { shouldShowLoading } from "@/shared/utils/queryStatus";
 import { buildProjectRoute } from "@/shared/utils/routes";
@@ -66,6 +67,7 @@ const WorkspacePage = () => {
   const createProjectMutation = useCreateProject();
   const { data: reclaimableProjects } = useReclaimableProjects();
   const { data: isBillingVisible } = useBillingVisibility();
+  const { legal, pricing } = useMarketingRoutes();
   const {
     canAutoOpen: canAutoOpenGettingStarted,
     isPending: isGettingStartedPending,
@@ -520,7 +522,7 @@ const WorkspacePage = () => {
             {t("footer.account")}
           </Link>
           <Link
-            href={PAGE_ROUTES.LEGAL}
+            href={legal}
             className={styles["workspace-footer__link"]}
             ariaLabel={t("footer.legal")}
           >
@@ -528,7 +530,7 @@ const WorkspacePage = () => {
           </Link>
           {isBillingVisible && (
             <Link
-              href={PAGE_ROUTES.PRICING}
+              href={pricing}
               className={styles["workspace-footer__link"]}
               ariaLabel={t("footer.subscriptions")}
             >

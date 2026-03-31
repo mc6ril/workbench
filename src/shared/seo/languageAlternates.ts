@@ -1,25 +1,28 @@
+import { defaultLocale } from "@/shared/i18n/config";
 import type { Locale } from "@/shared/i18n/types";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 type Hreflang = Locale | "x-default";
 
 /**
- * Returns language alternates for a route.
- *
- * Note: URLs are not locale-prefixed in this app today. We still expose hreflang
- * hints to help crawlers understand the language variants served on the same URL.
+ * hreflang map for a marketing route: one URL per locale (prefixed paths).
  */
 export const getLanguageAlternates = (
-  pathname: string
+  buildPathForLocale: (locale: Locale) => string
 ): Record<Hreflang, string> => {
   const base = getSiteUrl();
-  const url = new URL(pathname, base).toString();
+  const fr = new URL(buildPathForLocale("fr"), base).toString();
+  const en = new URL(buildPathForLocale("en"), base).toString();
+  const es = new URL(buildPathForLocale("es"), base).toString();
+  const xDefault = new URL(
+    buildPathForLocale(defaultLocale),
+    base
+  ).toString();
 
   return {
-    "x-default": url,
-    fr: url,
-    en: url,
-    es: url,
+    "x-default": xDefault,
+    fr,
+    en,
+    es,
   };
 };
-

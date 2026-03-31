@@ -9,6 +9,7 @@ import Button from "@/shared/design-system/button";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
+import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 
 import styles from "./UpgradePrompt.module.scss";
 
@@ -28,6 +29,7 @@ type Props = {
 const UpgradePrompt = ({ feature, minimumPlan }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
+  const { pricing } = useMarketingRoutes();
   const t = useTranslation("pages.upgrade");
   const { data: isBillingVisible } = useBillingVisibility();
   const headingId = useMemo(
@@ -40,8 +42,8 @@ const UpgradePrompt = ({ feature, minimumPlan }: Props) => {
 
   const handleViewPlans = useCallback(() => {
     const from = encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE);
-    router.push(`${PAGE_ROUTES.PRICING}?from=${from}`);
-  }, [router, pathname]);
+    router.push(`${pricing}?from=${from}`);
+  }, [router, pathname, pricing]);
 
   return (
     <section

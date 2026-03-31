@@ -8,11 +8,10 @@
  * Use these constants instead of hardcoded path strings.
  */
 export const PAGE_ROUTES = Object.freeze({
+  /** Site root; middleware redirects to `/{locale}` for marketing. */
   HOME: "/",
   WORKSPACE: "/workspace",
   ACCOUNT: "/account",
-  LEGAL: "/legal",
-  PRICING: "/pricing",
 });
 
 /**
@@ -62,8 +61,6 @@ export const PUBLIC_ROUTES: readonly string[] = Object.freeze([
   AUTH_PAGE_ROUTES.RESET_PASSWORD,
   AUTH_PAGE_ROUTES.UPDATE_PASSWORD,
   AUTH_PAGE_ROUTES.CALLBACK,
-  PAGE_ROUTES.LEGAL,
-  PAGE_ROUTES.PRICING,
 ]);
 
 /**

@@ -11,6 +11,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslation } from "@/shared/i18n";
+import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { markNavigationStart } from "@/shared/navigationPerf";
 
 import SidebarNavigationList from "./components/SidebarNavigationList";
@@ -29,6 +30,7 @@ import { usePrefetchWorkspaceProjects } from "@/domains/workspace/presentation/h
 const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const pathname = usePathname();
   const router = useRouter();
+  const { pricing } = useMarketingRoutes();
   const t = useTranslation("navigation.sidebar");
   const signOutMutation = useSignOut();
   const { data: viewer } = useViewer();
@@ -44,8 +46,8 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
 
   const handleLockedClick = useCallback(() => {
     const from = encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE);
-    router.push(`${PAGE_ROUTES.PRICING}?from=${from}`);
-  }, [router, pathname]);
+    router.push(`${pricing}?from=${from}`);
+  }, [router, pathname, pricing]);
 
   const displayNameValue = viewer?.displayName?.trim();
   const emailValue = viewer?.loginEmail?.trim();

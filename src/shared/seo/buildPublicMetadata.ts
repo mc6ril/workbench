@@ -14,6 +14,7 @@ type BuildPublicMetadataInput = {
   title: string;
   description: string;
   pathname: string;
+  buildPathForLocale: (locale: Locale) => string;
 };
 
 /**
@@ -24,17 +25,20 @@ export const buildPublicMetadata = ({
   title,
   description,
   pathname,
+  buildPathForLocale,
 }: BuildPublicMetadataInput): Metadata => {
   const base = getSiteUrl();
   const canonical = new URL(pathname, base).toString();
   const ogLocale = getOpenGraphLocale(locale);
+  const manifestUrl = new URL(`/manifest/${locale}`, base).toString();
 
   return {
     title,
     description,
+    manifest: manifestUrl,
     alternates: {
       canonical,
-      languages: getLanguageAlternates(pathname),
+      languages: getLanguageAlternates(buildPathForLocale),
     },
     openGraph: {
       title,

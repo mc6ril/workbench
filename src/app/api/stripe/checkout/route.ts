@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
+import { buildMarketingPricingPath } from "@/shared/i18n/marketingPaths";
+import { getRequestLocale } from "@/shared/i18n/requestLocale";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
@@ -79,7 +81,8 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     );
 
     const origin = request.nextUrl.origin;
-    const cancelUrl = new URL(PAGE_ROUTES.PRICING, origin);
+    const locale = await getRequestLocale();
+    const cancelUrl = new URL(buildMarketingPricingPath(locale), origin);
     cancelUrl.searchParams.set("checkout", "canceled");
     if (body.from) {
       cancelUrl.searchParams.set("from", body.from);
