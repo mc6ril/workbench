@@ -144,7 +144,8 @@ export const config = {
      *
      * Note: Public routes (/, /signin, /signup) are matched but will be
      * skipped by the middleware logic using isProtectedRoute().
+     * - monitoring: Sentry tunnel route (withSentryConfig tunnelRoute); must not run Supabase auth.
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|monitoring|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

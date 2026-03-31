@@ -1,5 +1,14 @@
 import "@testing-library/jest-dom";
 
+jest.mock("@sentry/nextjs", () => ({
+  __esModule: true,
+  captureException: jest.fn(),
+  captureRouterTransitionStart: jest.fn(),
+  captureRequestError: jest.fn(),
+  init: jest.fn(),
+  replayIntegration: jest.fn(() => ({})),
+}));
+
 /**
  * Browser Supabase repositories instantiate the client at module load time.
  * CI and agents often run tests without .env.local; provide safe placeholders so imports resolve.

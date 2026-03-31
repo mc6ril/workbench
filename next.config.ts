@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import bundleAnalyzer from "@next/bundle-analyzer";
+import { withSentryConfig } from "@sentry/nextjs";
 import path from "path";
 
 const withBundleAnalyzer = bundleAnalyzer({
@@ -70,4 +71,17 @@ const nextConfig: NextConfig = {
   }),
 };
 
-export default withBundleAnalyzer(nextConfig);
+const sentryBuildOptions = {
+  org: "lesot-cyril",
+  project: "javascript-nextjs",
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  widenClientFileUpload: true,
+  tunnelRoute: "/monitoring",
+  silent: !process.env.CI,
+  telemetry: false,
+};
+
+export default withSentryConfig(
+  withBundleAnalyzer(nextConfig),
+  sentryBuildOptions
+);
