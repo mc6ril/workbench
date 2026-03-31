@@ -66,9 +66,18 @@ const TicketCard = ({
     });
   }, [t, title, ticketCode, assigneeName, priority, storyPoints]);
 
+  const cardClasses = useMemo(() => {
+    return [
+      styles["ticket-card__row"],
+      priority ? styles[`ticket-card__row--priority-${priority}`] : null,
+    ]
+      .filter(Boolean)
+      .join(" ");
+  }, [priority]);
+
   return (
     <article
-      className={styles["ticket-card__row"]}
+      className={cardClasses}
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       aria-label={cardAriaLabel}
@@ -77,12 +86,10 @@ const TicketCard = ({
         <TicketMeta
           className={styles["ticket-card__meta"]}
           assigneeClassName={styles["ticket-card__assignee"]}
-          priorityDotClassName={styles["ticket-card__priority-dot"]}
           ticketCodeClassName={styles["ticket-card__id"]}
           ticketCode={ticketCode}
           assigneeName={assigneeName}
           assigneeAvatarUrl={assigneeAvatarUrl}
-          priority={priority}
           assigneeLabel={t("assigneeLabel")}
         />
         <Title

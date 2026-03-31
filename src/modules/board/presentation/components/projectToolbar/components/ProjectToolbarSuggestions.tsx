@@ -1,3 +1,6 @@
+import Badge from "@/shared/design-system/badge";
+import { useTranslation } from "@/shared/i18n";
+
 import styles from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.module.scss";
 import type { ProjectSearchSuggestion } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
 
@@ -18,6 +21,8 @@ const ProjectToolbarSuggestions = ({
   onSuggestionMouseDown,
   onSuggestionSelect,
 }: Props) => {
+  const t = useTranslation("pages.board.search");
+
   return (
     <div
       id={suggestionsId}
@@ -47,7 +52,17 @@ const ProjectToolbarSuggestions = ({
             onSuggestionSelect(suggestion.href);
           }}
         >
-          {suggestion.label}
+          <span className={styles["project-toolbar__search-result-label"]}>
+            {suggestion.label}
+          </span>
+          {suggestion.isArchived ? (
+            <Badge
+              label={t("archivedBadge")}
+              variant="warning"
+              size="small"
+              className={`${styles["project-toolbar__search-result-badge"]} ${styles["project-toolbar__search-result-badge--warning"]}`}
+            />
+          ) : null}
         </button>
       ))}
     </div>

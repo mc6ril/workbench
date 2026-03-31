@@ -484,6 +484,9 @@
       "backToWorkspaceAriaLabel": "Retourner à l'espace de travail"
     },
     "board": {
+      "search": {
+        "archivedBadge": "Archivée"
+      },
       "view": {
         "title": "Tableau de bord",
         "ariaLabel": "Vue tableau de bord",
@@ -830,6 +833,11 @@
           "saveEdit": "Enregistrer",
           "editButton": "Modifier",
           "deleteButton": "Supprimer"
+        },
+        "archived": {
+          "bannerTitle": "Tâche archivée",
+          "bannerDescription": "Cette tâche n'apparaît plus dans le tableau actif. Vous pouvez la désarchiver pour la remettre dans le flux.",
+          "unarchiveAction": "Désarchiver"
         }
       }
     },

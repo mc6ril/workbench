@@ -1,6 +1,7 @@
 @use "@/styles/variables/borders" as *;
 @use "@/styles/variables/breakpoints" as *;
 @use "@/styles/variables/colors" as *;
+@use "@/styles/variables/gradients" as *;
 @use "@/styles/variables/shadows" as *;
 @use "@/styles/variables/spacing" as *;
 @use "@/styles/variables/typography" as *;
@@ -12,6 +13,57 @@
   width: 100%;
   max-width: 40rem;
   margin: 0 auto;
+}
+
+.ticket-detail__archived-banner {
+  border: $border-width solid $color-accent-border-subtle;
+  background:
+    radial-gradient(
+      circle at top right,
+      $color-accent-peach-bg-soft 0%,
+      transparent 34%
+    ),
+    $color-surface-onboarding-gradient;
+  box-shadow: $shadow-card;
+}
+
+.ticket-detail__archived-banner-content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-md;
+}
+
+.ticket-detail__archived-banner-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
+  padding: $spacing-xs $spacing-md;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-full;
+  background: $color-surface;
+  color: $color-text;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease-in-out,
+    border-color 160ms ease-in-out,
+    box-shadow 160ms ease-in-out;
+
+  &:hover:not(:disabled) {
+    background-color: $color-surface-hover;
+    border-color: $color-border-highlight;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $shadow-focus;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 }
 
 @media (min-width: $breakpoint-md) {

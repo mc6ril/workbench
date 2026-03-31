@@ -131,6 +131,8 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
     isSavingMainFields,
     isDeletingTicket,
     isUpdatingAssignees,
+    isTicketArchived,
+    isUnarchivingTicket,
     setTitleDraft,
     setDescriptionDraft,
     setColumnIdDraft,
@@ -148,6 +150,7 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
     handleSaveComment,
     handleDeleteComment,
     handleDeleteTicket,
+    handleUnarchiveTicket,
   } = useTicketDetailController({
     projectId,
     ticketId,
@@ -183,6 +186,26 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
 
   return (
     <section className={styles["ticket-detail"]}>
+      {isTicketArchived ? (
+        <Card className={styles["ticket-detail__archived-banner"]}>
+          <div className={styles["ticket-detail__archived-banner-content"]}>
+            <div>
+              <Title variant="h3">{t("archived.bannerTitle")}</Title>
+              <Text variant="body">{t("archived.bannerDescription")}</Text>
+            </div>
+            {canEditTicket ? (
+              <button
+                type="button"
+                className={styles["ticket-detail__archived-banner-action"]}
+                onClick={handleUnarchiveTicket}
+                disabled={isUnarchivingTicket}
+              >
+                {t("archived.unarchiveAction")}
+              </button>
+            ) : null}
+          </div>
+        </Card>
+      ) : null}
       <TicketDetailHeader
         title={effectiveTitle}
         ticketCode={ticketCode}
