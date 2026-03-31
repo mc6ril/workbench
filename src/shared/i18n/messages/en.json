@@ -1,8 +1,14 @@
 {
   "app": {
     "metadata": {
-      "title": "Workbench",
-      "description": "A lightweight, personal task and project management tool"
+      "title": "Tribu Nova",
+      "description": "A couple-focused app to lighten mental load and organize daily life together, without the overwhelm.",
+      "titleTemplate": "%s | Tribu Nova",
+      "keywords": "couple, mental load, daily life, household balance, family organization, clarity, care",
+      "ogImageAlt": "Tribu Nova — less mental load, more clarity"
+    },
+    "manifest": {
+      "description": "A couple-focused app to lighten mental load and organize daily life together."
     }
   },
   "common": {
@@ -45,8 +51,8 @@
       "locked": {
         "ariaLabel": "{feature} — requires {plan} plan",
         "badge": {
-          "pro": "Pro",
-          "team": "Team"
+          "pro": "Foyer",
+          "team": "Foyer Plus"
         }
       },
       "profile": {
@@ -72,7 +78,7 @@
   },
   "layout": {
     "appFooter": {
-      "label": "Workbench",
+      "label": "Tribu Nova",
       "ariaLabel": "Application footer"
     }
   },
@@ -201,7 +207,7 @@
     },
     "signin": {
       "title": "Sign in",
-      "subtitle": "Sign in to access your Workbench",
+      "subtitle": "Sign in to access your Tribu Nova space",
       "button": "Sign in",
       "buttonAriaLabel": "Sign in",
       "oauth": {
@@ -235,7 +241,7 @@
       }
     },
     "home": {
-      "welcome": "Welcome to Workbench",
+      "welcome": "Welcome to Tribu Nova",
       "welcomeSubtitle": "Get started by signing in or creating an account",
       "welcomeTitle": "Welcome",
       "signedInAs": "Signed in as:",
@@ -886,7 +892,7 @@
         "changeButton": "Change password",
         "changeButtonAriaLabel": "Change password",
         "changingButton": "Changing...",
-        "oauthNotice": "This account uses OAuth sign-in. Password updates are not available from Workbench."
+        "oauthNotice": "This account uses OAuth sign-in. Password updates are not available from Tribu Nova."
       },
       "preferences": {
         "title": "Preferences",
@@ -922,8 +928,8 @@
         "currentPlan": "Current plan",
         "planLabels": {
           "free": "Free",
-          "pro": "Pro",
-          "team": "Team"
+          "pro": "Foyer",
+          "team": "Foyer Plus"
         },
         "statusLabels": {
           "active": "Active",
@@ -1096,6 +1102,10 @@
       }
     },
     "legal": {
+      "metadata": {
+        "title": "Legal notice",
+        "description": "Legal information, privacy, and terms of use for the Tribu Nova service."
+      },
       "header": {
         "label": "Back",
         "title": "Legal notice",
@@ -1155,10 +1165,14 @@
       "lastUpdated": "Last updated: February 2026"
     },
     "pricing": {
+      "metadata": {
+        "title": "Pricing",
+        "description": "Explore Tribu Nova plans: Free, Foyer, and Foyer Plus — built for couples and families easing mental load."
+      },
       "header": {
         "label": "Back",
         "title": "Our pricing",
-        "subtitle": "Prices designed for small businesses, freelancers, and individuals"
+        "subtitle": "Simple plans for couples and families organizing daily life together"
       },
       "billing": {
         "monthly": "Monthly billing",
@@ -1170,25 +1184,25 @@
       "plans": {
         "free": {
           "name": "Free",
-          "description": "Discover Workbench and manage a simple project",
+          "description": "Discover Tribu Nova and organize your home life together",
           "price": "€0",
           "cta": "Get started for free",
           "ctaAriaLabel": "Create a free account"
         },
         "pro": {
-          "name": "Pro",
-          "description": "For freelancers and small businesses who want to go further",
+          "name": "Foyer",
+          "description": "For couples who want a clearer split of mental load and routines",
           "price": "€3.99",
-          "cta": "Upgrade to Pro",
-          "ctaAriaLabel": "Subscribe to the Pro plan",
+          "cta": "Upgrade to Foyer",
+          "ctaAriaLabel": "Subscribe to the Foyer plan",
           "badge": "Popular"
         },
         "team": {
-          "name": "Team",
-          "description": "Collaborate as a team with advanced features",
+          "name": "Foyer Plus",
+          "description": "For larger households and co-parents who need more coordination",
           "price": "€8.99",
-          "cta": "Choose Team",
-          "ctaAriaLabel": "Subscribe to the Team plan"
+          "cta": "Choose Foyer Plus",
+          "ctaAriaLabel": "Subscribe to the Foyer Plus plan"
         },
         "currentBadge": "Active"
       },
@@ -1245,7 +1259,7 @@
       },
       "guarantee": {
         "title": "Money-back guarantee",
-        "description": "Try Workbench Pro or Team for 14 days. If you're not satisfied, we'll give you a full refund."
+        "description": "Try Tribu Nova Foyer or Foyer Plus for 14 days. If you're not satisfied, we'll give you a full refund."
       },
       "trust": {
         "title": "Premium, with clear expectations",
@@ -1302,8 +1316,8 @@
       },
       "planBadges": {
         "free": "Free",
-        "pro": "Pro",
-        "team": "Team"
+        "pro": "Foyer",
+        "team": "Foyer Plus"
       }
     }
   },

@@ -60,7 +60,7 @@ presentation root is currently acceptable.
 
 ### Guardrails
 
-- only pages composed from `src/app/(public)` or `src/app/(static)` belong here
+- only pages composed from `src/app/(marketing)` belong here
 - no protected project flows belong here
 - no repository wiring or owner business orchestration belongs here
 - if a stable owner emerges later, these pages can migrate into that owner

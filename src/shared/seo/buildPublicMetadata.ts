@@ -1,0 +1,62 @@
+import type { Metadata } from "next";
+
+import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
+import type { Locale } from "@/shared/i18n/types";
+import { getLanguageAlternates } from "@/shared/seo/languageAlternates";
+import {
+  getAlternateOpenGraphLocales,
+  getOpenGraphLocale,
+} from "@/shared/seo/ogLocale";
+import { getSiteUrl } from "@/shared/seo/siteUrl";
+
+type BuildPublicMetadataInput = {
+  locale: Locale;
+  title: string;
+  description: string;
+  pathname: string;
+};
+
+/**
+ * Metadata for indexable marketing routes (canonical, Open Graph, Twitter).
+ */
+export const buildPublicMetadata = ({
+  locale,
+  title,
+  description,
+  pathname,
+}: BuildPublicMetadataInput): Metadata => {
+  const base = getSiteUrl();
+  const canonical = new URL(pathname, base).toString();
+  const ogLocale = getOpenGraphLocale(locale);
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical,
+      languages: getLanguageAlternates(pathname),
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: PRODUCT_BRAND_NAME,
+      locale: ogLocale,
+      alternateLocale: getAlternateOpenGraphLocales(locale),
+      type: "website",
+      images: [
+        {
+          url: "/opengraph-image",
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/opengraph-image"],
+    },
+  };
+};
