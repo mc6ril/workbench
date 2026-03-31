@@ -1,40 +1,24 @@
 import type { Metadata, Viewport } from "next";
 
-import { throwProgrammingError } from "@/shared/errors/programmingError";
-import { getIntlLocale, getTranslationValue } from "@/shared/i18n";
-import { getMessages } from "@/shared/i18n/messages";
+import { getIntlLocale } from "@/shared/i18n";
 import { getRequestLocale } from "@/shared/i18n/requestLocale";
 import AppProvider from "@/shared/providers/AppProvider";
+import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 import "@/styles/global.scss";
 
-const getAppMetadata = async (): Promise<Metadata> => {
+/**
+ * Per-locale SEO for marketing lives under `[locale]/(marketing)/*` via `buildHomeMetadata` / `buildPublicMetadata`.
+ * Web app manifest is locale-aware for all routes.
+ */
+export const generateMetadata = async (): Promise<Metadata> => {
   const locale = await getRequestLocale();
-  const messages = getMessages(locale);
-
-  const appTitle = getTranslationValue(messages, "app.metadata", "title");
-  const appDescription = getTranslationValue(
-    messages,
-    "app.metadata",
-    "description"
-  );
-
-  if (!appTitle) {
-    throwProgrammingError("Missing translation: app.metadata.title");
-  }
-
-  if (!appDescription) {
-    throwProgrammingError("Missing translation: app.metadata.description");
-  }
+  const siteUrl = getSiteUrl();
 
   return {
-    title: appTitle,
-    description: appDescription,
+    metadataBase: siteUrl,
+    manifest: new URL(`/manifest/${locale}`, siteUrl).toString(),
   };
-};
-
-export const generateMetadata = async (): Promise<Metadata> => {
-  return getAppMetadata();
 };
 
 export const viewport: Viewport = {

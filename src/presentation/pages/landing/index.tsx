@@ -12,11 +12,12 @@ import {
   RHYTHM_KEYS,
   VALUE_KEYS,
 } from "@/shared/constants/landing";
-import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
+import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/button";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
+import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { buildFeaturePreviewContent } from "@/shared/utils";
 import {
   buildAuthCallbackPath,
@@ -39,6 +40,7 @@ const LandingPageContent = () => {
   const tRhythm = useTranslation("pages.landing.rhythm");
   const tCta = useTranslation("pages.landing.cta");
   const tFooter = useTranslation("pages.landing.footer");
+  const { legal, pricing } = useMarketingRoutes();
   const { data: isBillingVisible } = useBillingVisibility();
 
   // Some Supabase flows can still bounce through the site root with ?code=...
@@ -374,14 +376,14 @@ const LandingPageContent = () => {
           aria-label={tFooter("ariaLabel")}
         >
           <Link
-            href={PAGE_ROUTES.LEGAL}
+            href={legal}
             className={styles["landing-footer__link"]}
           >
             {tFooter("legal")}
           </Link>
           {isBillingVisible && (
             <Link
-              href={PAGE_ROUTES.PRICING}
+              href={pricing}
               className={styles["landing-footer__link"]}
             >
               {tFooter("pricing")}

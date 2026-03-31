@@ -30,6 +30,7 @@ import {
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import type { Locale } from "@/shared/i18n/types";
+import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
@@ -85,6 +86,7 @@ const AccountPage = () => {
   const deleteUserMutation = useDeleteUser();
   const signOutMutation = useSignOut();
   const { data: isBillingVisible } = useBillingVisibility();
+  const { pricing } = useMarketingRoutes();
   const { data: subscription, isLoading: isSubscriptionLoading } =
     useSubscription();
   const t = useTranslation("pages.account");
@@ -819,7 +821,7 @@ const AccountPage = () => {
                     )}
                     <Button
                       label={t("subscription.changePlanButton")}
-                      onClick={() => router.push(PAGE_ROUTES.PRICING)}
+                      onClick={() => router.push(pricing)}
                       aria-label={t("subscription.changePlanButtonAriaLabel")}
                     />
                   </div>

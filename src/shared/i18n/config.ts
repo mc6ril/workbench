@@ -10,7 +10,13 @@ export const defaultLocale: Locale = "fr";
  */
 export const localeCookieName = "workbench-locale";
 
-const localeCookieMaxAgeSeconds = 60 * 60 * 24 * 365;
+/**
+ * Middleware forwards the resolved locale to Server Components (read in getRequestLocale).
+ */
+export const requestLocaleHeaderName = "x-next-locale";
+
+/** Max-Age for the locale preference cookie (1 year). */
+export const localeCookieMaxAgeSeconds = 60 * 60 * 24 * 365;
 
 /**
  * External getter set at runtime by the locale store.
