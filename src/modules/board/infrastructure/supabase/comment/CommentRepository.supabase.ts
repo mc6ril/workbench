@@ -126,11 +126,13 @@ export const createCommentRepository = (
     input: UpdateCommentInput
   ): Promise<CommentWithAuthor> {
     try {
+      // author_id FK points to auth.users, not user_profiles — PostgREST cannot embed
+      // profiles on select; re-fetch via get_ticket_comments like create().
       const { data, error } = await client
         .from("comments")
         .update({ content: input.content })
         .eq("id", id)
-        .select("*, user_profiles:author_id(display_name, avatar_url)")
+        .select("id, ticket_id")
         .single();
 
       if (error) {
@@ -145,8 +147,30 @@ export const createCommentRepository = (
         );
       }
 
-      const row = data as CommentWithAuthorRow;
-      return mapCommentWithAuthorRowToDomain(row);
+      const ticketId = (data as { ticket_id: string }).ticket_id;
+
+      const { data: enriched, error: rpcError } = await client.rpc(
+        "get_ticket_comments",
+        { p_ticket_id: ticketId }
+      );
+
+      if (rpcError) {
+        return handleRepositoryError(rpcError, "Comment", id);
+      }
+
+      const updated = (enriched as CommentWithAuthorRow[]).find(
+        (author) => author.id === id
+      );
+
+      if (!updated) {
+        return handleRepositoryError(
+          createDatabaseError("Updated comment not found in RPC result"),
+          "Comment",
+          id
+        );
+      }
+
+      return mapCommentWithAuthorRowToDomain(updated);
     } catch (error) {
       return handleRepositoryError(error, "Comment", id);
     }
