@@ -4,6 +4,7 @@ import {
   extractProjectId,
   extractProjectView,
   isActiveHref,
+  isMarketingPublicRoute,
   isProjectRoute,
   isProtectedRoute,
   isPublicRoute,
@@ -21,12 +22,28 @@ describe("isPublicRoute", () => {
     expect(isPublicRoute("/auth/callback")).toBe(true);
     expect(isPublicRoute("/legal")).toBe(true);
     expect(isPublicRoute("/pricing")).toBe(true);
+    expect(isPublicRoute("/fr")).toBe(true);
+    expect(isPublicRoute("/en/pricing")).toBe(true);
+    expect(isPublicRoute("/es/legal")).toBe(true);
   });
 
   it("should return false for non-public routes", () => {
     expect(isPublicRoute("/workspace")).toBe(false);
     expect(isPublicRoute("/account")).toBe(false);
     expect(isPublicRoute("/unknown")).toBe(false);
+  });
+});
+
+describe("isMarketingPublicRoute", () => {
+  it("should return true for locale-prefixed marketing paths", () => {
+    expect(isMarketingPublicRoute("/fr")).toBe(true);
+    expect(isMarketingPublicRoute("/en/pricing")).toBe(true);
+    expect(isMarketingPublicRoute("/es/legal")).toBe(true);
+  });
+
+  it("should return false for non-marketing paths", () => {
+    expect(isMarketingPublicRoute("/workspace")).toBe(false);
+    expect(isMarketingPublicRoute("/fr/board")).toBe(false);
   });
 });
 

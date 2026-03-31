@@ -18,6 +18,7 @@ import { getAppErrorCode } from "@/shared/errors/appError";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { useTranslation } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
 import styles from "./styles.module.scss";
@@ -42,6 +43,7 @@ const SignupPage = () => {
   const tCommon = useTranslation("common");
   const tErrors = useTranslation("errors");
   const tFields = useTranslation("pages.signup.fields");
+  const { legal } = useMarketingRoutes();
   const redirectPathParam = searchParams.get("redirect");
   const redirectPath =
     redirectPathParam &&
@@ -253,7 +255,7 @@ const SignupPage = () => {
             />
             <Text variant="small" className={styles["signup-terms__label"]}>
               <Link
-                href={PAGE_ROUTES.LEGAL}
+                href={legal}
                 className={styles["signup-terms__link"]}
               >
                 {tFields("acceptedTerms.linkLabel")}

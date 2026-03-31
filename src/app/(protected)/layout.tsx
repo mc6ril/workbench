@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
@@ -8,14 +9,22 @@ import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
 import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 
-const logger = createLoggerFactory().forScope("AuthLayout");
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: { index: false, follow: false },
+  },
+};
+
+const logger = createLoggerFactory().forScope("ProtectedLayout");
 
 /**
- * Server-side layout for all protected routes under (auth) route group.
+ * Server-side layout for authenticated routes in the `(protected)` route group.
  * Checks authentication and redirects to landing page if no session or on error (fail-closed).
  * This layout does NOT pass data to children - all data fetching happens in client pages.
  */
-const AuthLayout = async ({
+const ProtectedLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -54,4 +63,4 @@ const AuthLayout = async ({
   return <>{children}</>;
 };
 
-export default AuthLayout;
+export default ProtectedLayout;

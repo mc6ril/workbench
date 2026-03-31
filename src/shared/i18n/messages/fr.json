@@ -1,8 +1,14 @@
 {
   "app": {
     "metadata": {
-      "title": "Workbench",
-      "description": "Un outil léger et personnel de gestion de tâches et de projets"
+      "title": "Tribu Nova",
+      "description": "Une aide au couple pour alléger la charge mentale et organiser le quotidien sans s'épuiser.",
+      "titleTemplate": "%s | Tribu Nova",
+      "keywords": "couple, charge mentale, organisation quotidienne, foyer, familles, équilibre, bienveillance",
+      "ogImageAlt": "Tribu Nova — moins de charge mentale, plus de clarté"
+    },
+    "manifest": {
+      "description": "Outil d'aide au couple pour réduire la charge mentale et clarifier le quotidien."
     }
   },
   "common": {
@@ -45,8 +51,8 @@
       "locked": {
         "ariaLabel": "{feature} — nécessite le plan {plan}",
         "badge": {
-          "pro": "Pro",
-          "team": "Équipe"
+          "pro": "Foyer",
+          "team": "Foyer Plus"
         }
       },
       "profile": {
@@ -72,7 +78,7 @@
   },
   "layout": {
     "appFooter": {
-      "label": "Workbench",
+      "label": "Tribu Nova",
       "ariaLabel": "Pied de page de l'application"
     }
   },
@@ -201,7 +207,7 @@
     },
     "signin": {
       "title": "Se connecter",
-      "subtitle": "Connectez-vous pour accéder à votre Workbench",
+      "subtitle": "Connectez-vous pour accéder à votre espace Tribu Nova",
       "button": "Se connecter",
       "buttonAriaLabel": "Se connecter",
       "oauth": {
@@ -235,7 +241,7 @@
       }
     },
     "home": {
-      "welcome": "Bienvenue sur Workbench",
+      "welcome": "Bienvenue sur Tribu Nova",
       "welcomeSubtitle": "Commencez par vous connecter ou créer un compte",
       "welcomeTitle": "Bienvenue",
       "signedInAs": "Connecté en tant que :",
@@ -886,7 +892,7 @@
         "changeButton": "Changer le mot de passe",
         "changeButtonAriaLabel": "Changer le mot de passe",
         "changingButton": "Modification...",
-        "oauthNotice": "Ce compte utilise une connexion OAuth. La mise à jour du mot de passe n'est pas disponible depuis Workbench."
+        "oauthNotice": "Ce compte utilise une connexion OAuth. La mise à jour du mot de passe n'est pas disponible depuis Tribu Nova."
       },
       "preferences": {
         "title": "Préférences",
@@ -922,8 +928,8 @@
         "currentPlan": "Plan actuel",
         "planLabels": {
           "free": "Gratuit",
-          "pro": "Pro",
-          "team": "Équipe"
+          "pro": "Foyer",
+          "team": "Foyer Plus"
         },
         "statusLabels": {
           "active": "Actif",
@@ -1096,6 +1102,10 @@
       }
     },
     "legal": {
+      "metadata": {
+        "title": "Mentions légales",
+        "description": "Mentions légales, protection des données et conditions d'utilisation du service Tribu Nova."
+      },
       "header": {
         "label": "Retour",
         "title": "Mentions légales",
@@ -1155,6 +1165,10 @@
       "lastUpdated": "Dernière mise à jour : février 2026"
     },
     "pricing": {
+      "metadata": {
+        "title": "Tarifs",
+        "description": "Découvrez les offres Tribu Nova : gratuit, Foyer et Foyer Plus pour organiser votre quotidien."
+      },
       "header": {
         "label": "Retour",
         "title": "Nos tarifs",
@@ -1277,8 +1291,8 @@
       },
       "planBadges": {
         "free": "Gratuit",
-        "pro": "Pro",
-        "team": "Équipe"
+        "pro": "Foyer",
+        "team": "Foyer Plus"
       }
     },
     "members": {

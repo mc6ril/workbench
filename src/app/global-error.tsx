@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
@@ -17,6 +18,13 @@ const GlobalErrorPage = ({ error, reset }: Props) => {
 
   useEffect(() => {
     console.error(error);
+    if (error.digest) {
+      Sentry.captureException(error, {
+        tags: { nextDigest: error.digest },
+      });
+    } else {
+      Sentry.captureException(error);
+    }
   }, [error]);
 
   return (

@@ -4,6 +4,19 @@ import {
   PUBLIC_ROUTES,
 } from "@/shared/constants/routes";
 
+const MARKETING_LOCALE_PREFIX = "fr|en|es";
+const MARKETING_PUBLIC_PATH = new RegExp(
+  `^\\/(${MARKETING_LOCALE_PREFIX})(?:\\/(pricing|legal))?\\/?$`,
+  "i"
+);
+
+/**
+ * Locale-prefixed marketing URLs (home, pricing, legal).
+ */
+export const isMarketingPublicRoute = (pathname: string): boolean => {
+  return MARKETING_PUBLIC_PATH.test(normalizePath(pathname));
+};
+
 const UUID_PATH_SEGMENT =
   "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
 const PROJECT_ROUTE_PATTERN = new RegExp(
@@ -18,7 +31,20 @@ const PROJECT_ROUTE_PATTERN = new RegExp(
  * @returns True if the pathname is a public route
  */
 export const isPublicRoute = (pathname: string): boolean => {
-  return PUBLIC_ROUTES.includes(pathname);
+  if (PUBLIC_ROUTES.includes(pathname)) {
+    return true;
+  }
+
+  if (isMarketingPublicRoute(pathname)) {
+    return true;
+  }
+
+  // Legacy unprefixed URLs; middleware redirects to /{locale}/...
+  if (pathname === "/pricing" || pathname === "/legal") {
+    return true;
+  }
+
+  return false;
 };
 
 /**
