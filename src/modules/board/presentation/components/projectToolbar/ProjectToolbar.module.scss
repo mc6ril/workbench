@@ -278,27 +278,33 @@
   position: absolute;
   z-index: 20;
   top: calc(100% + #{$spacing-xs});
-  left: 0;
   right: 0;
+  left: auto;
   display: grid;
-  gap: $spacing-2xs;
-  padding: $spacing-2xs;
+  gap: $spacing-xs;
+  padding: $spacing-xs;
   border: $border-width solid $color-border;
   border-radius: $border-radius-md;
   background-color: $color-surface;
   box-shadow: $shadow-md;
+  width: max(100%, 24rem);
+  max-width: 34rem;
 }
 
 .project-toolbar__search-result-item {
-  display: block;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: $spacing-sm;
   width: 100%;
   text-align: left;
   border: none;
   border-radius: $border-radius-sm;
   background: transparent;
   color: $color-text;
-  padding: $spacing-xs $spacing-sm;
+  padding: $spacing-sm $spacing-md;
   cursor: pointer;
+  min-height: 2.5rem;
 
   &:hover {
     background-color: $color-surface-hover;
@@ -308,6 +314,28 @@
     outline: none;
     box-shadow: $shadow-focus;
   }
+}
+
+.project-toolbar__search-result-label {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.project-toolbar__search-result-badge {
+  margin-left: auto;
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+.project-toolbar__search-result-badge--warning {
+  background-color: $color-warning;
+  color: $color-primary-text;
 }
 
 .project-toolbar__search-result-item--active {
