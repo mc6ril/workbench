@@ -51,6 +51,18 @@
   }
 }
 
+.ticket-card__row--priority-urgent {
+  border-color: $color-error;
+}
+
+.ticket-card__row--priority-normal {
+  border-color: $color-warning;
+}
+
+.ticket-card__row--priority-low {
+  border-color: $color-sage;
+}
+
 @media (max-width: $breakpoint-md) {
   .ticket-card__row {
     gap: $spacing-md;
@@ -74,10 +86,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-}
-
-.ticket-card__priority-dot {
-  box-shadow: 0 0 0 2px $color-surface;
 }
 
 .ticket-card__id {

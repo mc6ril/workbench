@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
 
 import { ProjectShellContributionProvider } from "@/domains/project/presentation/layouts/projectShell/ProjectShellContributionContext";
@@ -73,6 +74,24 @@ const ContributionProbe = () => {
   return <>{toolbar}</>;
 };
 
+const createTestQueryClient = (): QueryClient => {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+};
+
+const renderWithProviders = (ui: React.ReactElement) => {
+  const queryClient = createTestQueryClient();
+
+  return render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+  );
+};
+
 describe("BoardShellAdapter", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -82,7 +101,7 @@ describe("BoardShellAdapter", () => {
 
   it("mounts without an infinite contribution update loop when queries are still empty", () => {
     expect(() => {
-      render(
+      renderWithProviders(
         <ProjectShellContributionProvider>
           <BoardShellAdapter projectId="project-1" />
         </ProjectShellContributionProvider>
@@ -99,7 +118,7 @@ describe("BoardShellAdapter", () => {
   });
 
   it("opens the onboarding guide from the toolbar button", () => {
-    render(
+    renderWithProviders(
       <ProjectShellContributionProvider>
         <BoardShellAdapter projectId="project-1" />
         <ContributionProbe />
@@ -120,7 +139,7 @@ describe("BoardShellAdapter", () => {
   it("closes the onboarding guide from the toolbar button when it is already open", () => {
     searchParamsMock.set("onboarding", "1");
 
-    render(
+    renderWithProviders(
       <ProjectShellContributionProvider>
         <BoardShellAdapter projectId="project-1" />
         <ContributionProbe />
@@ -141,7 +160,7 @@ describe("BoardShellAdapter", () => {
   it("renders a settings title without board controls on the settings view", () => {
     mockPathname = "/project-1/settings";
 
-    render(
+    renderWithProviders(
       <ProjectShellContributionProvider>
         <BoardShellAdapter projectId="project-1" />
         <ContributionProbe />

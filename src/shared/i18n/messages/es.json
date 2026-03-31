@@ -484,6 +484,9 @@
       "backToWorkspaceAriaLabel": "Volver al espacio de trabajo"
     },
     "board": {
+      "search": {
+        "archivedBadge": "Archivada"
+      },
       "view": {
         "title": "Tablero",
         "ariaLabel": "Vista de tablero",
@@ -830,6 +833,11 @@
           "saveEdit": "Guardar",
           "editButton": "Editar",
           "deleteButton": "Eliminar"
+        },
+        "archived": {
+          "bannerTitle": "Tarea archivada",
+          "bannerDescription": "Esta tarea ya no aparece en el tablero activo. Puedes desarchivarla para volver a incluirla en el flujo.",
+          "unarchiveAction": "Desarchivar"
         }
       }
     },

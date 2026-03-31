@@ -484,6 +484,9 @@
       "backToWorkspaceAriaLabel": "Return to the workspace"
     },
     "board": {
+      "search": {
+        "archivedBadge": "Archived"
+      },
       "view": {
         "title": "Board",
         "ariaLabel": "Board view",
@@ -830,6 +833,11 @@
           "saveEdit": "Save",
           "editButton": "Edit",
           "deleteButton": "Delete"
+        },
+        "archived": {
+          "bannerTitle": "Archived task",
+          "bannerDescription": "This task no longer appears on the active board. You can unarchive it to bring it back into the flow.",
+          "unarchiveAction": "Unarchive"
         }
       }
     },

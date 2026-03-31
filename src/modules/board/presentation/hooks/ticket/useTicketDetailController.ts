@@ -246,6 +246,41 @@ export const useTicketDetailController = ({
     ticketId,
   ]);
 
+  const isTicketArchived = ticket?.archivedAt != null;
+  const isTicketInDoneColumn = useMemo((): boolean => {
+    const column = statusOptions.find(
+      (option) => option.value === effectiveColumnId
+    );
+    return column?.state === "done";
+  }, [effectiveColumnId, statusOptions]);
+
+  const handleUnarchiveTicket = useCallback(async (): Promise<void> => {
+    if (!ticket || !canEditTicket || !isTicketArchived) {
+      return;
+    }
+
+    try {
+      await updateMainTicketMutation.mutateAsync({
+        id: ticket.id,
+        input: {
+          archivedAt: null,
+          archivedWeekStart: null,
+          // Prevent immediate re-archival when unarchiving a ticket that remains in
+          // a done column: the weekly batch uses completedAt eligibility.
+          completedAt: isTicketInDoneColumn ? new Date() : undefined,
+        },
+      });
+    } catch {
+      // React Query already tracks errors; prevent an unhandled rejection in the click handler.
+    }
+  }, [
+    canEditTicket,
+    isTicketArchived,
+    isTicketInDoneColumn,
+    ticket,
+    updateMainTicketMutation,
+  ]);
+
   return {
     ticket,
     error,
@@ -274,6 +309,8 @@ export const useTicketDetailController = ({
     isDeletingTicket: deleteTicketMutation.isPending,
     isUpdatingAssignees:
       assignTicketMutation.isPending || unassignTicketMutation.isPending,
+    isTicketArchived,
+    isUnarchivingTicket: updateMainTicketMutation.isPending,
     setTitleDraft,
     setDescriptionDraft,
     setColumnIdDraft,
@@ -291,5 +328,6 @@ export const useTicketDetailController = ({
     handleSaveComment,
     handleDeleteComment,
     handleDeleteTicket,
+    handleUnarchiveTicket,
   };
 };
