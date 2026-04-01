@@ -1,28 +1,31 @@
-export type RecipeDraftIngredientStatus = "validated" | "addition";
+import type {
+  Recipe,
+  RecipeIngredient,
+  RecipeIngredientKind,
+  RecipeStep,
+} from "@/modules/recipes/core/domain/recipe.types";
 
-export type RecipeDraftIngredient = {
-  id: string;
-  status: RecipeDraftIngredientStatus;
-  quantity: string;
-  unit: string;
-  ingredient: string;
-  note: string;
-};
+export type RecipeDraftIngredientStatus = RecipeIngredientKind;
 
-export type RecipeDraftStep = {
-  id: string;
-  label: string;
-  content: string;
-  meta: string;
-};
+export type RecipeDraftIngredient = RecipeIngredient;
 
-export type RecipeDraft = {
+export type RecipeDraftStep = RecipeStep;
+
+export type RecipeDraft = Omit<Recipe, "id"> & {
   id: string | null;
-  title: string;
-  summary: string;
-  servingsLabel: string;
-  totalTimeLabel: string;
-  tags: string[];
-  ingredients: RecipeDraftIngredient[];
-  steps: RecipeDraftStep[];
+};
+
+export const EMPTY_RECIPE_DRAFT: RecipeDraft = {
+  id: null,
+  title: "",
+  summary: "",
+  totalTimeMinutes: null,
+  totalTimeLabel: "",
+  servingsCount: null,
+  servingsLabel: "",
+  tags: [],
+  ingredients: [],
+  steps: [],
+  note: null,
+  coverImageUrl: null,
 };

@@ -1,18 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
+import {
+  EMPTY_RECIPE_DRAFT,
+} from "@/modules/recipes/core/domain/editor/recipeDraft.types";
 import type { EditorRepository } from "@/modules/recipes/core/ports/editor/editorRepository";
-
-const EMPTY_RECIPE_DRAFT: RecipeDraft = {
-  id: null,
-  title: "",
-  summary: "",
-  servingsLabel: "",
-  totalTimeLabel: "",
-  tags: [],
-  ingredients: [],
-  steps: [],
-};
 
 /**
  * Step 2 scaffold:

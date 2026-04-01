@@ -1,6 +1,3 @@
-export type QuickListRecipe = {
-  recipeId: string;
-  title: string;
-  note: string;
-  servingsLabel: string;
-};
+import type { RecipeSelection } from "@/modules/recipes/core/domain/recipe.types";
+
+export type QuickListRecipe = RecipeSelection;

@@ -1,9 +1,13 @@
+import type {
+  RecipeIngredient,
+  RecipeSelection,
+} from "@/modules/recipes/core/domain/recipe.types";
+
 export type ShoppingListItem = {
   id: string;
-  label: string;
+  ingredient: RecipeIngredient;
   checked: boolean;
-  note: string | null;
-  source: "base" | "addition";
+  recipes: Array<Pick<RecipeSelection, "recipeId" | "title">>;
 };
 
 export type ShoppingListGroup = {
@@ -16,4 +20,17 @@ export type ShoppingList = {
   groups: ShoppingListGroup[];
   checkedCount: number;
   pendingCount: number;
+};
+
+export const buildShoppingList = (
+  groups: ShoppingListGroup[]
+): ShoppingList => {
+  const items = groups.flatMap((group) => group.items);
+  const checkedCount = items.filter((item) => item.checked).length;
+
+  return {
+    groups,
+    checkedCount,
+    pendingCount: items.length - checkedCount,
+  };
 };

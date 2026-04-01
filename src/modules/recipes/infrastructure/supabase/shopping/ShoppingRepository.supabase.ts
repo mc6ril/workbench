@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import { buildShoppingList } from "@/modules/recipes/core/domain/shopping/shoppingList.types";
 import type { ShoppingRepository } from "@/modules/recipes/core/ports/shopping/shoppingRepository";
 
 /**
@@ -10,10 +11,6 @@ export const createShoppingRepository = (
   _client: SupabaseClient
 ): ShoppingRepository => ({
   async getShoppingList() {
-    return {
-      groups: [],
-      checkedCount: 0,
-      pendingCount: 0,
-    };
+    return buildShoppingList([]);
   },
 });
