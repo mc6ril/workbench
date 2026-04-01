@@ -264,7 +264,7 @@ describe("Recipes Supabase repositories", () => {
     });
 
     const repository = createPlannerRepository(client);
-    const selections = await repository.listQuickList(projectId);
+    const selections = await repository.listActiveSelections(projectId);
 
     expect(selectionQuery.eq).toHaveBeenCalledWith("project_id", projectId);
     expect(selectionQuery.order).toHaveBeenCalledWith("position", {
@@ -279,6 +279,7 @@ describe("Recipes Supabase repositories", () => {
         note: selectionRow.note,
         servingsCount: selectionRow.servings_count,
         servingsLabel: selectionRow.servings_label,
+        status: "active",
       },
     ]);
   });

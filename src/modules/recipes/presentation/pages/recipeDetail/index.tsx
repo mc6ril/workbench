@@ -4,7 +4,7 @@ import Card from "@/shared/design-system/card";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
 import { getCatalogRecipeDetail } from "@/modules/recipes/core/usecases/catalog/getCatalogRecipeDetail";
-import { listQuickListRecipes } from "@/modules/recipes/core/usecases/planner/listQuickListRecipes";
+import { listActiveSelections } from "@/modules/recipes/core/usecases/planner/listActiveSelections";
 import { createCatalogRepository } from "@/modules/recipes/infrastructure/supabase/catalog/CatalogRepository.supabase";
 import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
 import RecipeDetailSummaryCard from "@/modules/recipes/presentation/components/catalog/RecipeDetailSummaryCard";
@@ -14,7 +14,6 @@ import styles from "@/modules/recipes/presentation/pages/shared/styles.module.sc
 import {
   buildRecipeEditRoute,
   buildRecipesCatalogRoute,
-  buildRecipesQuickListRoute,
   buildRecipesShoppingRoute,
 } from "@/modules/recipes/presentation/routes";
 
@@ -33,7 +32,7 @@ const RecipeDetailPage = async ({ projectId, recipeId }: Props) => {
     projectId,
     recipeId,
   });
-  const quickListRecipes = await listQuickListRecipes({
+  const quickListRecipes = await listActiveSelections({
     plannerRepository,
   })(projectId);
 
@@ -78,15 +77,10 @@ const RecipeDetailPage = async ({ projectId, recipeId }: Props) => {
           shoppingHref={buildRecipesShoppingRoute(projectId)}
         />
         <QuickListSummaryCard
-          href={buildRecipesQuickListRoute(projectId)}
+          projectId={projectId}
           recipes={quickListRecipes}
         />
       </div>
-
-      <p className={styles["recipes-scaffold__note"]}>
-        Hors scope etape 2: vraie fiche recette, navigation precedent/suivant et
-        interactions done pendant la cuisine.
-      </p>
     </RecipesPageScaffold>
   );
 };

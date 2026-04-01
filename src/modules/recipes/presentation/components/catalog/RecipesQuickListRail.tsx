@@ -4,6 +4,7 @@ import Link from "@/shared/design-system/link";
 import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
 import styles from "@/modules/recipes/presentation/pages/recipes/styles.module.scss";
 import {
+  buildRecipeDetailRoute,
   buildRecipesQuickListRoute,
   buildRecipesShoppingRoute,
 } from "@/modules/recipes/presentation/routes";
@@ -37,15 +38,14 @@ const RecipesQuickListRail = ({ projectId, recipes }: Props) => {
       <p className={styles["recipes-page__quick-list-helper"]}>
         {isEmpty
           ? "Visible mais discrète, la quick list garde sa place dans le catalogue pour qu’on sache toujours où la semaine en est."
-          : "Le rail garde assez de contexte pour arbitrer la semaine sans quitter le catalogue."}
+          : "Le rail donne assez d’info pour arbitrer, ouvrir une fiche ou finir un repas sans remaquetter le catalogue."}
       </p>
 
       {isEmpty ? (
         <div className={styles["recipes-page__quick-list-empty"]}>
           <p>
-            Aucune recette retenue pour l&apos;instant. Les recettes déjà
-            sélectionnées dans le projet remonteront ici sans changer la
-            hiérarchie de la page.
+            Choisissez une vraie recette persistée pour préparer la semaine. La
+            quick list reste visible même quand rien n&apos;est encore retenu.
           </p>
         </div>
       ) : (
@@ -55,13 +55,24 @@ const RecipesQuickListRail = ({ projectId, recipes }: Props) => {
               key={recipe.id}
               className={styles["recipes-page__quick-list-item"]}
             >
-              <div>
-                <h3 className={styles["recipes-page__quick-list-item-title"]}>
-                  {recipe.title}
-                </h3>
+              <div className={styles["recipes-page__quick-list-item-main"]}>
+                <div className={styles["recipes-page__quick-list-item-head"]}>
+                  <h3 className={styles["recipes-page__quick-list-item-title"]}>
+                    {recipe.title}
+                  </h3>
+                  <Badge label="Active" variant="success" size="small" />
+                </div>
                 <p className={styles["recipes-page__quick-list-item-note"]}>
-                  {recipe.note ?? "Prête à retrouver ses courses et son détail."}
+                  {recipe.note ?? "Recette retenue pour un prochain repas."}
                 </p>
+                <div className={styles["recipes-page__quick-list-item-links"]}>
+                  <Link
+                    href={buildRecipeDetailRoute(projectId, recipe.recipeId)}
+                    className={styles["recipes-page__action-link"]}
+                  >
+                    Voir la fiche
+                  </Link>
+                </div>
               </div>
               <span className={styles["recipes-page__quick-list-serving"]}>
                 {recipe.servingsLabel}

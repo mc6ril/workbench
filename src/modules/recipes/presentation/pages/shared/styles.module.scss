@@ -485,6 +485,83 @@
   margin: 0;
 }
 
+.recipes-scaffold__summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.recipes-scaffold__summary-item,
+.recipes-scaffold__selection-card,
+.recipes-scaffold__empty,
+.recipes-scaffold__success-banner {
+  padding: $spacing-md;
+  border: $border-width solid rgba(var(--shadow-color), 0.08);
+  border-radius: $border-radius-md;
+  background: rgba(var(--shadow-color), 0.02);
+}
+
+.recipes-scaffold__summary-item,
+.recipes-scaffold__selection-card,
+.recipes-scaffold__success-banner,
+.recipes-scaffold__summary-head,
+.recipes-scaffold__selection-side {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.recipes-scaffold__summary-item,
+.recipes-scaffold__selection-card,
+.recipes-scaffold__success-banner {
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.recipes-scaffold__summary-copy {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+  min-width: 0;
+}
+
+.recipes-scaffold__summary-head {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.recipes-scaffold__summary-meta {
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  white-space: nowrap;
+}
+
+.recipes-scaffold__selection-side {
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.recipes-scaffold__success-banner {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(var(--shadow-color-accent), 0.08) 0%,
+      rgba(var(--shadow-color-accent), 0.02) 100%
+    ),
+    $color-secondary;
+}
+
+.recipes-scaffold__empty {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  align-items: flex-start;
+}
+
+.recipes-scaffold__error {
+  color: $color-error;
+  font-size: $font-size-sm;
+}
+
 @media (max-width: $breakpoint-xl) {
   .recipes-scaffold__hero,
   .recipes-scaffold__route-grid {
@@ -514,5 +591,15 @@
   .recipes-scaffold__field-grid,
   .recipes-scaffold__shopping-stats {
     grid-template-columns: 1fr;
+  }
+
+  .recipes-scaffold__summary-item,
+  .recipes-scaffold__selection-card,
+  .recipes-scaffold__success-banner {
+    flex-direction: column;
+  }
+
+  .recipes-scaffold__selection-side {
+    align-items: flex-start;
   }
 }

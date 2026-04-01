@@ -17,6 +17,7 @@ import type {
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
 import {
+  useListActiveSelections,
   useListRecipes,
   useListRecipeTags,
 } from "@/modules/recipes/presentation/hooks";
@@ -143,8 +144,12 @@ const RecipesCatalogClientPage = ({
   const tagsQuery = useListRecipeTags(projectId, {
     initialData: initialTags,
   });
+  const quickListQuery = useListActiveSelections(projectId, {
+    initialData: quickListRecipes,
+  });
   const recipes = recipesQuery.data ?? [];
   const tags = tagsQuery.data ?? [];
+  const activeQuickListRecipes = quickListQuery.data ?? [];
   const hasActiveFilters = search.length > 0 || selectedTagSlugs.length > 0;
   const showInitialLoader = recipesQuery.isLoading && recipes.length === 0;
   const isRefreshing = recipesQuery.isFetching && !showInitialLoader;
@@ -212,11 +217,11 @@ const RecipesCatalogClientPage = ({
           </article>
           <article className={styles["recipes-page__metric-card"]}>
             <span className={styles["recipes-page__metric-value"]}>
-              {quickListRecipes.length}
+              {activeQuickListRecipes.length}
             </span>
             <span className={styles["recipes-page__metric-label"]}>
-              recette{quickListRecipes.length > 1 ? "s" : ""} déjà présente
-              {quickListRecipes.length > 1 ? "s" : ""} dans la quick list.
+              recette{activeQuickListRecipes.length > 1 ? "s" : ""} déjà présente
+              {activeQuickListRecipes.length > 1 ? "s" : ""} dans la quick list.
             </span>
           </article>
         </div>
@@ -374,7 +379,7 @@ const RecipesCatalogClientPage = ({
 
               <RecipesQuickListRail
                 projectId={projectId}
-                recipes={quickListRecipes}
+                recipes={activeQuickListRecipes}
               />
             </div>
           </div>

@@ -33,7 +33,6 @@ import styles from "@/modules/recipes/presentation/pages/shared/styles.module.sc
 import {
   buildRecipeDetailRoute,
   buildRecipesCatalogRoute,
-  buildRecipesQuickListRoute,
 } from "@/modules/recipes/presentation/routes";
 
 type Props = {
@@ -944,9 +943,8 @@ const RecipeEditorClientPage = ({
         </Card>
 
         <QuickListSummaryCard
-          href={buildRecipesQuickListRoute(projectId)}
+          projectId={projectId}
           recipes={quickListRecipes}
-          variant={quickListRecipes.length === 0 ? "empty" : "active"}
         />
 
         <Card

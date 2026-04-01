@@ -1,11 +1,11 @@
 import Card from "@/shared/design-system/card";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
-import { listQuickListRecipes } from "@/modules/recipes/core/usecases/planner/listQuickListRecipes";
+import { listActiveSelections } from "@/modules/recipes/core/usecases/planner/listActiveSelections";
 import { getShoppingList } from "@/modules/recipes/core/usecases/shopping/getShoppingList";
 import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
 import { createShoppingRepository } from "@/modules/recipes/infrastructure/supabase/shopping/ShoppingRepository.supabase";
-import QuickListSummaryCard from "@/modules/recipes/presentation/components/quickList/QuickListSummaryCard";
+import QuickListSelectionsCard from "@/modules/recipes/presentation/components/quickList/QuickListSelectionsCard";
 import ShoppingSummaryCard from "@/modules/recipes/presentation/components/shopping/ShoppingSummaryCard";
 import RecipesPageScaffold from "@/modules/recipes/presentation/pages/shared/RecipesPageScaffold";
 import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";
@@ -22,7 +22,7 @@ const RecipesQuickListPage = async ({ projectId }: Props) => {
   const supabaseClient = await createSupabaseServerClient();
   const plannerRepository = createPlannerRepository(supabaseClient);
   const shoppingRepository = createShoppingRepository(supabaseClient);
-  const quickListRecipes = await listQuickListRecipes({
+  const quickListRecipes = await listActiveSelections({
     plannerRepository,
   })(projectId);
   const shoppingList = await getShoppingList({
@@ -32,8 +32,8 @@ const RecipesQuickListPage = async ({ projectId }: Props) => {
   return (
     <RecipesPageScaffold
       eyebrow="Recipes / quick list"
-      title="La quick list a maintenant sa route dediee."
-      description="On garde l'intention preview: une liste courte, tres lisible, et deja branchee dans la navigation projet, sans embarquer encore le vrai planner."
+      title="Quick list des repas retenus"
+      description="La route reprend l’intention preview: une liste courte, actionnable, reliée au vrai schéma recipe_selections, avec retrait simple via done ou suppression de sélection."
       actions={[
         {
           href: buildRecipesCatalogRoute(projectId),
@@ -51,28 +51,23 @@ const RecipesQuickListPage = async ({ projectId }: Props) => {
               {quickListRecipes.length}
             </span>
             <span className={styles["recipes-scaffold__metric-label"]}>
-              recette{quickListRecipes.length > 1 ? "s" : ""} actuellement dans
-              la quick list projet.
+              recette{quickListRecipes.length > 1 ? "s" : ""} active
+              {quickListRecipes.length > 1 ? "s" : ""} dans la quick list.
             </span>
           </div>
         </Card>
       }
     >
       <div className={styles["recipes-scaffold__grid"]}>
-        <QuickListSummaryCard
-          href={buildRecipesCatalogRoute(projectId)}
-          recipes={quickListRecipes}
+        <QuickListSelectionsCard
+          projectId={projectId}
+          initialSelections={quickListRecipes}
         />
         <ShoppingSummaryCard
           href={buildRecipesShoppingRoute(projectId)}
           shoppingList={shoppingList}
         />
       </div>
-
-      <p className={styles["recipes-scaffold__note"]}>
-        Hors scope etape 2: selection depuis le catalogue, reorder, done et
-        persistance planner.
-      </p>
     </RecipesPageScaffold>
   );
 };

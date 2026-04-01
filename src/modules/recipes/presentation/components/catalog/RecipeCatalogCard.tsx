@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "@/shared/design-system/link";
 
 import type { CatalogRecipeSummary } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import { useSelectRecipe } from "@/modules/recipes/presentation/hooks";
 import styles from "@/modules/recipes/presentation/pages/recipes/styles.module.scss";
 import {
   buildRecipeDetailRoute,
@@ -19,6 +22,10 @@ const cx = (...classes: Array<string | false | null | undefined>) => {
 const RecipeCatalogCard = ({ projectId, recipe }: Props) => {
   const detailHref = buildRecipeDetailRoute(projectId, recipe.id);
   const quickListHref = buildRecipesQuickListRoute(projectId);
+  const selectRecipeMutation = useSelectRecipe();
+  const isSelecting =
+    selectRecipeMutation.isPending &&
+    selectRecipeMutation.variables?.recipeId === recipe.id;
 
   return (
     <article
@@ -71,14 +78,36 @@ const RecipeCatalogCard = ({ projectId, recipe }: Props) => {
                 styles["recipes-page__action-link--accent"]
               )}
             >
-              Dans la quick list
+              Active dans la quick list
             </Link>
           ) : (
-            <span className={styles["recipes-page__recipe-status"]}>
-              Sélection catalogue branchée à l&apos;étape suivante
-            </span>
+            <button
+              type="button"
+              className={cx(
+                styles["recipes-page__action-link"],
+                styles["recipes-page__action-link--accent"],
+                styles["recipes-page__action-button"]
+              )}
+              disabled={isSelecting}
+              onClick={() => {
+                selectRecipeMutation.mutate({
+                  projectId,
+                  recipeId: recipe.id,
+                });
+              }}
+            >
+              {isSelecting ? "Ajout en cours..." : "Ajouter à la quick list"}
+            </button>
           )}
         </div>
+
+        {selectRecipeMutation.isError &&
+        selectRecipeMutation.variables?.recipeId === recipe.id ? (
+          <p className={styles["recipes-page__recipe-error"]}>
+            Cette recette n&apos;est pas encore sélectionnable depuis ce
+            catalogue.
+          </p>
+        ) : null}
       </div>
     </article>
   );

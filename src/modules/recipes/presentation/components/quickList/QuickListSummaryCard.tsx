@@ -1,42 +1,21 @@
+import Badge from "@/shared/design-system/badge";
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
 
 import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
 import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";
+import {
+  buildRecipeDetailRoute,
+  buildRecipesQuickListRoute,
+} from "@/modules/recipes/presentation/routes";
 
 type Props = {
-  href: string;
-  variant?: "empty" | "active";
-  recipes?: QuickListRecipe[];
+  projectId: string;
+  recipes: QuickListRecipe[];
 };
 
-const ACTIVE_ITEMS = [
-  {
-    title: "Poulet citron & riz pilaf",
-    note: "Mardi soir, version sauce yaourt citronnee.",
-  },
-  {
-    title: "Rigatoni tomates roties & burrata",
-    note: "Jeudi, simple a relancer apres une grosse journee.",
-  },
-  {
-    title: "Bol croustillant tofu miel-sesame",
-    note: "Samedi midi avec les legumes du marche.",
-  },
-];
-
-const QuickListSummaryCard = ({
-  href,
-  variant = "active",
-  recipes,
-}: Props) => {
-  const isEmpty = recipes ? recipes.length === 0 : variant === "empty";
-  const activeItems = recipes
-    ? recipes.map((recipe) => ({
-        title: recipe.title,
-        note: recipe.note ?? recipe.servingsLabel,
-      }))
-    : ACTIVE_ITEMS;
+const QuickListSummaryCard = ({ projectId, recipes }: Props) => {
+  const isEmpty = recipes.length === 0;
 
   return (
     <Card
@@ -45,41 +24,50 @@ const QuickListSummaryCard = ({
         <div className={styles["recipes-scaffold__panel-head"]}>
           <p className={styles["recipes-scaffold__panel-kicker"]}>Quick list</p>
           <h2 className={styles["recipes-scaffold__panel-title"]}>
-            {isEmpty
-              ? "Visible meme a vide"
-              : "Route prete pour la planification"}
+            {isEmpty ? "Visible même à vide" : "Repas retenus pour la semaine"}
           </h2>
         </div>
       }
-      footer={<Link href={href}>Ouvrir la quick list</Link>}
+      footer={
+        <Link href={buildRecipesQuickListRoute(projectId)}>
+          Ouvrir la quick list
+        </Link>
+      }
     >
+      <p className={styles["recipes-scaffold__panel-copy"]}>
+        {isEmpty
+          ? "La quick list garde sa place dans le parcours, même avant la première sélection."
+          : "Le résumé garde les recettes actives lisibles depuis les autres écrans du module."}
+      </p>
+
       {isEmpty ? (
-        <>
-          <p className={styles["recipes-scaffold__panel-copy"]}>
-            La place de la quick list est fixee dans le module, meme quand rien
-            n&apos;est encore selectionne.
-          </p>
-          <p className={styles["recipes-scaffold__note"]}>
-            Aucune recette retenue pour l&apos;instant. Les prochaines etapes
-            brancheront la vraie selection depuis le catalogue.
-          </p>
-        </>
+        <p className={styles["recipes-scaffold__note"]}>
+          Aucune recette active pour l&apos;instant.
+        </p>
       ) : (
-        <>
-          <p className={styles["recipes-scaffold__panel-copy"]}>
-            La route existe deja pour accueillir la vraie logique planner sans
-            bouger le parcours utilisateur.
-          </p>
-          <ul className={styles["recipes-scaffold__list"]}>
-            {activeItems.map((item) => (
-              <li key={item.title}>
-                <strong>{item.title}</strong>
-                <br />
-                {item.note}
-              </li>
-            ))}
-          </ul>
-        </>
+        <div className={styles["recipes-scaffold__summary-list"]}>
+          {recipes.map((recipe) => (
+            <article
+              key={recipe.id}
+              className={styles["recipes-scaffold__summary-item"]}
+            >
+              <div className={styles["recipes-scaffold__summary-copy"]}>
+                <div className={styles["recipes-scaffold__summary-head"]}>
+                  <Link href={buildRecipeDetailRoute(projectId, recipe.recipeId)}>
+                    {recipe.title}
+                  </Link>
+                  <Badge label="Active" variant="success" size="small" />
+                </div>
+                <p className={styles["recipes-scaffold__helper"]}>
+                  {recipe.note ?? "Recette retenue pour un prochain repas."}
+                </p>
+              </div>
+              <span className={styles["recipes-scaffold__summary-meta"]}>
+                {recipe.servingsLabel}
+              </span>
+            </article>
+          ))}
+        </div>
       )}
     </Card>
   );

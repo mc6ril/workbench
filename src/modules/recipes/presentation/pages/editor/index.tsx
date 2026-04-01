@@ -5,7 +5,7 @@ import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/cli
 
 import { RECIPE_INGREDIENT_UNIT_VALUES } from "@/modules/recipes/core/domain/recipe.types";
 import { getRecipeDraft } from "@/modules/recipes/core/usecases/editor/getRecipeDraft";
-import { listQuickListRecipes } from "@/modules/recipes/core/usecases/planner/listQuickListRecipes";
+import { listActiveSelections } from "@/modules/recipes/core/usecases/planner/listActiveSelections";
 import { createEditorRepository } from "@/modules/recipes/infrastructure/supabase/editor/EditorRepository.supabase";
 import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
 import RecipeEditorClientPage from "@/modules/recipes/presentation/components/editor/RecipeEditorClientPage";
@@ -34,7 +34,7 @@ const RecipeEditorPage = async ({ projectId, mode, recipeId }: Props) => {
       projectId,
       recipeId,
     }),
-    listQuickListRecipes({
+    listActiveSelections({
       plannerRepository,
     })(projectId),
     editorRepository.listTagsByProject(projectId),

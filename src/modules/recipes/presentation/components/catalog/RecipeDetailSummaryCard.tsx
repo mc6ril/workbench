@@ -1,3 +1,4 @@
+import Badge from "@/shared/design-system/badge";
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
 
@@ -34,9 +35,16 @@ const RecipeDetailSummaryCard = ({
           <p className={styles["recipes-scaffold__panel-kicker"]}>
             Fiche recette
           </p>
-          <h2 className={styles["recipes-scaffold__panel-title"]}>
-            {recipe.title}
-          </h2>
+          <div className={styles["recipes-scaffold__summary-head"]}>
+            <h2 className={styles["recipes-scaffold__panel-title"]}>
+              {recipe.title}
+            </h2>
+            <Badge
+              label={recipe.isInQuickList ? "Active" : "Catalogue"}
+              variant={recipe.isInQuickList ? "success" : "default"}
+              size="small"
+            />
+          </div>
         </div>
       }
       footer={
@@ -49,6 +57,11 @@ const RecipeDetailSummaryCard = ({
       <p className={styles["recipes-scaffold__panel-copy"]}>
         La route detail garde l&apos;intention preview: lecture calme,
         ingredients tres visibles, puis etapes faciles a reprendre.
+      </p>
+      <p className={styles["recipes-scaffold__helper"]}>
+        {recipe.isInQuickList
+          ? "Cette recette est active dans la quick list."
+          : "Cette recette reste dans le catalogue tant qu’elle n’est pas sélectionnée."}
       </p>
       {recipe.tags.length > 0 ? (
         <div className={styles["recipes-scaffold__pill-row"]}>
@@ -95,10 +108,6 @@ const RecipeDetailSummaryCard = ({
             .join(", ")}
         </p>
       ) : null}
-      <p className={styles["recipes-scaffold__note"]}>
-        Hors scope etape 2: minuterie, done, ajouts temporaires persistants et
-        navigation entre recettes.
-      </p>
     </Card>
   );
 };

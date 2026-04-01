@@ -4,7 +4,7 @@ type Dependencies = {
   plannerRepository: PlannerRepository;
 };
 
-export const listQuickListRecipes =
+export const listActiveSelections =
   ({ plannerRepository }: Dependencies) =>
   (projectId: string) => {
     return plannerRepository.listActiveSelections(projectId);
