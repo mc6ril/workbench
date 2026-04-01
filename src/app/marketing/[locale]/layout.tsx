@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { isSupportedLocale } from "@/shared/i18n/config";
+import LocaleOnlyProvider from "@/shared/providers/LocaleOnlyProvider";
 
 type Props = {
   children: React.ReactNode;
@@ -14,7 +15,11 @@ const LocaleLayout = async ({ children, params }: Props) => {
     notFound();
   }
 
-  return children;
+  return (
+    <LocaleOnlyProvider initialLocale={locale}>
+      {children}
+    </LocaleOnlyProvider>
+  );
 };
 
 export default LocaleLayout;

@@ -1,10 +1,7 @@
-"use client";
-
-import { useCallback, useEffect } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y";
+import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
 import {
   HERO_PROOF_KEYS,
   IMPACT_KEYS,
@@ -13,82 +10,90 @@ import {
   VALUE_KEYS,
 } from "@/shared/constants/landing";
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
-import Button from "@/shared/design-system/button";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
-import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
-import { buildFeaturePreviewContent } from "@/shared/utils";
+import { assertDefined } from "@/shared/errors/programmingError";
 import {
-  buildAuthCallbackPath,
-  getAuthCodeRedirectTarget,
-  sanitizeInternalRedirectPath,
-} from "@/shared/utils/authRedirect";
+  buildMarketingLegalPath,
+  buildMarketingPricingPath,
+} from "@/shared/i18n/marketingPaths";
+import { getMessages } from "@/shared/i18n/messages";
+import type { Locale, TranslationMessages } from "@/shared/i18n/types";
+import { getTranslationValue } from "@/shared/i18n/utils";
+import { buildFeaturePreviewContent } from "@/shared/utils";
 
 import styles from "./styles.module.scss";
 
-import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
+type LandingPageProps = {
+  locale: Locale;
+  isBillingVisible: boolean;
+};
 
-const LandingPageContent = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const tHero = useTranslation("pages.landing.hero");
-  const tValues = useTranslation("pages.landing.values");
-  const tFeatures = useTranslation("pages.landing.features");
-  const tExamples = useTranslation("pages.landing.examples");
-  const tImpact = useTranslation("pages.landing.impact");
-  const tRhythm = useTranslation("pages.landing.rhythm");
-  const tCta = useTranslation("pages.landing.cta");
-  const tFooter = useTranslation("pages.landing.footer");
-  const { legal, pricing } = useMarketingRoutes();
-  const { data: isBillingVisible } = useBillingVisibility();
+const createNamespaceTranslationGetter = (
+  messages: TranslationMessages,
+  namespace: string
+) => {
+  return (key: string): string => {
+    const value = getTranslationValue(messages, namespace, key);
+    assertDefined(value, `Missing translation: ${namespace}.${key}`);
+    return value;
+  };
+};
 
-  // Some Supabase flows can still bounce through the site root with ?code=...
-  // Route them back through the server callback so the session is exchanged
-  // before we land on the final client page.
-  useEffect(() => {
-    const code = searchParams.get("code");
-    const type = searchParams.get("type");
-    const next = searchParams.get("next");
+const getCtaClassName = (...classNames: Array<string | undefined>) => {
+  return classNames.filter(Boolean).join(" ");
+};
 
-    if (code) {
-      const nextPath = sanitizeInternalRedirectPath(
-        next,
-        getAuthCodeRedirectTarget(type)
-      );
-
-      router.replace(
-        buildAuthCallbackPath({
-          code,
-          nextPath,
-          fallbackPath: getAuthCodeRedirectTarget(type),
-        })
-      );
-    }
-  }, [searchParams, router]);
-
-  const handleSignUp = useCallback(() => {
-    router.push(AUTH_PAGE_ROUTES.SIGNUP);
-  }, [router]);
-
-  const handleSignIn = useCallback(() => {
-    router.push(AUTH_PAGE_ROUTES.SIGNIN);
-  }, [router]);
-
-  const handleScrollToPreview = useCallback(() => {
-    const target = document.getElementById(
-      getAccessibilityId("landing-example-preview")
-    );
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, []);
-
+const LandingPage = ({ locale, isBillingVisible }: LandingPageProps) => {
+  const messages = getMessages(locale);
+  const tHero = createNamespaceTranslationGetter(
+    messages,
+    "pages.landing.hero"
+  );
+  const tValues = createNamespaceTranslationGetter(
+    messages,
+    "pages.landing.values"
+  );
+  const tFeatures = createNamespaceTranslationGetter(
+    messages,
+    "pages.landing.features"
+  );
+  const tExamples = createNamespaceTranslationGetter(
+    messages,
+    "pages.landing.examples"
+  );
+  const tImpact = createNamespaceTranslationGetter(
+    messages,
+    "pages.landing.impact"
+  );
+  const tRhythm = createNamespaceTranslationGetter(
+    messages,
+    "pages.landing.rhythm"
+  );
+  const tCta = createNamespaceTranslationGetter(messages, "pages.landing.cta");
+  const tFooter = createNamespaceTranslationGetter(
+    messages,
+    "pages.landing.footer"
+  );
+  const legal = buildMarketingLegalPath(locale);
+  const pricing = buildMarketingPricingPath(locale);
   const featurePreview = buildFeaturePreviewContent("board", tExamples);
+  const previewAnchor = `#${getAccessibilityId("landing-example-preview")}`;
+  const primaryCtaClassName = getCtaClassName(
+    styles["landing-hero__cta"],
+    styles["landing-hero__ctaPrimary"]
+  );
+  const ghostCtaClassName = getCtaClassName(
+    styles["landing-hero__cta"],
+    styles["landing-hero__ctaGhost"]
+  );
+  const secondaryCtaClassName = getCtaClassName(
+    styles["landing-hero__cta"],
+    styles["landing-hero__ctaSecondary"]
+  );
 
   return (
     <main className={styles["landing-page"]}>
-      {/* Hero */}
       <header className={styles["landing-hero"]}>
         <div className={styles["landing-hero__aurora"]} aria-hidden="true" />
         <div className={styles["landing-hero__content"]}>
@@ -103,7 +108,7 @@ const LandingPageContent = () => {
               TN
             </span>
             <span className={styles["landing-hero__brand-name"]}>
-              Tribu Nova
+              {PRODUCT_BRAND_NAME}
             </span>
           </div>
           <span className={styles["landing-hero__pill"]}>
@@ -135,29 +140,32 @@ const LandingPageContent = () => {
             ))}
           </div>
           <div className={styles["landing-hero__actions"]}>
-            <Button
-              label={tHero("ctaSignUp")}
-              onClick={handleSignUp}
+            <Link
+              href={AUTH_PAGE_ROUTES.SIGNUP}
+              className={primaryCtaClassName}
               aria-label={tHero("ctaSignUp")}
-            />
-            <Button
-              label={tHero("ctaSignIn")}
-              variant="ghost"
-              onClick={handleSignIn}
+            >
+              {tHero("ctaSignUp")}
+            </Link>
+            <Link
+              href={AUTH_PAGE_ROUTES.SIGNIN}
+              className={ghostCtaClassName}
               aria-label={tHero("ctaSignIn")}
-            />
-            <Button
-              label={tHero("ctaPreview")}
-              variant="secondary"
-              onClick={handleScrollToPreview}
+            >
+              {tHero("ctaSignIn")}
+            </Link>
+            <Link
+              href={previewAnchor}
+              className={secondaryCtaClassName}
               aria-label={tHero("ctaPreview")}
-            />
+            >
+              {tHero("ctaPreview")}
+            </Link>
           </div>
         </div>
       </header>
 
       <div className={styles["landing-container"]}>
-        {/* Values */}
         <section
           className={styles["values-section"]}
           aria-labelledby={getAccessibilityId("landing-values-title")}
@@ -186,7 +194,6 @@ const LandingPageContent = () => {
           </div>
         </section>
 
-        {/* Features */}
         <section
           className={styles["features-section"]}
           aria-labelledby={getAccessibilityId("landing-features-title")}
@@ -233,7 +240,7 @@ const LandingPageContent = () => {
                   aria-hidden="true"
                 />
                 <span className={styles["landing-example-preview__app-name"]}>
-                  Tribu Nova
+                  {PRODUCT_BRAND_NAME}
                 </span>
               </div>
               <div
@@ -279,7 +286,6 @@ const LandingPageContent = () => {
           </section>
         </section>
 
-        {/* Impact */}
         <section
           className={styles["impact-section"]}
           aria-labelledby={getAccessibilityId("landing-impact-title")}
@@ -304,7 +310,12 @@ const LandingPageContent = () => {
                 className={styles["impact-card"]}
                 role="listitem"
               >
-                <Text variant="metric">{tImpact(`${key}.value`)}</Text>
+                <Text
+                  variant="metric"
+                  className={styles["impact-card__metric"]}
+                >
+                  {tImpact(`${key}.value`)}
+                </Text>
                 <Title variant="h3">{tImpact(`${key}.title`)}</Title>
                 <Text variant="body">{tImpact(`${key}.description`)}</Text>
               </article>
@@ -312,7 +323,6 @@ const LandingPageContent = () => {
           </div>
         </section>
 
-        {/* Rhythm */}
         <section
           className={styles["rhythm-section"]}
           aria-labelledby={getAccessibilityId("landing-rhythm-title")}
@@ -349,7 +359,6 @@ const LandingPageContent = () => {
           </div>
         </section>
 
-        {/* CTA */}
         <section
           className={styles["cta-section"]}
           aria-labelledby={getAccessibilityId("landing-cta-title")}
@@ -361,31 +370,29 @@ const LandingPageContent = () => {
           >
             {tCta("title")}
           </Title>
-          <Button
-            label={tCta("button")}
-            onClick={handleSignUp}
+          <Link
+            href={AUTH_PAGE_ROUTES.SIGNUP}
+            className={getCtaClassName(
+              primaryCtaClassName,
+              styles["cta-section__button"]
+            )}
             aria-label={tCta("button")}
-          />
+          >
+            {tCta("button")}
+          </Link>
         </section>
       </div>
 
-      {/* Footer */}
       <footer className={styles["landing-footer"]}>
         <nav
           className={styles["landing-footer__nav"]}
           aria-label={tFooter("ariaLabel")}
         >
-          <Link
-            href={legal}
-            className={styles["landing-footer__link"]}
-          >
+          <Link href={legal} className={styles["landing-footer__link"]}>
             {tFooter("legal")}
           </Link>
           {isBillingVisible && (
-            <Link
-              href={pricing}
-              className={styles["landing-footer__link"]}
-            >
+            <Link href={pricing} className={styles["landing-footer__link"]}>
               {tFooter("pricing")}
             </Link>
           )}
@@ -393,10 +400,6 @@ const LandingPageContent = () => {
       </footer>
     </main>
   );
-};
-
-const LandingPage = () => {
-  return <LandingPageContent />;
 };
 
 export default LandingPage;

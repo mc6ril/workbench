@@ -1,25 +1,30 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import Loader from "@/shared/design-system/loader";
 import { assertDefined } from "@/shared/errors/programmingError";
+import { resolveLocale } from "@/shared/i18n/config";
 import {
   buildMarketingHomePath,
   buildMarketingPricingPath,
 } from "@/shared/i18n/marketingPaths";
 import { getMessages } from "@/shared/i18n/messages";
-import { getRequestLocale } from "@/shared/i18n/requestLocale";
+import type { Locale } from "@/shared/i18n/types";
 import { getTranslationValue } from "@/shared/i18n/utils";
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import AppProvider from "@/shared/providers/AppProvider";
 import { buildPublicMetadata } from "@/shared/seo/buildPublicMetadata";
 
-import { getBillingVisibility } from "@/domains/billing/core/usecases/getBillingVisibility";
-import { createBillingVisibilityPort } from "@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase";
+import { getCachedBillingVisibility } from "@/domains/billing/infrastructure/server/getCachedBillingVisibility";
 import PricingPage from "@/domains/billing/presentation/pages/pricing";
 
-export const generateMetadata = async (): Promise<Metadata> => {
-  const locale = await getRequestLocale();
+type PageProps = {
+  params: Promise<{ locale: string }>;
+};
+
+export const generateMetadata = async ({
+  params,
+}: PageProps): Promise<Metadata> => {
+  const { locale: routeLocale } = await params;
+  const locale: Locale = resolveLocale({ preferredLocale: routeLocale });
   const messages = getMessages(locale);
   const title = getTranslationValue(messages, "pages.pricing", "metadata.title");
   const description = getTranslationValue(
@@ -43,20 +48,19 @@ export const generateMetadata = async (): Promise<Metadata> => {
   });
 };
 
-const Pricing = async () => {
-  const supabaseClient = await createSupabaseServerClient();
-  const billingVisibilityPort = createBillingVisibilityPort(supabaseClient);
-  const isBillingVisible = await getBillingVisibility(billingVisibilityPort);
+const Pricing = async ({ params }: PageProps) => {
+  const { locale: routeLocale } = await params;
+  const locale: Locale = resolveLocale({ preferredLocale: routeLocale });
+  const isBillingVisible = await getCachedBillingVisibility();
 
   if (!isBillingVisible) {
-    const locale = await getRequestLocale();
     redirect(buildMarketingHomePath(locale));
   }
 
   return (
-    <Suspense fallback={<Loader />}>
+    <AppProvider>
       <PricingPage />
-    </Suspense>
+    </AppProvider>
   );
 };
 

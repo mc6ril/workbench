@@ -1,12 +1,9 @@
 import type { Metadata, Viewport } from "next";
 
-export const metadata: Metadata = {
-  robots: {
-    index: false,
-    follow: false,
-    googleBot: { index: false, follow: false },
-  },
-};
+import RequestLocaleAppProviders from "@/shared/providers/RequestLocaleAppProviders";
+import { noIndexMetadata } from "@/shared/seo/noIndexMetadata";
+
+export const metadata: Metadata = noIndexMetadata;
 
 export const viewport: Viewport = {
   themeColor: [
@@ -18,12 +15,12 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-const AuthPagesLayout = ({
+const AuthPagesLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  return <>{children}</>;
+  return <RequestLocaleAppProviders>{children}</RequestLocaleAppProviders>;
 };
 
 export default AuthPagesLayout;
