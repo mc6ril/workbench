@@ -32,7 +32,7 @@ type LoadedRecipeGraph = {
   tags: RecipeTag[];
 };
 
-const mapRecipeTagRowToDomain = (row: RecipeTagRow): RecipeTag => {
+export const mapRecipeTagRowToDomain = (row: RecipeTagRow): RecipeTag => {
   return {
     id: row.id,
     label: row.label,
@@ -98,14 +98,22 @@ export const mapLoadedRecipeGraphToCatalogSummary = (
   graph: LoadedRecipeGraph,
   isInQuickList: boolean
 ): CatalogRecipeSummary => {
+  return mapRecipeRowToCatalogSummary(graph.recipe, graph.tags, isInQuickList);
+};
+
+export const mapRecipeRowToCatalogSummary = (
+  recipe: RecipeRow,
+  tags: RecipeTag[],
+  isInQuickList: boolean
+): CatalogRecipeSummary => {
   return {
-    id: graph.recipe.id,
-    title: graph.recipe.title,
-    summary: graph.recipe.summary,
-    totalTimeLabel: graph.recipe.total_time_label,
-    servingsLabel: graph.recipe.servings_label,
-    tags: graph.tags,
-    coverStyle: graph.recipe.cover_style,
+    id: recipe.id,
+    title: recipe.title,
+    summary: recipe.summary,
+    totalTimeLabel: recipe.total_time_label,
+    servingsLabel: recipe.servings_label,
+    tags,
+    coverStyle: recipe.cover_style,
     isInQuickList,
   };
 };
@@ -183,6 +191,68 @@ export const mapShoppingListItemRowToDomain = (
     checked: row.checked,
     recipes: parseShoppingListRecipeSources(row.recipe_sources),
   };
+};
+
+export const loadRecipeTagsByRecipeIds = async (
+  client: SupabaseClient,
+  projectId: string,
+  recipeIds: string[]
+): Promise<Map<string, RecipeTag[]>> => {
+  if (recipeIds.length === 0) {
+    return new Map();
+  }
+
+  const { data: tagLinkData, error: tagLinkError } = await client
+    .from("recipe_tag_links")
+    .select("project_id, recipe_id, tag_id, created_at")
+    .eq("project_id", projectId)
+    .in("recipe_id", recipeIds)
+    .order("created_at", { ascending: true });
+
+  if (tagLinkError) {
+    return handleRepositoryError(tagLinkError, "RecipeTagLink", projectId);
+  }
+
+  const tagLinks = (tagLinkData ?? []) as RecipeTagLinkRow[];
+  const tagIds = [...new Set(tagLinks.map((tagLink) => tagLink.tag_id))];
+
+  if (tagIds.length === 0) {
+    return new Map(recipeIds.map((recipeId) => [recipeId, []]));
+  }
+
+  const { data: tagData, error: tagError } = await client
+    .from("recipe_tags")
+    .select("*")
+    .eq("project_id", projectId)
+    .in("id", tagIds);
+
+  if (tagError) {
+    return handleRepositoryError(tagError, "RecipeTag", projectId);
+  }
+
+  const tagRowsById = new Map(
+    ((tagData ?? []) as RecipeTagRow[]).map((tag) => [tag.id, mapRecipeTagRowToDomain(tag)])
+  );
+
+  const tagsByRecipeId = new Map<string, RecipeTag[]>();
+
+  for (const recipeId of recipeIds) {
+    tagsByRecipeId.set(recipeId, []);
+  }
+
+  for (const tagLink of tagLinks) {
+    const tag = tagRowsById.get(tagLink.tag_id);
+
+    if (!tag) {
+      continue;
+    }
+
+    const currentRecipeTags = tagsByRecipeId.get(tagLink.recipe_id) ?? [];
+    currentRecipeTags.push(tag);
+    tagsByRecipeId.set(tagLink.recipe_id, currentRecipeTags);
+  }
+
+  return tagsByRecipeId;
 };
 
 export const loadRecipeGraphsByIds = async (

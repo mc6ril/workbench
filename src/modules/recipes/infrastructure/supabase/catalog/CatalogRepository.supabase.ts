@@ -2,54 +2,326 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 
+import {
+  type CatalogRecipeListFilters,
+  normalizeCatalogRecipeListFilters,
+} from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import type { RecipeTag } from "@/modules/recipes/core/domain/recipe.types";
 import type { CatalogRepository } from "@/modules/recipes/core/ports/catalog/catalogRepository";
-import type { RecipeSelectionRow } from "@/modules/recipes/infrastructure/supabase/shared/persistence.types";
+import type {
+  RecipeIngredientRow,
+  RecipeRow,
+  RecipeSelectionRow,
+  RecipeTagLinkRow,
+  RecipeTagRow,
+} from "@/modules/recipes/infrastructure/supabase/shared/persistence.types";
 import {
   loadRecipeGraphsByIds,
+  loadRecipeTagsByRecipeIds,
   mapLoadedRecipeGraphToCatalogDetail,
-  mapLoadedRecipeGraphToCatalogSummary,
+  mapRecipeRowToCatalogSummary,
+  mapRecipeTagRowToDomain,
 } from "@/modules/recipes/infrastructure/supabase/shared/readModels";
 import {
   getCatalogFixtureDetail,
-  listCatalogFixtureRecipes,
+  listCatalogFixtureRecipesByFilters,
+  listCatalogFixtureTags,
 } from "@/modules/recipes/infrastructure/supabase/shared/recipesFixtureData";
 
+const hasPersistedCatalogRecipes = async (
+  client: SupabaseClient,
+  projectId: string
+): Promise<boolean> => {
+  const { data, error } = await client
+    .from("recipes")
+    .select("id")
+    .eq("project_id", projectId)
+    .limit(1);
+
+  if (error) {
+    return handleRepositoryError(error, "Recipe", projectId);
+  }
+
+  return (data ?? []).length > 0;
+};
+
+const loadSelectedRecipeIds = async (
+  client: SupabaseClient,
+  projectId: string
+): Promise<Set<string>> => {
+  const { data, error } = await client
+    .from("recipe_selections")
+    .select("id, project_id, recipe_id, position, note, servings_count, servings_label, created_at, updated_at")
+    .eq("project_id", projectId);
+
+  if (error) {
+    return handleRepositoryError(error, "RecipeSelection", projectId);
+  }
+
+  return new Set(
+    ((data ?? []) as RecipeSelectionRow[]).map((selection) => selection.recipe_id)
+  );
+};
+
+const resolveRecipeIdsMatchingSearch = async (
+  client: SupabaseClient,
+  projectId: string,
+  search: string
+): Promise<string[] | null> => {
+  if (!search) {
+    return null;
+  }
+
+  const searchPattern = `%${search}%`;
+  const [
+    { data: titleMatches, error: titleError },
+    { data: summaryMatches, error: summaryError },
+    { data: ingredientDisplayMatches, error: ingredientDisplayError },
+    { data: ingredientNormalizedMatches, error: ingredientNormalizedError },
+  ] = await Promise.all([
+    client
+      .from("recipes")
+      .select("id")
+      .eq("project_id", projectId)
+      .ilike("title", searchPattern),
+    client
+      .from("recipes")
+      .select("id")
+      .eq("project_id", projectId)
+      .ilike("summary", searchPattern),
+    client
+      .from("recipe_ingredients")
+      .select("recipe_id")
+      .eq("project_id", projectId)
+      .ilike("display_name", searchPattern),
+    client
+      .from("recipe_ingredients")
+      .select("recipe_id")
+      .eq("project_id", projectId)
+      .ilike("normalized_name", searchPattern),
+  ]);
+
+  if (titleError) {
+    return handleRepositoryError(titleError, "Recipe", projectId);
+  }
+
+  if (summaryError) {
+    return handleRepositoryError(summaryError, "Recipe", projectId);
+  }
+
+  if (ingredientDisplayError) {
+    return handleRepositoryError(ingredientDisplayError, "RecipeIngredient", projectId);
+  }
+
+  if (ingredientNormalizedError) {
+    return handleRepositoryError(ingredientNormalizedError, "RecipeIngredient", projectId);
+  }
+
+  return [
+    ...new Set([
+      ...((titleMatches ?? []) as Array<Pick<RecipeRow, "id">>).map((row) => row.id),
+      ...((summaryMatches ?? []) as Array<Pick<RecipeRow, "id">>).map((row) => row.id),
+      ...((ingredientDisplayMatches ?? []) as Array<Pick<RecipeIngredientRow, "recipe_id">>).map(
+        (row) => row.recipe_id
+      ),
+      ...((ingredientNormalizedMatches ?? []) as Array<
+        Pick<RecipeIngredientRow, "recipe_id">
+      >).map((row) => row.recipe_id),
+    ]),
+  ];
+};
+
+const resolveRecipeIdsMatchingTags = async (
+  client: SupabaseClient,
+  projectId: string,
+  tagSlugs: string[]
+): Promise<string[] | null> => {
+  if (tagSlugs.length === 0) {
+    return null;
+  }
+
+  const { data: tagData, error: tagError } = await client
+    .from("recipe_tags")
+    .select("*")
+    .eq("project_id", projectId)
+    .in("slug", tagSlugs);
+
+  if (tagError) {
+    return handleRepositoryError(tagError, "RecipeTag", projectId);
+  }
+
+  const tagRows = (tagData ?? []) as RecipeTagRow[];
+
+  if (tagRows.length !== tagSlugs.length) {
+    return [];
+  }
+
+  const tagIds = tagRows.map((tag) => tag.id);
+  const { data: tagLinkData, error: tagLinkError } = await client
+    .from("recipe_tag_links")
+    .select("project_id, recipe_id, tag_id, created_at")
+    .eq("project_id", projectId)
+    .in("tag_id", tagIds);
+
+  if (tagLinkError) {
+    return handleRepositoryError(tagLinkError, "RecipeTagLink", projectId);
+  }
+
+  const tagMatchCountByRecipeId = new Map<string, Set<string>>();
+
+  for (const tagLink of (tagLinkData ?? []) as RecipeTagLinkRow[]) {
+    const currentRecipeTagIds =
+      tagMatchCountByRecipeId.get(tagLink.recipe_id) ?? new Set<string>();
+    currentRecipeTagIds.add(tagLink.tag_id);
+    tagMatchCountByRecipeId.set(tagLink.recipe_id, currentRecipeTagIds);
+  }
+
+  return [...tagMatchCountByRecipeId.entries()]
+    .filter(([, matchedTagIds]) => matchedTagIds.size === tagIds.length)
+    .map(([recipeId]) => recipeId);
+};
+
+const intersectRecipeIds = (
+  left: string[] | null,
+  right: string[] | null
+): string[] | null => {
+  if (!left && !right) {
+    return null;
+  }
+
+  if (!left) {
+    return right;
+  }
+
+  if (!right) {
+    return left;
+  }
+
+  const rightIds = new Set(right);
+  return left.filter((recipeId) => rightIds.has(recipeId));
+};
+
+const loadCatalogRecipeRows = async (
+  client: SupabaseClient,
+  projectId: string,
+  filters?: CatalogRecipeListFilters
+): Promise<RecipeRow[]> => {
+  const normalizedFilters = normalizeCatalogRecipeListFilters(filters);
+  const [searchRecipeIds, tagRecipeIds] = await Promise.all([
+    resolveRecipeIdsMatchingSearch(client, projectId, normalizedFilters.search),
+    resolveRecipeIdsMatchingTags(client, projectId, normalizedFilters.tagSlugs),
+  ]);
+  const filteredRecipeIds = intersectRecipeIds(searchRecipeIds, tagRecipeIds);
+
+  if (filteredRecipeIds && filteredRecipeIds.length === 0) {
+    return [];
+  }
+
+  let recipesQuery = client
+    .from("recipes")
+    .select("*")
+    .eq("project_id", projectId)
+    .order("updated_at", { ascending: false });
+
+  if (filteredRecipeIds) {
+    recipesQuery = recipesQuery.in("id", filteredRecipeIds);
+  }
+
+  const { data, error } = await recipesQuery;
+
+  if (error) {
+    return handleRepositoryError(error, "Recipe", projectId);
+  }
+
+  return (data ?? []) as RecipeRow[];
+};
+
+const listPersistedCatalogTags = async (
+  client: SupabaseClient,
+  projectId: string
+): Promise<RecipeTag[]> => {
+  const { data: tagLinkData, error: tagLinkError } = await client
+    .from("recipe_tag_links")
+    .select("project_id, recipe_id, tag_id, created_at")
+    .eq("project_id", projectId);
+
+  if (tagLinkError) {
+    return handleRepositoryError(tagLinkError, "RecipeTagLink", projectId);
+  }
+
+  const tagIds = [
+    ...new Set(((tagLinkData ?? []) as RecipeTagLinkRow[]).map((tagLink) => tagLink.tag_id)),
+  ];
+
+  if (tagIds.length === 0) {
+    return [];
+  }
+
+  const { data: tagData, error: tagError } = await client
+    .from("recipe_tags")
+    .select("*")
+    .eq("project_id", projectId)
+    .in("id", tagIds)
+    .order("label", { ascending: true });
+
+  if (tagError) {
+    return handleRepositoryError(tagError, "RecipeTag", projectId);
+  }
+
+  return ((tagData ?? []) as RecipeTagRow[]).map(mapRecipeTagRowToDomain);
+};
+
 /**
- * Step 5:
- * read from the real Recipes schema and keep the former preview fixtures only as
- * a temporary fallback until write flows land in the next steps.
+ * Step 6:
+ * keep the real Recipes schema as the source of truth for catalogue reads and
+ * reduce the fixture fallback to the catalogue repository only while write flows
+ * are still landing in later steps.
  */
 export const createCatalogRepository = (
   client: SupabaseClient
 ): CatalogRepository => ({
-  async listByProject(projectId) {
-    const recipeGraphs = await loadRecipeGraphsByIds(client, projectId);
+  async listByProject({ projectId, filters }) {
+    const recipes = await loadCatalogRecipeRows(client, projectId, filters);
 
-    if (recipeGraphs.size === 0) {
-      return listCatalogFixtureRecipes();
+    if (recipes.length === 0) {
+      const hasPersistedRecipes = await hasPersistedCatalogRecipes(client, projectId);
+
+      if (!hasPersistedRecipes) {
+        return listCatalogFixtureRecipesByFilters(filters);
+      }
+
+      return [];
     }
 
-    const { data: selectionData, error: selectionError } = await client
-      .from("recipe_selections")
-      .select("id, project_id, recipe_id, position, note, servings_count, servings_label, created_at, updated_at")
-      .eq("project_id", projectId);
+    const recipeIds = recipes.map((recipe) => recipe.id);
+    const [tagsByRecipeId, selectedRecipeIds] = await Promise.all([
+      loadRecipeTagsByRecipeIds(client, projectId, recipeIds),
+      loadSelectedRecipeIds(client, projectId),
+    ]);
 
-    if (selectionError) {
-      return handleRepositoryError(selectionError, "RecipeSelection", projectId);
+    return recipes.map((recipe) =>
+      mapRecipeRowToCatalogSummary(
+        recipe,
+        tagsByRecipeId.get(recipe.id) ?? [],
+        selectedRecipeIds.has(recipe.id)
+      )
+    );
+  },
+
+  async listTagsByProject(projectId) {
+    const tags = await listPersistedCatalogTags(client, projectId);
+
+    if (tags.length > 0) {
+      return tags;
     }
 
-    const selectedRecipeIds = new Set(
-      ((selectionData ?? []) as RecipeSelectionRow[]).map(
-        (selection) => selection.recipe_id
-      )
-    );
+    const hasPersistedRecipes = await hasPersistedCatalogRecipes(client, projectId);
 
-    return Array.from(recipeGraphs.values()).map((recipeGraph) =>
-      mapLoadedRecipeGraphToCatalogSummary(
-        recipeGraph,
-        selectedRecipeIds.has(recipeGraph.recipe.id)
-      )
-    );
+    if (!hasPersistedRecipes) {
+      return listCatalogFixtureTags();
+    }
+
+    return [];
   },
 
   async getDetail(projectId, recipeId) {

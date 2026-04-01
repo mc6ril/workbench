@@ -1,1 +1,1 @@
-export {};
+export { useRecipesCatalogFiltersStore } from "./useRecipesCatalogFiltersStore";

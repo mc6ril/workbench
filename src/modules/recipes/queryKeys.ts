@@ -1,7 +1,21 @@
+import type { CatalogRecipeListFilters } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import {
+  normalizeCatalogRecipeListFilters,
+} from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+
 const recipesQueryKeysObject = {
   root: (projectId: string) => ["recipes", projectId] as const,
   catalog: {
     all: (projectId: string) => ["recipes", projectId, "catalog"] as const,
+    list: (projectId: string, filters?: CatalogRecipeListFilters) =>
+      [
+        "recipes",
+        projectId,
+        "catalog",
+        "list",
+        normalizeCatalogRecipeListFilters(filters),
+      ] as const,
+    tags: (projectId: string) => ["recipes", projectId, "catalog", "tags"] as const,
     detail: (projectId: string, recipeId: string) =>
       ["recipes", projectId, "catalog", recipeId] as const,
   },

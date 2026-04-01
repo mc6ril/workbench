@@ -1,7 +1,11 @@
 import type {
   CatalogRecipeCoverStyle,
   CatalogRecipeDetail,
+  CatalogRecipeListFilters,
   CatalogRecipeSummary,
+} from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import {
+  normalizeCatalogRecipeListFilters,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
 import {
@@ -409,8 +413,65 @@ const mapFixtureSourceToCatalogDetail = (
   };
 };
 
+const fixtureSourceMatchesFilters = (
+  source: FixtureRecipeSource,
+  filters?: CatalogRecipeListFilters
+): boolean => {
+  const normalizedFilters = normalizeCatalogRecipeListFilters(filters);
+
+  if (normalizedFilters.tagSlugs.length > 0) {
+    const sourceTagSlugs = new Set(source.tags.map((tag) => tag.slug));
+    const hasEveryTag = normalizedFilters.tagSlugs.every((tagSlug) =>
+      sourceTagSlugs.has(tagSlug)
+    );
+
+    if (!hasEveryTag) {
+      return false;
+    }
+  }
+
+  if (!normalizedFilters.search) {
+    return true;
+  }
+
+  const searchValue = normalizedFilters.search.toLocaleLowerCase();
+  const searchableValues = [
+    source.title,
+    source.summary,
+    source.note,
+    ...source.tags.map((tag) => tag.label),
+    ...source.ingredients.map((ingredient) => ingredient.displayName),
+  ];
+
+  return searchableValues.some((value) =>
+    value?.toLocaleLowerCase().includes(searchValue)
+  );
+};
+
 export const listCatalogFixtureRecipes = (): CatalogRecipeSummary[] => {
   return Object.values(EDIT_RECIPE_SOURCES).map(mapFixtureSourceToCatalogSummary);
+};
+
+export const listCatalogFixtureRecipesByFilters = (
+  filters?: CatalogRecipeListFilters
+): CatalogRecipeSummary[] => {
+  return Object.values(EDIT_RECIPE_SOURCES)
+    .filter((source) => fixtureSourceMatchesFilters(source, filters))
+    .map(mapFixtureSourceToCatalogSummary);
+};
+
+export const listCatalogFixtureTags = (): RecipeTag[] => {
+  const tagBySlug = new Map<string, RecipeTag>();
+
+  for (const recipe of Object.values(EDIT_RECIPE_SOURCES)) {
+    for (const tag of recipe.tags) {
+      tagBySlug.set(tag.slug, tag);
+    }
+  }
+
+  return [...tagBySlug.values()].sort((left, right) =>
+    left.label.localeCompare(right.label, "fr", { sensitivity: "base" })
+  );
 };
 
 export const getCatalogFixtureDetail = (

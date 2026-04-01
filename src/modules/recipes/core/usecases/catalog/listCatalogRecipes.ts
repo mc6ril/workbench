@@ -1,3 +1,4 @@
+import type { CatalogRecipeListInput } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { CatalogRepository } from "@/modules/recipes/core/ports/catalog/catalogRepository";
 
 type Dependencies = {
@@ -6,6 +7,6 @@ type Dependencies = {
 
 export const listCatalogRecipes =
   ({ catalogRepository }: Dependencies) =>
-  (projectId: string) => {
-    return catalogRepository.listByProject(projectId);
+  (input: CatalogRecipeListInput) => {
+    return catalogRepository.listByProject(input);
   };
