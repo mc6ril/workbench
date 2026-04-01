@@ -1,7 +1,9 @@
 import Card from "@/shared/design-system/card";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
+import { listQuickListRecipes } from "@/modules/recipes/core/usecases/planner/listQuickListRecipes";
 import { getShoppingList } from "@/modules/recipes/core/usecases/shopping/getShoppingList";
+import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
 import { createShoppingRepository } from "@/modules/recipes/infrastructure/supabase/shopping/ShoppingRepository.supabase";
 import QuickListSummaryCard from "@/modules/recipes/presentation/components/quickList/QuickListSummaryCard";
 import ShoppingSummaryCard from "@/modules/recipes/presentation/components/shopping/ShoppingSummaryCard";
@@ -18,7 +20,11 @@ type Props = {
 
 const RecipesQuickListPage = async ({ projectId }: Props) => {
   const supabaseClient = await createSupabaseServerClient();
+  const plannerRepository = createPlannerRepository(supabaseClient);
   const shoppingRepository = createShoppingRepository(supabaseClient);
+  const quickListRecipes = await listQuickListRecipes({
+    plannerRepository,
+  })(projectId);
   const shoppingList = await getShoppingList({
     shoppingRepository,
   })(projectId);
@@ -41,9 +47,12 @@ const RecipesQuickListPage = async ({ projectId }: Props) => {
       aside={
         <Card variant="outlined">
           <div className={styles["recipes-scaffold__metric"]}>
-            <span className={styles["recipes-scaffold__metric-value"]}>3</span>
+            <span className={styles["recipes-scaffold__metric-value"]}>
+              {quickListRecipes.length}
+            </span>
             <span className={styles["recipes-scaffold__metric-label"]}>
-              recettes exemple visibles pour fixer la structure de la page.
+              recette{quickListRecipes.length > 1 ? "s" : ""} actuellement dans
+              la quick list projet.
             </span>
           </div>
         </Card>
@@ -52,7 +61,7 @@ const RecipesQuickListPage = async ({ projectId }: Props) => {
       <div className={styles["recipes-scaffold__grid"]}>
         <QuickListSummaryCard
           href={buildRecipesCatalogRoute(projectId)}
-          variant="active"
+          recipes={quickListRecipes}
         />
         <ShoppingSummaryCard
           href={buildRecipesShoppingRoute(projectId)}

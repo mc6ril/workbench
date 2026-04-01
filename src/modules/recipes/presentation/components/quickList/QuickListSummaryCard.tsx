@@ -1,11 +1,13 @@
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
 
+import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
 import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";
 
 type Props = {
   href: string;
   variant?: "empty" | "active";
+  recipes?: QuickListRecipe[];
 };
 
 const ACTIVE_ITEMS = [
@@ -23,8 +25,18 @@ const ACTIVE_ITEMS = [
   },
 ];
 
-const QuickListSummaryCard = ({ href, variant = "active" }: Props) => {
-  const isEmpty = variant === "empty";
+const QuickListSummaryCard = ({
+  href,
+  variant = "active",
+  recipes,
+}: Props) => {
+  const isEmpty = recipes ? recipes.length === 0 : variant === "empty";
+  const activeItems = recipes
+    ? recipes.map((recipe) => ({
+        title: recipe.title,
+        note: recipe.note ?? recipe.servingsLabel,
+      }))
+    : ACTIVE_ITEMS;
 
   return (
     <Card
@@ -59,7 +71,7 @@ const QuickListSummaryCard = ({ href, variant = "active" }: Props) => {
             bouger le parcours utilisateur.
           </p>
           <ul className={styles["recipes-scaffold__list"]}>
-            {ACTIVE_ITEMS.map((item) => (
+            {activeItems.map((item) => (
               <li key={item.title}>
                 <strong>{item.title}</strong>
                 <br />

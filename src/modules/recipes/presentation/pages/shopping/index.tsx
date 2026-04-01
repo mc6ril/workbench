@@ -1,7 +1,9 @@
 import Card from "@/shared/design-system/card";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
+import { listQuickListRecipes } from "@/modules/recipes/core/usecases/planner/listQuickListRecipes";
 import { getShoppingList } from "@/modules/recipes/core/usecases/shopping/getShoppingList";
+import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
 import { createShoppingRepository } from "@/modules/recipes/infrastructure/supabase/shopping/ShoppingRepository.supabase";
 import QuickListSummaryCard from "@/modules/recipes/presentation/components/quickList/QuickListSummaryCard";
 import ShoppingSummaryCard from "@/modules/recipes/presentation/components/shopping/ShoppingSummaryCard";
@@ -18,7 +20,11 @@ type Props = {
 
 const RecipesShoppingPage = async ({ projectId }: Props) => {
   const supabaseClient = await createSupabaseServerClient();
+  const plannerRepository = createPlannerRepository(supabaseClient);
   const shoppingRepository = createShoppingRepository(supabaseClient);
+  const quickListRecipes = await listQuickListRecipes({
+    plannerRepository,
+  })(projectId);
   const shoppingList = await getShoppingList({
     shoppingRepository,
   })(projectId);
@@ -67,7 +73,7 @@ const RecipesShoppingPage = async ({ projectId }: Props) => {
         <div className={styles["recipes-scaffold__stack"]}>
           <QuickListSummaryCard
             href={buildRecipesQuickListRoute(projectId)}
-            variant="active"
+            recipes={quickListRecipes}
           />
           <Card variant="outlined">
             <div className={styles["recipes-scaffold__stack"]}>

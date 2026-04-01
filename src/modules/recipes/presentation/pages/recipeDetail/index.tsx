@@ -1,5 +1,12 @@
-import Card from "@/shared/design-system/card";
+import { notFound } from "next/navigation";
 
+import Card from "@/shared/design-system/card";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+
+import { getCatalogRecipeDetail } from "@/modules/recipes/core/usecases/catalog/getCatalogRecipeDetail";
+import { listQuickListRecipes } from "@/modules/recipes/core/usecases/planner/listQuickListRecipes";
+import { createCatalogRepository } from "@/modules/recipes/infrastructure/supabase/catalog/CatalogRepository.supabase";
+import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
 import RecipeDetailSummaryCard from "@/modules/recipes/presentation/components/catalog/RecipeDetailSummaryCard";
 import QuickListSummaryCard from "@/modules/recipes/presentation/components/quickList/QuickListSummaryCard";
 import RecipesPageScaffold from "@/modules/recipes/presentation/pages/shared/RecipesPageScaffold";
@@ -7,6 +14,7 @@ import styles from "@/modules/recipes/presentation/pages/shared/styles.module.sc
 import {
   buildRecipeEditRoute,
   buildRecipesCatalogRoute,
+  buildRecipesQuickListRoute,
   buildRecipesShoppingRoute,
 } from "@/modules/recipes/presentation/routes";
 
@@ -15,22 +23,28 @@ type Props = {
   recipeId: string;
 };
 
-const formatRecipeLabel = (recipeId: string) => {
-  const normalized = decodeURIComponent(recipeId).replace(/[-_]+/g, " ").trim();
-  if (!normalized) {
-    return "Recette";
+const RecipeDetailPage = async ({ projectId, recipeId }: Props) => {
+  const supabaseClient = await createSupabaseServerClient();
+  const catalogRepository = createCatalogRepository(supabaseClient);
+  const plannerRepository = createPlannerRepository(supabaseClient);
+  const recipe = await getCatalogRecipeDetail({
+    catalogRepository,
+  })({
+    projectId,
+    recipeId,
+  });
+  const quickListRecipes = await listQuickListRecipes({
+    plannerRepository,
+  })(projectId);
+
+  if (!recipe) {
+    notFound();
   }
-
-  return normalized.charAt(0).toUpperCase() + normalized.slice(1);
-};
-
-const RecipeDetailPage = ({ projectId, recipeId }: Props) => {
-  const recipeTitle = formatRecipeLabel(recipeId);
 
   return (
     <RecipesPageScaffold
       eyebrow="Recipes / detail"
-      title={recipeTitle}
+      title={recipe.title}
       description="Cette page reprend l'intention detail de la preview avec une lecture calme et de gros blocs, tout en restant strictement route-level pour cette etape."
       actions={[
         {
@@ -59,13 +73,13 @@ const RecipeDetailPage = ({ projectId, recipeId }: Props) => {
     >
       <div className={styles["recipes-scaffold__split"]}>
         <RecipeDetailSummaryCard
-          title={recipeTitle}
+          recipe={recipe}
           editHref={buildRecipeEditRoute(projectId, recipeId)}
           shoppingHref={buildRecipesShoppingRoute(projectId)}
         />
         <QuickListSummaryCard
-          href={buildRecipesShoppingRoute(projectId)}
-          variant="active"
+          href={buildRecipesQuickListRoute(projectId)}
+          recipes={quickListRecipes}
         />
       </div>
 

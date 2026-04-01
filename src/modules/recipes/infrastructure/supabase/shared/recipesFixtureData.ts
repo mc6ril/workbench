@@ -1,3 +1,8 @@
+import type {
+  CatalogRecipeCoverStyle,
+  CatalogRecipeDetail,
+  CatalogRecipeSummary,
+} from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
 import {
   type CreateRecipeIngredientFromDraftInput,
@@ -22,6 +27,7 @@ type FixtureRecipeSource = {
   totalTimeLabel: string;
   servingsCount: number | null;
   servingsLabel: string;
+  coverStyle: CatalogRecipeCoverStyle;
   tags: RecipeTag[];
   ingredients: FixtureIngredientSource[];
   steps: RecipeStep[];
@@ -64,6 +70,7 @@ const CREATION_DRAFT_SOURCE: FixtureRecipeSource = {
   totalTimeLabel: "",
   servingsCount: null,
   servingsLabel: "",
+  coverStyle: "neutral",
   tags: [buildTag("Poisson"), buildTag("Rapide")],
   ingredients: [
     {
@@ -111,6 +118,7 @@ const EDIT_RECIPE_SOURCES: Record<string, FixtureRecipeSource> = {
     totalTimeLabel: "35 min",
     servingsCount: 2,
     servingsLabel: "2 portions",
+    coverStyle: "citrus",
     tags: [buildTag("Rapide"), buildTag("Poulet"), buildTag("Soir de semaine")],
     ingredients: [
       {
@@ -208,6 +216,7 @@ const EDIT_RECIPE_SOURCES: Record<string, FixtureRecipeSource> = {
     totalTimeLabel: "30 min",
     servingsCount: 2,
     servingsLabel: "2 portions",
+    coverStyle: "green",
     tags: [buildTag("Vege"), buildTag("Batch"), buildTag("Croquant")],
     ingredients: [
       {
@@ -368,6 +377,52 @@ export const listQuickListFixtureSelections = (): RecipeSelection[] => {
       servingsLabel: recipe.servingsLabel,
     };
   });
+};
+
+const mapFixtureSourceToCatalogSummary = (
+  source: FixtureRecipeSource
+): CatalogRecipeSummary => {
+  return {
+    id: source.id,
+    title: source.title,
+    summary: source.summary,
+    totalTimeLabel: source.totalTimeLabel,
+    servingsLabel: source.servingsLabel,
+    tags: source.tags,
+    coverStyle: source.coverStyle,
+    isInQuickList: QUICK_LIST_RECIPE_IDS.includes(
+      source.id as (typeof QUICK_LIST_RECIPE_IDS)[number]
+    ),
+  };
+};
+
+const mapFixtureSourceToCatalogDetail = (
+  source: FixtureRecipeSource
+): CatalogRecipeDetail => {
+  return {
+    ...mapFixtureSourceToCatalogSummary(source),
+    note: source.note,
+    ingredients: source.ingredients.map((ingredient) =>
+      createRecipeIngredientFromDraftInput(ingredient)
+    ),
+    steps: source.steps,
+  };
+};
+
+export const listCatalogFixtureRecipes = (): CatalogRecipeSummary[] => {
+  return Object.values(EDIT_RECIPE_SOURCES).map(mapFixtureSourceToCatalogSummary);
+};
+
+export const getCatalogFixtureDetail = (
+  recipeId: string
+): CatalogRecipeDetail | null => {
+  const source = EDIT_RECIPE_SOURCES[recipeId];
+
+  if (!source) {
+    return null;
+  }
+
+  return mapFixtureSourceToCatalogDetail(source);
 };
 
 const buildShoppingIngredientSource = (

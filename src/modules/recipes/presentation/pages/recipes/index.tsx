@@ -4,9 +4,13 @@ import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
+import { listCatalogRecipes } from "@/modules/recipes/core/usecases/catalog/listCatalogRecipes";
 import { getRecipeDraft } from "@/modules/recipes/core/usecases/editor/getRecipeDraft";
+import { listQuickListRecipes } from "@/modules/recipes/core/usecases/planner/listQuickListRecipes";
 import { getShoppingList } from "@/modules/recipes/core/usecases/shopping/getShoppingList";
+import { createCatalogRepository } from "@/modules/recipes/infrastructure/supabase/catalog/CatalogRepository.supabase";
 import { createEditorRepository } from "@/modules/recipes/infrastructure/supabase/editor/EditorRepository.supabase";
+import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
 import { createShoppingRepository } from "@/modules/recipes/infrastructure/supabase/shopping/ShoppingRepository.supabase";
 import CatalogPreviewPanel from "@/modules/recipes/presentation/components/catalog/CatalogPreviewPanel";
 import RecipeEditorOutlineCard from "@/modules/recipes/presentation/components/editor/RecipeEditorOutlineCard";
@@ -25,8 +29,6 @@ import {
 type Props = {
   projectId: string;
 };
-
-const SAMPLE_RECIPE_ID = "poulet-citron-riz-pilaf";
 
 const ROUTE_BLUEPRINT = [
   {
@@ -51,13 +53,21 @@ const ROUTE_BLUEPRINT = [
 
 const RecipesPage = async ({ projectId }: Props) => {
   const supabaseClient = await createSupabaseServerClient();
+  const catalogRepository = createCatalogRepository(supabaseClient);
   const editorRepository = createEditorRepository(supabaseClient);
+  const plannerRepository = createPlannerRepository(supabaseClient);
   const shoppingRepository = createShoppingRepository(supabaseClient);
+  const catalogRecipes = await listCatalogRecipes({
+    catalogRepository,
+  })(projectId);
   const creationDraft = await getRecipeDraft({
     editorRepository,
   })({
     projectId,
   });
+  const quickListRecipes = await listQuickListRecipes({
+    plannerRepository,
+  })(projectId);
 
   if (!creationDraft) {
     notFound();
@@ -65,11 +75,13 @@ const RecipesPage = async ({ projectId }: Props) => {
   const shoppingList = await getShoppingList({
     shoppingRepository,
   })(projectId);
+  const detailRecipeId =
+    catalogRecipes[0]?.id ?? "poulet-citron-riz-pilaf";
   const quickListHref = buildRecipesQuickListRoute(projectId);
   const shoppingHref = buildRecipesShoppingRoute(projectId);
   const createHref = buildRecipeCreationRoute(projectId);
-  const detailHref = buildRecipeDetailRoute(projectId, SAMPLE_RECIPE_ID);
-  const editHref = buildRecipeEditRoute(projectId, SAMPLE_RECIPE_ID);
+  const detailHref = buildRecipeDetailRoute(projectId, detailRecipeId);
+  const editHref = buildRecipeEditRoute(projectId, detailRecipeId);
 
   return (
     <RecipesPageScaffold
@@ -164,6 +176,7 @@ const RecipesPage = async ({ projectId }: Props) => {
           title="Base catalogue prete pour la suite"
           description="On remplace le placeholder etape 1 par une page qui ressemble deja a la future entree produit, tout en restant route-level."
           highlights={[
+            `${catalogRecipes.length} recette${catalogRecipes.length > 1 ? "s" : ""} chargee${catalogRecipes.length > 1 ? "s" : ""} via le repository Recipes.`,
             "Route principale deja stable dans le shell projet.",
             "Sous-routes detail, quick list, shopping et editor deja raccordees.",
             "Microcopies principales preservees: catalogue, quick list, shopping.",
@@ -171,7 +184,7 @@ const RecipesPage = async ({ projectId }: Props) => {
           ctaLabel="Ouvrir un detail exemple"
         />
 
-        <QuickListSummaryCard href={quickListHref} variant="empty" />
+        <QuickListSummaryCard href={quickListHref} recipes={quickListRecipes} />
         <ShoppingSummaryCard href={shoppingHref} shoppingList={shoppingList} />
         <RecipeEditorOutlineCard
           href={createHref}
