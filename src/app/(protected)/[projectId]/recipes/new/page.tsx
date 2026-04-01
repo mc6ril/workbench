@@ -1,7 +1,7 @@
-import RecipesPage from "@/modules/recipes/presentation/pages/recipes";
+import RecipeEditorPage from "@/modules/recipes/presentation/pages/editor";
 import { withRecipesRouteAccess } from "@/modules/recipes/presentation/pages/shared/withRecipesRouteAccess";
 
-const RecipesPageRoute = async ({
+const RecipesCreationPageRoute = async ({
   params,
 }: {
   params: Promise<{ projectId: string }>;
@@ -9,8 +9,8 @@ const RecipesPageRoute = async ({
   const { projectId } = await params;
 
   return withRecipesRouteAccess(projectId, () => {
-    return <RecipesPage projectId={projectId} />;
+    return <RecipeEditorPage projectId={projectId} mode="create" />;
   });
 };
 
-export default RecipesPageRoute;
+export default RecipesCreationPageRoute;

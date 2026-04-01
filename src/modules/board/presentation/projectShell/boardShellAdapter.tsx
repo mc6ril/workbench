@@ -43,7 +43,7 @@ type Props = {
 
 const EMPTY_PROJECT_MEMBERS: ProjectMember[] = [];
 
-const BoardShellAdapter = ({ projectId }: Props) => {
+const BoardShellContributionAdapter = ({ projectId }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -314,6 +314,19 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   useRegisterProjectViewContribution(contribution);
 
   return null;
+};
+
+const BoardShellAdapter = ({ projectId }: Props) => {
+  const pathname = usePathname();
+  const currentViewKey = useMemo(() => {
+    return getProjectViewKeyFromPath(normalizePath(pathname), projectId);
+  }, [pathname, projectId]);
+
+  if (currentViewKey === PROJECT_VIEWS.RECIPES) {
+    return null;
+  }
+
+  return <BoardShellContributionAdapter projectId={projectId} />;
 };
 
 export default BoardShellAdapter;

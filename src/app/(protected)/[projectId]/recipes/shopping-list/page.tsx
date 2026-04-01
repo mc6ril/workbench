@@ -1,7 +1,7 @@
-import RecipesPage from "@/modules/recipes/presentation/pages/recipes";
 import { withRecipesRouteAccess } from "@/modules/recipes/presentation/pages/shared/withRecipesRouteAccess";
+import RecipesShoppingPage from "@/modules/recipes/presentation/pages/shopping";
 
-const RecipesPageRoute = async ({
+const RecipesShoppingPageRoute = async ({
   params,
 }: {
   params: Promise<{ projectId: string }>;
@@ -9,8 +9,8 @@ const RecipesPageRoute = async ({
   const { projectId } = await params;
 
   return withRecipesRouteAccess(projectId, () => {
-    return <RecipesPage projectId={projectId} />;
+    return <RecipesShoppingPage projectId={projectId} />;
   });
 };
 
-export default RecipesPageRoute;
+export default RecipesShoppingPageRoute;

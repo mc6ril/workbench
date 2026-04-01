@@ -1,16 +1,10 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { loadNormalizedMigrationSql } from "./loadMigrationSql";
 
 import { WEEKLY_TICKET_ARCHIVE_TIME_ZONE } from "@/modules/board/core/domain/rules/ticketArchival.rules";
 
-const migrationPath = join(
-  process.cwd(),
-  "supabase/migrations/000044_weekly_ticket_archival.sql"
+const normalizedSql = loadNormalizedMigrationSql(
+  "000044_weekly_ticket_archival.sql"
 );
-
-const normalizedSql = readFileSync(migrationPath, "utf8")
-  .replace(/\s+/g, " ")
-  .trim();
 
 describe("000044_weekly_ticket_archival.sql", () => {
   it("uses the configured timezone and the current local week boundary", () => {

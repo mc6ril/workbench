@@ -7,6 +7,7 @@ import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
 import ProjectShell from "@/domains/project/presentation/layouts/projectShell/ProjectShell";
 import BoardShellAdapter from "@/modules/board/presentation/projectShell/boardShellAdapter";
+import RecipesShellAdapter from "@/modules/recipes/presentation/projectShell/recipesShellAdapter";
 
 const logger = createLoggerFactory().forScope("ProjectLayout");
 
@@ -55,7 +56,12 @@ const ProjectLayout = async ({
   return (
     <ProjectShell
       projectId={projectId}
-      shellAdapter={<BoardShellAdapter projectId={projectId} />}
+      shellAdapter={
+        <>
+          <BoardShellAdapter projectId={projectId} />
+          <RecipesShellAdapter projectId={projectId} />
+        </>
+      }
     >
       {children}
     </ProjectShell>

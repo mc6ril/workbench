@@ -1,7 +1,7 @@
-import RecipesPage from "@/modules/recipes/presentation/pages/recipes";
+import RecipesQuickListPage from "@/modules/recipes/presentation/pages/quickList";
 import { withRecipesRouteAccess } from "@/modules/recipes/presentation/pages/shared/withRecipesRouteAccess";
 
-const RecipesPageRoute = async ({
+const RecipesQuickListPageRoute = async ({
   params,
 }: {
   params: Promise<{ projectId: string }>;
@@ -9,8 +9,8 @@ const RecipesPageRoute = async ({
   const { projectId } = await params;
 
   return withRecipesRouteAccess(projectId, () => {
-    return <RecipesPage projectId={projectId} />;
+    return <RecipesQuickListPage projectId={projectId} />;
   });
 };
 
-export default RecipesPageRoute;
+export default RecipesQuickListPageRoute;
