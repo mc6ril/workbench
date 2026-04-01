@@ -1,31 +1,24 @@
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
 
+import {
+  formatRecipeIngredientLabel,
+  isAdditionCandidateIngredient,
+} from "@/modules/recipes/core/domain/recipe.types";
+import type { ShoppingList } from "@/modules/recipes/core/domain/shopping/shoppingList.types";
 import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";
 
 type Props = {
   href: string;
+  shoppingList: ShoppingList;
+  ctaLabel?: string;
 };
 
-const SHOPPING_GROUPS = [
-  {
-    title: "Primeur",
-    items: [
-      { label: "2 citrons jaunes", checked: true },
-      { label: "1 concombre mini", checked: false },
-      { label: "1 botte de coriandre", checked: false },
-    ],
-  },
-  {
-    title: "Epicerie",
-    items: [
-      { label: "180 g de riz basmati", checked: true },
-      { label: "1 sachet de sumac", checked: false },
-    ],
-  },
-];
-
-const ShoppingSummaryCard = ({ href }: Props) => {
+const ShoppingSummaryCard = ({
+  href,
+  shoppingList,
+  ctaLabel = "Ouvrir la shopping list",
+}: Props) => {
   return (
     <Card
       variant="outlined"
@@ -33,40 +26,91 @@ const ShoppingSummaryCard = ({ href }: Props) => {
         <div className={styles["recipes-scaffold__panel-head"]}>
           <p className={styles["recipes-scaffold__panel-kicker"]}>Courses</p>
           <h2 className={styles["recipes-scaffold__panel-title"]}>
-            Checklist future-proof
+            Liste generee a partir des ingredients normalises
           </h2>
         </div>
       }
-      footer={<Link href={href}>Ouvrir la shopping list</Link>}
+      footer={<Link href={href}>{ctaLabel}</Link>}
     >
       <p className={styles["recipes-scaffold__panel-copy"]}>
-        La structure shopping est separee du catalogue des maintenant, pour
-        brancher la vraie aggregation plus tard sans refaire les routes.
+        Les ingredients sont regroupes seulement quand le nom normalise,
+        l&apos;unite et la quantite structuree rendent la fusion fiable.
       </p>
-      <div className={styles["recipes-scaffold__checklist"]}>
-        {SHOPPING_GROUPS.map((group) => (
-          <div
-            key={group.title}
-            className={styles["recipes-scaffold__checklist-group"]}
+
+      <div className={styles["recipes-scaffold__shopping-stats"]}>
+        <div className={styles["recipes-scaffold__metric"]}>
+          <span className={styles["recipes-scaffold__metric-value"]}>
+            {shoppingList.pendingCount}
+          </span>
+          <span className={styles["recipes-scaffold__metric-label"]}>
+            lignes encore a acheter
+          </span>
+        </div>
+        <div className={styles["recipes-scaffold__metric"]}>
+          <span className={styles["recipes-scaffold__metric-value"]}>
+            {shoppingList.checkedCount}
+          </span>
+          <span className={styles["recipes-scaffold__metric-label"]}>
+            lignes deja cochees
+          </span>
+        </div>
+      </div>
+
+      <div className={styles["recipes-scaffold__shopping-groups"]}>
+        {shoppingList.groups.map((group) => (
+          <section
+            key={group.id}
+            className={styles["recipes-scaffold__shopping-group"]}
           >
-            <span className={styles["recipes-scaffold__checklist-title"]}>
-              {group.title}
-            </span>
-            {group.items.map((item) => (
-              <span
-                key={item.label}
-                className={[
-                  styles["recipes-scaffold__checklist-item"],
-                  item.checked &&
-                    styles["recipes-scaffold__checklist-item--checked"],
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
-              >
-                {item.label}
+            <div className={styles["recipes-scaffold__shopping-group-head"]}>
+              <h3 className={styles["recipes-scaffold__shopping-group-title"]}>
+                {group.title}
+              </h3>
+              <span className={styles["recipes-scaffold__helper"]}>
+                {group.items.length} ligne{group.items.length > 1 ? "s" : ""}
               </span>
-            ))}
-          </div>
+            </div>
+
+            <div className={styles["recipes-scaffold__shopping-items"]}>
+              {group.items.map((item) => {
+                const isAddition = isAdditionCandidateIngredient(item.ingredient);
+
+                return (
+                  <article
+                    key={item.id}
+                    className={[
+                      styles["recipes-scaffold__shopping-item"],
+                      item.checked &&
+                        styles["recipes-scaffold__shopping-item--checked"],
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                  >
+                    <div className={styles["recipes-scaffold__shopping-item-top"]}>
+                      <p className={styles["recipes-scaffold__shopping-item-label"]}>
+                        {formatRecipeIngredientLabel(item.ingredient)}
+                      </p>
+                      {isAddition ? (
+                        <span className={styles["recipes-scaffold__pill"]}>
+                          Ajout a tester
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <p className={styles["recipes-scaffold__shopping-item-recipes"]}>
+                      {item.recipes.map((recipe) => recipe.title).join(", ")}
+                    </p>
+
+                    {item.ingredient.notes ? (
+                      <p className={styles["recipes-scaffold__shopping-item-note"]}>
+                        {item.ingredient.notes}
+                      </p>
+                    ) : null}
+                  </article>
+                );
+              })}
+            </div>
+          </section>
         ))}
       </div>
     </Card>

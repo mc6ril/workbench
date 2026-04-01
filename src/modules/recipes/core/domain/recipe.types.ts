@@ -1,3 +1,11 @@
+import {
+  formatRecipeIngredientAmountValue,
+  normalizeRecipeIngredientAmount,
+  normalizeRecipeIngredientName,
+  normalizeRecipeIngredientText,
+  normalizeRecipeIngredientUnit,
+} from "@/modules/recipes/core/domain/ingredientFormat";
+
 export const RECIPE_INGREDIENT_KIND_VALUES = [
   "validated",
   "addition_candidate",
@@ -67,27 +75,21 @@ type CreateRecipeIngredientInput = {
   kind?: RecipeIngredientKind;
 };
 
-const normalizeOptionalText = (value?: string | null): string | null => {
-  if (!value) {
-    return null;
-  }
-
-  const normalized = value.trim().replace(/\s+/g, " ");
-
-  return normalized || null;
-};
-
-export const normalizeRecipeIngredientName = (value: string): string => {
-  const normalized = normalizeOptionalText(value);
-
-  return normalized ? normalized.toLocaleLowerCase() : "";
+export type CreateRecipeIngredientFromDraftInput = {
+  id: string;
+  displayName: string;
+  amount?: string | null;
+  unit?: string | null;
+  notes?: string | null;
+  kind?: RecipeIngredientKind;
 };
 
 export const resolveRecipeIngredientAmountText = ({
   amountValue,
   amountText,
 }: Pick<CreateRecipeIngredientInput, "amountValue" | "amountText">): string | null => {
-  const normalizedAmountText = normalizeOptionalText(amountText);
+  const normalizedAmountText =
+    normalizeRecipeIngredientAmount(amountText).amountText;
 
   if (normalizedAmountText) {
     return normalizedAmountText;
@@ -97,26 +99,41 @@ export const resolveRecipeIngredientAmountText = ({
     return null;
   }
 
-  return amountValue.toString();
+  return formatRecipeIngredientAmountValue(amountValue);
 };
 
 export const createRecipeIngredient = (
   input: CreateRecipeIngredientInput
 ): RecipeIngredient => {
-  const displayName = normalizeOptionalText(input.displayName) ?? "";
+  const displayName = normalizeRecipeIngredientText(input.displayName) ?? "";
 
   return {
     id: input.id,
     displayName,
     normalizedName:
-      normalizeOptionalText(input.normalizedName) ??
-      normalizeRecipeIngredientName(displayName),
+      normalizeRecipeIngredientName(input.normalizedName ?? displayName),
     amountValue: input.amountValue ?? null,
     amountText: resolveRecipeIngredientAmountText(input),
-    unit: normalizeOptionalText(input.unit),
-    notes: normalizeOptionalText(input.notes),
+    unit: normalizeRecipeIngredientUnit(input.unit),
+    notes: normalizeRecipeIngredientText(input.notes),
     kind: input.kind ?? "validated",
   };
+};
+
+export const createRecipeIngredientFromDraftInput = (
+  input: CreateRecipeIngredientFromDraftInput
+): RecipeIngredient => {
+  const normalizedAmount = normalizeRecipeIngredientAmount(input.amount);
+
+  return createRecipeIngredient({
+    id: input.id,
+    displayName: input.displayName,
+    amountValue: normalizedAmount.amountValue,
+    amountText: normalizedAmount.amountText,
+    unit: input.unit,
+    notes: input.notes,
+    kind: input.kind,
+  });
 };
 
 export const formatRecipeIngredientLabel = (
@@ -132,3 +149,14 @@ export const isAdditionCandidateIngredient = (
 ): boolean => {
   return ingredient.kind === "addition_candidate";
 };
+
+export {
+  formatRecipeIngredientAmountValue,
+  isRecipeIngredientUnitSupported,
+  type NormalizedRecipeIngredientAmount,
+  normalizeRecipeIngredientAmount,
+  normalizeRecipeIngredientName,
+  normalizeRecipeIngredientUnit,
+  RECIPE_INGREDIENT_UNIT_VALUES,
+  type RecipeIngredientUnit,
+} from "@/modules/recipes/core/domain/ingredientFormat";

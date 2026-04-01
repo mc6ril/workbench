@@ -1,5 +1,11 @@
-import Card from "@/shared/design-system/card";
+import { notFound } from "next/navigation";
 
+import Card from "@/shared/design-system/card";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+
+import { RECIPE_INGREDIENT_UNIT_VALUES } from "@/modules/recipes/core/domain/recipe.types";
+import { getRecipeDraft } from "@/modules/recipes/core/usecases/editor/getRecipeDraft";
+import { createEditorRepository } from "@/modules/recipes/infrastructure/supabase/editor/EditorRepository.supabase";
 import RecipeEditorOutlineCard from "@/modules/recipes/presentation/components/editor/RecipeEditorOutlineCard";
 import QuickListSummaryCard from "@/modules/recipes/presentation/components/quickList/QuickListSummaryCard";
 import RecipesPageScaffold from "@/modules/recipes/presentation/pages/shared/RecipesPageScaffold";
@@ -16,14 +22,26 @@ type Props = {
   recipeId?: string;
 };
 
-const RecipeEditorPage = ({ projectId, mode, recipeId }: Props) => {
+const RecipeEditorPage = async ({ projectId, mode, recipeId }: Props) => {
   const isCreate = mode === "create";
+  const supabaseClient = await createSupabaseServerClient();
+  const editorRepository = createEditorRepository(supabaseClient);
+  const draft = await getRecipeDraft({
+    editorRepository,
+  })({
+    projectId,
+    recipeId,
+  });
+
+  if (!draft) {
+    notFound();
+  }
   const pageTitle = isCreate
     ? "Creation d'une recette"
     : "Edition d'une recette";
   const pageDescription = isCreate
-    ? "La route creation entre dans le module sans logique produit cachee. Elle pose juste le bon point d'ancrage pour l'editeur futur."
-    : "La route edition reprend l'intention de la preview: meme confort visuel que la lecture, mais avec une structure proprement separee.";
+    ? "La creation reprend la maquette validee avec un vrai format d'ingredients, sans embarquer encore la sauvegarde ni le parser avance."
+    : "L'edition garde l'intention preview: meme confort de lecture, ingredients normalises et base shopping deja raccordee.";
   const actionHref = isCreate
     ? buildRecipesCatalogRoute(projectId)
     : buildRecipesShoppingRoute(projectId);
@@ -45,27 +63,56 @@ const RecipeEditorPage = ({ projectId, mode, recipeId }: Props) => {
       ]}
       aside={
         <Card variant="outlined">
-          <div className={styles["recipes-scaffold__metric"]}>
-            <span className={styles["recipes-scaffold__metric-value"]}>4</span>
-            <span className={styles["recipes-scaffold__metric-label"]}>
-              blocs editor verrouilles avant d&apos;ajouter sauvegarde,
-              validations et draft serveur.
-            </span>
+          <div className={styles["recipes-scaffold__stack"]}>
+            <div className={styles["recipes-scaffold__panel-head"]}>
+              <p className={styles["recipes-scaffold__panel-kicker"]}>
+                Regles actives
+              </p>
+              <h2 className={styles["recipes-scaffold__panel-title"]}>
+                Format minimum fiable
+              </h2>
+            </div>
+            <ul className={styles["recipes-scaffold__list"]}>
+              <li>Quantites structurees: `2`, `2.5`, `1/2`.</li>
+              <li>Unites v1: {RECIPE_INGREDIENT_UNIT_VALUES.join(", ")}.</li>
+              <li>Fallback conserve `amountText` si la quantite reste libre.</li>
+              <li>Aucune fusion automatique si un ingredient reste ambigu.</li>
+            </ul>
           </div>
         </Card>
       }
     >
-      <div className={styles["recipes-scaffold__grid"]}>
-        <RecipeEditorOutlineCard href={actionHref} mode={mode} />
-        <QuickListSummaryCard
-          href={buildRecipesQuickListRoute(projectId)}
-          variant={isCreate ? "empty" : "active"}
-        />
+      <div className={styles["recipes-scaffold__split"]}>
+        <RecipeEditorOutlineCard href={actionHref} mode={mode} draft={draft} />
+        <div className={styles["recipes-scaffold__stack"]}>
+          <QuickListSummaryCard
+            href={buildRecipesQuickListRoute(projectId)}
+            variant={isCreate ? "empty" : "active"}
+          />
+          <Card variant="outlined">
+            <div className={styles["recipes-scaffold__stack"]}>
+              <div className={styles["recipes-scaffold__panel-head"]}>
+                <p className={styles["recipes-scaffold__panel-kicker"]}>
+                  Normalisation
+                </p>
+                <h2 className={styles["recipes-scaffold__panel-title"]}>
+                  Une meme base pour edition et courses
+                </h2>
+              </div>
+              <p className={styles["recipes-scaffold__panel-copy"]}>
+                Le draft renvoie deja des ingredients nettoyes avec
+                `displayName`, `normalizedName`, `amountValue`, `amountText` et
+                `unit` distincts.
+              </p>
+            </div>
+          </Card>
+        </div>
       </div>
 
       <p className={styles["recipes-scaffold__note"]}>
-        Hors scope etape 2: formulaire reel, upload d&apos;image, sauvegarde,
-        gestion des tags et edition basee sur une recette persistee
+        Hors scope etape 4: sauvegarde, validation formulaire interactive,
+        edition connectee a une vraie persistance Recipes, upload d&apos;image et
+        arbitrage post-done des ajouts
         {recipeId ? ` (${recipeId}).` : "."}
       </p>
     </RecipesPageScaffold>

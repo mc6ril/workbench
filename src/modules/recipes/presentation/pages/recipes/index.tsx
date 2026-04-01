@@ -1,6 +1,13 @@
+import { notFound } from "next/navigation";
+
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
+import { getRecipeDraft } from "@/modules/recipes/core/usecases/editor/getRecipeDraft";
+import { getShoppingList } from "@/modules/recipes/core/usecases/shopping/getShoppingList";
+import { createEditorRepository } from "@/modules/recipes/infrastructure/supabase/editor/EditorRepository.supabase";
+import { createShoppingRepository } from "@/modules/recipes/infrastructure/supabase/shopping/ShoppingRepository.supabase";
 import CatalogPreviewPanel from "@/modules/recipes/presentation/components/catalog/CatalogPreviewPanel";
 import RecipeEditorOutlineCard from "@/modules/recipes/presentation/components/editor/RecipeEditorOutlineCard";
 import QuickListSummaryCard from "@/modules/recipes/presentation/components/quickList/QuickListSummaryCard";
@@ -42,7 +49,22 @@ const ROUTE_BLUEPRINT = [
   },
 ];
 
-const RecipesPage = ({ projectId }: Props) => {
+const RecipesPage = async ({ projectId }: Props) => {
+  const supabaseClient = await createSupabaseServerClient();
+  const editorRepository = createEditorRepository(supabaseClient);
+  const shoppingRepository = createShoppingRepository(supabaseClient);
+  const creationDraft = await getRecipeDraft({
+    editorRepository,
+  })({
+    projectId,
+  });
+
+  if (!creationDraft) {
+    notFound();
+  }
+  const shoppingList = await getShoppingList({
+    shoppingRepository,
+  })(projectId);
   const quickListHref = buildRecipesQuickListRoute(projectId);
   const shoppingHref = buildRecipesShoppingRoute(projectId);
   const createHref = buildRecipeCreationRoute(projectId);
@@ -150,8 +172,13 @@ const RecipesPage = ({ projectId }: Props) => {
         />
 
         <QuickListSummaryCard href={quickListHref} variant="empty" />
-        <ShoppingSummaryCard href={shoppingHref} />
-        <RecipeEditorOutlineCard href={createHref} mode="create" />
+        <ShoppingSummaryCard href={shoppingHref} shoppingList={shoppingList} />
+        <RecipeEditorOutlineCard
+          href={createHref}
+          mode="create"
+          draft={creationDraft}
+          ctaLabel="Ouvrir la creation"
+        />
       </div>
 
       <section className={styles["recipes-scaffold__section"]}>
@@ -218,21 +245,22 @@ const RecipesPage = ({ projectId }: Props) => {
             Volontairement hors scope
           </p>
           <h2 className={styles["recipes-scaffold__panel-title"]}>
-            L&apos;etape 2 s&apos;arrete a l&apos;ossature.
+            La foundation Recipes reste volontairement partielle.
           </h2>
         </div>
         <ul className={styles["recipes-scaffold__list"]}>
           <li>
-            Aucune vraie persistance Recipes n&apos;est branchee cote produit.
+            Aucune vraie persistance Recipes n&apos;est encore branchee cote
+            produit.
           </li>
           <li>Le catalogue ne charge pas encore de vraies recettes.</li>
           <li>
-            La quick list, la shopping list et l&apos;editor restent
-            squelettiques.
+            La quick list reste illustrative et ne pilote pas encore toute la
+            generation.
           </li>
           <li>
-            Le flow done et les comportements mobile restent reserves aux etapes
-            suivantes.
+            Le flow done et les comportements mobile restent reserves aux
+            etapes suivantes.
           </li>
         </ul>
         <div className={styles["recipes-scaffold__actions"]}>

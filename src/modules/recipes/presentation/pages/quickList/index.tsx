@@ -1,5 +1,8 @@
 import Card from "@/shared/design-system/card";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
+import { getShoppingList } from "@/modules/recipes/core/usecases/shopping/getShoppingList";
+import { createShoppingRepository } from "@/modules/recipes/infrastructure/supabase/shopping/ShoppingRepository.supabase";
 import QuickListSummaryCard from "@/modules/recipes/presentation/components/quickList/QuickListSummaryCard";
 import ShoppingSummaryCard from "@/modules/recipes/presentation/components/shopping/ShoppingSummaryCard";
 import RecipesPageScaffold from "@/modules/recipes/presentation/pages/shared/RecipesPageScaffold";
@@ -13,7 +16,13 @@ type Props = {
   projectId: string;
 };
 
-const RecipesQuickListPage = ({ projectId }: Props) => {
+const RecipesQuickListPage = async ({ projectId }: Props) => {
+  const supabaseClient = await createSupabaseServerClient();
+  const shoppingRepository = createShoppingRepository(supabaseClient);
+  const shoppingList = await getShoppingList({
+    shoppingRepository,
+  })(projectId);
+
   return (
     <RecipesPageScaffold
       eyebrow="Recipes / quick list"
@@ -45,7 +54,10 @@ const RecipesQuickListPage = ({ projectId }: Props) => {
           href={buildRecipesCatalogRoute(projectId)}
           variant="active"
         />
-        <ShoppingSummaryCard href={buildRecipesShoppingRoute(projectId)} />
+        <ShoppingSummaryCard
+          href={buildRecipesShoppingRoute(projectId)}
+          shoppingList={shoppingList}
+        />
       </div>
 
       <p className={styles["recipes-scaffold__note"]}>

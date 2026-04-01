@@ -1,8 +1,11 @@
 import {
   createRecipeIngredient,
+  createRecipeIngredientFromDraftInput,
   formatRecipeIngredientLabel,
   isAdditionCandidateIngredient,
+  normalizeRecipeIngredientAmount,
   normalizeRecipeIngredientName,
+  normalizeRecipeIngredientUnit,
 } from "@/modules/recipes/core/domain/recipe.types";
 
 describe("normalizeRecipeIngredientName", () => {
@@ -18,7 +21,7 @@ describe("normalizeRecipeIngredientName", () => {
 });
 
 describe("createRecipeIngredient", () => {
-  it("derives a normalized name, amount text and default validated kind", () => {
+  it("derives a normalized name, amount text and canonical unit", () => {
     const ingredient = createRecipeIngredient({
       id: "ingredient-lemon",
       displayName: "  Citron   jaune  ",
@@ -33,7 +36,7 @@ describe("createRecipeIngredient", () => {
       normalizedName: "citron jaune",
       amountValue: 2,
       amountText: "2",
-      unit: "pieces",
+      unit: "piece",
       notes: "zeste + jus",
       kind: "validated",
     });
@@ -52,6 +55,76 @@ describe("createRecipeIngredient", () => {
     expect(ingredient.amountText).toBe("1/2");
     expect(ingredient.kind).toBe("addition_candidate");
     expect(isAdditionCandidateIngredient(ingredient)).toBe(true);
+  });
+});
+
+describe("normalizeRecipeIngredientAmount", () => {
+  it("supports integer, decimal and fractional amounts", () => {
+    expect(normalizeRecipeIngredientAmount("2")).toEqual({
+      amountValue: 2,
+      amountText: "2",
+      isStructured: true,
+    });
+
+    expect(normalizeRecipeIngredientAmount("2.5")).toEqual({
+      amountValue: 2.5,
+      amountText: "2.5",
+      isStructured: true,
+    });
+
+    expect(normalizeRecipeIngredientAmount("1 / 2")).toEqual({
+      amountValue: 0.5,
+      amountText: "1/2",
+      isStructured: true,
+    });
+  });
+
+  it("falls back to amount text when the quantity is not structured", () => {
+    expect(normalizeRecipeIngredientAmount("au gout")).toEqual({
+      amountValue: null,
+      amountText: "au gout",
+      isStructured: false,
+    });
+  });
+});
+
+describe("normalizeRecipeIngredientUnit", () => {
+  it("maps common aliases to the v1 unit list", () => {
+    expect(normalizeRecipeIngredientUnit(" C. a s. ")).toBe("cs");
+    expect(normalizeRecipeIngredientUnit("Pieces")).toBe("piece");
+  });
+
+  it("keeps unknown units as normalized free text", () => {
+    expect(normalizeRecipeIngredientUnit("Sachet")).toBe("sachet");
+  });
+});
+
+describe("createRecipeIngredientFromDraftInput", () => {
+  it("keeps display name and normalized name separated", () => {
+    const ingredient = createRecipeIngredientFromDraftInput({
+      id: "ingredient-sumac",
+      displayName: "  Sumac fumee  ",
+      amount: "1/2",
+      unit: "cc",
+      kind: "addition_candidate",
+    });
+
+    expect(ingredient.displayName).toBe("Sumac fumee");
+    expect(ingredient.normalizedName).toBe("sumac fumee");
+    expect(ingredient.amountValue).toBe(0.5);
+    expect(ingredient.amountText).toBe("1/2");
+    expect(ingredient.unit).toBe("cc");
+  });
+
+  it("preserves amountText when the amount cannot be structured", () => {
+    const ingredient = createRecipeIngredientFromDraftInput({
+      id: "ingredient-pepper",
+      displayName: "Poivre noir",
+      amount: "au gout",
+    });
+
+    expect(ingredient.amountValue).toBeNull();
+    expect(ingredient.amountText).toBe("au gout");
   });
 });
 
