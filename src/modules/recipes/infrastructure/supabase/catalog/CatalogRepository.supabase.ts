@@ -51,7 +51,7 @@ const loadSelectedRecipeIds = async (
 ): Promise<Set<string>> => {
   const { data, error } = await client
     .from("recipe_selections")
-    .select("id, project_id, recipe_id, position, note, servings_count, servings_label, created_at, updated_at")
+    .select("recipe_id")
     .eq("project_id", projectId);
 
   if (error) {
@@ -59,7 +59,9 @@ const loadSelectedRecipeIds = async (
   }
 
   return new Set(
-    ((data ?? []) as RecipeSelectionRow[]).map((selection) => selection.recipe_id)
+    ((data ?? []) as Array<Pick<RecipeSelectionRow, "recipe_id">>).map(
+      (selection) => selection.recipe_id
+    )
   );
 };
 
@@ -142,7 +144,7 @@ const resolveRecipeIdsMatchingTags = async (
 
   const { data: tagData, error: tagError } = await client
     .from("recipe_tags")
-    .select("*")
+    .select("id")
     .eq("project_id", projectId)
     .in("slug", tagSlugs);
 
@@ -150,7 +152,7 @@ const resolveRecipeIdsMatchingTags = async (
     return handleRepositoryError(tagError, "RecipeTag", projectId);
   }
 
-  const tagRows = (tagData ?? []) as RecipeTagRow[];
+  const tagRows = (tagData ?? []) as Array<Pick<RecipeTagRow, "id">>;
 
   if (tagRows.length !== tagSlugs.length) {
     return [];
@@ -159,7 +161,7 @@ const resolveRecipeIdsMatchingTags = async (
   const tagIds = tagRows.map((tag) => tag.id);
   const { data: tagLinkData, error: tagLinkError } = await client
     .from("recipe_tag_links")
-    .select("project_id, recipe_id, tag_id, created_at")
+    .select("recipe_id, tag_id")
     .eq("project_id", projectId)
     .in("tag_id", tagIds);
 
@@ -242,7 +244,7 @@ const listPersistedCatalogTags = async (
 ): Promise<RecipeTag[]> => {
   const { data: tagLinkData, error: tagLinkError } = await client
     .from("recipe_tag_links")
-    .select("project_id, recipe_id, tag_id, created_at")
+    .select("tag_id")
     .eq("project_id", projectId);
 
   if (tagLinkError) {
@@ -250,7 +252,11 @@ const listPersistedCatalogTags = async (
   }
 
   const tagIds = [
-    ...new Set(((tagLinkData ?? []) as RecipeTagLinkRow[]).map((tagLink) => tagLink.tag_id)),
+    ...new Set(
+      ((tagLinkData ?? []) as Array<Pick<RecipeTagLinkRow, "tag_id">>).map(
+        (tagLink) => tagLink.tag_id
+      )
+    ),
   ];
 
   if (tagIds.length === 0) {

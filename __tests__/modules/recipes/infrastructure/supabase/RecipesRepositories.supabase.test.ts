@@ -421,6 +421,35 @@ describe("Recipes Supabase repositories", () => {
     ]);
   });
 
+  it("short-circuits catalog listing when at least one requested tag is missing", async () => {
+    const filterTagsQuery = createQueryBuilderMock<Array<Pick<RecipeTagRow, "id">>>([
+      { id: tagId },
+    ]);
+    const persistedRecipesQuery = createQueryBuilderMock<Array<Pick<RecipeRow, "id">>>([
+      { id: recipeId },
+    ]);
+    const client = createClient({
+      recipes: persistedRecipesQuery,
+      recipe_tags: [filterTagsQuery],
+    });
+
+    const repository = createCatalogRepository(client);
+    const recipes = await repository.listByProject({
+      projectId,
+      filters: {
+        search: "",
+        tagSlugs: ["rapide", "inexistant"],
+      },
+    });
+
+    expect(filterTagsQuery.in).toHaveBeenCalledWith("slug", [
+      "inexistant",
+      "rapide",
+    ]);
+    expect(persistedRecipesQuery.limit).toHaveBeenCalledWith(1);
+    expect(recipes).toEqual([]);
+  });
+
   it("lists recipe tags for the catalogue from persisted links", async () => {
     const tagLinksQuery = createQueryBuilderMock<RecipeTagLinkRow[]>([
       tagLinkRow,

@@ -2,6 +2,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 
+import {
+  mapRecipeIngredientRowToDomain,
+  mapShoppingListItemIngredientRowToDomain,
+} from "./ingredientMappers";
 import type {
   RecipeIngredientRow,
   RecipeRow,
@@ -19,7 +23,6 @@ import type {
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
 import {
-  createRecipeIngredient,
   type Recipe,
   type RecipeSelection,
   type RecipeTag,
@@ -49,21 +52,6 @@ const mapRecipeStepRowToDomain = (row: RecipeStepRow): Recipe["steps"][number] =
     notes: row.notes,
     meta: row.meta,
   };
-};
-
-const mapRecipeIngredientRowToDomain = (
-  row: RecipeIngredientRow
-): Recipe["ingredients"][number] => {
-  return createRecipeIngredient({
-    id: row.id,
-    displayName: row.display_name,
-    normalizedName: row.normalized_name,
-    amountValue: row.amount_value,
-    amountText: row.amount_text,
-    unit: row.unit,
-    notes: row.notes,
-    kind: row.kind,
-  });
 };
 
 const mapLoadedRecipeGraphToRecipe = (graph: LoadedRecipeGraph): Recipe => {
@@ -178,16 +166,7 @@ export const mapShoppingListItemRowToDomain = (
 ) => {
   return {
     id: row.id,
-    ingredient: createRecipeIngredient({
-      id: row.id,
-      displayName: row.display_name,
-      normalizedName: row.normalized_name,
-      amountValue: row.amount_value,
-      amountText: row.amount_text,
-      unit: row.unit,
-      notes: row.notes,
-      kind: row.ingredient_kind,
-    }),
+    ingredient: mapShoppingListItemIngredientRowToDomain(row),
     checked: row.checked,
     recipes: parseShoppingListRecipeSources(row.recipe_sources),
   };

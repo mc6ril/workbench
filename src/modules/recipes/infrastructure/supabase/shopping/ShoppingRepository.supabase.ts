@@ -2,10 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 
-import {
-  createRecipeIngredient,
-  type RecipeIngredient,
-} from "@/modules/recipes/core/domain/recipe.types";
+import type { RecipeIngredient } from "@/modules/recipes/core/domain/recipe.types";
 import {
   buildShoppingIngredientMergeKey,
   buildShoppingListFromSources,
@@ -22,6 +19,7 @@ import {
   type ShoppingList,
 } from "@/modules/recipes/core/domain/shopping/shoppingList.types";
 import type { ShoppingRepository } from "@/modules/recipes/core/ports/shopping/shoppingRepository";
+import { mapRecipeIngredientRowToDomain } from "@/modules/recipes/infrastructure/supabase/shared/ingredientMappers";
 import type {
   RecipeIngredientRow,
   RecipeRow,
@@ -51,19 +49,6 @@ type ShoppingGenerationSource = ShoppingListIngredientSource & {
 
 const createEmptyShoppingList = (): ShoppingList => {
   return buildShoppingList([]);
-};
-
-const mapIngredientRowToDomain = (row: RecipeIngredientRow): RecipeIngredient => {
-  return createRecipeIngredient({
-    id: row.id,
-    displayName: row.display_name,
-    normalizedName: row.normalized_name,
-    amountValue: row.amount_value,
-    amountText: row.amount_text,
-    unit: row.unit,
-    notes: row.notes,
-    kind: row.kind,
-  });
 };
 
 const buildDistinctPersistedItemKey = (
@@ -115,21 +100,7 @@ const buildCheckedStateLookup = (itemRows: ShoppingListItemRow[]) => {
   >();
 
   for (const row of itemRows) {
-    const ingredient = mapIngredientRowToDomain({
-      id: row.id,
-      project_id: row.project_id,
-      recipe_id: "",
-      position: row.position,
-      display_name: row.display_name,
-      normalized_name: row.normalized_name,
-      amount_value: row.amount_value,
-      amount_text: row.amount_text,
-      unit: row.unit,
-      notes: row.notes,
-      kind: row.ingredient_kind,
-      created_at: row.created_at,
-      updated_at: row.updated_at,
-    });
+    const ingredient = mapShoppingListItemRowToDomain(row).ingredient;
 
     if (canMergeShoppingIngredient(ingredient)) {
       mergeableItemsByKey.set(
@@ -379,7 +350,7 @@ const buildSourcesFromSelections = (
       const ingredientRows = ingredientsByRecipeId.get(selection.recipe_id) ?? [];
 
       return ingredientRows.map((ingredientRow) => {
-        const ingredient = mapIngredientRowToDomain(ingredientRow);
+        const ingredient = mapRecipeIngredientRowToDomain(ingredientRow);
         const group = resolveShoppingIngredientGroup(ingredient);
 
         return {

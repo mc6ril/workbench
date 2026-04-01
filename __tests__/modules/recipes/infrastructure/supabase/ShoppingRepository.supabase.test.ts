@@ -322,4 +322,64 @@ describe("createShoppingRepository", () => {
     expect(updateByProject).toHaveBeenCalledWith("project_id", projectId);
     expect(updateById).toHaveBeenCalledWith("id", "item-1");
   });
+
+  it("clears persisted shopping items when no selection remains active", async () => {
+    const single = jest.fn().mockResolvedValue({
+      data: shoppingListRow,
+      error: null,
+    });
+    const selectShoppingList = jest.fn().mockReturnValue({ single });
+    const upsertShoppingList = jest.fn().mockReturnValue({
+      select: selectShoppingList,
+    });
+    const shoppingListQuery = {
+      upsert: upsertShoppingList,
+    };
+    const existingItemsQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      order: jest.fn(),
+    };
+    existingItemsQuery.order
+      .mockReturnValueOnce(existingItemsQuery)
+      .mockResolvedValueOnce({
+        data: existingItemRows,
+        error: null,
+      });
+    const selectionQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      order: jest.fn().mockResolvedValue({
+        data: [],
+        error: null,
+      }),
+    };
+    const deleteByList = jest.fn().mockResolvedValue({
+      error: null,
+    });
+    const deleteByProject = jest.fn().mockReturnValue({
+      eq: deleteByList,
+    });
+    const deleteItemsQuery = {
+      delete: jest.fn().mockReturnValue({
+        eq: deleteByProject,
+      }),
+    };
+    const insert = jest.fn();
+    const client = createClientMock({
+      shopping_lists: [shoppingListQuery],
+      shopping_list_items: [existingItemsQuery, deleteItemsQuery, { insert }],
+      recipe_selections: [selectionQuery],
+    });
+    const repository = createShoppingRepository(client);
+
+    const shoppingList = await repository.generateShoppingList(projectId);
+
+    expect(deleteByProject).toHaveBeenCalledWith("project_id", projectId);
+    expect(deleteByList).toHaveBeenCalledWith("shopping_list_id", shoppingListId);
+    expect(insert).not.toHaveBeenCalled();
+    expect(shoppingList.groups).toEqual([]);
+    expect(shoppingList.checkedCount).toBe(0);
+    expect(shoppingList.pendingCount).toBe(0);
+  });
 });

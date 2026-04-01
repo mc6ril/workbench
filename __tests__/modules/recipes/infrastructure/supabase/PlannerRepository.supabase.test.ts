@@ -158,6 +158,45 @@ describe("createPlannerRepository", () => {
     });
   });
 
+  it("reuses an existing selection instead of inserting a duplicate", async () => {
+    const existingSelectionQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn().mockResolvedValue({
+        data: selection,
+        error: null,
+      }),
+    };
+    const recipeQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn().mockResolvedValue({
+        data: recipe,
+        error: null,
+      }),
+    };
+    const client = createClientMock({
+      recipe_selections: [existingSelectionQuery],
+      recipes: [recipeQuery],
+    });
+    const repository = createPlannerRepository(client);
+
+    await expect(
+      repository.selectRecipe({
+        projectId: "project-1",
+        recipeId: "recipe-1",
+      })
+    ).resolves.toEqual({
+      id: "selection-1",
+      recipeId: "recipe-1",
+      title: "Poulet citron",
+      note: "Mardi soir.",
+      servingsCount: 4,
+      servingsLabel: "4 portions",
+      status: "active",
+    });
+  });
+
   it("marks a selection as done by deleting it and returning a done payload", async () => {
     const selectionQuery = {
       select: jest.fn().mockReturnThis(),
