@@ -1,5 +1,6 @@
 export { useListRecipes } from "./catalog/listRecipes";
 export { useListRecipeTags } from "./catalog/listRecipeTags";
+export { usePromoteRecipeAddition } from "./editor/usePromoteRecipeAddition";
 export { useListActiveSelections } from "./planner/listActiveSelections";
 export { useMarkSelectionDone } from "./planner/useMarkSelectionDone";
 export { useRemoveSelection } from "./planner/useRemoveSelection";

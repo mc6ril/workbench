@@ -77,3 +77,9 @@ export type CreateRecipeInput = PersistedRecipeInput;
 export type UpdateRecipeInput = PersistedRecipeInput & {
   recipeId: string;
 };
+
+export type PromoteRecipeAdditionInput = {
+  projectId: string;
+  recipeId: string;
+  ingredientId: string;
+};

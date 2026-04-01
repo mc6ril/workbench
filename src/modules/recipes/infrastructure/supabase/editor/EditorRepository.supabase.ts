@@ -9,6 +9,7 @@ import type {
   PersistedRecipeIngredientInput,
   PersistedRecipeStepInput,
   PersistedRecipeTagInput,
+  PromoteRecipeAdditionInput,
   UpdateRecipeInput,
 } from "@/modules/recipes/core/domain/editor/recipeEditor.types";
 import type { EditorRepository } from "@/modules/recipes/core/ports/editor/editorRepository";
@@ -264,6 +265,31 @@ const syncRecipeGraph = async (
   await replaceRecipeTagLinks(client, input.projectId, recipeId, input.tags);
 };
 
+const promoteAdditionToValidated = async (
+  client: SupabaseClient,
+  input: PromoteRecipeAdditionInput
+) => {
+  const { data, error } = await client
+    .from("recipe_ingredients")
+    .update({
+      kind: "validated",
+    })
+    .eq("project_id", input.projectId)
+    .eq("recipe_id", input.recipeId)
+    .eq("id", input.ingredientId)
+    .eq("kind", "addition_candidate")
+    .select("id")
+    .maybeSingle();
+
+  if (error) {
+    return handleRepositoryError(error, "RecipeIngredient", input.ingredientId);
+  }
+
+  if (!data) {
+    throw createNotFoundError("RecipeIngredient", input.ingredientId);
+  }
+};
+
 /**
  * Step 7:
  * editor reads and writes now target the real Recipes schema with project-scoped
@@ -300,6 +326,10 @@ export const createEditorRepository = (
     }
 
     return ((data ?? []) as RecipeTagRow[]).map(mapRecipeTagRowToDomain);
+  },
+
+  async promoteAdditionToValidated(input) {
+    return promoteAdditionToValidated(client, input);
   },
 
   async createRecipe(input) {

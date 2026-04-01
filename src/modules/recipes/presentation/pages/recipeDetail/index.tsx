@@ -40,11 +40,15 @@ const RecipeDetailPage = async ({ projectId, recipeId }: Props) => {
     notFound();
   }
 
+  const additionCount = recipe.ingredients.filter(
+    (ingredient) => ingredient.kind === "addition_candidate"
+  ).length;
+
   return (
     <RecipesPageScaffold
       eyebrow="Recipes / detail"
       title={recipe.title}
-      description="Cette page reprend l'intention detail de la preview avec une lecture calme et de gros blocs, tout en restant strictement route-level pour cette etape."
+      description="La fiche detail porte maintenant le retour de preparation: ingredients valides, ajouts a tester et decision explicite de validation restent regroupes sur un seul ecran."
       actions={[
         {
           href: buildRecipeEditRoute(projectId, recipeId),
@@ -61,17 +65,26 @@ const RecipeDetailPage = async ({ projectId, recipeId }: Props) => {
       ]}
       aside={
         <Card variant="outlined">
-          <div className={styles["recipes-scaffold__metric"]}>
-            <span className={styles["recipes-scaffold__metric-value"]}>2</span>
-            <span className={styles["recipes-scaffold__metric-label"]}>
-              colonnes maximum pour garder la lecture detail tres simple.
-            </span>
+          <div className={styles["recipes-scaffold__stack"]}>
+            <div className={styles["recipes-scaffold__metric"]}>
+              <span className={styles["recipes-scaffold__metric-value"]}>
+                {additionCount}
+              </span>
+              <span className={styles["recipes-scaffold__metric-label"]}>
+                ajout{additionCount > 1 ? "s" : ""} a arbitrer depuis la fiche.
+              </span>
+            </div>
+            <p className={styles["recipes-scaffold__helper"]}>
+              La validation d&apos;un ajout le fait passer en ingredient valide
+              et garde la shopping list persistée coherente.
+            </p>
           </div>
         </Card>
       }
     >
       <div className={styles["recipes-scaffold__split"]}>
         <RecipeDetailSummaryCard
+          projectId={projectId}
           recipe={recipe}
           editHref={buildRecipeEditRoute(projectId, recipeId)}
           shoppingHref={buildRecipesShoppingRoute(projectId)}

@@ -224,6 +224,59 @@ describe("Recipes Supabase repositories", () => {
     expect(draft?.tags[0]?.label).toBe(tagRow.label);
   });
 
+  it("promotes one addition candidate into a validated ingredient", async () => {
+    const selectPromotedIngredient = jest.fn().mockReturnThis();
+    const matchAdditionKind = jest.fn().mockReturnValue({
+      select: selectPromotedIngredient,
+    });
+    const matchIngredientId = jest.fn().mockReturnValue({
+      eq: matchAdditionKind,
+    });
+    const matchRecipeId = jest.fn().mockReturnValue({
+      eq: matchIngredientId,
+    });
+    const matchProjectId = jest.fn().mockReturnValue({
+      eq: matchRecipeId,
+    });
+    const updateIngredient = jest.fn().mockReturnValue({
+      eq: matchProjectId,
+    });
+    const recipeIngredientsQuery = {
+      update: updateIngredient,
+    };
+    selectPromotedIngredient.mockReturnValue({
+      maybeSingle: jest.fn().mockResolvedValue({
+        data: { id: ingredientRow.id },
+        error: null,
+      }),
+    });
+    const client = createClient({
+      recipe_ingredients: [recipeIngredientsQuery],
+    });
+
+    const repository = createEditorRepository(client);
+
+    await expect(
+      repository.promoteAdditionToValidated({
+        projectId,
+        recipeId,
+        ingredientId: ingredientRow.id,
+      })
+    ).resolves.toBeUndefined();
+
+    expect(updateIngredient).toHaveBeenCalledWith({
+      kind: "validated",
+    });
+    expect(matchProjectId).toHaveBeenCalledWith("project_id", projectId);
+    expect(matchRecipeId).toHaveBeenCalledWith("recipe_id", recipeId);
+    expect(matchIngredientId).toHaveBeenCalledWith("id", ingredientRow.id);
+    expect(matchAdditionKind).toHaveBeenCalledWith(
+      "kind",
+      "addition_candidate"
+    );
+    expect(selectPromotedIngredient).toHaveBeenCalledWith("id");
+  });
+
   it("marks catalog detail recipes as part of the quick list when selected", async () => {
     const recipeQuery = createQueryBuilderMock<RecipeRow[]>([recipeRow]);
     const ingredientQuery = createQueryBuilderMock<RecipeIngredientRow[]>([

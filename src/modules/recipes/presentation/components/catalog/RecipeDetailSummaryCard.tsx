@@ -1,4 +1,10 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
 import Badge from "@/shared/design-system/badge";
+import Button from "@/shared/design-system/button";
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
 
@@ -7,25 +13,36 @@ import {
   formatRecipeIngredientLabel,
   isAdditionCandidateIngredient,
 } from "@/modules/recipes/core/domain/recipe.types";
+import { usePromoteRecipeAddition } from "@/modules/recipes/presentation/hooks";
 import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";
 
 type Props = {
+  projectId: string;
   recipe: CatalogRecipeDetail;
   editHref: string;
   shoppingHref: string;
 };
 
 const RecipeDetailSummaryCard = ({
+  projectId,
   recipe,
   editHref,
   shoppingHref,
 }: Props) => {
+  const router = useRouter();
+  const promoteAdditionMutation = usePromoteRecipeAddition();
+  const [keptTemporaryIds, setKeptTemporaryIds] = useState<string[]>([]);
+  const [actionError, setActionError] = useState<string | null>(null);
   const validatedIngredients = recipe.ingredients.filter(
     (ingredient) => !isAdditionCandidateIngredient(ingredient)
   );
   const additionIngredients = recipe.ingredients.filter((ingredient) =>
     isAdditionCandidateIngredient(ingredient)
   );
+
+  const shoppingContinuityCopy = recipe.isInQuickList
+    ? "Tant qu'un ajout reste temporaire, il reste visible dans la shopping list."
+    : "L'ajout reste temporaire dans la recette et reviendra dans les courses si cette recette redevient active.";
 
   return (
     <Card
@@ -54,60 +71,253 @@ const RecipeDetailSummaryCard = ({
         </div>
       }
     >
-      <p className={styles["recipes-scaffold__panel-copy"]}>
-        La route detail garde l&apos;intention preview: lecture calme,
-        ingredients tres visibles, puis etapes faciles a reprendre.
-      </p>
-      <p className={styles["recipes-scaffold__helper"]}>
-        {recipe.isInQuickList
-          ? "Cette recette est active dans la quick list."
-          : "Cette recette reste dans le catalogue tant qu’elle n’est pas sélectionnée."}
-      </p>
-      {recipe.tags.length > 0 ? (
-        <div className={styles["recipes-scaffold__pill-row"]}>
-          {recipe.tags.map((tag) => (
-            <span key={tag.id} className={styles["recipes-scaffold__pill"]}>
-              {tag.label}
+      <div className={styles["recipes-scaffold__stack"]}>
+        <div className={styles["recipes-scaffold__stack"]}>
+          <p className={styles["recipes-scaffold__panel-copy"]}>
+            La fiche garde l&apos;intention preview: ingredients valides,
+            ajouts a tester et etapes restent lisibles sans changer d&apos;ecran.
+          </p>
+          <p className={styles["recipes-scaffold__helper"]}>
+            {recipe.isInQuickList
+              ? "Cette recette est active dans la quick list: les ajouts temporaires ont deja un impact sur les courses."
+              : "Cette recette n'est pas active pour le moment, mais ses ajouts temporaires restent attaches a la recette."}
+          </p>
+          {recipe.tags.length > 0 ? (
+            <div className={styles["recipes-scaffold__pill-row"]}>
+              {recipe.tags.map((tag) => (
+                <span key={tag.id} className={styles["recipes-scaffold__pill"]}>
+                  {tag.label}
+                </span>
+              ))}
+            </div>
+          ) : null}
+        </div>
+
+        <div className={styles["recipes-scaffold__metric-grid"]}>
+          <div className={styles["recipes-scaffold__metric"]}>
+            <span className={styles["recipes-scaffold__metric-value"]}>
+              {recipe.servingsLabel || "-"}
             </span>
-          ))}
+            <span className={styles["recipes-scaffold__metric-label"]}>
+              portions prevues pour cette recette.
+            </span>
+          </div>
+          <div className={styles["recipes-scaffold__metric"]}>
+            <span className={styles["recipes-scaffold__metric-value"]}>
+              {recipe.totalTimeLabel || "-"}
+            </span>
+            <span className={styles["recipes-scaffold__metric-label"]}>
+              temps estime pour reprendre la recette sans surprise.
+            </span>
+          </div>
         </div>
-      ) : null}
-      <div className={styles["recipes-scaffold__field-grid"]}>
-        <div className={styles["recipes-scaffold__field"]}>
-          <p className={styles["recipes-scaffold__field-label"]}>Ingredients</p>
-          <ul className={styles["recipes-scaffold__list"]}>
-            {validatedIngredients.slice(0, 5).map((ingredient) => (
-              <li key={ingredient.id}>
-                {formatRecipeIngredientLabel(ingredient)}
-              </li>
-            ))}
-            {validatedIngredients.length === 0 ? (
-              <li>Aucun ingredient valide pour l&apos;instant.</li>
-            ) : null}
-          </ul>
-        </div>
-        <div className={styles["recipes-scaffold__field"]}>
-          <p className={styles["recipes-scaffold__field-label"]}>Etapes</p>
-          <ul className={styles["recipes-scaffold__list"]}>
-            {recipe.steps.slice(0, 4).map((step) => (
-              <li key={step.id}>
-                Etape {step.position}: {step.instruction}
-              </li>
-            ))}
-            {recipe.steps.length === 0 ? (
-              <li>Aucune etape pour l&apos;instant.</li>
-            ) : null}
-          </ul>
-        </div>
+
+        <section className={styles["recipes-scaffold__detail-section"]}>
+          <div className={styles["recipes-scaffold__detail-section-head"]}>
+            <h3 className={styles["recipes-scaffold__section-title"]}>
+              Ingredients valides
+            </h3>
+            <span className={styles["recipes-scaffold__helper"]}>
+              {validatedIngredients.length} ligne
+              {validatedIngredients.length > 1 ? "s" : ""}
+            </span>
+          </div>
+          {validatedIngredients.length === 0 ? (
+            <div className={styles["recipes-scaffold__empty"]}>
+              <p className={styles["recipes-scaffold__helper"]}>
+                Aucun ingredient valide pour l&apos;instant.
+              </p>
+            </div>
+          ) : (
+            <ul className={styles["recipes-scaffold__detail-list"]}>
+              {validatedIngredients.map((ingredient) => (
+                <li key={ingredient.id}>
+                  <span className={styles["recipes-scaffold__detail-list-label"]}>
+                    {formatRecipeIngredientLabel(ingredient)}
+                  </span>
+                  {ingredient.notes ? (
+                    <span className={styles["recipes-scaffold__detail-list-note"]}>
+                      {ingredient.notes}
+                    </span>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section
+          className={[
+            styles["recipes-scaffold__detail-section"],
+            styles["recipes-scaffold__detail-section--addition"],
+          ]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          <div className={styles["recipes-scaffold__detail-section-head"]}>
+            <h3 className={styles["recipes-scaffold__section-title"]}>
+              Ajouts a tester
+            </h3>
+            <Badge
+              label={
+                recipe.isInQuickList
+                  ? "Inclus dans les courses"
+                  : "Temporaire"
+              }
+              variant={recipe.isInQuickList ? "warning" : "default"}
+              size="small"
+            />
+          </div>
+
+          <p className={styles["recipes-scaffold__helper"]}>
+            {shoppingContinuityCopy}
+          </p>
+
+          {additionIngredients.length === 0 ? (
+            <div className={styles["recipes-scaffold__empty"]}>
+              <p className={styles["recipes-scaffold__helper"]}>
+                Aucun ajout temporaire a arbitrer pour le moment.
+              </p>
+            </div>
+          ) : (
+            <div className={styles["recipes-scaffold__summary-list"]}>
+              {additionIngredients.map((ingredient) => {
+                const isPendingCurrentIngredient =
+                  promoteAdditionMutation.isPending &&
+                  promoteAdditionMutation.variables?.ingredientId ===
+                    ingredient.id;
+
+                return (
+                  <article
+                    key={ingredient.id}
+                    className={styles["recipes-scaffold__detail-addition-card"]}
+                  >
+                    <div className={styles["recipes-scaffold__detail-addition-copy"]}>
+                      <div className={styles["recipes-scaffold__shopping-item-top"]}>
+                        <h4 className={styles["recipes-scaffold__shopping-group-title"]}>
+                          {formatRecipeIngredientLabel(ingredient)}
+                        </h4>
+                        <span className={styles["recipes-scaffold__pill"]}>
+                          Ajout
+                        </span>
+                      </div>
+                      {ingredient.notes ? (
+                        <p className={styles["recipes-scaffold__shopping-item-note"]}>
+                          {ingredient.notes}
+                        </p>
+                      ) : null}
+                      <p className={styles["recipes-scaffold__helper"]}>
+                        {shoppingContinuityCopy}
+                      </p>
+                      {keptTemporaryIds.includes(ingredient.id) ? (
+                        <p className={styles["recipes-scaffold__note"]}>
+                          Rien ne change: cet ajout reste temporaire.
+                        </p>
+                      ) : null}
+                    </div>
+
+                    <div className={styles["recipes-scaffold__detail-addition-actions"]}>
+                      <Button
+                        label={
+                          isPendingCurrentIngredient
+                            ? "Validation..."
+                            : "Valider cet ajout"
+                        }
+                        disabled={promoteAdditionMutation.isPending}
+                        onClick={async () => {
+                          setActionError(null);
+                          setKeptTemporaryIds((currentIds) =>
+                            currentIds.filter((id) => id !== ingredient.id)
+                          );
+
+                          try {
+                            await promoteAdditionMutation.mutateAsync({
+                              projectId,
+                              recipeId: recipe.id,
+                              ingredientId: ingredient.id,
+                            });
+                            router.refresh();
+                          } catch {
+                            setActionError(
+                              "La validation de l'ajout a echoue. Reessayez."
+                            );
+                          }
+                        }}
+                      />
+                      <Button
+                        label="Laisser temporaire"
+                        variant="secondary"
+                        disabled={promoteAdditionMutation.isPending}
+                        onClick={() => {
+                          setActionError(null);
+                          setKeptTemporaryIds((currentIds) => {
+                            if (currentIds.includes(ingredient.id)) {
+                              return currentIds;
+                            }
+
+                            return [...currentIds, ingredient.id];
+                          });
+                        }}
+                      />
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </section>
+
+        <section className={styles["recipes-scaffold__detail-section"]}>
+          <div className={styles["recipes-scaffold__detail-section-head"]}>
+            <h3 className={styles["recipes-scaffold__section-title"]}>
+              Etapes
+            </h3>
+            <span className={styles["recipes-scaffold__helper"]}>
+              {recipe.steps.length} etape{recipe.steps.length > 1 ? "s" : ""}
+            </span>
+          </div>
+
+          {recipe.steps.length === 0 ? (
+            <div className={styles["recipes-scaffold__empty"]}>
+              <p className={styles["recipes-scaffold__helper"]}>
+                Aucune etape pour l&apos;instant.
+              </p>
+            </div>
+          ) : (
+            <div className={styles["recipes-scaffold__step-list"]}>
+              {recipe.steps.map((step) => (
+                <article
+                  key={step.id}
+                  className={styles["recipes-scaffold__step-card"]}
+                >
+                  <div className={styles["recipes-scaffold__step-head"]}>
+                    <span className={styles["recipes-scaffold__step-label"]}>
+                      Etape {step.position}
+                    </span>
+                    {step.meta ? (
+                      <span className={styles["recipes-scaffold__step-meta"]}>
+                        {step.meta}
+                      </span>
+                    ) : null}
+                  </div>
+                  <p className={styles["recipes-scaffold__step-copy"]}>
+                    {step.instruction}
+                  </p>
+                  {step.notes ? (
+                    <p className={styles["recipes-scaffold__shopping-item-note"]}>
+                      {step.notes}
+                    </p>
+                  ) : null}
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {actionError ? (
+          <p className={styles["recipes-scaffold__error"]}>{actionError}</p>
+        ) : null}
       </div>
-      {additionIngredients.length > 0 ? (
-        <p className={styles["recipes-scaffold__note"]}>
-          Ajouts a tester:{" "}
-          {additionIngredients
-            .map((ingredient) => formatRecipeIngredientLabel(ingredient))
-            .join(", ")}
-        </p>
-      ) : null}
     </Card>
   );
 };
