@@ -1,22 +1,28 @@
 import { redirect } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
-import { buildProjectRoute } from "@/shared/utils/routes";
 
+import { getProjectRouteViewState } from "@/domains/project/infrastructure/server/getProjectRouteViewState";
 import {
-  hasProjectModule,
-  ProjectModuleKey,
-} from "@/domains/project/core/domain/projectModule.types";
-import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
+  buildProjectViewHref,
+  canAccessProjectView,
+  getDefaultProjectViewKey,
+} from "@/domains/project/presentation/navigation/projectViews.config";
 
 export const withRecipesRouteAccess = async <T>(
   projectId: string,
   render: () => Promise<T> | T
 ): Promise<T> => {
-  const project = await getProjectForRoute(projectId);
+  const { project, effectivePlan } = await getProjectRouteViewState(projectId);
+  const viewState = {
+    enabledModules: project.enabledModules,
+    effectivePlan,
+  };
 
-  if (!hasProjectModule(project.enabledModules, ProjectModuleKey.RECIPES)) {
-    redirect(buildProjectRoute(projectId, PROJECT_VIEWS.BOARD));
+  if (!canAccessProjectView(PROJECT_VIEWS.RECIPES, viewState)) {
+    redirect(
+      buildProjectViewHref(projectId, getDefaultProjectViewKey(viewState))
+    );
   }
 
   return render();

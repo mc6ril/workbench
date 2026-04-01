@@ -1,7 +1,15 @@
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 
-import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
-import { ProjectModuleKey } from "@/domains/project/core/domain/projectModule.types";
+import {
+  canAccessFeature,
+  getMinimumPlanForFeature,
+  PlanFeature,
+} from "@/domains/billing/core/domain/planFeatures.rules";
+import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
+import {
+  hasProjectModule,
+  ProjectModuleKey,
+} from "@/domains/project/core/domain/projectModule.types";
 
 /** Project view keys available in the project shell. */
 export const PROJECT_VIEW_KEYS = Object.freeze([
@@ -27,6 +35,16 @@ export type ProjectViewConfig = {
   showInSidebar?: boolean;
   requiredFeature?: PlanFeature;
   requiredModule?: ProjectModuleKey;
+};
+
+export type ProjectViewAvailabilityInput = {
+  enabledModules?: readonly ProjectModuleKey[];
+  effectivePlan: SubscriptionPlan;
+};
+
+export type ProjectViewFeatureLockState = {
+  locked: boolean;
+  minimumPlan?: SubscriptionPlan;
 };
 
 type ProjectViewConfigInput = {
@@ -86,6 +104,12 @@ const PROJECT_VIEW_CONFIGS: Record<ProjectViewKey, ProjectViewConfig> =
     ),
   });
 
+const PROJECT_LANDING_VIEW_PRIORITY: readonly ProjectViewKey[] = Object.freeze([
+  PROJECT_VIEWS.RECIPES,
+  PROJECT_VIEWS.BOARD,
+  PROJECT_VIEWS.SETTINGS,
+]);
+
 export const getProjectViewKeyFromPath = (
   pathname: string,
   projectId: string
@@ -108,6 +132,60 @@ export const getProjectViewConfig = (
   key: ProjectViewKey
 ): ProjectViewConfig => {
   return PROJECT_VIEW_CONFIGS[key];
+};
+
+export const isProjectViewModuleEnabled = (
+  key: ProjectViewKey,
+  enabledModules: readonly ProjectModuleKey[] = []
+): boolean => {
+  const config = getProjectViewConfig(key);
+
+  if (!config.requiredModule) {
+    return true;
+  }
+
+  return hasProjectModule(enabledModules, config.requiredModule);
+};
+
+export const getProjectViewFeatureLockState = (
+  key: ProjectViewKey,
+  effectivePlan: SubscriptionPlan
+): ProjectViewFeatureLockState => {
+  const config = getProjectViewConfig(key);
+
+  if (!config.requiredFeature) {
+    return { locked: false };
+  }
+
+  if (canAccessFeature(effectivePlan, config.requiredFeature)) {
+    return { locked: false };
+  }
+
+  return {
+    locked: true,
+    minimumPlan: getMinimumPlanForFeature(config.requiredFeature),
+  };
+};
+
+export const canAccessProjectView = (
+  key: ProjectViewKey,
+  options: ProjectViewAvailabilityInput
+): boolean => {
+  if (!isProjectViewModuleEnabled(key, options.enabledModules)) {
+    return false;
+  }
+
+  return !getProjectViewFeatureLockState(key, options.effectivePlan).locked;
+};
+
+export const getDefaultProjectViewKey = (
+  options: ProjectViewAvailabilityInput
+): ProjectViewKey => {
+  return (
+    PROJECT_LANDING_VIEW_PRIORITY.find((key) => {
+      return canAccessProjectView(key, options);
+    }) ?? PROJECT_VIEWS.BOARD
+  );
 };
 
 export const buildProjectViewHref = (

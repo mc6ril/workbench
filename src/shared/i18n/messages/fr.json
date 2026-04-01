@@ -58,9 +58,11 @@
         },
         "recipes": {
           "status": "Disponible",
+          "lockedStatus": "Plan {plan}",
           "subtitle": "Le module repas du foyer, pensé pour devenir immédiatement désirable dans un projet.",
           "teaser": "Un espace premium pour choisir ses recettes, garder les bons plats sous la main et transformer la semaine en plan d’achats très simple.",
-          "cta": "Ajouter Recipes au projet"
+          "cta": "Ajouter Recipes au projet",
+          "upgradeCta": "Voir l'offre"
         },
         "empty": {
           "badge": "Projet déjà à jour",

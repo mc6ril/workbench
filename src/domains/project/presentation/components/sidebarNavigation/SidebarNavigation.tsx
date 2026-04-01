@@ -3,6 +3,7 @@
 import React, {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -63,8 +64,23 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
     enabledModules: project?.enabledModules,
   });
   const recipesHref = buildProjectViewHref(projectId, PROJECT_VIEWS.RECIPES);
-  const isRecipesEnabled =
-    project?.enabledModules.includes(ProjectModuleKey.RECIPES) ?? false;
+  const recipesItem = useMemo(() => {
+    return items.find((item) => item.key === PROJECT_VIEWS.RECIPES) ?? null;
+  }, [items]);
+  const canShowRecipesModule = recipesItem !== null && !recipesItem.enabled;
+  const canEnableRecipes =
+    recipesItem !== null && !recipesItem.enabled && !recipesItem.locked;
+  const recipesModuleStatusLabel =
+    recipesItem?.locked && recipesItem.planBadge
+      ? t("moduleLibrary.recipes.lockedStatus").replace(
+          "{plan}",
+          recipesItem.planBadge
+        )
+      : t("moduleLibrary.recipes.status");
+  const recipesModuleCtaLabel =
+    recipesItem?.locked && canShowRecipesModule
+      ? t("moduleLibrary.recipes.upgradeCta")
+      : t("moduleLibrary.recipes.cta");
 
   const handleLockedClick = useCallback(() => {
     const from = encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE);
@@ -125,6 +141,19 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
     recipesHref,
     router,
   ]);
+
+  const handleRecipesModuleAction = useCallback(() => {
+    if (!recipesItem) {
+      return;
+    }
+
+    if (recipesItem.locked) {
+      handleLockedClick();
+      return;
+    }
+
+    handleEnableRecipes();
+  }, [handleEnableRecipes, handleLockedClick, recipesItem]);
 
   const handleProfileTriggerClick = useCallback(() => {
     setProfileMenuOpen((prev) => {
@@ -197,12 +226,15 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
     },
     [lockedAriaLabelTemplate]
   );
+  const visibleItems = useMemo(() => {
+    return items.filter((item) => item.enabled);
+  }, [items]);
 
   return (
     <>
       <div className={styles["sidebar-navigation"]}>
         <SidebarNavigationList
-          items={items}
+          items={visibleItems}
           pathname={pathname}
           navListId={navListId}
           addTabLabel={t("addTab")}
@@ -247,13 +279,13 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
             {t("moduleLibrary.intro")}
           </p>
 
-          {!isRecipesEnabled ? (
+          {canShowRecipesModule ? (
             <div className={styles["sidebar-navigation__module-layout"]}>
               <div className={styles["sidebar-navigation__module-list"]}>
                 <button
                   type="button"
                   className={styles["sidebar-navigation__module-list-item"]}
-                  onClick={handleEnableRecipes}
+                  onClick={handleRecipesModuleAction}
                 >
                   <div
                     className={styles["sidebar-navigation__module-card-header"]}
@@ -281,8 +313,8 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
                       </div>
                     </div>
                     <Badge
-                      label={t("moduleLibrary.recipes.status")}
-                      variant="info"
+                      label={recipesModuleStatusLabel}
+                      variant={recipesItem?.locked ? "warning" : "info"}
                       size="small"
                     />
                   </div>
@@ -355,9 +387,11 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
                     className={styles["sidebar-navigation__module-actions"]}
                   >
                     <Button
-                      label={t("moduleLibrary.recipes.cta")}
-                      onClick={handleEnableRecipes}
-                      disabled={enableProjectModuleMutation.isPending}
+                      label={recipesModuleCtaLabel}
+                      onClick={handleRecipesModuleAction}
+                      disabled={
+                        canEnableRecipes && enableProjectModuleMutation.isPending
+                      }
                     />
                   </div>
                 </div>

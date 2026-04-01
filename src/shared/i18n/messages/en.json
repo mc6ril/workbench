@@ -58,9 +58,11 @@
         },
         "recipes": {
           "status": "Available",
+          "lockedStatus": "{plan} plan",
           "subtitle": "The household meals module, designed to feel desirable as soon as it lands in a project.",
           "teaser": "A premium space to pick recipes, keep the right meals close, and turn the week into a very simple shopping plan.",
-          "cta": "Add Recipes to the project"
+          "cta": "Add Recipes to the project",
+          "upgradeCta": "See plans"
         },
         "empty": {
           "badge": "Project up to date",

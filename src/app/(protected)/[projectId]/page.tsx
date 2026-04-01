@@ -1,10 +1,14 @@
 import { redirect } from "next/navigation";
 
-import { PROJECT_VIEWS } from "@/shared/constants/routes";
+import { getProjectRouteViewState } from "@/domains/project/infrastructure/server/getProjectRouteViewState";
+import {
+  buildProjectViewHref,
+  getDefaultProjectViewKey,
+} from "@/domains/project/presentation/navigation/projectViews.config";
 
 /**
  * Project root page.
- * This route redirects to the board view to keep a single default flow.
+ * This route redirects to the first accessible project view.
  */
 const ProjectPage = async ({
   params,
@@ -12,7 +16,13 @@ const ProjectPage = async ({
   params: Promise<{ projectId: string }>;
 }) => {
   const { projectId } = await params;
-  redirect(`/${projectId}/${PROJECT_VIEWS.BOARD}`);
+  const { project, effectivePlan } = await getProjectRouteViewState(projectId);
+  const defaultViewKey = getDefaultProjectViewKey({
+    enabledModules: project.enabledModules,
+    effectivePlan,
+  });
+
+  redirect(buildProjectViewHref(projectId, defaultViewKey));
 };
 
 export default ProjectPage;

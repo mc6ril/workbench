@@ -58,9 +58,11 @@
         },
         "recipes": {
           "status": "Disponible",
+          "lockedStatus": "Plan {plan}",
           "subtitle": "El módulo de comidas del hogar, pensado para resultar deseable en cuanto entra en un proyecto.",
           "teaser": "Un espacio premium para elegir recetas, tener a mano los platos adecuados y convertir la semana en un plan de compras muy simple.",
-          "cta": "Añadir Recipes al proyecto"
+          "cta": "Añadir Recipes al proyecto",
+          "upgradeCta": "Ver planes"
         },
         "empty": {
           "badge": "Proyecto al día",
