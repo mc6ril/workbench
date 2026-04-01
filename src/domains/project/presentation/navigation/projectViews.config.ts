@@ -1,10 +1,12 @@
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 
 import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
+import { ProjectModuleKey } from "@/domains/project/core/domain/projectModule.types";
 
 /** Project view keys available in the project shell. */
 export const PROJECT_VIEW_KEYS = Object.freeze([
   PROJECT_VIEWS.BOARD,
+  PROJECT_VIEWS.RECIPES,
   PROJECT_VIEWS.SETTINGS,
 ]);
 
@@ -24,6 +26,7 @@ export type ProjectViewConfig = {
   navbar: ProjectViewNavbarConfig;
   showInSidebar?: boolean;
   requiredFeature?: PlanFeature;
+  requiredModule?: ProjectModuleKey;
 };
 
 type ProjectViewConfigInput = {
@@ -31,6 +34,7 @@ type ProjectViewConfigInput = {
   sidebarLabelKey?: string;
   showInSidebar?: boolean;
   requiredFeature?: PlanFeature;
+  requiredModule?: ProjectModuleKey;
   pathOverride?: string;
 };
 
@@ -40,6 +44,11 @@ const PROJECT_VIEW_CONFIG_INPUTS: Record<
 > = Object.freeze({
   [PROJECT_VIEWS.BOARD]: {
     navbar: { showSearch: true, addActionType: "ticket" },
+  },
+  [PROJECT_VIEWS.RECIPES]: {
+    navbar: { showSearch: false, addActionType: null },
+    requiredFeature: PlanFeature.RECIPES,
+    requiredModule: ProjectModuleKey.RECIPES,
   },
   [PROJECT_VIEWS.SETTINGS]: {
     navbar: { showSearch: false, addActionType: null },
@@ -57,6 +66,7 @@ const createProjectViewConfig = (
     navbar: input.navbar,
     showInSidebar: input.showInSidebar,
     requiredFeature: input.requiredFeature,
+    requiredModule: input.requiredModule,
   };
 };
 
@@ -65,6 +75,10 @@ const PROJECT_VIEW_CONFIGS: Record<ProjectViewKey, ProjectViewConfig> =
     [PROJECT_VIEWS.BOARD]: createProjectViewConfig(
       PROJECT_VIEWS.BOARD,
       PROJECT_VIEW_CONFIG_INPUTS[PROJECT_VIEWS.BOARD]
+    ),
+    [PROJECT_VIEWS.RECIPES]: createProjectViewConfig(
+      PROJECT_VIEWS.RECIPES,
+      PROJECT_VIEW_CONFIG_INPUTS[PROJECT_VIEWS.RECIPES]
     ),
     [PROJECT_VIEWS.SETTINGS]: createProjectViewConfig(
       PROJECT_VIEWS.SETTINGS,

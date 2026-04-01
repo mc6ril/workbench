@@ -40,13 +40,33 @@
       "ariaLabel": "Navegación del proyecto",
       "openMenu": "Abrir el menu del proyecto",
       "closeMenu": "Cerrar el menu del proyecto",
-      "addTab": "Añadir pestaña",
-      "addTabAriaLabel": "Añadir pestaña (próximamente)",
+      "addTab": "Añadir módulo",
+      "addTabAriaLabel": "Añadir un módulo al proyecto",
       "items": {
         "home": "Inicio",
         "board": "Tablero",
+        "recipes": "Recipes",
         "ticketDetail": "Tarea",
         "settings": "Configuración"
+      },
+      "moduleLibrary": {
+        "title": "Añadir módulo",
+        "intro": "Compón un proyecto que se adapte de verdad al día a día del hogar. Aquí solo aparecen los módulos listos y aún no activados.",
+        "preview": {
+          "kicker": "Vista previa del módulo",
+          "title": "Catálogo suave, quick list visible y paso limpio a compras"
+        },
+        "recipes": {
+          "status": "Disponible",
+          "subtitle": "El módulo de comidas del hogar, pensado para resultar deseable en cuanto entra en un proyecto.",
+          "teaser": "Un espacio premium para elegir recetas, tener a mano los platos adecuados y convertir la semana en un plan de compras muy simple.",
+          "cta": "Añadir Recipes al proyecto"
+        },
+        "empty": {
+          "badge": "Proyecto al día",
+          "title": "No hay nuevos módulos para añadir por ahora",
+          "description": "Los módulos ya integrados desaparecen de aquí, y los futuros siguen ocultos hasta que estén listos."
+        }
       },
       "locked": {
         "ariaLabel": "{feature} — requiere el plan {plan}",

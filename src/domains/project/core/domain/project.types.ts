@@ -1,4 +1,5 @@
 import type { UserProfile } from "@/domains/profile/core/domain/profile.types";
+import type { ProjectModuleKey } from "@/domains/project/core/domain/projectModule.types";
 
 export enum ProjectRole {
   ADMIN = "admin",
@@ -41,6 +42,7 @@ export type Project = {
   name: string;
   shortCode: string;
   boardEmoji: string;
+  enabledModules: ProjectModuleKey[];
   createdAt: Date;
   updatedAt: Date;
 };

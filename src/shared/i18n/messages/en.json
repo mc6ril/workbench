@@ -40,13 +40,33 @@
       "ariaLabel": "Project navigation",
       "openMenu": "Open project menu",
       "closeMenu": "Close project menu",
-      "addTab": "Add tab",
-      "addTabAriaLabel": "Add tab (coming soon)",
+      "addTab": "Add module",
+      "addTabAriaLabel": "Add a module to the project",
       "items": {
         "home": "Home",
         "board": "Board",
+        "recipes": "Recipes",
         "ticketDetail": "Task",
         "settings": "Settings"
+      },
+      "moduleLibrary": {
+        "title": "Add a module",
+        "intro": "Shape the project around the household’s real week. Only ready modules that are not already enabled appear here.",
+        "preview": {
+          "kicker": "Module preview",
+          "title": "Soft catalogue, visible quick list, clean shopping handoff"
+        },
+        "recipes": {
+          "status": "Available",
+          "subtitle": "The household meals module, designed to feel desirable as soon as it lands in a project.",
+          "teaser": "A premium space to pick recipes, keep the right meals close, and turn the week into a very simple shopping plan.",
+          "cta": "Add Recipes to the project"
+        },
+        "empty": {
+          "badge": "Project up to date",
+          "title": "No new module to add right now",
+          "description": "Modules already enabled disappear from this list, and future modules stay hidden until they are ready."
+        }
       },
       "locked": {
         "ariaLabel": "{feature} — requires {plan} plan",

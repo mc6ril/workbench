@@ -5,7 +5,21 @@ import type {
   ProjectRole,
   ProjectWithRole,
 } from "@/domains/project/core/domain/project.types";
+import {
+  isProjectModuleKey,
+  type ProjectModuleKey,
+} from "@/domains/project/core/domain/projectModule.types";
 import type { ProjectRow } from "@/domains/project/infrastructure/supabase/types";
+
+const mapEnabledModules = (value: unknown): ProjectModuleKey[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.filter((item): item is ProjectModuleKey => {
+    return typeof item === "string" && isProjectModuleKey(item);
+  });
+};
 
 /**
  * Maps a Supabase row to a domain Project entity.
@@ -22,6 +36,7 @@ export const mapProjectRowToDomain = (row: ProjectRow): Project => {
     name: row.name,
     shortCode: row.short_code.trim().toUpperCase(),
     boardEmoji: row.board_emoji,
+    enabledModules: mapEnabledModules(row.enabled_modules),
     createdAt: toDate(row.created_at),
     updatedAt: toDate(row.updated_at),
   };

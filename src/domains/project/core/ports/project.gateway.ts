@@ -2,6 +2,7 @@ import type {
   Project,
   ProjectWithRole,
 } from "@/domains/project/core/domain/project.types";
+import type { ProjectModuleKey } from "@/domains/project/core/domain/projectModule.types";
 
 /**
  * Gateway contract for project-owned project operations.
@@ -49,7 +50,14 @@ export type ProjectGateway = {
    * @throws ConstraintError if constraint violation occurs
    * @throws DatabaseError if database operation fails
    */
-  update(id: string, input: { name?: string; boardEmoji?: string }): Promise<Project>;
+  update(
+    id: string,
+    input: {
+      name?: string;
+      boardEmoji?: string;
+      enabledModules?: ProjectModuleKey[];
+    }
+  ): Promise<Project>;
 
   /**
    * Delete a project by ID.

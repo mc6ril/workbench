@@ -40,13 +40,33 @@
       "ariaLabel": "Navigation du projet",
       "openMenu": "Ouvrir le menu du projet",
       "closeMenu": "Fermer le menu du projet",
-      "addTab": "Ajouter un onglet",
-      "addTabAriaLabel": "Ajouter un onglet (à venir)",
+      "addTab": "Ajouter un module",
+      "addTabAriaLabel": "Ajouter un module au projet",
       "items": {
         "home": "Accueil",
         "board": "Tableau",
+        "recipes": "Recipes",
         "ticketDetail": "Tâche",
         "settings": "Paramètres"
+      },
+      "moduleLibrary": {
+        "title": "Ajouter un module",
+        "intro": "Composez un projet qui colle vraiment au quotidien du foyer. Seuls les modules déjà prêts et pas encore activés apparaissent ici.",
+        "preview": {
+          "kicker": "Aperçu du module",
+          "title": "Catalogue doux, quick list visible, sortie courses nette"
+        },
+        "recipes": {
+          "status": "Disponible",
+          "subtitle": "Le module repas du foyer, pensé pour devenir immédiatement désirable dans un projet.",
+          "teaser": "Un espace premium pour choisir ses recettes, garder les bons plats sous la main et transformer la semaine en plan d’achats très simple.",
+          "cta": "Ajouter Recipes au projet"
+        },
+        "empty": {
+          "badge": "Projet déjà à jour",
+          "title": "Aucun nouveau module à ajouter pour le moment",
+          "description": "Les modules déjà intégrés n’apparaissent plus ici, et les futurs modules restent masqués tant qu’ils ne sont pas prêts."
+        }
       },
       "locked": {
         "ariaLabel": "{feature} — nécessite le plan {plan}",

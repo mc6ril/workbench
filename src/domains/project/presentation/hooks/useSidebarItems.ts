@@ -11,6 +11,10 @@ import {
 import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
+import {
+  hasProjectModule,
+  type ProjectModuleKey,
+} from "@/domains/project/core/domain/projectModule.types";
 import type { SidebarItem } from "@/domains/project/presentation/components/sidebarNavigation/SidebarNavigation.types";
 import {
   buildProjectViewHref,
@@ -41,7 +45,14 @@ const computeFeatureLockState = (
   };
 };
 
-export const useSidebarItems = (projectId: string): SidebarItem[] => {
+type UseSidebarItemsOptions = {
+  enabledModules?: readonly ProjectModuleKey[];
+};
+
+export const useSidebarItems = (
+  projectId: string,
+  options?: UseSidebarItemsOptions
+): SidebarItem[] => {
   const t = useTranslation("navigation.sidebar");
   const { data: session, isLoading: isSessionLoading } = useSession();
   const {
@@ -80,7 +91,14 @@ export const useSidebarItems = (projectId: string): SidebarItem[] => {
   }, [isEntitlementsReady, subscription]);
 
   return useMemo((): SidebarItem[] => {
-    const configs = getProjectViewConfigsForSidebar();
+    const enabledModules = options?.enabledModules ?? [];
+    const configs = getProjectViewConfigsForSidebar().filter((config) => {
+      if (!config.requiredModule) {
+        return true;
+      }
+
+      return hasProjectModule(enabledModules, config.requiredModule);
+    });
 
     return configs.flatMap((config) => {
       const { locked, minimumPlan } =
@@ -103,5 +121,5 @@ export const useSidebarItems = (projectId: string): SidebarItem[] => {
         },
       ];
     });
-  }, [effectivePlan, isBillingVisible, projectId, t]);
+  }, [effectivePlan, isBillingVisible, options?.enabledModules, projectId, t]);
 };
