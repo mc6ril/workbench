@@ -46,7 +46,6 @@
     rgba($color-secondary, 0.95) 0%,
     rgba($color-background, 0.88) 100%
   );
-  backdrop-filter: blur($backdrop-blur-base);
   padding: $spacing-3xl $spacing-lg;
   border-bottom: $border-width solid $color-accent-border-subtle;
   box-shadow: $shadow-sm;
@@ -183,7 +182,7 @@
 
 .landing-hero__subtitle {
   font-size: $font-size-md;
-  color: $color-text-secondary;
+  color: $color-neutral-600;
   font-weight: $font-weight-normal;
   line-height: $line-height-relaxed;
   max-width: 48rem;
@@ -218,7 +217,7 @@
     rgba($color-accent-bg-soft, 0.8),
     rgba($color-accent-peach-bg-soft, 0.8)
   );
-  color: $color-accent;
+  color: $color-primary;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
 
@@ -250,7 +249,7 @@
   max-width: 24rem;
   margin-top: $spacing-lg;
 
-  button {
+  > * {
     width: 100%;
   }
 
@@ -260,9 +259,83 @@
     width: auto;
     max-width: none;
 
-    button {
+    > * {
       width: auto;
     }
+  }
+}
+
+.landing-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: $spacing-button-height;
+  padding: $spacing-button-padding-y $spacing-button-padding-x;
+  border: $border-width solid transparent;
+  border-radius: $border-radius-button;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  letter-spacing: $letter-spacing-wide;
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    $transition-background, $transition-color, $transition-border,
+    $transition-transform, $transition-shadow;
+
+  &:visited {
+    color: inherit;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: $shadow-focus;
+  }
+}
+
+.landing-hero__ctaPrimary {
+  background-color: $color-action-publish-bg;
+  color: $color-action-publish-text;
+
+  &:visited {
+    color: $color-action-publish-text;
+  }
+
+  &:hover {
+    background-color: $color-action-publish-hover;
+    box-shadow: $shadow-button-hover;
+    transform: translateY(-$border-width);
+    text-decoration: none;
+  }
+}
+
+.landing-hero__ctaGhost {
+  color: $color-text;
+  background-color: transparent;
+
+  &:visited {
+    color: $color-text;
+  }
+
+  &:hover {
+    background-color: $color-surface-subtle;
+    text-decoration: none;
+  }
+}
+
+.landing-hero__ctaSecondary {
+  color: $color-primary;
+  background-color: transparent;
+  border-color: $color-border;
+
+  &:visited {
+    color: $color-primary;
+  }
+
+  &:hover {
+    border-color: $color-primary;
+    background-color: $color-surface-subtle;
+    text-decoration: none;
   }
 }
 
@@ -296,7 +369,7 @@
     // Higher specificity than design-system Text `margin: 0` (single-class tie-break).
     .impact-section__description {
       text-align: center;
-      color: $color-text-secondary;
+      color: $color-neutral-600;
       max-width: 58rem;
       margin: 0 auto;
     }
@@ -474,7 +547,7 @@
 }
 
 .landing-example-preview__description {
-  color: $color-text-secondary;
+  color: $color-neutral-600;
 }
 
 .landing-example-preview__surface {
@@ -502,7 +575,7 @@
 
 .landing-example-preview__app-name {
   margin-left: auto;
-  color: $color-text-secondary;
+  color: $color-neutral-600;
   font-size: $font-size-xs;
   font-weight: $font-weight-medium;
 }
@@ -550,7 +623,7 @@
   border-radius: $border-radius-sm;
   background: $color-secondary;
   font-size: $font-size-sm;
-  color: $color-text-secondary;
+  color: $color-neutral-600;
 }
 
 .landing-example-preview__item-check {
@@ -603,6 +676,10 @@
   &:nth-child(3) {
     animation-delay: $animation-delay-long;
   }
+}
+
+.impact-card__metric {
+  color: $color-action-publish-bg;
 }
 
 // ============================================================================
@@ -762,10 +839,16 @@
   position: relative;
   z-index: 1;
   font-size: $font-size-md;
-  color: $color-text-secondary;
+  color: $color-neutral-600;
   line-height: $line-height-relaxed;
   max-width: $container-max-width;
   margin: 0 auto $spacing-3xl;
+}
+
+.cta-section__button {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
 }
 
 // ============================================================================
@@ -790,9 +873,13 @@
 
 .landing-footer__link {
   font-size: $font-size-sm;
-  color: $color-text-secondary;
+  color: $color-neutral-600;
   text-decoration: none;
   transition: color $animation-duration-base $easing-ease-out;
+
+  &:visited {
+    color: $color-neutral-600;
+  }
 
   &:hover {
     color: $color-primary;

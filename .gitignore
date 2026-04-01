@@ -125,3 +125,6 @@ flavieBoard/
 
 # test file
 test.ts
+
+# lighthouse
+privateProd.lighthouse.json

@@ -1,14 +1,13 @@
 import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
 import { getMessages } from "@/shared/i18n/messages";
-import { getRequestLocale } from "@/shared/i18n/requestLocale";
+import type { Locale } from "@/shared/i18n/types";
 import { getTranslationValue } from "@/shared/i18n/utils";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 /**
  * Server-only JSON-LD for the marketing home page (WebSite + Organization).
  */
-const WebsiteJsonLd = async () => {
-  const locale = await getRequestLocale();
+const WebsiteJsonLd = ({ locale }: { locale: Locale }) => {
   const messages = getMessages(locale);
   const name = getTranslationValue(messages, "app.metadata", "title");
   const description = getTranslationValue(messages, "app.metadata", "description");

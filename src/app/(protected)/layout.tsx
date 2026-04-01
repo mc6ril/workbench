@@ -4,18 +4,14 @@ import { redirect } from "next/navigation";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { createLoggerFactory } from "@/shared/observability";
+import RequestLocaleAppProviders from "@/shared/providers/RequestLocaleAppProviders";
+import { noIndexMetadata } from "@/shared/seo/noIndexMetadata";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
 import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 
-export const metadata: Metadata = {
-  robots: {
-    index: false,
-    follow: false,
-    googleBot: { index: false, follow: false },
-  },
-};
+export const metadata: Metadata = noIndexMetadata;
 
 const logger = createLoggerFactory().forScope("ProtectedLayout");
 
@@ -58,9 +54,8 @@ const ProtectedLayout = async ({
     logger.error("Authentication error", { error });
     redirect(PAGE_ROUTES.HOME);
   }
-
   // User is authenticated, render children
-  return <>{children}</>;
+  return <RequestLocaleAppProviders>{children}</RequestLocaleAppProviders>;
 };
 
 export default ProtectedLayout;

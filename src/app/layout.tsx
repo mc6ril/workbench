@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 
 import { getIntlLocale } from "@/shared/i18n";
 import { getRequestLocale } from "@/shared/i18n/requestLocale";
-import AppProvider from "@/shared/providers/AppProvider";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 import "@/styles/global.scss";
@@ -39,9 +38,7 @@ const RootLayout = async ({
   return (
     <html lang={getIntlLocale(locale)} suppressHydrationWarning>
       <body>
-        <AppProvider initialLocale={locale}>
-          <div className="app-root">{children}</div>
-        </AppProvider>
+        <div className="app-root">{children}</div>
       </body>
     </html>
   );

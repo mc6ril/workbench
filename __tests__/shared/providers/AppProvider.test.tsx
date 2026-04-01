@@ -40,12 +40,12 @@ describe("AppProvider", () => {
     jest.mocked(useProfileRuntimeSync).mockReturnValue(false);
 
     render(
-      <AppProvider initialLocale="en">
+      <AppProvider>
         <div>app content</div>
       </AppProvider>
     );
 
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toBeInTheDocument();
     expect(screen.queryByText("app content")).not.toBeInTheDocument();
   });
 
@@ -53,12 +53,12 @@ describe("AppProvider", () => {
     jest.mocked(useProfileRuntimeSync).mockReturnValue(true);
 
     render(
-      <AppProvider initialLocale="en">
+      <AppProvider>
         <div>app content</div>
       </AppProvider>
     );
 
     expect(screen.getByText("app content")).toBeInTheDocument();
-    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 });

@@ -1,20 +1,17 @@
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 
+import RequestLocaleAppProviders from "@/shared/providers/RequestLocaleAppProviders";
+import { noIndexMetadata } from "@/shared/seo/noIndexMetadata";
+
 type Props = {
   children: ReactNode;
 };
 
-export const metadata: Metadata = {
-  robots: {
-    index: false,
-    follow: false,
-    googleBot: { index: false, follow: false },
-  },
-};
+export const metadata: Metadata = noIndexMetadata;
 
-const JoinLayout = ({ children }: Props) => {
-  return <>{children}</>;
+const JoinLayout = async ({ children }: Props) => {
+  return <RequestLocaleAppProviders>{children}</RequestLocaleAppProviders>;
 };
 
 export default JoinLayout;

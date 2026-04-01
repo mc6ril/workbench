@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { type CookieOptions, createServerClient } from "@supabase/ssr";
 
+import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { requireNonEmptyEnv } from "@/shared/errors/programmingError";
 import {
   isSupportedLocale,
@@ -10,6 +11,11 @@ import {
   resolveLocale,
 } from "@/shared/i18n/config";
 import { getMarketingLocaleFromPathname } from "@/shared/i18n/marketingPaths";
+import {
+  buildAuthCallbackPath,
+  getAuthCodeRedirectTarget,
+  sanitizeInternalRedirectPath,
+} from "@/shared/utils/authRedirect";
 import { isProtectedRoute } from "@/shared/utils/routes";
 
 /**
@@ -137,8 +143,36 @@ export const middleware = async (
   const isAuthPage =
     pathname === "/auth/signin" || pathname === "/auth/signup";
   const isProtected = isProtectedRoute(pathname);
+  const localeHomePath = pathLocale ? `/${pathLocale}` : null;
+  const isMarketingHome =
+    localeHomePath !== null &&
+    (pathname === localeHomePath || pathname === `${localeHomePath}/`);
 
-  if (!isAuthPage && !isProtected) {
+  if (isMarketingHome) {
+    const code = request.nextUrl.searchParams.get("code");
+    const type = request.nextUrl.searchParams.get("type");
+    const next = request.nextUrl.searchParams.get("next");
+
+    if (code) {
+      const nextPath = sanitizeInternalRedirectPath(
+        next,
+        getAuthCodeRedirectTarget(type)
+      );
+
+      return NextResponse.redirect(
+        new URL(
+          buildAuthCallbackPath({
+            code,
+            nextPath,
+            fallbackPath: getAuthCodeRedirectTarget(type),
+          }),
+          request.url
+        )
+      );
+    }
+  }
+
+  if (!isAuthPage && !isProtected && !isMarketingHome) {
     const response = NextResponse.next({
       request: {
         headers: requestHeaders,
@@ -158,19 +192,19 @@ export const middleware = async (
       error,
     } = await supabase.auth.getUser();
 
-    if (user && isAuthPage) {
-      return NextResponse.redirect(new URL("/workspace", request.url));
+    if (user && (isAuthPage || isMarketingHome)) {
+      return NextResponse.redirect(new URL(PAGE_ROUTES.WORKSPACE, request.url));
     }
 
     if (isProtected) {
       if (error || !user) {
-        const signInUrl = new URL("/auth/signin", request.url);
+        const signInUrl = new URL(AUTH_PAGE_ROUTES.SIGNIN, request.url);
         signInUrl.searchParams.set("redirect", pathname);
         return NextResponse.redirect(signInUrl);
       }
 
       if (!user.email_confirmed_at) {
-        const signInUrl = new URL("/auth/signin", request.url);
+        const signInUrl = new URL(AUTH_PAGE_ROUTES.SIGNIN, request.url);
         signInUrl.searchParams.set("unverified", "true");
         return NextResponse.redirect(signInUrl);
       }
