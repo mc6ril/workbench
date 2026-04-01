@@ -129,4 +129,47 @@ describe("buildShoppingListFromSources", () => {
 
     expect(shoppingList.groups[0].items).toHaveLength(2);
   });
+
+  it("keeps addition candidates distinct from validated ingredients", () => {
+    const shoppingList = buildShoppingListFromSources([
+      {
+        id: "shopping-citron-1",
+        groupId: "produce",
+        groupTitle: "Primeur",
+        ingredient: createRecipeIngredientFromDraftInput({
+          id: "ingredient-citron-1",
+          displayName: "Citron jaune",
+          amount: "1",
+          unit: "piece",
+          kind: "validated",
+        }),
+        recipe: {
+          recipeId: "recipe-1",
+          title: "Poulet citron",
+        },
+      },
+      {
+        id: "shopping-citron-2",
+        groupId: "produce",
+        groupTitle: "Primeur",
+        ingredient: createRecipeIngredientFromDraftInput({
+          id: "ingredient-citron-2",
+          displayName: "citron jaune",
+          amount: "1",
+          unit: "piece",
+          kind: "addition_candidate",
+        }),
+        recipe: {
+          recipeId: "recipe-2",
+          title: "Bol tofu",
+        },
+      },
+    ]);
+
+    expect(shoppingList.groups[0].items).toHaveLength(2);
+    expect(shoppingList.groups[0].items[0].ingredient.kind).toBe("validated");
+    expect(shoppingList.groups[0].items[1].ingredient.kind).toBe(
+      "addition_candidate"
+    );
+  });
 });

@@ -5,6 +5,7 @@ import {
   type RecipeIngredient,
   type RecipeSelection,
 } from "@/modules/recipes/core/domain/recipe.types";
+import { compareShoppingGroupIds } from "@/modules/recipes/core/domain/shopping/shoppingGrouping";
 import {
   buildShoppingList,
   type ShoppingList,
@@ -20,7 +21,9 @@ export type ShoppingListIngredientSource = {
   recipe: Pick<RecipeSelection, "recipeId" | "title">;
 };
 
-const canMergeShoppingIngredient = (ingredient: RecipeIngredient): boolean => {
+export const canMergeShoppingIngredient = (
+  ingredient: RecipeIngredient
+): boolean => {
   return (
     ingredient.amountValue !== null &&
     Boolean(ingredient.normalizedName) &&
@@ -29,7 +32,9 @@ const canMergeShoppingIngredient = (ingredient: RecipeIngredient): boolean => {
   );
 };
 
-const buildMergeKey = (source: ShoppingListIngredientSource): string => {
+export const buildShoppingIngredientMergeKey = (
+  source: Pick<ShoppingListIngredientSource, "groupId" | "ingredient">
+): string => {
   return [
     source.groupId,
     source.ingredient.kind,
@@ -86,7 +91,7 @@ export const buildShoppingListFromSources = (
     const group = getOrCreateGroup(source);
 
     if (canMergeShoppingIngredient(source.ingredient)) {
-      const mergeKey = buildMergeKey(source);
+      const mergeKey = buildShoppingIngredientMergeKey(source);
       const existingItem = mergeableItems.get(mergeKey);
 
       if (existingItem) {
@@ -129,5 +134,9 @@ export const buildShoppingListFromSources = (
     });
   });
 
-  return buildShoppingList(Array.from(groups.values()));
+  return buildShoppingList(
+    Array.from(groups.values()).sort((leftGroup, rightGroup) =>
+      compareShoppingGroupIds(leftGroup.id, rightGroup.id)
+    )
+  );
 };

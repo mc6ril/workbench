@@ -2,7 +2,7 @@ import Card from "@/shared/design-system/card";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
 import { listActiveSelections } from "@/modules/recipes/core/usecases/planner/listActiveSelections";
-import { getShoppingList } from "@/modules/recipes/core/usecases/shopping/getShoppingList";
+import { generateShoppingList } from "@/modules/recipes/core/usecases/shopping/generateShoppingList";
 import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
 import { createShoppingRepository } from "@/modules/recipes/infrastructure/supabase/shopping/ShoppingRepository.supabase";
 import QuickListSelectionsCard from "@/modules/recipes/presentation/components/quickList/QuickListSelectionsCard";
@@ -25,7 +25,7 @@ const RecipesQuickListPage = async ({ projectId }: Props) => {
   const quickListRecipes = await listActiveSelections({
     plannerRepository,
   })(projectId);
-  const shoppingList = await getShoppingList({
+  const shoppingList = await generateShoppingList({
     shoppingRepository,
   })(projectId);
 

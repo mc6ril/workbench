@@ -2,11 +2,11 @@ import Card from "@/shared/design-system/card";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
 import { listActiveSelections } from "@/modules/recipes/core/usecases/planner/listActiveSelections";
-import { getShoppingList } from "@/modules/recipes/core/usecases/shopping/getShoppingList";
+import { generateShoppingList } from "@/modules/recipes/core/usecases/shopping/generateShoppingList";
 import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
 import { createShoppingRepository } from "@/modules/recipes/infrastructure/supabase/shopping/ShoppingRepository.supabase";
 import QuickListSummaryCard from "@/modules/recipes/presentation/components/quickList/QuickListSummaryCard";
-import ShoppingSummaryCard from "@/modules/recipes/presentation/components/shopping/ShoppingSummaryCard";
+import ShoppingListClientCard from "@/modules/recipes/presentation/components/shopping/ShoppingListClientCard";
 import RecipesPageScaffold from "@/modules/recipes/presentation/pages/shared/RecipesPageScaffold";
 import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";
 import {
@@ -25,7 +25,7 @@ const RecipesShoppingPage = async ({ projectId }: Props) => {
   const quickListRecipes = await listActiveSelections({
     plannerRepository,
   })(projectId);
-  const shoppingList = await getShoppingList({
+  const shoppingList = await generateShoppingList({
     shoppingRepository,
   })(projectId);
 
@@ -65,13 +65,12 @@ const RecipesShoppingPage = async ({ projectId }: Props) => {
       }
     >
       <div className={styles["recipes-scaffold__split"]}>
-        <ShoppingSummaryCard
-          href={buildRecipesQuickListRoute(projectId)}
-          shoppingList={shoppingList}
-          ctaLabel="Retour a la quick list"
+        <ShoppingListClientCard
+          projectId={projectId}
+          initialShoppingList={shoppingList}
         />
         <div className={styles["recipes-scaffold__stack"]}>
-        <QuickListSummaryCard
+          <QuickListSummaryCard
             projectId={projectId}
             recipes={quickListRecipes}
           />

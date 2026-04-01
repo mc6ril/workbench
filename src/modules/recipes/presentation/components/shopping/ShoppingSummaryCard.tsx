@@ -26,7 +26,7 @@ const ShoppingSummaryCard = ({
         <div className={styles["recipes-scaffold__panel-head"]}>
           <p className={styles["recipes-scaffold__panel-kicker"]}>Courses</p>
           <h2 className={styles["recipes-scaffold__panel-title"]}>
-            Liste generee a partir des ingredients normalises
+            Liste generee a partir des recettes actives
           </h2>
         </div>
       }
@@ -56,63 +56,72 @@ const ShoppingSummaryCard = ({
         </div>
       </div>
 
-      <div className={styles["recipes-scaffold__shopping-groups"]}>
-        {shoppingList.groups.map((group) => (
-          <section
-            key={group.id}
-            className={styles["recipes-scaffold__shopping-group"]}
-          >
-            <div className={styles["recipes-scaffold__shopping-group-head"]}>
-              <h3 className={styles["recipes-scaffold__shopping-group-title"]}>
-                {group.title}
-              </h3>
-              <span className={styles["recipes-scaffold__helper"]}>
-                {group.items.length} ligne{group.items.length > 1 ? "s" : ""}
-              </span>
-            </div>
+      {shoppingList.groups.length === 0 ? (
+        <div className={styles["recipes-scaffold__empty"]}>
+          <p className={styles["recipes-scaffold__helper"]}>
+            La shopping list restera vide tant qu&apos;aucune recette n&apos;est
+            active.
+          </p>
+        </div>
+      ) : (
+        <div className={styles["recipes-scaffold__shopping-groups"]}>
+          {shoppingList.groups.map((group) => (
+            <section
+              key={group.id}
+              className={styles["recipes-scaffold__shopping-group"]}
+            >
+              <div className={styles["recipes-scaffold__shopping-group-head"]}>
+                <h3 className={styles["recipes-scaffold__shopping-group-title"]}>
+                  {group.title}
+                </h3>
+                <span className={styles["recipes-scaffold__helper"]}>
+                  {group.items.length} ligne{group.items.length > 1 ? "s" : ""}
+                </span>
+              </div>
 
-            <div className={styles["recipes-scaffold__shopping-items"]}>
-              {group.items.map((item) => {
-                const isAddition = isAdditionCandidateIngredient(item.ingredient);
+              <div className={styles["recipes-scaffold__shopping-items"]}>
+                {group.items.map((item) => {
+                  const isAddition = isAdditionCandidateIngredient(item.ingredient);
 
-                return (
-                  <article
-                    key={item.id}
-                    className={[
-                      styles["recipes-scaffold__shopping-item"],
-                      item.checked &&
-                        styles["recipes-scaffold__shopping-item--checked"],
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
-                  >
-                    <div className={styles["recipes-scaffold__shopping-item-top"]}>
-                      <p className={styles["recipes-scaffold__shopping-item-label"]}>
-                        {formatRecipeIngredientLabel(item.ingredient)}
+                  return (
+                    <article
+                      key={item.id}
+                      className={[
+                        styles["recipes-scaffold__shopping-item"],
+                        item.checked &&
+                          styles["recipes-scaffold__shopping-item--checked"],
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                    >
+                      <div className={styles["recipes-scaffold__shopping-item-top"]}>
+                        <p className={styles["recipes-scaffold__shopping-item-label"]}>
+                          {formatRecipeIngredientLabel(item.ingredient)}
+                        </p>
+                        {isAddition ? (
+                          <span className={styles["recipes-scaffold__pill"]}>
+                            Ajout a tester
+                          </span>
+                        ) : null}
+                      </div>
+
+                      <p className={styles["recipes-scaffold__shopping-item-recipes"]}>
+                        {item.recipes.map((recipe) => recipe.title).join(", ")}
                       </p>
-                      {isAddition ? (
-                        <span className={styles["recipes-scaffold__pill"]}>
-                          Ajout a tester
-                        </span>
+
+                      {item.ingredient.notes ? (
+                        <p className={styles["recipes-scaffold__shopping-item-note"]}>
+                          {item.ingredient.notes}
+                        </p>
                       ) : null}
-                    </div>
-
-                    <p className={styles["recipes-scaffold__shopping-item-recipes"]}>
-                      {item.recipes.map((recipe) => recipe.title).join(", ")}
-                    </p>
-
-                    {item.ingredient.notes ? (
-                      <p className={styles["recipes-scaffold__shopping-item-note"]}>
-                        {item.ingredient.notes}
-                      </p>
-                    ) : null}
-                  </article>
-                );
-              })}
-            </div>
-          </section>
-        ))}
-      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
+        </div>
+      )}
     </Card>
   );
 };

@@ -22,6 +22,12 @@ export type ShoppingList = {
   pendingCount: number;
 };
 
+export type SetShoppingListItemCheckedInput = {
+  projectId: string;
+  itemId: string;
+  checked: boolean;
+};
+
 export const buildShoppingList = (
   groups: ShoppingListGroup[]
 ): ShoppingList => {

@@ -5,3 +5,5 @@ export { useMarkSelectionDone } from "./planner/useMarkSelectionDone";
 export { useRemoveSelection } from "./planner/useRemoveSelection";
 export { useSelectRecipe } from "./planner/useSelectRecipe";
 export { useRecipesShellContribution } from "./projectShell/useRecipesShellContribution";
+export { useListShoppingList } from "./shopping/listShoppingList";
+export { useSetShoppingListItemChecked } from "./shopping/useSetShoppingListItemChecked";
