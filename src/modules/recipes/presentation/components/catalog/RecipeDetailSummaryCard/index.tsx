@@ -8,13 +8,14 @@ import Button from "@/shared/design-system/button";
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
 
+import styles from "./styles.module.scss";
+
 import type { CatalogRecipeDetail } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import {
   formatRecipeIngredientLabel,
   isAdditionCandidateIngredient,
 } from "@/modules/recipes/core/domain/recipe.types";
 import { usePromoteRecipeAddition } from "@/modules/recipes/presentation/hooks";
-import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";
 
 type Props = {
   projectId: string;

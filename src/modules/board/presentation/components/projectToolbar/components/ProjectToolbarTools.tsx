@@ -31,11 +31,14 @@ const ProjectToolbarTools = ({ extraTools = [] }: Props) => {
           title={tool.label}
           aria-pressed={tool.isActive ?? false}
         >
-          {tool.icon ?? (
-            <span className={styles["project-toolbar__tool-label"]}>
-              {tool.label}
+          {tool.icon ? (
+            <span className={styles["project-toolbar__tool-icon"]}>
+              {tool.icon}
             </span>
-          )}
+          ) : null}
+          <span className={styles["project-toolbar__tool-label"]}>
+            {tool.label}
+          </span>
         </button>
       ))}
     </div>

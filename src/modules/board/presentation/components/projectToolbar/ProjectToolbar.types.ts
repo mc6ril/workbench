@@ -33,6 +33,8 @@ export type ProjectToolbarProps = {
   showSearch?: boolean;
   hideTitleOnMobile?: boolean;
   addActionType?: ProjectToolbarAddActionType | null;
+  addActionLabel?: string;
+  addActionAriaLabel?: string;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
   onAddClick?: () => void;

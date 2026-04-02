@@ -2,9 +2,10 @@
 
 import Link from "@/shared/design-system/link";
 
+import styles from "./styles.module.scss";
+
 import type { CatalogRecipeSummary } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import { useSelectRecipe } from "@/modules/recipes/presentation/hooks";
-import styles from "@/modules/recipes/presentation/pages/recipes/styles.module.scss";
 import {
   buildRecipeDetailRoute,
   buildRecipesQuickListRoute,
@@ -55,7 +56,9 @@ const RecipeCatalogCard = ({ projectId, recipe }: Props) => {
         </div>
 
         <h3 className={styles["recipes-page__recipe-title"]}>{recipe.title}</h3>
-        <p className={styles["recipes-page__recipe-summary"]}>{recipe.summary}</p>
+        <p className={styles["recipes-page__recipe-summary"]}>
+          {recipe.summary}
+        </p>
 
         <div className={styles["recipes-page__tag-row"]}>
           {recipe.tags.map((tag) => (
@@ -66,7 +69,10 @@ const RecipeCatalogCard = ({ projectId, recipe }: Props) => {
         </div>
 
         <div className={styles["recipes-page__recipe-actions"]}>
-          <Link href={detailHref} className={styles["recipes-page__action-link"]}>
+          <Link
+            href={detailHref}
+            className={styles["recipes-page__action-link"]}
+          >
             Voir la fiche
           </Link>
 

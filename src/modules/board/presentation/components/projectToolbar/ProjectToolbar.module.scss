@@ -192,7 +192,17 @@
   }
 }
 
+.project-toolbar__tool-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .project-toolbar__tool-label {
+  display: inline-flex;
+  align-items: center;
+
   @media (max-width: #{$breakpoint-md - 1px}) {
     position: absolute;
     width: 1px;

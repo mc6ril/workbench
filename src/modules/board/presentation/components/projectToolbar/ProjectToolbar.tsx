@@ -24,6 +24,8 @@ const ProjectToolbar = ({
   showSearch = true,
   hideTitleOnMobile = false,
   addActionType = null,
+  addActionLabel,
+  addActionAriaLabel,
   searchValue = "",
   onSearchChange,
   onAddClick,
@@ -48,8 +50,8 @@ const ProjectToolbar = ({
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const isMobileSearchExpanded = isMobileSearchOpen || hasSearchQuery;
 
-  const addLabel = tNavbar("addTicket");
-  const addAriaLabel = tNavbar("addTicketAriaLabel");
+  const addLabel = addActionLabel ?? tNavbar("addTicket");
+  const addAriaLabel = addActionAriaLabel ?? tNavbar("addTicketAriaLabel");
 
   const navbarId = getAccessibilityId("project-toolbar");
   const pageTitleHeadingId = getAccessibilityId("project-toolbar-page-title");

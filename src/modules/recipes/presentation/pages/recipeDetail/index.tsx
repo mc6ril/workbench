@@ -7,7 +7,7 @@ import { getCatalogRecipeDetail } from "@/modules/recipes/core/usecases/catalog/
 import { listActiveSelections } from "@/modules/recipes/core/usecases/planner/listActiveSelections";
 import { createCatalogRepository } from "@/modules/recipes/infrastructure/supabase/catalog/CatalogRepository.supabase";
 import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
-import RecipeDetailSummaryCard from "@/modules/recipes/presentation/components/catalog/RecipeDetailSummaryCard";
+import RecipeDetailSummaryCard from "@/modules/recipes/presentation/components/catalog/RecipeDetailSummaryCard/index";
 import QuickListSummaryCard from "@/modules/recipes/presentation/components/quickList/QuickListSummaryCard";
 import RecipesPageScaffold from "@/modules/recipes/presentation/pages/shared/RecipesPageScaffold";
 import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";

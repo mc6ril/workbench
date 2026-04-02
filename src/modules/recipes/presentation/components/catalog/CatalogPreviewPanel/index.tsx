@@ -1,7 +1,7 @@
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
 
-import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";
+import styles from "./styles.module.scss";
 
 type Props = {
   href: string;

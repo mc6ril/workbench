@@ -14,8 +14,8 @@ type Props = {
   projectId: string;
 };
 
-const RecipesShellContributionAdapter = () => {
-  const contribution = useRecipesShellContribution();
+const RecipesShellContributionAdapter = ({ projectId }: Props) => {
+  const contribution = useRecipesShellContribution(projectId);
 
   useRegisterProjectViewContribution(contribution);
 
@@ -32,7 +32,7 @@ const RecipesShellAdapter = ({ projectId }: Props) => {
     return null;
   }
 
-  return <RecipesShellContributionAdapter />;
+  return <RecipesShellContributionAdapter projectId={projectId} />;
 };
 
 export default RecipesShellAdapter;

@@ -10,7 +10,7 @@ import { listCatalogRecipeTags } from "@/modules/recipes/core/usecases/catalog/l
 import { listActiveSelections } from "@/modules/recipes/core/usecases/planner/listActiveSelections";
 import { createCatalogRepository } from "@/modules/recipes/infrastructure/supabase/catalog/CatalogRepository.supabase";
 import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
-import RecipesCatalogClientPage from "@/modules/recipes/presentation/components/catalog/RecipesCatalogClientPage";
+import RecipesCatalogClientPage from "@/modules/recipes/presentation/components/catalog/RecipesCatalogClientPage/index";
 
 type Props = {
   projectId: string;

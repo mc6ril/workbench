@@ -8,6 +8,8 @@ import {
 type RecipesCatalogFiltersState = {
   search: string;
   selectedTagSlugs: string[];
+  isQuickListOpen: boolean;
+  isFiltersOpen: boolean;
 };
 
 type RecipesCatalogFiltersActions = {
@@ -15,9 +17,18 @@ type RecipesCatalogFiltersActions = {
     search?: string | null;
     tagSlugs?: string[] | null;
   }) => void;
+  initializeCatalogState: (input: {
+    search?: string | null;
+    tagSlugs?: string[] | null;
+  }) => void;
   setSearch: (search: string) => void;
   toggleTagSlug: (tagSlug: string) => void;
   clearFilters: () => void;
+  setQuickListOpen: (isOpen: boolean) => void;
+  toggleQuickList: () => void;
+  openFilters: () => void;
+  closeFilters: () => void;
+  toggleFilters: () => void;
 };
 
 type RecipesCatalogFiltersStore = RecipesCatalogFiltersState &
@@ -26,6 +37,8 @@ type RecipesCatalogFiltersStore = RecipesCatalogFiltersState &
 const initialState: RecipesCatalogFiltersState = {
   search: "",
   selectedTagSlugs: [],
+  isQuickListOpen: false,
+  isFiltersOpen: false,
 };
 
 export const useRecipesCatalogFiltersStore = create<RecipesCatalogFiltersStore>(
@@ -33,10 +46,21 @@ export const useRecipesCatalogFiltersStore = create<RecipesCatalogFiltersStore>(
     ...initialState,
 
     syncFromQueryState: (input) => {
-      set({
+      set((state) => ({
         search: normalizeCatalogRecipeSearch(input.search),
         selectedTagSlugs: normalizeCatalogRecipeTagSlugs(input.tagSlugs),
-      });
+        isQuickListOpen: state.isQuickListOpen,
+        isFiltersOpen: state.isFiltersOpen,
+      }));
+    },
+
+    initializeCatalogState: (input) => {
+      set((state) => ({
+        ...state,
+        search: normalizeCatalogRecipeSearch(input.search),
+        selectedTagSlugs: normalizeCatalogRecipeTagSlugs(input.tagSlugs),
+        isFiltersOpen: false,
+      }));
     },
 
     setSearch: (search) => {
@@ -66,7 +90,41 @@ export const useRecipesCatalogFiltersStore = create<RecipesCatalogFiltersStore>(
     },
 
     clearFilters: () => {
-      set(initialState);
+      set((state) => ({
+        ...state,
+        search: initialState.search,
+        selectedTagSlugs: initialState.selectedTagSlugs,
+      }));
+    },
+
+    setQuickListOpen: (isQuickListOpen) => {
+      set({
+        isQuickListOpen,
+      });
+    },
+
+    toggleQuickList: () => {
+      set((state) => ({
+        isQuickListOpen: !state.isQuickListOpen,
+      }));
+    },
+
+    openFilters: () => {
+      set({
+        isFiltersOpen: true,
+      });
+    },
+
+    closeFilters: () => {
+      set({
+        isFiltersOpen: false,
+      });
+    },
+
+    toggleFilters: () => {
+      set((state) => ({
+        isFiltersOpen: !state.isFiltersOpen,
+      }));
     },
   })
 );
