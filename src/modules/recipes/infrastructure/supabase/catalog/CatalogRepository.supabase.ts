@@ -3,8 +3,11 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 
 import {
+  type CatalogRecipeListCursor,
   type CatalogRecipeListFilters,
+  type CatalogRecipeListPagination,
   normalizeCatalogRecipeListFilters,
+  normalizeCatalogRecipeListPagination,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { RecipeTag } from "@/modules/recipes/core/domain/recipe.types";
 import type { CatalogRepository } from "@/modules/recipes/core/ports/catalog/catalogRepository";
@@ -24,7 +27,7 @@ import {
 } from "@/modules/recipes/infrastructure/supabase/shared/readModels";
 import {
   getCatalogFixtureDetail,
-  listCatalogFixtureRecipesByFilters,
+  listCatalogFixtureRecipePage,
   listCatalogFixtureTags,
 } from "@/modules/recipes/infrastructure/supabase/shared/recipesFixtureData";
 
@@ -203,11 +206,44 @@ const intersectRecipeIds = (
   return left.filter((recipeId) => rightIds.has(recipeId));
 };
 
+type CatalogRecipeRowPage = {
+  items: RecipeRow[];
+  nextCursor: CatalogRecipeListCursor | null;
+  hasMore: boolean;
+};
+
+const buildCatalogRecipeListCursor = (
+  recipe: Pick<RecipeRow, "id" | "updated_at">
+): CatalogRecipeListCursor => {
+  return {
+    updatedAt: recipe.updated_at,
+    id: recipe.id,
+  };
+};
+
+const toCatalogRecipeRowPage = (
+  recipes: RecipeRow[],
+  pageSize: number
+): CatalogRecipeRowPage => {
+  const items = recipes.slice(0, pageSize);
+  const hasMore = recipes.length > pageSize;
+
+  return {
+    items,
+    hasMore,
+    nextCursor:
+      hasMore && items.length > 0
+        ? buildCatalogRecipeListCursor(items[items.length - 1])
+        : null,
+  };
+};
+
 const loadCatalogRecipeRows = async (
   client: SupabaseClient,
   projectId: string,
-  filters?: CatalogRecipeListFilters
-): Promise<RecipeRow[]> => {
+  filters: CatalogRecipeListFilters | undefined,
+  pagination: CatalogRecipeListPagination
+): Promise<CatalogRecipeRowPage> => {
   const normalizedFilters = normalizeCatalogRecipeListFilters(filters);
   const [searchRecipeIds, tagRecipeIds] = await Promise.all([
     resolveRecipeIdsMatchingSearch(client, projectId, normalizedFilters.search),
@@ -216,17 +252,32 @@ const loadCatalogRecipeRows = async (
   const filteredRecipeIds = intersectRecipeIds(searchRecipeIds, tagRecipeIds);
 
   if (filteredRecipeIds && filteredRecipeIds.length === 0) {
-    return [];
+    return {
+      items: [],
+      hasMore: false,
+      nextCursor: null,
+    };
   }
 
   let recipesQuery = client
     .from("recipes")
     .select("*")
     .eq("project_id", projectId)
-    .order("updated_at", { ascending: false });
+    .order("updated_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(pagination.pageSize + 1);
 
   if (filteredRecipeIds) {
     recipesQuery = recipesQuery.in("id", filteredRecipeIds);
+  }
+
+  if (pagination.cursor) {
+    recipesQuery = recipesQuery.or(
+      [
+        `updated_at.lt.${pagination.cursor.updatedAt}`,
+        `and(updated_at.eq.${pagination.cursor.updatedAt},id.lt.${pagination.cursor.id})`,
+      ].join(",")
+    );
   }
 
   const { data, error } = await recipesQuery;
@@ -235,7 +286,7 @@ const loadCatalogRecipeRows = async (
     return handleRepositoryError(error, "Recipe", projectId);
   }
 
-  return (data ?? []) as RecipeRow[];
+  return toCatalogRecipeRowPage((data ?? []) as RecipeRow[], pagination.pageSize);
 };
 
 const listPersistedCatalogTags = async (
@@ -286,32 +337,47 @@ const listPersistedCatalogTags = async (
 export const createCatalogRepository = (
   client: SupabaseClient
 ): CatalogRepository => ({
-  async listByProject({ projectId, filters }) {
-    const recipes = await loadCatalogRecipeRows(client, projectId, filters);
+  async listByProject({ projectId, filters, pagination }) {
+    const normalizedPagination =
+      normalizeCatalogRecipeListPagination(pagination);
+    const recipePage = await loadCatalogRecipeRows(
+      client,
+      projectId,
+      filters,
+      normalizedPagination
+    );
 
-    if (recipes.length === 0) {
+    if (recipePage.items.length === 0) {
       const hasPersistedRecipes = await hasPersistedCatalogRecipes(client, projectId);
 
       if (!hasPersistedRecipes) {
-        return listCatalogFixtureRecipesByFilters(filters);
+        return listCatalogFixtureRecipePage(filters, normalizedPagination);
       }
 
-      return [];
+      return {
+        items: [],
+        hasMore: false,
+        nextCursor: null,
+      };
     }
 
-    const recipeIds = recipes.map((recipe) => recipe.id);
+    const recipeIds = recipePage.items.map((recipe) => recipe.id);
     const [tagsByRecipeId, selectedRecipeIds] = await Promise.all([
       loadRecipeTagsByRecipeIds(client, projectId, recipeIds),
       loadSelectedRecipeIds(client, projectId),
     ]);
 
-    return recipes.map((recipe) =>
-      mapRecipeRowToCatalogSummary(
-        recipe,
-        tagsByRecipeId.get(recipe.id) ?? [],
-        selectedRecipeIds.has(recipe.id)
-      )
-    );
+    return {
+      items: recipePage.items.map((recipe) =>
+        mapRecipeRowToCatalogSummary(
+          recipe,
+          tagsByRecipeId.get(recipe.id) ?? [],
+          selectedRecipeIds.has(recipe.id)
+        )
+      ),
+      hasMore: recipePage.hasMore,
+      nextCursor: recipePage.nextCursor,
+    };
   },
 
   async listTagsByProject(projectId) {

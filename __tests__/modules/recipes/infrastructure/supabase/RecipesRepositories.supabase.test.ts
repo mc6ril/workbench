@@ -1,5 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import { APP_LIMITS } from "@/shared/constants/app";
+
 import { createQueryBuilderMock } from "../../../../infrastructure/supabase/testUtils/queryBuilderMock";
 
 import { createCatalogRepository } from "@/modules/recipes/infrastructure/supabase/catalog/CatalogRepository.supabase";
@@ -409,16 +411,29 @@ describe("Recipes Supabase repositories", () => {
     ]);
     expect(recipeListQuery.in).toHaveBeenCalledWith("id", [recipeId]);
     expect(recipeTagLinksQuery.in).toHaveBeenCalledWith("recipe_id", [recipeId]);
-    expect(recipes).toEqual([
-      expect.objectContaining({
-        id: recipeId,
-        isInQuickList: true,
-        tags: [
-          expect.objectContaining({ label: tagRow.label }),
-          expect.objectContaining({ label: secondTagRow.label }),
-        ],
-      }),
-    ]);
+    expect(recipeListQuery.order).toHaveBeenCalledWith("updated_at", {
+      ascending: false,
+    });
+    expect(recipeListQuery.order).toHaveBeenCalledWith("id", {
+      ascending: false,
+    });
+    expect(recipeListQuery.limit).toHaveBeenCalledWith(
+      APP_LIMITS.PAGINATION.DEFAULT_PAGE_SIZE + 1
+    );
+    expect(recipes).toEqual({
+      items: [
+        expect.objectContaining({
+          id: recipeId,
+          isInQuickList: true,
+          tags: [
+            expect.objectContaining({ label: tagRow.label }),
+            expect.objectContaining({ label: secondTagRow.label }),
+          ],
+        }),
+      ],
+      hasMore: false,
+      nextCursor: null,
+    });
   });
 
   it("short-circuits catalog listing when at least one requested tag is missing", async () => {
@@ -447,7 +462,67 @@ describe("Recipes Supabase repositories", () => {
       "rapide",
     ]);
     expect(persistedRecipesQuery.limit).toHaveBeenCalledWith(1);
-    expect(recipes).toEqual([]);
+    expect(recipes).toEqual({
+      items: [],
+      hasMore: false,
+      nextCursor: null,
+    });
+  });
+
+  it("returns a bounded catalog page with hasMore and a stable next cursor", async () => {
+    const secondRecipeId = "323e4567-e89b-12d3-a456-426614174111";
+    const secondRecipeRow: RecipeRow = {
+      ...recipeRow,
+      id: secondRecipeId,
+      title: "Nouilles sesame",
+      updated_at: "2026-03-30T08:00:00.000Z",
+    };
+    const thirdRecipeId = "323e4567-e89b-12d3-a456-426614174222";
+    const thirdRecipeRow: RecipeRow = {
+      ...recipeRow,
+      id: thirdRecipeId,
+      title: "Soupe miso",
+      updated_at: "2026-03-29T08:00:00.000Z",
+    };
+    const recipeListQuery = createQueryBuilderMock<RecipeRow[]>([
+      recipeRow,
+      secondRecipeRow,
+      thirdRecipeRow,
+    ]);
+    const recipeTagLinksQuery = createQueryBuilderMock<RecipeTagLinkRow[]>([
+      tagLinkRow,
+    ]);
+    const loadedTagsQuery = createQueryBuilderMock<RecipeTagRow[]>([tagRow]);
+    const selectionQuery = createQueryBuilderMock<RecipeSelectionRow[]>([
+      selectionRow,
+    ]);
+    const client = createClient({
+      recipes: recipeListQuery,
+      recipe_tag_links: recipeTagLinksQuery,
+      recipe_tags: loadedTagsQuery,
+      recipe_selections: selectionQuery,
+    });
+
+    const repository = createCatalogRepository(client);
+    const recipes = await repository.listByProject({
+      projectId,
+      pagination: {
+        pageSize: 2,
+      },
+    });
+
+    expect(recipeListQuery.limit).toHaveBeenCalledWith(3);
+    expect(recipes).toEqual({
+      items: [
+        expect.objectContaining({ id: recipeId }),
+        expect.objectContaining({ id: secondRecipeId }),
+      ],
+      hasMore: true,
+      nextCursor: {
+        updatedAt: secondRecipeRow.updated_at,
+        id: secondRecipeId,
+      },
+    });
   });
 
   it("lists recipe tags for the catalogue from persisted links", async () => {

@@ -2,7 +2,11 @@ import { listCatalogRecipes } from "@/modules/recipes/core/usecases/catalog/list
 
 describe("listCatalogRecipes", () => {
   it("passes project id and filters to the catalog repository", async () => {
-    const listByProject = jest.fn().mockResolvedValue([]);
+    const listByProject = jest.fn().mockResolvedValue({
+      items: [],
+      hasMore: false,
+      nextCursor: null,
+    });
 
     await listCatalogRecipes({
       catalogRepository: {

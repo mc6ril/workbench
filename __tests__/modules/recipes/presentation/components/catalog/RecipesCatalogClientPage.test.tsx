@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import RecipesCatalogClientPage from "@/modules/recipes/presentation/components/catalog/RecipesCatalogClientPage/index";
 import { useListRecipes } from "@/modules/recipes/presentation/hooks/catalog/listRecipes";
@@ -9,6 +9,30 @@ import { useRecipesCatalogFiltersStore } from "@/modules/recipes/presentation/st
 const mockReplace = jest.fn();
 const mockPathname = "/project-1/recipes";
 let mockSearchParams = new URLSearchParams();
+let mockIntersectionObserverCallback: IntersectionObserverCallback | null = null;
+const mockIntersectionObserve = jest.fn();
+const mockIntersectionDisconnect = jest.fn();
+
+class MockIntersectionObserver implements IntersectionObserver {
+  readonly root = null;
+  readonly rootMargin = "0px";
+  readonly thresholds = [];
+
+  constructor(callback: IntersectionObserverCallback) {
+    mockIntersectionObserverCallback = callback;
+  }
+
+  disconnect = mockIntersectionDisconnect;
+  observe = mockIntersectionObserve;
+  takeRecords = () => [];
+  unobserve = jest.fn();
+}
+
+Object.defineProperty(globalThis, "IntersectionObserver", {
+  writable: true,
+  configurable: true,
+  value: MockIntersectionObserver,
+});
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({
@@ -58,6 +82,9 @@ describe("RecipesCatalogClientPage", () => {
   beforeEach(() => {
     mockReplace.mockClear();
     mockSearchParams = new URLSearchParams();
+    mockIntersectionObserverCallback = null;
+    mockIntersectionObserve.mockClear();
+    mockIntersectionDisconnect.mockClear();
     useRecipesCatalogFiltersStore.setState({
       search: "",
       selectedTagSlugs: [],
@@ -67,7 +94,7 @@ describe("RecipesCatalogClientPage", () => {
 
     jest.mocked(useListRecipes).mockReturnValue(
       asMockedReturn<ReturnType<typeof useListRecipes>>({
-        data: [
+        recipes: [
           {
             id: "recipe-1",
             title: "Pasta primavera",
@@ -79,6 +106,9 @@ describe("RecipesCatalogClientPage", () => {
             isInQuickList: false,
           },
         ],
+        fetchNextPage: jest.fn(),
+        hasNextPage: false,
+        isFetchingNextPage: false,
         isLoading: false,
         isFetching: false,
       })
@@ -107,18 +137,22 @@ describe("RecipesCatalogClientPage", () => {
     render(
       <RecipesCatalogClientPage
         projectId="project-1"
-        initialRecipes={[
-          {
-            id: "recipe-1",
-            title: "Pasta primavera",
-            summary: "summary",
-            totalTimeLabel: "30 min",
-            servingsLabel: "4 portions",
-            tags: [],
-            coverStyle: "citrus",
-            isInQuickList: false,
-          },
-        ]}
+        initialRecipesPage={{
+          items: [
+            {
+              id: "recipe-1",
+              title: "Pasta primavera",
+              summary: "summary",
+              totalTimeLabel: "30 min",
+              servingsLabel: "4 portions",
+              tags: [],
+              coverStyle: "citrus",
+              isInQuickList: false,
+            },
+          ],
+          hasMore: false,
+          nextCursor: null,
+        }}
         initialTags={[
           {
             id: "tag-1",
@@ -150,5 +184,134 @@ describe("RecipesCatalogClientPage", () => {
     });
 
     expect(tagButton).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("shows a load more fallback button and fetches the next page on click", async () => {
+    const fetchNextPage = jest.fn();
+
+    jest.mocked(useListRecipes).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useListRecipes>>({
+        recipes: [
+          {
+            id: "recipe-1",
+            title: "Pasta primavera",
+            summary: "summary",
+            totalTimeLabel: "30 min",
+            servingsLabel: "4 portions",
+            tags: [],
+            coverStyle: "citrus",
+            isInQuickList: false,
+          },
+        ],
+        fetchNextPage,
+        hasNextPage: true,
+        isFetchingNextPage: false,
+        isLoading: false,
+        isFetching: false,
+      })
+    );
+
+    render(
+      <RecipesCatalogClientPage
+        projectId="project-1"
+        initialRecipesPage={{
+          items: [
+            {
+              id: "recipe-1",
+              title: "Pasta primavera",
+              summary: "summary",
+              totalTimeLabel: "30 min",
+              servingsLabel: "4 portions",
+              tags: [],
+              coverStyle: "citrus",
+              isInQuickList: false,
+            },
+          ],
+          hasMore: true,
+          nextCursor: {
+            updatedAt: "2026-04-03T10:00:00.000Z",
+            id: "recipe-1",
+          },
+        }}
+        initialTags={[]}
+        initialQueryState={{
+          search: "",
+          tagSlugs: [],
+        }}
+        quickListRecipes={[]}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Charger plus" }));
+
+    expect(fetchNextPage).toHaveBeenCalledTimes(1);
+  });
+
+  it("fetches the next page when the sentinel enters the viewport", async () => {
+    const fetchNextPage = jest.fn();
+
+    jest.mocked(useListRecipes).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useListRecipes>>({
+        recipes: [
+          {
+            id: "recipe-1",
+            title: "Pasta primavera",
+            summary: "summary",
+            totalTimeLabel: "30 min",
+            servingsLabel: "4 portions",
+            tags: [],
+            coverStyle: "citrus",
+            isInQuickList: false,
+          },
+        ],
+        fetchNextPage,
+        hasNextPage: true,
+        isFetchingNextPage: false,
+        isLoading: false,
+        isFetching: false,
+      })
+    );
+
+    render(
+      <RecipesCatalogClientPage
+        projectId="project-1"
+        initialRecipesPage={{
+          items: [
+            {
+              id: "recipe-1",
+              title: "Pasta primavera",
+              summary: "summary",
+              totalTimeLabel: "30 min",
+              servingsLabel: "4 portions",
+              tags: [],
+              coverStyle: "citrus",
+              isInQuickList: false,
+            },
+          ],
+          hasMore: true,
+          nextCursor: {
+            updatedAt: "2026-04-03T10:00:00.000Z",
+            id: "recipe-1",
+          },
+        }}
+        initialTags={[]}
+        initialQueryState={{
+          search: "",
+          tagSlugs: [],
+        }}
+        quickListRecipes={[]}
+      />
+    );
+
+    expect(mockIntersectionObserve).toHaveBeenCalled();
+
+    act(() => {
+      mockIntersectionObserverCallback?.(
+        [{ isIntersecting: true } as IntersectionObserverEntry],
+        {} as IntersectionObserver
+      );
+    });
+
+    expect(fetchNextPage).toHaveBeenCalledTimes(1);
   });
 });

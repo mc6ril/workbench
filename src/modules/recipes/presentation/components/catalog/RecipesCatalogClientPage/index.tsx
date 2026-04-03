@@ -17,7 +17,7 @@ import RecipesQuickListRail from "../RecipesQuickListRail";
 import styles from "./styles.module.scss";
 
 import type {
-  CatalogRecipeSummary,
+  CatalogRecipeListResponse,
   CatalogRecipeTag,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
@@ -34,7 +34,7 @@ import { useRecipesCatalogFiltersStore } from "@/modules/recipes/presentation/st
 
 type Props = {
   projectId: string;
-  initialRecipes: CatalogRecipeSummary[];
+  initialRecipesPage: CatalogRecipeListResponse;
   initialTags: CatalogRecipeTag[];
   initialQueryState: RecipesCatalogQueryState;
   quickListRecipes: QuickListRecipe[];
@@ -54,7 +54,7 @@ const cx = (...classes: Array<string | false | null | undefined>) => {
 
 const RecipesCatalogClientPage = ({
   projectId,
-  initialRecipes,
+  initialRecipesPage,
   initialTags,
   initialQueryState,
   quickListRecipes,
@@ -64,6 +64,8 @@ const RecipesCatalogClientPage = ({
   const searchParams = useSearchParams();
   const searchParamsKey = searchParams.toString();
   const initializedCatalogStateRef = useRef<string | null>(null);
+  const catalogMainRef = useRef<HTMLDivElement | null>(null);
+  const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null);
   const initialQueryStateKey = `${projectId}:${initialQueryState.search}:${initialQueryState.tagSlugs.join(",")}`;
 
   const search = useRecipesCatalogFiltersStore((state) => state.search);
@@ -166,7 +168,7 @@ const RecipesCatalogClientPage = ({
       tagSlugs: selectedTagSlugs,
     },
     {
-      initialData: isInitialRecipesQuery ? initialRecipes : undefined,
+      initialData: isInitialRecipesQuery ? initialRecipesPage : undefined,
     }
   );
   const tagsQuery = useListRecipeTags(projectId, {
@@ -175,7 +177,10 @@ const RecipesCatalogClientPage = ({
   const quickListQuery = useListActiveSelections(projectId, {
     initialData: quickListRecipes,
   });
-  const recipes = recipesQuery.data ?? [];
+  const recipes = recipesQuery.recipes;
+  const fetchNextPage = recipesQuery.fetchNextPage;
+  const hasNextPage = recipesQuery.hasNextPage;
+  const isFetchingNextPage = recipesQuery.isFetchingNextPage;
   const tags = useMemo(() => {
     return tagsQuery.data ?? [];
   }, [tagsQuery.data]);
@@ -185,8 +190,50 @@ const RecipesCatalogClientPage = ({
   }, [tags]);
   const hasActiveFilters = search.length > 0 || selectedTagSlugs.length > 0;
   const showInitialLoader = recipesQuery.isLoading && recipes.length === 0;
-  const isRefreshing = recipesQuery.isFetching && !showInitialLoader;
+  const isRefreshing =
+    recipesQuery.isFetching &&
+    !showInitialLoader &&
+    !isFetchingNextPage;
   const activeFilterCount = (search ? 1 : 0) + selectedTagSlugs.length;
+  const showLoadMoreControls =
+    recipes.length > 0 && (hasNextPage || isFetchingNextPage);
+
+  useEffect(() => {
+    if (
+      !hasNextPage ||
+      isFetchingNextPage ||
+      typeof IntersectionObserver === "undefined"
+    ) {
+      return;
+    }
+
+    const sentinel = loadMoreSentinelRef.current;
+    const catalogMain = catalogMainRef.current;
+
+    if (!sentinel || !catalogMain) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) {
+          return;
+        }
+
+        void fetchNextPage();
+      },
+      {
+        root: catalogMain,
+        rootMargin: "240px 0px",
+      }
+    );
+
+    observer.observe(sentinel);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   return (
     <>
@@ -285,7 +332,10 @@ const RecipesCatalogClientPage = ({
           ) : null}
 
           <div className={styles["recipes-page__catalog-layout"]}>
-            <div className={styles["recipes-page__catalog-main"]}>
+            <div
+              ref={catalogMainRef}
+              className={styles["recipes-page__catalog-main"]}
+            >
               {showInitialLoader ? (
                 <div className={styles["recipes-page__loading-shell"]}>
                   <Loader variant="inline" size="medium" />
@@ -315,15 +365,49 @@ const RecipesCatalogClientPage = ({
                   ) : null}
                 </div>
               ) : (
-                <div className={styles["recipes-page__recipe-grid"]}>
-                  {recipes.map((recipe) => (
-                    <RecipeCatalogCard
-                      key={recipe.id}
-                      projectId={projectId}
-                      recipe={recipe}
-                    />
-                  ))}
-                </div>
+                <>
+                  <div className={styles["recipes-page__recipe-grid"]}>
+                    {recipes.map((recipe) => (
+                      <RecipeCatalogCard
+                        key={recipe.id}
+                        projectId={projectId}
+                        recipe={recipe}
+                      />
+                    ))}
+                  </div>
+
+                  {showLoadMoreControls ? (
+                    <div className={styles["recipes-page__pagination"]}>
+                      <div
+                        ref={loadMoreSentinelRef}
+                        className={styles["recipes-page__sentinel"]}
+                        aria-hidden="true"
+                      />
+
+                      <button
+                        type="button"
+                        className={styles["recipes-page__load-more-button"]}
+                        onClick={() => {
+                          void fetchNextPage();
+                        }}
+                        disabled={!hasNextPage || isFetchingNextPage}
+                      >
+                        {isFetchingNextPage ? "Chargement..." : "Charger plus"}
+                      </button>
+
+                      {isFetchingNextPage ? (
+                        <div className={styles["recipes-page__load-more-status"]}>
+                          <Loader
+                            variant="inline"
+                            size="small"
+                            message="Chargement des recettes suivantes..."
+                            ariaLabel="Chargement des recettes suivantes"
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </>
               )}
             </div>
           </div>

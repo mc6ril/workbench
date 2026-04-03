@@ -1,12 +1,12 @@
 import type {
   CatalogRecipeDetail,
   CatalogRecipeListInput,
-  CatalogRecipeSummary,
+  CatalogRecipeListResponse,
   CatalogRecipeTag,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 
 export type CatalogRepository = {
-  listByProject: (input: CatalogRecipeListInput) => Promise<CatalogRecipeSummary[]>;
+  listByProject: (input: CatalogRecipeListInput) => Promise<CatalogRecipeListResponse>;
   listTagsByProject: (projectId: string) => Promise<CatalogRecipeTag[]>;
   getDetail: (
     projectId: string,

@@ -2,10 +2,13 @@ import type {
   CatalogRecipeCoverStyle,
   CatalogRecipeDetail,
   CatalogRecipeListFilters,
+  CatalogRecipeListPagination,
+  CatalogRecipeListResponse,
   CatalogRecipeSummary,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import {
   normalizeCatalogRecipeListFilters,
+  normalizeCatalogRecipeListPagination,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
 import {
@@ -458,6 +461,46 @@ export const listCatalogFixtureRecipesByFilters = (
   return Object.values(EDIT_RECIPE_SOURCES)
     .filter((source) => fixtureSourceMatchesFilters(source, filters))
     .map(mapFixtureSourceToCatalogSummary);
+};
+
+const FIXTURE_CATALOG_CURSOR_UPDATED_AT = "1970-01-01T00:00:00.000Z";
+
+const paginateCatalogFixtureRecipes = (
+  recipes: CatalogRecipeSummary[],
+  pagination?: CatalogRecipeListPagination
+): CatalogRecipeListResponse => {
+  const normalizedPagination =
+    pagination ?? normalizeCatalogRecipeListPagination(undefined);
+  const startIndex = normalizedPagination.cursor
+    ? recipes.findIndex((recipe) => recipe.id === normalizedPagination.cursor?.id) + 1
+    : 0;
+  const items = recipes.slice(
+    Math.max(startIndex, 0),
+    Math.max(startIndex, 0) + normalizedPagination.pageSize
+  );
+  const hasMore = startIndex + normalizedPagination.pageSize < recipes.length;
+
+  return {
+    items,
+    hasMore,
+    nextCursor:
+      hasMore && items.length > 0
+        ? {
+            updatedAt: FIXTURE_CATALOG_CURSOR_UPDATED_AT,
+            id: items[items.length - 1].id,
+          }
+        : null,
+  };
+};
+
+export const listCatalogFixtureRecipePage = (
+  filters?: CatalogRecipeListFilters,
+  pagination?: CatalogRecipeListPagination
+): CatalogRecipeListResponse => {
+  return paginateCatalogFixtureRecipes(
+    listCatalogFixtureRecipesByFilters(filters),
+    pagination
+  );
 };
 
 export const listCatalogFixtureTags = (): RecipeTag[] => {

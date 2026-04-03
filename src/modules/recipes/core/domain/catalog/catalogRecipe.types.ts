@@ -1,3 +1,5 @@
+import { APP_LIMITS } from "@/shared/constants/app";
+
 import type {
   Recipe,
   RecipeTag,
@@ -23,9 +25,25 @@ export type CatalogRecipeListFilters = {
   tagSlugs?: string[];
 };
 
+export type CatalogRecipeListCursor = {
+  updatedAt: string;
+  id: string;
+};
+
+export type CatalogRecipeListPaginationInput = {
+  cursor?: CatalogRecipeListCursor | null;
+  pageSize?: number;
+};
+
+export type CatalogRecipeListPagination = {
+  cursor: CatalogRecipeListCursor | null;
+  pageSize: number;
+};
+
 export type CatalogRecipeListInput = {
   projectId: string;
   filters?: CatalogRecipeListFilters;
+  pagination?: CatalogRecipeListPaginationInput;
 };
 
 export type CatalogRecipeSummary = Pick<
@@ -39,6 +57,12 @@ export type CatalogRecipeSummary = Pick<
 
 export type CatalogRecipeDetail = CatalogRecipeSummary &
   Pick<Recipe, "note" | "ingredients" | "steps">;
+
+export type CatalogRecipeListResponse = {
+  items: CatalogRecipeSummary[];
+  nextCursor: CatalogRecipeListCursor | null;
+  hasMore: boolean;
+};
 
 export const normalizeCatalogRecipeSearch = (
   value: string | null | undefined
@@ -62,5 +86,23 @@ export const normalizeCatalogRecipeListFilters = (
   return {
     search: normalizeCatalogRecipeSearch(filters?.search),
     tagSlugs: normalizeCatalogRecipeTagSlugs(filters?.tagSlugs),
+  };
+};
+
+export const normalizeCatalogRecipeListPagination = (
+  pagination?: CatalogRecipeListPaginationInput
+): CatalogRecipeListPagination => {
+  const requestedPageSize = pagination?.pageSize;
+  const pageSize =
+    typeof requestedPageSize === "number" && Number.isFinite(requestedPageSize)
+      ? Math.trunc(requestedPageSize)
+      : APP_LIMITS.PAGINATION.DEFAULT_PAGE_SIZE;
+
+  return {
+    cursor: pagination?.cursor ?? null,
+    pageSize: Math.min(
+      Math.max(pageSize, 1),
+      APP_LIMITS.PAGINATION.MAX_PAGE_SIZE
+    ),
   };
 };

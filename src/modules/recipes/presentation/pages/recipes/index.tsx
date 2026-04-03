@@ -1,3 +1,4 @@
+import { APP_LIMITS } from "@/shared/constants/app";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
 import { listCatalogRecipes } from "@/modules/recipes/core/usecases/catalog/listCatalogRecipes";
@@ -22,7 +23,7 @@ const RecipesPage = async ({ projectId, searchParams = {} }: Props) => {
   const supabaseClient = await createSupabaseServerClient();
   const catalogRepository = createCatalogRepository(supabaseClient);
   const plannerRepository = createPlannerRepository(supabaseClient);
-  const [initialRecipes, initialTags, quickListRecipes] = await Promise.all([
+  const [initialRecipesPage, initialTags, quickListRecipes] = await Promise.all([
     listCatalogRecipes({
       catalogRepository,
     })({
@@ -30,6 +31,9 @@ const RecipesPage = async ({ projectId, searchParams = {} }: Props) => {
       filters: {
         search: initialQueryState.search,
         tagSlugs: initialQueryState.tagSlugs,
+      },
+      pagination: {
+        pageSize: APP_LIMITS.PAGINATION.DEFAULT_PAGE_SIZE,
       },
     }),
     listCatalogRecipeTags({
@@ -43,7 +47,7 @@ const RecipesPage = async ({ projectId, searchParams = {} }: Props) => {
   return (
     <RecipesCatalogClientPage
       projectId={projectId}
-      initialRecipes={initialRecipes}
+      initialRecipesPage={initialRecipesPage}
       initialTags={initialTags}
       initialQueryState={initialQueryState}
       quickListRecipes={quickListRecipes}
