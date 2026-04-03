@@ -4,13 +4,17 @@ import { type CookieOptions, createServerClient } from "@supabase/ssr";
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { requireNonEmptyEnv } from "@/shared/errors/programmingError";
 import {
-  isSupportedLocale,
   localeCookieMaxAgeSeconds,
   localeCookieName,
   requestLocaleHeaderName,
   resolveLocale,
 } from "@/shared/i18n/config";
-import { getMarketingLocaleFromPathname } from "@/shared/i18n/marketingPaths";
+import {
+  getMarketingLocaleFromPathname,
+  getResolvedMarketingLocaleFromPathname,
+  isDefaultLocalePrefixedMarketingPathname,
+  stripDefaultLocalePrefix,
+} from "@/shared/i18n/marketingPaths";
 import {
   buildAuthCallbackPath,
   getAuthCodeRedirectTarget,
@@ -76,9 +80,9 @@ const appendLocaleResponseCookies = (
   response: NextResponse,
   pathname: string
 ): NextResponse => {
-  const fromPath = getMarketingLocaleFromPathname(pathname);
-  if (fromPath && isSupportedLocale(fromPath)) {
-    response.cookies.set(localeCookieName, fromPath, {
+  const marketingLocale = getResolvedMarketingLocaleFromPathname(pathname);
+  if (marketingLocale) {
+    response.cookies.set(localeCookieName, marketingLocale, {
       path: "/",
       sameSite: "lax",
       maxAge: localeCookieMaxAgeSeconds,
@@ -96,7 +100,8 @@ const appendLocaleResponseCookies = (
  * - RLS policies at the database level are the ultimate source of truth
  *
  * This middleware provides:
- * - Locale-prefixed marketing URLs and `x-next-locale` for Server Components
+ * - Default-locale marketing URLs without redirect on `/`
+ * - `x-next-locale` for Server Components
  * - UX optimization: early redirects for better user experience
  * - Route filtering: prevents loading unnecessary pages
  * - Email verification checks: redirects unverified users
@@ -108,10 +113,17 @@ export const middleware = async (
 ): Promise<NextResponse> => {
   const { pathname } = request.nextUrl;
 
-  // Canonical public URLs are `/{locale}`; files live under `/marketing/{locale}` (see next.config rewrites).
+  // Public marketing URLs are rewritten from `/` and `/{locale}` into `/marketing/{locale}`.
   if (pathname === "/marketing" || pathname.startsWith("/marketing/")) {
-    const suffix = pathname === "/marketing" ? "/" : pathname.slice("/marketing".length);
+    const suffix =
+      pathname === "/marketing" ? "/" : pathname.slice("/marketing".length);
     return NextResponse.redirect(new URL(suffix, request.url));
+  }
+
+  if (isDefaultLocalePrefixedMarketingPathname(pathname)) {
+    return NextResponse.redirect(
+      new URL(stripDefaultLocalePrefix(pathname), request.url)
+    );
   }
 
   const cookieLocale = request.cookies.get(localeCookieName)?.value;
@@ -121,32 +133,22 @@ export const middleware = async (
     acceptLanguage,
   });
 
-  // Legacy marketing URLs without locale prefix → locale-prefixed URLs
-  if (pathname === "/") {
-    return NextResponse.redirect(
-      new URL(`/${resolvedFromPreferences}`, request.url)
-    );
-  }
-
-  if (pathname === "/pricing" || pathname === "/legal") {
-    return NextResponse.redirect(
-      new URL(`/${resolvedFromPreferences}${pathname}`, request.url)
-    );
-  }
-
   const pathLocale = getMarketingLocaleFromPathname(pathname);
-  const resolvedLocale = pathLocale ?? resolvedFromPreferences;
+  const marketingLocale = getResolvedMarketingLocaleFromPathname(pathname);
+  const resolvedLocale = marketingLocale ?? resolvedFromPreferences;
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set(requestLocaleHeaderName, resolvedLocale);
 
-  const isAuthPage =
-    pathname === "/auth/signin" || pathname === "/auth/signup";
+  const isAuthPage = pathname === "/auth/signin" || pathname === "/auth/signup";
   const isProtected = isProtectedRoute(pathname);
-  const localeHomePath = pathLocale ? `/${pathLocale}` : null;
+  const normalizedPathname =
+    pathname.length > 1 && pathname.endsWith("/")
+      ? pathname.slice(0, -1)
+      : pathname;
   const isMarketingHome =
-    localeHomePath !== null &&
-    (pathname === localeHomePath || pathname === `${localeHomePath}/`);
+    normalizedPathname === "/" ||
+    (pathLocale !== null && normalizedPathname === `/${pathLocale}`);
 
   if (isMarketingHome) {
     const code = request.nextUrl.searchParams.get("code");
@@ -172,7 +174,7 @@ export const middleware = async (
     }
   }
 
-  if (!isAuthPage && !isProtected && !isMarketingHome) {
+  if (!isAuthPage && !isProtected) {
     const response = NextResponse.next({
       request: {
         headers: requestHeaders,
@@ -192,7 +194,7 @@ export const middleware = async (
       error,
     } = await supabase.auth.getUser();
 
-    if (user && (isAuthPage || isMarketingHome)) {
+    if (user && isAuthPage) {
       return NextResponse.redirect(new URL(PAGE_ROUTES.WORKSPACE, request.url));
     }
 

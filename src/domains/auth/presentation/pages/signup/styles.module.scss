@@ -14,8 +14,7 @@
   align-items: stretch;
   justify-content: flex-start;
   overflow-y: auto;
-  padding:
-    calc(#{$spacing-4xl} + env(safe-area-inset-top))
+  padding: calc(#{$spacing-4xl} + env(safe-area-inset-top))
     calc(#{$spacing-lg} + env(safe-area-inset-right))
     calc(#{$spacing-3xl} + env(safe-area-inset-bottom))
     calc(#{$spacing-lg} + env(safe-area-inset-left));
@@ -85,6 +84,31 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-xs;
+}
+
+.signup-verification-hint,
+.signup-verification-feedback--error,
+.signup-verification-feedback--success,
+.signup-oauth-notice {
+  text-align: center;
+}
+
+.signup-verification-hint,
+.signup-oauth-notice {
+  color: $color-text-secondary;
+}
+
+.signup-verification-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.signup-verification-feedback--error {
+  color: $color-error-text;
+}
+
+.signup-verification-feedback--success {
+  color: $color-text-primary;
 }
 
 .signup-terms {

@@ -28,25 +28,42 @@ const supabaseRemotePattern = (() => {
 
 const nextConfig: NextConfig = {
   /**
-   * Public SEO URLs use `/{locale}` (`/fr`, `/en`, `/es`).
+   * Public SEO URLs keep the default locale unprefixed (`/`, `/pricing`, `/legal`)
+   * and use `/{locale}` only for secondary locales (`/en`, `/es`).
    * Files live under `app/marketing/[locale]/…` to avoid clashing with `app/(protected)/[projectId]`.
    */
   rewrites: async () => {
     return [
       {
-        source: "/:locale(fr|en|es)",
+        source: "/",
+        destination: "/marketing/fr",
+      },
+      {
+        source: "/pricing",
+        destination: "/marketing/fr/pricing",
+      },
+      {
+        source: "/legal",
+        destination: "/marketing/fr/legal",
+      },
+      {
+        source: "/legal/:path*",
+        destination: "/marketing/fr/legal/:path*",
+      },
+      {
+        source: "/:locale(en|es)",
         destination: "/marketing/:locale",
       },
       {
-        source: "/:locale(fr|en|es)/pricing",
+        source: "/:locale(en|es)/pricing",
         destination: "/marketing/:locale/pricing",
       },
       {
-        source: "/:locale(fr|en|es)/legal",
+        source: "/:locale(en|es)/legal",
         destination: "/marketing/:locale/legal",
       },
       {
-        source: "/:locale(fr|en|es)/legal/:path*",
+        source: "/:locale(en|es)/legal/:path*",
         destination: "/marketing/:locale/legal/:path*",
       },
     ];
