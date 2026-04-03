@@ -1,4 +1,5 @@
 import {
+  isStandaloneDisplayMode,
   isUnsupportedGoogleOAuthContext,
   isUnsupportedGoogleOAuthUserAgent,
 } from "@/domains/auth/presentation/utils/googleOAuth";
@@ -37,11 +38,24 @@ describe("isUnsupportedGoogleOAuthUserAgent", () => {
 
 describe("isUnsupportedGoogleOAuthContext", () => {
   const originalUserAgent = window.navigator.userAgent;
+  const originalMatchMedia = window.matchMedia;
+  const originalStandalone = (
+    window.navigator as Navigator & { standalone?: boolean }
+  ).standalone;
 
   afterEach(() => {
     Object.defineProperty(window.navigator, "userAgent", {
       configurable: true,
       value: originalUserAgent,
+    });
+    Object.defineProperty(window.navigator, "standalone", {
+      configurable: true,
+      value: originalStandalone,
+    });
+    Object.defineProperty(window, "matchMedia", {
+      configurable: true,
+      writable: true,
+      value: originalMatchMedia,
     });
   });
 
@@ -54,6 +68,26 @@ describe("isUnsupportedGoogleOAuthContext", () => {
         "Mobile/15E148 Instagram 372.0.0.0.44",
     });
 
+    expect(isUnsupportedGoogleOAuthContext()).toBe(true);
+  });
+
+  it("returns true when the app is opened in standalone display mode", () => {
+    Object.defineProperty(window, "matchMedia", {
+      configurable: true,
+      writable: true,
+      value: jest.fn().mockImplementation((query: string) => ({
+        matches: query === "(display-mode: standalone)",
+        media: query,
+        onchange: null,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+      })),
+    });
+
+    expect(isStandaloneDisplayMode()).toBe(true);
     expect(isUnsupportedGoogleOAuthContext()).toBe(true);
   });
 });

@@ -21,7 +21,6 @@ import {
   sanitizeInternalRedirectPath,
 } from "@/shared/utils/authRedirect";
 import { isProtectedRoute } from "@/shared/utils/routes";
-import { hasSupabaseAuthCookie } from "@/shared/utils/supabaseAuthCookies";
 
 /**
  * Create Supabase client for Edge Runtime (middleware).
@@ -150,9 +149,6 @@ export const middleware = async (
   const isMarketingHome =
     normalizedPathname === "/" ||
     (pathLocale !== null && normalizedPathname === `/${pathLocale}`);
-  const hasAuthCookie = hasSupabaseAuthCookie(
-    request.cookies.getAll().map(({ name }) => name)
-  );
 
   if (isMarketingHome) {
     const code = request.nextUrl.searchParams.get("code");
@@ -178,16 +174,7 @@ export const middleware = async (
     }
   }
 
-  if (isMarketingHome && !hasAuthCookie) {
-    const response = NextResponse.next({
-      request: {
-        headers: requestHeaders,
-      },
-    });
-    return appendLocaleResponseCookies(response, pathname);
-  }
-
-  if (!isAuthPage && !isProtected && !isMarketingHome) {
+  if (!isAuthPage && !isProtected) {
     const response = NextResponse.next({
       request: {
         headers: requestHeaders,
@@ -207,7 +194,7 @@ export const middleware = async (
       error,
     } = await supabase.auth.getUser();
 
-    if (user && (isAuthPage || isMarketingHome)) {
+    if (user && isAuthPage) {
       return NextResponse.redirect(new URL(PAGE_ROUTES.WORKSPACE, request.url));
     }
 

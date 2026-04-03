@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import Link from "next/link";
@@ -31,19 +31,27 @@ import {
 } from "@/domains/auth/presentation/forms/authForms.schema";
 import { useSignInWithGoogle } from "@/domains/auth/presentation/hooks/user/useSignInWithGoogle";
 import { useSignUp } from "@/domains/auth/presentation/hooks/user/useSignUp";
+import { useResendVerification } from "@/domains/auth/presentation/hooks/verification/useResendVerification";
 import { getNextUnmetCriterion } from "@/domains/auth/presentation/password/passwordStrength";
-import { isUnsupportedGoogleOAuthContext } from "@/domains/auth/presentation/utils/googleOAuth";
+import { useIsGoogleOAuthBlocked } from "@/domains/auth/presentation/utils/googleOAuth";
 
 const SignupPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const signUpMutation = useSignUp();
   const signInWithGoogleMutation = useSignInWithGoogle();
+  const resendVerificationMutation = useResendVerification();
   const t = useTranslation("pages.signup");
   const tCommon = useTranslation("common");
   const tErrors = useTranslation("errors");
   const tFields = useTranslation("pages.signup.fields");
   const { legal } = useMarketingRoutes();
+  const [submittedEmail, setSubmittedEmail] = useState("");
+  const [verificationFeedback, setVerificationFeedback] = useState<{
+    tone: "success" | "error";
+    message: string;
+  } | null>(null);
+  const googleOAuthBlocked = useIsGoogleOAuthBlocked();
   const redirectPathParam = searchParams.get("redirect");
   const redirectPath =
     redirectPathParam &&
@@ -63,6 +71,7 @@ const SignupPage = () => {
     setError,
     clearErrors,
     control,
+    getValues,
   } = useForm<SignUpFormInput>({
     resolver: zodResolver(SignUpFormSchema),
     mode: "onBlur",
@@ -132,6 +141,9 @@ const SignupPage = () => {
 
   const onSubmit: SubmitHandler<SignUpFormInput> = useCallback(
     (data) => {
+      setSubmittedEmail(data.email);
+      setVerificationFeedback(null);
+
       const signUpInput: SignUpInput = {
         email: data.email,
         password: data.password,
@@ -146,7 +158,7 @@ const SignupPage = () => {
   const handleGoogleSignIn = useCallback(() => {
     clearErrors("root");
 
-    if (isUnsupportedGoogleOAuthContext()) {
+    if (googleOAuthBlocked) {
       setError("root", {
         type: "manual",
         message: t("oauth.unsupportedBrowser"),
@@ -155,7 +167,39 @@ const SignupPage = () => {
     }
 
     signInWithGoogleMutation.mutate(redirectPath);
-  }, [clearErrors, redirectPath, setError, signInWithGoogleMutation, t]);
+  }, [
+    clearErrors,
+    googleOAuthBlocked,
+    redirectPath,
+    setError,
+    signInWithGoogleMutation,
+    t,
+  ]);
+
+  const handleResendVerification = useCallback(() => {
+    const email = submittedEmail || getValues("email");
+
+    if (!email) {
+      return;
+    }
+
+    resendVerificationMutation.reset();
+    setVerificationFeedback(null);
+    resendVerificationMutation.mutate(email, {
+      onSuccess: () => {
+        setVerificationFeedback({
+          tone: "success",
+          message: t("verification.resendSuccess"),
+        });
+      },
+      onError: (error) => {
+        setVerificationFeedback({
+          tone: "error",
+          message: getErrorMessage(error, tErrors),
+        });
+      },
+    });
+  }, [getValues, resendVerificationMutation, submittedEmail, t, tErrors]);
 
   if (
     signUpMutation.isSuccess &&
@@ -173,6 +217,45 @@ const SignupPage = () => {
           <Text variant="body" className={styles["signup-subtitle"]}>
             {t("verification.instructions")}
           </Text>
+          <Text variant="small" className={styles["signup-verification-hint"]}>
+            {t("verification.resendHint")}
+          </Text>
+          <div className={styles["signup-verification-actions"]}>
+            <Button
+              label={
+                resendVerificationMutation.isPending
+                  ? tCommon("loading")
+                  : t("verification.resendButton")
+              }
+              onClick={handleResendVerification}
+              disabled={
+                resendVerificationMutation.isPending ||
+                (!submittedEmail && !getValues("email"))
+              }
+              variant="secondary"
+              type="button"
+              aria-label={t("verification.resendButtonAriaLabel")}
+            />
+          </div>
+          {verificationFeedback && (
+            <div
+              role={verificationFeedback.tone === "error" ? "alert" : "status"}
+              aria-live={
+                verificationFeedback.tone === "error" ? "assertive" : "polite"
+              }
+            >
+              <Text
+                variant="small"
+                className={
+                  verificationFeedback.tone === "error"
+                    ? styles["signup-verification-feedback--error"]
+                    : styles["signup-verification-feedback--success"]
+                }
+              >
+                {verificationFeedback.message}
+              </Text>
+            </div>
+          )}
           <div className={styles["signup-footer"]}>
             <Link href={signinHref} className={styles["signup-link"]}>
               {t("verification.backToSignin")}
@@ -254,10 +337,7 @@ const SignupPage = () => {
               )}
             />
             <Text variant="small" className={styles["signup-terms__label"]}>
-              <Link
-                href={legal}
-                className={styles["signup-terms__link"]}
-              >
+              <Link href={legal} className={styles["signup-terms__link"]}>
                 {tFields("acceptedTerms.linkLabel")}
               </Link>
             </Text>
@@ -290,9 +370,14 @@ const SignupPage = () => {
           variant="secondary"
           fullWidth
           onClick={handleGoogleSignIn}
-          disabled={signInWithGoogleMutation.isPending}
+          disabled={signInWithGoogleMutation.isPending || googleOAuthBlocked}
           aria-label={t("oauth.googleButtonAriaLabel")}
         />
+        {googleOAuthBlocked && (
+          <Text variant="small" className={styles["signup-oauth-notice"]}>
+            {t("oauth.unsupportedBrowser")}
+          </Text>
+        )}
 
         <Text variant="small" className={styles["signup-footer"]}>
           {t("footer")}{" "}

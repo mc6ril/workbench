@@ -26,7 +26,7 @@ import { SignInSchema } from "@/domains/auth/core/usecases/user/signInUser";
 import { useSignIn } from "@/domains/auth/presentation/hooks/user/useSignIn";
 import { useSignInWithGoogle } from "@/domains/auth/presentation/hooks/user/useSignInWithGoogle";
 import { useResendVerification } from "@/domains/auth/presentation/hooks/verification/useResendVerification";
-import { isUnsupportedGoogleOAuthContext } from "@/domains/auth/presentation/utils/googleOAuth";
+import { useIsGoogleOAuthBlocked } from "@/domains/auth/presentation/utils/googleOAuth";
 
 type FormData = SignInInput;
 
@@ -40,6 +40,7 @@ const SigninPage = () => {
   const tCommon = useTranslation("common");
   const tErrors = useTranslation("errors");
   const tFields = useTranslation("pages.signin.fields");
+  const googleOAuthBlocked = useIsGoogleOAuthBlocked();
 
   const isUnverifiedRedirect = searchParams.get("unverified") === "true";
   const redirectPathParam = searchParams.get("redirect");
@@ -145,7 +146,7 @@ const SigninPage = () => {
   const handleGoogleSignIn = useCallback(() => {
     clearErrors("root");
 
-    if (isUnsupportedGoogleOAuthContext()) {
+    if (googleOAuthBlocked) {
       setError("root", {
         type: "manual",
         message: t("oauth.unsupportedBrowser"),
@@ -154,7 +155,14 @@ const SigninPage = () => {
     }
 
     signInWithGoogleMutation.mutate(redirectPath);
-  }, [clearErrors, redirectPath, setError, signInWithGoogleMutation, t]);
+  }, [
+    clearErrors,
+    googleOAuthBlocked,
+    redirectPath,
+    setError,
+    signInWithGoogleMutation,
+    t,
+  ]);
 
   const isEmailVerificationError =
     isUnverifiedRedirect ||
@@ -238,9 +246,14 @@ const SigninPage = () => {
           variant="secondary"
           fullWidth
           onClick={handleGoogleSignIn}
-          disabled={signInWithGoogleMutation.isPending}
+          disabled={signInWithGoogleMutation.isPending || googleOAuthBlocked}
           aria-label={t("oauth.googleButtonAriaLabel")}
         />
+        {googleOAuthBlocked && (
+          <Text variant="small" className={styles["signin-oauth-notice"]}>
+            {t("oauth.unsupportedBrowser")}
+          </Text>
+        )}
 
         <Text variant="small" className={styles["signin-footer"]}>
           {t("footer")}{" "}

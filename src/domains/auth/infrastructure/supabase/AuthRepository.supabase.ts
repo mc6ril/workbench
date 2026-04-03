@@ -69,17 +69,35 @@ const mapVerifiedSessionToAuthResult = (
   };
 };
 
-const createPasswordUpdateNotAllowedError =
-  (): PasswordUpdateNotAllowedError =>
-    createAppError(AUTH_ERROR_CODE.PASSWORD_UPDATE_NOT_ALLOWED, {
-      debugMessage:
-        "Password updates are not available for OAuth-only accounts",
-    }) as PasswordUpdateNotAllowedError;
+const createPasswordUpdateNotAllowedError = (): PasswordUpdateNotAllowedError =>
+  createAppError(AUTH_ERROR_CODE.PASSWORD_UPDATE_NOT_ALLOWED, {
+    debugMessage: "Password updates are not available for OAuth-only accounts",
+  }) as PasswordUpdateNotAllowedError;
 
 const createPasswordUpdateAuthRequiredError = (): AuthenticationError =>
   createAppError(AUTH_ERROR_CODE.AUTHENTICATION_ERROR, {
     debugMessage: "User must be authenticated to update password",
   }) as AuthenticationError;
+
+const buildBrowserAuthCallbackUrl = ({
+  nextPath,
+  fallbackPath,
+}: {
+  nextPath?: string | null;
+  fallbackPath?: string;
+}): string | undefined => {
+  const baseOrigin =
+    typeof window !== "undefined" ? window.location.origin : "";
+
+  if (!baseOrigin) {
+    return undefined;
+  }
+
+  return `${baseOrigin}${buildAuthCallbackPath({
+    nextPath,
+    fallbackPath,
+  })}`;
+};
 
 export const createAuthGateway = (
   client: SupabaseClient,
@@ -98,13 +116,9 @@ export const createAuthGateway = (
         metadata.terms_accepted_at = input.termsAcceptedAt;
       }
 
-      const baseOrigin =
-        typeof window !== "undefined" ? window.location.origin : "";
-      const emailRedirectTo = baseOrigin
-        ? `${baseOrigin}${buildAuthCallbackPath({
-            nextPath: VERIFIED_EMAIL_REDIRECT_PATH,
-          })}`
-        : undefined;
+      const emailRedirectTo = buildBrowserAuthCallbackUrl({
+        nextPath: VERIFIED_EMAIL_REDIRECT_PATH,
+      });
       const signUpOptions: {
         data?: Record<string, unknown>;
         emailRedirectTo?: string;
@@ -209,16 +223,14 @@ export const createAuthGateway = (
 
   async signInWithGoogle(redirectPath?: string): Promise<void> {
     try {
-      const baseOrigin =
-        typeof window !== "undefined" ? window.location.origin : "";
       const safeNext = sanitizeInternalRedirectPath(
         redirectPath,
         PAGE_ROUTES.WORKSPACE
       );
-      const redirectTo = `${baseOrigin}${buildAuthCallbackPath({
+      const redirectTo = buildBrowserAuthCallbackUrl({
         nextPath: safeNext,
         fallbackPath: PAGE_ROUTES.WORKSPACE,
-      })}`;
+      });
 
       const { data, error } = await client.auth.signInWithOAuth({
         provider: "google",
@@ -238,8 +250,7 @@ export const createAuthGateway = (
         const error: AuthenticationError = createAppError(
           AUTH_ERROR_CODE.AUTHENTICATION_ERROR,
           {
-            debugMessage:
-              "No OAuth URL returned from Supabase Google signin",
+            debugMessage: "No OAuth URL returned from Supabase Google signin",
           }
         ) as AuthenticationError;
         return handleAuthError(error);
@@ -265,13 +276,10 @@ export const createAuthGateway = (
 
   async resetPasswordForEmail(input: ResetPasswordInput): Promise<void> {
     try {
-      const redirectTo =
-        typeof window !== "undefined"
-          ? `${window.location.origin}${buildAuthCallbackPath({
-              nextPath: AUTH_PAGE_ROUTES.UPDATE_PASSWORD,
-              fallbackPath: AUTH_PAGE_ROUTES.UPDATE_PASSWORD,
-            })}`
-          : undefined;
+      const redirectTo = buildBrowserAuthCallbackUrl({
+        nextPath: AUTH_PAGE_ROUTES.UPDATE_PASSWORD,
+        fallbackPath: AUTH_PAGE_ROUTES.UPDATE_PASSWORD,
+      });
 
       const { error } = await client.auth.resetPasswordForEmail(input.email, {
         redirectTo,
@@ -423,8 +431,7 @@ export const createAuthGateway = (
           const error: EmailVerificationError = createAppError(
             AUTH_ERROR_CODE.EMAIL_VERIFICATION_ERROR,
             {
-              debugMessage:
-                "No session returned after PKCE email verification",
+              debugMessage: "No session returned after PKCE email verification",
             }
           ) as EmailVerificationError;
           return handleAuthError(error);
@@ -495,8 +502,7 @@ export const createAuthGateway = (
         const error: EmailVerificationError = createAppError(
           AUTH_ERROR_CODE.EMAIL_VERIFICATION_ERROR,
           {
-            debugMessage:
-              "No session or user returned from email verification",
+            debugMessage: "No session or user returned from email verification",
           }
         ) as EmailVerificationError;
         handleAuthError(error);
@@ -513,13 +519,20 @@ export const createAuthGateway = (
 
   async resendVerificationEmail(email: string): Promise<void> {
     try {
-      // Check if resend is available (Supabase may support this via resend method)
-      // For now, we'll use signUp with the same email to trigger resend
-      // Note: This is a workaround - Supabase doesn't have a direct resend API
-      // In production, this might need to use admin API or a different approach
+      const emailRedirectTo = buildBrowserAuthCallbackUrl({
+        nextPath: VERIFIED_EMAIL_REDIRECT_PATH,
+      });
+
       const { error } = await client.auth.resend({
         type: "signup",
-        email: email,
+        email,
+        ...(emailRedirectTo
+          ? {
+              options: {
+                emailRedirectTo,
+              },
+            }
+          : {}),
       });
 
       if (error) {
