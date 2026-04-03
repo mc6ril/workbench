@@ -13,6 +13,7 @@ export type TranslationKey =
   | `pages.workspace.${string}`
   | `pages.board.${string}`
   | `pages.ticketDetail.${string}`
+  | `pages.recipes.${string}`
   | `pages.landing.${string}`
   | `forms.${string}`
   | `errors.${string}`;
@@ -46,6 +47,7 @@ export type Namespace =
   | "pages.workspace"
   | "pages.board"
   | "pages.ticketDetail"
+  | "pages.recipes"
   | "pages.landing"
   | "forms"
   | "errors";

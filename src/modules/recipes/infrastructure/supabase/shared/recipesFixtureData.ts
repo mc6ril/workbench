@@ -368,6 +368,10 @@ export const getRecipeDraftFixture = (
   });
 };
 
+export const hasRecipeFixture = (recipeId: string): boolean => {
+  return Boolean(EDIT_RECIPE_SOURCES[recipeId]);
+};
+
 export const listQuickListFixtureSelections = (): RecipeSelection[] => {
   return QUICK_LIST_RECIPE_IDS.map((recipeId, index) => {
     const recipe = EDIT_RECIPE_SOURCES[recipeId];

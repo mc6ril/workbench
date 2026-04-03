@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import { isUuid } from "@/shared/utils/uuid";
 
 import {
   type CatalogRecipeListCursor,
@@ -397,6 +398,10 @@ export const createCatalogRepository = (
   },
 
   async getDetail(projectId, recipeId) {
+    if (!isUuid(recipeId)) {
+      return getCatalogFixtureDetail(recipeId);
+    }
+
     const recipeGraphs = await loadRecipeGraphsByIds(client, projectId, [recipeId]);
     const recipeGraph = recipeGraphs.get(recipeId);
 

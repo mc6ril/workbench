@@ -869,6 +869,26 @@
         }
       }
     },
+    "recipes": {
+      "detail": {
+        "additions": {
+          "title": "A tester",
+          "validate": "Valider cet ajout",
+          "validating": "Validation..."
+        },
+        "ingredients": {
+          "title": "Ingrédients",
+          "empty": "Aucun ingrédient validé pour l'instant."
+        },
+        "steps": {
+          "label": "Étape {position}",
+          "empty": "Aucune étape pour l'instant."
+        },
+        "errors": {
+          "validateAddition": "La validation de l'ajout a échoué. Réessayez."
+        }
+      }
+    },
     "account": {
       "header": {
         "label": "Paramètres 🔧",

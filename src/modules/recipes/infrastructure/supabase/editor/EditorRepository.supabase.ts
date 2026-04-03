@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import { isUuid } from "@/shared/utils/uuid";
 
 import { EMPTY_RECIPE_DRAFT } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
 import type {
@@ -23,6 +24,10 @@ import {
   mapLoadedRecipeGraphToDraft,
   mapRecipeTagRowToDomain,
 } from "@/modules/recipes/infrastructure/supabase/shared/readModels";
+import {
+  getRecipeDraftFixture,
+  hasRecipeFixture,
+} from "@/modules/recipes/infrastructure/supabase/shared/recipesFixtureData";
 
 const buildRecipeRowPayload = (
   input: CreateRecipeInput | UpdateRecipeInput
@@ -304,6 +309,10 @@ export const createEditorRepository = (
   },
 
   async getDraft(projectId, recipeId) {
+    if (!isUuid(recipeId)) {
+      return hasRecipeFixture(recipeId) ? getRecipeDraftFixture(recipeId) : null;
+    }
+
     const recipeGraphs = await loadRecipeGraphsByIds(client, projectId, [recipeId]);
     const recipeGraph = recipeGraphs.get(recipeId);
 

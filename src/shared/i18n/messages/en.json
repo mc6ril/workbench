@@ -869,6 +869,26 @@
         }
       }
     },
+    "recipes": {
+      "detail": {
+        "additions": {
+          "title": "To try",
+          "validate": "Validate this addition",
+          "validating": "Validating..."
+        },
+        "ingredients": {
+          "title": "Ingredients",
+          "empty": "No validated ingredient yet."
+        },
+        "steps": {
+          "label": "Step {position}",
+          "empty": "No steps yet."
+        },
+        "errors": {
+          "validateAddition": "Addition validation failed. Please try again."
+        }
+      }
+    },
     "account": {
       "header": {
         "label": "Settings 🔧",
