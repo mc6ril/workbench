@@ -5,7 +5,11 @@ describe("recipesQueryKeys.catalog.infinite", () => {
     expect(
       recipesQueryKeys.catalog.infinite("project-1", {
         search: "  citron  ",
-        tagSlugs: ["rapide", "vegetarien", "rapide"],
+        filterOptionIds: [
+          "type-express",
+          "popular-vegetarian",
+          "type-express",
+        ],
       })
     ).toEqual([
       "recipes",
@@ -15,7 +19,7 @@ describe("recipesQueryKeys.catalog.infinite", () => {
       "infinite",
       {
         search: "citron",
-        tagSlugs: ["rapide", "vegetarien"],
+        filterOptionIds: ["popular-vegetarian", "type-express"],
       },
     ]);
   });
@@ -24,12 +28,12 @@ describe("recipesQueryKeys.catalog.infinite", () => {
     expect(
       recipesQueryKeys.catalog.infinite("project-1", {
         search: "citron",
-        tagSlugs: ["vegetarien", "rapide"],
+        filterOptionIds: ["popular-vegetarian", "type-express"],
       })
     ).toEqual(
       recipesQueryKeys.catalog.infinite("project-1", {
         search: "citron",
-        tagSlugs: ["rapide", "vegetarien"],
+        filterOptionIds: ["type-express", "popular-vegetarian"],
       })
     );
   });

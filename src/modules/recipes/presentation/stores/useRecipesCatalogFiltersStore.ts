@@ -1,13 +1,12 @@
 import { create } from "zustand";
 
-import {
-  normalizeCatalogRecipeSearch,
-  normalizeCatalogRecipeTagSlugs,
-} from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import { normalizeCatalogRecipeSearch } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import { normalizeCatalogRecipeFilterOptionIds } from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
 
 type RecipesCatalogFiltersState = {
   search: string;
-  selectedTagSlugs: string[];
+  selectedFilterOptionIds: string[];
+  draftSelectedFilterOptionIds: string[];
   isQuickListOpen: boolean;
   isFiltersOpen: boolean;
 };
@@ -15,14 +14,16 @@ type RecipesCatalogFiltersState = {
 type RecipesCatalogFiltersActions = {
   syncFromQueryState: (input: {
     search?: string | null;
-    tagSlugs?: string[] | null;
+    filterOptionIds?: string[] | null;
   }) => void;
   initializeCatalogState: (input: {
     search?: string | null;
-    tagSlugs?: string[] | null;
+    filterOptionIds?: string[] | null;
   }) => void;
   setSearch: (search: string) => void;
-  toggleTagSlug: (tagSlug: string) => void;
+  toggleDraftFilterOptionId: (filterOptionId: string) => void;
+  applyDraftFilters: () => void;
+  resetDraftFilters: () => void;
   clearFilters: () => void;
   setQuickListOpen: (isOpen: boolean) => void;
   toggleQuickList: () => void;
@@ -36,9 +37,32 @@ type RecipesCatalogFiltersStore = RecipesCatalogFiltersState &
 
 const initialState: RecipesCatalogFiltersState = {
   search: "",
-  selectedTagSlugs: [],
+  selectedFilterOptionIds: [],
+  draftSelectedFilterOptionIds: [],
   isQuickListOpen: false,
   isFiltersOpen: false,
+};
+
+const toggleFilterOptionIdInSelection = (
+  selectedFilterOptionIds: string[],
+  filterOptionId: string
+) => {
+  const normalizedFilterOptionId =
+    normalizeCatalogRecipeFilterOptionIds([filterOptionId])[0];
+
+  if (!normalizedFilterOptionId) {
+    return selectedFilterOptionIds;
+  }
+
+  const hasOption = selectedFilterOptionIds.includes(normalizedFilterOptionId);
+
+  return normalizeCatalogRecipeFilterOptionIds(
+    hasOption
+      ? selectedFilterOptionIds.filter(
+          (value) => value !== normalizedFilterOptionId
+        )
+      : [...selectedFilterOptionIds, normalizedFilterOptionId]
+  );
 };
 
 export const useRecipesCatalogFiltersStore = create<RecipesCatalogFiltersStore>(
@@ -48,7 +72,12 @@ export const useRecipesCatalogFiltersStore = create<RecipesCatalogFiltersStore>(
     syncFromQueryState: (input) => {
       set((state) => ({
         search: normalizeCatalogRecipeSearch(input.search),
-        selectedTagSlugs: normalizeCatalogRecipeTagSlugs(input.tagSlugs),
+        selectedFilterOptionIds: normalizeCatalogRecipeFilterOptionIds(
+          input.filterOptionIds
+        ),
+        draftSelectedFilterOptionIds: state.isFiltersOpen
+          ? state.draftSelectedFilterOptionIds
+          : normalizeCatalogRecipeFilterOptionIds(input.filterOptionIds),
         isQuickListOpen: state.isQuickListOpen,
         isFiltersOpen: state.isFiltersOpen,
       }));
@@ -58,7 +87,12 @@ export const useRecipesCatalogFiltersStore = create<RecipesCatalogFiltersStore>(
       set((state) => ({
         ...state,
         search: normalizeCatalogRecipeSearch(input.search),
-        selectedTagSlugs: normalizeCatalogRecipeTagSlugs(input.tagSlugs),
+        selectedFilterOptionIds: normalizeCatalogRecipeFilterOptionIds(
+          input.filterOptionIds
+        ),
+        draftSelectedFilterOptionIds: normalizeCatalogRecipeFilterOptionIds(
+          input.filterOptionIds
+        ),
         isFiltersOpen: false,
       }));
     },
@@ -69,23 +103,29 @@ export const useRecipesCatalogFiltersStore = create<RecipesCatalogFiltersStore>(
       });
     },
 
-    toggleTagSlug: (tagSlug) => {
-      const normalizedTagSlug = normalizeCatalogRecipeTagSlugs([tagSlug])[0];
-
-      if (!normalizedTagSlug) {
-        return;
-      }
-
+    toggleDraftFilterOptionId: (filterOptionId) => {
       set((state) => {
-        const hasTag = state.selectedTagSlugs.includes(normalizedTagSlug);
-
         return {
-          selectedTagSlugs: normalizeCatalogRecipeTagSlugs(
-            hasTag
-              ? state.selectedTagSlugs.filter((value) => value !== normalizedTagSlug)
-              : [...state.selectedTagSlugs, normalizedTagSlug]
+          draftSelectedFilterOptionIds: toggleFilterOptionIdInSelection(
+            state.draftSelectedFilterOptionIds,
+            filterOptionId
           ),
         };
+      });
+    },
+
+    applyDraftFilters: () => {
+      set((state) => ({
+        selectedFilterOptionIds: normalizeCatalogRecipeFilterOptionIds(
+          state.draftSelectedFilterOptionIds
+        ),
+        isFiltersOpen: false,
+      }));
+    },
+
+    resetDraftFilters: () => {
+      set({
+        draftSelectedFilterOptionIds: initialState.draftSelectedFilterOptionIds,
       });
     },
 
@@ -93,7 +133,8 @@ export const useRecipesCatalogFiltersStore = create<RecipesCatalogFiltersStore>(
       set((state) => ({
         ...state,
         search: initialState.search,
-        selectedTagSlugs: initialState.selectedTagSlugs,
+        selectedFilterOptionIds: initialState.selectedFilterOptionIds,
+        draftSelectedFilterOptionIds: initialState.draftSelectedFilterOptionIds,
       }));
     },
 
@@ -110,20 +151,23 @@ export const useRecipesCatalogFiltersStore = create<RecipesCatalogFiltersStore>(
     },
 
     openFilters: () => {
-      set({
+      set((state) => ({
         isFiltersOpen: true,
-      });
+        draftSelectedFilterOptionIds: state.selectedFilterOptionIds,
+      }));
     },
 
     closeFilters: () => {
-      set({
+      set((state) => ({
         isFiltersOpen: false,
-      });
+        draftSelectedFilterOptionIds: state.selectedFilterOptionIds,
+      }));
     },
 
     toggleFilters: () => {
       set((state) => ({
         isFiltersOpen: !state.isFiltersOpen,
+        draftSelectedFilterOptionIds: state.selectedFilterOptionIds,
       }));
     },
   })

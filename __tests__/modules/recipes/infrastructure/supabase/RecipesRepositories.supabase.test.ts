@@ -392,7 +392,7 @@ describe("Recipes Supabase repositories", () => {
       projectId,
       filters: {
         search: "citron",
-        tagSlugs: ["rapide", "poulet"],
+        filterOptionIds: ["type-express", "type-meat"],
       },
     });
 
@@ -401,10 +401,10 @@ describe("Recipes Supabase repositories", () => {
       "summary",
       "%citron%"
     );
-    expect(filterTagsQuery.in).toHaveBeenCalledWith("slug", [
-      "poulet",
-      "rapide",
-    ]);
+    expect(filterTagsQuery.in).toHaveBeenCalledWith(
+      "slug",
+      expect.arrayContaining(["express", "rapide", "viande", "poulet"])
+    );
     expect(filteredTagLinksQuery.in).toHaveBeenCalledWith("tag_id", [
       tagId,
       secondTagId,
@@ -453,14 +453,14 @@ describe("Recipes Supabase repositories", () => {
       projectId,
       filters: {
         search: "",
-        tagSlugs: ["rapide", "inexistant"],
+        filterOptionIds: ["type-express", "nutri-score-a"],
       },
     });
 
-    expect(filterTagsQuery.in).toHaveBeenCalledWith("slug", [
-      "inexistant",
-      "rapide",
-    ]);
+    expect(filterTagsQuery.in).toHaveBeenCalledWith(
+      "slug",
+      expect.arrayContaining(["express", "rapide", "nutri-a", "nutriscore-a"])
+    );
     expect(persistedRecipesQuery.limit).toHaveBeenCalledWith(1);
     expect(recipes).toEqual({
       items: [],

@@ -870,6 +870,112 @@
       }
     },
     "recipes": {
+      "catalog": {
+        "header": {
+          "kicker": "Catalogue",
+          "title": "Toutes les recettes",
+          "filteredTitle": "Résultats filtrés"
+        },
+        "summary": {
+          "availableResults": "{count} recette disponible",
+          "availableResults_other": "{count} recettes disponibles",
+          "filteredResults": "{count} recette après filtres",
+          "filteredResults_other": "{count} recettes après filtres",
+          "refreshing": "Mise à jour..."
+        },
+        "filterBar": {
+          "open": "Filtrer",
+          "openAriaLabel": "Ouvrir les filtres du catalogue",
+          "helper": "{count} catégorie de filtre disponible",
+          "helper_other": "{count} catégories de filtre disponibles",
+          "reset": "Réinitialiser"
+        },
+        "activeFilters": {
+          "search": "Recherche : {search}"
+        },
+        "empty": {
+          "kicker": "Aucun résultat",
+          "title": "Aucune recette ne correspond aux filtres actuels.",
+          "description": "Essayez une recherche plus courte ou retirez un filtre pour rouvrir le catalogue.",
+          "reset": "Réinitialiser les filtres"
+        },
+        "pagination": {
+          "loadMore": "Charger plus",
+          "loading": "Chargement...",
+          "loadingMessage": "Chargement des recettes suivantes...",
+          "loadingAriaLabel": "Chargement des recettes suivantes"
+        },
+        "sheet": {
+          "ariaLabel": "Filtres du catalogue de recettes",
+          "kicker": "Filtres",
+          "title": "Affiner le catalogue",
+          "close": "Fermer",
+          "closeAriaLabel": "Fermer le panneau des filtres",
+          "reset": "Réinitialiser",
+          "apply": "Valider",
+          "applyPending": "Valider les filtres",
+          "groups": {
+            "popular": {
+              "title": "Populaires"
+            },
+            "type": {
+              "title": "Type"
+            },
+            "nutrition": {
+              "title": "Nutrition"
+            },
+            "nutriScore": {
+              "title": "Nutri-score"
+            },
+            "dietary": {
+              "title": "Habitudes alimentaires"
+            },
+            "equipment": {
+              "title": "Équipement"
+            }
+          },
+          "options": {
+            "popular-express": "Express",
+            "popular-low-calories": "Faibles en calories",
+            "popular-boost-nutri": "Boost Nutri",
+            "popular-organic-vegetables": "Légumes BIO",
+            "popular-vegetarian": "Végétarien",
+            "popular-gourmand": "Gourmand",
+            "type-crustaceans": "Crustacés",
+            "type-express": "Express",
+            "type-family": "Famille",
+            "type-healthy": "Healthy",
+            "type-world": "Monde",
+            "type-fish": "Poisson",
+            "type-veggie": "Veggie",
+            "type-meat": "Viande",
+            "nutrition-low-calories": "Faible en calories",
+            "nutrition-fibers-plus": "Fibres+",
+            "nutrition-omega-3": "Oméga 3",
+            "nutrition-protein": "Protéiné",
+            "nutrition-vegetables-rich": "Riche en légumes",
+            "nutri-score-a": "A",
+            "nutri-score-b": "B",
+            "nutri-score-c": "C",
+            "nutri-score-d": "D",
+            "nutri-score-e": "E",
+            "dietary-naturally-gluten-free": "Naturellement sans gluten",
+            "equipment-two-hobs-max": "2 plaques maximum",
+            "equipment-food-processor": "Compatible robot de cuisine",
+            "equipment-no-oven": "Sans four",
+            "equipment-no-blender": "Sans mixeur"
+          }
+        },
+        "toolbar": {
+          "filter": "Filtrer",
+          "filterAriaLabel": "Ouvrir les filtres du catalogue",
+          "quickList": "Quick list",
+          "quickListShowAriaLabel": "Afficher la quick list",
+          "quickListHideAriaLabel": "Masquer la quick list",
+          "addRecipe": "Ajouter une recette",
+          "addRecipeAriaLabel": "Créer une nouvelle recette"
+        }
+      },
       "detail": {
         "additions": {
           "title": "A tester",

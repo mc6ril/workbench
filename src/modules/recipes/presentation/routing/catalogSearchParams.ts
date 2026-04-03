@@ -2,8 +2,8 @@ import type { ReadonlyURLSearchParams } from "next/navigation";
 
 import {
   normalizeCatalogRecipeSearch,
-  normalizeCatalogRecipeTagSlugs,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import { normalizeCatalogRecipeFilterOptionIds } from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
 
 type SearchParamsLike =
   | URLSearchParams
@@ -18,12 +18,12 @@ const hasSearchParamsGetter = (
 
 export type RecipesCatalogQueryState = {
   search: string;
-  tagSlugs: string[];
+  filterOptionIds: string[];
 };
 
 const readValue = (
   searchParams: SearchParamsLike,
-  key: "q" | "tags"
+  key: "q" | "filters" | "tags"
 ): string | null => {
   if (hasSearchParamsGetter(searchParams)) {
     return searchParams.get(key);
@@ -42,11 +42,14 @@ export const parseRecipesCatalogSearchParams = (
   searchParams: SearchParamsLike
 ): RecipesCatalogQueryState => {
   const search = normalizeCatalogRecipeSearch(readValue(searchParams, "q"));
-  const tagsValue = readValue(searchParams, "tags");
+  const filterValues =
+    readValue(searchParams, "filters") ?? readValue(searchParams, "tags");
 
   return {
     search,
-    tagSlugs: normalizeCatalogRecipeTagSlugs(tagsValue?.split(",") ?? []),
+    filterOptionIds: normalizeCatalogRecipeFilterOptionIds(
+      filterValues?.split(",") ?? []
+    ),
   };
 };
 
@@ -55,14 +58,16 @@ export const buildRecipesCatalogSearchParams = (
 ): URLSearchParams => {
   const searchParams = new URLSearchParams();
   const search = normalizeCatalogRecipeSearch(queryState.search);
-  const tagSlugs = normalizeCatalogRecipeTagSlugs(queryState.tagSlugs);
+  const filterOptionIds = normalizeCatalogRecipeFilterOptionIds(
+    queryState.filterOptionIds
+  );
 
   if (search) {
     searchParams.set("q", search);
   }
 
-  if (tagSlugs.length > 0) {
-    searchParams.set("tags", tagSlugs.join(","));
+  if (filterOptionIds.length > 0) {
+    searchParams.set("filters", filterOptionIds.join(","));
   }
 
   return searchParams;

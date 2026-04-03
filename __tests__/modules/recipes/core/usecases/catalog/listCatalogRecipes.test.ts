@@ -18,7 +18,7 @@ describe("listCatalogRecipes", () => {
       projectId: "project-1",
       filters: {
         search: "citron",
-        tagSlugs: ["rapide"],
+        filterOptionIds: ["type-express"],
       },
     });
 
@@ -26,7 +26,7 @@ describe("listCatalogRecipes", () => {
       projectId: "project-1",
       filters: {
         search: "citron",
-        tagSlugs: ["rapide"],
+        filterOptionIds: ["type-express"],
       },
     });
   });

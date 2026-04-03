@@ -1,8 +1,14 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 
 import RecipesCatalogClientPage from "@/modules/recipes/presentation/components/catalog/RecipesCatalogClientPage/index";
 import { useListRecipes } from "@/modules/recipes/presentation/hooks/catalog/listRecipes";
-import { useListRecipeTags } from "@/modules/recipes/presentation/hooks/catalog/listRecipeTags";
 import { useListActiveSelections } from "@/modules/recipes/presentation/hooks/planner/listActiveSelections";
 import { useRecipesCatalogFiltersStore } from "@/modules/recipes/presentation/stores";
 
@@ -68,10 +74,6 @@ jest.mock("@/modules/recipes/presentation/hooks/catalog/listRecipes", () => ({
   useListRecipes: jest.fn(),
 }));
 
-jest.mock("@/modules/recipes/presentation/hooks/catalog/listRecipeTags", () => ({
-  useListRecipeTags: jest.fn(),
-}));
-
 jest.mock("@/modules/recipes/presentation/hooks/planner/listActiveSelections", () => ({
   useListActiveSelections: jest.fn(),
 }));
@@ -87,7 +89,8 @@ describe("RecipesCatalogClientPage", () => {
     mockIntersectionDisconnect.mockClear();
     useRecipesCatalogFiltersStore.setState({
       search: "",
-      selectedTagSlugs: [],
+      selectedFilterOptionIds: [],
+      draftSelectedFilterOptionIds: [],
       isQuickListOpen: false,
       isFiltersOpen: false,
     });
@@ -114,18 +117,6 @@ describe("RecipesCatalogClientPage", () => {
       })
     );
 
-    jest.mocked(useListRecipeTags).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useListRecipeTags>>({
-        data: [
-          {
-            id: "tag-1",
-            label: "Rapide",
-            slug: "rapide",
-          },
-        ],
-      })
-    );
-
     jest.mocked(useListActiveSelections).mockReturnValue(
       asMockedReturn<ReturnType<typeof useListActiveSelections>>({
         data: [],
@@ -133,7 +124,7 @@ describe("RecipesCatalogClientPage", () => {
     );
   });
 
-  it("keeps the selected tag active while syncing the query params", async () => {
+  it("applies the selected filters only after validation", async () => {
     render(
       <RecipesCatalogClientPage
         projectId="project-1"
@@ -153,37 +144,44 @@ describe("RecipesCatalogClientPage", () => {
           hasMore: false,
           nextCursor: null,
         }}
-        initialTags={[
-          {
-            id: "tag-1",
-            label: "Rapide",
-            slug: "rapide",
-          },
-        ]}
         initialQueryState={{
           search: "",
-          tagSlugs: [],
+          filterOptionIds: [],
         }}
         quickListRecipes={[]}
       />
     );
 
-    const tagButton = screen.getByRole("button", { name: "Rapide" });
+    act(() => {
+      useRecipesCatalogFiltersStore.getState().openFilters();
+    });
 
-    expect(tagButton).toHaveAttribute("aria-pressed", "false");
+    const typeSection = screen.getByRole("heading", { name: "Type" }).closest("section");
 
-    fireEvent.click(tagButton);
+    expect(typeSection).not.toBeNull();
+
+    const tagCheckbox = within(typeSection as HTMLElement).getByRole("checkbox", {
+      name: "Express",
+    });
+
+    expect(tagCheckbox).not.toBeChecked();
+
+    fireEvent.click(tagCheckbox);
+
+    expect(mockReplace).not.toHaveBeenCalled();
+
+    expect(tagCheckbox).toBeChecked();
+
+    fireEvent.click(screen.getByRole("button", { name: "Valider les filtres" }));
 
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith(
-        "/project-1/recipes?tags=rapide",
+        "/project-1/recipes?filters=type-express",
         {
           scroll: false,
         }
       );
     });
-
-    expect(tagButton).toHaveAttribute("aria-pressed", "true");
   });
 
   it("shows a load more fallback button and fetches the next page on click", async () => {
@@ -233,10 +231,9 @@ describe("RecipesCatalogClientPage", () => {
             id: "recipe-1",
           },
         }}
-        initialTags={[]}
         initialQueryState={{
           search: "",
-          tagSlugs: [],
+          filterOptionIds: [],
         }}
         quickListRecipes={[]}
       />
@@ -294,10 +291,9 @@ describe("RecipesCatalogClientPage", () => {
             id: "recipe-1",
           },
         }}
-        initialTags={[]}
         initialQueryState={{
           search: "",
-          tagSlugs: [],
+          filterOptionIds: [],
         }}
         quickListRecipes={[]}
       />

@@ -1,5 +1,9 @@
 import { APP_LIMITS } from "@/shared/constants/app";
 
+import {
+  type CatalogRecipeFilterOptionId,
+  normalizeCatalogRecipeFilterOptionIds,
+} from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
 import type {
   Recipe,
   RecipeTag,
@@ -22,7 +26,7 @@ export type CatalogRecipeTag = RecipeTag;
 
 export type CatalogRecipeListFilters = {
   search?: string;
-  tagSlugs?: string[];
+  filterOptionIds?: CatalogRecipeFilterOptionId[];
 };
 
 export type CatalogRecipeListCursor = {
@@ -70,22 +74,14 @@ export const normalizeCatalogRecipeSearch = (
   return value?.trim() ?? "";
 };
 
-export const normalizeCatalogRecipeTagSlugs = (
-  value: string[] | null | undefined
-): string[] => {
-  if (!value || value.length === 0) {
-    return [];
-  }
-
-  return [...new Set(value.map((slug) => slug.trim()).filter(Boolean))].sort();
-};
-
 export const normalizeCatalogRecipeListFilters = (
   filters?: CatalogRecipeListFilters
 ): Required<CatalogRecipeListFilters> => {
   return {
     search: normalizeCatalogRecipeSearch(filters?.search),
-    tagSlugs: normalizeCatalogRecipeTagSlugs(filters?.tagSlugs),
+    filterOptionIds: normalizeCatalogRecipeFilterOptionIds(
+      filters?.filterOptionIds
+    ),
   };
 };
 

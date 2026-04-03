@@ -870,6 +870,112 @@
       }
     },
     "recipes": {
+      "catalog": {
+        "header": {
+          "kicker": "Catalog",
+          "title": "All recipes",
+          "filteredTitle": "Filtered results"
+        },
+        "summary": {
+          "availableResults": "{count} recipe available",
+          "availableResults_other": "{count} recipes available",
+          "filteredResults": "{count} recipe after filters",
+          "filteredResults_other": "{count} recipes after filters",
+          "refreshing": "Refreshing..."
+        },
+        "filterBar": {
+          "open": "Filter",
+          "openAriaLabel": "Open the catalog filters",
+          "helper": "{count} filter category available",
+          "helper_other": "{count} filter categories available",
+          "reset": "Reset"
+        },
+        "activeFilters": {
+          "search": "Search: {search}"
+        },
+        "empty": {
+          "kicker": "No results",
+          "title": "No recipe matches the current filters.",
+          "description": "Try a shorter search or remove a filter to reopen the catalog.",
+          "reset": "Reset filters"
+        },
+        "pagination": {
+          "loadMore": "Load more",
+          "loading": "Loading...",
+          "loadingMessage": "Loading more recipes...",
+          "loadingAriaLabel": "Loading more recipes"
+        },
+        "sheet": {
+          "ariaLabel": "Recipe catalog filters",
+          "kicker": "Filters",
+          "title": "Refine the catalog",
+          "close": "Close",
+          "closeAriaLabel": "Close the filters panel",
+          "reset": "Reset",
+          "apply": "Apply",
+          "applyPending": "Apply filters",
+          "groups": {
+            "popular": {
+              "title": "Popular"
+            },
+            "type": {
+              "title": "Type"
+            },
+            "nutrition": {
+              "title": "Nutrition"
+            },
+            "nutriScore": {
+              "title": "Nutri-score"
+            },
+            "dietary": {
+              "title": "Dietary habits"
+            },
+            "equipment": {
+              "title": "Equipment"
+            }
+          },
+          "options": {
+            "popular-express": "Express",
+            "popular-low-calories": "Low calorie",
+            "popular-boost-nutri": "Nutri boost",
+            "popular-organic-vegetables": "Organic vegetables",
+            "popular-vegetarian": "Vegetarian",
+            "popular-gourmand": "Gourmet",
+            "type-crustaceans": "Shellfish",
+            "type-express": "Express",
+            "type-family": "Family",
+            "type-healthy": "Healthy",
+            "type-world": "World",
+            "type-fish": "Fish",
+            "type-veggie": "Veggie",
+            "type-meat": "Meat",
+            "nutrition-low-calories": "Low calorie",
+            "nutrition-fibers-plus": "Fiber+",
+            "nutrition-omega-3": "Omega 3",
+            "nutrition-protein": "Protein-rich",
+            "nutrition-vegetables-rich": "Rich in vegetables",
+            "nutri-score-a": "A",
+            "nutri-score-b": "B",
+            "nutri-score-c": "C",
+            "nutri-score-d": "D",
+            "nutri-score-e": "E",
+            "dietary-naturally-gluten-free": "Naturally gluten-free",
+            "equipment-two-hobs-max": "2 hobs max",
+            "equipment-food-processor": "Food processor compatible",
+            "equipment-no-oven": "No oven",
+            "equipment-no-blender": "No blender"
+          }
+        },
+        "toolbar": {
+          "filter": "Filter",
+          "filterAriaLabel": "Open the catalog filters",
+          "quickList": "Quick list",
+          "quickListShowAriaLabel": "Show the quick list",
+          "quickListHideAriaLabel": "Hide the quick list",
+          "addRecipe": "Add recipe",
+          "addRecipeAriaLabel": "Create a new recipe"
+        }
+      },
       "detail": {
         "additions": {
           "title": "To try",

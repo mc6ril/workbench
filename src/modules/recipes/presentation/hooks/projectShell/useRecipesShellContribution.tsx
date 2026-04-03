@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-import { EyeIcon, EyeOffIcon } from "@/shared/design-system/icons";
+import { EyeIcon, EyeOffIcon, FilterIcon } from "@/shared/design-system/icons";
 import { useTranslation } from "@/shared/i18n";
 import { normalizePath } from "@/shared/utils/routes";
 
@@ -23,6 +23,7 @@ export const useRecipesShellContribution = (
   const router = useRouter();
   const pathname = usePathname();
   const tSidebar = useTranslation("navigation.sidebar");
+  const tCatalog = useTranslation("pages.recipes.catalog");
   const pageTitle = tSidebar("items.recipes");
   const { canCreateTicket: canCreateRecipe, isLoading: isPermissionsLoading } =
     useProjectPermissions();
@@ -31,12 +32,22 @@ export const useRecipesShellContribution = (
   const toggleQuickList = useRecipesCatalogFiltersStore(
     (state) => state.toggleQuickList
   );
+  const toggleFilters = useRecipesCatalogFiltersStore(
+    (state) => state.toggleFilters
+  );
   const isQuickListOpen = useRecipesCatalogFiltersStore(
     (state) => state.isQuickListOpen
+  );
+  const isFiltersOpen = useRecipesCatalogFiltersStore(
+    (state) => state.isFiltersOpen
+  );
+  const selectedFilterOptionIds = useRecipesCatalogFiltersStore(
+    (state) => state.selectedFilterOptionIds
   );
   const [searchInput, setSearchInput] = useState(search);
   const isCatalogRoute =
     normalizePath(pathname) === buildRecipesCatalogRoute(projectId);
+  const activeFilterCount = (search ? 1 : 0) + selectedFilterOptionIds.length;
 
   useEffect(() => {
     setSearchInput(search);
@@ -73,17 +84,36 @@ export const useRecipesShellContribution = (
 
     return [
       {
+        key: "recipes-filters",
+        label:
+          activeFilterCount > 0
+            ? `${tCatalog("toolbar.filter")} (${activeFilterCount})`
+            : tCatalog("toolbar.filter"),
+        ariaLabel: tCatalog("toolbar.filterAriaLabel"),
+        icon: <FilterIcon size={16} />,
+        onClick: toggleFilters,
+        isActive: isFiltersOpen,
+      },
+      {
         key: "recipes-quick-list",
-        label: "Quick list",
+        label: tCatalog("toolbar.quickList"),
         ariaLabel: isQuickListOpen
-          ? "Masquer la quick list"
-          : "Afficher la quick list",
+          ? tCatalog("toolbar.quickListHideAriaLabel")
+          : tCatalog("toolbar.quickListShowAriaLabel"),
         icon: isQuickListOpen ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />,
         onClick: toggleQuickList,
         isActive: isQuickListOpen,
       },
     ];
-  }, [isCatalogRoute, isQuickListOpen, toggleQuickList]);
+  }, [
+    activeFilterCount,
+    isCatalogRoute,
+    isFiltersOpen,
+    isQuickListOpen,
+    tCatalog,
+    toggleFilters,
+    toggleQuickList,
+  ]);
 
   return useMemo<ProjectViewContribution>(() => {
     return {
@@ -92,8 +122,8 @@ export const useRecipesShellContribution = (
           pageTitle={pageTitle}
           showSearch={isCatalogRoute}
           addActionType="ticket"
-          addActionLabel="Ajouter une recette"
-          addActionAriaLabel="Créer une nouvelle recette"
+          addActionLabel={tCatalog("toolbar.addRecipe")}
+          addActionAriaLabel={tCatalog("toolbar.addRecipeAriaLabel")}
           searchValue={isCatalogRoute ? searchInput : ""}
           onSearchChange={isCatalogRoute ? setSearchInput : undefined}
           onAddClick={handleAddClick}
@@ -110,6 +140,7 @@ export const useRecipesShellContribution = (
     isPermissionsLoading,
     pageTitle,
     searchInput,
+    tCatalog,
     toolbarExtraTools,
   ]);
 };

@@ -88,22 +88,13 @@
   font-size: $font-size-sm;
 }
 
-.recipes-page__filter-bar,
-.recipes-page__active-filters,
-.recipes-page__tag-row {
+.recipes-page__active-filters {
   display: flex;
   flex-wrap: wrap;
   gap: $spacing-sm;
 }
 
-.recipes-page__filter-bar {
-  align-items: center;
-  padding-bottom: $spacing-xs;
-}
-
-.recipes-page__filter-pill,
-.recipes-page__tag,
-.recipes-page__secondary-link {
+.recipes-page__tag {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -122,30 +113,6 @@
     background-color $animation-duration-base $easing-ease-out,
     border-color $animation-duration-base $easing-ease-out,
     color $animation-duration-base $easing-ease-out;
-}
-
-.recipes-page__filter-pill {
-  cursor: pointer;
-  appearance: none;
-  font: inherit;
-}
-
-.recipes-page__filter-pill:hover,
-.recipes-page__secondary-link:hover {
-  text-decoration: none;
-  transform: translateY(-1px);
-}
-
-.recipes-page__filter-pill--active {
-  border-color: rgba(var(--shadow-color-accent), 0.24);
-  background: rgba(var(--shadow-color-accent), 0.1);
-  color: $color-accent;
-}
-
-.recipes-page__filter-pill--ghost {
-  color: $color-text-secondary;
-  background: transparent;
-  border-style: dashed;
 }
 
 .recipes-page__tag {
@@ -253,13 +220,8 @@
   line-height: $line-height-relaxed;
 }
 
-.recipes-page__secondary-link {
-  width: 100%;
-  min-height: 2.5rem;
-  padding: 0 $spacing-md;
-  font-weight: $font-weight-semibold;
-  border: $border-width solid rgba(var(--shadow-color), 0.08);
-  background: rgba(var(--shadow-color), 0.02);
+.recipes-page__empty-state-action {
+  margin-top: $spacing-sm;
 }
 
 @media (min-width: $breakpoint-md) {
@@ -309,9 +271,5 @@
     grid-template-columns: repeat(auto-fill, 16rem);
     justify-content: flex-start;
     gap: $spacing-lg;
-  }
-
-  .recipes-page__secondary-link {
-    width: auto;
   }
 }

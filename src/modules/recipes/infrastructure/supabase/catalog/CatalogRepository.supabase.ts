@@ -10,6 +10,9 @@ import {
   normalizeCatalogRecipeListFilters,
   normalizeCatalogRecipeListPagination,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import {
+  groupCatalogRecipeFilterOptionIdsByCategory,
+} from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
 import type { RecipeTag } from "@/modules/recipes/core/domain/recipe.types";
 import type { CatalogRepository } from "@/modules/recipes/core/ports/catalog/catalogRepository";
 import type {
@@ -137,53 +140,92 @@ const resolveRecipeIdsMatchingSearch = async (
   ];
 };
 
-const resolveRecipeIdsMatchingTags = async (
+const resolveRecipeIdsMatchingFilters = async (
   client: SupabaseClient,
   projectId: string,
-  tagSlugs: string[]
+  filterOptionIds: string[]
 ): Promise<string[] | null> => {
-  if (tagSlugs.length === 0) {
+  const selectedOptionsByCategory =
+    groupCatalogRecipeFilterOptionIdsByCategory(filterOptionIds);
+
+  if (selectedOptionsByCategory.size === 0) {
     return null;
   }
 
+  const requestedTagSlugs = [
+    ...new Set(
+      [...selectedOptionsByCategory.values()].flatMap((options) =>
+        options.flatMap((option) => option.tagSlugs)
+      )
+    ),
+  ];
+
   const { data: tagData, error: tagError } = await client
     .from("recipe_tags")
-    .select("id")
+    .select("id, slug")
     .eq("project_id", projectId)
-    .in("slug", tagSlugs);
+    .in("slug", requestedTagSlugs);
 
   if (tagError) {
     return handleRepositoryError(tagError, "RecipeTag", projectId);
   }
 
-  const tagRows = (tagData ?? []) as Array<Pick<RecipeTagRow, "id">>;
+  const tagRows = (tagData ?? []) as Array<Pick<RecipeTagRow, "id" | "slug">>;
+  const tagIdBySlug = new Map(tagRows.map((tag) => [tag.slug, tag.id]));
+  const tagIdsByCategory = new Map<string, Set<string>>();
 
-  if (tagRows.length !== tagSlugs.length) {
-    return [];
+  for (const [categoryKey, options] of selectedOptionsByCategory.entries()) {
+    const tagIds = new Set(
+      options.flatMap((option) =>
+        option.tagSlugs.flatMap((tagSlug) => {
+          const tagId = tagIdBySlug.get(tagSlug);
+          return tagId ? [tagId] : [];
+        })
+      )
+    );
+
+    if (tagIds.size === 0) {
+      return [];
+    }
+
+    tagIdsByCategory.set(categoryKey, tagIds);
   }
 
-  const tagIds = tagRows.map((tag) => tag.id);
+  const selectedTagIds = [...new Set([...tagIdsByCategory.values()].flatMap((ids) => [...ids]))];
   const { data: tagLinkData, error: tagLinkError } = await client
     .from("recipe_tag_links")
     .select("recipe_id, tag_id")
     .eq("project_id", projectId)
-    .in("tag_id", tagIds);
+    .in("tag_id", selectedTagIds);
 
   if (tagLinkError) {
     return handleRepositoryError(tagLinkError, "RecipeTagLink", projectId);
   }
 
-  const tagMatchCountByRecipeId = new Map<string, Set<string>>();
+  const categoryKeys = [...tagIdsByCategory.keys()];
+  const matchedCategoriesByRecipeId = new Map<string, Set<string>>();
 
   for (const tagLink of (tagLinkData ?? []) as RecipeTagLinkRow[]) {
-    const currentRecipeTagIds =
-      tagMatchCountByRecipeId.get(tagLink.recipe_id) ?? new Set<string>();
-    currentRecipeTagIds.add(tagLink.tag_id);
-    tagMatchCountByRecipeId.set(tagLink.recipe_id, currentRecipeTagIds);
+    const matchingCategoryKeys = categoryKeys.filter((categoryKey) =>
+      tagIdsByCategory.get(categoryKey)?.has(tagLink.tag_id)
+    );
+
+    if (matchingCategoryKeys.length === 0) {
+      continue;
+    }
+
+    const currentMatchedCategories =
+      matchedCategoriesByRecipeId.get(tagLink.recipe_id) ?? new Set<string>();
+
+    for (const categoryKey of matchingCategoryKeys) {
+      currentMatchedCategories.add(categoryKey);
+    }
+
+    matchedCategoriesByRecipeId.set(tagLink.recipe_id, currentMatchedCategories);
   }
 
-  return [...tagMatchCountByRecipeId.entries()]
-    .filter(([, matchedTagIds]) => matchedTagIds.size === tagIds.length)
+  return [...matchedCategoriesByRecipeId.entries()]
+    .filter(([, matchedCategories]) => matchedCategories.size === categoryKeys.length)
     .map(([recipeId]) => recipeId);
 };
 
@@ -246,11 +288,15 @@ const loadCatalogRecipeRows = async (
   pagination: CatalogRecipeListPagination
 ): Promise<CatalogRecipeRowPage> => {
   const normalizedFilters = normalizeCatalogRecipeListFilters(filters);
-  const [searchRecipeIds, tagRecipeIds] = await Promise.all([
+  const [searchRecipeIds, filterRecipeIds] = await Promise.all([
     resolveRecipeIdsMatchingSearch(client, projectId, normalizedFilters.search),
-    resolveRecipeIdsMatchingTags(client, projectId, normalizedFilters.tagSlugs),
+    resolveRecipeIdsMatchingFilters(
+      client,
+      projectId,
+      normalizedFilters.filterOptionIds
+    ),
   ]);
-  const filteredRecipeIds = intersectRecipeIds(searchRecipeIds, tagRecipeIds);
+  const filteredRecipeIds = intersectRecipeIds(searchRecipeIds, filterRecipeIds);
 
   if (filteredRecipeIds && filteredRecipeIds.length === 0) {
     return {

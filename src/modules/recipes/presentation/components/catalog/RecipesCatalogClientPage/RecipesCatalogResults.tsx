@@ -1,0 +1,78 @@
+import type { RefObject } from "react";
+
+import Loader from "@/shared/design-system/loader";
+
+import RecipesCatalogEmptyState from "./RecipesCatalogEmptyState";
+import RecipesCatalogPagination from "./RecipesCatalogPagination";
+import styles from "./styles.module.scss";
+
+import type { CatalogRecipeSummary } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import RecipeCatalogCard from "@/modules/recipes/presentation/components/catalog/RecipeCatalogCard/index";
+
+type Props = {
+  projectId: string;
+  recipes: CatalogRecipeSummary[];
+  hasActiveFilters: boolean;
+  showInitialLoader: boolean;
+  showLoadMoreControls: boolean;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  catalogMainRef: RefObject<HTMLDivElement | null>;
+  loadMoreSentinelRef: RefObject<HTMLDivElement | null>;
+  onClearFilters: () => void;
+  onFetchNextPage: () => void;
+};
+
+const RecipesCatalogResults = ({
+  projectId,
+  recipes,
+  hasActiveFilters,
+  showInitialLoader,
+  showLoadMoreControls,
+  hasNextPage,
+  isFetchingNextPage,
+  catalogMainRef,
+  loadMoreSentinelRef,
+  onClearFilters,
+  onFetchNextPage,
+}: Props) => {
+  return (
+    <div className={styles["recipes-page__catalog-layout"]}>
+      <div ref={catalogMainRef} className={styles["recipes-page__catalog-main"]}>
+        {showInitialLoader ? (
+          <div className={styles["recipes-page__loading-shell"]}>
+            <Loader variant="inline" size="medium" />
+          </div>
+        ) : recipes.length === 0 ? (
+          <RecipesCatalogEmptyState
+            hasActiveFilters={hasActiveFilters}
+            onClearFilters={onClearFilters}
+          />
+        ) : (
+          <>
+            <div className={styles["recipes-page__recipe-grid"]}>
+              {recipes.map((recipe) => (
+                <RecipeCatalogCard
+                  key={recipe.id}
+                  projectId={projectId}
+                  recipe={recipe}
+                />
+              ))}
+            </div>
+
+            {showLoadMoreControls ? (
+              <RecipesCatalogPagination
+                loadMoreSentinelRef={loadMoreSentinelRef}
+                hasNextPage={hasNextPage}
+                isFetchingNextPage={isFetchingNextPage}
+                onFetchNextPage={onFetchNextPage}
+              />
+            ) : null}
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default RecipesCatalogResults;

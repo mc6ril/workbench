@@ -1,35 +1,56 @@
+import Button from "@/shared/design-system/button";
+import Checkbox from "@/shared/design-system/checkbox";
+import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
+import { useTranslation } from "@/shared/i18n";
+
 import styles from "./styles.module.scss";
 
-import type { CatalogRecipeTag } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import type { RecipesCatalogFilterGroup } from "@/modules/recipes/presentation/components/catalog/recipesCatalogFilterGroups";
 
 type Props = {
   isOpen: boolean;
-  search: string;
-  tags: CatalogRecipeTag[];
-  selectedTagSlugs: string[];
-  hasActiveFilters: boolean;
+  filterGroups: RecipesCatalogFilterGroup[];
+  selectedFilterOptionIds: string[];
+  appliedFilterOptionIds: string[];
   onClose: () => void;
-  onToggleTag: (tagSlug: string) => void;
-  onClearFilters: () => void;
+  onToggleFilterOption: (filterOptionId: string) => void;
+  onApplyFilters: () => void;
+  onResetFilters: () => void;
 };
 
 const cx = (...classes: Array<string | false | null | undefined>) => {
   return classes.filter(Boolean).join(" ");
 };
 
+const areTagSlugsEqual = (left: string[], right: string[]) => {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  return left.every((value, index) => value === right[index]);
+};
+
 const RecipesCatalogFiltersSheet = ({
   isOpen,
-  search,
-  tags,
-  selectedTagSlugs,
-  hasActiveFilters,
+  filterGroups,
+  selectedFilterOptionIds,
+  appliedFilterOptionIds,
   onClose,
-  onToggleTag,
-  onClearFilters,
+  onToggleFilterOption,
+  onApplyFilters,
+  onResetFilters,
 }: Props) => {
+  const t = useTranslation("pages.recipes.catalog");
+
   if (!isOpen) {
     return null;
   }
+
+  const hasPendingChanges = !areTagSlugsEqual(
+    selectedFilterOptionIds,
+    appliedFilterOptionIds
+  );
 
   return (
     <div
@@ -39,90 +60,93 @@ const RecipesCatalogFiltersSheet = ({
     >
       <aside
         className={styles["recipes-page__sheet"]}
-        aria-label="Filtres du catalogue recipes"
+        aria-label={t("sheet.ariaLabel")}
         onClick={(event) => {
           event.stopPropagation();
         }}
       >
         <div className={styles["recipes-page__sheet-header"]}>
-          <div>
-            <p className={styles["recipes-page__panel-kicker"]}>Filtres</p>
-            <h2 className={styles["recipes-page__panel-title"]}>
-              Affiner le catalogue
-            </h2>
+          <div className={styles["recipes-page__sheet-heading"]}>
+            <Text
+              as="span"
+              variant="caption"
+              className={styles["recipes-page__panel-kicker"]}
+            >
+              {t("sheet.kicker")}
+            </Text>
+            <Title variant="h2" className={styles["recipes-page__panel-title"]}>
+              {t("sheet.title")}
+            </Title>
           </div>
-          <button
-            type="button"
-            className={styles["recipes-page__sheet-close"]}
+
+          <Button
+            label={t("sheet.close")}
+            variant="ghost"
             onClick={onClose}
-            aria-label="Fermer les filtres"
-          >
-            Fermer
-          </button>
+            className={styles["recipes-page__sheet-close"]}
+            aria-label={t("sheet.closeAriaLabel")}
+          />
         </div>
 
         <div className={styles["recipes-page__sheet-body"]}>
-          <p className={styles["recipes-page__sheet-copy"]}>
-            La recherche texte reste dans la top bar. Ici, on pilote surtout les
-            tags pour resserrer le catalogue rapidement.
-          </p>
+          <div className={styles["recipes-page__sheet-groups"]}>
+            {filterGroups.map((group) => (
+              <section
+                key={group.key}
+                className={styles["recipes-page__sheet-section"]}
+              >
+                <Title
+                  variant="h4"
+                  className={styles["recipes-page__sheet-section-title"]}
+                >
+                  {group.title}
+                </Title>
 
-          {search ? (
-            <div className={styles["recipes-page__sheet-search"]}>
-              <span className={styles["recipes-page__sheet-search-label"]}>
-                Recherche active
-              </span>
-              <strong>{search}</strong>
-            </div>
-          ) : null}
+                <div className={styles["recipes-page__sheet-options"]}>
+                  {group.options.map((option) => {
+                    const isActive = selectedFilterOptionIds.includes(option.id);
 
-          <div className={styles["recipes-page__sheet-section"]}>
-            <p className={styles["recipes-page__sheet-section-title"]}>Tags</p>
-            <div className={styles["recipes-page__sheet-tag-grid"]}>
-              {tags.map((tag) => {
-                const isActive = selectedTagSlugs.includes(tag.slug);
-
-                return (
-                  <button
-                    key={tag.id}
-                    type="button"
-                    className={cx(
-                      styles["recipes-page__filter-pill"],
-                      isActive && styles["recipes-page__filter-pill--active"]
-                    )}
-                    aria-pressed={isActive}
-                    onClick={() => {
-                      onToggleTag(tag.slug);
-                    }}
-                  >
-                    {tag.label}
-                  </button>
-                );
-              })}
-            </div>
+                    return (
+                      <div
+                        key={option.id}
+                        className={cx(
+                          styles["recipes-page__sheet-option-card"],
+                          isActive &&
+                            styles["recipes-page__sheet-option-card--active"]
+                        )}
+                      >
+                        <Checkbox
+                          id={`recipes-filter-${option.id}`}
+                          label={option.label}
+                          checked={isActive}
+                          onChange={() => {
+                            onToggleFilterOption(option.id);
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
           </div>
         </div>
 
         <div className={styles["recipes-page__sheet-footer"]}>
-          {hasActiveFilters ? (
-            <button
-              type="button"
-              className={cx(
-                styles["recipes-page__filter-pill"],
-                styles["recipes-page__filter-pill--ghost"]
-              )}
-              onClick={onClearFilters}
-            >
-              Réinitialiser
-            </button>
-          ) : null}
-          <button
-            type="button"
-            className={styles["recipes-page__secondary-link"]}
-            onClick={onClose}
-          >
-            Appliquer
-          </button>
+          <Button
+            label={t("sheet.reset")}
+            variant="secondary"
+            onClick={onResetFilters}
+            disabled={selectedFilterOptionIds.length === 0}
+            className={styles["recipes-page__sheet-footer-button"]}
+          />
+          <Button
+            label={
+              hasPendingChanges ? t("sheet.applyPending") : t("sheet.apply")
+            }
+            onClick={onApplyFilters}
+            className={styles["recipes-page__sheet-footer-button"]}
+          />
         </div>
       </aside>
     </div>

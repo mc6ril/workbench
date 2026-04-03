@@ -14,7 +14,7 @@ describe("useListRecipes", () => {
   const projectId = "project-1";
   const filters = {
     search: "citron",
-    tagSlugs: ["rapide"],
+    filterOptionIds: ["type-express"],
   };
 
   const firstPage = {
@@ -228,7 +228,7 @@ describe("useListRecipes", () => {
     rerender({
       currentFilters: {
         search: "herbes",
-        tagSlugs: ["rapide"],
+        filterOptionIds: ["type-express"],
       },
     });
 
@@ -240,7 +240,7 @@ describe("useListRecipes", () => {
       projectId,
       filters: {
         search: "herbes",
-        tagSlugs: ["rapide"],
+        filterOptionIds: ["type-express"],
       },
       pagination: undefined,
     });

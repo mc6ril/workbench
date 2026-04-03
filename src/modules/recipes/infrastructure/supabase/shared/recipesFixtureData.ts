@@ -10,6 +10,7 @@ import {
   normalizeCatalogRecipeListFilters,
   normalizeCatalogRecipeListPagination,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import { groupCatalogRecipeFilterOptionIdsByCategory } from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
 import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
 import {
   type CreateRecipeIngredientFromDraftInput,
@@ -426,14 +427,20 @@ const fixtureSourceMatchesFilters = (
 ): boolean => {
   const normalizedFilters = normalizeCatalogRecipeListFilters(filters);
 
-  if (normalizedFilters.tagSlugs.length > 0) {
+  if (normalizedFilters.filterOptionIds.length > 0) {
     const sourceTagSlugs = new Set(source.tags.map((tag) => tag.slug));
-    const hasEveryTag = normalizedFilters.tagSlugs.every((tagSlug) =>
-      sourceTagSlugs.has(tagSlug)
+    const selectedOptionsByCategory = groupCatalogRecipeFilterOptionIdsByCategory(
+      normalizedFilters.filterOptionIds
     );
 
-    if (!hasEveryTag) {
-      return false;
+    for (const options of selectedOptionsByCategory.values()) {
+      const hasCategoryMatch = options.some((option) =>
+        option.tagSlugs.some((tagSlug) => sourceTagSlugs.has(tagSlug))
+      );
+
+      if (!hasCategoryMatch) {
+        return false;
+      }
     }
   }
 
