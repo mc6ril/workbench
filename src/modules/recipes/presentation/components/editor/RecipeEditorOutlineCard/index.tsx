@@ -1,9 +1,10 @@
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
 
+import styles from "./styles.module.scss";
+
 import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
 import { isAdditionCandidateIngredient } from "@/modules/recipes/core/domain/recipe.types";
-import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";
 
 type Props = {
   href: string;

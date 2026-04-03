@@ -5,7 +5,7 @@ import Link from "@/shared/design-system/link";
 import styles from "./styles.module.scss";
 
 import type { CatalogRecipeSummary } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
-import { useSelectRecipe } from "@/modules/recipes/presentation/hooks";
+import { useSelectRecipe } from "@/modules/recipes/presentation/hooks/planner/useSelectRecipe";
 import {
   buildRecipeDetailRoute,
   buildRecipesQuickListRoute,

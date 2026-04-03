@@ -8,16 +8,15 @@ import Button from "@/shared/design-system/button";
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
 
+import styles from "./styles.module.scss";
+
 import type {
   DoneQuickListSelection,
   QuickListRecipe,
 } from "@/modules/recipes/core/domain/planner/quickList.types";
-import {
-  useListActiveSelections,
-  useMarkSelectionDone,
-  useRemoveSelection,
-} from "@/modules/recipes/presentation/hooks";
-import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";
+import { useListActiveSelections } from "@/modules/recipes/presentation/hooks/planner/listActiveSelections";
+import { useMarkSelectionDone } from "@/modules/recipes/presentation/hooks/planner/useMarkSelectionDone";
+import { useRemoveSelection } from "@/modules/recipes/presentation/hooks/planner/useRemoveSelection";
 import {
   buildRecipeDetailRoute,
   buildRecipesCatalogRoute,

@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import Card from "@/shared/design-system/card";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
+import styles from "./styles.module.scss";
+
 import { RECIPE_INGREDIENT_UNIT_VALUES } from "@/modules/recipes/core/domain/recipe.types";
 import { getRecipeDraft } from "@/modules/recipes/core/usecases/editor/getRecipeDraft";
 import { listActiveSelections } from "@/modules/recipes/core/usecases/planner/listActiveSelections";
@@ -10,7 +12,6 @@ import { createEditorRepository } from "@/modules/recipes/infrastructure/supabas
 import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
 import RecipeEditorClientPage from "@/modules/recipes/presentation/components/editor/RecipeEditorClientPage";
 import RecipesPageScaffold from "@/modules/recipes/presentation/pages/shared/RecipesPageScaffold";
-import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";
 import {
   buildRecipeDetailRoute,
   buildRecipesCatalogRoute,

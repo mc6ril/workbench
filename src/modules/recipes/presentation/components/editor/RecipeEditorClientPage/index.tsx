@@ -14,7 +14,7 @@ import Input from "@/shared/design-system/input";
 import Link from "@/shared/design-system/link";
 import Textarea from "@/shared/design-system/textarea";
 
-import componentStyles from "./RecipeEditorClientPage.module.scss";
+import componentStyles from "./styles.module.scss";
 
 import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
 import {
@@ -29,7 +29,6 @@ import { RecipeEditorSubmissionSchema } from "@/modules/recipes/core/usecases/ed
 import QuickListSummaryCard from "@/modules/recipes/presentation/components/quickList/QuickListSummaryCard";
 import { useCreateRecipe } from "@/modules/recipes/presentation/hooks/editor/useCreateRecipe";
 import { useUpdateRecipe } from "@/modules/recipes/presentation/hooks/editor/useUpdateRecipe";
-import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";
 import {
   buildRecipeDetailRoute,
   buildRecipesCatalogRoute,
@@ -54,6 +53,8 @@ const createEmptyStepRow = () => ({
   instruction: "",
   meta: "",
 });
+
+const styles = componentStyles;
 
 const getFieldMessage = (error: unknown): string | undefined => {
   if (!error || typeof error !== "object") {

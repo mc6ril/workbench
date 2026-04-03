@@ -2,8 +2,9 @@ import Badge from "@/shared/design-system/badge";
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
 
+import styles from "./styles.module.scss";
+
 import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
-import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";
 import {
   buildRecipeDetailRoute,
   buildRecipesQuickListRoute,

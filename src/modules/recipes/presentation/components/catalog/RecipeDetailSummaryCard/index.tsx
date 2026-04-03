@@ -15,7 +15,7 @@ import {
   formatRecipeIngredientLabel,
   isAdditionCandidateIngredient,
 } from "@/modules/recipes/core/domain/recipe.types";
-import { usePromoteRecipeAddition } from "@/modules/recipes/presentation/hooks";
+import { usePromoteRecipeAddition } from "@/modules/recipes/presentation/hooks/editor/usePromoteRecipeAddition";
 
 type Props = {
   projectId: string;

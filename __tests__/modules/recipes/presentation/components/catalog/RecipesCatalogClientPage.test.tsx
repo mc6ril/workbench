@@ -1,11 +1,9 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import RecipesCatalogClientPage from "@/modules/recipes/presentation/components/catalog/RecipesCatalogClientPage/index";
-import {
-  useListActiveSelections,
-  useListRecipes,
-  useListRecipeTags,
-} from "@/modules/recipes/presentation/hooks";
+import { useListRecipes } from "@/modules/recipes/presentation/hooks/catalog/listRecipes";
+import { useListRecipeTags } from "@/modules/recipes/presentation/hooks/catalog/listRecipeTags";
+import { useListActiveSelections } from "@/modules/recipes/presentation/hooks/planner/listActiveSelections";
 import { useRecipesCatalogFiltersStore } from "@/modules/recipes/presentation/stores";
 
 const mockReplace = jest.fn();
@@ -42,9 +40,15 @@ jest.mock(
   })
 );
 
-jest.mock("@/modules/recipes/presentation/hooks", () => ({
+jest.mock("@/modules/recipes/presentation/hooks/catalog/listRecipes", () => ({
   useListRecipes: jest.fn(),
+}));
+
+jest.mock("@/modules/recipes/presentation/hooks/catalog/listRecipeTags", () => ({
   useListRecipeTags: jest.fn(),
+}));
+
+jest.mock("@/modules/recipes/presentation/hooks/planner/listActiveSelections", () => ({
   useListActiveSelections: jest.fn(),
 }));
 

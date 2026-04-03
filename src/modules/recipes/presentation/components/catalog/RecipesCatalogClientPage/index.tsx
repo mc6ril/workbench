@@ -22,11 +22,9 @@ import type {
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
 import RecipeCatalogCard from "@/modules/recipes/presentation/components/catalog/RecipeCatalogCard/index";
-import {
-  useListActiveSelections,
-  useListRecipes,
-  useListRecipeTags,
-} from "@/modules/recipes/presentation/hooks";
+import { useListRecipes } from "@/modules/recipes/presentation/hooks/catalog/listRecipes";
+import { useListRecipeTags } from "@/modules/recipes/presentation/hooks/catalog/listRecipeTags";
+import { useListActiveSelections } from "@/modules/recipes/presentation/hooks/planner/listActiveSelections";
 import type { RecipesCatalogQueryState } from "@/modules/recipes/presentation/pages/recipes/catalogSearchParams";
 import {
   buildRecipesCatalogSearchParams,

@@ -1,6 +1,8 @@
 import Card from "@/shared/design-system/card";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
+import styles from "./styles.module.scss";
+
 import { listActiveSelections } from "@/modules/recipes/core/usecases/planner/listActiveSelections";
 import { generateShoppingList } from "@/modules/recipes/core/usecases/shopping/generateShoppingList";
 import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
@@ -8,7 +10,6 @@ import { createShoppingRepository } from "@/modules/recipes/infrastructure/supab
 import QuickListSelectionsCard from "@/modules/recipes/presentation/components/quickList/QuickListSelectionsCard";
 import ShoppingSummaryCard from "@/modules/recipes/presentation/components/shopping/ShoppingSummaryCard";
 import RecipesPageScaffold from "@/modules/recipes/presentation/pages/shared/RecipesPageScaffold";
-import styles from "@/modules/recipes/presentation/pages/shared/styles.module.scss";
 import {
   buildRecipesCatalogRoute,
   buildRecipesShoppingRoute,
