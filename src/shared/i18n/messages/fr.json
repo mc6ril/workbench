@@ -115,7 +115,7 @@
         "divider": "ou",
         "googleButton": "Continuer avec Google",
         "googleButtonAriaLabel": "Se connecter avec Google",
-        "unsupportedBrowser": "La connexion Google doit être ouverte dans un onglet de navigateur classique. Ouvrez cette page dans Chrome, Safari ou Firefox puis réessayez."
+        "unsupportedBrowser": "La connexion Google doit être ouverte dans un onglet de navigateur classique. Sur Android, ouvrez cette page dans Chrome ou Firefox, pas dans le navigateur intégré d'une application ni depuis l'app installée."
       },
       "footer": "Vous avez déjà un compte ?",
       "footerLink": "Se connecter",
@@ -160,6 +160,10 @@
         "title": "Vérification de l'email requise",
         "message": "Un email de vérification a été envoyé à votre adresse.",
         "instructions": "Veuillez vérifier votre boîte de réception et cliquer sur le lien pour vérifier votre compte.",
+        "resendHint": "Si vous ne le recevez pas, vous pouvez demander un nouvel email de vérification.",
+        "resendButton": "Renvoyer l'email de vérification",
+        "resendButtonAriaLabel": "Renvoyer l'email de vérification",
+        "resendSuccess": "Email de vérification renvoyé. Veuillez vérifier votre boîte de réception.",
         "backToSignin": "Retour à la connexion"
       },
       "errors": {
@@ -236,7 +240,7 @@
         "divider": "ou",
         "googleButton": "Continuer avec Google",
         "googleButtonAriaLabel": "Se connecter avec Google",
-        "unsupportedBrowser": "La connexion Google doit être ouverte dans un onglet de navigateur classique. Ouvrez cette page dans Chrome, Safari ou Firefox puis réessayez."
+        "unsupportedBrowser": "La connexion Google doit être ouverte dans un onglet de navigateur classique. Sur Android, ouvrez cette page dans Chrome ou Firefox, pas dans le navigateur intégré d'une application ni depuis l'app installée."
       },
       "forgotPassword": "Mot de passe oublié ?",
       "footer": "Vous n'avez pas de compte ?",

@@ -115,7 +115,7 @@
         "divider": "or",
         "googleButton": "Continue with Google",
         "googleButtonAriaLabel": "Sign in with Google",
-        "unsupportedBrowser": "Google sign-in must be opened in a regular browser tab. Please open this page in Chrome, Safari, or Firefox and try again."
+        "unsupportedBrowser": "Google sign-in must be opened in a regular browser tab. On Android, open this page in Chrome or Firefox, not in an in-app browser or the installed app."
       },
       "footer": "Already have an account?",
       "footerLink": "Sign in",
@@ -160,6 +160,10 @@
         "title": "Email verification required",
         "message": "A verification email has been sent to your address.",
         "instructions": "Please check your inbox and click the link to verify your account.",
+        "resendHint": "If you do not receive it, you can request a new verification email.",
+        "resendButton": "Resend verification email",
+        "resendButtonAriaLabel": "Resend verification email",
+        "resendSuccess": "Verification email sent again. Please check your inbox.",
         "backToSignin": "Back to sign in"
       },
       "errors": {
@@ -236,7 +240,7 @@
         "divider": "or",
         "googleButton": "Continue with Google",
         "googleButtonAriaLabel": "Sign in with Google",
-        "unsupportedBrowser": "Google sign-in must be opened in a regular browser tab. Please open this page in Chrome, Safari, or Firefox and try again."
+        "unsupportedBrowser": "Google sign-in must be opened in a regular browser tab. On Android, open this page in Chrome or Firefox, not in an in-app browser or the installed app."
       },
       "forgotPassword": "Forgot password?",
       "footer": "Don't have an account?",

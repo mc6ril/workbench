@@ -8,7 +8,7 @@
  * Use these constants instead of hardcoded path strings.
  */
 export const PAGE_ROUTES = Object.freeze({
-  /** Site root; middleware redirects to `/{locale}` for marketing. */
+  /** Site root; serves the default-locale marketing home. */
   HOME: "/",
   WORKSPACE: "/workspace",
   ACCOUNT: "/account",

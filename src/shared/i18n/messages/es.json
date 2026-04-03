@@ -115,7 +115,7 @@
         "divider": "o",
         "googleButton": "Continuar con Google",
         "googleButtonAriaLabel": "Iniciar sesión con Google",
-        "unsupportedBrowser": "El inicio de sesión con Google debe abrirse en una pestaña normal del navegador. Abre esta página en Chrome, Safari o Firefox y vuelve a intentarlo."
+        "unsupportedBrowser": "El inicio de sesión con Google debe abrirse en una pestaña normal del navegador. En Android, abre esta página en Chrome o Firefox, no en un navegador integrado de otra app ni desde la app instalada."
       },
       "footer": "¿Ya tienes una cuenta?",
       "footerLink": "Iniciar sesión",
@@ -160,6 +160,10 @@
         "title": "Verificación de email requerida",
         "message": "Se ha enviado un email de verificación a tu dirección.",
         "instructions": "Revisa tu bandeja de entrada y haz clic en el enlace para verificar tu cuenta.",
+        "resendHint": "Si no lo recibes, puedes solicitar un nuevo email de verificación.",
+        "resendButton": "Reenviar email de verificación",
+        "resendButtonAriaLabel": "Reenviar email de verificación",
+        "resendSuccess": "El email de verificación se ha enviado de nuevo. Revisa tu bandeja de entrada.",
         "backToSignin": "Volver a iniciar sesión"
       },
       "errors": {
@@ -236,7 +240,7 @@
         "divider": "o",
         "googleButton": "Continuar con Google",
         "googleButtonAriaLabel": "Iniciar sesión con Google",
-        "unsupportedBrowser": "El inicio de sesión con Google debe abrirse en una pestaña normal del navegador. Abre esta página en Chrome, Safari o Firefox y vuelve a intentarlo."
+        "unsupportedBrowser": "El inicio de sesión con Google debe abrirse en una pestaña normal del navegador. En Android, abre esta página en Chrome o Firefox, no en un navegador integrado de otra app ni desde la app instalada."
       },
       "forgotPassword": "¿Olvidaste tu contraseña?",
       "footer": "¿No tienes cuenta?",
