@@ -6,12 +6,12 @@ import {
 
 const MARKETING_LOCALE_PREFIX = "fr|en|es";
 const MARKETING_PUBLIC_PATH = new RegExp(
-  `^\\/(${MARKETING_LOCALE_PREFIX})(?:\\/(pricing|legal))?\\/?$`,
+  `^(?:/$|/pricing/?$|/legal(?:/.*)?$|/(${MARKETING_LOCALE_PREFIX})(?:$|/pricing/?$|/legal(?:/.*)?$))`,
   "i"
 );
 
 /**
- * Locale-prefixed marketing URLs (home, pricing, legal).
+ * Marketing URLs (default locale unprefixed, secondary locales prefixed).
  */
 export const isMarketingPublicRoute = (pathname: string): boolean => {
   return MARKETING_PUBLIC_PATH.test(normalizePath(pathname));
@@ -36,11 +36,6 @@ export const isPublicRoute = (pathname: string): boolean => {
   }
 
   if (isMarketingPublicRoute(pathname)) {
-    return true;
-  }
-
-  // Legacy unprefixed URLs; middleware redirects to /{locale}/...
-  if (pathname === "/pricing" || pathname === "/legal") {
     return true;
   }
 

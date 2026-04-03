@@ -14,14 +14,14 @@ import {
 describe("isPublicRoute", () => {
   it("should return true for known public routes", () => {
     expect(isPublicRoute("/")).toBe(true);
+    expect(isPublicRoute("/pricing")).toBe(true);
+    expect(isPublicRoute("/legal")).toBe(true);
     expect(isPublicRoute("/auth/signin")).toBe(true);
     expect(isPublicRoute("/auth/signup")).toBe(true);
     expect(isPublicRoute("/auth/verify-email")).toBe(true);
     expect(isPublicRoute("/auth/reset-password")).toBe(true);
     expect(isPublicRoute("/auth/update-password")).toBe(true);
     expect(isPublicRoute("/auth/callback")).toBe(true);
-    expect(isPublicRoute("/legal")).toBe(true);
-    expect(isPublicRoute("/pricing")).toBe(true);
     expect(isPublicRoute("/fr")).toBe(true);
     expect(isPublicRoute("/en/pricing")).toBe(true);
     expect(isPublicRoute("/es/legal")).toBe(true);
@@ -35,7 +35,10 @@ describe("isPublicRoute", () => {
 });
 
 describe("isMarketingPublicRoute", () => {
-  it("should return true for locale-prefixed marketing paths", () => {
+  it("should return true for marketing paths", () => {
+    expect(isMarketingPublicRoute("/")).toBe(true);
+    expect(isMarketingPublicRoute("/pricing")).toBe(true);
+    expect(isMarketingPublicRoute("/legal")).toBe(true);
     expect(isMarketingPublicRoute("/fr")).toBe(true);
     expect(isMarketingPublicRoute("/en/pricing")).toBe(true);
     expect(isMarketingPublicRoute("/es/legal")).toBe(true);

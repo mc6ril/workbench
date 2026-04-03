@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AppError } from "@/shared/errors/appError";
 import { createAppError } from "@/shared/errors/appError";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
+import { hasSupabaseAuthCookieInHeader } from "@/shared/utils/supabaseAuthCookies";
 
 import { handleAuthError } from "@/domains/auth/infrastructure/errors/authErrorHandler";
 import {
@@ -10,7 +11,6 @@ import {
   isSuperuserFromAppMetadata,
 } from "@/domains/auth/infrastructure/supabase/providerCapabilities";
 import type { SessionGateway } from "@/domains/session/core/ports/session.gateway";
-import { mapSupabaseSessionToCurrentSession } from "@/domains/session/infrastructure/supabase/SessionMapper.supabase";
 
 const createAuthenticationError = (debugMessage: string): AppError =>
   createAppError(AUTH_ERROR_CODE.AUTHENTICATION_ERROR, { debugMessage });
@@ -24,6 +24,35 @@ const isAuthSessionMissingError = (error: unknown): boolean => {
     "message" in error &&
     error.message === "Auth session missing!"
   );
+};
+
+const hasBrowserAuthCookie = (): boolean => {
+  if (typeof document === "undefined") {
+    return false;
+  }
+
+  return hasSupabaseAuthCookieInHeader(document.cookie);
+};
+
+const mapAuthenticatedUserToCurrentSession = (user: {
+  id: string;
+  email?: string | null;
+  app_metadata?: Record<string, unknown>;
+}) => {
+  const userEmail = user.email;
+
+  if (!userEmail) {
+    handleAuthError(
+      createAuthenticationError("User email not found in authenticated user data")
+    );
+  }
+
+  return {
+    userId: user.id,
+    loginEmail: userEmail!,
+    accessToken: "",
+    isSuperuser: isSuperuserFromAppMetadata(user.app_metadata),
+  };
 };
 
 /**
@@ -79,44 +108,31 @@ export const createSessionGateway = (
           return null;
         }
 
-        const userEmail = user.email;
-        if (!userEmail) {
-          handleAuthError(
-            createAuthenticationError(
-              "User email not found in authenticated user data"
-            )
-          );
-        }
-
-        return {
-          userId: user.id,
-          loginEmail: userEmail!,
-          accessToken: "",
-          isSuperuser: isSuperuserFromAppMetadata(user.app_metadata),
-        };
+        return mapAuthenticatedUserToCurrentSession(user);
       }
 
-      const {
-        data: { session },
-        error,
-      } = await client.auth.getSession();
-
-      if (error) {
-        handleAuthError(error);
-      }
-
-      if (!session) {
+      if (!hasBrowserAuthCookie()) {
         return null;
       }
 
-      const userEmail = session.user.email;
-      if (!userEmail) {
-        handleAuthError(
-          createAuthenticationError("User email not found in session")
-        );
+      const {
+        data: { user },
+        error,
+      } = await client.auth.getUser();
+
+      if (error) {
+        if (isAuthSessionMissingError(error)) {
+          return null;
+        }
+
+        handleAuthError(error);
       }
 
-      return mapSupabaseSessionToCurrentSession(session, userEmail!);
+      if (!user) {
+        return null;
+      }
+
+      return mapAuthenticatedUserToCurrentSession(user);
     } catch (error) {
       return handleAuthError(error);
     }

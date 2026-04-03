@@ -5,7 +5,8 @@ import { getSiteUrl } from "@/shared/seo/siteUrl";
 type Hreflang = Locale | "x-default";
 
 /**
- * hreflang map for a marketing route: one URL per locale (prefixed paths).
+ * hreflang map for a marketing route.
+ * The default locale is unprefixed; secondary locales keep their prefix.
  */
 export const getLanguageAlternates = (
   buildPathForLocale: (locale: Locale) => string
@@ -14,10 +15,7 @@ export const getLanguageAlternates = (
   const fr = new URL(buildPathForLocale("fr"), base).toString();
   const en = new URL(buildPathForLocale("en"), base).toString();
   const es = new URL(buildPathForLocale("es"), base).toString();
-  const xDefault = new URL(
-    buildPathForLocale(defaultLocale),
-    base
-  ).toString();
+  const xDefault = new URL(buildPathForLocale(defaultLocale), base).toString();
 
   return {
     "x-default": xDefault,
