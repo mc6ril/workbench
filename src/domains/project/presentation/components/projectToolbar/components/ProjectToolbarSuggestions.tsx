@@ -1,12 +1,12 @@
 import Badge from "@/shared/design-system/badge";
 import { useTranslation } from "@/shared/i18n";
 
-import styles from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.module.scss";
-import type { ProjectSearchSuggestion } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
+import styles from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.module.scss";
+import type { ProjectToolbarSearchSuggestion } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
 
 type Props = {
   suggestionsId: string;
-  searchSuggestions: ProjectSearchSuggestion[];
+  searchSuggestions: ProjectToolbarSearchSuggestion[];
   activeSuggestionIndex: number;
   onSuggestionMouseEnter: (index: number) => void;
   onSuggestionMouseDown: (event: React.MouseEvent<HTMLButtonElement>) => void;

@@ -1,7 +1,7 @@
 import { buildTicketDetailRoute } from "@/shared/utils/routes";
 
+import type { ProjectToolbarSearchSuggestion } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
 import type { Ticket } from "@/modules/board/core/domain/ticket.types";
-import type { ProjectSearchSuggestion } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
 import { buildTicketCode, parseTicketCodeForProject } from "@/modules/board/utils/ticketUtils";
 
 type BuildArchivedSuggestionFallbackInput = {
@@ -18,7 +18,7 @@ export const buildArchivedSuggestionFallback = ({
   searchTerm,
   activeTicketsCount,
   archivedTicket,
-}: BuildArchivedSuggestionFallbackInput): ProjectSearchSuggestion[] => {
+}: BuildArchivedSuggestionFallbackInput): ProjectToolbarSearchSuggestion[] => {
   if (activeTicketsCount > 0) {
     return [];
   }
@@ -41,4 +41,3 @@ export const buildArchivedSuggestionFallback = ({
     },
   ];
 };
-

@@ -7,6 +7,7 @@ import styles from "./styles.module.scss";
 
 import { RECIPE_INGREDIENT_UNIT_VALUES } from "@/modules/recipes/core/domain/recipe.types";
 import { getRecipeDraft } from "@/modules/recipes/core/usecases/editor/getRecipeDraft";
+import { listRecipeEditorTags } from "@/modules/recipes/core/usecases/editor/listRecipeEditorTags";
 import { listActiveSelections } from "@/modules/recipes/core/usecases/planner/listActiveSelections";
 import { createEditorRepository } from "@/modules/recipes/infrastructure/supabase/editor/EditorRepository.supabase";
 import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
@@ -38,7 +39,9 @@ const RecipeEditorPage = async ({ projectId, mode, recipeId }: Props) => {
     listActiveSelections({
       plannerRepository,
     })(projectId),
-    editorRepository.listTagsByProject(projectId),
+    listRecipeEditorTags({
+      editorRepository,
+    })(projectId),
   ]);
 
   if (!draft) {

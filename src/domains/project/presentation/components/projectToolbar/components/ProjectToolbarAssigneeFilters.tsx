@@ -1,11 +1,11 @@
 import Avatar from "@/shared/design-system/avatar";
 import { UserProfileIcon } from "@/shared/design-system/icons";
 
-import styles from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.module.scss";
+import styles from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.module.scss";
 import {
   PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID,
   type ProjectToolbarAssigneeFilter,
-} from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.types";
+} from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
 
 type Props = {
   filters: ProjectToolbarAssigneeFilter[];

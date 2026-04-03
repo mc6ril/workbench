@@ -25,11 +25,11 @@ import RecipeCatalogCard from "@/modules/recipes/presentation/components/catalog
 import { useListRecipes } from "@/modules/recipes/presentation/hooks/catalog/listRecipes";
 import { useListRecipeTags } from "@/modules/recipes/presentation/hooks/catalog/listRecipeTags";
 import { useListActiveSelections } from "@/modules/recipes/presentation/hooks/planner/listActiveSelections";
-import type { RecipesCatalogQueryState } from "@/modules/recipes/presentation/pages/recipes/catalogSearchParams";
+import type { RecipesCatalogQueryState } from "@/modules/recipes/presentation/routing/catalogSearchParams";
 import {
   buildRecipesCatalogSearchParams,
   parseRecipesCatalogSearchParams,
-} from "@/modules/recipes/presentation/pages/recipes/catalogSearchParams";
+} from "@/modules/recipes/presentation/routing/catalogSearchParams";
 import { useRecipesCatalogFiltersStore } from "@/modules/recipes/presentation/stores";
 
 type Props = {

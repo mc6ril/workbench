@@ -1,6 +1,11 @@
 import type { ReactNode } from "react";
 
-import type { ProjectSearchSuggestion } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
+export type ProjectToolbarSearchSuggestion = {
+  id: string;
+  label: string;
+  href: string;
+  isArchived: boolean;
+};
 
 export type ProjectToolbarAddActionType = "ticket";
 
@@ -40,7 +45,7 @@ export type ProjectToolbarProps = {
   onAddClick?: () => void;
   canAddAction?: boolean;
   isPermissionsLoading?: boolean;
-  searchSuggestions?: ProjectSearchSuggestion[];
+  searchSuggestions?: ProjectToolbarSearchSuggestion[];
   extraTools?: ProjectToolbarExtraTool[];
   assigneeFilters?: ProjectToolbarAssigneeFilter[];
   /** Selected member user id, {@link PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID}, or null. */

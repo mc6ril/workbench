@@ -1,5 +1,5 @@
-import styles from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.module.scss";
-import type { ProjectToolbarExtraTool } from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.types";
+import styles from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.module.scss";
+import type { ProjectToolbarExtraTool } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
 
 type Props = {
   extraTools?: ProjectToolbarExtraTool[];

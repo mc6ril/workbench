@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { ProjectSearchSuggestion } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
+import type { ProjectToolbarSearchSuggestion } from "./ProjectToolbar.types";
 
 type UseProjectToolbarSuggestionsParams = {
   enabled?: boolean;
   searchValue: string;
-  searchSuggestions: ProjectSearchSuggestion[];
+  searchSuggestions: ProjectToolbarSearchSuggestion[];
   onSearchChange?: (value: string) => void;
   onSuggestionSelect: (href: string) => void;
 };

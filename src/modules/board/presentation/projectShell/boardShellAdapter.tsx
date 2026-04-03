@@ -15,6 +15,12 @@ import { useTranslation } from "@/shared/i18n";
 import { buildProjectRoute, normalizePath } from "@/shared/utils/routes";
 
 import type { ProjectMember } from "@/domains/project/core/domain/project.types";
+import ProjectToolbar from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar";
+import {
+  PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID,
+  type ProjectToolbarAssigneeFilter,
+  type ProjectToolbarExtraTool,
+} from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useRegisterProjectViewContribution } from "@/domains/project/presentation/layouts/projectShell/ProjectShellContributionContext";
 import type { ProjectViewContribution } from "@/domains/project/presentation/layouts/projectShell/projectViewContribution";
@@ -23,12 +29,6 @@ import {
   getProjectViewKeyFromPath,
 } from "@/domains/project/presentation/navigation/projectViews.config";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
-import ProjectToolbar from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar";
-import {
-  PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID,
-  type ProjectToolbarAssigneeFilter,
-  type ProjectToolbarExtraTool,
-} from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.types";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { usePrefetchProjectViews } from "@/modules/board/presentation/hooks/project/usePrefetchProjectViews";
 import { useProjectSearchSuggestions } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";

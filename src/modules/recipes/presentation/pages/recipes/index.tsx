@@ -1,16 +1,15 @@
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
-import {
-  parseRecipesCatalogSearchParams,
-  type RecipesCatalogQueryState,
-} from "./catalogSearchParams";
-
 import { listCatalogRecipes } from "@/modules/recipes/core/usecases/catalog/listCatalogRecipes";
 import { listCatalogRecipeTags } from "@/modules/recipes/core/usecases/catalog/listCatalogRecipeTags";
 import { listActiveSelections } from "@/modules/recipes/core/usecases/planner/listActiveSelections";
 import { createCatalogRepository } from "@/modules/recipes/infrastructure/supabase/catalog/CatalogRepository.supabase";
 import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
 import RecipesCatalogClientPage from "@/modules/recipes/presentation/components/catalog/RecipesCatalogClientPage/index";
+import {
+  parseRecipesCatalogSearchParams,
+  type RecipesCatalogQueryState,
+} from "@/modules/recipes/presentation/routing/catalogSearchParams";
 
 type Props = {
   projectId: string;

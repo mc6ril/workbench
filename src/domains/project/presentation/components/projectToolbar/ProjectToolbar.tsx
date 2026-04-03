@@ -15,9 +15,9 @@ import ProjectToolbarSuggestions from "./components/ProjectToolbarSuggestions";
 import ProjectToolbarTools from "./components/ProjectToolbarTools";
 import styles from "./ProjectToolbar.module.scss";
 import type { ProjectToolbarProps } from "./ProjectToolbar.types";
+import { useProjectToolbarSuggestions } from "./useProjectToolbarSuggestions";
 
 import { useIsDesktopDashboardViewport } from "@/domains/project/presentation/components/dashboardShell/dashboardShell.helpers";
-import { useProjectToolbarSuggestions } from "@/modules/board/presentation/hooks/project/useProjectToolbarSuggestions";
 
 const ProjectToolbar = ({
   pageTitle,

@@ -7,10 +7,10 @@ import { EyeIcon, EyeOffIcon } from "@/shared/design-system/icons";
 import { useTranslation } from "@/shared/i18n";
 import { normalizePath } from "@/shared/utils/routes";
 
+import ProjectToolbar from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar";
+import type { ProjectToolbarExtraTool } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
 import type { ProjectViewContribution } from "@/domains/project/presentation/layouts/projectShell/projectViewContribution";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
-import ProjectToolbar from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar";
-import type { ProjectToolbarExtraTool } from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.types";
 import {
   buildRecipeCreationRoute,
   buildRecipesCatalogRoute,
@@ -24,7 +24,7 @@ export const useRecipesShellContribution = (
   const pathname = usePathname();
   const tSidebar = useTranslation("navigation.sidebar");
   const pageTitle = tSidebar("items.recipes");
-  const { canCreateTicket, isLoading: isPermissionsLoading } =
+  const { canCreateTicket: canCreateRecipe, isLoading: isPermissionsLoading } =
     useProjectPermissions();
   const search = useRecipesCatalogFiltersStore((state) => state.search);
   const setSearch = useRecipesCatalogFiltersStore((state) => state.setSearch);
@@ -59,12 +59,12 @@ export const useRecipesShellContribution = (
   }, [isCatalogRoute, search, searchInput, setSearch]);
 
   const handleAddClick = useCallback(() => {
-    if (!canCreateTicket) {
+    if (!canCreateRecipe) {
       return;
     }
 
     router.push(buildRecipeCreationRoute(projectId));
-  }, [canCreateTicket, projectId, router]);
+  }, [canCreateRecipe, projectId, router]);
 
   const toolbarExtraTools = useMemo<ProjectToolbarExtraTool[]>(() => {
     if (!isCatalogRoute) {
@@ -97,14 +97,14 @@ export const useRecipesShellContribution = (
           searchValue={isCatalogRoute ? searchInput : ""}
           onSearchChange={isCatalogRoute ? setSearchInput : undefined}
           onAddClick={handleAddClick}
-          canAddAction={canCreateTicket}
+          canAddAction={canCreateRecipe}
           isPermissionsLoading={isPermissionsLoading}
           extraTools={toolbarExtraTools}
         />
       ),
     };
   }, [
-    canCreateTicket,
+    canCreateRecipe,
     handleAddClick,
     isCatalogRoute,
     isPermissionsLoading,
