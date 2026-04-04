@@ -19,15 +19,10 @@ import type {
   UpdateTicketInput,
 } from "@/modules/board/core/domain/ticket.types";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
-import type { TicketRow } from "@/modules/board/infrastructure/supabase/ticket/types";
-
-type TicketAssigneeRow = {
-  ticket_id: string;
-  user_id: string;
-  display_name: string | null;
-  avatar_url: string | null;
-  assigned_at: string;
-};
+import type {
+  TicketAssigneeRow,
+  TicketRow,
+} from "@/modules/board/infrastructure/supabase/ticket/types";
 
 type PostgrestErrorLike = {
   code?: string;
