@@ -3,6 +3,7 @@ import type {
   Ticket,
   TicketAssignee,
   TicketFilters,
+  TicketSearchItem,
   UpdateTicketInput,
 } from "@/modules/board/core/domain/ticket.types";
 
@@ -19,6 +20,10 @@ export type TicketRepositoryMock = {
   >;
   findById: jest.Mock<Promise<Ticket | null>, [string]>;
   listByProject: jest.Mock<Promise<Ticket[]>, [string, TicketFilters?, string?, number?]>;
+  listSearchSuggestions: jest.Mock<
+    Promise<TicketSearchItem[]>,
+    [string, string, number?]
+  >;
   listByColumnId: jest.Mock<Promise<Ticket[]>, [string, string]>;
   create: jest.Mock<Promise<Ticket>, [CreateTicketInput]>;
   update: jest.Mock<Promise<Ticket>, [string, UpdateTicketInput]>;
@@ -89,6 +94,10 @@ export const createTicketRepositoryMock = (
     listByProject: jest.fn<
       Promise<Ticket[]>,
       [string, TicketFilters?, string?, number?]
+    >(),
+    listSearchSuggestions: jest.fn<
+      Promise<TicketSearchItem[]>,
+      [string, string, number?]
     >(),
     listByColumnId: jest.fn<Promise<Ticket[]>, [string, string]>(),
     create: jest.fn<Promise<Ticket>, [CreateTicketInput]>(),

@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useMemo } from "react";
+import React from "react";
 import Link from "next/link";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
@@ -50,7 +48,7 @@ const LinkComponent = ({
   className,
   ...linkProps
 }: Props) => {
-  const linkId = useMemo(() => getAccessibilityId(`link-${href}`), [href]);
+  const linkId = getAccessibilityId(`link-${href}`);
 
   const linkClasses = [styles.link, styles[`link--${variant}`], className]
     .filter(Boolean)

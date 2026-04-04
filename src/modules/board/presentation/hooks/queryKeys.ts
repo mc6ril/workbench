@@ -41,6 +41,19 @@ const queryKeysObject = {
         createTicketListQueryParamsKey(filters, search, limit),
       ] as const;
     },
+    ticketSearchSuggestions: (
+      projectId: string,
+      search?: string,
+      limit?: number
+    ) =>
+      [
+        "projects",
+        projectId,
+        "tickets",
+        "search-suggestions",
+        search?.trim() || null,
+        limit ?? null,
+      ] as const,
     boardConfiguration: (projectId: string) =>
       ["projects", projectId, "board", "configuration"] as const,
   },

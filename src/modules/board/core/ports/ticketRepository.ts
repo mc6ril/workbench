@@ -3,6 +3,7 @@ import type {
   Ticket,
   TicketAssignee,
   TicketFilters,
+  TicketSearchItem,
   UpdateTicketInput,
 } from "@/modules/board/core/domain/ticket.types";
 
@@ -70,6 +71,21 @@ export type TicketRepository = {
     search?: string,
     limit?: number
   ): Promise<Ticket[]>;
+
+  /**
+   * Get lightweight ticket search matches for typeahead suggestions.
+   * Returns only the fields required to render suggestion labels and links.
+   * @param projectId - Project ID
+   * @param search - Search term (title, description, code number)
+   * @param limit - Optional max number of rows
+   * @returns Array of lightweight ticket search matches
+   * @throws DatabaseError if database operation fails
+   */
+  listSearchSuggestions(
+    projectId: string,
+    search: string,
+    limit?: number
+  ): Promise<TicketSearchItem[]>;
 
   /**
    * Get tickets by column.

@@ -3,7 +3,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createQueryBuilderMock } from "../testUtils/queryBuilderMock";
 
 import { createTicketRepository } from "@/modules/board/infrastructure/supabase/ticket/TicketRepository.supabase";
-import type { TicketRow } from "@/modules/board/infrastructure/supabase/ticket/types";
+import type {
+  TicketRow,
+  TicketSearchRow,
+} from "@/modules/board/infrastructure/supabase/ticket/types";
 
 describe("TicketRepository.supabase active ticket filtering", () => {
   const projectId = "223e4567-e89b-12d3-a456-426614174000";
@@ -54,6 +57,41 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     await repository.listByProject(projectId, { priority: "urgent" });
 
     expect(ticketsQuery.eq).toHaveBeenCalledWith("priority", "urgent");
+  });
+
+  it("loads lightweight ticket search suggestions with a scoped payload", async () => {
+    const suggestionsQuery = createQueryBuilderMock<TicketSearchRow[]>([
+      {
+        id: ticketId,
+        title: baseRow.title,
+        code_number: baseRow.code_number,
+      },
+    ]);
+    const client = {
+      from: jest.fn(() => suggestionsQuery),
+    } as unknown as SupabaseClient;
+
+    const repository = createTicketRepository(client);
+    const result = await repository.listSearchSuggestions(projectId, "ticket", 6);
+
+    expect(client.from).toHaveBeenCalledWith("tickets");
+    expect(suggestionsQuery.select).toHaveBeenCalledWith("id,title,code_number");
+    expect(suggestionsQuery.eq).toHaveBeenCalledWith("project_id", projectId);
+    expect(suggestionsQuery.is).toHaveBeenCalledWith("archived_at", null);
+    expect(suggestionsQuery.order).toHaveBeenCalledWith("created_at", {
+      ascending: false,
+    });
+    expect(suggestionsQuery.limit).toHaveBeenCalledWith(6);
+    expect(suggestionsQuery.or).toHaveBeenCalledWith(
+      'title.ilike."%ticket%",description.ilike."%ticket%"'
+    );
+    expect(result).toEqual([
+      {
+        id: ticketId,
+        title: baseRow.title,
+        codeNumber: baseRow.code_number,
+      },
+    ]);
   });
 
   it("filters archived tickets out of column queries by default", async () => {
