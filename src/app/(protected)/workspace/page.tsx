@@ -1,5 +1,3 @@
-"use client";
-
 import WorkspacePage from "@/domains/workspace/presentation/pages/workspace";
 
 const WorkspaceRoutePage = () => {

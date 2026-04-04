@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 
 import Avatar from "@/shared/design-system/avatar";
