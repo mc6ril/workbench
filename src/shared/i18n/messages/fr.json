@@ -92,8 +92,7 @@
       "oauth": {
         "divider": "ou",
         "googleButton": "Continuer avec Google",
-        "googleButtonAriaLabel": "Se connecter avec Google",
-        "unsupportedBrowser": "La connexion Google doit être ouverte dans un onglet de navigateur classique. Sur Android, ouvrez cette page dans Chrome ou Firefox, pas dans le navigateur intégré d'une application ni depuis l'app installée."
+        "googleButtonAriaLabel": "Se connecter avec Google"
       },
       "footer": "Vous avez déjà un compte ?",
       "footerLink": "Se connecter",
@@ -217,8 +216,7 @@
       "oauth": {
         "divider": "ou",
         "googleButton": "Continuer avec Google",
-        "googleButtonAriaLabel": "Se connecter avec Google",
-        "unsupportedBrowser": "La connexion Google doit être ouverte dans un onglet de navigateur classique. Sur Android, ouvrez cette page dans Chrome ou Firefox, pas dans le navigateur intégré d'une application ni depuis l'app installée."
+        "googleButtonAriaLabel": "Se connecter avec Google"
       },
       "forgotPassword": "Mot de passe oublié ?",
       "footer": "Vous n'avez pas de compte ?",

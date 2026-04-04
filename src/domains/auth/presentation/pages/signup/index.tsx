@@ -33,7 +33,6 @@ import { useSignInWithGoogle } from "@/domains/auth/presentation/hooks/user/useS
 import { useSignUp } from "@/domains/auth/presentation/hooks/user/useSignUp";
 import { useResendVerification } from "@/domains/auth/presentation/hooks/verification/useResendVerification";
 import { getNextUnmetCriterion } from "@/domains/auth/presentation/password/passwordStrength";
-import { useIsGoogleOAuthBlocked } from "@/domains/auth/presentation/utils/googleOAuth";
 
 const SignupPage = () => {
   const router = useRouter();
@@ -51,7 +50,6 @@ const SignupPage = () => {
     tone: "success" | "error";
     message: string;
   } | null>(null);
-  const googleOAuthBlocked = useIsGoogleOAuthBlocked();
   const redirectPathParam = searchParams.get("redirect");
   const redirectPath =
     redirectPathParam &&
@@ -158,23 +156,8 @@ const SignupPage = () => {
   const handleGoogleSignIn = useCallback(() => {
     clearErrors("root");
 
-    if (googleOAuthBlocked) {
-      setError("root", {
-        type: "manual",
-        message: t("oauth.unsupportedBrowser"),
-      });
-      return;
-    }
-
     signInWithGoogleMutation.mutate(redirectPath);
-  }, [
-    clearErrors,
-    googleOAuthBlocked,
-    redirectPath,
-    setError,
-    signInWithGoogleMutation,
-    t,
-  ]);
+  }, [clearErrors, redirectPath, signInWithGoogleMutation]);
 
   const handleResendVerification = useCallback(() => {
     const email = submittedEmail || getValues("email");
@@ -370,14 +353,9 @@ const SignupPage = () => {
           variant="secondary"
           fullWidth
           onClick={handleGoogleSignIn}
-          disabled={signInWithGoogleMutation.isPending || googleOAuthBlocked}
+          disabled={signInWithGoogleMutation.isPending}
           aria-label={t("oauth.googleButtonAriaLabel")}
         />
-        {googleOAuthBlocked && (
-          <Text variant="small" className={styles["signup-oauth-notice"]}>
-            {t("oauth.unsupportedBrowser")}
-          </Text>
-        )}
 
         <Text variant="small" className={styles["signup-footer"]}>
           {t("footer")}{" "}

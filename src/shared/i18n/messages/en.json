@@ -92,8 +92,7 @@
       "oauth": {
         "divider": "or",
         "googleButton": "Continue with Google",
-        "googleButtonAriaLabel": "Sign in with Google",
-        "unsupportedBrowser": "Google sign-in must be opened in a regular browser tab. On Android, open this page in Chrome or Firefox, not in an in-app browser or the installed app."
+        "googleButtonAriaLabel": "Sign in with Google"
       },
       "footer": "Already have an account?",
       "footerLink": "Sign in",
@@ -217,8 +216,7 @@
       "oauth": {
         "divider": "or",
         "googleButton": "Continue with Google",
-        "googleButtonAriaLabel": "Sign in with Google",
-        "unsupportedBrowser": "Google sign-in must be opened in a regular browser tab. On Android, open this page in Chrome or Firefox, not in an in-app browser or the installed app."
+        "googleButtonAriaLabel": "Sign in with Google"
       },
       "forgotPassword": "Forgot password?",
       "footer": "Don't have an account?",
