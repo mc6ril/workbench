@@ -26,3 +26,5 @@ export type TicketAssigneeRow = {
   avatar_url: string | null;
   assigned_at: string;
 };
+
+export type TicketSearchRow = Pick<TicketRow, "id" | "title" | "code_number">;
