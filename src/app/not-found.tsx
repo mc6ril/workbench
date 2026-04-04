@@ -1,11 +1,9 @@
-"use client";
-
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
-import { useTranslation } from "@/shared/i18n";
+import { getServerTranslation } from "@/shared/i18n/server";
 
-const NotFoundPage = () => {
-  const t = useTranslation("pages.fallback");
+const NotFoundPage = async () => {
+  const t = await getServerTranslation("pages.fallback");
 
   return (
     <RouteFallbackPage

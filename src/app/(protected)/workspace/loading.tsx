@@ -1,13 +1,11 @@
-"use client";
-
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
-import { useTranslation } from "@/shared/i18n";
+import { getServerTranslation } from "@/shared/i18n/server";
 
 /**
  * Loading state for workspace route.
  */
-const WorkspaceLoading = () => {
-  const t = useTranslation("pages.fallback");
+const WorkspaceLoading = async () => {
+  const t = await getServerTranslation("pages.fallback");
 
   return (
     <RouteFallbackPage

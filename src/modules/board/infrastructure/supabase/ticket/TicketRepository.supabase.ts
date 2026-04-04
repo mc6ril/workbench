@@ -9,6 +9,7 @@ import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandl
 import {
   mapTicketRowsToDomain,
   mapTicketRowToDomain,
+  mapTicketSearchRowsToDomain,
 } from "./TicketMapper.supabase";
 
 import type {
@@ -16,18 +17,15 @@ import type {
   Ticket,
   TicketAssignee,
   TicketFilters,
+  TicketSearchItem,
   UpdateTicketInput,
 } from "@/modules/board/core/domain/ticket.types";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
-import type { TicketRow } from "@/modules/board/infrastructure/supabase/ticket/types";
-
-type TicketAssigneeRow = {
-  ticket_id: string;
-  user_id: string;
-  display_name: string | null;
-  avatar_url: string | null;
-  assigned_at: string;
-};
+import type {
+  TicketAssigneeRow,
+  TicketRow,
+  TicketSearchRow,
+} from "@/modules/board/infrastructure/supabase/ticket/types";
 
 type PostgrestErrorLike = {
   code?: string;
@@ -71,6 +69,47 @@ const mapAssigneeRowsToTicketMap = (
   }
 
   return result;
+};
+
+const buildTicketSearchClauses = (searchTerm: string): string[] => {
+  const escapedSearchTerm = searchTerm
+    .replace(/\\/g, "\\\\")
+    .replace(/[%_]/g, "\\$&")
+    .replace(/"/g, '\\"');
+  const codeMatch = searchTerm.match(/^(?:[a-z]+-)?(\d+)$/i);
+  const codePrefix = codeMatch?.[1] ?? "";
+  const hasCodePrefixMatch = codePrefix !== "";
+
+  const searchClauses = [
+    `title.ilike."%${escapedSearchTerm}%"`,
+    `description.ilike."%${escapedSearchTerm}%"`,
+  ];
+
+  if (!hasCodePrefixMatch) {
+    return searchClauses;
+  }
+
+  const parsedPrefix = Number.parseInt(codePrefix, 10);
+  const maxCodeNumber = 2_147_483_647;
+  if (!Number.isInteger(parsedPrefix) || parsedPrefix < 0) {
+    return searchClauses;
+  }
+
+  for (let scale = 0; scale <= 9; scale += 1) {
+    const factor = 10 ** scale;
+    const rangeStart = parsedPrefix * factor;
+    if (rangeStart > maxCodeNumber) {
+      break;
+    }
+
+    const rangeEnd = Math.min((parsedPrefix + 1) * factor - 1, maxCodeNumber);
+
+    searchClauses.push(
+      `and(code_number.gte.${rangeStart},code_number.lte.${rangeEnd})`
+    );
+  }
+
+  return searchClauses;
 };
 
 /**
@@ -233,43 +272,7 @@ export const createTicketRepository = (
 
         const searchTerm = search?.trim();
         if (searchTerm) {
-          const escapedSearchTerm = searchTerm
-            .replace(/\\/g, "\\\\")
-            .replace(/[%_]/g, "\\$&")
-            .replace(/"/g, '\\"');
-          const codeMatch = searchTerm.match(/^(?:[a-z]+-)?(\d+)$/i);
-          const codePrefix = codeMatch?.[1] ?? "";
-          const hasCodePrefixMatch = codePrefix !== "";
-
-          const searchClauses = [
-            `title.ilike."%${escapedSearchTerm}%"`,
-            `description.ilike."%${escapedSearchTerm}%"`,
-          ];
-
-          if (hasCodePrefixMatch) {
-            const parsedPrefix = Number.parseInt(codePrefix, 10);
-            const maxCodeNumber = 2_147_483_647;
-            if (Number.isInteger(parsedPrefix) && parsedPrefix >= 0) {
-              for (let scale = 0; scale <= 9; scale += 1) {
-                const factor = 10 ** scale;
-                const rangeStart = parsedPrefix * factor;
-                if (rangeStart > maxCodeNumber) {
-                  break;
-                }
-
-                const rangeEnd = Math.min(
-                  (parsedPrefix + 1) * factor - 1,
-                  maxCodeNumber
-                );
-
-                searchClauses.push(
-                  `and(code_number.gte.${rangeStart},code_number.lte.${rangeEnd})`
-                );
-              }
-            }
-          }
-
-          query = query.or(searchClauses.join(","));
+          query = query.or(buildTicketSearchClauses(searchTerm).join(","));
         }
 
         query = query.order("created_at", {
@@ -292,6 +295,46 @@ export const createTicketRepository = (
 
         const ticketRows = data as unknown as TicketRow[];
         return mapTicketRowsToDomain(ticketRows);
+      } catch (error) {
+        return handleRepositoryError(error, "Ticket");
+      }
+    },
+
+    async listSearchSuggestions(
+      projectId: string,
+      search: string,
+      limit = 6
+    ): Promise<TicketSearchItem[]> {
+      try {
+        const searchTerm = search.trim();
+        if (searchTerm === "") {
+          return [];
+        }
+
+        let query = client
+          .from("tickets")
+          .select("id,title,code_number")
+          .eq("project_id", projectId)
+          .is("archived_at", null)
+          .order("created_at", {
+            ascending: false,
+          })
+          .limit(limit);
+
+        query = query.or(buildTicketSearchClauses(searchTerm).join(","));
+
+        const { data, error } = await query;
+
+        if (error) {
+          return handleRepositoryError(error, "Ticket");
+        }
+
+        if (!data) {
+          return [];
+        }
+
+        const rows = data as unknown as TicketSearchRow[];
+        return mapTicketSearchRowsToDomain(rows);
       } catch (error) {
         return handleRepositoryError(error, "Ticket");
       }

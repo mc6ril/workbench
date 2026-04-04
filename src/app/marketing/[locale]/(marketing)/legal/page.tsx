@@ -1,5 +1,3 @@
-"use client";
-
 import LegalPage from "@/presentation/pages/legal";
 
 const Legal = () => {

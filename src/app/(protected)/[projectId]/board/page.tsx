@@ -1,25 +1,19 @@
-"use client";
-
-import { Suspense, use } from "react";
+import { Suspense } from "react";
 
 import Loader from "@/shared/design-system/loader";
 
 import BoardPageContent from "@/modules/board/presentation/pages/board";
 
-const BoardPageRouteContent = ({
+const BoardPage = async ({
   params,
 }: {
   params: Promise<{ projectId: string }>;
 }) => {
-  const { projectId } = use(params);
+  const { projectId } = await params;
 
-  return <BoardPageContent projectId={projectId} />;
-};
-
-const BoardPage = ({ params }: { params: Promise<{ projectId: string }> }) => {
   return (
     <Suspense fallback={<Loader />}>
-      <BoardPageRouteContent params={params} />
+      <BoardPageContent projectId={projectId} />
     </Suspense>
   );
 };

@@ -22,6 +22,8 @@ export type Ticket = {
   updatedAt: Date;
 };
 
+export type TicketSearchItem = Pick<Ticket, "id" | "title" | "codeNumber">;
+
 export type TicketFilters = {
   columnId?: string;
   priority?: TicketPriority;
@@ -120,4 +122,3 @@ export type UnassignUsersFromTicketInput = {
   ticketId: string;
   userIds: string[];
 };
-

@@ -45,8 +45,10 @@ type OnRegistration = {
 };
 
 const PROJECT_ID = "project-1";
+const OTHER_PROJECT_ID = "project-2";
 const BOARD_ID = "board-1";
 const TICKET_ID = "ticket-1";
+const OTHER_TICKET_ID = "ticket-2";
 
 const createWrapper = (queryClient: QueryClient) => {
   const wrapper = ({ children }: PropsWithChildren) => {
@@ -120,6 +122,30 @@ const buildTicketRow = (
     archived_week_start: null,
     created_at: "2026-03-08T10:00:00.000Z",
     updated_at: "2026-03-08T10:00:00.000Z",
+    ...overrides,
+  };
+};
+
+const buildTicketEntity = (
+  overrides: Partial<Record<string, unknown>> = {}
+): Record<string, unknown> => {
+  return {
+    id: TICKET_ID,
+    projectId: PROJECT_ID,
+    title: "Refactor realtime invalidation",
+    description: null,
+    columnId: "column-todo",
+    position: 1,
+    codeNumber: 42,
+    priority: null,
+    dueDate: null,
+    storyPoints: null,
+    createdBy: null,
+    completedAt: null,
+    archivedAt: null,
+    archivedWeekStart: null,
+    createdAt: new Date("2026-03-08T10:00:00.000Z"),
+    updatedAt: new Date("2026-03-08T10:00:00.000Z"),
     ...overrides,
   };
 };
@@ -305,6 +331,12 @@ describe("useProjectRealtime", () => {
     const wrapper = createWrapper(queryClient);
     const { registrations } = createRealtimeMocks();
 
+    queryClient.setQueryData(queryKeys.projects.ticketsList(PROJECT_ID), [
+      buildTicketEntity(),
+    ]);
+    queryClient.setQueryData(queryKeys.tickets.assignees(TICKET_ID), []);
+    queryClient.setQueryData(queryKeys.tickets.assigneesByProjectId(PROJECT_ID), {});
+
     renderHook(() => useProjectRealtime(PROJECT_ID, BOARD_ID), { wrapper });
 
     const registrationByTable = getRegistrationByTable(registrations);
@@ -336,6 +368,67 @@ describe("useProjectRealtime", () => {
     );
   });
 
+  it("patches assignee caches for current project tickets when payload is complete", () => {
+    const queryClient = new QueryClient();
+    const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
+    const wrapper = createWrapper(queryClient);
+    const { registrations } = createRealtimeMocks();
+
+    queryClient.setQueryData(queryKeys.projects.ticketsList(PROJECT_ID), [
+      buildTicketEntity(),
+    ]);
+    queryClient.setQueryData(queryKeys.tickets.assignees(TICKET_ID), []);
+    queryClient.setQueryData(queryKeys.tickets.assigneesByProjectId(PROJECT_ID), {});
+
+    renderHook(() => useProjectRealtime(PROJECT_ID, BOARD_ID), { wrapper });
+
+    const registrationByTable = getRegistrationByTable(registrations);
+    const ticketAssigneesCallback =
+      registrationByTable.get("ticket_assignees")?.callback;
+
+    ticketAssigneesCallback?.({
+      eventType: "INSERT",
+      new: {
+        ticket_id: TICKET_ID,
+        user_id: "user-1",
+        assigned_at: "2026-03-08T12:00:00.000Z",
+      },
+    });
+
+    expect(
+      queryClient.getQueryData(queryKeys.tickets.assignees(TICKET_ID))
+    ).toEqual([
+      {
+        userId: "user-1",
+        displayName: null,
+        avatarUrl: null,
+        assignedAt: new Date("2026-03-08T12:00:00.000Z"),
+      },
+    ]);
+
+    expect(
+      queryClient.getQueryData(queryKeys.tickets.assigneesByProjectId(PROJECT_ID))
+    ).toEqual({
+      [TICKET_ID]: [
+        {
+          userId: "user-1",
+          displayName: null,
+          avatarUrl: null,
+          assignedAt: new Date("2026-03-08T12:00:00.000Z"),
+        },
+      ],
+    });
+
+    expect(invalidateQueriesSpy).not.toHaveBeenCalledWith({
+      queryKey: queryKeys.tickets.assignees(TICKET_ID),
+      refetchType: "active",
+    });
+    expect(invalidateQueriesSpy).not.toHaveBeenCalledWith({
+      queryKey: queryKeys.tickets.assigneesByProjectId(PROJECT_ID),
+      refetchType: "active",
+    });
+  });
+
   it("falls back to project-scoped invalidation when payload has no ticket id", () => {
     const queryClient = new QueryClient();
     const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
@@ -353,6 +446,45 @@ describe("useProjectRealtime", () => {
 
     expect(invalidateQueriesSpy).toHaveBeenCalledWith({
       queryKey: queryKeys.tickets.assigneesByProjectId(PROJECT_ID),
+      refetchType: "active",
+    });
+  });
+
+  it("ignores ticket assignee events for tickets outside the current project", () => {
+    const queryClient = new QueryClient();
+    const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
+    const wrapper = createWrapper(queryClient);
+    const { registrations } = createRealtimeMocks();
+
+    queryClient.setQueryData(queryKeys.tickets.detail(OTHER_TICKET_ID), {
+      ...buildTicketEntity({
+        id: OTHER_TICKET_ID,
+        projectId: OTHER_PROJECT_ID,
+      }),
+    });
+    queryClient.setQueryData(queryKeys.tickets.assigneesByProjectId(PROJECT_ID), {});
+
+    renderHook(() => useProjectRealtime(PROJECT_ID, BOARD_ID), { wrapper });
+
+    const registrationByTable = getRegistrationByTable(registrations);
+    registrationByTable.get("ticket_assignees")?.callback({
+      eventType: "INSERT",
+      new: {
+        ticket_id: OTHER_TICKET_ID,
+        user_id: "user-1",
+        assigned_at: "2026-03-08T12:00:00.000Z",
+      },
+    });
+
+    expect(
+      queryClient.getQueryData(queryKeys.tickets.assigneesByProjectId(PROJECT_ID))
+    ).toEqual({});
+    expect(invalidateQueriesSpy).not.toHaveBeenCalledWith({
+      queryKey: queryKeys.tickets.assigneesByProjectId(PROJECT_ID),
+      refetchType: "active",
+    });
+    expect(invalidateQueriesSpy).not.toHaveBeenCalledWith({
+      queryKey: queryKeys.tickets.assignees(OTHER_TICKET_ID),
       refetchType: "active",
     });
   });
