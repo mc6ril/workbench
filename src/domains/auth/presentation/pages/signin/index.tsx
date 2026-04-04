@@ -26,7 +26,6 @@ import { SignInSchema } from "@/domains/auth/core/usecases/user/signInUser";
 import { useSignIn } from "@/domains/auth/presentation/hooks/user/useSignIn";
 import { useSignInWithGoogle } from "@/domains/auth/presentation/hooks/user/useSignInWithGoogle";
 import { useResendVerification } from "@/domains/auth/presentation/hooks/verification/useResendVerification";
-import { useIsGoogleOAuthBlocked } from "@/domains/auth/presentation/utils/googleOAuth";
 
 type FormData = SignInInput;
 
@@ -40,7 +39,6 @@ const SigninPage = () => {
   const tCommon = useTranslation("common");
   const tErrors = useTranslation("errors");
   const tFields = useTranslation("pages.signin.fields");
-  const googleOAuthBlocked = useIsGoogleOAuthBlocked();
 
   const isUnverifiedRedirect = searchParams.get("unverified") === "true";
   const redirectPathParam = searchParams.get("redirect");
@@ -146,23 +144,8 @@ const SigninPage = () => {
   const handleGoogleSignIn = useCallback(() => {
     clearErrors("root");
 
-    if (googleOAuthBlocked) {
-      setError("root", {
-        type: "manual",
-        message: t("oauth.unsupportedBrowser"),
-      });
-      return;
-    }
-
     signInWithGoogleMutation.mutate(redirectPath);
-  }, [
-    clearErrors,
-    googleOAuthBlocked,
-    redirectPath,
-    setError,
-    signInWithGoogleMutation,
-    t,
-  ]);
+  }, [clearErrors, redirectPath, signInWithGoogleMutation]);
 
   const isEmailVerificationError =
     isUnverifiedRedirect ||
@@ -246,14 +229,9 @@ const SigninPage = () => {
           variant="secondary"
           fullWidth
           onClick={handleGoogleSignIn}
-          disabled={signInWithGoogleMutation.isPending || googleOAuthBlocked}
+          disabled={signInWithGoogleMutation.isPending}
           aria-label={t("oauth.googleButtonAriaLabel")}
         />
-        {googleOAuthBlocked && (
-          <Text variant="small" className={styles["signin-oauth-notice"]}>
-            {t("oauth.unsupportedBrowser")}
-          </Text>
-        )}
 
         <Text variant="small" className={styles["signin-footer"]}>
           {t("footer")}{" "}

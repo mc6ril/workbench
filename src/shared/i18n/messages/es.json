@@ -92,8 +92,7 @@
       "oauth": {
         "divider": "o",
         "googleButton": "Continuar con Google",
-        "googleButtonAriaLabel": "Iniciar sesión con Google",
-        "unsupportedBrowser": "El inicio de sesión con Google debe abrirse en una pestaña normal del navegador. En Android, abre esta página en Chrome o Firefox, no en un navegador integrado de otra app ni desde la app instalada."
+        "googleButtonAriaLabel": "Iniciar sesión con Google"
       },
       "footer": "¿Ya tienes una cuenta?",
       "footerLink": "Iniciar sesión",
@@ -217,8 +216,7 @@
       "oauth": {
         "divider": "o",
         "googleButton": "Continuar con Google",
-        "googleButtonAriaLabel": "Iniciar sesión con Google",
-        "unsupportedBrowser": "El inicio de sesión con Google debe abrirse en una pestaña normal del navegador. En Android, abre esta página en Chrome o Firefox, no en un navegador integrado de otra app ni desde la app instalada."
+        "googleButtonAriaLabel": "Iniciar sesión con Google"
       },
       "forgotPassword": "¿Olvidaste tu contraseña?",
       "footer": "¿No tienes cuenta?",
