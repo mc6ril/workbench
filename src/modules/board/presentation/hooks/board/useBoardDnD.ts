@@ -23,13 +23,20 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import type { BoardColumnTickets } from "./types";
 
 import type { Ticket } from "@/modules/board/core/domain/ticket.types";
-import type { BoardTicketIds } from "@/modules/board/core/usecases/board/boardDnD";
+import type {
+  BoardTicketIds,
+  TicketLocationIndex,
+} from "@/modules/board/core/usecases/board/boardDnD";
 import {
   buildBoardTicketIds,
   buildNextBoardFromDragOver,
   buildTicketLocationIndex,
+  cloneTicketLocationIndex,
+  getBoardDragOverColumnId,
   getTicketLocation,
+  syncTicketLocationIndexColumns,
 } from "@/modules/board/core/usecases/board/boardDnD";
+import { buildStableBoardColumnTickets } from "@/modules/board/presentation/hooks/board/useBoardDnD.helpers";
 import { useMoveAndReorderTicket } from "@/modules/board/presentation/hooks/ticket/useMoveAndReorderTicket";
 import { useReorderTicket } from "@/modules/board/presentation/hooks/ticket/useReorderTicket";
 import type {
@@ -59,6 +66,17 @@ type UseBoardDnDInput = {
   columnById: Map<string, BoardColumnConfig>;
 };
 
+type DragSnapshot = {
+  boardTicketIds: BoardTicketIds;
+  locationIndex: TicketLocationIndex;
+};
+
+type BoardColumnTicketsCache = {
+  boardTicketIds: BoardTicketIds | null;
+  ticketViewModelById: Map<string, BoardTicketViewModel> | null;
+  tickets: BoardColumnTickets;
+};
+
 export const useBoardDnD = ({
   projectId,
   columns,
@@ -71,12 +89,18 @@ export const useBoardDnD = ({
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
   const [draftBoardTicketIds, setDraftBoardTicketIds] =
     useState<BoardTicketIds | null>(null);
-  const dragSnapshotRef = useRef<BoardTicketIds | null>(null);
+  const dragSnapshotRef = useRef<DragSnapshot | null>(null);
+  const draftBoardLocationIndexRef = useRef<TicketLocationIndex | null>(null);
   const pendingDragOverRef = useRef<{
     activeId: string;
     overId: string;
   } | null>(null);
   const dragOverRafRef = useRef<number | null>(null);
+  const boardColumnTicketsCacheRef = useRef<BoardColumnTicketsCache>({
+    boardTicketIds: null,
+    ticketViewModelById: null,
+    tickets: new Map(),
+  });
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -96,25 +120,30 @@ export const useBoardDnD = ({
   const baseBoardTicketIds = useMemo(() => {
     return buildBoardTicketIds(columns, filteredTickets);
   }, [columns, filteredTickets]);
+  const baseBoardTicketLocationIndex = useMemo(() => {
+    return buildTicketLocationIndex(baseBoardTicketIds);
+  }, [baseBoardTicketIds]);
 
   const boardTicketIds = draftBoardTicketIds ?? baseBoardTicketIds;
 
-  const boardTicketLocationIndex = useMemo(() => {
-    return buildTicketLocationIndex(boardTicketIds);
-  }, [boardTicketIds]);
-
   const boardColumnTickets = useMemo<BoardColumnTickets>(() => {
-    const map = new Map<string, BoardTicketViewModel[]>();
+    const cache = boardColumnTicketsCacheRef.current;
+    const nextBoardColumnTickets = buildStableBoardColumnTickets({
+      columns,
+      boardTicketIds,
+      ticketViewModelById,
+      previousBoardTicketIds: cache.boardTicketIds,
+      previousTicketViewModelById: cache.ticketViewModelById,
+      previousBoardColumnTickets: cache.tickets,
+    });
 
-    for (const column of columns) {
-      const ticketIds = boardTicketIds[column.id] ?? [];
-      const ticketCards = ticketIds
-        .map((ticketId) => ticketViewModelById.get(ticketId))
-        .filter((ticket): ticket is BoardTicketViewModel => ticket != null);
-      map.set(column.id, ticketCards);
-    }
+    boardColumnTicketsCacheRef.current = {
+      boardTicketIds,
+      ticketViewModelById,
+      tickets: nextBoardColumnTickets,
+    };
 
-    return map;
+    return nextBoardColumnTickets;
   }, [boardTicketIds, columns, ticketViewModelById]);
 
   const activeTicket = useMemo(() => {
@@ -124,6 +153,15 @@ export const useBoardDnD = ({
 
     return ticketViewModelById.get(activeTicketId) ?? null;
   }, [activeTicketId, ticketViewModelById]);
+
+  const cancelPendingDragOver = useCallback(() => {
+    if (dragOverRafRef.current != null) {
+      window.cancelAnimationFrame(dragOverRafRef.current);
+      dragOverRafRef.current = null;
+    }
+
+    pendingDragOverRef.current = null;
+  }, []);
 
   const flushPendingDragOver = useCallback(() => {
     const pending = pendingDragOverRef.current;
@@ -136,24 +174,56 @@ export const useBoardDnD = ({
 
     setDraftBoardTicketIds((previous) => {
       const currentBoard = previous ?? baseBoardTicketIds;
-      const currentLocationIndex = buildTicketLocationIndex(currentBoard);
-      return buildNextBoardFromDragOver(
+      const currentLocationIndex =
+        draftBoardLocationIndexRef.current ??
+        cloneTicketLocationIndex(baseBoardTicketLocationIndex);
+      const sourceColumnId =
+        getTicketLocation(pending.activeId, currentLocationIndex)?.columnId ??
+        null;
+      const targetColumnId = getBoardDragOverColumnId(
+        pending.overId,
+        currentLocationIndex
+      );
+      const nextBoard = buildNextBoardFromDragOver(
         currentBoard,
         currentLocationIndex,
         pending.activeId,
         pending.overId
       );
+
+      if (
+        nextBoard === currentBoard ||
+        sourceColumnId == null ||
+        targetColumnId == null
+      ) {
+        return currentBoard;
+      }
+
+      syncTicketLocationIndexColumns(currentLocationIndex, nextBoard, [
+        sourceColumnId,
+        targetColumnId,
+      ]);
+      draftBoardLocationIndexRef.current = currentLocationIndex;
+
+      return nextBoard;
     });
-  }, [baseBoardTicketIds]);
+  }, [baseBoardTicketIds, baseBoardTicketLocationIndex]);
 
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
       const activeId = String(event.active.id);
-      dragSnapshotRef.current = baseBoardTicketIds;
+      cancelPendingDragOver();
+      dragSnapshotRef.current = {
+        boardTicketIds: baseBoardTicketIds,
+        locationIndex: baseBoardTicketLocationIndex,
+      };
+      draftBoardLocationIndexRef.current = cloneTicketLocationIndex(
+        baseBoardTicketLocationIndex
+      );
       setDraftBoardTicketIds(baseBoardTicketIds);
       setActiveTicketId(activeId);
     },
-    [baseBoardTicketIds]
+    [baseBoardTicketIds, baseBoardTicketLocationIndex, cancelPendingDragOver]
   );
 
   const handleDragOver = useCallback(
@@ -181,18 +251,18 @@ export const useBoardDnD = ({
   );
 
   const handleDragCancel = useCallback(() => {
+    cancelPendingDragOver();
     dragSnapshotRef.current = null;
+    draftBoardLocationIndexRef.current = null;
     setDraftBoardTicketIds(null);
     setActiveTicketId(null);
-  }, []);
+  }, [cancelPendingDragOver]);
 
   useEffect(() => {
     return () => {
-      if (dragOverRafRef.current != null) {
-        window.cancelAnimationFrame(dragOverRafRef.current);
-      }
+      cancelPendingDragOver();
     };
-  }, []);
+  }, [cancelPendingDragOver]);
 
   const collisionDetection = useCallback<CollisionDetection>((args) => {
     const pointerCollisions = pointerWithin(args);
@@ -219,15 +289,18 @@ export const useBoardDnD = ({
       const activeId = String(active.id);
       const snapshot = dragSnapshotRef.current;
 
+      cancelPendingDragOver();
       setActiveTicketId(null);
       dragSnapshotRef.current = null;
 
       if (snapshot == null) {
+        draftBoardLocationIndexRef.current = null;
         setDraftBoardTicketIds(null);
         return;
       }
 
       if (over == null) {
+        draftBoardLocationIndexRef.current = null;
         setDraftBoardTicketIds(null);
         return;
       }
@@ -235,9 +308,8 @@ export const useBoardDnD = ({
       const overId = String(over.id);
       const effectiveBoardTicketIds = draftBoardTicketIds ?? baseBoardTicketIds;
       const currentLocationIndex =
-        draftBoardTicketIds != null
-          ? boardTicketLocationIndex
-          : buildTicketLocationIndex(baseBoardTicketIds);
+        draftBoardLocationIndexRef.current ??
+        cloneTicketLocationIndex(baseBoardTicketLocationIndex);
       const boardAfterDrop = buildNextBoardFromDragOver(
         effectiveBoardTicketIds,
         currentLocationIndex,
@@ -245,29 +317,32 @@ export const useBoardDnD = ({
         overId
       );
       const effectiveLocationIndex = buildTicketLocationIndex(boardAfterDrop);
-      const snapshotLocationIndex = buildTicketLocationIndex(snapshot);
+      const snapshotLocationIndex = snapshot.locationIndex;
       const finalSourceColumnId =
         getTicketLocation(activeId, effectiveLocationIndex)?.columnId ?? null;
       const initialSourceColumnId =
         getTicketLocation(activeId, snapshotLocationIndex)?.columnId ?? null;
 
       if (finalSourceColumnId == null || initialSourceColumnId == null) {
+        draftBoardLocationIndexRef.current = null;
         setDraftBoardTicketIds(null);
         return;
       }
 
       const finalSourceIds = boardAfterDrop[finalSourceColumnId] ?? [];
-      const initialSourceIds = snapshot[initialSourceColumnId] ?? [];
+      const initialSourceIds = snapshot.boardTicketIds[initialSourceColumnId] ?? [];
       const noPositionChange =
         finalSourceColumnId === initialSourceColumnId &&
         areIdArraysEqual(finalSourceIds, initialSourceIds);
       if (noPositionChange) {
+        draftBoardLocationIndexRef.current = null;
         setDraftBoardTicketIds(null);
         return;
       }
 
       const finalTargetColumn = columnById.get(finalSourceColumnId);
       if (!finalTargetColumn) {
+        draftBoardLocationIndexRef.current = null;
         setDraftBoardTicketIds(null);
         return;
       }
@@ -316,12 +391,14 @@ export const useBoardDnD = ({
       } catch {
         // Optimistic state is reverted by mutation's onError.
       } finally {
+        draftBoardLocationIndexRef.current = null;
         setDraftBoardTicketIds(null);
       }
     },
     [
       baseBoardTicketIds,
-      boardTicketLocationIndex,
+      baseBoardTicketLocationIndex,
+      cancelPendingDragOver,
       columnById,
       draftBoardTicketIds,
       moveAndReorderTicketMutation,

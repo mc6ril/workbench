@@ -77,7 +77,22 @@ export const buildTicketLocationIndex = (
   return index;
 };
 
-const resolveTargetColumnId = (
+export const cloneTicketLocationIndex = (
+  ticketLocationIndex: TicketLocationIndex
+): TicketLocationIndex => {
+  const clone: TicketLocationIndex = {};
+
+  for (const [ticketId, location] of Object.entries(ticketLocationIndex)) {
+    clone[ticketId] = {
+      columnId: location.columnId,
+      index: location.index,
+    };
+  }
+
+  return clone;
+};
+
+export const getBoardDragOverColumnId = (
   overId: string,
   ticketLocationIndex: TicketLocationIndex
 ): string | null => {
@@ -102,7 +117,7 @@ export const buildNextBoardFromDragOver = (
   overId: string
 ): BoardTicketIds => {
   const sourceLocation = getTicketLocation(activeId, previousLocationIndex);
-  const targetColumnId = resolveTargetColumnId(overId, previousLocationIndex);
+  const targetColumnId = getBoardDragOverColumnId(overId, previousLocationIndex);
 
   if (sourceLocation == null || targetColumnId == null) {
     return previous;
@@ -146,4 +161,35 @@ export const buildNextBoardFromDragOver = (
     [sourceColumnId]: nextSourceIds,
     [targetColumnId]: nextTargetIds,
   };
+};
+
+export const syncTicketLocationIndexColumns = (
+  ticketLocationIndex: TicketLocationIndex,
+  boardTicketIds: BoardTicketIds,
+  columnIds: string[]
+): TicketLocationIndex => {
+  const uniqueColumnIds = new Set(columnIds);
+
+  for (const columnId of uniqueColumnIds) {
+    const ticketIds = boardTicketIds[columnId] ?? [];
+
+    for (let position = 0; position < ticketIds.length; position += 1) {
+      const ticketId = ticketIds[position];
+      const currentLocation = ticketLocationIndex[ticketId];
+
+      if (
+        currentLocation?.columnId === columnId &&
+        currentLocation.index === position
+      ) {
+        continue;
+      }
+
+      ticketLocationIndex[ticketId] = {
+        columnId,
+        index: position,
+      };
+    }
+  }
+
+  return ticketLocationIndex;
 };

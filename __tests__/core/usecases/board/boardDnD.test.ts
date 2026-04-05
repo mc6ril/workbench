@@ -4,6 +4,8 @@ import {
   buildBoardTicketIds,
   buildNextBoardFromDragOver,
   buildTicketLocationIndex,
+  cloneTicketLocationIndex,
+  syncTicketLocationIndexColumns,
 } from "@/modules/board/core/usecases/board/boardDnD";
 import type { BoardColumnConfig } from "@/modules/board/presentation/types/boardView.types";
 
@@ -178,6 +180,48 @@ describe("boardDnD usecase helpers", () => {
       );
 
       expect(result).toBe(previous);
+    });
+  });
+
+  describe("cloneTicketLocationIndex", () => {
+    it("creates a deep clone that can be mutated independently", () => {
+      const previous = {
+        "todo-column": ["ticket-1", "ticket-2"],
+        "doing-column": ["ticket-3"],
+      };
+      const locationIndex = buildTicketLocationIndex(previous);
+
+      const clone = cloneTicketLocationIndex(locationIndex);
+
+      expect(clone).toEqual(locationIndex);
+      expect(clone).not.toBe(locationIndex);
+      expect(clone["ticket-1"]).not.toBe(locationIndex["ticket-1"]);
+    });
+  });
+
+  describe("syncTicketLocationIndexColumns", () => {
+    it("updates only the source and target columns after a cross-column move", () => {
+      const previous = {
+        "todo-column": ["ticket-1", "ticket-2"],
+        "doing-column": ["ticket-3"],
+        "done-column": ["ticket-4"],
+      };
+      const locationIndex = buildTicketLocationIndex(previous);
+      const unaffectedLocation = locationIndex["ticket-4"];
+      const nextBoard = buildNextBoardFromDragOver(
+        previous,
+        locationIndex,
+        "ticket-2",
+        "ticket-3"
+      );
+
+      syncTicketLocationIndexColumns(locationIndex, nextBoard, [
+        "todo-column",
+        "doing-column",
+      ]);
+
+      expect(locationIndex).toEqual(buildTicketLocationIndex(nextBoard));
+      expect(locationIndex["ticket-4"]).toBe(unaffectedLocation);
     });
   });
 });
