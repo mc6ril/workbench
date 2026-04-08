@@ -6,12 +6,10 @@ import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/cli
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 
 import { getBoardConfiguration } from "@/modules/board/core/usecases/board/getBoardConfiguration";
-import { getProjectShortCode } from "@/modules/board/core/usecases/project/getProjectShortCode";
 import { getTicketAssigneesByProjectId } from "@/modules/board/core/usecases/ticket/getTicketAssigneesByProjectId";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 import {
   createBoardRepository,
-  createProjectLookupRepository,
   createTicketRepository,
 } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
@@ -27,7 +25,6 @@ const BoardPage = async ({
   const supabaseClient = await createSupabaseServerClient();
   const boardRepository = createBoardRepository(supabaseClient);
   const ticketRepository = createTicketRepository(supabaseClient);
-  const projectLookupRepository = createProjectLookupRepository(supabaseClient);
 
   await Promise.all([
     queryClient.prefetchQuery({
@@ -41,10 +38,6 @@ const BoardPage = async ({
     queryClient.prefetchQuery({
       queryKey: queryKeys.tickets.assigneesByProjectId(projectId),
       queryFn: () => getTicketAssigneesByProjectId(ticketRepository, projectId),
-    }),
-    queryClient.prefetchQuery({
-      queryKey: queryKeys.projects.shortCode(projectId),
-      queryFn: () => getProjectShortCode(projectLookupRepository, projectId),
     }),
   ]);
 

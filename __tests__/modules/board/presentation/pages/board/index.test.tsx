@@ -163,9 +163,14 @@ jest.mock("@/modules/board/presentation/hooks/ticket/useTickets", () => ({
 
 jest.mock("@/modules/board/presentation/stores/useFilterStore", () => ({
   useFilterStore: (
-    selector: (state: { filters: Record<string, unknown>; search: string }) => unknown
+    selector: (state: {
+      projectId: string | null;
+      filters: Record<string, unknown>;
+      search: string;
+    }) => unknown
   ) =>
     selector({
+      projectId: "project-1",
       filters: {},
       search: "",
     }),

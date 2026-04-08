@@ -1,5 +1,8 @@
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
-import { mapTicketListQueryKey } from "@/modules/board/presentation/hooks/queryKeys.mapper";
+import {
+  createTicketListFilterKey,
+  mapTicketListQueryKey,
+} from "@/modules/board/presentation/hooks/queryKeys.mapper";
 
 describe("queryKeys ticket list mapper", () => {
   it("maps ticket list query keys to named fields", () => {
@@ -40,5 +43,12 @@ describe("queryKeys ticket list mapper", () => {
         ["column-todo", "urgent"],
       ])
     ).toBeNull();
+  });
+
+  it("normalizes empty filters to null", () => {
+    expect(createTicketListFilterKey({})).toBeNull();
+    expect(queryKeys.projects.ticketsList("project-1", {})).toEqual(
+      queryKeys.projects.ticketsList("project-1", undefined)
+    );
   });
 });

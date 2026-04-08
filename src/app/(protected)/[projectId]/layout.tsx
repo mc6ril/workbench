@@ -8,10 +8,14 @@ import { createAppQueryClient } from "@/shared/providers/queryClient";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
 import { getCurrentProjectRole } from "@/domains/project/core/usecases/member/getCurrentProjectRole";
+import { listProjectMembers } from "@/domains/project/core/usecases/member/listProjectMembers";
 import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
 import { createProjectMemberGateway } from "@/domains/project/infrastructure/supabase/gateways";
-import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
+import { queryKeys as projectQueryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import ProjectShell from "@/domains/project/presentation/layouts/projectShell/ProjectShell";
+import { getProjectShortCode } from "@/modules/board/core/usecases/project/getProjectShortCode";
+import { createProjectLookupRepository } from "@/modules/board/infrastructure/supabase/repositories";
+import { queryKeys as boardQueryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 import BoardShellAdapter from "@/modules/board/presentation/projectShell/boardShellAdapter";
 
 const logger = createLoggerFactory().forScope("ProjectLayout");
@@ -59,11 +63,22 @@ const ProjectLayout = async ({
   const queryClient = createAppQueryClient();
   const supabaseClient = await createSupabaseServerClient();
   const projectMemberGateway = createProjectMemberGateway(supabaseClient);
+  const projectLookupRepository = createProjectLookupRepository(supabaseClient);
 
-  await queryClient.prefetchQuery({
-    queryKey: queryKeys.projects.currentRole(projectId),
-    queryFn: () => getCurrentProjectRole(projectMemberGateway, projectId),
-  });
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: projectQueryKeys.projects.currentRole(projectId),
+      queryFn: () => getCurrentProjectRole(projectMemberGateway, projectId),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: projectQueryKeys.members.byProject(projectId),
+      queryFn: () => listProjectMembers(projectMemberGateway, projectId),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: boardQueryKeys.projects.shortCode(projectId),
+      queryFn: () => getProjectShortCode(projectLookupRepository, projectId),
+    }),
+  ]);
 
   // User has access, render children
   // Note: We don't pass project data here - client pages fetch via React Query

@@ -8,7 +8,6 @@ import BoardShellAdapter from "@/modules/board/presentation/projectShell/boardSh
 const pushMock = jest.fn();
 const replaceMock = jest.fn();
 const prefetchMock = jest.fn();
-const prefetchBoardViewMock = jest.fn();
 const useProjectRealtimeMock = jest.fn();
 let mockPathname = "/project-1/board";
 const routerMock = {
@@ -43,12 +42,6 @@ jest.mock("@/domains/project/presentation/hooks/member/useProjectMembers", () =>
 jest.mock("@/modules/board/presentation/hooks/board/useBoardConfiguration", () => ({
   useBoardConfiguration: () => ({
     data: undefined,
-  }),
-}));
-
-jest.mock("@/modules/board/presentation/hooks/project/usePrefetchProjectViews", () => ({
-  usePrefetchProjectViews: () => ({
-    prefetchBoardView: prefetchBoardViewMock,
   }),
 }));
 

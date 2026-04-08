@@ -8,10 +8,13 @@ import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
  * Fetches the short code for a project.
  * Used to build human-readable ticket codes in the board UI.
  */
-export const useProjectShortCode = (projectId: string) => {
+export const useProjectShortCode = (
+  projectId: string,
+  options?: { enabled?: boolean }
+) => {
   return useQuery({
     queryKey: queryKeys.projects.shortCode(projectId),
     queryFn: () => getProjectShortCode(projectLookupRepository, projectId),
-    enabled: !!projectId,
+    enabled: !!projectId && (options?.enabled ?? true),
   });
 };
