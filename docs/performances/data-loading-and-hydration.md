@@ -5,194 +5,246 @@ status: draft
 last_updated: 2026-04-08
 ---
 
-## 1) Current state
+## 1) Assessment
 
-The codebase currently uses **multiple, distributed data loading layers**:
+This analysis is directionally correct: data loading responsibilities are
+currently distributed across route loaders, shell-level client adapters,
+global providers, and UI-triggered prefetch. That makes ownership harder to
+reason about.
 
-- **Route-level server hydration (React Query)**: several `src/app/(protected)/**` server components create a QueryClient, prefetch queries, and send a dehydrated state to the client.
-- **Client-side data hooks (React Query)**: most screens rely on owner hooks under `src/domains/*/presentation/hooks/**` and `src/modules/*/presentation/hooks/**`.
-- **Shell-level side effects**: `ProjectShell` mounts cross-view UI composition, while module-specific “shell adapters” mount long-lived side effects (e.g., realtime subscriptions) and also trigger view-specific queries.
-- **Opportunistic prefetch**: the sidebar triggers both Next.js route prefetch and React Query prefetch on hover/focus.
+Two nuances matter, though:
 
-Observed consequence: the intended “load once, then navigate fast” mental model is diluted because:
+- The main issue is **ownership ambiguity**, not guaranteed duplicate network
+  traffic.
+  - Most SSR-prefetched queries reuse the same query keys as client hooks.
+  - `createAppQueryClient()` sets `staleTime: 5 minutes`, so hydrated queries
+    often do **not** refetch immediately on mount.
+- UI/event-driven prefetch is **not inherently wrong**.
+  - Next.js route prefetch on hover/focus is usually a good UX optimization.
+  - The problem is that the policy currently lives inside a leaf UI component
+    (`SidebarNavigation`) instead of a clear shell/route owner.
 
-- **Prefetch/hydration responsibilities are spread across route files, shell adapters, and UI components**.
-- **The same data can be loaded from multiple places** (server hydration + client hook + hover prefetch), making it harder to reason about what is “the” source of truth for loading.
-- **Some components that should be pure consumers also initiate prefetch/fetch**, creating incoherent ownership.
+Bottom line: the refactor direction is sound, but the current problem should be
+framed as "too many places can initiate loading for the same concern" rather
+than "the app always loads the same data twice."
 
-## 2) Files that are acting as “loaders” (today)
+## 2) Verified loading paths today
 
-This is the current set of files that clearly perform server-side hydration or cross-route loading responsibilities.
-
-### Authenticated root loader (session + profile hydration)
+### A) Server loaders with SSR hydration
 
 - `src/app/(protected)/layout.tsx`
-  - **Role**: route group gate + hydration bootstrap
+  - **Role**: authenticated app bootstrap
   - **Loads/Hydrates**:
     - session (`getCurrentSession`) via `queryClient.setQueryData(...)`
     - profile (`getProfile`) via `queryClient.prefetchQuery(...)`
-  - **Hydration handoff**: `RequestLocaleAppProviders dehydratedState={dehydrate(queryClient)}`
-
-### Workspace loader (workspace dashboard queries)
+  - **Hydration handoff**:
+    - `RequestLocaleAppProviders dehydratedState={dehydrate(queryClient)}`
 
 - `src/app/(protected)/workspace/page.tsx`
-  - **Role**: server-side prefetch for workspace dashboard
+  - **Role**: workspace route bootstrap
   - **Loads/Hydrates**:
     - projects with stats (`listProjectsWithStats`)
     - reclaimable projects (`listReclaimableProjects`)
     - billing visibility (`getBillingVisibility`)
-  - **Hydration handoff**: `HydrationBoundary state={dehydrate(queryClient)}`
-
-### Project container loader (project access + base project context)
+  - **Hydration handoff**:
+    - `HydrationBoundary state={dehydrate(queryClient)}`
 
 - `src/app/(protected)/[projectId]/layout.tsx`
-  - **Role**: project access check + project baseline hydration for all project routes
+  - **Role**: project access check + baseline project bootstrap
   - **Loads/Hydrates**:
-    - access check: `getProjectForRoute(projectId)` (server-only, request-deduped)
+    - access check: `getProjectForRoute(projectId)` (server-only)
     - current role (`getCurrentProjectRole`)
     - project members (`listProjectMembers`)
-    - board project short code (`getProjectShortCode`) (module-owned but hydrated here)
-  - **Hydration handoff**: `HydrationBoundary state={dehydrate(queryClient)}`
-  - **Shell composition**: mounts `ProjectShell` and a module `shellAdapter` (currently `BoardShellAdapter`)
-
-### Board view loader (board page hydration)
+    - board project short code (`getProjectShortCode`)
+  - **Hydration handoff**:
+    - `HydrationBoundary state={dehydrate(queryClient)}`
+  - **Shell composition**:
+    - mounts `ProjectShell` and `BoardShellAdapter`
 
 - `src/app/(protected)/[projectId]/board/page.tsx`
-  - **Role**: server-side prefetch for the board view
+  - **Role**: board view bootstrap
   - **Loads/Hydrates**:
     - board configuration (`getBoardConfiguration`)
     - tickets list (`listTickets`)
     - ticket assignees by project (`getTicketAssigneesByProjectId`)
-  - **Hydration handoff**: `HydrationBoundary state={dehydrate(queryClient)}`
+  - **Hydration handoff**:
+    - `HydrationBoundary state={dehydrate(queryClient)}`
 
-### Hydration plumbing (provider side)
+### B) Hydration plumbing (not loaders)
 
 - `src/shared/providers/queryClient.ts`
-  - **Role**: central React Query client config for SSR prefetch + client runtime
+  - shared React Query defaults (`staleTime: 5 min`, `refetchOnWindowFocus: false`)
 - `src/shared/providers/ReactQueryProvider.tsx`
-  - **Role**: client QueryClientProvider + HydrationBoundary
+  - client `QueryClientProvider` + `HydrationBoundary`
 - `src/shared/providers/RequestLocaleAppProviders.tsx`
-  - **Role**: request locale resolution + provider composition
+  - request-locale resolution + provider composition
 - `src/shared/providers/AppProvider.tsx`
-  - **Role**: global providers + runtime sync gate (see “should consume but also fetch” below)
+  - global providers and runtime gate orchestration
 
-## 3) Files that should primarily consume data, but currently fetch/prefetch too
-
-These are the concrete places where loading behavior leaks into UI/components (or where “loader ownership” is ambiguous).
-
-### UI-driven prefetch in the sidebar
-
-- `src/domains/project/presentation/components/sidebarNavigation/SidebarNavigation.tsx`
-  - **Does**:
-    - Next.js route prefetch (`router.prefetch(...)`) when hovering/focusing sidebar items
-    - triggers workspace React Query prefetch via `usePrefetchWorkspaceProjects`
-  - **Why it’s problematic**:
-    - sidebar becomes a data-loader by interaction side effect
-    - prefetch timing is user-input-driven and can compete with more important in-flight queries
-    - spreads “project/workspace warmup” logic outside the shell/route layer
-
-- `src/domains/workspace/presentation/hooks/usePrefetchWorkspaceProjects.ts`
-  - **Does**: `queryClient.prefetchQuery(...)` for workspace projects queries
-  - **Why it’s problematic**:
-    - this is a “loader hook” mounted from a navigation component
-    - the gateway used is a **browser singleton** (`workspaceProjectCatalogGateway`), which can hide implicit auth/session coupling and makes ownership less explicit
-
-### Global runtime gate triggering profile load
+### C) Client-side loading and prefetch outside route loaders
 
 - `src/shared/providers/AppProvider.tsx`
 - `src/domains/profile/presentation/providers/useProfileRuntimeSync.ts`
-  - **Does**: blocks app rendering behind `useMyProfile()` when authenticated
-  - **Why it’s problematic**:
-    - turns “global providers” into an implicit loader
-    - increases perceived latency if profile hydration is missing, stale, or refetched
-    - creates a second “bootstrap” pathway in addition to `src/app/(protected)/layout.tsx`
+  - **Does**:
+    - blocks rendering until `useMyProfile()` settles for authenticated sessions
+  - **Why it matters**:
+    - it reuses the same profile query as SSR hydration, but it still acts as a
+      global runtime gate
+    - if protected-layout hydration is ever missing, stale, or delayed, the
+      whole authenticated shell waits on a client-side query
 
-### Page-level Stripe calls from presentation pages
+- `src/domains/project/presentation/components/sidebarNavigation/SidebarNavigation.tsx`
+  - **Does**:
+    - Next.js route prefetch (`router.prefetch(...)`) on sidebar hover/focus
+    - workspace React Query prefetch via `usePrefetchWorkspaceProjects`
+  - **Why it matters**:
+    - prefetch policy is owned by a navigation primitive instead of the shell or route
+    - this is an ownership issue first, not proof that prefetch itself is bad
+
+- `src/domains/workspace/presentation/hooks/usePrefetchWorkspaceProjects.ts`
+  - **Does**:
+    - `queryClient.prefetchQuery(...)` for workspace queries from a browser singleton gateway
+  - **Why it matters**:
+    - it is effectively a loader helper, but it is mounted from UI interaction
+    - ownership is implicit rather than declared
+
+- `src/domains/project/presentation/hooks/useSidebarItems.ts`
+  - **Does**:
+    - reads `useSubscription()` and `useBillingVisibility()` to compute locked navigation items
+  - **Why it matters**:
+    - project-shell navigation depends on client queries that are not owned by
+      the project route loader
+    - this is not necessarily wrong, but it means project-shell rendering still
+      has cross-cutting data dependencies
+
+- `src/modules/board/presentation/projectShell/boardShellAdapter.tsx`
+  - **Does**:
+    - mounts long-lived realtime side effects
+    - reads board configuration and project members to build toolbar/filter UI
+  - **Why it matters**:
+    - because query keys align with SSR-prefetched keys, this is mostly a
+      consumer with fallback fetch capability, not a guaranteed duplicate fetch
+    - it still mixes shell UI composition with runtime data ownership
 
 - `src/domains/settings/presentation/pages/account/index.tsx`
 - `src/domains/billing/presentation/pages/pricing/index.tsx`
-  - **Does**: `fetch("/api/stripe/...")` directly from page-level UI
-  - **Why it’s problematic**:
-    - couples UI pages to imperative network calls
-    - bypasses the domain/module “hook -> usecase -> port” ownership pattern
+  - **Does**:
+    - calls Stripe endpoints directly via `fetch(...)` from presentation pages
+  - **Why it matters**:
+    - couples page components to imperative network calls
+    - bypasses the domain/module `hook -> usecase -> port` ownership pattern
 
-### Potential duplication: module hooks fetching what was already hydrated
+## 3) What is actually problematic
 
-- `src/modules/board/presentation/projectShell/boardShellAdapter.tsx`
-  - **Consumes**:
-    - `useBoardConfiguration(projectId, { enabled: isBoardShellView })`
-    - `useProjectMembers(projectId)`
-  - **Notes**:
-    - these should be pure consumers of hydrated data, but they will still “own” the query execution on the client if hydration is missing or keys mismatch.
-    - realtime subscription (`useProjectRealtime`) is intentionally long-lived; its invalidations can cause refetch bursts if keys and staleTime are not aligned with the hydration strategy.
+The strongest issues are:
 
-## 4) Expected structure after refactor (clear ownership)
+- **Too many initiation points for the same concern**
+  - auth/profile bootstrap spans route hydration and a global runtime gate
+  - workspace warmup is triggered both by route hydration and sidebar intent
+- **Shell composition and data policy are mixed together**
+  - `ProjectShell` and `BoardShellAdapter` currently combine UI contribution,
+    long-lived subscriptions, and view-aware data reads
+- **Cross-cutting shell data is not explicitly owned**
+  - project navigation depends on subscription/billing visibility; these should
+    be owned by the project route layout, but are currently unowned at that
+    boundary
+- **Presentation pages perform imperative network flows directly**
+  - Stripe entry points live in page components instead of a domain boundary
 
-Goal: re-establish a single, coherent story:
+## 4) Where the original wording was too strong
 
-- **One loader layer per navigation scope** (app-level auth, workspace, project container, per-view module page).
-- **UI components consume only** (render, navigate, emit events), with no ad-hoc data warmup.
-- **Optional prefetch lives in shell/route adapters**, not in UI primitives.
+These points need softer wording:
 
-### A) Loader boundaries (what should load where)
+- "The same data can be loaded from multiple places"
+  - Better: **"The same concern can be initiated from multiple places."**
+  - Reason: SSR-prefetched queries and client hooks mostly share aligned query
+    keys, so duplicate network work is possible but not guaranteed.
 
-- **Authenticated app bootstrap**
-  - owner: `src/app/(protected)/layout.tsx`
-  - responsibilities:
-    - session bootstrap
-    - minimal profile bootstrap required for global UX (theme/locale)
-    - provide dehydrated state to client providers
+- "Components that should be pure consumers also fetch"
+  - Better: **"Some components are both consumers and loading-policy owners."**
+  - Reason: `BoardShellAdapter` mostly consumes hydrated data, but it also owns
+    realtime subscriptions and therefore part of the refresh policy.
 
-- **Workspace route bootstrap**
-  - owner: `src/app/(protected)/workspace/page.tsx`
-  - responsibilities:
-    - prefetch workspace dashboard queries needed for first paint
-    - do not embed “project warmup” here
+- "UI-driven prefetch in the sidebar is problematic"
+  - Better: **"UI-driven prefetch is useful, but its ownership is misplaced."**
+  - Reason: hover/focus prefetch is a valid perf technique; the issue is who
+    decides when and what to prefetch.
 
-- **Project container bootstrap (ShellProject responsibility)**
-  - owner: `src/app/(protected)/[projectId]/layout.tsx` + `src/domains/project/presentation/layouts/projectShell/ProjectShell.tsx`
-  - responsibilities:
-    - access check + baseline project context hydration (role, members, enabled modules)
-    - expose a single extension point for modules to declare:
-      - “base queries for this project”
-      - “view queries for current tab”
-      - “optional prefetch policy on navigation intent”
+## 5) Refactor target
 
-- **Module view bootstrap**
-  - owner: each module route page (example: `src/app/(protected)/[projectId]/board/page.tsx`)
-  - responsibilities:
-    - hydrate view-critical queries only (board config, ticket list, assignees)
-    - keep additional/secondary queries client-only and behind `enabled`
+Goal: assign one primary owner per concern and one loader boundary per
+navigation scope.
 
-### B) What should become pure consumers
+### A) Global authenticated concerns
 
-- `src/domains/project/presentation/components/sidebarNavigation/SidebarNavigation.tsx`
-  - should: navigate + mark perf events
-  - should not: trigger React Query prefetch for workspace/project data
+- **Owner**: `src/app/(protected)/layout.tsx`
+- **Should own**:
+  - session bootstrap
+  - profile bootstrap required for runtime preferences
+  - any other concern that can block the authenticated shell
+- **Rule**:
+  - if a query can block the whole authenticated shell, it should either be
+    guaranteed here or stop blocking the whole shell
 
-- `src/domains/workspace/presentation/hooks/usePrefetchWorkspaceProjects.ts`
-  - should either:
-    - move under a shell-level “prefetch policy” owned by workspace/project shell, or
-    - be removed if SSR hydration covers the needs reliably
+### B) Workspace concerns
 
-- `src/shared/providers/AppProvider.tsx` + `useProfileRuntimeSync.ts`
-  - should: apply already-hydrated preferences
-  - should not: block the entire app behind a profile query unless strictly required
-    - if strict is required, then it must be owned and guaranteed by `src/app/(protected)/layout.tsx` (single bootstrap path)
+- **Owner**: `src/app/(protected)/workspace/page.tsx`
+- **Should own**:
+  - workspace first-paint queries
+- **Should not own**:
+  - project-route warmup
+  - cross-route speculative prefetch
 
-- Stripe flows
-  - should: be triggered via a domain hook/usecase (UI consumes the hook)
-  - pages should not call `fetch()` directly
+### C) Project baseline concerns
 
-### C) Practical refactor target (file-level)
+- **Owner**: `src/app/(protected)/[projectId]/layout.tsx`
+- **Should own**:
+  - access check
+  - current role
+  - project members
+  - project-level metadata needed across project views
+  - billing visibility and subscription summary / entitlements
+    - these are only consumed within project routes (navigation lock state via
+      `useSidebarItems`) — loading them at the global layout level would add
+      unnecessary weight to every authenticated render
+- **Should make explicit**:
+  - whether module-owned metadata such as project short code is truly
+    project-baseline or only board-view metadata
 
-After refactor, the “places that load” should be limited to:
+### D) Module view concerns
 
-- `src/app/(protected)/layout.tsx`
-- `src/app/(protected)/workspace/page.tsx`
-- `src/app/(protected)/[projectId]/layout.tsx`
-- `src/app/(protected)/[projectId]/*/page.tsx` (one per module view, e.g. board)
-- plus module/domain React Query hooks (execution layer), but with:
-  - stable queryKeys aligned with SSR prefetch keys
-  - clear `enabled` gating to avoid eager refetch on mount when hydrated
+- **Owner**: each module route page, e.g. `src/app/(protected)/[projectId]/board/page.tsx`
+- **Should own**:
+  - view-critical queries needed for first meaningful paint
+- **May remain client-only**:
+  - secondary panels
+  - optional onboarding signals
+  - speculative or interaction-driven data
 
+### E) Prefetch policy
+
+- **Owner**: shell/route layer, not leaf UI components
+- **Rule**:
+  - keep Next.js route prefetch
+  - keep React Query prefetch only when there is a named owner, bounded scope,
+    and measurable benefit
+  - expose prefetch as a shell-level policy, not as hidden behavior inside
+    navigation primitives
+
+## 6) Practical next steps
+
+1. Move `usePrefetchWorkspaceProjects` ownership out of `SidebarNavigation` and
+   into a shell-owned prefetch policy, or remove it if SSR hydration + route
+   prefetch already give acceptable latency.
+2. Move `subscription` and `billingVisibility` ownership to
+   `src/app/(protected)/[projectId]/layout.tsx`. These queries are only consumed
+   within project routes (navigation lock state in `useSidebarItems`) and should
+   not be loaded at the global authenticated layout.
+3. Turn `useProfileRuntimeSync` into a pure "apply hydrated preferences" step
+   unless the protected layout explicitly guarantees the profile query on every
+   authenticated render path.
+4. Keep `ProjectShellContributionProvider` focused on UI contribution
+   (`toolbar`, `filters`, `onMount`) and introduce a separate loader/prefetch
+   contract if modules need to declare data requirements.
+5. Replace page-level Stripe `fetch()` calls with a dedicated domain
+   hook/usecase boundary.

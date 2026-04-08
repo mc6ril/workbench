@@ -41,6 +41,30 @@ type Props = {
 const EMPTY_PROJECT_MEMBERS: ProjectMember[] = [];
 const EMPTY_FILTERS: TicketFilters = {};
 
+type BoardShellRuntimeAdapterProps = {
+  projectId: string;
+  isEnabled: boolean;
+  boardId: string | undefined;
+  initializeProject: (projectId: string) => void;
+};
+
+const BoardShellRuntimeAdapter = ({
+  projectId,
+  isEnabled,
+  boardId,
+  initializeProject,
+}: BoardShellRuntimeAdapterProps) => {
+  useProjectRealtime(projectId, boardId, {
+    enabled: isEnabled,
+  });
+
+  useEffect(() => {
+    initializeProject(projectId);
+  }, [initializeProject, projectId]);
+
+  return null;
+};
+
 const BoardShellAdapter = ({ projectId }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -84,10 +108,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   );
   const projectMembers = projectMembersData ?? EMPTY_PROJECT_MEMBERS;
 
-  useProjectRealtime(projectId, boardConfiguration?.board.id, {
-    enabled: isBoardShellView,
-  });
-
   const searchSuggestions = useProjectSearchSuggestions({
     projectId,
     viewKey: currentViewKey,
@@ -109,10 +129,6 @@ const BoardShellAdapter = ({ projectId }: Props) => {
       window.clearTimeout(timeout);
     };
   }, [search, searchInput, setSearch]);
-
-  useEffect(() => {
-    initializeProject(projectId);
-  }, [initializeProject, projectId]);
 
   const updateQueryParams = useCallback(
     (updates: Record<string, string | null>) => {
@@ -282,7 +298,14 @@ const BoardShellAdapter = ({ projectId }: Props) => {
 
   useRegisterProjectViewContribution(contribution);
 
-  return null;
+  return (
+    <BoardShellRuntimeAdapter
+      projectId={projectId}
+      isEnabled={isBoardShellView}
+      boardId={boardConfiguration?.board.id}
+      initializeProject={initializeProject}
+    />
+  );
 };
 
 export default BoardShellAdapter;

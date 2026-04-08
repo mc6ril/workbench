@@ -70,14 +70,13 @@ export const useProfileRuntimeSync = (): boolean => {
   if (!hasAuthenticatedSession) {
     return true;
   }
-
-  if (profileQuery.isLoading || profileQuery.isPending) {
-    return false;
-  }
-
-  if (profileQuery.isError) {
-    return true;
-  }
-
+  /**
+   * This hook should never globally block the authenticated shell.
+   *
+   * The protected route layout hydrates the profile query server-side, and even
+   * if hydration is missing/late, the app should still render using defaults.
+   * Preferences will be applied as soon as the query becomes available.
+   */
+  void profileQuery;
   return true;
 };

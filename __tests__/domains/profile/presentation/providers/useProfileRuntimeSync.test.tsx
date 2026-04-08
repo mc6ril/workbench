@@ -75,7 +75,7 @@ describe("useProfileRuntimeSync", () => {
     expect(i18nConfig.persistLocaleCookie).not.toHaveBeenCalled();
   });
 
-  it("blocks runtime readiness while the authenticated profile is still loading", () => {
+  it("stays ready while the authenticated profile is still loading", () => {
     jest.mocked(useSession).mockReturnValue(
       asMockedReturn<ReturnType<typeof useSession>>({
         data: { userId: "user-1" },
@@ -95,7 +95,9 @@ describe("useProfileRuntimeSync", () => {
 
     const { result } = renderHook(() => useProfileRuntimeSync(), { wrapper });
 
-    expect(result.current).toBe(false);
+    expect(result.current).toBe(true);
+    expect(setThemeMock).not.toHaveBeenCalled();
+    expect(i18nConfig.persistLocaleCookie).not.toHaveBeenCalled();
   });
 
   it("stays ready once the profile is available while applying locale and theme", async () => {
