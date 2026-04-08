@@ -1,3 +1,5 @@
+import type { TranslationFunction } from "./types";
+
 /**
  * Centralized mapping of Zod English validation messages to relative i18n field keys.
  * Used by auth forms (signin, signup) to translate raw Zod messages into
@@ -23,7 +25,7 @@ export const AUTH_ZOD_FIELD_MESSAGES: Record<string, string> = {
  */
 export const translateFieldError = (
   error: { type?: string; message?: string } | undefined,
-  tFields: (key: string) => string
+  tFields: TranslationFunction
 ): string | undefined => {
   if (!error?.message) {
     return undefined;

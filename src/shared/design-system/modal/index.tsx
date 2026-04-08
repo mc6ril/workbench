@@ -4,7 +4,7 @@ import React, { useCallback, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import ModalDialog from "./components/modal_dialog";
 import styles from "./modal.module.scss";
@@ -43,7 +43,7 @@ const Modal = ({
   ariaDescribedBy,
 }: ModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const t = useTranslation("common");
+  const t = useTranslations("common");
   const isHydrated = useSyncExternalStore(
     subscribeToHydration,
     () => true,

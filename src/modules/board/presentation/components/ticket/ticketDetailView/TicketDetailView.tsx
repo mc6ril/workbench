@@ -8,7 +8,7 @@ import Card from "@/shared/design-system/card";
 import Loader from "@/shared/design-system/loader";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { getIntlLocale, useTranslation } from "@/shared/i18n";
+import { getIntlLocale, useLocale, useTranslations } from "@/shared/i18n";
 
 import TicketDetailCommentsSection from "./components/TicketDetailCommentsSection";
 import TicketDetailDeleteModal from "./components/TicketDetailDeleteModal";
@@ -98,10 +98,11 @@ const isDueDateOverdue = (value: string | null): boolean => {
 };
 
 const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
-  const t = useTranslation("pages.ticketDetail.page");
-  const tCommon = useTranslation("common");
+  const t = useTranslations("pages.ticketDetail.page");
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
   const notesFieldId = getAccessibilityId("ticket-notes");
-  const intlLocale = getIntlLocale();
+  const intlLocale = getIntlLocale(locale);
   const { data: projectShortCode } = useProjectShortCode(projectId);
 
   const {

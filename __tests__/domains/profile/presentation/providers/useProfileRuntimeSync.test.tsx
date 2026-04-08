@@ -1,7 +1,5 @@
+import { NextIntlClientProvider } from "next-intl";
 import { renderHook, waitFor } from "@testing-library/react";
-
-import * as i18nConfig from "@/shared/i18n/config";
-import { LocaleProvider } from "@/shared/i18n/LocaleProvider";
 
 import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
 import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
@@ -9,9 +7,16 @@ import { useProfileRuntimeSync } from "@/domains/profile/presentation/providers/
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 let themeValue: string | undefined = "system";
+const refreshMock = jest.fn();
 const setThemeMock = jest.fn((nextTheme: string) => {
   themeValue = nextTheme;
 });
+
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    refresh: refreshMock,
+  }),
+}));
 
 jest.mock("next-themes", () => ({
   useTheme: () => ({
@@ -32,9 +37,9 @@ const asMockedReturn = <T,>(value: unknown): T => value as T;
 
 const wrapper = ({ children }: { children: React.ReactNode }) => {
   return (
-    <LocaleProvider initialLocale="en" key="en">
+    <NextIntlClientProvider locale="en">
       {children}
-    </LocaleProvider>
+    </NextIntlClientProvider>
   );
 };
 
@@ -42,6 +47,7 @@ describe("useProfileRuntimeSync", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     themeValue = "system";
+    document.cookie = "workbench-locale=; Max-Age=0; Path=/";
 
     jest.mocked(useSession).mockReturnValue(
       asMockedReturn<ReturnType<typeof useSession>>({
@@ -59,8 +65,6 @@ describe("useProfileRuntimeSync", () => {
         isError: false,
       })
     );
-
-    jest.spyOn(i18nConfig, "persistLocaleCookie").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -72,7 +76,8 @@ describe("useProfileRuntimeSync", () => {
 
     expect(result.current).toBe(true);
     expect(setThemeMock).not.toHaveBeenCalled();
-    expect(i18nConfig.persistLocaleCookie).not.toHaveBeenCalled();
+    expect(document.cookie).not.toContain("workbench-locale=");
+    expect(refreshMock).not.toHaveBeenCalled();
   });
 
   it("stays ready while the authenticated profile is still loading", () => {
@@ -97,7 +102,8 @@ describe("useProfileRuntimeSync", () => {
 
     expect(result.current).toBe(true);
     expect(setThemeMock).not.toHaveBeenCalled();
-    expect(i18nConfig.persistLocaleCookie).not.toHaveBeenCalled();
+    expect(document.cookie).not.toContain("workbench-locale=");
+    expect(refreshMock).not.toHaveBeenCalled();
   });
 
   it("stays ready once the profile is available while applying locale and theme", async () => {
@@ -132,6 +138,5 @@ describe("useProfileRuntimeSync", () => {
       expect(setThemeMock).toHaveBeenCalledWith("dark");
     });
 
-    expect(i18nConfig.persistLocaleCookie).toHaveBeenCalledWith("fr");
   });
 });

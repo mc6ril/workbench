@@ -8,7 +8,7 @@ import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authR
 import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
 import { createSessionGatewayMock } from "../../../../__mocks__/core/ports/sessionGateway";
 
-import type { AuthResult } from "@/domains/auth/core/domain/auth.types";
+import type { AuthResult, SignUpInput } from "@/domains/auth/core/domain/auth.types";
 import { signInUser } from "@/domains/auth/core/usecases/user/signInUser";
 import { signUpUser } from "@/domains/auth/core/usecases/user/signUpUser";
 import {
@@ -26,6 +26,7 @@ describe("Auth Flow Tests", () => {
   const mockSignUpInput = {
     email: mockUserEmail,
     password: mockUserPassword,
+    locale: "fr" as const,
   };
 
   const mockSignInInput = {
@@ -37,7 +38,7 @@ describe("Auth Flow Tests", () => {
     it("should complete signup flow with email verification requirement", async () => {
       // Arrange
       const authRepository = createAuthRepositoryMock({
-        signUp: jest.fn<Promise<AuthResult>, [typeof mockSignUpInput]>(
+        signUp: jest.fn<Promise<AuthResult>, [SignUpInput]>(
           async () => mockAuthResultWithEmailVerification
         ),
       });
@@ -71,7 +72,7 @@ describe("Auth Flow Tests", () => {
       // Arrange
       const repositoryError = createAuthError.emailAlreadyExists();
       const authRepository = createAuthRepositoryMock({
-        signUp: jest.fn<Promise<AuthResult>, [typeof mockSignUpInput]>(
+        signUp: jest.fn<Promise<AuthResult>, [SignUpInput]>(
           async () => {
             throw repositoryError;
           }

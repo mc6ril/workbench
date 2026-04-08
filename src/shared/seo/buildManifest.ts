@@ -2,18 +2,13 @@ import type { MetadataRoute } from "next";
 
 import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
 import type { Locale } from "@/shared/i18n/types";
-import type { TranslationMessages } from "@/shared/i18n/types";
-import { getTranslationValue } from "@/shared/i18n/utils";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 export const buildManifest = (
   locale: Locale,
-  messages: TranslationMessages
+  description: string
 ): MetadataRoute.Manifest => {
   const base = getSiteUrl();
-  const description =
-    getTranslationValue(messages, "app.manifest", "description") ??
-    "Couple-focused app to lighten mental load.";
 
   return {
     name: PRODUCT_BRAND_NAME,
@@ -35,4 +30,3 @@ export const buildManifest = (
     ],
   };
 };
-

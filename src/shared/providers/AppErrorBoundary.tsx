@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 type AppErrorBoundaryProps = {
   children: ReactNode;
@@ -64,7 +64,7 @@ class InternalAppErrorBoundary extends Component<BoundaryProps, BoundaryState> {
 
 const AppErrorBoundary = ({ children }: AppErrorBoundaryProps) => {
   const pathname = usePathname() ?? "";
-  const t = useTranslation("pages.fallback");
+  const t = useTranslations("pages.fallback");
 
   return (
     <InternalAppErrorBoundary

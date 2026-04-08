@@ -1,20 +1,21 @@
 "use client";
 
 import { useEffect } from "react";
+import { NextIntlClientProvider } from "next-intl";
 import * as Sentry from "@sentry/nextjs";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
-import { getIntlLocale, useLocaleStore, useTranslation } from "@/shared/i18n";
+import { defaultLocale, getIntlLocale, useTranslations } from "@/shared/i18n";
+import messages from "@/shared/i18n/messages/fr.json";
 
 type Props = {
   error: Error & { digest?: string };
   reset: () => void;
 };
 
-const GlobalErrorPage = ({ error, reset }: Props) => {
-  const t = useTranslation("pages.fallback");
-  const locale = useLocaleStore((state) => state.locale);
+const GlobalErrorContent = ({ error, reset }: Props) => {
+  const t = useTranslations("pages.fallback");
 
   useEffect(() => {
     console.error(error);
@@ -28,33 +29,41 @@ const GlobalErrorPage = ({ error, reset }: Props) => {
   }, [error]);
 
   return (
-    <html lang={getIntlLocale(locale)}>
+    <RouteFallbackPage
+      tone="error"
+      eyebrow={t("globalError.eyebrow")}
+      statusLabel={t("globalError.status")}
+      statusValue="500"
+      title={t("globalError.title")}
+      message={t("globalError.message")}
+      detail={
+        process.env.NODE_ENV === "development" ? error.message : undefined
+      }
+      actions={[
+        {
+          label: t("globalError.primaryAction"),
+          ariaLabel: t("globalError.primaryActionAriaLabel"),
+          onClick: reset,
+          variant: "primary",
+        },
+        {
+          label: t("globalError.secondaryAction"),
+          ariaLabel: t("globalError.secondaryActionAriaLabel"),
+          href: PAGE_ROUTES.HOME,
+          variant: "secondary",
+        },
+      ]}
+    />
+  );
+};
+
+const GlobalErrorPage = ({ error, reset }: Props) => {
+  return (
+    <html lang={getIntlLocale(defaultLocale)} suppressHydrationWarning>
       <body>
-        <RouteFallbackPage
-          tone="error"
-          eyebrow={t("globalError.eyebrow")}
-          statusLabel={t("globalError.status")}
-          statusValue="500"
-          title={t("globalError.title")}
-          message={t("globalError.message")}
-          detail={
-            process.env.NODE_ENV === "development" ? error.message : undefined
-          }
-          actions={[
-            {
-              label: t("globalError.primaryAction"),
-              ariaLabel: t("globalError.primaryActionAriaLabel"),
-              onClick: reset,
-              variant: "primary",
-            },
-            {
-              label: t("globalError.secondaryAction"),
-              ariaLabel: t("globalError.secondaryActionAriaLabel"),
-              href: PAGE_ROUTES.HOME,
-              variant: "secondary",
-            },
-          ]}
-        />
+        <NextIntlClientProvider locale={defaultLocale} messages={messages}>
+          <GlobalErrorContent error={error} reset={reset} />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

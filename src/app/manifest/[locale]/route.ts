@@ -1,12 +1,9 @@
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 
-import { getMessages } from "@/shared/i18n/messages";
+import { defaultLocale, isSupportedLocale } from "@/shared/i18n/config";
 import type { Locale } from "@/shared/i18n/types";
 import { buildManifest } from "@/shared/seo/buildManifest";
-
-const isLocale = (value: string): value is Locale => {
-  return value === "fr" || value === "en" || value === "es";
-};
 
 type Params = {
   locale: string;
@@ -17,9 +14,14 @@ export const GET = async (
   { params }: { params: Promise<Params> }
 ) => {
   const { locale } = await params;
-  const resolvedLocale: Locale = isLocale(locale) ? locale : "fr";
-  const messages = getMessages(resolvedLocale);
-  const manifest = buildManifest(resolvedLocale, messages);
+  const resolvedLocale: Locale = isSupportedLocale(locale)
+    ? locale
+    : defaultLocale;
+  const tManifest = await getTranslations({
+    locale: resolvedLocale,
+    namespace: "app.manifest",
+  });
+  const manifest = buildManifest(resolvedLocale, tManifest("description"));
 
   return NextResponse.json(manifest, {
     headers: {
@@ -28,4 +30,3 @@ export const GET = async (
     },
   });
 };
-

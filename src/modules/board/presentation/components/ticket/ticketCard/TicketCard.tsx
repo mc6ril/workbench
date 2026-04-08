@@ -5,7 +5,7 @@ import React, { useCallback, useMemo } from "react";
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import Button from "@/shared/design-system/button";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./TicketCard.module.scss";
 
@@ -37,7 +37,7 @@ const TicketCard = ({
   storyPoints,
   onEdit,
 }: Props) => {
-  const t = useTranslation("pages.board.ticketCard");
+  const t = useTranslations("pages.board.ticketCard");
 
   const baseId = useMemo(() => getAccessibilityId(`board-ticket-${id}`), [id]);
 
@@ -61,7 +61,9 @@ const TicketCard = ({
       priorityLabel: t("priorityLabel"),
       storyPointsLabel:
         typeof storyPoints === "number"
-          ? t("storyPointsLabel", { count: storyPoints })
+          ? t("storyPointsLabel", {
+              count: storyPoints,
+            })
           : undefined,
     });
   }, [t, title, ticketCode, assigneeName, priority, storyPoints]);

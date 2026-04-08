@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import AppProvider from "@/shared/providers/AppProvider";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
-import RequestLocaleAppProviders from "@/shared/providers/RequestLocaleAppProviders";
 
 import ProtectedLayout from "@/app/(protected)/layout";
 import { getProfile } from "@/domains/profile/core/usecases/getProfile";
@@ -24,7 +24,7 @@ jest.mock("@tanstack/react-query", () => ({
   dehydrate: (queryClient: unknown) => dehydrateMock(queryClient),
 }));
 
-jest.mock("@/shared/providers/RequestLocaleAppProviders", () => ({
+jest.mock("@/shared/providers/AppProvider", () => ({
   __esModule: true,
   default: jest.fn(
     ({
@@ -121,9 +121,9 @@ describe("ProtectedLayout hydration", () => {
     expect(getProfile).toHaveBeenCalledWith(mockProfileGateway, session.userId);
     expect(dehydrateMock).toHaveBeenCalledWith(mockQueryClient);
 
-    const requestLocaleProvidersMock = jest.mocked(RequestLocaleAppProviders);
-    expect(requestLocaleProvidersMock).toHaveBeenCalledTimes(1);
-    expect(requestLocaleProvidersMock.mock.calls[0]?.[0]).toEqual(
+    const appProviderMock = jest.mocked(AppProvider);
+    expect(appProviderMock).toHaveBeenCalledTimes(1);
+    expect(appProviderMock.mock.calls[0]?.[0]).toEqual(
       expect.objectContaining({
         dehydratedState: { dehydrated: true },
       })

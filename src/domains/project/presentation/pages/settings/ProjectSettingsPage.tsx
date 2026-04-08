@@ -18,7 +18,7 @@ import Loader from "@/shared/design-system/loader";
 import Modal from "@/shared/design-system/modal";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 import ProjectPeopleSettingsSection from "./components/ProjectPeopleSettingsSection";
@@ -38,12 +38,12 @@ type ProjectSettingsPageProps = {
 
 const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
   const router = useRouter();
-  const tPage = useTranslation("pages.settings.page");
-  const tProject = useTranslation("pages.settings.project");
-  const tAccess = useTranslation("pages.settings.access");
-  const tDanger = useTranslation("pages.settings.dangerZone");
-  const tDelete = useTranslation("pages.settings.delete");
-  const tErrors = useTranslation("errors");
+  const tPage = useTranslations("pages.settings.page");
+  const tProject = useTranslations("pages.settings.project");
+  const tAccess = useTranslations("pages.settings.access");
+  const tDanger = useTranslations("pages.settings.dangerZone");
+  const tDelete = useTranslations("pages.settings.delete");
+  const tErrors = useTranslations("errors");
 
   const {
     data: project,

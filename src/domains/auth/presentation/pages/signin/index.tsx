@@ -15,7 +15,7 @@ import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { getAppErrorCode } from "@/shared/errors/appError";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
@@ -35,10 +35,10 @@ const SigninPage = () => {
   const signInMutation = useSignIn();
   const signInWithGoogleMutation = useSignInWithGoogle();
   const resendVerificationMutation = useResendVerification();
-  const t = useTranslation("pages.signin");
-  const tCommon = useTranslation("common");
-  const tErrors = useTranslation("errors");
-  const tFields = useTranslation("pages.signin.fields");
+  const t = useTranslations("pages.signin");
+  const tCommon = useTranslations("common");
+  const tErrors = useTranslations("errors");
+  const tFields = useTranslations("pages.signin.fields");
 
   const isUnverifiedRedirect = searchParams.get("unverified") === "true";
   const redirectPathParam = searchParams.get("redirect");

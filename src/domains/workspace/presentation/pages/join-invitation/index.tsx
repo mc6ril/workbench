@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 
 import { useAcceptInvitation } from "@/domains/project/presentation/hooks/invitation/useAcceptInvitation";
@@ -14,8 +14,8 @@ import { useSession } from "@/domains/session/presentation/hooks/useSession";
 const JoinInvitationPage = () => {
   const params = useParams<{ token: string }>();
   const router = useRouter();
-  const t = useTranslation("pages.join");
-  const tErrors = useTranslation("errors");
+  const t = useTranslations("pages.join");
+  const tErrors = useTranslations("errors");
 
   const { data: session, isLoading: isLoadingSession } = useSession();
   const acceptInvitationMutation = useAcceptInvitation();

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
 
 import { isSupportedLocale } from "@/shared/i18n/config";
-import LocaleOnlyProvider from "@/shared/providers/LocaleOnlyProvider";
 
 type Props = {
   children: React.ReactNode;
@@ -15,11 +15,9 @@ const LocaleLayout = async ({ children, params }: Props) => {
     notFound();
   }
 
-  return (
-    <LocaleOnlyProvider initialLocale={locale}>
-      {children}
-    </LocaleOnlyProvider>
-  );
+  setRequestLocale(locale);
+
+  return children;
 };
 
 export default LocaleLayout;

@@ -31,6 +31,7 @@ export const buildPublicMetadata = ({
   const canonical = new URL(pathname, base).toString();
   const ogLocale = getOpenGraphLocale(locale);
   const manifestUrl = new URL(`/manifest/${locale}`, base).toString();
+  const openGraphImageUrl = new URL(`/og/${locale}`, base).toString();
 
   return {
     title,
@@ -50,7 +51,7 @@ export const buildPublicMetadata = ({
       type: "website",
       images: [
         {
-          url: "/opengraph-image",
+          url: openGraphImageUrl,
           width: 1200,
           height: 630,
         },
@@ -60,7 +61,7 @@ export const buildPublicMetadata = ({
       card: "summary_large_image",
       title,
       description,
-      images: ["/opengraph-image"],
+      images: [openGraphImageUrl],
     },
   };
 };

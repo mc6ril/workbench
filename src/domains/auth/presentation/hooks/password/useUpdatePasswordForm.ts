@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
@@ -17,8 +17,8 @@ import { getNextUnmetCriterion } from "@/domains/auth/presentation/password/pass
 export const useUpdatePasswordForm = () => {
   const router = useRouter();
   const updatePasswordMutation = useUpdatePassword();
-  const tErrors = useTranslation("errors");
-  const tFields = useTranslation("pages.updatePassword.fields");
+  const tErrors = useTranslations("errors");
+  const tFields = useTranslations("pages.updatePassword.fields");
 
   const {
     register,

@@ -10,7 +10,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { GuideIcon } from "@/shared/design-system/icons";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { buildProjectRoute, normalizePath } from "@/shared/utils/routes";
 
 import type { ProjectMember } from "@/domains/project/core/domain/project.types";
@@ -70,10 +70,10 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const searchParamsString = searchParams.toString();
-  const tSidebar = useTranslation("navigation.sidebar");
-  const tNavbar = useTranslation("navigation.navbar");
-  const tBoardFilters = useTranslation("pages.board.filters");
-  const tBoardOnboarding = useTranslation("pages.board.onboarding");
+  const tSidebar = useTranslations("navigation.sidebar");
+  const tNavbar = useTranslations("navigation.navbar");
+  const tBoardFilters = useTranslations("pages.board.filters");
+  const tBoardOnboarding = useTranslations("pages.board.onboarding");
   const { canCreateTicket, isLoading: isPermissionsLoading } =
     useProjectPermissions();
 

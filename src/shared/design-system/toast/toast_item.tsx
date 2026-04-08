@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 
 import { getAccessibilityId } from "@/shared/a11y";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./toast.module.scss";
 
@@ -24,7 +24,7 @@ const VARIANT_ICONS: Record<ToastVariant, string> = {
 };
 
 const ToastItem = ({ id, message, variant, onDismiss }: Props) => {
-  const t = useTranslation("common");
+  const t = useTranslations("common");
   const toastRef = useRef<HTMLDivElement>(null);
 
   const handleDismiss = useCallback(() => {

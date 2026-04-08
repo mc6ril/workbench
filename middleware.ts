@@ -6,7 +6,6 @@ import { requireNonEmptyEnv } from "@/shared/errors/programmingError";
 import {
   localeCookieMaxAgeSeconds,
   localeCookieName,
-  requestLocaleHeaderName,
   resolveLocale,
 } from "@/shared/i18n/config";
 import {
@@ -21,6 +20,8 @@ import {
   sanitizeInternalRedirectPath,
 } from "@/shared/utils/authRedirect";
 import { isProtectedRoute } from "@/shared/utils/routes";
+
+const NEXT_INTL_LOCALE_HEADER_NAME = "X-NEXT-INTL-LOCALE";
 
 /**
  * Create Supabase client for Edge Runtime (middleware).
@@ -78,11 +79,15 @@ const createSupabaseClientForMiddleware = (
 
 const appendLocaleResponseCookies = (
   response: NextResponse,
-  pathname: string
+  pathname: string,
+  currentCookieLocale?: string
 ): NextResponse => {
-  const marketingLocale = getResolvedMarketingLocaleFromPathname(pathname);
-  if (marketingLocale) {
-    response.cookies.set(localeCookieName, marketingLocale, {
+  const explicitMarketingLocale = getMarketingLocaleFromPathname(pathname);
+  if (
+    explicitMarketingLocale &&
+    explicitMarketingLocale !== currentCookieLocale
+  ) {
+    response.cookies.set(localeCookieName, explicitMarketingLocale, {
       path: "/",
       sameSite: "lax",
       maxAge: localeCookieMaxAgeSeconds,
@@ -101,7 +106,7 @@ const appendLocaleResponseCookies = (
  *
  * This middleware provides:
  * - Default-locale marketing URLs without redirect on `/`
- * - `x-next-locale` for Server Components
+ * - `X-NEXT-INTL-LOCALE` for `next-intl`
  * - UX optimization: early redirects for better user experience
  * - Route filtering: prevents loading unnecessary pages
  * - Email verification checks: redirects unverified users
@@ -112,6 +117,7 @@ export const middleware = async (
   request: NextRequest
 ): Promise<NextResponse> => {
   const { pathname } = request.nextUrl;
+  const cookieLocale = request.cookies.get(localeCookieName)?.value;
 
   // Public marketing URLs are rewritten from `/` and `/{locale}` into `/marketing/{locale}`.
   if (pathname === "/marketing" || pathname.startsWith("/marketing/")) {
@@ -121,12 +127,13 @@ export const middleware = async (
   }
 
   if (isDefaultLocalePrefixedMarketingPathname(pathname)) {
-    return NextResponse.redirect(
+    const response = NextResponse.redirect(
       new URL(stripDefaultLocalePrefix(pathname), request.url)
     );
+
+    return appendLocaleResponseCookies(response, pathname, cookieLocale);
   }
 
-  const cookieLocale = request.cookies.get(localeCookieName)?.value;
   const acceptLanguage = request.headers.get("accept-language");
   const resolvedFromPreferences = resolveLocale({
     cookieLocale,
@@ -138,7 +145,7 @@ export const middleware = async (
   const resolvedLocale = marketingLocale ?? resolvedFromPreferences;
 
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set(requestLocaleHeaderName, resolvedLocale);
+  requestHeaders.set(NEXT_INTL_LOCALE_HEADER_NAME, resolvedLocale);
 
   const isAuthPage = pathname === "/auth/signin" || pathname === "/auth/signup";
   const isProtected = isProtectedRoute(pathname);
@@ -180,7 +187,7 @@ export const middleware = async (
         headers: requestHeaders,
       },
     });
-    return appendLocaleResponseCookies(response, pathname);
+    return appendLocaleResponseCookies(response, pathname, cookieLocale);
   }
 
   try {
@@ -212,7 +219,7 @@ export const middleware = async (
       }
     }
 
-    return appendLocaleResponseCookies(response, pathname);
+    return appendLocaleResponseCookies(response, pathname, cookieLocale);
   } catch (error) {
     console.error("[Middleware] Authentication error:", error);
     const response = NextResponse.next({
@@ -220,7 +227,7 @@ export const middleware = async (
         headers: requestHeaders,
       },
     });
-    return appendLocaleResponseCookies(response, pathname);
+    return appendLocaleResponseCookies(response, pathname, cookieLocale);
   }
 };
 

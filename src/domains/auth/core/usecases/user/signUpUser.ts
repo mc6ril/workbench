@@ -30,6 +30,7 @@ export const SignUpSchema = z.object({
     .max(100, "Display name must be less than 100 characters")
     .optional(),
   termsAcceptedAt: z.string().optional(),
+  locale: z.enum(["fr", "en", "es"]),
 });
 
 /**

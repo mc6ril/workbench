@@ -8,7 +8,7 @@ import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/button";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
@@ -33,9 +33,9 @@ const PricingPage = () => {
   const searchParams = useSearchParams();
   const { data: session } = useSession();
   const { data: subscription } = useSubscription();
-  const t = useTranslation("pages.pricing");
-  const tCta = useTranslation("pages.pricing.cta");
-  const tErrors = useTranslation("errors.stripe");
+  const t = useTranslations("pages.pricing");
+  const tCta = useTranslations("pages.pricing.cta");
+  const tErrors = useTranslations("errors.stripe");
   const addToast = useToastStore((s) => s.addToast);
   const createCheckoutSessionMutation = useCreateCheckoutSession();
   const createBillingPortalSessionMutation = useCreateBillingPortalSession();

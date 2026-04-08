@@ -1,9 +1,10 @@
+import { getTranslations } from "next-intl/server";
+
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
-import { getServerTranslation } from "@/shared/i18n/server";
 
 const NotFoundPage = async () => {
-  const t = await getServerTranslation("pages.fallback");
+  const t = await getTranslations("pages.fallback");
 
   return (
     <RouteFallbackPage

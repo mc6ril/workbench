@@ -13,7 +13,7 @@ export type RoleLabelKey = "roleAdmin" | "roleMember" | "roleViewer";
  *
  * @example
  * ```tsx
- * const t = useTranslation("pages.workspace");
+ * const t = useTranslations("pages.workspace");
  * const roleKey = getRoleLabelKey("admin");
  * const label = t(roleKey); // "Administrateur"
  * ```
@@ -32,27 +32,6 @@ export const getRoleLabelKey = (role: string): RoleLabelKey => {
 };
 
 /**
- * Creates a pluralized translation key based on count.
- * French pluralization rules: singular for count === 1, plural otherwise.
- *
- * @param baseKey - The base translation key (e.g., "items")
- * @param count - The count to determine pluralization
- * @returns The pluralized key (e.g., "items" for count === 1, "items_other" for count !== 1)
- *
- * @example
- * ```ts
- * createPluralKey("items", 1); // "items"
- * createPluralKey("items", 5); // "items_other"
- * ```
- */
-export const createPluralKey = (baseKey: string, count: number): string => {
-  if (count === 1) {
-    return baseKey;
-  }
-  return `${baseKey}_other`;
-};
-
-/**
  * Creates a type-safe interpolation wrapper for translation functions.
  * This provides better type safety when using interpolation.
  *
@@ -61,7 +40,7 @@ export const createPluralKey = (baseKey: string, count: number): string => {
  *
  * @example
  * ```tsx
- * const t = useTranslation("common");
+ * const t = useTranslations("common");
  * const translate = createInterpolatedTranslation(t);
  * const message = translate("welcome", { name: "John" }); // "Bienvenue, John!"
  * ```
@@ -84,7 +63,7 @@ export const createInterpolatedTranslation = (
  *
  * @example
  * ```tsx
- * const t = useTranslation("forms.ticket.fields.status");
+ * const t = useTranslations("forms.ticket.fields.status");
  * const labelKey = getConditionalTranslation(isCompleted, "label_completed", "label");
  * const label = t(labelKey);
  * ```

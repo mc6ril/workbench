@@ -27,8 +27,8 @@ import { REPOSITORY_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import {
   getIntlLocale,
   getRoleLabelKey,
-  useLocaleStore,
-  useTranslation,
+  useLocale,
+  useTranslations,
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
@@ -100,10 +100,10 @@ const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
       }
     };
   }, []);
-  const t = useTranslation("pages.workspace");
-  const tReclaim = useTranslation("pages.workspace.reclaimable");
-  const tErrors = useTranslation("errors");
-  const locale = useLocaleStore((state) => state.locale);
+  const t = useTranslations("pages.workspace");
+  const tReclaim = useTranslations("pages.workspace.reclaimable");
+  const tErrors = useTranslations("errors");
+  const locale = useLocale();
   const intlLocale = useMemo(() => getIntlLocale(locale), [locale]);
   const referenceTime = useMemo(() => {
     return referenceTimeIso ? new Date(referenceTimeIso) : new Date();
@@ -433,13 +433,17 @@ const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
                       <span className={styles["workspace-meta-item"]}>
                         <span aria-hidden="true">👥</span>
                         <span>
-                          {t("membersCount", { count: project.memberCount })}
+                          {t("membersCount", {
+                            count: project.memberCount,
+                          })}
                         </span>
                       </span>
                       <span className={styles["workspace-meta-item"]}>
                         <span aria-hidden="true">📋</span>
                         <span>
-                          {t("tasksCount", { count: project.ticketCount })}
+                          {t("tasksCount", {
+                            count: project.ticketCount,
+                          })}
                         </span>
                       </span>
                     </div>

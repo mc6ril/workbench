@@ -1,6 +1,7 @@
+import { NextIntlClientProvider } from "next-intl";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
-import { LocaleProvider } from "@/shared/i18n/LocaleProvider";
+import messages from "@/shared/i18n/messages/fr.json";
 import AppErrorBoundary from "@/shared/providers/AppErrorBoundary";
 
 let mockPathname = "/workspace";
@@ -11,9 +12,9 @@ jest.mock("next/navigation", () => ({
 
 const renderWithLocale = (children: React.ReactNode) => {
   return render(
-    <LocaleProvider initialLocale="fr" key="fr">
+    <NextIntlClientProvider locale="fr" messages={messages}>
       {children}
-    </LocaleProvider>
+    </NextIntlClientProvider>
   );
 };
 
@@ -74,11 +75,11 @@ describe("AppErrorBoundary", () => {
     mockPathname = "/account";
 
     rerender(
-      <LocaleProvider initialLocale="fr" key="fr">
+      <NextIntlClientProvider locale="fr" messages={messages}>
         <AppErrorBoundary>
           <StableChild />
         </AppErrorBoundary>
-      </LocaleProvider>
+      </NextIntlClientProvider>
     );
 
     await waitFor(() => {

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 type Props = {
   error: Error & { digest?: string };
@@ -12,7 +12,7 @@ type Props = {
 };
 
 const ErrorPage = ({ error, reset }: Props) => {
-  const t = useTranslation("pages.fallback");
+  const t = useTranslations("pages.fallback");
 
   useEffect(() => {
     console.error(error);

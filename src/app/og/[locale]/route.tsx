@@ -1,26 +1,33 @@
 import { ImageResponse } from "next/og";
+import { getTranslations } from "next-intl/server";
 
 import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
-import { getMessages } from "@/shared/i18n/messages";
-import { getRequestLocale } from "@/shared/i18n/requestLocale";
-import { getTranslationValue } from "@/shared/i18n/utils";
+import { defaultLocale, isSupportedLocale } from "@/shared/i18n/config";
+import type { Locale } from "@/shared/i18n/types";
 
 export const runtime = "edge";
 
-export const size = {
+const size = {
   width: 1200,
   height: 630,
 };
 
-export const contentType = "image/png";
+const getResolvedLocale = (value: string): Locale => {
+  return isSupportedLocale(value) ? value : defaultLocale;
+};
 
-const OpengraphImage = async () => {
-  const locale = await getRequestLocale();
-  const messages = getMessages(locale);
-  const title =
-    getTranslationValue(messages, "app.metadata", "title") ?? PRODUCT_BRAND_NAME;
-  const subtitle =
-    getTranslationValue(messages, "app.metadata", "description") ?? "";
+export const GET = async (
+  _request: Request,
+  { params }: { params: Promise<{ locale: string }> }
+) => {
+  const { locale: localeParam } = await params;
+  const locale = getResolvedLocale(localeParam);
+  const tMetadata = await getTranslations({
+    locale,
+    namespace: "app.metadata",
+  });
+  const title = tMetadata("title") || PRODUCT_BRAND_NAME;
+  const subtitle = tMetadata("description") || "";
 
   return new ImageResponse(
     (
@@ -32,7 +39,8 @@ const OpengraphImage = async () => {
           justifyContent: "center",
           width: "100%",
           height: "100%",
-          background: "linear-gradient(135deg, #2a1f1a 0%, #4a3b32 55%, #faf7f4 100%)",
+          background:
+            "linear-gradient(135deg, #2a1f1a 0%, #4a3b32 55%, #faf7f4 100%)",
           color: "#faf7f4",
           fontFamily: "system-ui, sans-serif",
           padding: 64,
@@ -66,5 +74,3 @@ const OpengraphImage = async () => {
     { ...size }
   );
 };
-
-export default OpengraphImage;

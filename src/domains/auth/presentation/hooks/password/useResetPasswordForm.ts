@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { getAppErrorCode } from "@/shared/errors/appError";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
@@ -15,8 +15,8 @@ import { useResetPassword } from "@/domains/auth/presentation/hooks/password/use
 
 export const useResetPasswordForm = () => {
   const resetPasswordMutation = useResetPassword();
-  const tErrors = useTranslation("errors");
-  const tFields = useTranslation("pages.resetPassword.fields");
+  const tErrors = useTranslations("errors");
+  const tFields = useTranslations("pages.resetPassword.fields");
 
   const {
     register,

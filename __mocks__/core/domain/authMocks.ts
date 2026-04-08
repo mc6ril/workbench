@@ -42,6 +42,7 @@ export const mockAuthResultWithEmailVerification: AuthResult = {
 export const validSignUpInput: SignUpInput = {
   email: "test@example.com",
   password: "password123",
+  locale: "fr",
 };
 
 /**

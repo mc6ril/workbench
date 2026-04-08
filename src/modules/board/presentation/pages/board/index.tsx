@@ -8,7 +8,7 @@ import { getAccessibilityId } from "@/shared/a11y";
 import Loader from "@/shared/design-system/loader";
 import Modal from "@/shared/design-system/modal";
 import Text from "@/shared/design-system/text";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { buildTicketDetailRoute } from "@/shared/utils/routes";
 
 import { getBoardOnboardingProgress } from "./boardOnboardingProgress";
@@ -47,10 +47,10 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const layoutId = useMemo(() => getAccessibilityId("board-layout"), []);
-  const tBoard = useTranslation("pages.board");
-  const tOnboarding = useTranslation("pages.board.onboarding");
+  const tBoard = useTranslations("pages.board");
+  const tOnboarding = useTranslations("pages.board.onboarding");
   const legacyTicketId = searchParams.get("ticket");
-  const tCreateForm = useTranslation("pages.board.createTicketForm");
+  const tCreateForm = useTranslations("pages.board.createTicketForm");
   const isCreateTicketModalOpen = searchParams.get("createTicket") === "1";
   const isOnboardingReviewRequested = searchParams.get("onboarding") === "1";
   const {

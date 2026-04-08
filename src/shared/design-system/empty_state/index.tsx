@@ -4,7 +4,7 @@ import React from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./empty_state.module.scss";
 
@@ -53,7 +53,7 @@ const EmptyState = ({
   ariaLabel,
   className,
 }: Props) => {
-  const t = useTranslation("common.emptyState");
+  const t = useTranslations("common.emptyState");
   const displayMessage = message || t("defaultMessage");
   const displayAriaLabel = ariaLabel || title;
   const emptyStateId = getAccessibilityId("empty-state");

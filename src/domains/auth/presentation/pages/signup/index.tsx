@@ -16,8 +16,14 @@ import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { getAppErrorCode } from "@/shared/errors/appError";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
-import { useTranslation } from "@/shared/i18n";
+import {
+  defaultLocale,
+  isSupportedLocale,
+  useLocale,
+  useTranslations,
+} from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import type { Locale } from "@/shared/i18n/types";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
@@ -40,10 +46,14 @@ const SignupPage = () => {
   const signUpMutation = useSignUp();
   const signInWithGoogleMutation = useSignInWithGoogle();
   const resendVerificationMutation = useResendVerification();
-  const t = useTranslation("pages.signup");
-  const tCommon = useTranslation("common");
-  const tErrors = useTranslation("errors");
-  const tFields = useTranslation("pages.signup.fields");
+  const t = useTranslations("pages.signup");
+  const tCommon = useTranslations("common");
+  const tErrors = useTranslations("errors");
+  const tFields = useTranslations("pages.signup.fields");
+  const activeLocale = useLocale();
+  const signupLocale: Locale = isSupportedLocale(activeLocale)
+    ? activeLocale
+    : defaultLocale;
   const { legal } = useMarketingRoutes();
   const [submittedEmail, setSubmittedEmail] = useState("");
   const [verificationFeedback, setVerificationFeedback] = useState<{
@@ -147,10 +157,11 @@ const SignupPage = () => {
         password: data.password,
         displayName: data.displayName || undefined,
         termsAcceptedAt: new Date().toISOString(),
+        locale: signupLocale,
       };
       signUpMutation.mutate(signUpInput);
     },
-    [signUpMutation]
+    [signUpMutation, signupLocale]
   );
 
   const handleGoogleSignIn = useCallback(() => {

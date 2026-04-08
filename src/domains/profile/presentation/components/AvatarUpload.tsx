@@ -6,7 +6,7 @@ import { APP_LIMITS } from "@/shared/constants/app";
 import Avatar from "@/shared/design-system/avatar";
 import Button from "@/shared/design-system/button";
 import Text from "@/shared/design-system/text";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./AvatarUpload.module.scss";
 
@@ -29,7 +29,7 @@ const AvatarUpload = ({
   onFileSelect,
   onRemove,
 }: Props) => {
-  const t = useTranslation("ui.avatarUpload");
+  const t = useTranslations("ui.avatarUpload");
   const inputRef = useRef<HTMLInputElement>(null);
   const isBusy = disabled || isUploading || isRemoving;
 

@@ -8,14 +8,14 @@ import ErrorMessage from "@/shared/design-system/error_message";
 import Loader from "@/shared/design-system/loader";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
 
 import { useVerifyEmailFlow } from "@/domains/auth/presentation/hooks/verification/useVerifyEmailFlow";
 
 const VerifyEmailContent = () => {
-  const t = useTranslation("pages.verifyEmail");
+  const t = useTranslations("pages.verifyEmail");
 
   const { isMissingToken, isPending, isSuccess, isError, errorMessage } =
     useVerifyEmailFlow();
