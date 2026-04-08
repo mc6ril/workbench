@@ -1,10 +1,16 @@
 import { redirect } from "next/navigation";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { createLoggerFactory } from "@/shared/observability";
+import { createAppQueryClient } from "@/shared/providers/queryClient";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
+import { getCurrentProjectRole } from "@/domains/project/core/usecases/member/getCurrentProjectRole";
 import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
+import { createProjectMemberGateway } from "@/domains/project/infrastructure/supabase/gateways";
+import { queryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import ProjectShell from "@/domains/project/presentation/layouts/projectShell/ProjectShell";
 import BoardShellAdapter from "@/modules/board/presentation/projectShell/boardShellAdapter";
 
@@ -50,15 +56,26 @@ const ProjectLayout = async ({
     redirect(PAGE_ROUTES.WORKSPACE);
   }
 
+  const queryClient = createAppQueryClient();
+  const supabaseClient = await createSupabaseServerClient();
+  const projectMemberGateway = createProjectMemberGateway(supabaseClient);
+
+  await queryClient.prefetchQuery({
+    queryKey: queryKeys.projects.currentRole(projectId),
+    queryFn: () => getCurrentProjectRole(projectMemberGateway, projectId),
+  });
+
   // User has access, render children
   // Note: We don't pass project data here - client pages fetch via React Query
   return (
-    <ProjectShell
-      projectId={projectId}
-      shellAdapter={<BoardShellAdapter projectId={projectId} />}
-    >
-      {children}
-    </ProjectShell>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ProjectShell
+        projectId={projectId}
+        shellAdapter={<BoardShellAdapter projectId={projectId} />}
+      >
+        {children}
+      </ProjectShell>
+    </HydrationBoundary>
   );
 };
 

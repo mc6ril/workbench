@@ -17,7 +17,7 @@ import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 /**
  * Applies the authenticated user's runtime preferences (locale + theme) and
- * reports whether the app runtime is aligned with the persisted profile.
+ * reports whether the app can render without waiting for the profile query.
  */
 export const useProfileRuntimeSync = (): boolean => {
   const { data: session } = useSession();
@@ -79,8 +79,5 @@ export const useProfileRuntimeSync = (): boolean => {
     return true;
   }
 
-  const isLocaleReady = !nextLocale || locale === nextLocale;
-  const isThemeReady = !nextTheme || theme === nextTheme;
-
-  return isLocaleReady && isThemeReady;
+  return true;
 };

@@ -4,7 +4,8 @@
  * @returns The formatted date
  */
 export const getLastUpdateContent = (
-  lastUpdateContent: Date | undefined
+  lastUpdateContent: Date | undefined,
+  referenceDate: Date = new Date()
 ): { hours: number; days: number } => {
   if (!lastUpdateContent) {
     return { hours: 0, days: 0 };
@@ -13,8 +14,10 @@ export const getLastUpdateContent = (
   // show hours if less than a day
   // show days if less than a week
   // else show date
-  const now = new Date();
-  const diff = Math.max(0, now.getTime() - lastUpdateContent.getTime());
+  const diff = Math.max(
+    0,
+    referenceDate.getTime() - lastUpdateContent.getTime()
+  );
   const diffHours = diff / (1000 * 60 * 60);
   const diffDays = diff / (1000 * 60 * 60 * 24);
 
