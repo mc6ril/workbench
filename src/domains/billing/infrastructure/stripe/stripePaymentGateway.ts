@@ -12,14 +12,6 @@ import type {
 } from "@/domains/billing/core/ports/payment.gateway";
 
 /**
- * Use the module's ambient `Stripe` namespace (not the default class export) so
- * this stays compatible with Stripe v22+ where `Stripe.Checkout` on the class
- * can collide with the ESM Checkout resource types.
- */
-type CheckoutSessionCreateParams =
-  import("stripe").Stripe.Checkout.SessionCreateParams;
-
-/**
  * Stripe implementation of the PaymentGateway port.
  * Delegates all mapping logic to StripeMapper.
  */
@@ -36,7 +28,7 @@ export const stripePaymentGateway: PaymentGateway = {
       });
     }
 
-    const sessionParams: CheckoutSessionCreateParams = {
+    const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
@@ -46,15 +38,10 @@ export const stripePaymentGateway: PaymentGateway = {
         userId: params.userId,
         plan: params.plan,
       },
-    };
-
-    if (params.customerId) {
-      sessionParams.customer = params.customerId;
-    } else {
-      sessionParams.customer_email = params.email;
-    }
-
-    const session = await stripe.checkout.sessions.create(sessionParams);
+      ...(params.customerId
+        ? { customer: params.customerId }
+        : { customer_email: params.email }),
+    });
 
     if (!session.url) {
       throw createAppError(INFRA_ERROR_CODE.STRIPE_CHECKOUT_NO_URL, {
