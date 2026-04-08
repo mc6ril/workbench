@@ -24,7 +24,12 @@ import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { getAppErrorCode } from "@/shared/errors/appError";
 import { REPOSITORY_ERROR_CODE } from "@/shared/errors/appErrorCodes";
-import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
+import {
+  getIntlLocale,
+  getRoleLabelKey,
+  useLocaleStore,
+  useTranslation,
+} from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { markNavigationStart } from "@/shared/navigationPerf";
@@ -49,7 +54,11 @@ import { getWorkspaceEmoji } from "@/domains/workspace/utils/workspaceUtils";
 
 type CreateProjectFormData = CreateProjectInput;
 
-const WorkspacePage = () => {
+type WorkspacePageProps = {
+  referenceTimeIso?: string;
+};
+
+const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
   const router = useRouter();
   const {
     data: viewer,
@@ -94,6 +103,18 @@ const WorkspacePage = () => {
   const t = useTranslation("pages.workspace");
   const tReclaim = useTranslation("pages.workspace.reclaimable");
   const tErrors = useTranslation("errors");
+  const locale = useLocaleStore((state) => state.locale);
+  const intlLocale = useMemo(() => getIntlLocale(locale), [locale]);
+  const referenceTime = useMemo(() => {
+    return referenceTimeIso ? new Date(referenceTimeIso) : new Date();
+  }, [referenceTimeIso]);
+  const shortDateFormatter = useMemo(() => {
+    return new Intl.DateTimeFormat(intlLocale, {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }, [intlLocale]);
 
   const displayName = viewer?.displayName?.trim() || t("userFallbackName");
   const welcomeGuideTitleId = getAccessibilityId("workspace-welcome-guide");
@@ -283,12 +304,13 @@ const WorkspacePage = () => {
                       0,
                       30 -
                         Math.floor(
-                          (Date.now() - project.orphanedAt.getTime()) /
+                          (referenceTime.getTime() - project.orphanedAt.getTime()) /
                             (1000 * 60 * 60 * 24)
                         )
                     );
-                    const orphanedDate =
-                      project.orphanedAt.toLocaleDateString();
+                    const orphanedDate = shortDateFormatter.format(
+                      project.orphanedAt
+                    );
 
                     return (
                       <div
@@ -405,7 +427,7 @@ const WorkspacePage = () => {
                       {project.name}
                     </Title>
                     <p className={styles["workspace-last-activity"]}>
-                      {formatLastActivity(project.updatedAt)}
+                      {formatLastActivity(project.updatedAt, referenceTime)}
                     </p>
                     <div className={styles["workspace-meta"]}>
                       <span className={styles["workspace-meta-item"]}>

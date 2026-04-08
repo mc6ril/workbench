@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { ThemeProvider } from "next-themes";
+import type { DehydratedState } from "@tanstack/react-query";
 
 import Loader from "@/shared/design-system/loader";
 import Toast from "@/shared/design-system/toast";
@@ -15,6 +16,7 @@ import { useProfileRuntimeSync } from "@/domains/profile/presentation/providers/
 
 type AppProviderProps = {
   children: React.ReactNode;
+  dehydratedState?: DehydratedState;
 };
 
 const NavigationPerfTracker = () => {
@@ -41,11 +43,11 @@ const RuntimeSyncProvider = ({ children }: { children: React.ReactNode }) => {
  * Central place for global providers.
  * Keep this file free of business logic and side effects.
  */
-const AppProvider = ({ children }: AppProviderProps) => {
+const AppProvider = ({ children, dehydratedState }: AppProviderProps) => {
   return (
     <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
       <AppErrorBoundary>
-        <ReactQueryProvider>
+        <ReactQueryProvider dehydratedState={dehydratedState}>
           <RuntimeSyncProvider>
             <NavigationPerfTracker />
             {children}

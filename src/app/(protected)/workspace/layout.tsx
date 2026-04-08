@@ -1,6 +1,6 @@
 /**
  * Shell layout for workspace route.
- * No data fetching - all data is fetched in the client page component.
+ * No layout-level data fetching. Route data is hydrated in the page component.
  */
 const WorkspaceLayout = ({
   children,
