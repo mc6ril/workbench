@@ -25,7 +25,6 @@ import type {
 import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";
 import { useSidebarItems } from "@/domains/project/presentation/hooks/useSidebarItems";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
-import { usePrefetchWorkspaceProjects } from "@/domains/workspace/presentation/hooks/usePrefetchWorkspaceProjects";
 
 const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const pathname = usePathname();
@@ -61,8 +60,6 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
     // Future: add tab action. No-op for now.
   }, []);
 
-  const prefetchWorkspaceProjects = usePrefetchWorkspaceProjects();
-
   const prefetchProjectView = useCallback(
     (item: SidebarItem) => {
       if (item.locked) {
@@ -76,8 +73,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
 
   const prefetchWorkspace = useCallback(() => {
     void router.prefetch(PAGE_ROUTES.WORKSPACE);
-    prefetchWorkspaceProjects(viewer?.userId);
-  }, [prefetchWorkspaceProjects, router, viewer?.userId]);
+  }, [router]);
 
   const handleProfileTriggerClick = useCallback(() => {
     setProfileMenuOpen((prev) => {

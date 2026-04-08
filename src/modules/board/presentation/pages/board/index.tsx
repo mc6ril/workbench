@@ -16,6 +16,7 @@ import styles from "./styles.module.scss";
 
 import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
+import type { TicketFilters } from "@/modules/board/core/domain/ticket.types";
 import BoardView from "@/modules/board/presentation/components/board/boardView/BoardView";
 import BoardOnboardingPanel from "@/modules/board/presentation/components/boardOnboardingPanel/BoardOnboardingPanel";
 import {
@@ -38,6 +39,8 @@ import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
 import type { BoardColumnConfig } from "@/modules/board/presentation/types/boardView.types";
 import { normalizeTicketSearch } from "@/modules/board/utils/ticketUtils";
+
+const EMPTY_FILTERS: TicketFilters = {};
 
 const BoardLayout = ({ projectId }: { projectId: string }) => {
   const router = useRouter();
@@ -101,8 +104,12 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     error,
   } = useBoardConfiguration(projectId);
   const { data: projectShortCode } = useProjectShortCode(projectId);
-  const filters = useFilterStore((state) => state.filters);
-  const search = useFilterStore((state) => state.search);
+  const filterProjectId = useFilterStore((state) => state.projectId);
+  const rawFilters = useFilterStore((state) => state.filters);
+  const rawSearch = useFilterStore((state) => state.search);
+  const isFilterStoreReady = filterProjectId === projectId;
+  const filters = isFilterStoreReady ? rawFilters : EMPTY_FILTERS;
+  const search = isFilterStoreReady ? rawSearch : "";
   const effectiveSearch = useMemo(() => {
     return normalizeTicketSearch(search, projectShortCode);
   }, [projectShortCode, search]);
@@ -154,9 +161,9 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
 
   const { columns, columnById } = useBoardColumns(boardConfiguration);
   const { filteredTickets, ticketViewModelById } = useBoardTickets({
-    projectId,
     tickets,
-    projectShortCode: projectShortCode,
+    projectShortCode,
+    assigneesByTicketId: ticketAssigneesByProjectId,
   });
 
   const {

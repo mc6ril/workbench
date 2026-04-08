@@ -1,7 +1,7 @@
-import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
+import { navigateToDocumentPath } from "@/shared/navigation/documentNavigation";
 
 import { signOutUser } from "@/domains/auth/core/usecases/user/signOutUser";
 import { authGateway } from "@/domains/auth/infrastructure/supabase/repositories";
@@ -13,14 +13,16 @@ import { invalidatePostAuthMutation } from "@/domains/auth/presentation/utils/in
  */
 export const useSignOut = () => {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: () => signOutUser(authGateway),
     onSuccess: async () => {
       await invalidatePostAuthMutation(queryClient);
       queryClient.clear();
-      router.push(PAGE_ROUTES.HOME);
+
+      // Use a document navigation so middleware and server layouts re-evaluate
+      // against the cleared auth cookies instead of reusing protected client state.
+      navigateToDocumentPath(PAGE_ROUTES.HOME);
     },
   });
 };

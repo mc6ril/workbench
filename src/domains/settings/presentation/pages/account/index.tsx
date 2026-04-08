@@ -45,6 +45,7 @@ import {
   SubscriptionStatus,
 } from "@/domains/billing/core/domain/subscription.types";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
+import { useCreateBillingPortalSession } from "@/domains/billing/presentation/hooks/useCreateBillingPortalSession";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 import {
   DEFAULT_USER_PREFERENCES,
@@ -89,6 +90,7 @@ const AccountPage = () => {
   const { pricing } = useMarketingRoutes();
   const { data: subscription, isLoading: isSubscriptionLoading } =
     useSubscription();
+  const createBillingPortalSessionMutation = useCreateBillingPortalSession();
   const t = useTranslation("pages.account");
   const tErrors = useTranslation("errors");
   const tStripe = useTranslation("errors.stripe");
@@ -322,35 +324,20 @@ const AccountPage = () => {
     signOutMutation.mutate();
   }, [signOutMutation]);
 
-  const [isManagingSubscription, setIsManagingSubscription] = useState(false);
   const locale = useLocaleStore((s) => s.locale);
 
   const handleManageSubscription = useCallback(async () => {
-    setIsManagingSubscription(true);
     try {
-      const response = await fetch("/api/stripe/portal", { method: "POST" });
-      const data = (await response.json()) as { url?: string; error?: string };
-
-      if (!response.ok || !data.url) {
-        addToast({
-          message: tStripe("portalFailed"),
-          variant: "error",
-          duration: 6000,
-        });
-        return;
-      }
-
-      window.location.href = data.url;
+      const { url } = await createBillingPortalSessionMutation.mutateAsync({});
+      window.location.href = url;
     } catch {
       addToast({
         message: tStripe("portalFailed"),
         variant: "error",
         duration: 6000,
       });
-    } finally {
-      setIsManagingSubscription(false);
     }
-  }, [addToast, tStripe]);
+  }, [addToast, createBillingPortalSessionMutation, tStripe]);
 
   const handleEmailNotificationsChange = useCallback(
     (checked: boolean) => {
@@ -815,7 +802,7 @@ const AccountPage = () => {
                         label={t("subscription.manageButton")}
                         variant="secondary"
                         onClick={handleManageSubscription}
-                        disabled={isManagingSubscription}
+                        disabled={createBillingPortalSessionMutation.isPending}
                         aria-label={t("subscription.manageButtonAriaLabel")}
                       />
                     )}

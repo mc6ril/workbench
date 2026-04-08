@@ -37,8 +37,11 @@ export const useProjectSearchSuggestions = ({
 }: Input): ProjectSearchSuggestion[] => {
   const isTicketView = viewKey === PROJECT_VIEWS.BOARD;
   const searchTerm = searchValue.trim();
+  const shouldResolveProjectShortCode = isTicketView && searchTerm !== "";
 
-  const { data: projectShortCode } = useProjectShortCode(projectId);
+  const { data: projectShortCode } = useProjectShortCode(projectId, {
+    enabled: shouldResolveProjectShortCode,
+  });
   const effectiveSearch = useMemo(() => {
     return normalizeTicketSearch(searchTerm, projectShortCode);
   }, [projectShortCode, searchTerm]);

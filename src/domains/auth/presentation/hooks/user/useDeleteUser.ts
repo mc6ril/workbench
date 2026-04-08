@@ -1,9 +1,9 @@
-import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { API_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { createAppError } from "@/shared/errors/appError";
 import { INFRA_ERROR_CODE } from "@/shared/errors/appErrorCodes";
+import { navigateToDocumentPath } from "@/shared/navigation/documentNavigation";
 
 import { invalidatePostAuthMutation } from "@/domains/auth/presentation/utils/invalidatePostAuthMutation";
 
@@ -12,7 +12,6 @@ import { invalidatePostAuthMutation } from "@/domains/auth/presentation/utils/in
  */
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: async () => {
@@ -34,7 +33,7 @@ export const useDeleteUser = () => {
     onSuccess: async () => {
       await invalidatePostAuthMutation(queryClient);
       queryClient.clear();
-      router.push(PAGE_ROUTES.HOME);
+      navigateToDocumentPath(PAGE_ROUTES.HOME);
     },
   });
 };
