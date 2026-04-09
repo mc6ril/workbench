@@ -16,15 +16,21 @@ import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { getAppErrorCode } from "@/shared/errors/appError";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
-import { useTranslation } from "@/shared/i18n";
+import {
+  defaultLocale,
+  isSupportedLocale,
+  type Locale,
+  useLocale,
+  useTranslations,
+} from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
-import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
 import styles from "./styles.module.scss";
 
 import type { SignUpInput } from "@/domains/auth/core/domain/auth.types";
 import PasswordStrengthIndicator from "@/domains/auth/presentation/components/PasswordStrengthIndicator";
+import { translateAuthFieldError } from "@/domains/auth/presentation/forms/authFieldErrors";
 import {
   type SignUpFormInput,
   SignUpFormSchema,
@@ -40,10 +46,14 @@ const SignupPage = () => {
   const signUpMutation = useSignUp();
   const signInWithGoogleMutation = useSignInWithGoogle();
   const resendVerificationMutation = useResendVerification();
-  const t = useTranslation("pages.signup");
-  const tCommon = useTranslation("common");
-  const tErrors = useTranslation("errors");
-  const tFields = useTranslation("pages.signup.fields");
+  const t = useTranslations("pages.signup");
+  const tCommon = useTranslations("common");
+  const tErrors = useTranslations("errors");
+  const tFields = useTranslations("pages.signup.fields");
+  const activeLocale = useLocale();
+  const signupLocale: Locale = isSupportedLocale(activeLocale)
+    ? activeLocale
+    : defaultLocale;
   const { legal } = useMarketingRoutes();
   const [submittedEmail, setSubmittedEmail] = useState("");
   const [verificationFeedback, setVerificationFeedback] = useState<{
@@ -53,7 +63,7 @@ const SignupPage = () => {
   const redirectPathParam = searchParams.get("redirect");
   const redirectPath =
     redirectPathParam &&
-    redirectPathParam.startsWith("/") &&
+    redirectPathParam.startsWith(PAGE_ROUTES.HOME) &&
     !redirectPathParam.startsWith("//")
       ? redirectPathParam
       : PAGE_ROUTES.WORKSPACE;
@@ -147,10 +157,11 @@ const SignupPage = () => {
         password: data.password,
         displayName: data.displayName || undefined,
         termsAcceptedAt: new Date().toISOString(),
+        locale: signupLocale,
       };
       signUpMutation.mutate(signUpInput);
     },
-    [signUpMutation]
+    [signUpMutation, signupLocale]
   );
 
   const handleGoogleSignIn = useCallback(() => {
@@ -279,7 +290,7 @@ const SignupPage = () => {
             type="email"
             autoComplete="email"
             required
-            error={translateFieldError(errors.email, tFields)}
+            error={translateAuthFieldError(errors.email, tFields)}
             {...register("email")}
           />
 
@@ -290,7 +301,7 @@ const SignupPage = () => {
               autoComplete="new-password"
               required
               helperText={passwordHint}
-              error={translateFieldError(errors.password, tFields)}
+              error={translateAuthFieldError(errors.password, tFields)}
               {...register("password")}
             />
             <PasswordStrengthIndicator password={passwordValue} />
@@ -301,7 +312,7 @@ const SignupPage = () => {
             type="password"
             autoComplete="new-password"
             required
-            error={translateFieldError(errors.confirmPassword, tFields)}
+            error={translateAuthFieldError(errors.confirmPassword, tFields)}
             {...register("confirmPassword")}
           />
 

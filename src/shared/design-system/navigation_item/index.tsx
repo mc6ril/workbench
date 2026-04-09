@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./navigation_item.module.scss";
 
@@ -67,7 +67,7 @@ const NavigationItem = ({
   planBadge,
 }: Props) => {
   const navItemId = getAccessibilityId(`nav-item-${href}`);
-  const t = useTranslation("common");
+  const t = useTranslations("common");
   const displayLabel = label.startsWith("common.")
     ? t(label.replace("common.", ""))
     : label;

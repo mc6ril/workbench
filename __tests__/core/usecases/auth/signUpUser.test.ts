@@ -38,6 +38,7 @@ describe("signUpUser", () => {
     const invalidInput = {
       email: "invalid-email",
       password: "password123",
+      locale: "fr" as const,
     };
     const repository = createAuthRepositoryMock();
 
@@ -53,6 +54,7 @@ describe("signUpUser", () => {
     const invalidInput = {
       email: "test@example.com",
       password: "12345", // Less than 6 characters
+      locale: "fr" as const,
     };
     const repository = createAuthRepositoryMock();
 
@@ -68,6 +70,7 @@ describe("signUpUser", () => {
     const invalidInput = {
       email: "test@example.com",
       password: "a".repeat(101), // More than 100 characters
+      locale: "fr" as const,
     };
     const repository = createAuthRepositoryMock();
 
@@ -83,6 +86,7 @@ describe("signUpUser", () => {
     const invalidInput = {
       email: "",
       password: "password123",
+      locale: "fr" as const,
     };
     const repository = createAuthRepositoryMock();
 
@@ -119,9 +123,10 @@ describe("signUpUser", () => {
     const inputWithoutDisplayName = {
       email: "test@example.com",
       password: "password123",
+      locale: "fr" as const,
     };
     const repository = createAuthRepositoryMock({
-      signUp: jest.fn<Promise<AuthResult>, [typeof inputWithoutDisplayName]>(
+      signUp: jest.fn<Promise<AuthResult>, [SignUpInput]>(
         async () => mockAuthResult
       ),
     });

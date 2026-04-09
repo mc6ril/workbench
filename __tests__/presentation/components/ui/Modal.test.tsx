@@ -2,9 +2,9 @@ import { fireEvent,render, screen } from "@testing-library/react";
 
 import Modal from "@/shared/design-system/modal";
 
-// Mock useTranslation
+// Mock useTranslations
 jest.mock("@/shared/i18n", () => ({
-  useTranslation: () => (key: string) => {
+  useTranslations: () => (key: string) => {
     const translations: Record<string, string> = {
       dismiss: "Fermer",
       dismissAriaLabel: "Fermer le message d'erreur",

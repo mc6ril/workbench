@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./PasswordStrengthIndicator.module.scss";
 
@@ -21,7 +21,7 @@ type Props = {
  * Uses auth-domain password rules for calculation.
  */
 const PasswordStrengthIndicator = ({ password }: Props) => {
-  const t = useTranslation("pages.signup.passwordStrength");
+  const t = useTranslations("pages.signup.passwordStrength");
   const strength = useMemo(
     () => calculatePasswordStrength(password),
     [password]

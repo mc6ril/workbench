@@ -1,6 +1,7 @@
  
 import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
 
+import { DEFAULT_COLUMN_KEY_BY_STATE } from "@/modules/board/core/domain/board.defaults";
 import type {
   Board,
   BoardConfiguration,
@@ -111,7 +112,7 @@ describe("getBoardConfiguration", () => {
     expect(repository.createColumn).toHaveBeenCalledWith({
       boardId,
       name: "Done",
-      key: "completed",
+      key: DEFAULT_COLUMN_KEY_BY_STATE.done,
       state: "done",
       position: 2,
       visible: true,
@@ -136,7 +137,7 @@ describe("getBoardConfiguration", () => {
       id: "423e4567-e89b-12d3-a456-426614174001",
       boardId,
       name: "In Progress",
-      key: "in-progress",
+      key: DEFAULT_COLUMN_KEY_BY_STATE.in_progress,
       state: "in_progress",
       position: 1,
       visible: true,
@@ -147,7 +148,7 @@ describe("getBoardConfiguration", () => {
       id: "523e4567-e89b-12d3-a456-426614174002",
       boardId,
       name: "Done",
-      key: "completed",
+      key: DEFAULT_COLUMN_KEY_BY_STATE.done,
       state: "done",
       position: 2,
       visible: true,
@@ -215,7 +216,7 @@ describe("getBoardConfiguration", () => {
       id: "423e4567-e89b-12d3-a456-426614174001",
       boardId,
       name: "In Progress",
-      key: "in-progress",
+      key: DEFAULT_COLUMN_KEY_BY_STATE.in_progress,
       state: "in_progress",
       position: 1,
       visible: true,
@@ -226,7 +227,7 @@ describe("getBoardConfiguration", () => {
       id: "523e4567-e89b-12d3-a456-426614174002",
       boardId,
       name: "Done",
-      key: "completed",
+      key: DEFAULT_COLUMN_KEY_BY_STATE.done,
       state: "done",
       position: 2,
       visible: true,

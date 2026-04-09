@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
-import RequestLocaleAppProviders from "@/shared/providers/RequestLocaleAppProviders";
+import AppProvider from "@/shared/providers/AppProvider";
 import { noIndexMetadata } from "@/shared/seo/noIndexMetadata";
 
 export const metadata: Metadata = noIndexMetadata;
@@ -20,7 +20,7 @@ const AuthPagesLayout = async ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  return <RequestLocaleAppProviders>{children}</RequestLocaleAppProviders>;
+  return <AppProvider>{children}</AppProvider>;
 };
 
 export default AuthPagesLayout;

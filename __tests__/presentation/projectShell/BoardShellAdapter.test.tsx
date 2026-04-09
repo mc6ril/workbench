@@ -9,6 +9,7 @@ const pushMock = jest.fn();
 const replaceMock = jest.fn();
 const prefetchMock = jest.fn();
 const useProjectRealtimeMock = jest.fn();
+const useBoardConfigurationMock = jest.fn();
 let mockPathname = "/project-1/board";
 const routerMock = {
   push: pushMock,
@@ -40,9 +41,8 @@ jest.mock("@/domains/project/presentation/hooks/member/useProjectMembers", () =>
 }));
 
 jest.mock("@/modules/board/presentation/hooks/board/useBoardConfiguration", () => ({
-  useBoardConfiguration: () => ({
-    data: undefined,
-  }),
+  useBoardConfiguration: (...args: unknown[]) =>
+    useBoardConfigurationMock(...args),
 }));
 
 jest.mock("@/modules/board/presentation/hooks/project/useProjectShortCode", () => ({
@@ -90,6 +90,9 @@ describe("BoardShellAdapter", () => {
     jest.clearAllMocks();
     searchParamsMock.delete("onboarding");
     mockPathname = "/project-1/board";
+    useBoardConfigurationMock.mockReturnValue({
+      data: undefined,
+    });
   });
 
   it("mounts without an infinite contribution update loop when queries are still empty", () => {
@@ -108,6 +111,16 @@ describe("BoardShellAdapter", () => {
         enabled: true,
       }
     );
+    expect(useBoardConfigurationMock).toHaveBeenNthCalledWith(
+      1,
+      "project-1",
+      {
+        enabled: false,
+      }
+    );
+    expect(useBoardConfigurationMock).toHaveBeenLastCalledWith("project-1", {
+      enabled: true,
+    });
   });
 
   it("opens the onboarding guide from the toolbar button", () => {

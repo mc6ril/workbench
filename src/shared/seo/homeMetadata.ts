@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
-import { assertDefined } from "@/shared/errors/programmingError";
+import type { Locale } from "@/shared/i18n/config";
 import {
   buildMarketingHomePath,
   buildMarketingLegalPath,
   buildMarketingPricingPath,
 } from "@/shared/i18n/marketingPaths";
-import { getMessages } from "@/shared/i18n/messages";
-import type { Locale } from "@/shared/i18n/types";
-import { getTranslationValue } from "@/shared/i18n/utils";
 import { getLanguageAlternates } from "@/shared/seo/languageAlternates";
 import {
   getAlternateOpenGraphLocales,
@@ -17,46 +15,34 @@ import {
 } from "@/shared/seo/ogLocale";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
-/**
- * Root marketing home metadata (per locale URL).
- */
-export const buildHomeMetadata = (locale: Locale): Metadata => {
-  const messages = getMessages(locale);
+export const buildHomeMetadata = async (locale: Locale): Promise<Metadata> => {
+  const tMetadata = await getTranslations({
+    locale,
+    namespace: "app.metadata",
+  });
   const siteUrl = getSiteUrl();
 
-  const appTitle = getTranslationValue(messages, "app.metadata", "title");
-  const appDescription = getTranslationValue(
-    messages,
-    "app.metadata",
-    "description"
-  );
-  assertDefined(appTitle, "Missing translation: app.metadata.title");
-  assertDefined(appDescription, "Missing translation: app.metadata.description");
-
-  const titleTemplate =
-    getTranslationValue(messages, "app.metadata", "titleTemplate") ??
-    `%s | ${PRODUCT_BRAND_NAME}`;
-  const keywordsRaw = getTranslationValue(messages, "app.metadata", "keywords");
-  const ogImageAlt =
-    getTranslationValue(messages, "app.metadata", "ogImageAlt") ?? appTitle;
-
-  const keywords =
-    keywordsRaw
-      ?.split(",")
-      .map((k) => k.trim())
-      .filter(Boolean) ?? [];
+  const appTitle = tMetadata("title");
+  const appDescription = tMetadata("description");
+  const titleTemplate = tMetadata("titleTemplate");
+  const keywords = tMetadata("keywords")
+    .split(",")
+    .map((keyword) => keyword.trim())
+    .filter(Boolean);
+  const ogImageAlt = tMetadata("ogImageAlt");
 
   const ogLocale = getOpenGraphLocale(locale);
   const alternateOgLocales = getAlternateOpenGraphLocales(locale);
   const homePath = buildMarketingHomePath(locale);
   const homeUrl = new URL(homePath, siteUrl).toString();
   const manifestUrl = new URL(`/manifest/${locale}`, siteUrl).toString();
+  const openGraphImageUrl = new URL(`/og/${locale}`, siteUrl).toString();
 
   return {
     metadataBase: siteUrl,
     title: {
       default: appTitle,
-      template: titleTemplate,
+      template: titleTemplate || `%s | ${PRODUCT_BRAND_NAME}`,
     },
     description: appDescription,
     keywords,
@@ -89,10 +75,10 @@ export const buildHomeMetadata = (locale: Locale): Metadata => {
       description: appDescription,
       images: [
         {
-          url: "/opengraph-image",
+          url: openGraphImageUrl,
           width: 1200,
           height: 630,
-          alt: ogImageAlt ?? appTitle,
+          alt: ogImageAlt || appTitle,
         },
       ],
     },
@@ -100,7 +86,7 @@ export const buildHomeMetadata = (locale: Locale): Metadata => {
       card: "summary_large_image",
       title: appTitle,
       description: appDescription,
-      images: ["/opengraph-image"],
+      images: [openGraphImageUrl],
     },
     category: "productivity",
   };

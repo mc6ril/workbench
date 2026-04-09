@@ -1,7 +1,51 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 import bundleAnalyzer from "@next/bundle-analyzer";
 import { withSentryConfig } from "@sentry/nextjs";
 import path from "path";
+
+import { PAGE_ROUTES } from "./src/shared/constants/routes";
+import { defaultLocale, supportedLocales } from "./src/shared/i18n/config";
+
+const withNextIntl = createNextIntlPlugin("./src/shared/i18n/request.ts");
+const INTERNAL_MARKETING_ROOT = "/marketing";
+const secondaryMarketingLocalePattern = supportedLocales
+  .filter((locale) => locale !== defaultLocale)
+  .join("|");
+const marketingRewrites = [
+  {
+    source: PAGE_ROUTES.HOME,
+    destination: `${INTERNAL_MARKETING_ROOT}/${defaultLocale}`,
+  },
+  {
+    source: PAGE_ROUTES.PRICING,
+    destination: `${INTERNAL_MARKETING_ROOT}/${defaultLocale}${PAGE_ROUTES.PRICING}`,
+  },
+  {
+    source: PAGE_ROUTES.LEGAL,
+    destination: `${INTERNAL_MARKETING_ROOT}/${defaultLocale}${PAGE_ROUTES.LEGAL}`,
+  },
+  {
+    source: `${PAGE_ROUTES.LEGAL}/:path*`,
+    destination: `${INTERNAL_MARKETING_ROOT}/${defaultLocale}${PAGE_ROUTES.LEGAL}/:path*`,
+  },
+  {
+    source: `/:locale(${secondaryMarketingLocalePattern})`,
+    destination: `${INTERNAL_MARKETING_ROOT}/:locale`,
+  },
+  {
+    source: `/:locale(${secondaryMarketingLocalePattern})${PAGE_ROUTES.PRICING}`,
+    destination: `${INTERNAL_MARKETING_ROOT}/:locale${PAGE_ROUTES.PRICING}`,
+  },
+  {
+    source: `/:locale(${secondaryMarketingLocalePattern})${PAGE_ROUTES.LEGAL}`,
+    destination: `${INTERNAL_MARKETING_ROOT}/:locale${PAGE_ROUTES.LEGAL}`,
+  },
+  {
+    source: `/:locale(${secondaryMarketingLocalePattern})${PAGE_ROUTES.LEGAL}/:path*`,
+    destination: `${INTERNAL_MARKETING_ROOT}/:locale${PAGE_ROUTES.LEGAL}/:path*`,
+  },
+];
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
@@ -32,42 +76,7 @@ const nextConfig: NextConfig = {
    * and use `/{locale}` only for secondary locales (`/en`, `/es`).
    * Files live under `app/marketing/[locale]/…` to avoid clashing with `app/(protected)/[projectId]`.
    */
-  rewrites: async () => {
-    return [
-      {
-        source: "/",
-        destination: "/marketing/fr",
-      },
-      {
-        source: "/pricing",
-        destination: "/marketing/fr/pricing",
-      },
-      {
-        source: "/legal",
-        destination: "/marketing/fr/legal",
-      },
-      {
-        source: "/legal/:path*",
-        destination: "/marketing/fr/legal/:path*",
-      },
-      {
-        source: "/:locale(en|es)",
-        destination: "/marketing/:locale",
-      },
-      {
-        source: "/:locale(en|es)/pricing",
-        destination: "/marketing/:locale/pricing",
-      },
-      {
-        source: "/:locale(en|es)/legal",
-        destination: "/marketing/:locale/legal",
-      },
-      {
-        source: "/:locale(en|es)/legal/:path*",
-        destination: "/marketing/:locale/legal/:path*",
-      },
-    ];
-  },
+  rewrites: async () => marketingRewrites,
   sassOptions: {
     includePaths: [path.join(__dirname, "./src/styles")],
   },
@@ -123,6 +132,6 @@ const sentryBuildOptions = {
 };
 
 export default withSentryConfig(
-  withBundleAnalyzer(nextConfig),
+  withBundleAnalyzer(withNextIntl(nextConfig)),
   sentryBuildOptions
 );

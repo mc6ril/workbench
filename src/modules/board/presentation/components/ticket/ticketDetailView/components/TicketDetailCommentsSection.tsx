@@ -1,5 +1,5 @@
 import Avatar from "@/shared/design-system/avatar";
-import { getIntlLocale, useTranslation } from "@/shared/i18n";
+import { getIntlLocale, useLocale, useTranslations } from "@/shared/i18n";
 
 import type { ProjectMember } from "@/domains/project/core/domain/project.types";
 import type { CommentWithAuthor } from "@/modules/board/core/domain/comment.types";
@@ -44,9 +44,10 @@ const TicketDetailCommentsSection = ({
   onSaveComment,
   onDeleteComment,
 }: Props) => {
-  const t = useTranslation("pages.ticketDetail.page");
-  const tCommon = useTranslation("common");
-  const intlLocale = getIntlLocale();
+  const t = useTranslations("pages.ticketDetail.page");
+  const tCommon = useTranslations("common");
+  const locale = useLocale();
+  const intlLocale = getIntlLocale(locale);
   const commentDateFormatter = new Intl.DateTimeFormat(intlLocale, {
     dateStyle: "medium",
     timeStyle: "short",

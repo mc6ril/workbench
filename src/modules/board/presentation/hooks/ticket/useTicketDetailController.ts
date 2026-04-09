@@ -2,11 +2,13 @@ import { useCallback, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
+import { useTranslations } from "@/shared/i18n";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
+import type { ColumnWorkflowState } from "@/modules/board/core/domain/board.types";
 import type { TicketPriority } from "@/modules/board/core/domain/ticket.types";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import {
@@ -23,6 +25,7 @@ import {
   useUnassignTicket,
   useUpdateTicket,
 } from "@/modules/board/presentation/hooks/ticket";
+import { getBoardColumnDisplayName } from "@/modules/board/presentation/utils/columnI18n";
 
 type UseTicketDetailControllerParams = {
   projectId: string;
@@ -32,7 +35,7 @@ type UseTicketDetailControllerParams = {
 export type TicketDetailStatusOption = {
   value: string;
   label: string;
-  state: "todo" | "in_progress" | "done";
+  state: ColumnWorkflowState;
 };
 
 export const useTicketDetailController = ({
@@ -42,6 +45,7 @@ export const useTicketDetailController = ({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const tColumns = useTranslations("pages.board.columns");
 
   const { data: session } = useSession();
   const {
@@ -86,10 +90,10 @@ export const useTicketDetailController = ({
     const columns = boardConfiguration?.columns ?? [];
     return columns.map((column) => ({
       value: column.id,
-      label: column.name,
+      label: getBoardColumnDisplayName(column, tColumns),
       state: column.state,
     }));
-  }, [boardConfiguration?.columns]);
+  }, [boardConfiguration?.columns, tColumns]);
 
   const effectiveTitle = titleDraft ?? ticket?.title ?? "";
   const effectiveDescription = descriptionDraft ?? ticket?.description ?? "";

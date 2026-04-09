@@ -22,7 +22,7 @@ export const generateMetadata = async ({
     return {};
   }
 
-  return buildHomeMetadata(locale);
+  return await buildHomeMetadata(locale);
 };
 
 const MarketingHomePage = async ({ params }: PageProps) => {

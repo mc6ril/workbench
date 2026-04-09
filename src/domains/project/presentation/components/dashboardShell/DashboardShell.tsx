@@ -4,7 +4,7 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import {
   type DashboardShellProps,
@@ -15,7 +15,7 @@ import DashboardShellInner from "./DashboardShellInner";
 const DashboardShell = (props: DashboardShellProps) => {
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
-  const tSidebar = useTranslation("navigation.sidebar");
+  const tSidebar = useTranslations("navigation.sidebar");
   const isDesktopViewport = useIsDesktopDashboardViewport();
 
   const shellResetKey = `${pathname}:${isDesktopViewport ? "desktop" : "mobile"}`;

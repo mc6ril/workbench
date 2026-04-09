@@ -1,11 +1,12 @@
 import { render, screen } from "@testing-library/react";
 
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import AppProvider from "@/shared/providers/AppProvider";
 
 import { useProfileRuntimeSync } from "@/domains/profile/presentation/providers/useProfileRuntimeSync";
 
 jest.mock("next/navigation", () => ({
-  usePathname: () => "/workspace",
+  usePathname: () => PAGE_ROUTES.WORKSPACE,
 }));
 
 jest.mock("next-themes", () => ({

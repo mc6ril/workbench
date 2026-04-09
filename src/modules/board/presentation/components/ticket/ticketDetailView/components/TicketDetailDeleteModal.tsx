@@ -1,7 +1,7 @@
 import Button from "@/shared/design-system/button";
 import Modal from "@/shared/design-system/modal";
 import Text from "@/shared/design-system/text";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 
@@ -18,8 +18,8 @@ const TicketDetailDeleteModal = ({
   onClose,
   onConfirmDelete,
 }: Props) => {
-  const t = useTranslation("pages.ticketDetail.page");
-  const tCommon = useTranslation("common");
+  const t = useTranslations("pages.ticketDetail.page");
+  const tCommon = useTranslations("common");
 
   return (
     <Modal

@@ -8,15 +8,15 @@ import Form from "@/shared/design-system/form";
 import Input from "@/shared/design-system/input";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
 
 import { useResetPasswordForm } from "@/domains/auth/presentation/hooks/password/useResetPasswordForm";
 
 const ResetPasswordPage = () => {
-  const t = useTranslation("pages.resetPassword");
-  const tCommon = useTranslation("common");
+  const t = useTranslations("pages.resetPassword");
+  const tCommon = useTranslations("common");
 
   const { emailField, onSubmit, emailError, rootError, isPending, isSuccess } =
     useResetPasswordForm();

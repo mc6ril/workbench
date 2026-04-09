@@ -1,5 +1,7 @@
-import type { BillingSessionsClientPort } from "@/domains/billing/core/ports/billingSessionsClient.port";
+import { API_ROUTES } from "@/shared/constants/routes";
+
 import type {
+  BillingSessionsClientPort,
   CreateBillingPortalSessionClientInput,
   CreateCheckoutSessionClientInput,
 } from "@/domains/billing/core/ports/billingSessionsClient.port";
@@ -22,7 +24,7 @@ export const createBillingSessionsClient = (): BillingSessionsClientPort => ({
   async createCheckoutSession(
     input: CreateCheckoutSessionClientInput
   ): Promise<{ url: string }> {
-    const response = await fetch("/api/stripe/checkout", {
+    const response = await fetch(API_ROUTES.STRIPE.CHECKOUT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),
@@ -34,7 +36,7 @@ export const createBillingSessionsClient = (): BillingSessionsClientPort => ({
   async createBillingPortalSession(
     input: CreateBillingPortalSessionClientInput
   ): Promise<{ url: string }> {
-    const response = await fetch("/api/stripe/portal", {
+    const response = await fetch(API_ROUTES.STRIPE.PORTAL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),
@@ -43,4 +45,3 @@ export const createBillingSessionsClient = (): BillingSessionsClientPort => ({
     return parseApiResponse(response);
   },
 });
-

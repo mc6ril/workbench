@@ -1,3 +1,5 @@
+import { PAGE_ROUTES } from "@/shared/constants/routes";
+
 import type { BillingSessionsClientPort } from "@/domains/billing/core/ports/billingSessionsClient.port";
 import { createBillingPortalSessionClient } from "@/domains/billing/core/usecases/createBillingPortalSessionClient";
 
@@ -22,13 +24,12 @@ describe("createBillingPortalSessionClient", () => {
     });
 
     const result = await createBillingPortalSessionClient(client, {
-      from: "/account",
+      from: PAGE_ROUTES.ACCOUNT,
     });
 
     expect(client.createBillingPortalSession).toHaveBeenCalledWith({
-      from: "/account",
+      from: PAGE_ROUTES.ACCOUNT,
     });
     expect(result).toEqual({ url: "https://portal.test" });
   });
 });
-

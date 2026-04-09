@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 /**
@@ -14,8 +15,8 @@ const manifest = (): MetadataRoute.Manifest => {
     short_name: PRODUCT_BRAND_NAME,
     description:
       "Outil d'aide au couple pour réduire la charge mentale et clarifier le quotidien.",
-    start_url: "/",
-    scope: "/",
+    start_url: PAGE_ROUTES.HOME,
+    scope: PAGE_ROUTES.HOME,
     display: "standalone",
     background_color: "#faf7f4",
     theme_color: "#2a1f1a",

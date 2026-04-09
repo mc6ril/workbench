@@ -2,6 +2,12 @@ import type { AppError } from "@/shared/errors/appError";
 import { normalizeToAppError } from "@/shared/errors/appError";
 import { APP_ERROR_MESSAGE_KEY } from "@/shared/i18n/appErrorMessageKeys";
 
+type ErrorTranslationValues = Record<string, string | number | Date>;
+type ErrorTranslator = (
+  key: string,
+  params?: ErrorTranslationValues
+) => string;
+
 const DOMAIN_CONSTRAINT_TO_I18N_KEY: Record<string, string> = {
   LAST_ADMIN_REQUIRED: "domain.LAST_ADMIN_REQUIRED",
   INVITATION_ALREADY_USED: "domain.INVITATION_ALREADY_USED",
@@ -14,7 +20,7 @@ const DOMAIN_CONSTRAINT_TO_I18N_KEY: Record<string, string> = {
  */
 export const getErrorMessageFromAppError = (
   appError: AppError,
-  tErrors: (key: string, params?: Record<string, string | number>) => string
+  tErrors: ErrorTranslator
 ): string => {
   if (appError.code === "CONSTRAINT_VIOLATION" && appError.context?.constraint) {
     const mappedKey =
@@ -53,7 +59,7 @@ export const getErrorMessageFromAppError = (
  */
 export const getErrorMessage = (
   error: unknown,
-  tErrors: (key: string, params?: Record<string, string | number>) => string
+  tErrors: ErrorTranslator
 ): string => {
   const appError = normalizeToAppError(error);
 

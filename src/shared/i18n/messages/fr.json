@@ -323,10 +323,8 @@
     "projectHome": {
       "title": "Accueil",
       "lastActivityNow": "Dernière activité: à l'instant",
-      "lastActivityHours": "Dernière activité: {hours} heure",
-      "lastActivityHours_plural": "Dernière activité: {hours} heures",
-      "lastActivityDays": "Dernière activité: {days} jour",
-      "lastActivityDays_plural": "Dernière activité: {days} jours",
+      "lastActivityHours": "Dernière activité: {hours, plural, one {# heure} other {# heures}}",
+      "lastActivityDays": "Dernière activité: {days, plural, one {# jour} other {# jours}}",
       "lastActivityDate": "Dernière activité: {date}",
       "myTasksTitle": "Mes tâches",
       "myTasksDescription": "Vos tâches assignées en priorité.",
@@ -397,10 +395,8 @@
       "welcomeLabel": "Bonjour 👋",
       "welcomeSubtitle": "Prêt à créer quelque chose de merveilleux aujourd'hui ?",
       "sectionDescription": "Retrouvez tous vos espaces partagés",
-      "membersCount": "{count} membre",
-      "membersCount_other": "{count} membres",
-      "tasksCount": "{count} tâche",
-      "tasksCount_other": "{count} tâches",
+      "membersCount": "{count, plural, one {# membre} other {# membres}}",
+      "tasksCount": "{count, plural, one {# tâche} other {# tâches}}",
       "statInProgress": "En cours",
       "statCompleted": "Terminées",
       "emptyStateCardTitle": "Votre espace vous attend",
@@ -492,6 +488,13 @@
       "backToWorkspaceAriaLabel": "Retourner à l'espace de travail"
     },
     "board": {
+      "columns": {
+        "todo": "À faire",
+        "in_progress": "En cours",
+        "done": "Fait",
+        "in-progress": "En cours",
+        "completed": "Fait"
+      },
       "search": {
         "archivedBadge": "Archivée"
       },
@@ -534,8 +537,7 @@
           "low": "Basse"
         },
         "priorityLabel": "Priorité",
-        "storyPointsLabel": "{count} point",
-        "storyPointsLabel_other": "{count} points",
+        "storyPointsLabel": "{count, plural, one {# point} other {# points}}",
         "openTicketLabel": "Ouvrir la tâche",
         "editTicketLabel": "Modifier la tâche"
       },
@@ -716,8 +718,7 @@
         "loadErrorTitle": "Impossible de charger les membres",
         "emptyTitle": "Aucun membre à afficher",
         "emptyDescription": "Les personnes qui rejoignent le projet apparaîtront ici.",
-        "adminsCount": "{count} administrateur",
-        "adminsCount_other": "{count} administrateurs",
+        "adminsCount": "{count, plural, one {# administrateur} other {# administrateurs}}",
         "syncing": "Synchronisation...",
         "live": "Synchronisé",
         "roleFieldLabel": "Rôle"
@@ -740,8 +741,7 @@
         "loadErrorTitle": "Impossible de charger les invitations",
         "emptyTitle": "Aucune invitation en attente",
         "emptyDescription": "Les liens actifs apparaîtront ici dès qu'une invitation est créée.",
-        "activeCount": "{count} invitation en attente",
-        "activeCount_other": "{count} invitations en attente",
+        "activeCount": "{count, plural, one {# invitation en attente} other {# invitations en attente}}",
         "pendingLinkTitle": "Lien d'invitation",
         "createdAt": "Créé le {date}",
         "expiresAt": "Expire le {date}",

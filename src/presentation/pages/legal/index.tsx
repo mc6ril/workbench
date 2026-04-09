@@ -7,13 +7,13 @@ import { getAccessibilityId } from "@/shared/a11y";
 import { GDPR_RIGHTS_KEYS, LEGAL_SECTIONS } from "@/shared/constants";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
 
 const LegalPage = () => {
   const router = useRouter();
-  const t = useTranslation("pages.legal");
+  const t = useTranslations("pages.legal");
 
   const handleGoBack = useCallback(() => {
     router.back();

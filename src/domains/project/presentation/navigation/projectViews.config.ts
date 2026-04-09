@@ -1,4 +1,4 @@
-import { PROJECT_VIEWS } from "@/shared/constants/routes";
+import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
 
 import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
 
@@ -76,7 +76,7 @@ export const getProjectViewKeyFromPath = (
   pathname: string,
   projectId: string
 ): ProjectViewKey => {
-  const normalized = pathname.replace(/\/$/, "") || "/";
+  const normalized = pathname.replace(/\/$/, "") || PAGE_ROUTES.HOME;
   const prefix = `/${projectId}`;
   if (normalized === prefix) {
     return PROJECT_VIEWS.BOARD;

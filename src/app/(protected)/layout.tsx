@@ -5,8 +5,8 @@ import { dehydrate } from "@tanstack/react-query";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { createLoggerFactory } from "@/shared/observability";
+import AppProvider from "@/shared/providers/AppProvider";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
-import RequestLocaleAppProviders from "@/shared/providers/RequestLocaleAppProviders";
 import { noIndexMetadata } from "@/shared/seo/noIndexMetadata";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
@@ -76,9 +76,9 @@ const ProtectedLayout = async ({
   }
   // User is authenticated, render children
   return (
-    <RequestLocaleAppProviders dehydratedState={dehydrate(queryClient)}>
+    <AppProvider dehydratedState={dehydrate(queryClient)}>
       {children}
-    </RequestLocaleAppProviders>
+    </AppProvider>
   );
 };
 

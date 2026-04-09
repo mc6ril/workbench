@@ -4,7 +4,7 @@ import ErrorMessage from "@/shared/design-system/error_message";
 
 // Mock i18n
 jest.mock("@/shared/i18n", () => ({
-  useTranslation: jest.fn((namespace: string) => {
+  useTranslations: jest.fn((namespace: string) => {
     if (namespace === "common") {
       return (key: string) => {
         const translations: Record<string, string> = {

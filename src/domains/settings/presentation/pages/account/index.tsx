@@ -22,14 +22,14 @@ import { getAppErrorCode } from "@/shared/errors/appError";
 import { INFRA_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import {
   getIntlLocale,
-  persistLocaleCookie,
+  type Locale,
   supportedLocaleOptions,
   supportedLocales,
-  useLocaleStore,
-  useTranslation,
+  useLocale,
+  useLocalePreference,
+  useTranslations,
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import type { Locale } from "@/shared/i18n/types";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
@@ -91,10 +91,12 @@ const AccountPage = () => {
   const { data: subscription, isLoading: isSubscriptionLoading } =
     useSubscription();
   const createBillingPortalSessionMutation = useCreateBillingPortalSession();
-  const t = useTranslation("pages.account");
-  const tErrors = useTranslation("errors");
-  const tStripe = useTranslation("errors.stripe");
-  const tAvatar = useTranslation("ui.avatarUpload");
+  const locale = useLocale();
+  const applyLocalePreference = useLocalePreference();
+  const t = useTranslations("pages.account");
+  const tErrors = useTranslations("errors");
+  const tStripe = useTranslations("errors.stripe");
+  const tAvatar = useTranslations("ui.avatarUpload");
   const addToast = useToastStore((s) => s.addToast);
   const checkoutHandled = useRef(false);
 
@@ -297,7 +299,7 @@ const AccountPage = () => {
 
   const goBackHref = useMemo(() => {
     const from = searchParams.get("from");
-    if (from && from.startsWith("/")) {
+    if (from && from.startsWith(PAGE_ROUTES.HOME)) {
       return from;
     }
     return PAGE_ROUTES.WORKSPACE;
@@ -323,8 +325,6 @@ const AccountPage = () => {
   const handleSignOut = useCallback(() => {
     signOutMutation.mutate();
   }, [signOutMutation]);
-
-  const locale = useLocaleStore((s) => s.locale);
 
   const handleManageSubscription = useCallback(async () => {
     try {
@@ -359,21 +359,18 @@ const AccountPage = () => {
     [updatePreferencesMutation, setTheme]
   );
 
-  const setLocale = useLocaleStore((s) => s.setLocale);
-
   const handleLanguageChange = useCallback(
     (value: string) => {
       if (supportedLocales.includes(value as Locale)) {
         const nextLocale = value as Locale;
         setLanguagePreference(nextLocale);
-        setLocale(nextLocale);
-        persistLocaleCookie(nextLocale);
+        applyLocalePreference(nextLocale);
       } else {
         setLanguagePreference(value);
       }
       updatePreferencesMutation.mutate({ language: value });
     },
-    [updatePreferencesMutation, setLocale]
+    [applyLocalePreference, updatePreferencesMutation]
   );
 
   const canManagePassword = canUpdatePassword ?? true;

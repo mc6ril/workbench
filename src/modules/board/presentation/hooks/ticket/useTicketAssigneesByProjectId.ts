@@ -12,11 +12,16 @@ import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
  * @returns Record keyed by ticketId
  */
 export const useTicketAssigneesByProjectId = (
-  projectId: string | undefined
+  projectId: string | undefined,
+  options?: {
+    enabled?: boolean;
+    initialData?: Record<string, TicketAssignee[]>;
+  }
 ) => {
   return useQuery<Record<string, TicketAssignee[]>>({
     queryKey: queryKeys.tickets.assigneesByProjectId(projectId ?? ""),
     queryFn: () => getTicketAssigneesByProjectId(ticketRepository, projectId!),
-    enabled: !!projectId,
+    enabled: !!projectId && (options?.enabled ?? true),
+    initialData: options?.initialData,
   });
 };

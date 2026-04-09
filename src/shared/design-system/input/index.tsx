@@ -3,7 +3,7 @@ import React, { forwardRef, useCallback, useState } from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { EyeIcon, EyeOffIcon } from "@/shared/design-system/icons";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./input.module.scss";
 
@@ -51,7 +51,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
   ) => {
     const isPasswordType = type === "password";
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const t = useTranslation("common.passwordToggle");
+    const t = useTranslations("common.passwordToggle");
 
     const togglePasswordVisibility = useCallback(() => {
       setPasswordVisible((prev) => !prev);

@@ -1,6 +1,20 @@
-import type { Locale } from "@/shared/i18n/types";
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 
-import { defaultLocale, isSupportedLocale } from "./config";
+import {
+  defaultLocale,
+  isSupportedLocale,
+  type Locale,
+  supportedLocales,
+} from "./config";
+
+const marketingLocalePattern = supportedLocales.join("|");
+const MARKETING_LEAF_ROUTES = [PAGE_ROUTES.PRICING, PAGE_ROUTES.LEGAL] as const;
+const marketingLeafRoutePattern = MARKETING_LEAF_ROUTES.map((value) =>
+  value.slice(1)
+).join("|");
+const explicitMarketingLocalePattern = new RegExp(
+  `^/(${marketingLocalePattern})(?:$|/(?:${marketingLeafRoutePattern})(?:/.*)?)`
+);
 
 const normalizeMarketingPathname = (pathname: string): string => {
   if (pathname.length > 1 && pathname.endsWith("/")) {
@@ -16,15 +30,19 @@ const normalizeMarketingPathname = (pathname: string): string => {
  * App routes (workspace, auth, join, api) stay unprefixed.
  */
 export const buildMarketingHomePath = (locale: Locale): string => {
-  return locale === defaultLocale ? "/" : `/${locale}`;
+  return locale === defaultLocale ? PAGE_ROUTES.HOME : `/${locale}`;
 };
 
 export const buildMarketingPricingPath = (locale: Locale): string => {
-  return locale === defaultLocale ? "/pricing" : `/${locale}/pricing`;
+  return locale === defaultLocale
+    ? PAGE_ROUTES.PRICING
+    : `/${locale}${PAGE_ROUTES.PRICING}`;
 };
 
 export const buildMarketingLegalPath = (locale: Locale): string => {
-  return locale === defaultLocale ? "/legal" : `/${locale}/legal`;
+  return locale === defaultLocale
+    ? PAGE_ROUTES.LEGAL
+    : `/${locale}${PAGE_ROUTES.LEGAL}`;
 };
 
 /**
@@ -34,7 +52,7 @@ export const getMarketingLocaleFromPathname = (
   pathname: string
 ): Locale | null => {
   const match = normalizeMarketingPathname(pathname).match(
-    /^\/(fr|en|es)(?:$|\/(?:pricing|legal)(?:\/.*)?)/
+    explicitMarketingLocalePattern
   );
   if (!match?.[1]) {
     return null;
@@ -50,10 +68,10 @@ export const isDefaultLocaleMarketingPathname = (pathname: string): boolean => {
   const normalizedPathname = normalizeMarketingPathname(pathname);
 
   return (
-    normalizedPathname === "/" ||
-    normalizedPathname === "/pricing" ||
-    normalizedPathname === "/legal" ||
-    normalizedPathname.startsWith("/legal/")
+    normalizedPathname === PAGE_ROUTES.HOME ||
+    normalizedPathname === PAGE_ROUTES.PRICING ||
+    normalizedPathname === PAGE_ROUTES.LEGAL ||
+    normalizedPathname.startsWith(`${PAGE_ROUTES.LEGAL}/`)
   );
 };
 
@@ -71,36 +89,4 @@ export const getResolvedMarketingLocaleFromPathname = (
   }
 
   return isDefaultLocaleMarketingPathname(pathname) ? defaultLocale : null;
-};
-
-/**
- * Returns true when a marketing route uses the legacy default-locale prefix.
- */
-export const isDefaultLocalePrefixedMarketingPathname = (
-  pathname: string
-): boolean => {
-  const normalizedPathname = normalizeMarketingPathname(pathname);
-  const escapedDefaultLocale = defaultLocale.replace(
-    /[.*+?^${}()|[\]\\]/g,
-    "\\$&"
-  );
-  const prefixedMarketingPath = new RegExp(
-    `^/${escapedDefaultLocale}(?:$|/(pricing|legal)(?:/.*)?)`
-  );
-
-  return prefixedMarketingPath.test(normalizedPathname);
-};
-
-/**
- * Strips the legacy default-locale prefix from a marketing pathname.
- */
-export const stripDefaultLocalePrefix = (pathname: string): string => {
-  const normalizedPathname = normalizeMarketingPathname(pathname);
-
-  if (!isDefaultLocalePrefixedMarketingPathname(normalizedPathname)) {
-    return normalizedPathname;
-  }
-
-  const strippedPath = normalizedPathname.slice(`/${defaultLocale}`.length);
-  return strippedPath.length > 0 ? strippedPath : "/";
 };

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import SkipLink from "@/shared/design-system/skip_link";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { buildProjectRoute, normalizePath } from "@/shared/utils/routes";
 
 import DashboardShell from "@/domains/project/presentation/components/dashboardShell";
@@ -25,8 +25,8 @@ type Props = {
 
 const ProjectShellContent = ({ projectId, children, shellAdapter }: Props) => {
   const pathname = usePathname();
-  const tSkipLink = useTranslation("navigation.skipLink");
-  const tSidebar = useTranslation("navigation.sidebar");
+  const tSkipLink = useTranslations("navigation.skipLink");
+  const tSidebar = useTranslations("navigation.sidebar");
   const mainContentId = getAccessibilityId("main-content");
   const { toolbar, filters } = useProjectShellContribution();
   const isTicketDetailRoute = normalizePath(pathname).startsWith(

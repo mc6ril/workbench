@@ -3,7 +3,6 @@ import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { createAppError } from "@/shared/errors/appError";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
-import { getLocale } from "@/shared/i18n/config";
 import {
   buildAuthCallbackPath,
   sanitizeInternalRedirectPath,
@@ -107,7 +106,7 @@ export const createAuthGateway = (
     try {
       // `locale` is available in Supabase email templates as `{{ .Data.locale }}` (user_metadata).
       const metadata: Record<string, unknown> = {
-        locale: getLocale(),
+        locale: input.locale,
       };
       if (input.displayName) {
         metadata.display_name = input.displayName;

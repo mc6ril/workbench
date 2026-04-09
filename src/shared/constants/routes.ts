@@ -4,12 +4,13 @@
  */
 
 /**
- * Named page route paths for authenticated pages.
- * Use these constants instead of hardcoded path strings.
+ * Named page routes reused across redirects and navigation.
  */
 export const PAGE_ROUTES = Object.freeze({
   /** Site root; serves the default-locale marketing home. */
   HOME: "/",
+  PRICING: "/pricing",
+  LEGAL: "/legal",
   WORKSPACE: "/workspace",
   ACCOUNT: "/account",
 });
@@ -55,6 +56,8 @@ export const AUTH_PAGE_ROUTES = Object.freeze({
  */
 export const PUBLIC_ROUTES: readonly string[] = Object.freeze([
   PAGE_ROUTES.HOME,
+  PAGE_ROUTES.PRICING,
+  PAGE_ROUTES.LEGAL,
   AUTH_PAGE_ROUTES.SIGNIN,
   AUTH_PAGE_ROUTES.SIGNUP,
   AUTH_PAGE_ROUTES.VERIFY_EMAIL,
@@ -68,6 +71,11 @@ export const PUBLIC_ROUTES: readonly string[] = Object.freeze([
  * Used by client-side hooks to call API routes for admin-privileged operations.
  */
 export const API_ROUTES = Object.freeze({
+  STRIPE: Object.freeze({
+    CHECKOUT: "/api/stripe/checkout",
+    PORTAL: "/api/stripe/portal",
+    WEBHOOK: "/api/stripe/webhook",
+  }),
   AUTH: Object.freeze({
     DELETE_USER: "/api/auth/delete-user",
   }),

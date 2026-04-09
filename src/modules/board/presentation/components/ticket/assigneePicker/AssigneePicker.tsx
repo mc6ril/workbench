@@ -7,7 +7,7 @@ import React, {
 } from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./AssigneePicker.module.scss";
 import AssigneePickerCurrent from "./components/AssigneePickerCurrent";
@@ -43,7 +43,7 @@ const AssigneePicker = ({
   isLoading = false,
   disabled = false,
 }: Props) => {
-  const t = useTranslation("ui.assigneePicker");
+  const t = useTranslations("ui.assigneePicker");
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pickerId = getAccessibilityId("assignee-picker");

@@ -1,51 +1,16 @@
-import type { Locale } from "./types";
+import type { Locale } from "./routing";
+import { localeCookieMaxAgeSeconds, routing } from "./routing";
 
-/**
- * Default locale for the application.
- */
-export const defaultLocale: Locale = "fr";
+export { localeCookieMaxAgeSeconds };
+export type { Locale } from "./routing";
 
-/**
- * Cookie used to persist an explicit locale choice across requests.
- */
-export const localeCookieName = "workbench-locale";
+export const defaultLocale: Locale = routing.defaultLocale;
+export const supportedLocales = routing.locales;
+export const localeCookieName: string =
+  routing.localeCookie && typeof routing.localeCookie === "object"
+    ? (routing.localeCookie.name ?? "workbench-locale")
+    : "workbench-locale";
 
-/**
- * Middleware forwards the resolved locale to Server Components (read in getRequestLocale).
- */
-export const requestLocaleHeaderName = "x-next-locale";
-
-/** Max-Age for the locale preference cookie (1 year). */
-export const localeCookieMaxAgeSeconds = 60 * 60 * 24 * 365;
-
-/**
- * External getter set at runtime by the locale store.
- * Allows getLocale() to read the current locale without coupling shared logic
- * to the presentation implementation.
- */
-let localeGetter: (() => Locale) | null = null;
-
-/**
- * Registers a locale getter function from the presentation layer.
- * Called by the presentation layer whenever the active locale changes.
- */
-export const registerLocaleGetter = (getter: () => Locale): void => {
-  localeGetter = getter;
-};
-
-/**
- * Supported locales.
- */
-export const supportedLocales: readonly Locale[] = Object.freeze([
-  "fr",
-  "en",
-  "es",
-]);
-
-/**
- * Supported locales with native language labels.
- * Labels use native names (e.g. "Français" not "French") as they are language-independent.
- */
 export const supportedLocaleOptions: readonly {
   code: Locale;
   label: string;
@@ -55,18 +20,12 @@ export const supportedLocaleOptions: readonly {
   { code: "es", label: "Español" },
 ]);
 
-/**
- * Maps internal locale codes to BCP 47 / Intl-compatible locale strings.
- */
 const localeToIntlMap: Record<Locale, string> = {
   fr: "fr-FR",
   en: "en-US",
   es: "es-ES",
 };
 
-/**
- * Returns true when the provided value matches one of the supported locales.
- */
 export const isSupportedLocale = (value: string): value is Locale => {
   return supportedLocales.includes(value as Locale);
 };
@@ -75,10 +34,6 @@ const normalizeLocaleToken = (value: string): string => {
   return value.trim().toLowerCase().replace(/_/g, "-");
 };
 
-/**
- * Matches a locale candidate against the supported locales.
- * Accepts both base locales ("fr") and BCP 47 variants ("fr-FR", "es_MX").
- */
 export const matchSupportedLocale = (value?: string | null): Locale | null => {
   if (!value) {
     return null;
@@ -94,10 +49,6 @@ export const matchSupportedLocale = (value?: string | null): Locale | null => {
   return isSupportedLocale(baseLocale) ? baseLocale : null;
 };
 
-/**
- * Parses an Accept-Language header and returns locale candidates ordered by
- * quality and original appearance.
- */
 export const parseAcceptLanguageHeader = (
   headerValue?: string | null
 ): string[] => {
@@ -139,14 +90,6 @@ type ResolveLocaleInput = {
   acceptLanguage?: string | null;
 };
 
-/**
- * Resolves the best locale for a request.
- * Priority:
- * 1. Explicitly chosen locale (eg. user preference)
- * 2. Persisted locale cookie
- * 3. Browser/system locale from Accept-Language
- * 4. Application default locale
- */
 export const resolveLocale = ({
   preferredLocale,
   cookieLocale,
@@ -172,9 +115,6 @@ export const resolveLocale = ({
   return defaultLocale;
 };
 
-/**
- * Persists an explicit locale choice in the browser.
- */
 export const persistLocaleCookie = (locale: Locale): void => {
   if (typeof document === "undefined") {
     return;
@@ -190,19 +130,6 @@ export const persistLocaleCookie = (locale: Locale): void => {
     `SameSite=Lax${secureSuffix}`;
 };
 
-/**
- * Get the current active locale.
- * Reads from the registered locale getter if available,
- * otherwise falls back to the default locale.
- */
-export const getLocale = (): Locale => {
-  return localeGetter ? localeGetter() : defaultLocale;
-};
-
-/**
- * Get the Intl-compatible locale string (BCP 47) for the provided locale.
- * Useful for Intl.DateTimeFormat, Intl.NumberFormat, etc.
- */
-export const getIntlLocale = (locale: Locale = getLocale()): string => {
+export const getIntlLocale = (locale: Locale): string => {
   return localeToIntlMap[locale];
 };
