@@ -121,7 +121,7 @@ export const useRecipesShellContribution = (
         <ProjectToolbar
           pageTitle={pageTitle}
           showSearch={isCatalogRoute}
-          addActionType="ticket"
+          addActionType={isCatalogRoute ? "ticket" : null}
           addActionLabel={tCatalog("toolbar.addRecipe")}
           addActionAriaLabel={tCatalog("toolbar.addRecipeAriaLabel")}
           searchValue={isCatalogRoute ? searchInput : ""}

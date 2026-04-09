@@ -41,4 +41,12 @@ export const APP_LIMITS = Object.freeze({
     OUTPUT_QUALITY: 0.86,
     STORAGE_BUCKET: "avatars",
   },
+  RECIPE_COVER: {
+    MAX_INPUT_SIZE_BYTES: 20 * 1024 * 1024,
+    MAX_DIMENSION_PX: 1600,
+    ALLOWED_MIME_TYPES: ["image/jpeg", "image/png", "image/webp"] as const,
+    OUTPUT_MIME_TYPE: "image/webp" as const,
+    OUTPUT_QUALITY: 0.84,
+    STORAGE_BUCKET: "recipe-covers",
+  },
 });

@@ -1,20 +1,34 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import {
+  type ChangeEvent,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ZodError } from "zod";
 
+import { getAccessibilityId } from "@/shared/a11y/constants";
+import { APP_LIMITS } from "@/shared/constants/app";
 import Button from "@/shared/design-system/button";
 import Card from "@/shared/design-system/card";
+import CloseButton from "@/shared/design-system/close_button";
 import ErrorMessage from "@/shared/design-system/error_message";
 import Form from "@/shared/design-system/form";
 import Input from "@/shared/design-system/input";
-import Link from "@/shared/design-system/link";
+import SectionTitle from "@/shared/design-system/section_title";
+import Select from "@/shared/design-system/select";
+import Text from "@/shared/design-system/text";
 import Textarea from "@/shared/design-system/textarea";
+import { useTranslation } from "@/shared/i18n";
 
-import componentStyles from "./styles.module.scss";
+import styles from "./styles.module.scss";
 
 import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
 import {
@@ -22,13 +36,14 @@ import {
   normalizeRecipeTagLabel,
 } from "@/modules/recipes/core/domain/editor/recipeEditor.helpers";
 import type { SaveRecipeEditorInput } from "@/modules/recipes/core/domain/editor/recipeEditor.types";
-import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
-import type { RecipeTag } from "@/modules/recipes/core/domain/recipe.types";
-import { RECIPE_INGREDIENT_UNIT_VALUES } from "@/modules/recipes/core/domain/recipe.types";
+import {
+  RECIPE_INGREDIENT_UNIT_VALUES,
+  type RecipeTag,
+} from "@/modules/recipes/core/domain/recipe.types";
 import { RecipeEditorSubmissionSchema } from "@/modules/recipes/core/usecases/editor/saveRecipe";
-import QuickListSummaryCard from "@/modules/recipes/presentation/components/quickList/QuickListSummaryCard";
 import { useCreateRecipe } from "@/modules/recipes/presentation/hooks/editor/useCreateRecipe";
 import { useUpdateRecipe } from "@/modules/recipes/presentation/hooks/editor/useUpdateRecipe";
+import { useUploadRecipeCover } from "@/modules/recipes/presentation/hooks/editor/useUploadRecipeCover";
 import {
   buildRecipeDetailRoute,
   buildRecipesCatalogRoute,
@@ -39,7 +54,54 @@ type Props = {
   mode: "create" | "edit";
   draft: RecipeDraft;
   availableTags: RecipeTag[];
-  quickListRecipes: QuickListRecipe[];
+};
+
+type SectionHeadingProps = {
+  title: string;
+};
+
+type MetaBadgeProps = {
+  label: string;
+  value: string;
+  tone?: "default" | "accent" | "muted";
+};
+
+type IngredientSectionProps = {
+  sectionKey: "validatedIngredients" | "additionIngredients";
+  sectionHeading: SectionHeadingProps;
+  emptyCopy: string;
+  addLabel: string;
+  nameLabel: string;
+  itemLabel: string;
+  fields: Array<{
+    id: string;
+  }>;
+  ingredientErrors: unknown;
+  appendIngredient: () => void;
+  moveIngredient: (from: number, to: number) => void;
+  removeIngredient: (index: number) => void;
+  register: ReturnType<typeof useForm<SaveRecipeEditorInput>>["register"];
+  ingredientUnitOptions: Array<{
+    value: string;
+    label: string;
+  }>;
+  isPending: boolean;
+  t: ReturnType<typeof useTranslation>;
+};
+
+type IngredientRowError = {
+  amount?: {
+    message?: string;
+  };
+  unit?: {
+    message?: string;
+  };
+  displayName?: {
+    message?: string;
+  };
+  notes?: {
+    message?: string;
+  };
 };
 
 const createEmptyIngredientRow = () => ({
@@ -54,7 +116,12 @@ const createEmptyStepRow = () => ({
   meta: "",
 });
 
-const styles = componentStyles;
+const RECIPE_COVER_ACCEPT = APP_LIMITS.RECIPE_COVER.ALLOWED_MIME_TYPES.join(
+  ","
+);
+const RECIPE_COVER_ALLOWED_MIME_TYPES = new Set<string>(
+  APP_LIMITS.RECIPE_COVER.ALLOWED_MIME_TYPES
+);
 
 const getFieldMessage = (error: unknown): string | undefined => {
   if (!error || typeof error !== "object") {
@@ -116,18 +183,196 @@ const mapDraftToFormValues = (
   };
 };
 
+const resizeTextarea = (element: HTMLTextAreaElement | null) => {
+  if (!element) {
+    return;
+  }
+
+  element.style.height = "0";
+  element.style.height = `${element.scrollHeight}px`;
+};
+
+const SectionHeading = ({ title }: SectionHeadingProps) => {
+  return (
+    <div className={styles["editor-section-heading"]}>
+      <SectionTitle>{title}</SectionTitle>
+    </div>
+  );
+};
+
+const MetaBadge = ({
+  label,
+  value,
+  tone = "default",
+}: MetaBadgeProps) => {
+  return (
+    <div
+      className={[
+        styles["editor-meta-badge"],
+        tone !== "default" ? styles[`editor-meta-badge--${tone}`] : null,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <Text
+        as="span"
+        variant="caption"
+        className={styles["editor-meta-label"]}
+      >
+        {label}
+      </Text>
+      <Text as="span" variant="small" className={styles["editor-meta-value"]}>
+        {value}
+      </Text>
+    </div>
+  );
+};
+
+const IngredientSection = ({
+  sectionKey,
+  sectionHeading,
+  emptyCopy,
+  addLabel,
+  nameLabel,
+  itemLabel,
+  fields,
+  ingredientErrors,
+  appendIngredient,
+  moveIngredient,
+  removeIngredient,
+  register,
+  ingredientUnitOptions,
+  isPending,
+  t,
+}: IngredientSectionProps) => {
+  const ingredientRowErrors = Array.isArray(ingredientErrors)
+    ? (ingredientErrors as Array<IngredientRowError | undefined>)
+    : [];
+
+  return (
+    <section className={styles["editor-main-section"]}>
+      <SectionHeading {...sectionHeading} />
+
+      {getFieldMessage(ingredientErrors) ? (
+        <ErrorMessage
+          message={getFieldMessage(ingredientErrors) ?? ""}
+          className={styles["editor-form-error"]}
+        />
+      ) : null}
+
+      {fields.length === 0 ? (
+        <div className={styles["editor-empty-state"]}>
+          <Text variant="body" className={styles["editor-empty-copy"]}>
+            {emptyCopy}
+          </Text>
+        </div>
+      ) : null}
+
+      <div className={styles["editor-item-list"]}>
+        {fields.map((field, index) => {
+          const rowErrors = ingredientRowErrors[index];
+          const rowLabel = t(`sections.${sectionKey}.rowLabel`, {
+            position: index + 1,
+          });
+
+          return (
+            <div key={field.id} className={styles["editor-item-card"]}>
+              <div className={styles["editor-item-head"]}>
+                <span className={styles["editor-item-index"]}>{rowLabel}</span>
+
+                <div className={styles["editor-controls"]}>
+                  <Button
+                    label={t("actions.moveUpItemAriaLabel", {
+                      label: itemLabel,
+                      position: index + 1,
+                    })}
+                    variant="ghost"
+                    onClick={() => moveIngredient(index, index - 1)}
+                    disabled={isPending || index === 0}
+                  >
+                    {t("actions.moveUp")}
+                  </Button>
+                  <Button
+                    label={t("actions.moveDownItemAriaLabel", {
+                      label: itemLabel,
+                      position: index + 1,
+                    })}
+                    variant="ghost"
+                    onClick={() => moveIngredient(index, index + 1)}
+                    disabled={isPending || index === fields.length - 1}
+                  >
+                    {t("actions.moveDown")}
+                  </Button>
+                  <Button
+                    label={t("actions.removeItemAriaLabel", {
+                      label: itemLabel,
+                      position: index + 1,
+                    })}
+                    variant="ghost"
+                    onClick={() => removeIngredient(index)}
+                    disabled={isPending}
+                  >
+                    {t("actions.remove")}
+                  </Button>
+                </div>
+              </div>
+
+              <div
+                className={`${styles["editor-grid"]} ${styles["editor-grid--ingredient"]}`}
+              >
+                <Input
+                  label={t("fields.ingredientAmount.label")}
+                  error={rowErrors?.amount?.message}
+                  disabled={isPending}
+                  {...register(`${sectionKey}.${index}.amount` as const)}
+                />
+                <Select
+                  label={t("fields.ingredientUnit.label")}
+                  options={ingredientUnitOptions}
+                  error={rowErrors?.unit?.message}
+                  disabled={isPending}
+                  {...register(`${sectionKey}.${index}.unit` as const)}
+                />
+                <Input
+                  label={nameLabel}
+                  error={rowErrors?.displayName?.message}
+                  disabled={isPending}
+                  {...register(`${sectionKey}.${index}.displayName` as const)}
+                />
+                <input type="hidden" {...register(`${sectionKey}.${index}.notes` as const)} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className={styles["editor-section-footer"]}>
+        <Button
+          label={addLabel}
+          variant="secondary"
+          onClick={appendIngredient}
+          disabled={isPending}
+        />
+      </div>
+    </section>
+  );
+};
+
 const RecipeEditorClientPage = ({
   projectId,
   mode,
   draft,
   availableTags,
-  quickListRecipes,
 }: Props) => {
+  const t = useTranslation("pages.recipes.editor");
   const isCreate = mode === "create";
   const router = useRouter();
   const [tagDraft, setTagDraft] = useState("");
   const [isRouting, startRouting] = useTransition();
+  const titleTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const coverUploadInputRef = useRef<HTMLInputElement | null>(null);
   const createRecipeMutation = useCreateRecipe();
+  const coverUploadMutation = useUploadRecipeCover();
   const updateRecipeMutation = useUpdateRecipe();
   const defaultValues = useMemo(
     () => mapDraftToFormValues(projectId, draft),
@@ -139,6 +384,7 @@ const RecipeEditorClientPage = ({
     handleSubmit,
     setError,
     clearErrors,
+    setValue,
     formState: { errors },
   } = useForm<SaveRecipeEditorInput>({
     resolver: zodResolver(RecipeEditorSubmissionSchema),
@@ -220,8 +466,15 @@ const RecipeEditorClientPage = ({
 
   const isPending =
     createRecipeMutation.isPending ||
+    coverUploadMutation.isPending ||
     updateRecipeMutation.isPending ||
     isRouting;
+
+  const titleField = register("title");
+
+  useLayoutEffect(() => {
+    resizeTextarea(titleTextareaRef.current);
+  }, [watchedTitle]);
 
   const selectedTagSlugs = useMemo(() => {
     return new Set(
@@ -238,11 +491,18 @@ const RecipeEditorClientPage = ({
   const resolvedServingsLabel =
     normalizeRecipeTagLabel(watchedServingsLabel) ??
     (normalizeRecipeTagLabel(watchedServingsCount)
-      ? `${watchedServingsCount} portions`
-      : "A definir");
+      ? t("meta.servingsWithCount", {
+          count: watchedServingsCount,
+        })
+      : t("meta.servingsFallback"));
   const resolvedTimeLabel = normalizeRecipeTagLabel(watchedTotalTimeMinutes)
-    ? `${watchedTotalTimeMinutes} min`
-    : "A estimer";
+    ? t("meta.timeWithCount", {
+        count: watchedTotalTimeMinutes,
+      })
+    : t("meta.timeFallback");
+  const resolvedImageLabel = normalizeRecipeTagLabel(watchedCoverImageUrl)
+    ? t("meta.imageReady")
+    : t("meta.imageEmpty");
   const nonBlankValidatedIngredients = watchedValidatedIngredients.filter(
     (ingredient) =>
       normalizeRecipeTagLabel(ingredient.amount) ||
@@ -262,6 +522,30 @@ const RecipeEditorClientPage = ({
       normalizeRecipeTagLabel(step.instruction) ||
       normalizeRecipeTagLabel(step.meta)
   );
+  const backHref = isCreate
+    ? buildRecipesCatalogRoute(projectId)
+    : buildRecipeDetailRoute(projectId, draft.id ?? "");
+  const ingredientUnitOptions = useMemo(
+    () => [
+      {
+        value: "",
+        label: t("fields.ingredientUnit.options.none"),
+      },
+      ...RECIPE_INGREDIENT_UNIT_VALUES.map((unit) => ({
+        value: unit,
+        label: t(`fields.ingredientUnit.options.${unit}`),
+      })),
+    ],
+    [t]
+  );
+  const coverImageFieldId = getAccessibilityId("recipe-cover-image-url");
+  const coverImageFieldHintId = getAccessibilityId("recipe-cover-image-url-hint");
+  const coverImageFieldErrorId = getAccessibilityId(
+    "recipe-cover-image-url-error"
+  );
+  const coverImageFieldDescribedBy = errors.coverImageUrl?.message
+    ? coverImageFieldErrorId
+    : coverImageFieldHintId;
 
   const handleAddTag = (candidate: string) => {
     const label = normalizeRecipeTagLabel(candidate);
@@ -284,6 +568,64 @@ const RecipeEditorClientPage = ({
     setTagDraft("");
   };
 
+  const handleTriggerCoverUpload = useCallback(() => {
+    coverUploadInputRef.current?.click();
+  }, []);
+
+  const handleCloseEditor = useCallback(() => {
+    router.push(backHref);
+  }, [backHref, router]);
+
+  const handleCoverFileChange = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+
+      event.target.value = "";
+
+      if (!file) {
+        return;
+      }
+
+      if (file.size > APP_LIMITS.RECIPE_COVER.MAX_INPUT_SIZE_BYTES) {
+        setError("coverImageUrl", {
+          type: "server",
+          message: t("errors.coverUploadTooLarge"),
+        });
+        return;
+      }
+
+      if (!RECIPE_COVER_ALLOWED_MIME_TYPES.has(file.type)) {
+        setError("coverImageUrl", {
+          type: "server",
+          message: t("errors.coverUploadInvalidType"),
+        });
+        return;
+      }
+
+      clearErrors("coverImageUrl");
+
+      try {
+        const uploadedCoverUrl = await coverUploadMutation.mutateAsync({
+          projectId,
+          file,
+        });
+
+        setValue("coverImageUrl", uploadedCoverUrl, {
+          shouldDirty: true,
+          shouldTouch: true,
+          shouldValidate: true,
+        });
+        clearErrors("coverImageUrl");
+      } catch {
+        setError("coverImageUrl", {
+          type: "server",
+          message: t("errors.coverUploadFailed"),
+        });
+      }
+    },
+    [clearErrors, coverUploadMutation, projectId, setError, setValue, t]
+  );
+
   const onSubmit = handleSubmit(async (values) => {
     clearErrors("root");
 
@@ -298,7 +640,7 @@ const RecipeEditorClientPage = ({
       if (!savedRecipe.id) {
         setError("root", {
           type: "server",
-          message: "La recette a ete enregistree sans identifiant exploitable.",
+          message: t("errors.missingId"),
         });
         return;
       }
@@ -326,648 +668,459 @@ const RecipeEditorClientPage = ({
 
       setError("root", {
         type: "server",
-        message: "Impossible d'enregistrer la recette pour l'instant.",
+        message: t("errors.saveFailed"),
       });
     }
   });
 
+  const metaBadges: MetaBadgeProps[] = [
+    {
+      label: t("meta.servings"),
+      value: resolvedServingsLabel,
+      tone: normalizeRecipeTagLabel(watchedServingsCount) ? "accent" : "muted",
+    },
+    {
+      label: t("meta.time"),
+      value: resolvedTimeLabel,
+      tone: normalizeRecipeTagLabel(watchedTotalTimeMinutes)
+        ? "accent"
+        : "muted",
+    },
+    {
+      label: t("meta.image"),
+      value: resolvedImageLabel,
+      tone: normalizeRecipeTagLabel(watchedCoverImageUrl) ? "accent" : "muted",
+    },
+    {
+      label: t("meta.tags"),
+      value: String(watchedTags.length),
+    },
+    {
+      label: t("meta.validatedIngredients"),
+      value: String(nonBlankValidatedIngredients.length),
+    },
+    {
+      label: t("meta.additionIngredients"),
+      value: String(nonBlankAdditionIngredients.length),
+    },
+    {
+      label: t("meta.steps"),
+      value: String(nonBlankSteps.length),
+    },
+  ];
+
   return (
-    <div className={componentStyles["editor-layout"]}>
+    <div className={styles["editor-layout"]}>
       <Form
         onSubmit={onSubmit}
-        className={componentStyles["editor-form"]}
+        className={styles["editor-form"]}
         error={getFieldMessage(errors.root)}
       >
         <input type="hidden" {...register("projectId")} />
-        <Card
-          variant="outlined"
-          title={
-            <div className={styles["recipes-scaffold__panel-head"]}>
-              <p className={styles["recipes-scaffold__panel-kicker"]}>
-                {isCreate ? "Creation" : "Edition"}
-              </p>
-              <h2 className={styles["recipes-scaffold__panel-title"]}>
-                Une recette propre a reprendre sans perdre le fil
-              </h2>
-            </div>
-          }
-        >
-          <div className={componentStyles["editor-section"]}>
-            <p className={componentStyles["editor-copy"]}>
-              Le formulaire garde la lecture validee en preview: base claire,
-              ajouts a part, etapes courtes et sauvegarde simple.
-            </p>
 
-            <div className={componentStyles["editor-grid"]}>
-              <Input
-                label="Titre"
-                placeholder="Poulet citron & riz pilaf"
-                error={errors.title?.message}
-                disabled={isPending}
-                {...register("title")}
-              />
-              <Input
-                label="Image"
-                type="url"
-                placeholder="https://..."
-                helperText="URL simple compatible avec cover_image_url."
-                error={errors.coverImageUrl?.message}
-                disabled={isPending}
-                {...register("coverImageUrl")}
-              />
-              <Input
-                label="Portions"
-                type="number"
-                inputMode="numeric"
-                placeholder="2"
-                error={errors.servingsCount?.message}
-                disabled={isPending}
-                {...register("servingsCount")}
-              />
-              <Input
-                label="Libelle portions"
-                placeholder="2 portions"
-                error={errors.servingsLabel?.message}
-                disabled={isPending}
-                helperText="Laisse vide pour reprendre le nombre."
-                {...register("servingsLabel")}
-              />
-              <Input
-                label="Temps estime"
-                type="number"
-                inputMode="numeric"
-                placeholder="35"
-                error={errors.totalTimeMinutes?.message}
-                disabled={isPending}
-                helperText="En minutes."
-                {...register("totalTimeMinutes")}
+        <div className={styles["editor-form-shell"]}>
+          <header className={styles["editor-header"]}>
+            <div className={styles["editor-header-top"]}>
+              <span className={styles["editor-header-mode"]}>
+                {isCreate ? t("header.createMode") : t("header.editMode")}
+              </span>
+              <CloseButton
+                ariaLabel={t("actions.close")}
+                onClick={handleCloseEditor}
               />
             </div>
 
-            <Textarea
-              label="Resume"
-              rows={4}
-              resize="vertical"
-              error={errors.summary?.message}
+            <textarea
+              ref={(element) => {
+                titleField.ref(element);
+                titleTextareaRef.current = element;
+              }}
+              rows={1}
+              name={titleField.name}
+              onBlur={titleField.onBlur}
+              onChange={titleField.onChange}
+              onInput={(event) => {
+                resizeTextarea(event.currentTarget);
+              }}
+              placeholder={t("fields.title.placeholder")}
+              aria-label={t("fields.title.label")}
+              aria-invalid={errors.title ? "true" : "false"}
               disabled={isPending}
-              helperText="Une phrase ou deux pour reconnaitre la recette vite."
-              {...register("summary")}
+              className={[
+                styles["editor-title-input"],
+                errors.title && styles["editor-title-input--error"],
+              ]
+                .filter(Boolean)
+                .join(" ")}
             />
-          </div>
-        </Card>
 
-        <Card
-          variant="outlined"
-          title={
-            <div className={styles["recipes-scaffold__panel-head"]}>
-              <p className={styles["recipes-scaffold__panel-kicker"]}>Tags</p>
-              <h2 className={styles["recipes-scaffold__panel-title"]}>
-                Tags existants + creation inline
-              </h2>
-            </div>
-          }
-        >
-          <div className={componentStyles["editor-card-stack"]}>
-            <p className={componentStyles["editor-copy"]}>
-              Les tags restent scopes au projet et les doublons sont evites via
-              leur slug.
-            </p>
-
-            {tagFields.length > 0 ? (
-              <div className={componentStyles["editor-pills"]}>
-                {tagFields.map((tag, index) => (
-                  <span
-                    key={tag.id}
-                    className={componentStyles["editor-pill"]}
-                  >
-                    {tag.label}
-                    <button
-                      type="button"
-                      onClick={() => removeTag(index)}
-                      disabled={isPending}
-                      aria-label={`Retirer ${tag.label}`}
-                    >
-                      Retirer
-                    </button>
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <div className={componentStyles["editor-empty-state"]}>
-                <p className={componentStyles["editor-empty-copy"]}>
-                  Aucun tag selectionne pour l&apos;instant.
-                </p>
-              </div>
-            )}
-
-            {getFieldMessage(errors.tags) ? (
-              <ErrorMessage
-                message={getFieldMessage(errors.tags) ?? ""}
-                className={componentStyles["editor-form-error"]}
-              />
+            {errors.title?.message ? (
+              <Text variant="small" className={styles["editor-title-error"]}>
+                {errors.title.message}
+              </Text>
             ) : null}
 
-            <div className={componentStyles["editor-inline-form"]}>
-              <Input
-                label="Nouveau tag"
-                value={tagDraft}
-                onChange={(event) => setTagDraft(event.target.value)}
-                placeholder="Rapide"
-                disabled={isPending}
-              />
-              <div className={componentStyles["editor-actions"]}>
-                <Button
-                  label="Ajouter le tag"
-                  variant="secondary"
-                  onClick={() => handleAddTag(tagDraft)}
+            <div className={styles["editor-meta-bar"]}>
+              {metaBadges.map((item) => (
+                <MetaBadge
+                  key={item.label}
+                  label={item.label}
+                  value={item.value}
+                  tone={item.tone}
+                />
+              ))}
+            </div>
+          </header>
+
+          <Card variant="outlined" className={styles["editor-main-card"]}>
+            <section className={styles["editor-main-section"]}>
+              <SectionHeading title={t("sections.identity.kicker")} />
+
+              <div
+                className={`${styles["editor-grid"]} ${styles["editor-grid--details"]}`}
+              >
+                <div className={styles["editor-cover-field"]}>
+                  <label
+                    htmlFor={coverImageFieldId}
+                    className={styles["editor-cover-label"]}
+                  >
+                    {t("fields.coverImageUrl.label")}
+                  </label>
+                  <div className={styles["editor-cover-controls"]}>
+                    <div className={styles["editor-cover-input"]}>
+                      <Input
+                        id={coverImageFieldId}
+                        type="url"
+                        placeholder={t("fields.coverImageUrl.placeholder")}
+                        aria-describedby={coverImageFieldDescribedBy}
+                        disabled={isPending}
+                        {...register("coverImageUrl")}
+                      />
+                    </div>
+                    <div className={styles["editor-upload-actions"]}>
+                      <input
+                        ref={coverUploadInputRef}
+                        type="file"
+                        accept={RECIPE_COVER_ACCEPT}
+                        className={styles["editor-upload-input"]}
+                        aria-label={t("actions.uploadCover")}
+                        disabled={isPending}
+                        onChange={handleCoverFileChange}
+                      />
+                      <Button
+                        label={
+                          coverUploadMutation.isPending
+                            ? t("actions.uploadingCover")
+                            : normalizeRecipeTagLabel(watchedCoverImageUrl)
+                              ? t("actions.replaceCover")
+                              : t("actions.uploadCover")
+                        }
+                        variant="secondary"
+                        onClick={handleTriggerCoverUpload}
+                        disabled={isPending}
+                      />
+                    </div>
+                  </div>
+                  {errors.coverImageUrl?.message ? (
+                    <Text
+                      id={coverImageFieldErrorId}
+                      variant="small"
+                      className={styles["editor-cover-error"]}
+                    >
+                      {errors.coverImageUrl.message}
+                    </Text>
+                  ) : (
+                    <Text
+                      id={coverImageFieldHintId}
+                      variant="small"
+                      className={styles["editor-cover-hint"]}
+                    >
+                      {t("fields.coverImageUrl.helper")}
+                    </Text>
+                  )}
+                </div>
+                <Input
+                  label={t("fields.servingsCount.label")}
+                  type="number"
+                  inputMode="numeric"
+                  placeholder={t("fields.servingsCount.placeholder")}
+                  error={errors.servingsCount?.message}
                   disabled={isPending}
+                  {...register("servingsCount")}
+                />
+                <Input
+                  label={t("fields.servingsLabel.label")}
+                  placeholder={t("fields.servingsLabel.placeholder")}
+                  helperText={t("fields.servingsLabel.helper")}
+                  error={errors.servingsLabel?.message}
+                  disabled={isPending}
+                  {...register("servingsLabel")}
+                />
+                <Input
+                  label={t("fields.totalTimeMinutes.label")}
+                  type="number"
+                  inputMode="numeric"
+                  placeholder={t("fields.totalTimeMinutes.placeholder")}
+                  helperText={t("fields.totalTimeMinutes.helper")}
+                  error={errors.totalTimeMinutes?.message}
+                  disabled={isPending}
+                  {...register("totalTimeMinutes")}
                 />
               </div>
-            </div>
 
-            {remainingTagSuggestions.length > 0 ? (
-              <div className={componentStyles["editor-chip-row"]}>
-                {remainingTagSuggestions.map((tag) => (
-                  <button
-                    key={tag.id}
-                    type="button"
-                    className={componentStyles["editor-suggestion"]}
-                    onClick={() => handleAddTag(tag.label)}
-                    disabled={isPending}
-                  >
-                    {tag.label}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-          </div>
-        </Card>
-
-        <Card
-          variant="outlined"
-          title={
-            <div className={styles["recipes-scaffold__panel-head"]}>
-              <p className={styles["recipes-scaffold__panel-kicker"]}>
-                Ingredients valides
-              </p>
-              <h2 className={styles["recipes-scaffold__panel-title"]}>
-                La base stable de la recette
-              </h2>
-            </div>
-          }
-          footer={
-            <Button
-              label="Ajouter un ingredient valide"
-              variant="secondary"
-              onClick={() => appendValidatedIngredient(createEmptyIngredientRow())}
-              disabled={isPending}
-            />
-          }
-        >
-          <div className={componentStyles["editor-card-stack"]}>
-            <p className={componentStyles["editor-helper"]}>
-              Quantites structurees acceptees: `2`, `2.5`, `1/2`. Unites v1:
-              {` ${RECIPE_INGREDIENT_UNIT_VALUES.join(", ")}.`}
-            </p>
-
-            {getFieldMessage(errors.validatedIngredients) ? (
-              <ErrorMessage
-                message={getFieldMessage(errors.validatedIngredients) ?? ""}
-                className={componentStyles["editor-form-error"]}
+              <Textarea
+                label={t("fields.summary.label")}
+                rows={4}
+                resize="vertical"
+                error={errors.summary?.message}
+                disabled={isPending}
+                {...register("summary")}
               />
-            ) : null}
+            </section>
 
-            {validatedIngredientFields.map((field, index) => (
-              <div
-                key={field.id}
-                className={componentStyles["editor-card"]}
-              >
-                <div className={componentStyles["editor-row-head"]}>
-                  <span className={componentStyles["editor-row-index"]}>
-                    Valide {index + 1}
-                  </span>
-                  <div className={componentStyles["editor-controls"]}>
-                    <Button
-                      label={`Monter l'ingredient valide ${index + 1}`}
-                      variant="ghost"
-                      onClick={() => moveValidatedIngredient(index, index - 1)}
-                      disabled={isPending || index === 0}
-                    >
-                      Haut
-                    </Button>
-                    <Button
-                      label={`Descendre l'ingredient valide ${index + 1}`}
-                      variant="ghost"
-                      onClick={() => moveValidatedIngredient(index, index + 1)}
-                      disabled={
-                        isPending || index === validatedIngredientFields.length - 1
-                      }
-                    >
-                      Bas
-                    </Button>
-                    <Button
-                      label={`Supprimer l'ingredient valide ${index + 1}`}
-                      variant="ghost"
-                      onClick={() => removeValidatedIngredient(index)}
-                      disabled={isPending}
-                    >
-                      Suppr.
-                    </Button>
-                  </div>
-                </div>
+            <section className={styles["editor-main-section"]}>
+              <SectionHeading title={t("sections.tags.kicker")} />
 
-                <div
-                  className={`${componentStyles["editor-grid"]} ${componentStyles["editor-grid--ingredient"]}`}
-                >
-                  <Input
-                    label="Quantite"
-                    error={
-                      errors.validatedIngredients?.[index]?.amount?.message
-                    }
-                    disabled={isPending}
-                    {...register(`validatedIngredients.${index}.amount`)}
-                  />
-                  <Input
-                    label="Unite"
-                    error={errors.validatedIngredients?.[index]?.unit?.message}
-                    disabled={isPending}
-                    {...register(`validatedIngredients.${index}.unit`)}
-                  />
-                  <Input
-                    label="Ingredient"
-                    error={
-                      errors.validatedIngredients?.[index]?.displayName?.message
-                    }
-                    disabled={isPending}
-                    {...register(`validatedIngredients.${index}.displayName`)}
-                  />
-                  <Input
-                    label="Note"
-                    error={errors.validatedIngredients?.[index]?.notes?.message}
-                    disabled={isPending}
-                    {...register(`validatedIngredients.${index}.notes`)}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card
-          variant="outlined"
-          title={
-            <div className={styles["recipes-scaffold__panel-head"]}>
-              <p className={styles["recipes-scaffold__panel-kicker"]}>Ajouts</p>
-              <h2 className={styles["recipes-scaffold__panel-title"]}>
-                Pistes a tester sans brouiller la base
-              </h2>
-            </div>
-          }
-          footer={
-            <Button
-              label="Ajouter un ajout"
-              variant="secondary"
-              onClick={() => appendAdditionIngredient(createEmptyIngredientRow())}
-              disabled={isPending}
-            />
-          }
-        >
-          <div className={componentStyles["editor-card-stack"]}>
-            <p className={componentStyles["editor-copy"]}>
-              Les ajouts restent persistants, mais clairement identifies comme
-              hypotheses ou variations.
-            </p>
-
-            {additionIngredientFields.length === 0 ? (
-              <div className={componentStyles["editor-empty-state"]}>
-                <p className={componentStyles["editor-empty-copy"]}>
-                  Aucun ajout pour l&apos;instant.
-                </p>
-              </div>
-            ) : null}
-
-            {additionIngredientFields.map((field, index) => (
-              <div
-                key={field.id}
-                className={`${componentStyles["editor-card"]} ${componentStyles["editor-card--addition"]}`}
-              >
-                <div className={componentStyles["editor-row-head"]}>
-                  <span
-                    className={`${componentStyles["editor-row-index"]} ${componentStyles["editor-row-index--addition"]}`}
-                  >
-                    Ajout {index + 1}
-                  </span>
-                  <div className={componentStyles["editor-controls"]}>
-                    <Button
-                      label={`Monter l'ajout ${index + 1}`}
-                      variant="ghost"
-                      onClick={() => moveAdditionIngredient(index, index - 1)}
-                      disabled={isPending || index === 0}
-                    >
-                      Haut
-                    </Button>
-                    <Button
-                      label={`Descendre l'ajout ${index + 1}`}
-                      variant="ghost"
-                      onClick={() => moveAdditionIngredient(index, index + 1)}
-                      disabled={
-                        isPending || index === additionIngredientFields.length - 1
-                      }
-                    >
-                      Bas
-                    </Button>
-                    <Button
-                      label={`Supprimer l'ajout ${index + 1}`}
-                      variant="ghost"
-                      onClick={() => removeAdditionIngredient(index)}
-                      disabled={isPending}
-                    >
-                      Suppr.
-                    </Button>
-                  </div>
-                </div>
-
-                <div
-                  className={`${componentStyles["editor-grid"]} ${componentStyles["editor-grid--ingredient"]}`}
-                >
-                  <Input
-                    label="Quantite"
-                    error={
-                      errors.additionIngredients?.[index]?.amount?.message
-                    }
-                    disabled={isPending}
-                    {...register(`additionIngredients.${index}.amount`)}
-                  />
-                  <Input
-                    label="Unite"
-                    error={errors.additionIngredients?.[index]?.unit?.message}
-                    disabled={isPending}
-                    {...register(`additionIngredients.${index}.unit`)}
-                  />
-                  <Input
-                    label="Ajout"
-                    error={
-                      errors.additionIngredients?.[index]?.displayName?.message
-                    }
-                    disabled={isPending}
-                    {...register(`additionIngredients.${index}.displayName`)}
-                  />
-                  <Input
-                    label="Note"
-                    error={errors.additionIngredients?.[index]?.notes?.message}
-                    disabled={isPending}
-                    {...register(`additionIngredients.${index}.notes`)}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card
-          variant="outlined"
-          title={
-            <div className={styles["recipes-scaffold__panel-head"]}>
-              <p className={styles["recipes-scaffold__panel-kicker"]}>Etapes</p>
-              <h2 className={styles["recipes-scaffold__panel-title"]}>
-                Une suite de blocs courts et faciles a reprendre
-              </h2>
-            </div>
-          }
-          footer={
-            <Button
-              label="Ajouter une etape"
-              variant="secondary"
-              onClick={() => appendStep(createEmptyStepRow())}
-              disabled={isPending}
-            />
-          }
-        >
-          <div className={componentStyles["editor-step-stack"]}>
-            {getFieldMessage(errors.steps) ? (
-              <ErrorMessage
-                message={getFieldMessage(errors.steps) ?? ""}
-                className={componentStyles["editor-form-error"]}
-              />
-            ) : null}
-
-            {stepFields.map((field, index) => (
-              <div
-                key={field.id}
-                className={componentStyles["editor-card"]}
-              >
-                <div className={componentStyles["editor-row-head"]}>
-                  <p className={componentStyles["editor-row-title"]}>
-                    Etape {index + 1}
-                  </p>
-                  <div className={componentStyles["editor-controls"]}>
-                    <Button
-                      label={`Monter l'etape ${index + 1}`}
-                      variant="ghost"
-                      onClick={() => moveStep(index, index - 1)}
-                      disabled={isPending || index === 0}
-                    >
-                      Haut
-                    </Button>
-                    <Button
-                      label={`Descendre l'etape ${index + 1}`}
-                      variant="ghost"
-                      onClick={() => moveStep(index, index + 1)}
-                      disabled={isPending || index === stepFields.length - 1}
-                    >
-                      Bas
-                    </Button>
-                    <Button
-                      label={`Supprimer l'etape ${index + 1}`}
-                      variant="ghost"
-                      onClick={() => removeStep(index)}
-                      disabled={isPending}
-                    >
-                      Suppr.
-                    </Button>
-                  </div>
-                </div>
-
-                <div
-                  className={`${componentStyles["editor-grid"]} ${componentStyles["editor-grid--step"]}`}
-                >
-                  <Textarea
-                    label="Instruction"
-                    rows={4}
-                    resize="vertical"
-                    error={errors.steps?.[index]?.instruction?.message}
-                    disabled={isPending}
-                    {...register(`steps.${index}.instruction`)}
-                  />
-                  <Input
-                    label="Repere"
-                    placeholder="Sauce, four, 10 min..."
-                    error={errors.steps?.[index]?.meta?.message}
-                    disabled={isPending}
-                    {...register(`steps.${index}.meta`)}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card
-          variant="outlined"
-          title={
-            <div className={styles["recipes-scaffold__panel-head"]}>
-              <p className={styles["recipes-scaffold__panel-kicker"]}>Note</p>
-              <h2 className={styles["recipes-scaffold__panel-title"]}>
-                Retour de test ou rappel perso
-              </h2>
-            </div>
-          }
-        >
-          <Textarea
-            label="Note de recette"
-            rows={4}
-            resize="vertical"
-            error={errors.note?.message}
-            disabled={isPending}
-            helperText="Optionnel. Pratique pour garder un arbitrage apres test."
-            {...register("note")}
-          />
-        </Card>
-
-        <Card variant="outlined">
-          <div className={componentStyles["editor-actions"]}>
-            <Button
-              label={
-                isPending
-                  ? "Enregistrement..."
-                  : isCreate
-                    ? "Creer la recette"
-                    : "Enregistrer les changements"
-              }
-              variant="save"
-              type="submit"
-              disabled={isPending}
-            />
-            <Link
-              href={
-                isCreate
-                  ? buildRecipesCatalogRoute(projectId)
-                  : buildRecipeDetailRoute(projectId, draft.id ?? "")
-              }
-            >
-              {isCreate ? "Retour au catalogue" : "Retour a la recette"}
-            </Link>
-          </div>
-        </Card>
-      </Form>
-
-      <div className={componentStyles["editor-stack"]}>
-        <Card
-          variant="outlined"
-          title={
-            <div className={styles["recipes-scaffold__panel-head"]}>
-              <p className={styles["recipes-scaffold__panel-kicker"]}>
-                Recap rapide
-              </p>
-              <h2 className={styles["recipes-scaffold__panel-title"]}>
-                Verifier avant sauvegarde
-              </h2>
-            </div>
-          }
-        >
-          <div className={componentStyles["editor-summary"]}>
-            <div className={componentStyles["editor-summary-row"]}>
-              <span className={componentStyles["editor-label"]}>Titre</span>
-              <span className={componentStyles["editor-summary-value"]}>
-                {normalizeRecipeTagLabel(watchedTitle) ?? "A definir"}
-              </span>
-            </div>
-            <div className={componentStyles["editor-summary-row"]}>
-              <span className={componentStyles["editor-label"]}>Portions</span>
-              <span className={componentStyles["editor-summary-value"]}>
-                {resolvedServingsLabel}
-              </span>
-            </div>
-            <div className={componentStyles["editor-summary-row"]}>
-              <span className={componentStyles["editor-label"]}>Temps</span>
-              <span className={componentStyles["editor-summary-value"]}>
-                {resolvedTimeLabel}
-              </span>
-            </div>
-            <div className={componentStyles["editor-summary-row"]}>
-              <span className={componentStyles["editor-label"]}>Image</span>
-              <span className={componentStyles["editor-summary-value"]}>
-                {normalizeRecipeTagLabel(watchedCoverImageUrl)
-                  ? "URL renseignee"
-                  : "Optionnelle"}
-              </span>
-            </div>
-            <div className={componentStyles["editor-summary-row"]}>
-              <span className={componentStyles["editor-label"]}>Base</span>
-              <span className={componentStyles["editor-summary-value"]}>
-                {nonBlankValidatedIngredients.length} ingredient
-                {nonBlankValidatedIngredients.length > 1 ? "s" : ""}
-              </span>
-            </div>
-            <div className={componentStyles["editor-summary-row"]}>
-              <span className={componentStyles["editor-label"]}>Ajouts</span>
-              <span className={componentStyles["editor-summary-value"]}>
-                {nonBlankAdditionIngredients.length}
-              </span>
-            </div>
-            <div className={componentStyles["editor-summary-row"]}>
-              <span className={componentStyles["editor-label"]}>Etapes</span>
-              <span className={componentStyles["editor-summary-value"]}>
-                {nonBlankSteps.length}
-              </span>
-            </div>
-            <div className={componentStyles["editor-field-stack"]}>
-              <span className={componentStyles["editor-label"]}>Tags</span>
-              {watchedTags.length > 0 ? (
-                <div className={componentStyles["editor-pills"]}>
-                  {watchedTags.map((tag, index) => (
-                    <span
-                      key={`${tag.label}-${index}`}
-                      className={componentStyles["editor-pill"]}
-                    >
+              {tagFields.length > 0 ? (
+                <div className={styles["editor-pill-row"]}>
+                  {tagFields.map((tag, index) => (
+                    <span key={tag.id} className={styles["editor-pill"]}>
                       {tag.label}
+                      <button
+                        type="button"
+                        className={styles["editor-pill-remove"]}
+                        onClick={() => removeTag(index)}
+                        disabled={isPending}
+                        aria-label={t("actions.removeTagAriaLabel", {
+                          label: tag.label,
+                        })}
+                      >
+                        {t("actions.remove")}
+                      </button>
                     </span>
                   ))}
                 </div>
-              ) : (
-                <p className={componentStyles["editor-summary-copy"]}>
-                  Aucun tag selectionne.
-                </p>
-              )}
-            </div>
-          </div>
-        </Card>
+              ) : null}
 
-        <QuickListSummaryCard
-          projectId={projectId}
-          recipes={quickListRecipes}
-        />
+              {getFieldMessage(errors.tags) ? (
+                <ErrorMessage
+                  message={getFieldMessage(errors.tags) ?? ""}
+                  className={styles["editor-form-error"]}
+                />
+              ) : null}
 
-        <Card
-          variant="outlined"
-          title={
-            <div className={styles["recipes-scaffold__panel-head"]}>
-              <p className={styles["recipes-scaffold__panel-kicker"]}>Repere</p>
-              <h2 className={styles["recipes-scaffold__panel-title"]}>
-                Une sauvegarde simple, sans avancer l&apos;etape 8
-              </h2>
+              <div className={styles["editor-inline-form"]}>
+                <Input
+                  label={t("fields.tagDraft.label")}
+                  value={tagDraft}
+                  onChange={(event) => setTagDraft(event.target.value)}
+                  placeholder={t("fields.tagDraft.placeholder")}
+                  disabled={isPending}
+                />
+                <div className={styles["editor-actions"]}>
+                  <Button
+                    label={t("actions.addTag")}
+                    variant="secondary"
+                    onClick={() => handleAddTag(tagDraft)}
+                    disabled={isPending}
+                  />
+                </div>
+              </div>
+
+              {remainingTagSuggestions.length > 0 ? (
+                <div className={styles["editor-suggestion-row"]}>
+                  {remainingTagSuggestions.map((tag) => (
+                    <button
+                      key={tag.id}
+                      type="button"
+                      className={styles["editor-suggestion"]}
+                      onClick={() => handleAddTag(tag.label)}
+                      disabled={isPending}
+                    >
+                      {tag.label}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </section>
+
+            <IngredientSection
+              sectionKey="validatedIngredients"
+              sectionHeading={{
+                title: t("sections.validatedIngredients.kicker"),
+              }}
+              emptyCopy={t("sections.validatedIngredients.empty")}
+              addLabel={t("actions.addValidatedIngredient")}
+              nameLabel={t("sections.validatedIngredients.nameLabel")}
+              itemLabel={t("labels.validatedIngredient")}
+              fields={validatedIngredientFields}
+              ingredientErrors={errors.validatedIngredients}
+              appendIngredient={() =>
+                appendValidatedIngredient(createEmptyIngredientRow())
+              }
+              moveIngredient={moveValidatedIngredient}
+              removeIngredient={removeValidatedIngredient}
+              register={register}
+              ingredientUnitOptions={ingredientUnitOptions}
+              isPending={isPending}
+              t={t}
+            />
+
+            <IngredientSection
+              sectionKey="additionIngredients"
+              sectionHeading={{
+                title: t("sections.additionIngredients.kicker"),
+              }}
+              emptyCopy={t("sections.additionIngredients.empty")}
+              addLabel={t("actions.addAdditionIngredient")}
+              nameLabel={t("sections.additionIngredients.nameLabel")}
+              itemLabel={t("labels.validatedIngredient")}
+              fields={additionIngredientFields}
+              ingredientErrors={errors.additionIngredients}
+              appendIngredient={() =>
+                appendAdditionIngredient(createEmptyIngredientRow())
+              }
+              moveIngredient={moveAdditionIngredient}
+              removeIngredient={removeAdditionIngredient}
+              register={register}
+              ingredientUnitOptions={ingredientUnitOptions}
+              isPending={isPending}
+              t={t}
+            />
+
+            <section className={styles["editor-main-section"]}>
+              <SectionHeading title={t("sections.steps.kicker")} />
+
+              {getFieldMessage(errors.steps) ? (
+                <ErrorMessage
+                  message={getFieldMessage(errors.steps) ?? ""}
+                  className={styles["editor-form-error"]}
+                />
+              ) : null}
+
+              {stepFields.length === 0 ? (
+                <div className={styles["editor-empty-state"]}>
+                  <Text variant="body" className={styles["editor-empty-copy"]}>
+                    {t("sections.steps.empty")}
+                  </Text>
+                </div>
+              ) : null}
+
+              <div className={styles["editor-item-list"]}>
+                {stepFields.map((field, index) => {
+                  const rowErrors = errors.steps?.[index];
+
+                  return (
+                    <div key={field.id} className={styles["editor-item-card"]}>
+                      <div className={styles["editor-item-head"]}>
+                        <span className={styles["editor-item-index"]}>
+                          {t("sections.steps.rowLabel", {
+                            position: index + 1,
+                          })}
+                        </span>
+
+                        <div className={styles["editor-controls"]}>
+                          <Button
+                            label={t("actions.moveUpItemAriaLabel", {
+                              label: t("labels.step"),
+                              position: index + 1,
+                            })}
+                            variant="ghost"
+                            onClick={() => moveStep(index, index - 1)}
+                            disabled={isPending || index === 0}
+                          >
+                            {t("actions.moveUp")}
+                          </Button>
+                          <Button
+                            label={t("actions.moveDownItemAriaLabel", {
+                              label: t("labels.step"),
+                              position: index + 1,
+                            })}
+                            variant="ghost"
+                            onClick={() => moveStep(index, index + 1)}
+                            disabled={isPending || index === stepFields.length - 1}
+                          >
+                            {t("actions.moveDown")}
+                          </Button>
+                          <Button
+                            label={t("actions.removeItemAriaLabel", {
+                              label: t("labels.step"),
+                              position: index + 1,
+                            })}
+                            variant="ghost"
+                            onClick={() => removeStep(index)}
+                            disabled={isPending}
+                          >
+                            {t("actions.remove")}
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div
+                        className={`${styles["editor-grid"]} ${styles["editor-grid--step"]}`}
+                      >
+                        <Textarea
+                          label={t("fields.stepInstruction.label")}
+                          rows={4}
+                          resize="vertical"
+                          placeholder={t("sections.steps.instructionPlaceholder")}
+                          error={rowErrors?.instruction?.message}
+                          disabled={isPending}
+                          {...register(`steps.${index}.instruction` as const)}
+                        />
+                        <Input
+                          label={t("fields.stepMeta.label")}
+                          placeholder={t("sections.steps.metaPlaceholder")}
+                          error={rowErrors?.meta?.message}
+                          disabled={isPending}
+                          {...register(`steps.${index}.meta` as const)}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className={styles["editor-section-footer"]}>
+                <Button
+                  label={t("actions.addStep")}
+                  variant="secondary"
+                  onClick={() => appendStep(createEmptyStepRow())}
+                  disabled={isPending}
+                />
+              </div>
+            </section>
+
+            <section className={styles["editor-main-section"]}>
+              <SectionHeading title={t("sections.note.kicker")} />
+
+              <Textarea
+                label={t("fields.note.label")}
+                rows={4}
+                resize="vertical"
+                error={errors.note?.message}
+                disabled={isPending}
+                {...register("note")}
+              />
+            </section>
+
+            <div className={styles["editor-actions-row"]}>
+              <Button
+                label={
+                  isPending
+                    ? t("actions.saving")
+                    : isCreate
+                      ? t("actions.saveCreate")
+                      : t("actions.saveEdit")
+                }
+                variant="save"
+                type="submit"
+                disabled={isPending}
+              />
             </div>
-          }
-          footer={<Link href={buildRecipesCatalogRoute(projectId)}>Voir le catalogue</Link>}
-        >
-          <ul className={styles["recipes-scaffold__list"]}>
-            <li>Pas d&apos;autosave ni de drag-and-drop.</li>
-            <li>Les boutons haut / bas suffisent pour le v1.</li>
-            <li>Les tags inline restent scopes au projet.</li>
-            <li>Le save renvoie vers la fiche recette pour rester lisible.</li>
-          </ul>
-        </Card>
-      </div>
+          </Card>
+        </div>
+      </Form>
     </div>
   );
 };

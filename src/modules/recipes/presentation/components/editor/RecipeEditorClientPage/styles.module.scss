@@ -1,117 +1,304 @@
 @use "@/styles/variables/borders" as *;
 @use "@/styles/variables/breakpoints" as *;
 @use "@/styles/variables/colors" as *;
+@use "@/styles/variables/shadows" as *;
 @use "@/styles/variables/spacing" as *;
 @use "@/styles/variables/typography" as *;
 
-.editor-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
-  gap: $spacing-lg;
-  align-items: start;
-}
-
+.editor-layout,
 .editor-form,
-.editor-stack,
-.editor-section,
-.editor-card-stack,
-.editor-field-stack,
-.editor-step-stack,
-.editor-summary,
+.editor-form-shell,
+.editor-header,
+.editor-main-section,
+.editor-cover-field,
+.editor-cover-controls,
+.editor-section-heading,
 .editor-inline-form,
-.editor-empty-state {
+.editor-empty-state,
+.editor-item-list {
   display: flex;
   flex-direction: column;
 }
 
-.editor-form,
-.editor-stack,
-.editor-section,
-.editor-card-stack,
-.editor-step-stack,
-.editor-summary {
+.editor-layout {
+  width: 100%;
+  max-width: 52rem;
+  margin: 0 auto;
   gap: $spacing-lg;
 }
 
-.editor-field-stack,
-.editor-inline-form,
-.editor-empty-state {
-  gap: $spacing-sm;
+.editor-form,
+.editor-form-shell {
+  gap: $spacing-xl;
 }
 
-.editor-card-stack {
+.editor-header {
   gap: $spacing-md;
 }
 
-.editor-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: $spacing-md;
-}
-
-.editor-grid--ingredient {
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 0.8fr) minmax(0, 1.4fr) minmax(0, 1fr);
-}
-
-.editor-grid--step {
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr);
-}
-
-.editor-card {
-  padding: $spacing-lg;
-  border: $border-width solid rgba(var(--shadow-color), 0.08);
-  border-radius: calc(#{$border-radius-md} + #{$spacing-2xs});
-  background: rgba(var(--shadow-color), 0.02);
-}
-
-.editor-card--addition {
-  border-color: rgba(var(--shadow-color-accent), 0.18);
-  background: rgba(var(--shadow-color-accent), 0.05);
-}
-
-.editor-card-head,
-.editor-row-head,
-.editor-summary-row,
+.editor-header-top,
+.editor-meta-bar,
+.editor-controls,
+.editor-pill-row,
+.editor-suggestion-row,
+.editor-upload-actions,
 .editor-actions,
-.editor-pills,
-.editor-chip-row {
+.editor-item-head,
+.editor-actions-row {
   display: flex;
   flex-wrap: wrap;
   gap: $spacing-sm;
 }
 
-.editor-card-head,
-.editor-row-head,
-.editor-summary-row,
-.editor-actions {
+.editor-header-top,
+.editor-item-head {
   align-items: center;
   justify-content: space-between;
 }
 
-.editor-label {
-  color: $color-text-secondary;
+.editor-section-heading,
+.editor-cover-field,
+.editor-cover-controls,
+.editor-empty-state {
+  gap: $spacing-xs;
+}
+
+.editor-header-mode {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: $spacing-2xs $spacing-md;
+  border: $border-width solid $color-accent-border-soft;
+  border-radius: $border-radius-full;
+  background: $color-accent-bg-soft;
+  color: $color-accent;
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
   letter-spacing: $letter-spacing-wide;
   text-transform: uppercase;
 }
 
-.editor-copy,
-.editor-helper,
-.editor-summary-copy,
+.editor-meta-label {
+  color: $color-text-muted;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+}
+
 .editor-empty-copy {
   color: $color-text-secondary;
   line-height: $line-height-relaxed;
 }
 
-.editor-row-title {
-  margin: 0;
+.editor-title-input {
+  @include typography-heading-serif;
+  width: 100%;
+  min-height: 3.5rem;
+  padding: $spacing-md $spacing-lg;
+  border: $border-width solid $color-border-subtle;
+  border-radius: $border-radius-sm;
+  background: linear-gradient(
+    160deg,
+    $color-surface-subtle 0%,
+    $color-background 100%
+  );
   color: $color-text;
-  font-size: $font-size-lg;
+  resize: none;
+  overflow: hidden;
+  caret-color: $color-accent;
+  transition:
+    border-color 160ms ease-in-out,
+    box-shadow 160ms ease-in-out;
+  font-size: clamp(1.9rem, 8vw, 3.1rem);
+  line-height: 1.1;
+
+  &::placeholder {
+    color: $color-text-muted;
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    border-color: $color-accent;
+    box-shadow: $shadow-focus;
+  }
+
+  &:disabled {
+    opacity: 1;
+    cursor: default;
+  }
+}
+
+.editor-title-input--error {
+  border-color: $color-error;
+}
+
+.editor-title-error {
+  color: $color-error-text;
+}
+
+.editor-meta-bar {
+  align-items: stretch;
+}
+
+.editor-meta-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-sm;
+  min-width: min(100%, 10rem);
+  min-height: 2.25rem;
+  padding: $spacing-xs $spacing-md;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-full;
+  background: $color-secondary;
+}
+
+.editor-meta-badge--accent {
+  border-color: $color-accent-border-soft;
+  background: $color-accent-bg-soft;
+}
+
+.editor-meta-badge--muted {
+  background: transparent;
+}
+
+.editor-meta-value {
+  color: $color-text;
   font-weight: $font-weight-semibold;
 }
 
-.editor-row-index {
+.editor-main-card {
+  border: $border-width solid $color-border;
+  box-shadow: $shadow-card;
+
+  :global(.card__body) {
+    padding: 0;
+  }
+}
+
+.editor-main-section {
+  gap: $spacing-md;
+  padding: $spacing-lg;
+}
+
+.editor-main-section + .editor-main-section {
+  border-top: $border-width solid $color-border-subtle;
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-md;
+}
+
+.editor-inline-form {
+  gap: $spacing-md;
+  padding: $spacing-md;
+  border: $border-width dashed rgba(var(--shadow-color), 0.12);
+  border-radius: $border-radius-md;
+  background: rgba(var(--shadow-color), 0.02);
+}
+
+.editor-actions,
+.editor-section-footer {
+  align-items: center;
+}
+
+.editor-pill-row,
+.editor-suggestion-row {
+  align-items: center;
+}
+
+.editor-upload-actions {
+  align-items: center;
+  justify-content: center;
+}
+
+.editor-upload-input {
+  display: none;
+}
+
+.editor-cover-label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-normal;
+  color: $color-text;
+}
+
+.editor-cover-input {
+  width: 100%;
+}
+
+.editor-cover-hint {
+  color: $color-text-secondary;
+}
+
+.editor-cover-error {
+  color: $color-error;
+}
+
+.editor-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  min-height: 2rem;
+  padding: $spacing-2xs $spacing-md;
+  border: $border-width solid rgba(var(--shadow-color), 0.08);
+  border-radius: $border-radius-full;
+  background: rgba(var(--shadow-color), 0.03);
+  color: $color-text;
+  font-size: $font-size-sm;
+}
+
+.editor-pill-remove {
+  border: 0;
+  background: transparent;
+  color: $color-text-secondary;
+  cursor: pointer;
+  font: inherit;
+}
+
+.editor-suggestion {
+  min-height: 2rem;
+  padding: $spacing-2xs $spacing-md;
+  border: $border-width dashed rgba(var(--shadow-color), 0.18);
+  border-radius: $border-radius-full;
+  background: transparent;
+  color: $color-text;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease-in-out,
+    border-color 150ms ease-in-out;
+
+  &:hover:not(:disabled) {
+    border-color: $color-accent-border-soft;
+    background: rgba(var(--shadow-color-accent), 0.06);
+  }
+}
+
+.editor-empty-state {
+  padding: $spacing-md;
+  border: $border-width dashed rgba(var(--shadow-color), 0.14);
+  border-radius: $border-radius-md;
+  background: rgba(var(--shadow-color), 0.02);
+}
+
+.editor-item-list {
+  gap: $spacing-md;
+}
+
+.editor-item-card {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  border: $border-width solid rgba(var(--shadow-color), 0.08);
+  border-radius: calc(#{$border-radius-md} + #{$spacing-2xs});
+  background: rgba(var(--shadow-color), 0.02);
+}
+
+.editor-item-index {
   display: inline-flex;
   align-items: center;
   min-height: 2rem;
@@ -123,123 +310,68 @@
   font-weight: $font-weight-semibold;
 }
 
-.editor-row-index--addition {
-  background: rgba(var(--shadow-color-accent), 0.1);
-}
-
-.editor-pills,
-.editor-chip-row {
-  align-items: center;
-}
-
-.editor-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-xs;
-  min-height: 2rem;
-  padding: 0 $spacing-md;
-  border: $border-width solid rgba(var(--shadow-color), 0.08);
-  border-radius: $border-radius-full;
-  background: rgba(var(--shadow-color), 0.03);
-  color: $color-text;
-  font-size: $font-size-sm;
-}
-
-.editor-pill button {
-  border: 0;
-  background: transparent;
-  color: $color-text-secondary;
-  cursor: pointer;
-  font-size: $font-size-sm;
-}
-
-.editor-suggestion {
-  border: $border-width dashed rgba(var(--shadow-color), 0.18);
-  border-radius: $border-radius-full;
-  background: transparent;
-  color: $color-text;
-  cursor: pointer;
-  padding: 0 $spacing-md;
-  min-height: 2rem;
-}
-
-.editor-suggestion:hover {
-  background: rgba(var(--shadow-color-accent), 0.06);
-  text-decoration: none;
-}
-
-.editor-inline-form {
-  padding: $spacing-md;
-  border: $border-width dashed rgba(var(--shadow-color), 0.12);
-  border-radius: $border-radius-md;
-  background: rgba(var(--shadow-color), 0.02);
-}
-
 .editor-controls {
+  align-items: center;
+}
+
+.editor-section-footer {
   display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-xs;
+  justify-content: flex-start;
 }
 
-.editor-summary-value {
-  color: $color-text;
-  font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-}
-
-.editor-empty-state {
-  padding: $spacing-md;
-  border: $border-width dashed rgba(var(--shadow-color), 0.14);
-  border-radius: $border-radius-md;
-  background: rgba(var(--shadow-color), 0.02);
+.editor-actions-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: $spacing-sm;
+  border-top: $border-width solid $color-border-subtle;
+  padding: $spacing-lg;
 }
 
 .editor-form-error {
   margin: 0;
 }
 
-.recipes-scaffold__list {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-  margin: 0;
-  padding-left: calc(#{$spacing-md} + #{$spacing-xs});
-}
-
-.recipes-scaffold__list li {
-  color: $color-text;
-  line-height: $line-height-relaxed;
-}
-
-.recipes-scaffold__panel-head {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-2xs;
-}
-
-.recipes-scaffold__panel-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-xs;
-  color: $color-text-secondary;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
-  letter-spacing: $letter-spacing-wide;
-  text-transform: uppercase;
-}
-
-.recipes-scaffold__panel-title {
-  margin: 0;
-  color: $color-text;
-  font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
-}
-
-@media (max-width: $breakpoint-lg) {
-  .editor-layout,
-  .editor-grid,
-  .editor-grid--ingredient,
+@media (min-width: $breakpoint-md) {
+  .editor-grid--details,
   .editor-grid--step {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .editor-cover-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: $spacing-md;
+  }
+
+  .editor-upload-actions {
+    justify-content: flex-end;
+    align-self: start;
+  }
+
+  .editor-inline-form {
+    align-items: end;
+    grid-template-columns: minmax(0, 1fr) auto;
+    display: grid;
+  }
+
+  .editor-actions-row {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
+}
+
+@media (min-width: $breakpoint-lg) {
+  .editor-grid--ingredient {
+    grid-template-columns:
+      minmax(0, 0.8fr)
+      minmax(0, 0.9fr)
+      minmax(0, 1.6fr);
+  }
+
+  .editor-main-section,
+  .editor-actions-row {
+    padding-inline: $spacing-2xl;
   }
 }

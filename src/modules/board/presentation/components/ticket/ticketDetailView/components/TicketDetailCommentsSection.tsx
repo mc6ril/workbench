@@ -1,4 +1,5 @@
 import Avatar from "@/shared/design-system/avatar";
+import SectionTitle from "@/shared/design-system/section_title";
 import { getIntlLocale, useLocale, useTranslations } from "@/shared/i18n";
 
 import type { ProjectMember } from "@/domains/project/core/domain/project.types";
@@ -56,9 +57,7 @@ const TicketDetailCommentsSection = ({
   return (
     <div className={styles["ticket-detail__section"]}>
       <div className={styles["ticket-detail__section-header"]}>
-        <span className={styles["ticket-detail__section-label"]}>
-          {t("comments.title")}
-        </span>
+        <SectionTitle>{t("comments.title")}</SectionTitle>
       </div>
       <div className={styles["ticket-detail__comment-list"]}>
         {comments.map((comment) => {

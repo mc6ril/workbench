@@ -995,6 +995,217 @@
         "errors": {
           "validateAddition": "La validación del añadido ha fallado. Inténtalo de nuevo."
         }
+      },
+      "editor": {
+        "page": {
+          "create": {
+            "eyebrow": "Recipes / crear",
+            "title": "Crear una receta",
+            "description": "Una pantalla más directa para capturar la idea, estructurar la base y guardar la ficha correctamente."
+          },
+          "edit": {
+            "eyebrow": "Recipes / editar",
+            "title": "Editar receta",
+            "description": "Una ficha de edición legible para ajustar la base, los añadidos y los pasos sin perder el hilo."
+          },
+          "aside": {
+            "kicker": "Reglas activas",
+            "title": "Marco v1",
+            "ruleQuantities": "Cantidades estructuradas aceptadas: {formats}.",
+            "ruleUnits": "Unidades v1: {units}.",
+            "ruleFallback": "El fallback conserva `amountText` si la cantidad sigue siendo libre.",
+            "ruleReorder": "La reorganización sigue siendo simple con los botones subir / bajar."
+          }
+        },
+        "header": {
+          "kicker": "Ficha de receta",
+          "createMode": "Creación",
+          "editMode": "Edición",
+          "descriptionCreate": "Empieza por el título y después completa los bloques útiles, como en la pantalla de actualización de una tarea.",
+          "descriptionEdit": "Ajusta la receta bloque por bloque con la misma lectura compacta que en la pantalla de actualización de una tarea."
+        },
+        "meta": {
+          "servings": "Raciones",
+          "time": "Tiempo",
+          "image": "Imagen",
+          "tags": "Tags",
+          "validatedIngredients": "Base",
+          "additionIngredients": "Añadidos",
+          "steps": "Pasos",
+          "servingsFallback": "Por definir",
+          "servingsWithCount": "{count} raciones",
+          "timeFallback": "Por estimar",
+          "timeWithCount": "{count} min",
+          "imageReady": "Indicada",
+          "imageEmpty": "Opcional"
+        },
+        "sections": {
+          "identity": {
+            "kicker": "Identidad",
+            "title": "Las pistas que hacen reconocible la receta",
+            "description": "El título se mantiene visible arriba y después completamos la imagen, el tiempo, las raciones y el resumen."
+          },
+          "tags": {
+            "kicker": "Tags",
+            "title": "Tags del proyecto, sin duplicados",
+            "description": "Las sugerencias reutilizan los tags ya usados y el slug evita repeticiones.",
+            "empty": "Todavía no hay ningún tag seleccionado."
+          },
+          "validatedIngredients": {
+            "kicker": "Ingredientes",
+            "title": "La base estable de la receta",
+            "description": "Cantidades estructuradas aceptadas: {formats}. Unidades v1: {units}.",
+            "empty": "Todavía no hay ningún ingrediente.",
+            "rowLabel": "Ingrediente {position}",
+            "nameLabel": "Ingrediente"
+          },
+          "additionIngredients": {
+            "kicker": "Añadidos",
+            "title": "Variaciones por probar sin ensuciar la base",
+            "description": "Los añadidos siguen siendo persistentes, pero claramente identificados como hipótesis o variaciones.",
+            "empty": "Todavía no hay ningún ingrediente.",
+            "rowLabel": "Ingrediente {position}",
+            "nameLabel": "Ingrediente"
+          },
+          "steps": {
+            "kicker": "Pasos",
+            "title": "Una secuencia de bloques cortos y fáciles de retomar",
+            "description": "Cada paso mantiene una instrucción clara y una referencia opcional para releer mejor.",
+            "empty": "Todavía no hay ningún paso.",
+            "rowLabel": "Paso {position}",
+            "instructionPlaceholder": "Describe la acción que hay que hacer…",
+            "metaPlaceholder": "Salsa, horno, 10 min…"
+          },
+          "note": {
+            "kicker": "Nota",
+            "title": "El retorno de prueba o el recordatorio personal",
+            "description": "Opcional, pero útil para conservar una decisión después de probar."
+          },
+          "summary": {
+            "kicker": "Resumen",
+            "title": "Revisar antes de guardar",
+            "description": "Una vista rápida de la ficha tal y como se releerá después."
+          }
+        },
+        "fields": {
+          "title": {
+            "label": "Título",
+            "placeholder": "Pollo al limón y arroz pilaf"
+          },
+          "coverImageUrl": {
+            "label": "Imagen",
+            "placeholder": "https://...",
+            "helper": "Pega la dirección de una imagen en línea o sube una."
+          },
+          "servingsCount": {
+            "label": "Raciones",
+            "placeholder": "2"
+          },
+          "servingsLabel": {
+            "label": "Etiqueta de raciones",
+            "placeholder": "2 raciones",
+            "helper": "2 raciones por defecto."
+          },
+          "totalTimeMinutes": {
+            "label": "Tiempo estimado",
+            "placeholder": "35",
+            "helper": "En minutos."
+          },
+          "summary": {
+            "label": "Resumen",
+            "helper": "Una o dos líneas para reconocer la receta rápido."
+          },
+          "note": {
+            "label": "Nota de receta",
+            "helper": "Opcional. Útil para conservar un arbitraje después de probar."
+          },
+          "tagDraft": {
+            "label": "Nuevo tag",
+            "placeholder": "Rápida"
+          },
+          "ingredientAmount": {
+            "label": "Cantidad"
+          },
+          "ingredientUnit": {
+            "label": "Unidad",
+            "options": {
+              "none": "Sin unidad",
+              "g": "g",
+              "kg": "kg",
+              "ml": "ml",
+              "cl": "cl",
+              "l": "l",
+              "piece": "pieza",
+              "botte": "manojo",
+              "cs": "cda",
+              "cc": "cdta"
+            }
+          },
+          "ingredientNotes": {
+            "label": "Nota"
+          },
+          "stepInstruction": {
+            "label": "Instrucción"
+          },
+          "stepMeta": {
+            "label": "Referencia"
+          }
+        },
+        "actions": {
+          "close": "Cerrar",
+          "backToCatalog": "Volver al catálogo",
+          "backToRecipe": "Volver a la receta",
+          "addTag": "Añadir",
+          "addValidatedIngredient": "Añadir",
+          "addAdditionIngredient": "Añadir",
+          "addStep": "Añadir",
+          "uploadCover": "Subir imagen",
+          "replaceCover": "Reemplazar imagen",
+          "uploadingCover": "Subiendo...",
+          "moveUp": "Subir",
+          "moveDown": "Bajar",
+          "remove": "Eliminar",
+          "removeTagAriaLabel": "Quitar {label}",
+          "moveUpItemAriaLabel": "Subir {label} {position}",
+          "moveDownItemAriaLabel": "Bajar {label} {position}",
+          "removeItemAriaLabel": "Eliminar {label} {position}",
+          "saveCreate": "Crear receta",
+          "saveEdit": "Guardar cambios",
+          "saving": "Guardando..."
+        },
+        "labels": {
+          "validatedIngredient": "el ingrediente",
+          "additionIngredient": "el añadido",
+          "step": "el paso"
+        },
+        "summary": {
+          "untitled": "Receta sin título",
+          "noTags": "Ningún tag seleccionado.",
+          "validatedIngredients": "{count} ingrediente validado",
+          "validatedIngredients_other": "{count} ingredientes validados",
+          "additionIngredients": "{count} añadido",
+          "additionIngredients_other": "{count} añadidos",
+          "steps": "{count} paso",
+          "steps_other": "{count} pasos"
+        },
+        "errors": {
+          "missingId": "La receta se ha guardado sin un identificador usable.",
+          "saveFailed": "No se puede guardar la receta ahora mismo.",
+          "coverUploadFailed": "No se puede subir la imagen ahora mismo.",
+          "coverUploadTooLarge": "La imagen es demasiado pesada.",
+          "coverUploadInvalidType": "Formato de imagen no compatible."
+        }
+      },
+      "quickListSummary": {
+        "kicker": "Quick list",
+        "titleEmpty": "Visible incluso vacía",
+        "titleFilled": "Comidas previstas para la semana",
+        "copyEmpty": "La quick list mantiene su lugar en el recorrido, incluso antes de la primera selección.",
+        "copyFilled": "El resumen mantiene las recetas activas legibles desde las otras pantallas del módulo.",
+        "emptyNote": "Todavía no hay ninguna receta activa.",
+        "open": "Abrir la quick list",
+        "activeBadge": "Activa",
+        "defaultNote": "Receta guardada para una próxima comida."
       }
     },
     "account": {
