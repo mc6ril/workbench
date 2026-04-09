@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import {
   buildAuthCallbackPath,
@@ -23,7 +23,7 @@ export const useVerifyEmailFlow = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const verifyEmailMutation = useVerifyEmail();
-  const tErrors = useTranslation("errors");
+  const tErrors = useTranslations("errors");
   const searchParamsValue = searchParams.toString();
   const locationHash =
     typeof window !== "undefined" ? window.location.hash : undefined;

@@ -1,26 +1,22 @@
 import type { MetadataRoute } from "next";
 
 import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
-import type { Locale } from "@/shared/i18n/types";
-import type { TranslationMessages } from "@/shared/i18n/types";
-import { getTranslationValue } from "@/shared/i18n/utils";
+import type { Locale } from "@/shared/i18n/config";
+import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 export const buildManifest = (
   locale: Locale,
-  messages: TranslationMessages
+  description: string
 ): MetadataRoute.Manifest => {
   const base = getSiteUrl();
-  const description =
-    getTranslationValue(messages, "app.manifest", "description") ??
-    "Couple-focused app to lighten mental load.";
 
   return {
     name: PRODUCT_BRAND_NAME,
     short_name: PRODUCT_BRAND_NAME,
     description,
-    start_url: "/",
-    scope: "/",
+    start_url: buildMarketingHomePath(locale),
+    scope: buildMarketingHomePath(locale),
     display: "standalone",
     background_color: "#faf7f4",
     theme_color: "#2a1f1a",
@@ -35,4 +31,3 @@ export const buildManifest = (
     ],
   };
 };
-

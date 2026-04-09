@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from "react";
 
 import Text from "@/shared/design-system/text";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView.module.scss";
 
@@ -20,7 +20,7 @@ const TicketDetailHeader = ({
   onTitleChange,
   onBack,
 }: Props) => {
-  const t = useTranslation("pages.ticketDetail.page");
+  const t = useTranslations("pages.ticketDetail.page");
   const titleRef = useRef<HTMLTextAreaElement | null>(null);
 
   useLayoutEffect(() => {

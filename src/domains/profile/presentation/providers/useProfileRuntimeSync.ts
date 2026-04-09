@@ -3,13 +3,12 @@
 import { useEffect, useMemo } from "react";
 import { useTheme } from "next-themes";
 
+import { useLocale, useLocalePreference } from "@/shared/i18n";
 import {
   defaultLocale,
-  persistLocaleCookie,
+  type Locale,
   supportedLocales,
 } from "@/shared/i18n/config";
-import type { Locale } from "@/shared/i18n/types";
-import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
 
 import { resolveThemePreference } from "@/domains/profile/core/domain/profile.types";
 import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
@@ -22,8 +21,8 @@ import { useSession } from "@/domains/session/presentation/hooks/useSession";
 export const useProfileRuntimeSync = (): boolean => {
   const { data: session } = useSession();
   const profileQuery = useMyProfile();
-  const locale = useLocaleStore((state) => state.locale);
-  const setLocale = useLocaleStore((state) => state.setLocale);
+  const locale = useLocale();
+  const applyLocalePreference = useLocalePreference();
   const { theme, setTheme } = useTheme();
 
   const hasAuthenticatedSession = !!session?.userId;
@@ -55,9 +54,8 @@ export const useProfileRuntimeSync = (): boolean => {
       return;
     }
 
-    setLocale(nextLocale);
-    persistLocaleCookie(nextLocale);
-  }, [hasAuthenticatedSession, locale, nextLocale, setLocale]);
+    applyLocalePreference(nextLocale);
+  }, [applyLocalePreference, hasAuthenticatedSession, locale, nextLocale]);
 
   useEffect(() => {
     if (!hasAuthenticatedSession || !nextTheme || theme === nextTheme) {

@@ -23,9 +23,9 @@ jest.mock("next/link", () => {
   return MockLink;
 });
 
-// Mock useTranslation
+// Mock useTranslations
 jest.mock("@/shared/i18n", () => ({
-  useTranslation: (namespace: string) => (key: string) => {
+  useTranslations: (namespace: string) => (key: string) => {
     if (namespace === "common" && key === "dashboard") {
       return "Dashboard";
     }

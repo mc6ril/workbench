@@ -5,7 +5,7 @@ import React, { useMemo } from "react";
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./BoardView.module.scss";
 
@@ -22,7 +22,7 @@ const BoardView = ({
   errorMessage,
   className,
 }: BoardViewProps) => {
-  const t = useTranslation("pages.board.view");
+  const t = useTranslations("pages.board.view");
 
   const containerId = useMemo(() => getAccessibilityId("board-view"), []);
 

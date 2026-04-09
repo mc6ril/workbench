@@ -3,7 +3,7 @@
 import React from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./app_footer.module.scss";
 
@@ -12,7 +12,7 @@ type Props = {
 };
 
 const AppFooter = ({ className }: Props) => {
-  const t = useTranslation("layout.appFooter");
+  const t = useTranslations("layout.appFooter");
 
   const footerId = getAccessibilityId("app-footer");
 

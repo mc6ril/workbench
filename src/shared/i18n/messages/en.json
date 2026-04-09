@@ -323,10 +323,8 @@
     "projectHome": {
       "title": "Home",
       "lastActivityNow": "Last activity: just now",
-      "lastActivityHours": "Last activity: {hours} hour",
-      "lastActivityHours_plural": "Last activity: {hours} hours",
-      "lastActivityDays": "Last activity: {days} day",
-      "lastActivityDays_plural": "Last activity: {days} days",
+      "lastActivityHours": "Last activity: {hours, plural, one {# hour} other {# hours}}",
+      "lastActivityDays": "Last activity: {days, plural, one {# day} other {# days}}",
       "lastActivityDate": "Last activity: {date}",
       "myTasksTitle": "My tasks",
       "myTasksDescription": "Your assigned tasks to tackle first.",
@@ -397,10 +395,8 @@
       "welcomeLabel": "Hello 👋",
       "welcomeSubtitle": "Ready to create something wonderful today?",
       "sectionDescription": "Find all your shared spaces",
-      "membersCount": "{count} member",
-      "membersCount_other": "{count} members",
-      "tasksCount": "{count} task",
-      "tasksCount_other": "{count} tasks",
+      "membersCount": "{count, plural, one {# member} other {# members}}",
+      "tasksCount": "{count, plural, one {# task} other {# tasks}}",
       "statInProgress": "In progress",
       "statCompleted": "Completed",
       "emptyStateCardTitle": "Your workspace awaits",
@@ -492,6 +488,13 @@
       "backToWorkspaceAriaLabel": "Return to the workspace"
     },
     "board": {
+      "columns": {
+        "todo": "To do",
+        "in_progress": "In progress",
+        "done": "Done",
+        "in-progress": "In progress",
+        "completed": "Done"
+      },
       "search": {
         "archivedBadge": "Archived"
       },
@@ -534,8 +537,7 @@
           "low": "Low"
         },
         "priorityLabel": "Priority",
-        "storyPointsLabel": "{count} point",
-        "storyPointsLabel_other": "{count} points",
+        "storyPointsLabel": "{count, plural, one {# point} other {# points}}",
         "openTicketLabel": "Open task",
         "editTicketLabel": "Edit task"
       },
@@ -716,8 +718,7 @@
         "loadErrorTitle": "Unable to load members",
         "emptyTitle": "No members to display",
         "emptyDescription": "People who join the project will appear here.",
-        "adminsCount": "{count} administrator",
-        "adminsCount_other": "{count} administrators",
+        "adminsCount": "{count, plural, one {# administrator} other {# administrators}}",
         "syncing": "Syncing...",
         "live": "Synced",
         "roleFieldLabel": "Role"
@@ -740,8 +741,7 @@
         "loadErrorTitle": "Unable to load invitations",
         "emptyTitle": "No pending invitations",
         "emptyDescription": "Active links will appear here as soon as you create one.",
-        "activeCount": "{count} pending invitation",
-        "activeCount_other": "{count} pending invitations",
+        "activeCount": "{count, plural, one {# pending invitation} other {# pending invitations}}",
         "pendingLinkTitle": "Invitation link",
         "createdAt": "Created on {date}",
         "expiresAt": "Expires on {date}",

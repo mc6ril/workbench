@@ -29,20 +29,25 @@ const BoardPage = async ({
   const ticketRepository = createTicketRepository(supabaseClient);
   const projectLookupRepository = createProjectLookupRepository(supabaseClient);
 
-  await Promise.all([
-    queryClient.prefetchQuery({
+  const [
+    initialBoardConfiguration,
+    initialTickets,
+    initialTicketAssigneesByProjectId,
+    initialProjectShortCode,
+  ] = await Promise.all([
+    queryClient.fetchQuery({
       queryKey: queryKeys.projects.boardConfiguration(projectId),
       queryFn: () => getBoardConfiguration(boardRepository, projectId),
     }),
-    queryClient.prefetchQuery({
+    queryClient.fetchQuery({
       queryKey: queryKeys.projects.ticketsList(projectId, undefined, undefined),
       queryFn: () => listTickets(ticketRepository, projectId),
     }),
-    queryClient.prefetchQuery({
+    queryClient.fetchQuery({
       queryKey: queryKeys.tickets.assigneesByProjectId(projectId),
       queryFn: () => getTicketAssigneesByProjectId(ticketRepository, projectId),
     }),
-    queryClient.prefetchQuery({
+    queryClient.fetchQuery({
       queryKey: queryKeys.projects.shortCode(projectId),
       queryFn: () => getProjectShortCode(projectLookupRepository, projectId),
     }),
@@ -51,7 +56,13 @@ const BoardPage = async ({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<Loader />}>
-        <BoardPageContent projectId={projectId} />
+        <BoardPageContent
+          projectId={projectId}
+          initialBoardConfiguration={initialBoardConfiguration}
+          initialTickets={initialTickets}
+          initialTicketAssigneesByProjectId={initialTicketAssigneesByProjectId}
+          initialProjectShortCode={initialProjectShortCode}
+        />
       </Suspense>
     </HydrationBoundary>
   );

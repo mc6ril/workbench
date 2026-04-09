@@ -1,17 +1,17 @@
 "use client";
 
+import { useLocale } from "@/shared/i18n";
 import {
   buildMarketingHomePath,
   buildMarketingLegalPath,
   buildMarketingPricingPath,
 } from "@/shared/i18n/marketingPaths";
-import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
 
 /**
  * Locale-prefixed marketing URLs for client components (landing, workspace footer, etc.).
  */
 export const useMarketingRoutes = () => {
-  const locale = useLocaleStore((state) => state.locale);
+  const locale = useLocale();
 
   return {
     home: buildMarketingHomePath(locale),

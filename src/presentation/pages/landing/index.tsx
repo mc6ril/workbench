@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
@@ -12,14 +13,11 @@ import {
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { assertDefined } from "@/shared/errors/programmingError";
+import type { Locale } from "@/shared/i18n/config";
 import {
   buildMarketingLegalPath,
   buildMarketingPricingPath,
 } from "@/shared/i18n/marketingPaths";
-import { getMessages } from "@/shared/i18n/messages";
-import type { Locale, TranslationMessages } from "@/shared/i18n/types";
-import { getTranslationValue } from "@/shared/i18n/utils";
 import { buildFeaturePreviewContent } from "@/shared/utils";
 
 import styles from "./styles.module.scss";
@@ -29,52 +27,39 @@ type LandingPageProps = {
   isBillingVisible: boolean;
 };
 
-const createNamespaceTranslationGetter = (
-  messages: TranslationMessages,
+const createNamespaceTranslationGetter = async (
+  locale: Locale,
   namespace: string
 ) => {
-  return (key: string): string => {
-    const value = getTranslationValue(messages, namespace, key);
-    assertDefined(value, `Missing translation: ${namespace}.${key}`);
-    return value;
-  };
+  const t = await getTranslations({ locale, namespace });
+  return (key: string): string => t(key);
 };
 
 const getCtaClassName = (...classNames: Array<string | undefined>) => {
   return classNames.filter(Boolean).join(" ");
 };
 
-const LandingPage = ({ locale, isBillingVisible }: LandingPageProps) => {
-  const messages = getMessages(locale);
-  const tHero = createNamespaceTranslationGetter(
-    messages,
-    "pages.landing.hero"
-  );
-  const tValues = createNamespaceTranslationGetter(
-    messages,
-    "pages.landing.values"
-  );
-  const tFeatures = createNamespaceTranslationGetter(
-    messages,
-    "pages.landing.features"
-  );
-  const tExamples = createNamespaceTranslationGetter(
-    messages,
-    "pages.landing.examples"
-  );
-  const tImpact = createNamespaceTranslationGetter(
-    messages,
-    "pages.landing.impact"
-  );
-  const tRhythm = createNamespaceTranslationGetter(
-    messages,
-    "pages.landing.rhythm"
-  );
-  const tCta = createNamespaceTranslationGetter(messages, "pages.landing.cta");
-  const tFooter = createNamespaceTranslationGetter(
-    messages,
-    "pages.landing.footer"
-  );
+const LandingPage = async ({ locale, isBillingVisible }: LandingPageProps) => {
+  const [
+    tHero,
+    tValues,
+    tFeatures,
+    tExamples,
+    tImpact,
+    tRhythm,
+    tCta,
+    tFooter,
+  ] = await Promise.all([
+    createNamespaceTranslationGetter(locale, "pages.landing.hero"),
+    createNamespaceTranslationGetter(locale, "pages.landing.values"),
+    createNamespaceTranslationGetter(locale, "pages.landing.features"),
+    createNamespaceTranslationGetter(locale, "pages.landing.examples"),
+    createNamespaceTranslationGetter(locale, "pages.landing.impact"),
+    createNamespaceTranslationGetter(locale, "pages.landing.rhythm"),
+    createNamespaceTranslationGetter(locale, "pages.landing.cta"),
+    createNamespaceTranslationGetter(locale, "pages.landing.footer"),
+  ]);
+
   const legal = buildMarketingLegalPath(locale);
   const pricing = buildMarketingPricingPath(locale);
   const featurePreview = buildFeaturePreviewContent("board", tExamples);

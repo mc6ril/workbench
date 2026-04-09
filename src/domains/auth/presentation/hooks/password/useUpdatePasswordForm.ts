@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
+import { translateAuthFieldError } from "@/domains/auth/presentation/forms/authFieldErrors";
 import type { UpdatePasswordFormInput } from "@/domains/auth/presentation/forms/authForms.schema";
 import { UpdatePasswordFormSchema } from "@/domains/auth/presentation/forms/authForms.schema";
 import { useUpdatePassword } from "@/domains/auth/presentation/hooks/password/useUpdatePassword";
@@ -17,8 +17,8 @@ import { getNextUnmetCriterion } from "@/domains/auth/presentation/password/pass
 export const useUpdatePasswordForm = () => {
   const router = useRouter();
   const updatePasswordMutation = useUpdatePassword();
-  const tErrors = useTranslation("errors");
-  const tFields = useTranslation("pages.updatePassword.fields");
+  const tErrors = useTranslations("errors");
+  const tFields = useTranslations("pages.updatePassword.fields");
 
   const {
     register,
@@ -73,8 +73,11 @@ export const useUpdatePasswordForm = () => {
     onSubmit: handleSubmit(onSubmit),
     passwordValue,
     passwordHint,
-    passwordError: translateFieldError(errors.password, tFields),
-    confirmPasswordError: translateFieldError(errors.confirmPassword, tFields),
+    passwordError: translateAuthFieldError(errors.password, tFields),
+    confirmPasswordError: translateAuthFieldError(
+      errors.confirmPassword,
+      tFields
+    ),
     rootError: errors.root?.message,
     isPending: updatePasswordMutation.isPending,
     isSuccess:

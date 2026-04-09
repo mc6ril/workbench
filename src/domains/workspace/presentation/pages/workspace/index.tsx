@@ -26,9 +26,8 @@ import { getAppErrorCode } from "@/shared/errors/appError";
 import { REPOSITORY_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import {
   getIntlLocale,
-  getRoleLabelKey,
-  useLocaleStore,
-  useTranslation,
+  useLocale,
+  useTranslations,
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
@@ -40,6 +39,7 @@ import styles from "./styles.module.scss";
 
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
+import { getProjectRoleLabelKey } from "@/domains/project/core/domain/project.types";
 import {
   type CreateProjectInput,
   CreateProjectInputSchema,
@@ -100,10 +100,10 @@ const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
       }
     };
   }, []);
-  const t = useTranslation("pages.workspace");
-  const tReclaim = useTranslation("pages.workspace.reclaimable");
-  const tErrors = useTranslation("errors");
-  const locale = useLocaleStore((state) => state.locale);
+  const t = useTranslations("pages.workspace");
+  const tReclaim = useTranslations("pages.workspace.reclaimable");
+  const tErrors = useTranslations("errors");
+  const locale = useLocale();
   const intlLocale = useMemo(() => getIntlLocale(locale), [locale]);
   const referenceTime = useMemo(() => {
     return referenceTimeIso ? new Date(referenceTimeIso) : new Date();
@@ -376,7 +376,7 @@ const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
 
             <div className={styles["workspaces-grid"]}>
               {projects.map((project, index) => {
-                const roleKey = getRoleLabelKey(project.role);
+                const roleKey = getProjectRoleLabelKey(project.role);
                 const roleLabel = t(roleKey);
                 const openAriaLabel = t("openWorkspaceAriaLabel", {
                   name: project.name,
@@ -433,13 +433,17 @@ const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
                       <span className={styles["workspace-meta-item"]}>
                         <span aria-hidden="true">👥</span>
                         <span>
-                          {t("membersCount", { count: project.memberCount })}
+                          {t("membersCount", {
+                            count: project.memberCount,
+                          })}
                         </span>
                       </span>
                       <span className={styles["workspace-meta-item"]}>
                         <span aria-hidden="true">📋</span>
                         <span>
-                          {t("tasksCount", { count: project.ticketCount })}
+                          {t("tasksCount", {
+                            count: project.ticketCount,
+                          })}
                         </span>
                       </span>
                     </div>

@@ -1,23 +1,22 @@
+import { getTranslations } from "next-intl/server";
+
+import type { Locale } from "@/shared/i18n/config";
 import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
-import { getMessages } from "@/shared/i18n/messages";
-import type { Locale } from "@/shared/i18n/types";
-import { getTranslationValue } from "@/shared/i18n/utils";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 /**
  * Server-only JSON-LD for the marketing home page (WebSite + Organization).
  */
-const WebsiteJsonLd = ({ locale }: { locale: Locale }) => {
-  const messages = getMessages(locale);
-  const name = getTranslationValue(messages, "app.metadata", "title");
-  const description = getTranslationValue(messages, "app.metadata", "description");
+const WebsiteJsonLd = async ({ locale }: { locale: Locale }) => {
+  const tMetadata = await getTranslations({
+    locale,
+    namespace: "app.metadata",
+  });
+  const name = tMetadata("title");
+  const description = tMetadata("description");
   const base = getSiteUrl();
   const siteUrl = base.origin;
   const homeUrl = new URL(buildMarketingHomePath(locale), base).toString();
-
-  if (!name || !description) {
-    return null;
-  }
 
   const graph = {
     "@context": "https://schema.org",

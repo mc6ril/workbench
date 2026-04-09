@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import {
   canAccessFeature,
@@ -42,7 +42,7 @@ const computeFeatureLockState = (
 };
 
 export const useSidebarItems = (projectId: string): SidebarItem[] => {
-  const t = useTranslation("navigation.sidebar");
+  const t = useTranslations("navigation.sidebar");
   const { data: session, isLoading: isSessionLoading } = useSession();
   const {
     data: subscription,

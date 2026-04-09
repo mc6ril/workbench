@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { recordFullPageLoaderShown } from "@/shared/navigationPerf";
 
 import styles from "./loader.module.scss";
@@ -62,7 +62,7 @@ const Loader = ({
   message,
   className,
 }: Props) => {
-  const t = useTranslation("common");
+  const t = useTranslations("common");
   const displayMessage = message || t("loading");
   const displayAriaLabel = ariaLabel || t("loadingAriaLabel");
   const loaderId = getAccessibilityId("loader");

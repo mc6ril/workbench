@@ -9,7 +9,7 @@ import Card from "@/shared/design-system/card";
 import ErrorMessage from "@/shared/design-system/error_message";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./BoardOnboardingPanel.module.scss";
 import type {
@@ -37,7 +37,7 @@ const BoardOnboardingPanel = ({
   errorMessage,
   translationNamespace = "pages.board.onboarding",
 }: OnboardingPanelProps) => {
-  const t = useTranslation(translationNamespace);
+  const t = useTranslations(translationNamespace);
   const titleId = useMemo(
     () => getAccessibilityId("board-onboarding-panel-title"),
     []

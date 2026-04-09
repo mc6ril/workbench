@@ -10,7 +10,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { markNavigationStart } from "@/shared/navigationPerf";
 
@@ -30,7 +30,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const { pricing } = useMarketingRoutes();
-  const t = useTranslation("navigation.sidebar");
+  const t = useTranslations("navigation.sidebar");
   const signOutMutation = useSignOut();
   const { data: viewer } = useViewer();
 
@@ -52,7 +52,6 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const emailValue = viewer?.loginEmail?.trim();
   const profileIdentity = displayNameValue || emailValue;
   const displayName = profileIdentity ?? t("profile.userFallbackName");
-  const lockedAriaLabelTemplate = t("locked.ariaLabel");
   const workspaceHref = PAGE_ROUTES.WORKSPACE;
   const accountHref = `${PAGE_ROUTES.ACCOUNT}?from=${encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE)}`;
 
@@ -140,11 +139,12 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
 
   const getLockedAriaLabel = useCallback(
     (item: SidebarItem): string => {
-      return lockedAriaLabelTemplate
-        .replace("{feature}", item.label)
-        .replace("{plan}", item.planBadge ?? "");
+      return t("locked.ariaLabel", {
+        feature: item.label,
+        plan: item.planBadge ?? "",
+      });
     },
-    [lockedAriaLabelTemplate]
+    [t]
   );
 
   return (

@@ -5,7 +5,7 @@ import React, { type FormEvent, useState } from "react";
 import { BUTTON_LABELS } from "@/shared/a11y/constants";
 import ErrorMessage from "@/shared/design-system/error_message";
 import Form from "@/shared/design-system/form";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import CreateTicketFormActions from "./components/CreateTicketFormActions";
 import CreateTicketFormFields from "./components/CreateTicketFormFields";
@@ -34,8 +34,8 @@ const CreateTicketForm = ({
   errorMessage,
   className,
 }: Props) => {
-  const t = useTranslation("pages.board.createTicketForm");
-  const tCommon = useTranslation("common");
+  const t = useTranslations("pages.board.createTicketForm");
+  const tCommon = useTranslations("common");
 
   const [title, setTitle] = useState(initialValues?.title ?? "");
   const [description, setDescription] = useState(

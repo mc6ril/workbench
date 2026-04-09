@@ -4,7 +4,7 @@ import EmptyState from "@/shared/design-system/empty_state";
 
 // Mock i18n
 jest.mock("@/shared/i18n", () => ({
-  useTranslation: jest.fn((namespace: string) => {
+  useTranslations: jest.fn((namespace: string) => {
     if (namespace === "common.emptyState") {
       return (key: string) => {
         const translations: Record<string, string> = {

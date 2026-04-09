@@ -1,3 +1,5 @@
+import type { Locale } from "@/shared/i18n/config";
+
 import type { CurrentSession } from "@/domains/session/core/domain/session.types";
 
 export type SignUpInput = {
@@ -5,6 +7,8 @@ export type SignUpInput = {
   password: string;
   displayName?: string;
   termsAcceptedAt?: string;
+  /** Used in Supabase email templates (`user_metadata.locale`). */
+  locale: Locale;
 };
 
 export type SignInInput = {

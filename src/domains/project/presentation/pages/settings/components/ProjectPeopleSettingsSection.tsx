@@ -14,7 +14,7 @@ import Modal from "@/shared/design-system/modal";
 import Select from "@/shared/design-system/select";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { getRoleLabelKey, useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
@@ -23,6 +23,7 @@ import styles from "./projectPeopleSettingsSection.module.scss";
 import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
 import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
 import {
+  getProjectRoleLabelKey,
   InvitationStatus,
   type ProjectInvitation,
   type ProjectMember,
@@ -94,13 +95,13 @@ const ProjectPeopleSettingsSection = ({
   const removeMemberMutation = useRemoveMember();
   const addToast = useToastStore((state) => state.addToast);
 
-  const tPeople = useTranslation("pages.settings.people");
-  const tMembers = useTranslation("pages.settings.members");
-  const tInvitations = useTranslation("pages.settings.invitations");
-  const tWorkspace = useTranslation("pages.workspace");
-  const tUpgrade = useTranslation("pages.upgrade");
-  const tMembersGlobal = useTranslation("pages.members");
-  const tErrors = useTranslation("errors");
+  const tPeople = useTranslations("pages.settings.people");
+  const tMembers = useTranslations("pages.settings.members");
+  const tInvitations = useTranslations("pages.settings.invitations");
+  const tWorkspace = useTranslations("pages.workspace");
+  const tUpgrade = useTranslations("pages.upgrade");
+  const tMembersGlobal = useTranslations("pages.members");
+  const tErrors = useTranslations("errors");
 
   const [inviteRole, setInviteRole] =
     useState<ProjectRole>(DEFAULT_INVITE_ROLE);
@@ -157,7 +158,7 @@ const ProjectPeopleSettingsSection = ({
 
     return roles.map((role) => ({
       value: role,
-      label: tWorkspace(getRoleLabelKey(role)),
+      label: tWorkspace(getProjectRoleLabelKey(role)),
     }));
   }, [advancedRolesAccess.hasAccess, tWorkspace]);
   const invitationErrorMessage = invitationsError
@@ -607,7 +608,9 @@ const ProjectPeopleSettingsSection = ({
                                   ]
                                 }`}
                               >
-                                {tWorkspace(getRoleLabelKey(invitation.role))}
+                                {tWorkspace(
+                                  getProjectRoleLabelKey(invitation.role)
+                                )}
                               </span>
                               {isInvitationsFetching && (
                                 <span
@@ -684,10 +687,14 @@ const ProjectPeopleSettingsSection = ({
 
           <div className={styles["people-settings__pills"]}>
             <span className={styles["people-settings__pill"]}>
-              {tWorkspace("membersCount", { count: members.length })}
+              {tWorkspace("membersCount", {
+                count: members.length,
+              })}
             </span>
             <span className={styles["people-settings__pill"]}>
-              {tMembers("adminsCount", { count: adminCount })}
+              {tMembers("adminsCount", {
+                count: adminCount,
+              })}
             </span>
             <span className={styles["people-settings__pill"]}>
               {isMembersFetching ? tMembers("syncing") : tMembers("live")}
@@ -785,7 +792,7 @@ const ProjectPeopleSettingsSection = ({
                               styles[`people-settings__tag--${member.role}`]
                             }`}
                           >
-                            {tWorkspace(getRoleLabelKey(member.role))}
+                            {tWorkspace(getProjectRoleLabelKey(member.role))}
                           </span>
                           {isCurrentUser && (
                             <span
@@ -837,7 +844,7 @@ const ProjectPeopleSettingsSection = ({
                           >
                             {availableRoles.map((role) => (
                               <option key={role} value={role}>
-                                {tWorkspace(getRoleLabelKey(role))}
+                                {tWorkspace(getProjectRoleLabelKey(role))}
                               </option>
                             ))}
                           </select>

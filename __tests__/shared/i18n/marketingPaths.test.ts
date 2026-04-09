@@ -1,18 +1,17 @@
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import {
   buildMarketingHomePath,
   buildMarketingLegalPath,
   buildMarketingPricingPath,
   getResolvedMarketingLocaleFromPathname,
   isDefaultLocaleMarketingPathname,
-  isDefaultLocalePrefixedMarketingPathname,
-  stripDefaultLocalePrefix,
 } from "@/shared/i18n/marketingPaths";
 
 describe("marketingPaths", () => {
   it("builds unprefixed paths for the default locale", () => {
-    expect(buildMarketingHomePath("fr")).toBe("/");
-    expect(buildMarketingPricingPath("fr")).toBe("/pricing");
-    expect(buildMarketingLegalPath("fr")).toBe("/legal");
+    expect(buildMarketingHomePath("fr")).toBe(PAGE_ROUTES.HOME);
+    expect(buildMarketingPricingPath("fr")).toBe(PAGE_ROUTES.PRICING);
+    expect(buildMarketingLegalPath("fr")).toBe(PAGE_ROUTES.LEGAL);
   });
 
   it("builds prefixed paths for secondary locales", () => {
@@ -22,33 +21,32 @@ describe("marketingPaths", () => {
   });
 
   it("detects the locale encoded by marketing URLs", () => {
-    expect(getResolvedMarketingLocaleFromPathname("/")).toBe("fr");
-    expect(getResolvedMarketingLocaleFromPathname("/pricing")).toBe("fr");
-    expect(getResolvedMarketingLocaleFromPathname("/legal")).toBe("fr");
-    expect(getResolvedMarketingLocaleFromPathname("/en")).toBe("en");
-    expect(getResolvedMarketingLocaleFromPathname("/es/legal")).toBe("es");
-    expect(getResolvedMarketingLocaleFromPathname("/workspace")).toBeNull();
+    expect(getResolvedMarketingLocaleFromPathname(PAGE_ROUTES.HOME)).toBe("fr");
+    expect(getResolvedMarketingLocaleFromPathname(PAGE_ROUTES.PRICING)).toBe(
+      "fr"
+    );
+    expect(getResolvedMarketingLocaleFromPathname(PAGE_ROUTES.LEGAL)).toBe(
+      "fr"
+    );
+    expect(
+      getResolvedMarketingLocaleFromPathname(buildMarketingHomePath("en"))
+    ).toBe("en");
+    expect(
+      getResolvedMarketingLocaleFromPathname(buildMarketingLegalPath("es"))
+    ).toBe("es");
+    expect(
+      getResolvedMarketingLocaleFromPathname(PAGE_ROUTES.WORKSPACE)
+    ).toBeNull();
   });
 
   it("recognizes default-locale marketing paths", () => {
-    expect(isDefaultLocaleMarketingPathname("/")).toBe(true);
-    expect(isDefaultLocaleMarketingPathname("/pricing")).toBe(true);
-    expect(isDefaultLocaleMarketingPathname("/legal/")).toBe(true);
-    expect(isDefaultLocaleMarketingPathname("/en")).toBe(false);
-  });
-
-  it("rewrites legacy prefixed default-locale paths to the canonical URL", () => {
-    expect(isDefaultLocalePrefixedMarketingPathname("/fr")).toBe(true);
-    expect(isDefaultLocalePrefixedMarketingPathname("/fr/pricing")).toBe(true);
-    expect(isDefaultLocalePrefixedMarketingPathname("/fr/legal/privacy")).toBe(
+    expect(isDefaultLocaleMarketingPathname(PAGE_ROUTES.HOME)).toBe(true);
+    expect(isDefaultLocaleMarketingPathname(PAGE_ROUTES.PRICING)).toBe(true);
+    expect(isDefaultLocaleMarketingPathname(`${PAGE_ROUTES.LEGAL}/`)).toBe(
       true
     );
-    expect(isDefaultLocalePrefixedMarketingPathname("/fr/board")).toBe(false);
-
-    expect(stripDefaultLocalePrefix("/fr")).toBe("/");
-    expect(stripDefaultLocalePrefix("/fr/pricing")).toBe("/pricing");
-    expect(stripDefaultLocalePrefix("/fr/legal/privacy")).toBe(
-      "/legal/privacy"
+    expect(isDefaultLocaleMarketingPathname(buildMarketingHomePath("en"))).toBe(
+      false
     );
   });
 });

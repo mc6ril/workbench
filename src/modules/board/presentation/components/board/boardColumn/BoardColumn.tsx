@@ -12,7 +12,7 @@ import { CSS } from "@dnd-kit/utilities";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./BoardColumn.module.scss";
 
@@ -90,7 +90,7 @@ const BoardColumn = ({
   onTicketClick,
   className,
 }: BoardColumnProps) => {
-  const t = useTranslation("pages.board.column");
+  const t = useTranslations("pages.board.column");
   const droppableId = `${BOARD_COLUMN_DROP_PREFIX}${id}`;
   const { setNodeRef, isOver } = useDroppable({
     id: droppableId,

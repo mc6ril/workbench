@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 
-import RequestLocaleAppProviders from "@/shared/providers/RequestLocaleAppProviders";
+import AppProvider from "@/shared/providers/AppProvider";
 import { noIndexMetadata } from "@/shared/seo/noIndexMetadata";
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 export const metadata: Metadata = noIndexMetadata;
 
 const JoinLayout = async ({ children }: Props) => {
-  return <RequestLocaleAppProviders>{children}</RequestLocaleAppProviders>;
+  return <AppProvider>{children}</AppProvider>;
 };
 
 export default JoinLayout;

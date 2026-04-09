@@ -6,7 +6,11 @@ export const sanitizeInternalRedirectPath = (
   candidate: string | null | undefined,
   fallback: string = PAGE_ROUTES.HOME
 ): string => {
-  if (candidate && candidate.startsWith("/") && !candidate.startsWith("//")) {
+  if (
+    candidate &&
+    candidate.startsWith(PAGE_ROUTES.HOME) &&
+    !candidate.startsWith("//")
+  ) {
     return candidate;
   }
 

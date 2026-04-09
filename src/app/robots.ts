@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 const robots = (): MetadataRoute.Robots => {
@@ -9,13 +10,13 @@ const robots = (): MetadataRoute.Robots => {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
+        allow: PAGE_ROUTES.HOME,
         disallow: [
           "/api/",
           "/monitoring",
           "/auth/",
-          "/workspace",
-          "/account",
+          PAGE_ROUTES.WORKSPACE,
+          PAGE_ROUTES.ACCOUNT,
           "/join/",
         ],
       },

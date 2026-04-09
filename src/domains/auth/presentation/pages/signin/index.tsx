@@ -15,14 +15,14 @@ import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { getAppErrorCode } from "@/shared/errors/appError";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
 import styles from "./styles.module.scss";
 
 import type { SignInInput } from "@/domains/auth/core/domain/auth.types";
 import { SignInSchema } from "@/domains/auth/core/usecases/user/signInUser";
+import { translateAuthFieldError } from "@/domains/auth/presentation/forms/authFieldErrors";
 import { useSignIn } from "@/domains/auth/presentation/hooks/user/useSignIn";
 import { useSignInWithGoogle } from "@/domains/auth/presentation/hooks/user/useSignInWithGoogle";
 import { useResendVerification } from "@/domains/auth/presentation/hooks/verification/useResendVerification";
@@ -35,16 +35,16 @@ const SigninPage = () => {
   const signInMutation = useSignIn();
   const signInWithGoogleMutation = useSignInWithGoogle();
   const resendVerificationMutation = useResendVerification();
-  const t = useTranslation("pages.signin");
-  const tCommon = useTranslation("common");
-  const tErrors = useTranslation("errors");
-  const tFields = useTranslation("pages.signin.fields");
+  const t = useTranslations("pages.signin");
+  const tCommon = useTranslations("common");
+  const tErrors = useTranslations("errors");
+  const tFields = useTranslations("pages.signin.fields");
 
   const isUnverifiedRedirect = searchParams.get("unverified") === "true";
   const redirectPathParam = searchParams.get("redirect");
   const redirectPath =
     redirectPathParam &&
-    redirectPathParam.startsWith("/") &&
+    redirectPathParam.startsWith(PAGE_ROUTES.HOME) &&
     !redirectPathParam.startsWith("//")
       ? redirectPathParam
       : PAGE_ROUTES.WORKSPACE;
@@ -190,7 +190,7 @@ const SigninPage = () => {
             type="email"
             autoComplete="email"
             required
-            error={translateFieldError(errors.email, tFields)}
+            error={translateAuthFieldError(errors.email, tFields)}
             {...register("email")}
           />
 
@@ -199,7 +199,7 @@ const SigninPage = () => {
             type="password"
             autoComplete="current-password"
             required
-            error={translateFieldError(errors.password, tFields)}
+            error={translateAuthFieldError(errors.password, tFields)}
             {...register("password")}
           />
 

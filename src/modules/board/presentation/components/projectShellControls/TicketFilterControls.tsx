@@ -1,6 +1,6 @@
 import Button from "@/shared/design-system/button";
 import Select from "@/shared/design-system/select";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./ProjectShellControls.module.scss";
 import type { TicketFilterControlsProps } from "./types";
@@ -12,7 +12,7 @@ const TicketFilterControls = ({
   onClearStatus,
   onResetFilters,
 }: TicketFilterControlsProps) => {
-  const t = useTranslation("pages.board.filters");
+  const t = useTranslations("pages.board.filters");
 
   return (
     <div className={styles["project-shell-controls"]}>

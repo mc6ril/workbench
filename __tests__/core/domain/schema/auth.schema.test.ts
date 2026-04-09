@@ -7,6 +7,7 @@ describe("SignUpSchema", () => {
   const validInput = {
     email: "test@example.com",
     password: "password123",
+    locale: "fr" as const,
   };
 
   it("should accept valid input without optional fields", () => {
