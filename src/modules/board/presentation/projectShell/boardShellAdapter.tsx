@@ -29,12 +29,6 @@ import {
 } from "@/domains/project/presentation/navigation/projectViews.config";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import type { TicketFilters } from "@/modules/board/core/domain/ticket.types";
-import ProjectToolbar from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar";
-import {
-  PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID,
-  type ProjectToolbarAssigneeFilter,
-  type ProjectToolbarExtraTool,
-} from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.types";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { useProjectSearchSuggestions } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
 import { useProjectRealtime } from "@/modules/board/presentation/hooks/realtime/useProjectRealtime";

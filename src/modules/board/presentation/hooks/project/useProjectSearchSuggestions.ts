@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { PROJECT_VIEWS, type ProjectView } from "@/shared/constants/routes";
 import { buildTicketDetailRoute } from "@/shared/utils/routes";
 
+import type { ProjectToolbarSearchSuggestion } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
 import type { TicketSearchItem } from "@/modules/board/core/domain/ticket.types";
 import { buildArchivedSuggestionFallback } from "@/modules/board/presentation/hooks/project/archivedSuggestionFallback";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
@@ -14,12 +15,7 @@ import {
   parseTicketCodeForProject,
 } from "@/modules/board/utils/ticketUtils";
 
-export type ProjectSearchSuggestion = {
-  id: string;
-  label: string;
-  href: string;
-  isArchived: boolean;
-};
+export type ProjectSearchSuggestion = ProjectToolbarSearchSuggestion;
 
 const EMPTY_TICKET_SEARCH_ITEMS: TicketSearchItem[] = [];
 const EMPTY_SEARCH_SUGGESTIONS: ProjectSearchSuggestion[] = [];
@@ -34,7 +30,7 @@ export const useProjectSearchSuggestions = ({
   projectId,
   viewKey,
   searchValue,
-}: Input): ProjectToolbarSearchSuggestion[] => {
+}: Input): ProjectSearchSuggestion[] => {
   const isTicketView = viewKey === PROJECT_VIEWS.BOARD;
   const searchTerm = searchValue.trim();
   const shouldResolveProjectShortCode = isTicketView && searchTerm !== "";

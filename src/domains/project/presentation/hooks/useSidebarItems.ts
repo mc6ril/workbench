@@ -2,9 +2,7 @@ import { useMemo } from "react";
 
 import { useTranslations } from "@/shared/i18n";
 
-import {
-  getEffectivePlan,
-} from "@/domains/billing/core/domain/planFeatures.rules";
+import { getEffectivePlan } from "@/domains/billing/core/domain/planFeatures.rules";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
@@ -22,25 +20,10 @@ type UseSidebarItemsOptions = {
   enabledModules?: readonly ProjectModuleKey[];
 };
 
-const computeFeatureLockState = (
-  requiredFeature: PlanFeature | undefined,
-  effectivePlan: SubscriptionPlan
-): FeatureLockState => {
-  if (!requiredFeature) {
-    return { locked: false };
-  }
-
-  if (canAccessFeature(effectivePlan, requiredFeature)) {
-    return { locked: false };
-  }
-
-  return {
-    locked: true,
-    minimumPlan: getMinimumPlanForFeature(requiredFeature),
-  };
-};
-
-export const useSidebarItems = (projectId: string): SidebarItem[] => {
+export const useSidebarItems = (
+  projectId: string,
+  options?: UseSidebarItemsOptions
+): SidebarItem[] => {
   const t = useTranslations("navigation.sidebar");
   const { data: session, isLoading: isSessionLoading } = useSession();
   const {
@@ -78,12 +61,14 @@ export const useSidebarItems = (projectId: string): SidebarItem[] => {
     return getEffectivePlan(subscription);
   }, [isEntitlementsReady, subscription]);
 
+  const enabledModules = options?.enabledModules;
+
   return useMemo((): SidebarItem[] => {
-    const enabledModules = options?.enabledModules ?? [];
+    const availableModules = enabledModules ?? [];
     const configs = getProjectViewConfigsForSidebar();
 
     return configs.flatMap((config) => {
-      const enabled = isProjectViewModuleEnabled(config.key, enabledModules);
+      const enabled = isProjectViewModuleEnabled(config.key, availableModules);
       const { locked, minimumPlan } =
         effectivePlan === null
           ? { locked: false, minimumPlan: undefined }
@@ -105,5 +90,5 @@ export const useSidebarItems = (projectId: string): SidebarItem[] => {
         },
       ];
     });
-  }, [effectivePlan, isBillingVisible, options?.enabledModules, projectId, t]);
+  }, [effectivePlan, enabledModules, isBillingVisible, projectId, t]);
 };

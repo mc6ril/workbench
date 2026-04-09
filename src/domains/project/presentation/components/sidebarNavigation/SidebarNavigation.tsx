@@ -10,7 +10,10 @@ import React, {
 import { usePathname, useRouter } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { PAGE_ROUTES } from "@/shared/constants/routes";
+import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
+import Badge from "@/shared/design-system/badge";
+import Button from "@/shared/design-system/button";
+import Modal from "@/shared/design-system/modal";
 import { useTranslations } from "@/shared/i18n";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { markNavigationStart } from "@/shared/navigationPerf";

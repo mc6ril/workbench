@@ -21,7 +21,6 @@ import ProjectShell from "@/domains/project/presentation/layouts/projectShell/Pr
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
 import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 import BoardShellAdapter from "@/modules/board/presentation/projectShell/boardShellAdapter";
-import RecipesShellAdapter from "@/modules/recipes/presentation/projectShell/recipesShellAdapter";
 
 const logger = createLoggerFactory().forScope("ProjectLayout");
 
