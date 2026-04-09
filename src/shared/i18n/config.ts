@@ -1,7 +1,8 @@
+import type { Locale } from "./routing";
 import { localeCookieMaxAgeSeconds, routing } from "./routing";
-import type { Locale } from "./types";
 
 export { localeCookieMaxAgeSeconds };
+export type { Locale } from "./routing";
 
 export const defaultLocale: Locale = routing.defaultLocale;
 export const supportedLocales = routing.locales;

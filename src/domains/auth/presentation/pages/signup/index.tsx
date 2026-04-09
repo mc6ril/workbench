@@ -19,18 +19,18 @@ import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import {
   defaultLocale,
   isSupportedLocale,
+  type Locale,
   useLocale,
   useTranslations,
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import type { Locale } from "@/shared/i18n/types";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
-import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
 import styles from "./styles.module.scss";
 
 import type { SignUpInput } from "@/domains/auth/core/domain/auth.types";
 import PasswordStrengthIndicator from "@/domains/auth/presentation/components/PasswordStrengthIndicator";
+import { translateAuthFieldError } from "@/domains/auth/presentation/forms/authFieldErrors";
 import {
   type SignUpFormInput,
   SignUpFormSchema,
@@ -63,7 +63,7 @@ const SignupPage = () => {
   const redirectPathParam = searchParams.get("redirect");
   const redirectPath =
     redirectPathParam &&
-    redirectPathParam.startsWith("/") &&
+    redirectPathParam.startsWith(PAGE_ROUTES.HOME) &&
     !redirectPathParam.startsWith("//")
       ? redirectPathParam
       : PAGE_ROUTES.WORKSPACE;
@@ -290,7 +290,7 @@ const SignupPage = () => {
             type="email"
             autoComplete="email"
             required
-            error={translateFieldError(errors.email, tFields)}
+            error={translateAuthFieldError(errors.email, tFields)}
             {...register("email")}
           />
 
@@ -301,7 +301,7 @@ const SignupPage = () => {
               autoComplete="new-password"
               required
               helperText={passwordHint}
-              error={translateFieldError(errors.password, tFields)}
+              error={translateAuthFieldError(errors.password, tFields)}
               {...register("password")}
             />
             <PasswordStrengthIndicator password={passwordValue} />
@@ -312,7 +312,7 @@ const SignupPage = () => {
             type="password"
             autoComplete="new-password"
             required
-            error={translateFieldError(errors.confirmPassword, tFields)}
+            error={translateAuthFieldError(errors.confirmPassword, tFields)}
             {...register("confirmPassword")}
           />
 

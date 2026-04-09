@@ -2,9 +2,9 @@
 
 import { useEffect } from "react";
 
-import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
-import { useTranslations } from "@/shared/i18n";
+import { useLocale, useTranslations } from "@/shared/i18n";
+import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
 
 type Props = {
   error: Error & { digest?: string };
@@ -12,7 +12,9 @@ type Props = {
 };
 
 const ErrorPage = ({ error, reset }: Props) => {
+  const locale = useLocale();
   const t = useTranslations("pages.fallback");
+  const homePath = buildMarketingHomePath(locale);
 
   useEffect(() => {
     console.error(error);
@@ -39,7 +41,7 @@ const ErrorPage = ({ error, reset }: Props) => {
         {
           label: t("error.secondaryAction"),
           ariaLabel: t("error.secondaryActionAriaLabel"),
-          href: PAGE_ROUTES.HOME,
+          href: homePath,
           variant: "secondary",
         },
       ]}

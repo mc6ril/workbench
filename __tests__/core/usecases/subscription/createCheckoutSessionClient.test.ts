@@ -1,3 +1,5 @@
+import { PAGE_ROUTES } from "@/shared/constants/routes";
+
 import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import type { BillingSessionsClientPort } from "@/domains/billing/core/ports/billingSessionsClient.port";
 import { createCheckoutSessionClient } from "@/domains/billing/core/usecases/createCheckoutSessionClient";
@@ -30,12 +32,12 @@ describe("createCheckoutSessionClient", () => {
 
     const result = await createCheckoutSessionClient(client, {
       plan: SubscriptionPlan.PRO,
-      from: "/workspace",
+      from: PAGE_ROUTES.WORKSPACE,
     });
 
     expect(client.createCheckoutSession).toHaveBeenCalledWith({
       plan: SubscriptionPlan.PRO,
-      from: "/workspace",
+      from: PAGE_ROUTES.WORKSPACE,
     });
     expect(result).toEqual({ url: "https://stripe.test" });
   });
@@ -50,4 +52,3 @@ describe("createCheckoutSessionClient", () => {
     ).rejects.toBeInstanceOf(Error);
   });
 });
-

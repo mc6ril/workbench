@@ -22,6 +22,7 @@ import { getAppErrorCode } from "@/shared/errors/appError";
 import { INFRA_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import {
   getIntlLocale,
+  type Locale,
   supportedLocaleOptions,
   supportedLocales,
   useLocale,
@@ -29,7 +30,6 @@ import {
   useTranslations,
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import type { Locale } from "@/shared/i18n/types";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
@@ -299,7 +299,7 @@ const AccountPage = () => {
 
   const goBackHref = useMemo(() => {
     const from = searchParams.get("from");
-    if (from && from.startsWith("/")) {
+    if (from && from.startsWith(PAGE_ROUTES.HOME)) {
       return from;
     }
     return PAGE_ROUTES.WORKSPACE;

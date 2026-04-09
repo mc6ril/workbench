@@ -2,8 +2,11 @@ import { ImageResponse } from "next/og";
 import { getTranslations } from "next-intl/server";
 
 import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
-import { defaultLocale, isSupportedLocale } from "@/shared/i18n/config";
-import type { Locale } from "@/shared/i18n/types";
+import {
+  defaultLocale,
+  isSupportedLocale,
+  type Locale,
+} from "@/shared/i18n/config";
 
 export const runtime = "edge";
 

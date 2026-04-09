@@ -1,10 +1,16 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
+import type { Locale } from "@/shared/i18n";
+import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
 
 const NotFoundPage = async () => {
-  const t = await getTranslations("pages.fallback");
+  const locale = (await getLocale()) as Locale;
+  const t = await getTranslations({
+    locale,
+    namespace: "pages.fallback",
+  });
 
   return (
     <RouteFallbackPage
@@ -18,7 +24,7 @@ const NotFoundPage = async () => {
         {
           label: t("notFound.primaryAction"),
           ariaLabel: t("notFound.primaryActionAriaLabel"),
-          href: PAGE_ROUTES.HOME,
+          href: buildMarketingHomePath(locale),
           variant: "primary",
         },
         {

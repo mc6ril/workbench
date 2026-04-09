@@ -16,7 +16,12 @@ import styles from "./styles.module.scss";
 
 import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
-import type { TicketFilters } from "@/modules/board/core/domain/ticket.types";
+import type { BoardConfiguration } from "@/modules/board/core/domain/board.types";
+import type {
+  Ticket,
+  TicketAssignee,
+  TicketFilters,
+} from "@/modules/board/core/domain/ticket.types";
 import BoardView from "@/modules/board/presentation/components/board/boardView/BoardView";
 import BoardOnboardingPanel from "@/modules/board/presentation/components/boardOnboardingPanel/BoardOnboardingPanel";
 import {
@@ -38,11 +43,26 @@ import { useTicketAssigneesByProjectId } from "@/modules/board/presentation/hook
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
 import type { BoardColumnConfig } from "@/modules/board/presentation/types/boardView.types";
+import { getBoardColumnDisplayName } from "@/modules/board/presentation/utils/columnI18n";
 import { normalizeTicketSearch } from "@/modules/board/utils/ticketUtils";
 
 const EMPTY_FILTERS: TicketFilters = {};
 
-const BoardLayout = ({ projectId }: { projectId: string }) => {
+type BoardLayoutProps = {
+  projectId: string;
+  initialBoardConfiguration?: BoardConfiguration;
+  initialTickets?: Ticket[];
+  initialTicketAssigneesByProjectId?: Record<string, TicketAssignee[]>;
+  initialProjectShortCode?: string | null;
+};
+
+const BoardLayout = ({
+  projectId,
+  initialBoardConfiguration,
+  initialTickets,
+  initialTicketAssigneesByProjectId,
+  initialProjectShortCode,
+}: BoardLayoutProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -51,6 +71,7 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   const tOnboarding = useTranslations("pages.board.onboarding");
   const legacyTicketId = searchParams.get("ticket");
   const tCreateForm = useTranslations("pages.board.createTicketForm");
+  const tColumns = useTranslations("pages.board.columns");
   const isCreateTicketModalOpen = searchParams.get("createTicket") === "1";
   const isOnboardingReviewRequested = searchParams.get("onboarding") === "1";
   const {
@@ -102,8 +123,12 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     data: boardConfiguration,
     isLoading,
     error,
-  } = useBoardConfiguration(projectId);
-  const { data: projectShortCode } = useProjectShortCode(projectId);
+  } = useBoardConfiguration(projectId, {
+    initialData: initialBoardConfiguration,
+  });
+  const { data: projectShortCode } = useProjectShortCode(projectId, {
+    initialData: initialProjectShortCode,
+  });
   const filterProjectId = useFilterStore((state) => state.projectId);
   const rawFilters = useFilterStore((state) => state.filters);
   const rawSearch = useFilterStore((state) => state.search);
@@ -113,7 +138,16 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   const effectiveSearch = useMemo(() => {
     return normalizeTicketSearch(search, projectShortCode);
   }, [projectShortCode, search]);
-  const { data: tickets = [] } = useTickets(projectId, filters, effectiveSearch);
+  const shouldUseInitialTickets =
+    !isFilterStoreReady ||
+    (!filters.columnId &&
+      !filters.priority &&
+      !filters.assigneeUserId &&
+      !filters.unassignedOnly &&
+      effectiveSearch.trim() === "");
+  const { data: tickets = [] } = useTickets(projectId, filters, effectiveSearch, {
+    initialData: shouldUseInitialTickets ? initialTickets : undefined,
+  });
   const hasActiveFilters = useMemo(() => {
     return Boolean(
       filters.columnId ||
@@ -151,7 +185,9 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
   const shouldLoadBoardOnboardingSignals =
     gettingStartedStatus === "pending" || isOnboardingReviewRequested;
   const { data: ticketAssigneesByProjectId = {} } =
-    useTicketAssigneesByProjectId(projectId);
+    useTicketAssigneesByProjectId(projectId, {
+      initialData: initialTicketAssigneesByProjectId,
+    });
   const { data: hasProjectComments = false } = useHasProjectComments(
     projectId,
     {
@@ -230,9 +266,9 @@ const BoardLayout = ({ projectId }: { projectId: string }) => {
     const currentColumns = boardConfiguration?.columns ?? [];
     return currentColumns.map((column) => ({
       value: column.id,
-      label: column.name,
+      label: getBoardColumnDisplayName(column, tColumns),
     }));
-  }, [boardConfiguration?.columns]);
+  }, [boardConfiguration?.columns, tColumns]);
 
   const createTicketErrorMessage =
     createTicketMutation.error instanceof Error

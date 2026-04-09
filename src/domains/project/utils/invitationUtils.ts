@@ -1,3 +1,5 @@
+import { PAGE_ROUTES } from "@/shared/constants";
+
 /**
  * Build the internal route used to accept an invitation token.
  */
@@ -25,7 +27,7 @@ export const extractInvitationToken = (value: string): string | null => {
         return tokenFromQuery.trim();
       }
 
-      const segments = parsed.pathname.split("/").filter(Boolean);
+      const segments = parsed.pathname.split(PAGE_ROUTES.HOME).filter(Boolean);
       const joinIndex = segments.findIndex((segment) => segment === "join");
       if (joinIndex >= 0 && segments[joinIndex + 1]) {
         return segments[joinIndex + 1].trim();

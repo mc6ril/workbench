@@ -10,11 +10,15 @@ import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
  */
 export const useProjectShortCode = (
   projectId: string,
-  options?: { enabled?: boolean }
+  options?: {
+    enabled?: boolean;
+    initialData?: string | null;
+  }
 ) => {
-  return useQuery({
+  return useQuery<string | null>({
     queryKey: queryKeys.projects.shortCode(projectId),
     queryFn: () => getProjectShortCode(projectLookupRepository, projectId),
     enabled: !!projectId && (options?.enabled ?? true),
+    initialData: options?.initialData,
   });
 };

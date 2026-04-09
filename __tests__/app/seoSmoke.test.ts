@@ -26,9 +26,16 @@ describe("SEO smoke: sitemap and manifest", () => {
     );
     expect(res.status).toBe(200);
     expect(res.headers.get("content-type")).toContain("application/manifest+json");
-    const body = (await res.json()) as { lang: string; name: string };
+    const body = (await res.json()) as {
+      lang: string;
+      name: string;
+      scope: string;
+      start_url: string;
+    };
     expect(body.lang).toBe("fr");
     expect(typeof body.name).toBe("string");
+    expect(body.start_url).toBe("/");
+    expect(body.scope).toBe("/");
   });
 
   it("manifest route falls back locale for unknown segment", async () => {
@@ -38,5 +45,17 @@ describe("SEO smoke: sitemap and manifest", () => {
     );
     const body = (await res.json()) as { lang: string };
     expect(body.lang).toBe("fr");
+  });
+
+  it("manifest route uses the locale-specific marketing home for launch URLs", async () => {
+    const res = await manifestGet(
+      new Request("http://localhost:3000/manifest/en"),
+      { params: Promise.resolve({ locale: "en" }) }
+    );
+    const body = (await res.json()) as { lang: string; scope: string; start_url: string };
+
+    expect(body.lang).toBe("en");
+    expect(body.start_url).toBe("/en");
+    expect(body.scope).toBe("/en");
   });
 });

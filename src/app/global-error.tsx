@@ -1,21 +1,47 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import * as Sentry from "@sentry/nextjs";
 
-import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
-import { defaultLocale, getIntlLocale, useTranslations } from "@/shared/i18n";
-import messages from "@/shared/i18n/messages/fr.json";
+import { getIntlLocale, useTranslations } from "@/shared/i18n";
+import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { messageCatalog } from "@/shared/i18n/messageCatalog";
+import {
+  getBrowserAcceptLanguage,
+  resolveRuntimeLocale,
+} from "@/shared/i18n/runtimeLocale";
 
 type Props = {
   error: Error & { digest?: string };
   reset: () => void;
 };
 
-const GlobalErrorContent = ({ error, reset }: Props) => {
+const subscribeToRuntimeLocale = () => {
+  return () => {};
+};
+
+const getServerSnapshot = (pathname: string | null) => {
+  return resolveRuntimeLocale({ pathname });
+};
+
+const getClientSnapshot = (pathname: string | null) => {
+  return resolveRuntimeLocale({
+    pathname,
+    cookieString: document.cookie,
+    acceptLanguage: getBrowserAcceptLanguage(),
+  });
+};
+
+const GlobalErrorContent = ({
+  error,
+  reset,
+  locale,
+}: Props & { locale: ReturnType<typeof getServerSnapshot> }) => {
   const t = useTranslations("pages.fallback");
+  const homePath = buildMarketingHomePath(locale);
 
   useEffect(() => {
     console.error(error);
@@ -49,7 +75,7 @@ const GlobalErrorContent = ({ error, reset }: Props) => {
         {
           label: t("globalError.secondaryAction"),
           ariaLabel: t("globalError.secondaryActionAriaLabel"),
-          href: PAGE_ROUTES.HOME,
+          href: homePath,
           variant: "secondary",
         },
       ]}
@@ -58,11 +84,21 @@ const GlobalErrorContent = ({ error, reset }: Props) => {
 };
 
 const GlobalErrorPage = ({ error, reset }: Props) => {
+  const pathname = usePathname();
+  const locale = useSyncExternalStore(
+    subscribeToRuntimeLocale,
+    () => getClientSnapshot(pathname),
+    () => getServerSnapshot(pathname)
+  );
+
   return (
-    <html lang={getIntlLocale(defaultLocale)} suppressHydrationWarning>
+    <html lang={getIntlLocale(locale)} suppressHydrationWarning>
       <body>
-        <NextIntlClientProvider locale={defaultLocale} messages={messages}>
-          <GlobalErrorContent error={error} reset={reset} />
+        <NextIntlClientProvider
+          locale={locale}
+          messages={messageCatalog[locale]}
+        >
+          <GlobalErrorContent error={error} reset={reset} locale={locale} />
         </NextIntlClientProvider>
       </body>
     </html>

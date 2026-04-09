@@ -99,9 +99,18 @@ const BoardShellAdapter = ({ projectId }: Props) => {
   const search = isFilterStoreReady ? rawSearch : "";
   const filters = isFilterStoreReady ? rawFilters : EMPTY_FILTERS;
   const [searchInput, setSearchInput] = useState(search);
+  const [isClientReady, setIsClientReady] = useState(false);
 
+  useEffect(() => {
+    setIsClientReady(true);
+  }, []);
+
+  // Keep the board page as the SSR owner of boardConfiguration.
+  // If the shell starts the same query during server render, it can create a
+  // pending cache entry outside the page hydration boundary and trigger a
+  // loading->loaded hydration mismatch in BoardView.
   const { data: boardConfiguration } = useBoardConfiguration(projectId, {
-    enabled: isBoardShellView,
+    enabled: isBoardShellView && isClientReady,
   });
   const { data: projectMembersData } = useProjectMembers(
     isBoardShellView ? projectId : undefined

@@ -7,10 +7,10 @@ import { getAppErrorCode } from "@/shared/errors/appError";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
 import type { ResetPasswordInput } from "@/domains/auth/core/domain/auth.types";
 import { ResetPasswordSchema } from "@/domains/auth/core/usecases/password/resetPasswordForEmail";
+import { translateAuthFieldError } from "@/domains/auth/presentation/forms/authFieldErrors";
 import { useResetPassword } from "@/domains/auth/presentation/hooks/password/useResetPassword";
 
 export const useResetPasswordForm = () => {
@@ -54,7 +54,7 @@ export const useResetPasswordForm = () => {
   return {
     emailField: register("email"),
     onSubmit: handleSubmit(onSubmit),
-    emailError: translateFieldError(errors.email, tFields),
+    emailError: translateAuthFieldError(errors.email, tFields),
     rootError: errors.root?.message,
     isPending: resetPasswordMutation.isPending,
     isSuccess: resetPasswordMutation.isSuccess,

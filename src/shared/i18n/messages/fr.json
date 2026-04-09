@@ -488,6 +488,13 @@
       "backToWorkspaceAriaLabel": "Retourner à l'espace de travail"
     },
     "board": {
+      "columns": {
+        "todo": "À faire",
+        "in_progress": "En cours",
+        "done": "Fait",
+        "in-progress": "En cours",
+        "completed": "Fait"
+      },
       "search": {
         "archivedBadge": "Archivée"
       },

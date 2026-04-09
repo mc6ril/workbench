@@ -4,8 +4,11 @@ import { useEffect, useMemo } from "react";
 import { useTheme } from "next-themes";
 
 import { useLocale, useLocalePreference } from "@/shared/i18n";
-import { defaultLocale, supportedLocales } from "@/shared/i18n/config";
-import type { Locale } from "@/shared/i18n/types";
+import {
+  defaultLocale,
+  type Locale,
+  supportedLocales,
+} from "@/shared/i18n/config";
 
 import { resolveThemePreference } from "@/domains/profile/core/domain/profile.types";
 import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 
 import { persistLocaleCookie } from "./config";
-import type { Locale } from "./types";
+import type { Locale } from "./routing";
 
 export const useLocalePreference = () => {
   const router = useRouter();

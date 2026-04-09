@@ -26,7 +26,6 @@ import { getAppErrorCode } from "@/shared/errors/appError";
 import { REPOSITORY_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import {
   getIntlLocale,
-  getRoleLabelKey,
   useLocale,
   useTranslations,
 } from "@/shared/i18n";
@@ -40,6 +39,7 @@ import styles from "./styles.module.scss";
 
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
+import { getProjectRoleLabelKey } from "@/domains/project/core/domain/project.types";
 import {
   type CreateProjectInput,
   CreateProjectInputSchema,
@@ -376,7 +376,7 @@ const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
 
             <div className={styles["workspaces-grid"]}>
               {projects.map((project, index) => {
-                const roleKey = getRoleLabelKey(project.role);
+                const roleKey = getProjectRoleLabelKey(project.role);
                 const roleLabel = t(roleKey);
                 const openAriaLabel = t("openWorkspaceAriaLabel", {
                   name: project.name,

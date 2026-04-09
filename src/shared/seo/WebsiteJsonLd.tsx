@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
+import type { Locale } from "@/shared/i18n/config";
 import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
-import type { Locale } from "@/shared/i18n/types";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 /**

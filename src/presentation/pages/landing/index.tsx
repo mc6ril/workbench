@@ -13,11 +13,11 @@ import {
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
+import type { Locale } from "@/shared/i18n/config";
 import {
   buildMarketingLegalPath,
   buildMarketingPricingPath,
 } from "@/shared/i18n/marketingPaths";
-import type { Locale } from "@/shared/i18n/types";
 import { buildFeaturePreviewContent } from "@/shared/utils";
 
 import styles from "./styles.module.scss";

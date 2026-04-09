@@ -7,8 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import { translateFieldError } from "@/shared/i18n/zodFieldErrors";
 
+import { translateAuthFieldError } from "@/domains/auth/presentation/forms/authFieldErrors";
 import type { UpdatePasswordFormInput } from "@/domains/auth/presentation/forms/authForms.schema";
 import { UpdatePasswordFormSchema } from "@/domains/auth/presentation/forms/authForms.schema";
 import { useUpdatePassword } from "@/domains/auth/presentation/hooks/password/useUpdatePassword";
@@ -73,8 +73,11 @@ export const useUpdatePasswordForm = () => {
     onSubmit: handleSubmit(onSubmit),
     passwordValue,
     passwordHint,
-    passwordError: translateFieldError(errors.password, tFields),
-    confirmPasswordError: translateFieldError(errors.confirmPassword, tFields),
+    passwordError: translateAuthFieldError(errors.password, tFields),
+    confirmPasswordError: translateAuthFieldError(
+      errors.confirmPassword,
+      tFields
+    ),
     rootError: errors.root?.message,
     isPending: updatePasswordMutation.isPending,
     isSuccess:

@@ -1,10 +1,13 @@
 import { NextIntlClientProvider } from "next-intl";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
+import { PAGE_ROUTES } from "@/shared/constants/routes";
+import * as i18n from "@/shared/i18n";
+import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
 import messages from "@/shared/i18n/messages/fr.json";
 import AppErrorBoundary from "@/shared/providers/AppErrorBoundary";
 
-let mockPathname = "/workspace";
+let mockPathname: string = PAGE_ROUTES.WORKSPACE;
 
 jest.mock("next/navigation", () => ({
   usePathname: () => mockPathname,
@@ -20,8 +23,9 @@ const renderWithLocale = (children: React.ReactNode) => {
 
 describe("AppErrorBoundary", () => {
   beforeEach(() => {
-    mockPathname = "/workspace";
+    mockPathname = PAGE_ROUTES.WORKSPACE;
     jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(i18n, "useLocale").mockReturnValue("fr");
   });
 
   afterEach(() => {
@@ -72,7 +76,7 @@ describe("AppErrorBoundary", () => {
 
     expect(screen.getByText("Quelque chose a dérapé")).toBeInTheDocument();
 
-    mockPathname = "/account";
+    mockPathname = PAGE_ROUTES.ACCOUNT;
 
     rerender(
       <NextIntlClientProvider locale="fr" messages={messages}>
@@ -85,5 +89,23 @@ describe("AppErrorBoundary", () => {
     await waitFor(() => {
       expect(screen.getByText("fresh route")).toBeInTheDocument();
     });
+  });
+
+  it("keeps the fallback home action on the active locale", () => {
+    jest.spyOn(i18n, "useLocale").mockReturnValue("en");
+
+    const ThrowingChild = () => {
+      throw new Error("route crash");
+    };
+
+    renderWithLocale(
+      <AppErrorBoundary>
+        <ThrowingChild />
+      </AppErrorBoundary>
+    );
+
+    expect(
+      screen.getByRole("link", { name: "Revenir à la page d'accueil" })
+    ).toHaveAttribute("href", buildMarketingHomePath("en"));
   });
 });

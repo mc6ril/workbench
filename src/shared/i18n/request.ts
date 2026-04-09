@@ -1,12 +1,10 @@
 import { getRequestConfig } from "next-intl/server";
 
 import { isSupportedLocale } from "./config";
-import { routing } from "./routing";
-import type { Locale } from "./types";
+import type { IntlMessages } from "./messageCatalog";
+import { type Locale, routing } from "./routing";
 
-type Messages = typeof import("./messages/fr.json");
-
-const messageLoaders: Record<Locale, () => Promise<Messages>> = {
+const messageLoaders: Record<Locale, () => Promise<IntlMessages>> = {
   fr: async () => (await import("./messages/fr.json")).default,
   en: async () => (await import("./messages/en.json")).default,
   es: async () => (await import("./messages/es.json")).default,

@@ -1,7 +1,15 @@
 import type {
   Column,
+  ColumnWorkflowState,
   CreateColumnInput,
 } from "@/modules/board/core/domain/board.types";
+
+export const DEFAULT_COLUMN_KEY_BY_STATE: Record<ColumnWorkflowState, string> =
+  {
+    todo: "todo",
+    in_progress: "in_progress",
+    done: "done",
+  };
 
 /**
  * Returns default board configuration (Todo, In Progress, Done).
@@ -21,7 +29,7 @@ export const getDefaultBoardConfiguration = (
       {
         boardId: "",
         name: "Todo",
-        key: "todo",
+        key: DEFAULT_COLUMN_KEY_BY_STATE.todo,
         state: "todo",
         position: 0,
         visible: true,
@@ -29,7 +37,7 @@ export const getDefaultBoardConfiguration = (
       {
         boardId: "",
         name: "In Progress",
-        key: "in-progress",
+        key: DEFAULT_COLUMN_KEY_BY_STATE.in_progress,
         state: "in_progress",
         position: 1,
         visible: true,
@@ -37,7 +45,7 @@ export const getDefaultBoardConfiguration = (
       {
         boardId: "",
         name: "Done",
-        key: "completed",
+        key: DEFAULT_COLUMN_KEY_BY_STATE.done,
         state: "done",
         position: 2,
         visible: true,

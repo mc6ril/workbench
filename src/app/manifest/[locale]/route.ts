@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 
-import { defaultLocale, isSupportedLocale } from "@/shared/i18n/config";
-import type { Locale } from "@/shared/i18n/types";
+import {
+  defaultLocale,
+  isSupportedLocale,
+  type Locale,
+} from "@/shared/i18n/config";
 import { buildManifest } from "@/shared/seo/buildManifest";
 
 type Params = {
