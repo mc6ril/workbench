@@ -67,6 +67,9 @@ const BoardLayout = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const layoutId = useMemo(() => getAccessibilityId("board-layout"), []);
+  const dndContextId = useMemo(() => {
+    return getAccessibilityId(`board-dnd-context-${projectId}`);
+  }, [projectId]);
   const tBoard = useTranslations("pages.board");
   const tOnboarding = useTranslations("pages.board.onboarding");
   const legacyTicketId = searchParams.get("ticket");
@@ -480,6 +483,7 @@ const BoardLayout = ({
       )}
 
       <DndContext
+        id={dndContextId}
         sensors={sensors}
         collisionDetection={collisionDetection}
         onDragStart={canMoveTicket ? onDragStart : undefined}

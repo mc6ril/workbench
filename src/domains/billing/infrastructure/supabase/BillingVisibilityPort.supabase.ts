@@ -3,12 +3,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { BillingVisibilityPort } from "@/domains/billing/core/ports/billingVisibility.port";
 
 type RuntimeConfigRow = {
-  is_billing_visible: boolean;
+  value: unknown;
 };
 
 /**
  * Supabase implementation of BillingVisibilityPort.
- * Reads the singleton runtime config row and returns billing visibility.
+ * Reads the runtime config entry and returns billing visibility.
  */
 export const createBillingVisibilityPort = (
   client: SupabaseClient
@@ -16,8 +16,8 @@ export const createBillingVisibilityPort = (
   async getBillingVisibility(): Promise<boolean> {
     const { data, error } = await client
       .from("app_runtime_config")
-      .select("is_billing_visible")
-      .eq("id", 1)
+      .select("value")
+      .eq("key", "is_billing_visible")
       .maybeSingle();
 
     if (error) {
@@ -25,6 +25,12 @@ export const createBillingVisibilityPort = (
     }
 
     const row = data as RuntimeConfigRow | null;
-    return row?.is_billing_visible ?? false;
+    const value = row?.value;
+
+    if (typeof value !== "boolean") {
+      return false;
+    }
+
+    return value;
   },
 });

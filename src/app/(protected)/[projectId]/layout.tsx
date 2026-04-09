@@ -18,9 +18,13 @@ import { getProjectForRoute } from "@/domains/project/infrastructure/server/getP
 import { createProjectMemberGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys as projectQueryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import ProjectShell from "@/domains/project/presentation/layouts/projectShell/ProjectShell";
+import { getRuntimeConfigBoolean } from "@/domains/runtimeConfig/core/usecases/getRuntimeConfigBoolean";
+import { createRuntimeConfigPort } from "@/domains/runtimeConfig/infrastructure/supabase/RuntimeConfigPort.supabase";
+import { queryKeys as runtimeConfigQueryKeys } from "@/domains/runtimeConfig/presentation/hooks/queryKeys";
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
 import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 import BoardShellAdapter from "@/modules/board/presentation/projectShell/boardShellAdapter";
+import RecipesShellAdapter from "@/modules/recipes/presentation/projectShell/recipesShellAdapter";
 
 const logger = createLoggerFactory().forScope("ProjectLayout");
 
@@ -68,6 +72,7 @@ const ProjectLayout = async ({
   const supabaseClient = await createSupabaseServerClient();
   const projectMemberGateway = createProjectMemberGateway(supabaseClient);
   const billingVisibilityPort = createBillingVisibilityPort(supabaseClient);
+  const runtimeConfigPort = createRuntimeConfigPort(supabaseClient);
   const sessionGateway = createSessionGateway(supabaseClient);
 
   const session = await getCurrentSession(sessionGateway);
@@ -90,6 +95,16 @@ const ProjectLayout = async ({
       queryFn: () => getBillingVisibility(billingVisibilityPort),
     }),
     queryClient.prefetchQuery({
+      queryKey: runtimeConfigQueryKeys.runtimeConfig.boolean(
+        "is_recipes_board_visible"
+      ),
+      queryFn: () =>
+        getRuntimeConfigBoolean(runtimeConfigPort, {
+          key: "is_recipes_board_visible",
+          defaultValue: false,
+        }),
+    }),
+    queryClient.prefetchQuery({
       queryKey: billingQueryKeys.subscription.current(),
       queryFn: () =>
         getUserSubscription(subscriptionRepository, {
@@ -105,7 +120,12 @@ const ProjectLayout = async ({
     <HydrationBoundary state={dehydrate(queryClient)}>
       <ProjectShell
         projectId={projectId}
-        shellAdapter={<BoardShellAdapter projectId={projectId} />}
+        shellAdapter={
+          <>
+            <BoardShellAdapter projectId={projectId} />
+            <RecipesShellAdapter projectId={projectId} />
+          </>
+        }
       >
         {children}
       </ProjectShell>

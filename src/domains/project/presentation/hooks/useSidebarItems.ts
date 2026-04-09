@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 
+import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslations } from "@/shared/i18n";
 
 import { getEffectivePlan } from "@/domains/billing/core/domain/planFeatures.rules";
@@ -14,6 +15,7 @@ import {
   getProjectViewFeatureLockState,
   isProjectViewModuleEnabled,
 } from "@/domains/project/presentation/navigation/projectViews.config";
+import { useRuntimeConfigBoolean } from "@/domains/runtimeConfig/presentation/hooks/useRuntimeConfigBoolean";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 type UseSidebarItemsOptions = {
@@ -32,6 +34,10 @@ export const useSidebarItems = (
     isFetched: isSubscriptionFetched,
   } = useSubscription();
   const { data: isBillingVisible } = useBillingVisibility();
+  const { data: isRecipesBoardVisible } = useRuntimeConfigBoolean(
+    "is_recipes_board_visible",
+    false
+  );
 
   const isEntitlementsReady = useMemo((): boolean => {
     if (isSessionLoading) {
@@ -68,6 +74,10 @@ export const useSidebarItems = (
     const configs = getProjectViewConfigsForSidebar();
 
     return configs.flatMap((config) => {
+      if (config.key === PROJECT_VIEWS.RECIPES && !isRecipesBoardVisible) {
+        return [];
+      }
+
       const enabled = isProjectViewModuleEnabled(config.key, availableModules);
       const { locked, minimumPlan } =
         effectivePlan === null
@@ -90,5 +100,12 @@ export const useSidebarItems = (
         },
       ];
     });
-  }, [effectivePlan, enabledModules, isBillingVisible, projectId, t]);
+  }, [
+    effectivePlan,
+    enabledModules,
+    isBillingVisible,
+    isRecipesBoardVisible,
+    projectId,
+    t,
+  ]);
 };

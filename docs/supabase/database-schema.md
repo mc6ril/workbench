@@ -43,7 +43,8 @@ The current product keeps tickets, comments, assignees, invitations, and billing
 - `subscriptions`
   - User subscription state (`free/pro/team`) and billing metadata
 - `app_runtime_config`
-  - Runtime flags for product surfaces such as billing visibility
+  - Runtime remote-config entries (one row per key) used for product flags and A/B tests
+  - `key` (text) + `value` (jsonb) where `value` can be boolean/number/text/json
 
 ## Key Relationships
 

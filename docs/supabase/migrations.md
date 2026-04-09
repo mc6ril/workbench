@@ -130,7 +130,13 @@ This document describes the current migration strategy for Workbench and reflect
   Hardens trigger search-path behavior for the last-admin protection logic.
 
 - `000036_add_runtime_billing_visibility_config.sql`
-  Adds `app_runtime_config` for remotely toggling billing visibility.
+  Adds the initial `app_runtime_config` singleton used for remotely toggling billing visibility (later refactored to key/value).
+
+- `000059_refactor_app_runtime_config_key_value.sql`
+  Refactors `app_runtime_config` into key/value remote-config entries (`key` + `value` jsonb).
+
+- `000060_add_recipes_board_visibility_runtime_config.sql`
+  Adds `is_recipes_board_visible` runtime config key (boolean).
 
 - `000037_allow_owner_manual_user_deletion.sql`
   Allows the database owner to manually delete users without violating the last-admin invariant.

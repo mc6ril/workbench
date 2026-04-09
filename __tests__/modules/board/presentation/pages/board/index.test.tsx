@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
@@ -33,6 +34,21 @@ jest.mock("next/navigation", () => ({
   useSearchParams: () => mockSearchParams,
 }));
 
+jest.mock("@dnd-kit/core", () => ({
+  DndContext: ({
+    id,
+    children,
+  }: {
+    id?: string;
+    children: ReactNode;
+  }) => (
+    <div data-testid="dnd-context" data-dnd-id={id}>
+      {children}
+    </div>
+  ),
+  DragOverlay: ({ children }: { children: ReactNode }) => <>{children}</>,
+}));
+
 jest.mock("@/shared/design-system/loader", () => ({
   __esModule: true,
   default: () => <div>loading</div>,
@@ -40,7 +56,7 @@ jest.mock("@/shared/design-system/loader", () => ({
 
 jest.mock("@/shared/design-system/modal", () => ({
   __esModule: true,
-  default: ({ isOpen, children }: { isOpen: boolean; children: React.ReactNode }) =>
+  default: ({ isOpen, children }: { isOpen: boolean; children: ReactNode }) =>
     isOpen ? <div data-testid="modal">{children}</div> : null,
 }));
 
@@ -538,6 +554,15 @@ describe("BoardPage onboarding", () => {
       {
         initialData: initialTickets,
       }
+    );
+  });
+
+  it("passes a stable id to DndContext to avoid SSR hydration mismatches", () => {
+    render(<BoardPage projectId={PROJECT_ID} />);
+
+    expect(screen.getByTestId("dnd-context")).toHaveAttribute(
+      "data-dnd-id",
+      "a11y-board-dnd-context-project-1"
     );
   });
 });
