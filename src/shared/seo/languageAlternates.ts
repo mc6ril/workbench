@@ -1,5 +1,8 @@
-import { defaultLocale } from "@/shared/i18n/config";
-import type { Locale } from "@/shared/i18n/types";
+import {
+  defaultLocale,
+  type Locale,
+  supportedLocales,
+} from "@/shared/i18n/config";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 type Hreflang = Locale | "x-default";
@@ -12,15 +15,16 @@ export const getLanguageAlternates = (
   buildPathForLocale: (locale: Locale) => string
 ): Record<Hreflang, string> => {
   const base = getSiteUrl();
-  const fr = new URL(buildPathForLocale("fr"), base).toString();
-  const en = new URL(buildPathForLocale("en"), base).toString();
-  const es = new URL(buildPathForLocale("es"), base).toString();
   const xDefault = new URL(buildPathForLocale(defaultLocale), base).toString();
+  const localeAlternates = Object.fromEntries(
+    supportedLocales.map((locale) => [
+      locale,
+      new URL(buildPathForLocale(locale), base).toString(),
+    ])
+  ) as Record<Locale, string>;
 
   return {
     "x-default": xDefault,
-    fr,
-    en,
-    es,
+    ...localeAlternates,
   };
 };

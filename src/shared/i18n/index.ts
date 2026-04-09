@@ -1,11 +1,13 @@
-/**
- * i18n translation system exports.
- */
+import {
+  useLocale as useNextIntlLocale,
+  useTranslations,
+} from "next-intl";
+
+import type { Locale } from "./routing";
 
 export {
   defaultLocale,
   getIntlLocale,
-  getLocale,
   isSupportedLocale,
   localeCookieName,
   matchSupportedLocale,
@@ -15,34 +17,11 @@ export {
   supportedLocaleOptions,
   supportedLocales,
 } from "./config";
-export type { RoleLabelKey } from "./dynamic";
-export { LocaleProvider } from "./LocaleProvider";
-export { getMessages } from "./messages";
-export type {
-  Locale,
-  Namespace,
-  TranslationFunction,
-  TranslationKey,
-  TranslationMessages,
-  TranslationParams,
-} from "./types";
-export { useLocaleStore } from "./useLocaleStore";
-export { useTranslation } from "./useTranslation";
+export type { Locale } from "./routing";
+export { useLocalePreference } from "./useLocalePreference";
 
-// Translation utilities
-export {
-  getTranslationValue,
-  interpolateTranslation,
-  validateTranslationKey,
-} from "./utils";
+export const useLocale = (): Locale => {
+  return useNextIntlLocale() as Locale;
+};
 
-// Dynamic translation utilities
-export {
-  createInterpolatedTranslation,
-  createPluralKey,
-  getConditionalTranslation,
-  getRoleLabelKey,
-} from "./dynamic";
-
-// Zod field error translation utilities
-export { AUTH_ZOD_FIELD_MESSAGES, translateFieldError } from "./zodFieldErrors";
+export { useTranslations };

@@ -4,14 +4,13 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { GuideIcon } from "@/shared/design-system/icons";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { buildProjectRoute, normalizePath } from "@/shared/utils/routes";
 
 import type { ProjectMember } from "@/domains/project/core/domain/project.types";
@@ -29,29 +28,58 @@ import {
   getProjectViewKeyFromPath,
 } from "@/domains/project/presentation/navigation/projectViews.config";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
+import type { TicketFilters } from "@/modules/board/core/domain/ticket.types";
+import ProjectToolbar from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar";
+import {
+  PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID,
+  type ProjectToolbarAssigneeFilter,
+  type ProjectToolbarExtraTool,
+} from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.types";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
-import { usePrefetchProjectViews } from "@/modules/board/presentation/hooks/project/usePrefetchProjectViews";
 import { useProjectSearchSuggestions } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
-import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useProjectRealtime } from "@/modules/board/presentation/hooks/realtime/useProjectRealtime";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
-import { normalizeTicketSearch } from "@/modules/board/utils/ticketUtils";
 
 type Props = {
   projectId: string;
 };
 
 const EMPTY_PROJECT_MEMBERS: ProjectMember[] = [];
+const EMPTY_FILTERS: TicketFilters = {};
+
+type BoardShellRuntimeAdapterProps = {
+  projectId: string;
+  isEnabled: boolean;
+  boardId: string | undefined;
+  initializeProject: (projectId: string) => void;
+};
+
+const BoardShellRuntimeAdapter = ({
+  projectId,
+  isEnabled,
+  boardId,
+  initializeProject,
+}: BoardShellRuntimeAdapterProps) => {
+  useProjectRealtime(projectId, boardId, {
+    enabled: isEnabled,
+  });
+
+  useEffect(() => {
+    initializeProject(projectId);
+  }, [initializeProject, projectId]);
+
+  return null;
+};
 
 const BoardShellContributionAdapter = ({ projectId }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const searchParamsString = searchParams.toString();
-  const tSidebar = useTranslation("navigation.sidebar");
-  const tNavbar = useTranslation("navigation.navbar");
-  const tBoardFilters = useTranslation("pages.board.filters");
-  const tBoardOnboarding = useTranslation("pages.board.onboarding");
+  const tSidebar = useTranslations("navigation.sidebar");
+  const tNavbar = useTranslations("navigation.navbar");
+  const tBoardFilters = useTranslations("pages.board.filters");
+  const tBoardOnboarding = useTranslations("pages.board.onboarding");
   const { canCreateTicket, isLoading: isPermissionsLoading } =
     useProjectPermissions();
 
@@ -63,59 +91,37 @@ const BoardShellContributionAdapter = ({ projectId }: Props) => {
   }, [currentViewKey]);
   const isBoardShellView = currentViewKey === PROJECT_VIEWS.BOARD;
 
-  const search = useFilterStore((state) => state.search);
+  const filterProjectId = useFilterStore((state) => state.projectId);
+  const rawSearch = useFilterStore((state) => state.search);
   const setSearch = useFilterStore((state) => state.setSearch);
-  const [searchInput, setSearchInput] = useState(search);
-  const filters = useFilterStore((state) => state.filters);
+  const initializeProject = useFilterStore((state) => state.initializeProject);
+  const rawFilters = useFilterStore((state) => state.filters);
   const setAssigneeUserId = useFilterStore((state) => state.setAssigneeUserId);
   const setUnassignedOnly = useFilterStore((state) => state.setUnassignedOnly);
   const clearAssigneeUserId = useFilterStore(
     (state) => state.clearAssigneeUserId
   );
-  const resetSearch = useFilterStore((state) => state.resetSearch);
-  const resetFilters = useFilterStore((state) => state.resetFilters);
-
-  const { data: projectShortCode } = useProjectShortCode(projectId);
-  const effectiveSearch = useMemo(() => {
-    return normalizeTicketSearch(search, projectShortCode);
-  }, [projectShortCode, search]);
-
-  const { prefetchBoardView } = usePrefetchProjectViews({
-    projectId,
-    filters,
-    search: effectiveSearch,
-  });
-  const prefetchRef = useRef({
-    isBoardShellView,
-    prefetchBoardView,
-  });
+  const isFilterStoreReady = filterProjectId === projectId;
+  const search = isFilterStoreReady ? rawSearch : "";
+  const filters = isFilterStoreReady ? rawFilters : EMPTY_FILTERS;
+  const [searchInput, setSearchInput] = useState(search);
+  const [isClientReady, setIsClientReady] = useState(false);
 
   useEffect(() => {
-    prefetchRef.current = {
-      isBoardShellView,
-      prefetchBoardView,
-    };
-  }, [isBoardShellView, prefetchBoardView]);
-
-  const onMount = useCallback(() => {
-    if (!prefetchRef.current.isBoardShellView) {
-      return;
-    }
-
-    prefetchRef.current.prefetchBoardView();
+    setIsClientReady(true);
   }, []);
 
+  // Keep the board page as the SSR owner of boardConfiguration.
+  // If the shell starts the same query during server render, it can create a
+  // pending cache entry outside the page hydration boundary and trigger a
+  // loading->loaded hydration mismatch in BoardView.
   const { data: boardConfiguration } = useBoardConfiguration(projectId, {
-    enabled: isBoardShellView,
+    enabled: isBoardShellView && isClientReady,
   });
   const { data: projectMembersData } = useProjectMembers(
     isBoardShellView ? projectId : undefined
   );
   const projectMembers = projectMembersData ?? EMPTY_PROJECT_MEMBERS;
-
-  useProjectRealtime(projectId, boardConfiguration?.board.id, {
-    enabled: isBoardShellView,
-  });
 
   const searchSuggestions = useProjectSearchSuggestions({
     projectId,
@@ -138,11 +144,6 @@ const BoardShellContributionAdapter = ({ projectId }: Props) => {
       window.clearTimeout(timeout);
     };
   }, [search, searchInput, setSearch]);
-
-  useEffect(() => {
-    resetSearch();
-    resetFilters();
-  }, [projectId, resetFilters, resetSearch]);
 
   const updateQueryParams = useCallback(
     (updates: Record<string, string | null>) => {
@@ -307,13 +308,19 @@ const BoardShellContributionAdapter = ({ projectId }: Props) => {
   const contribution = useMemo<ProjectViewContribution>(() => {
     return {
       toolbar,
-      onMount: isBoardShellView ? onMount : undefined,
     };
-  }, [isBoardShellView, onMount, toolbar]);
+  }, [toolbar]);
 
   useRegisterProjectViewContribution(contribution);
 
-  return null;
+  return (
+    <BoardShellRuntimeAdapter
+      projectId={projectId}
+      isEnabled={isBoardShellView}
+      boardId={boardConfiguration?.board.id}
+      initializeProject={initializeProject}
+    />
+  );
 };
 
 const BoardShellAdapter = ({ projectId }: Props) => {

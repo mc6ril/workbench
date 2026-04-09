@@ -9,7 +9,7 @@ import Input from "@/shared/design-system/input";
 import Loader from "@/shared/design-system/loader";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
 
@@ -17,8 +17,8 @@ import PasswordStrengthIndicator from "@/domains/auth/presentation/components/Pa
 import { useUpdatePasswordForm } from "@/domains/auth/presentation/hooks/password/useUpdatePasswordForm";
 
 const UpdatePasswordPage = () => {
-  const t = useTranslation("pages.updatePassword");
-  const tFields = useTranslation("pages.updatePassword.fields");
+  const t = useTranslations("pages.updatePassword");
+  const tFields = useTranslations("pages.updatePassword.fields");
 
   const {
     passwordField,

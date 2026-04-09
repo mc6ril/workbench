@@ -3,7 +3,7 @@ import type { BoardTicketViewModel } from "@/modules/board/presentation/types/bo
 export type BoardColumnProps = {
   id: string;
   title: string;
-  tickets: BoardTicketViewModel[];
+  tickets: readonly BoardTicketViewModel[];
   isDragging?: boolean;
   isSortable?: boolean;
   onTicketClick?: (ticketId: string) => void;

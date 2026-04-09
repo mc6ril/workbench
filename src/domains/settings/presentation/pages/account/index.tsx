@@ -22,14 +22,14 @@ import { getAppErrorCode } from "@/shared/errors/appError";
 import { INFRA_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import {
   getIntlLocale,
-  persistLocaleCookie,
+  type Locale,
   supportedLocaleOptions,
   supportedLocales,
-  useLocaleStore,
-  useTranslation,
+  useLocale,
+  useLocalePreference,
+  useTranslations,
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import type { Locale } from "@/shared/i18n/types";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
@@ -45,6 +45,7 @@ import {
   SubscriptionStatus,
 } from "@/domains/billing/core/domain/subscription.types";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
+import { useCreateBillingPortalSession } from "@/domains/billing/presentation/hooks/useCreateBillingPortalSession";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 import {
   DEFAULT_USER_PREFERENCES,
@@ -89,10 +90,13 @@ const AccountPage = () => {
   const { pricing } = useMarketingRoutes();
   const { data: subscription, isLoading: isSubscriptionLoading } =
     useSubscription();
-  const t = useTranslation("pages.account");
-  const tErrors = useTranslation("errors");
-  const tStripe = useTranslation("errors.stripe");
-  const tAvatar = useTranslation("ui.avatarUpload");
+  const createBillingPortalSessionMutation = useCreateBillingPortalSession();
+  const locale = useLocale();
+  const applyLocalePreference = useLocalePreference();
+  const t = useTranslations("pages.account");
+  const tErrors = useTranslations("errors");
+  const tStripe = useTranslations("errors.stripe");
+  const tAvatar = useTranslations("ui.avatarUpload");
   const addToast = useToastStore((s) => s.addToast);
   const checkoutHandled = useRef(false);
 
@@ -295,7 +299,7 @@ const AccountPage = () => {
 
   const goBackHref = useMemo(() => {
     const from = searchParams.get("from");
-    if (from && from.startsWith("/")) {
+    if (from && from.startsWith(PAGE_ROUTES.HOME)) {
       return from;
     }
     return PAGE_ROUTES.WORKSPACE;
@@ -322,35 +326,18 @@ const AccountPage = () => {
     signOutMutation.mutate();
   }, [signOutMutation]);
 
-  const [isManagingSubscription, setIsManagingSubscription] = useState(false);
-  const locale = useLocaleStore((s) => s.locale);
-
   const handleManageSubscription = useCallback(async () => {
-    setIsManagingSubscription(true);
     try {
-      const response = await fetch("/api/stripe/portal", { method: "POST" });
-      const data = (await response.json()) as { url?: string; error?: string };
-
-      if (!response.ok || !data.url) {
-        addToast({
-          message: tStripe("portalFailed"),
-          variant: "error",
-          duration: 6000,
-        });
-        return;
-      }
-
-      window.location.href = data.url;
+      const { url } = await createBillingPortalSessionMutation.mutateAsync({});
+      window.location.href = url;
     } catch {
       addToast({
         message: tStripe("portalFailed"),
         variant: "error",
         duration: 6000,
       });
-    } finally {
-      setIsManagingSubscription(false);
     }
-  }, [addToast, tStripe]);
+  }, [addToast, createBillingPortalSessionMutation, tStripe]);
 
   const handleEmailNotificationsChange = useCallback(
     (checked: boolean) => {
@@ -372,21 +359,18 @@ const AccountPage = () => {
     [updatePreferencesMutation, setTheme]
   );
 
-  const setLocale = useLocaleStore((s) => s.setLocale);
-
   const handleLanguageChange = useCallback(
     (value: string) => {
       if (supportedLocales.includes(value as Locale)) {
         const nextLocale = value as Locale;
         setLanguagePreference(nextLocale);
-        setLocale(nextLocale);
-        persistLocaleCookie(nextLocale);
+        applyLocalePreference(nextLocale);
       } else {
         setLanguagePreference(value);
       }
       updatePreferencesMutation.mutate({ language: value });
     },
-    [updatePreferencesMutation, setLocale]
+    [applyLocalePreference, updatePreferencesMutation]
   );
 
   const canManagePassword = canUpdatePassword ?? true;
@@ -815,7 +799,7 @@ const AccountPage = () => {
                         label={t("subscription.manageButton")}
                         variant="secondary"
                         onClick={handleManageSubscription}
-                        disabled={isManagingSubscription}
+                        disabled={createBillingPortalSessionMutation.isPending}
                         aria-label={t("subscription.manageButtonAriaLabel")}
                       />
                     )}

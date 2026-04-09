@@ -1,33 +1,31 @@
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
-import { assertDefined } from "@/shared/errors/programmingError";
+import { isSupportedLocale } from "@/shared/i18n/config";
 import { buildMarketingLegalPath } from "@/shared/i18n/marketingPaths";
-import { getMessages } from "@/shared/i18n/messages";
-import { getRequestLocale } from "@/shared/i18n/requestLocale";
-import { getTranslationValue } from "@/shared/i18n/utils";
 import { buildPublicMetadata } from "@/shared/seo/buildPublicMetadata";
 
-export const generateMetadata = async (): Promise<Metadata> => {
-  const locale = await getRequestLocale();
-  const messages = getMessages(locale);
-  const title = getTranslationValue(messages, "pages.legal", "metadata.title");
-  const description = getTranslationValue(
-    messages,
-    "pages.legal",
-    "metadata.description"
-  );
+export const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> => {
+  const { locale } = await params;
 
-  assertDefined(title, "Missing translation: pages.legal.metadata.title");
-  assertDefined(
-    description,
-    "Missing translation: pages.legal.metadata.description"
-  );
+  if (!isSupportedLocale(locale)) {
+    return {};
+  }
+
+  const tMetadata = await getTranslations({
+    locale,
+    namespace: "pages.legal.metadata",
+  });
 
   return buildPublicMetadata({
     locale,
-    title,
-    description,
+    title: tMetadata("title"),
+    description: tMetadata("description"),
     pathname: buildMarketingLegalPath(locale),
     buildPathForLocale: buildMarketingLegalPath,
   });

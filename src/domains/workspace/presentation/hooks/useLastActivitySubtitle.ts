@@ -1,6 +1,6 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
-import { useTranslation } from "@/shared/i18n";
+import { getIntlLocale, useLocale, useTranslations } from "@/shared/i18n";
 import { getLastUpdateContent } from "@/shared/utils";
 
 /**
@@ -9,38 +9,44 @@ import { getLastUpdateContent } from "@/shared/utils";
  * Usable for a single date or per-item in a list.
  */
 export const useLastActivitySubtitle = (): ((
-  updatedAt: Date | undefined
+  updatedAt: Date | undefined,
+  referenceDate?: Date
 ) => string) => {
-  const t = useTranslation("pages.projectHome");
+  const t = useTranslations("pages.projectHome");
+  const locale = useLocale();
+  const intlLocale = useMemo(() => getIntlLocale(locale), [locale]);
+  const dateFormatter = useMemo(() => {
+    return new Intl.DateTimeFormat(intlLocale, {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }, [intlLocale]);
 
   return useCallback(
-    (updatedAt: Date | undefined): string => {
+    (updatedAt: Date | undefined, referenceDate: Date = new Date()): string => {
       if (!updatedAt) {
         return "";
       }
 
-      const { days, hours } = getLastUpdateContent(updatedAt);
+      const { days, hours } = getLastUpdateContent(updatedAt, referenceDate);
 
       if (days >= 7) {
         return t("lastActivityDate", {
-          date: updatedAt.toLocaleDateString(),
+          date: dateFormatter.format(updatedAt),
         });
       }
 
       if (days >= 1) {
-        return days === 1
-          ? t("lastActivityDays", { days })
-          : t("lastActivityDays_plural", { days });
+        return t("lastActivityDays", { days });
       }
 
       if (hours > 0) {
-        return hours === 1
-          ? t("lastActivityHours", { hours })
-          : t("lastActivityHours_plural", { hours });
+        return t("lastActivityHours", { hours });
       }
 
       return t("lastActivityNow");
     },
-    [t]
+    [dateFormatter, t]
   );
 };

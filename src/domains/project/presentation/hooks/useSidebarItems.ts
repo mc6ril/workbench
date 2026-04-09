@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import {
   getEffectivePlan,
@@ -22,11 +22,26 @@ type UseSidebarItemsOptions = {
   enabledModules?: readonly ProjectModuleKey[];
 };
 
-export const useSidebarItems = (
-  projectId: string,
-  options?: UseSidebarItemsOptions
-): SidebarItem[] => {
-  const t = useTranslation("navigation.sidebar");
+const computeFeatureLockState = (
+  requiredFeature: PlanFeature | undefined,
+  effectivePlan: SubscriptionPlan
+): FeatureLockState => {
+  if (!requiredFeature) {
+    return { locked: false };
+  }
+
+  if (canAccessFeature(effectivePlan, requiredFeature)) {
+    return { locked: false };
+  }
+
+  return {
+    locked: true,
+    minimumPlan: getMinimumPlanForFeature(requiredFeature),
+  };
+};
+
+export const useSidebarItems = (projectId: string): SidebarItem[] => {
+  const t = useTranslations("navigation.sidebar");
   const { data: session, isLoading: isSessionLoading } = useSession();
   const {
     data: subscription,

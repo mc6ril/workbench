@@ -12,7 +12,7 @@ import { CSS } from "@dnd-kit/utilities";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./BoardColumn.module.scss";
 
@@ -25,6 +25,7 @@ const SORTABLE_TRANSITION = Object.freeze({
   duration: 160,
   easing: "cubic-bezier(0.25, 1, 0.5, 1)",
 });
+const LONG_COLUMN_THRESHOLD = 40;
 
 const getColumnClassName = (className?: string): string => {
   return [styles["board-column"], className].filter(Boolean).join(" ");
@@ -36,7 +37,7 @@ type SortableTicketItemProps = {
   onTicketClick?: (ticketId: string) => void;
 };
 
-const SortableTicketItem = ({
+const SortableTicketItemComponent = ({
   ticket,
   isSortable,
   onTicketClick,
@@ -76,6 +77,9 @@ const SortableTicketItem = ({
     </li>
   );
 };
+const SortableTicketItem = React.memo(SortableTicketItemComponent);
+
+SortableTicketItem.displayName = "SortableTicketItem";
 
 const BoardColumn = ({
   id,
@@ -86,7 +90,7 @@ const BoardColumn = ({
   onTicketClick,
   className,
 }: BoardColumnProps) => {
-  const t = useTranslation("pages.board.column");
+  const t = useTranslations("pages.board.column");
   const droppableId = `${BOARD_COLUMN_DROP_PREFIX}${id}`;
   const { setNodeRef, isOver } = useDroppable({
     id: droppableId,
@@ -105,6 +109,7 @@ const BoardColumn = ({
   const ticketIds = useMemo(() => {
     return tickets.map((ticket) => ticket.id);
   }, [tickets]);
+  const isLongColumn = tickets.length >= LONG_COLUMN_THRESHOLD;
   const columnClasses = useMemo(
     () => getColumnClassName(className),
     [className]
@@ -134,6 +139,7 @@ const BoardColumn = ({
         aria-labelledby={headerId}
         data-over={isOver}
         data-dragging={isDragging}
+        data-long-list={isLongColumn}
       >
         <SortableContext
           items={ticketIds}

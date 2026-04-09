@@ -1,5 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
+import { PAGE_ROUTES } from "@/shared/constants/routes";
+
 import { ProjectRole } from "@/domains/project/core/domain/project.types";
 import { useDeleteProject } from "@/domains/project/presentation/hooks/useDeleteProject";
 import { useProject } from "@/domains/project/presentation/hooks/useProject";
@@ -307,7 +309,7 @@ describe("ProjectSettingsPage", () => {
 
     await waitFor(() => {
       expect(deleteMutateAsync).toHaveBeenCalledWith(PROJECT_ID);
-      expect(replaceMock).toHaveBeenCalledWith("/workspace");
+      expect(replaceMock).toHaveBeenCalledWith(PAGE_ROUTES.WORKSPACE);
     });
   });
 });

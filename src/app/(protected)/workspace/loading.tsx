@@ -1,13 +1,12 @@
-"use client";
+import { getTranslations } from "next-intl/server";
 
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
-import { useTranslation } from "@/shared/i18n";
 
 /**
  * Loading state for workspace route.
  */
-const WorkspaceLoading = () => {
-  const t = useTranslation("pages.fallback");
+const WorkspaceLoading = async () => {
+  const t = await getTranslations("pages.fallback");
 
   return (
     <RouteFallbackPage

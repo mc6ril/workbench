@@ -88,13 +88,11 @@
 
 .signup-verification-hint,
 .signup-verification-feedback--error,
-.signup-verification-feedback--success,
-.signup-oauth-notice {
+.signup-verification-feedback--success {
   text-align: center;
 }
 
-.signup-verification-hint,
-.signup-oauth-notice {
+.signup-verification-hint {
   color: $color-text-secondary;
 }
 

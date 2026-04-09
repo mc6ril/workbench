@@ -8,7 +8,7 @@ import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/button";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
@@ -23,6 +23,8 @@ import {
   PLAN_RANK,
   SubscriptionPlan,
 } from "@/domains/billing/core/domain/subscription.types";
+import { useCreateBillingPortalSession } from "@/domains/billing/presentation/hooks/useCreateBillingPortalSession";
+import { useCreateCheckoutSession } from "@/domains/billing/presentation/hooks/useCreateCheckoutSession";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
@@ -31,10 +33,12 @@ const PricingPage = () => {
   const searchParams = useSearchParams();
   const { data: session } = useSession();
   const { data: subscription } = useSubscription();
-  const t = useTranslation("pages.pricing");
-  const tCta = useTranslation("pages.pricing.cta");
-  const tErrors = useTranslation("errors.stripe");
+  const t = useTranslations("pages.pricing");
+  const tCta = useTranslations("pages.pricing.cta");
+  const tErrors = useTranslations("errors.stripe");
   const addToast = useToastStore((s) => s.addToast);
+  const createCheckoutSessionMutation = useCreateCheckoutSession();
+  const createBillingPortalSessionMutation = useCreateBillingPortalSession();
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
@@ -68,27 +72,12 @@ const PricingPage = () => {
     async (plan: SubscriptionPlan) => {
       setCheckoutLoading(plan);
       try {
-        const from = searchParams.get("from");
-        const response = await fetch("/api/stripe/checkout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ plan, from: from ?? undefined }),
+        const from = searchParams.get("from") ?? undefined;
+        const { url } = await createCheckoutSessionMutation.mutateAsync({
+          plan,
+          from,
         });
-        const data = (await response.json()) as {
-          url?: string;
-          error?: string;
-        };
-
-        if (!response.ok || !data.url) {
-          addToast({
-            message: tErrors("checkoutFailed"),
-            variant: "error",
-            duration: 6000,
-          });
-          return;
-        }
-
-        window.location.href = data.url;
+        window.location.href = url;
       } catch {
         addToast({
           message: tErrors("checkoutFailed"),
@@ -99,28 +88,14 @@ const PricingPage = () => {
         setCheckoutLoading(null);
       }
     },
-    [addToast, searchParams, tErrors]
+    [addToast, createCheckoutSessionMutation, searchParams, tErrors]
   );
 
   const handleManageBilling = useCallback(async () => {
     setCheckoutLoading("portal");
     try {
-      const response = await fetch("/api/stripe/portal", { method: "POST" });
-      const data = (await response.json()) as {
-        url?: string;
-        error?: string;
-      };
-
-      if (!response.ok || !data.url) {
-        addToast({
-          message: tErrors("portalFailed"),
-          variant: "error",
-          duration: 6000,
-        });
-        return;
-      }
-
-      window.location.href = data.url;
+      const { url } = await createBillingPortalSessionMutation.mutateAsync({});
+      window.location.href = url;
     } catch {
       addToast({
         message: tErrors("portalFailed"),
@@ -130,7 +105,7 @@ const PricingPage = () => {
     } finally {
       setCheckoutLoading(null);
     }
-  }, [addToast, tErrors]);
+  }, [addToast, createBillingPortalSessionMutation, tErrors]);
 
   const getCtaProps = useCallback(
     (

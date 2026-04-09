@@ -14,4 +14,5 @@ export { useTicketAssigneesByTicketIds } from "./useTicketAssigneesByTicketIds";
 export { useTicketByCodeIncludingArchived } from "./useTicketByCodeIncludingArchived";
 export { useTicketDetailController } from "./useTicketDetailController";
 export { useTickets } from "./useTickets";
+export { useTicketSearchSuggestions } from "./useTicketSearchSuggestions";
 export { useUpdateTicket } from "./useUpdateTicket";

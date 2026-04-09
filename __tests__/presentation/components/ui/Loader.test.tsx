@@ -3,9 +3,9 @@ import { render, screen } from "@testing-library/react";
 
 import Loader from "@/shared/design-system/loader";
 
-// Mock useTranslation hook
+// Mock useTranslations hook
 jest.mock("@/shared/i18n", () => ({
-  useTranslation: jest.fn((namespace: string) => {
+  useTranslations: jest.fn((namespace: string) => {
     const translations: Record<string, Record<string, string>> = {
       common: {
         loading: "Chargement en cours...",

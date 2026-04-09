@@ -93,6 +93,14 @@
   }
 }
 
+@supports (content-visibility: auto) {
+  .board-column__list[data-dragging="false"][data-long-list="true"] >
+    .board-column__list-item {
+    content-visibility: auto;
+    contain-intrinsic-size: 148px;
+  }
+}
+
 .board-column__sortable-card {
   cursor: grab;
   transition:

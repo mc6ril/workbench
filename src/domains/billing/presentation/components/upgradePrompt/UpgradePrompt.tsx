@@ -8,7 +8,7 @@ import { PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/button";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 
 import styles from "./UpgradePrompt.module.scss";
@@ -30,7 +30,7 @@ const UpgradePrompt = ({ feature, minimumPlan }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const { pricing } = useMarketingRoutes();
-  const t = useTranslation("pages.upgrade");
+  const t = useTranslations("pages.upgrade");
   const { data: isBillingVisible } = useBillingVisibility();
   const headingId = useMemo(
     () => getAccessibilityId("upgrade-prompt-title"),

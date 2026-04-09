@@ -4,6 +4,11 @@ import type { TicketFilters } from "@/modules/board/core/domain/ticket.types";
 
 type FilterState = {
   /**
+   * Project scope currently associated with the store values.
+   * When the route switches to another project, filters/search must be reset.
+   */
+  projectId: string | null;
+  /**
    * Domain-aligned filters (single source of truth).
    * IMPORTANT: search must never be merged into this object.
    */
@@ -16,6 +21,7 @@ type FilterState = {
 };
 
 type FilterActions = {
+  initializeProject: (projectId: string) => void;
   setSearch: (search: string) => void;
   resetSearch: () => void;
 
@@ -38,8 +44,23 @@ const initialFilters: TicketFilters = {};
 const initialSearch = "";
 
 export const useFilterStore = create<FilterStore>((set) => ({
+  projectId: null,
   filters: initialFilters,
   search: initialSearch,
+
+  initializeProject: (projectId: string): void => {
+    set((state) => {
+      if (state.projectId === projectId) {
+        return state;
+      }
+
+      return {
+        projectId,
+        filters: initialFilters,
+        search: initialSearch,
+      };
+    });
+  },
 
   setSearch: (search: string): void => {
     set({ search });

@@ -4,9 +4,9 @@ import type { ErrorInfo, ReactNode } from "react";
 import { Component } from "react";
 import { usePathname } from "next/navigation";
 
-import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
-import { useTranslation } from "@/shared/i18n";
+import { useLocale, useTranslations } from "@/shared/i18n";
+import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
 
 type AppErrorBoundaryProps = {
   children: ReactNode;
@@ -63,8 +63,10 @@ class InternalAppErrorBoundary extends Component<BoundaryProps, BoundaryState> {
 }
 
 const AppErrorBoundary = ({ children }: AppErrorBoundaryProps) => {
+  const locale = useLocale();
   const pathname = usePathname() ?? "";
-  const t = useTranslation("pages.fallback");
+  const t = useTranslations("pages.fallback");
+  const homePath = buildMarketingHomePath(locale);
 
   return (
     <InternalAppErrorBoundary
@@ -90,7 +92,7 @@ const AppErrorBoundary = ({ children }: AppErrorBoundaryProps) => {
             {
               label: t("error.secondaryAction"),
               ariaLabel: t("error.secondaryActionAriaLabel"),
-              href: PAGE_ROUTES.HOME,
+              href: homePath,
               variant: "secondary",
             },
           ]}

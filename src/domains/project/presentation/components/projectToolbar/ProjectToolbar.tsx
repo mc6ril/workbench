@@ -8,7 +8,7 @@ import Button from "@/shared/design-system/button";
 import { PlusIcon, SearchIcon } from "@/shared/design-system/icons";
 import Input from "@/shared/design-system/input";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import ProjectToolbarAssigneeFilters from "./components/ProjectToolbarAssigneeFilters";
 import ProjectToolbarSuggestions from "./components/ProjectToolbarSuggestions";
@@ -40,8 +40,8 @@ const ProjectToolbar = ({
 }: ProjectToolbarProps) => {
   const router = useRouter();
   const isDesktopViewport = useIsDesktopDashboardViewport();
-  const tNavbar = useTranslation("navigation.navbar");
-  const tSearch = useTranslation("navigation.searchBar");
+  const tNavbar = useTranslations("navigation.navbar");
+  const tSearch = useTranslations("navigation.searchBar");
   const showAddAction = addActionType !== null;
   const hasAssigneeFilters = assigneeFilters.length > 0;
   const hasToolbarTools = extraTools.length > 0;

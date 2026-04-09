@@ -1,7 +1,13 @@
 import { toDate } from "@/shared/utils/guards";
 
-import type { Ticket } from "@/modules/board/core/domain/ticket.types";
-import type { TicketRow } from "@/modules/board/infrastructure/supabase/ticket/types";
+import type {
+  Ticket,
+  TicketSearchItem,
+} from "@/modules/board/core/domain/ticket.types";
+import type {
+  TicketRow,
+  TicketSearchRow,
+} from "@/modules/board/infrastructure/supabase/ticket/types";
 
 /**
  * Maps a Supabase row to a domain Ticket entity.
@@ -43,4 +49,20 @@ export const mapTicketRowToDomain = (row: TicketRow): Ticket => {
  */
 export const mapTicketRowsToDomain = (rows: TicketRow[]): Ticket[] => {
   return rows.map(mapTicketRowToDomain);
+};
+
+export const mapTicketSearchRowToDomain = (
+  row: TicketSearchRow
+): TicketSearchItem => {
+  return {
+    id: row.id,
+    title: row.title,
+    codeNumber: row.code_number,
+  };
+};
+
+export const mapTicketSearchRowsToDomain = (
+  rows: TicketSearchRow[]
+): TicketSearchItem[] => {
+  return rows.map(mapTicketSearchRowToDomain);
 };

@@ -28,7 +28,7 @@ export const stripePaymentGateway: PaymentGateway = {
       });
     }
 
-    const sessionParams: Stripe.Checkout.SessionCreateParams = {
+    const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
@@ -38,15 +38,10 @@ export const stripePaymentGateway: PaymentGateway = {
         userId: params.userId,
         plan: params.plan,
       },
-    };
-
-    if (params.customerId) {
-      sessionParams.customer = params.customerId;
-    } else {
-      sessionParams.customer_email = params.email;
-    }
-
-    const session = await stripe.checkout.sessions.create(sessionParams);
+      ...(params.customerId
+        ? { customer: params.customerId }
+        : { customer_email: params.email }),
+    });
 
     if (!session.url) {
       throw createAppError(INFRA_ERROR_CODE.STRIPE_CHECKOUT_NO_URL, {

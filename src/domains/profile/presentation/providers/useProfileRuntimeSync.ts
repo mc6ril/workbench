@@ -3,13 +3,12 @@
 import { useEffect, useMemo } from "react";
 import { useTheme } from "next-themes";
 
+import { useLocale, useLocalePreference } from "@/shared/i18n";
 import {
   defaultLocale,
-  persistLocaleCookie,
+  type Locale,
   supportedLocales,
 } from "@/shared/i18n/config";
-import type { Locale } from "@/shared/i18n/types";
-import { useLocaleStore } from "@/shared/i18n/useLocaleStore";
 
 import { resolveThemePreference } from "@/domains/profile/core/domain/profile.types";
 import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
@@ -17,13 +16,13 @@ import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 /**
  * Applies the authenticated user's runtime preferences (locale + theme) and
- * reports whether the app runtime is aligned with the persisted profile.
+ * reports whether the app can render without waiting for the profile query.
  */
 export const useProfileRuntimeSync = (): boolean => {
   const { data: session } = useSession();
   const profileQuery = useMyProfile();
-  const locale = useLocaleStore((state) => state.locale);
-  const setLocale = useLocaleStore((state) => state.setLocale);
+  const locale = useLocale();
+  const applyLocalePreference = useLocalePreference();
   const { theme, setTheme } = useTheme();
 
   const hasAuthenticatedSession = !!session?.userId;
@@ -55,9 +54,8 @@ export const useProfileRuntimeSync = (): boolean => {
       return;
     }
 
-    setLocale(nextLocale);
-    persistLocaleCookie(nextLocale);
-  }, [hasAuthenticatedSession, locale, nextLocale, setLocale]);
+    applyLocalePreference(nextLocale);
+  }, [applyLocalePreference, hasAuthenticatedSession, locale, nextLocale]);
 
   useEffect(() => {
     if (!hasAuthenticatedSession || !nextTheme || theme === nextTheme) {
@@ -70,17 +68,13 @@ export const useProfileRuntimeSync = (): boolean => {
   if (!hasAuthenticatedSession) {
     return true;
   }
-
-  if (profileQuery.isLoading || profileQuery.isPending) {
-    return false;
-  }
-
-  if (profileQuery.isError) {
-    return true;
-  }
-
-  const isLocaleReady = !nextLocale || locale === nextLocale;
-  const isThemeReady = !nextTheme || theme === nextTheme;
-
-  return isLocaleReady && isThemeReady;
+  /**
+   * This hook should never globally block the authenticated shell.
+   *
+   * The protected route layout hydrates the profile query server-side, and even
+   * if hydration is missing/late, the app should still render using defaults.
+   * Preferences will be applied as soon as the query becomes available.
+   */
+  void profileQuery;
+  return true;
 };

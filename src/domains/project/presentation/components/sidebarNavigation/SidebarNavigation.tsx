@@ -10,11 +10,8 @@ import React, {
 import { usePathname, useRouter } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
-import Badge from "@/shared/design-system/badge";
-import Button from "@/shared/design-system/button";
-import Modal from "@/shared/design-system/modal";
-import { useTranslation } from "@/shared/i18n";
+import { PAGE_ROUTES } from "@/shared/constants/routes";
+import { useTranslations } from "@/shared/i18n";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { markNavigationStart } from "@/shared/navigationPerf";
 
@@ -33,7 +30,6 @@ import { useProject } from "@/domains/project/presentation/hooks/useProject";
 import { useSidebarItems } from "@/domains/project/presentation/hooks/useSidebarItems";
 import { buildProjectViewHref } from "@/domains/project/presentation/navigation/projectViews.config";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
-import { usePrefetchWorkspaceProjects } from "@/domains/workspace/presentation/hooks/usePrefetchWorkspaceProjects";
 
 const RECIPES_MODULE_TAGS = ["Repas", "Quick list", "Courses"];
 const RECIPES_MODULE_POINTS = [
@@ -46,7 +42,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const { pricing } = useMarketingRoutes();
-  const t = useTranslation("navigation.sidebar");
+  const t = useTranslations("navigation.sidebar");
   const signOutMutation = useSignOut();
   const enableProjectModuleMutation = useEnableProjectModule();
   const { data: project } = useProject(projectId);
@@ -91,7 +87,6 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const emailValue = viewer?.loginEmail?.trim();
   const profileIdentity = displayNameValue || emailValue;
   const displayName = profileIdentity ?? t("profile.userFallbackName");
-  const lockedAriaLabelTemplate = t("locked.ariaLabel");
   const workspaceHref = PAGE_ROUTES.WORKSPACE;
   const accountHref = `${PAGE_ROUTES.ACCOUNT}?from=${encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE)}`;
 
@@ -102,8 +97,6 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const handleAddTabClick = useCallback(() => {
     setIsModuleLibraryOpen(true);
   }, []);
-
-  const prefetchWorkspaceProjects = usePrefetchWorkspaceProjects();
 
   const prefetchProjectView = useCallback(
     (item: SidebarItem) => {
@@ -118,8 +111,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
 
   const prefetchWorkspace = useCallback(() => {
     void router.prefetch(PAGE_ROUTES.WORKSPACE);
-    prefetchWorkspaceProjects(viewer?.userId);
-  }, [prefetchWorkspaceProjects, router, viewer?.userId]);
+  }, [router]);
 
   const handleEnableRecipes = useCallback(() => {
     enableProjectModuleMutation.mutate(
@@ -220,11 +212,12 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
 
   const getLockedAriaLabel = useCallback(
     (item: SidebarItem): string => {
-      return lockedAriaLabelTemplate
-        .replace("{feature}", item.label)
-        .replace("{plan}", item.planBadge ?? "");
+      return t("locked.ariaLabel", {
+        feature: item.label,
+        plan: item.planBadge ?? "",
+      });
     },
-    [lockedAriaLabelTemplate]
+    [t]
   );
   const visibleItems = useMemo(() => {
     return items.filter((item) => item.enabled);

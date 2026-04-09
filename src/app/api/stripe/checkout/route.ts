@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
+import { localeCookieName } from "@/shared/i18n/config";
 import { buildMarketingPricingPath } from "@/shared/i18n/marketingPaths";
-import { getRequestLocale } from "@/shared/i18n/requestLocale";
+import { resolveRuntimeLocale } from "@/shared/i18n/runtimeLocale";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
@@ -81,7 +82,10 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     );
 
     const origin = request.nextUrl.origin;
-    const locale = await getRequestLocale();
+    const locale = resolveRuntimeLocale({
+      cookieLocale: request.cookies.get(localeCookieName)?.value,
+      acceptLanguage: request.headers.get("accept-language"),
+    });
     const cancelUrl = new URL(buildMarketingPricingPath(locale), origin);
     cancelUrl.searchParams.set("checkout", "canceled");
     if (body.from) {

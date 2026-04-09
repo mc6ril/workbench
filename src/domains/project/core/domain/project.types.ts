@@ -7,6 +7,23 @@ export enum ProjectRole {
   VIEWER = "viewer",
 }
 
+export type ProjectRoleLabelKey =
+  | "roleAdmin"
+  | "roleMember"
+  | "roleViewer";
+
+export const PROJECT_ROLE_LABEL_KEYS = {
+  [ProjectRole.ADMIN]: "roleAdmin",
+  [ProjectRole.MEMBER]: "roleMember",
+  [ProjectRole.VIEWER]: "roleViewer",
+} as const satisfies Record<ProjectRole, ProjectRoleLabelKey>;
+
+export const getProjectRoleLabelKey = (
+  role: ProjectRole
+): ProjectRoleLabelKey => {
+  return PROJECT_ROLE_LABEL_KEYS[role];
+};
+
 export const PROJECT_ROLES: readonly ProjectRole[] = Object.freeze([
   ProjectRole.ADMIN,
   ProjectRole.MEMBER,

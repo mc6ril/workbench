@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 
-import { getIntlLocale } from "@/shared/i18n";
-import { getRequestLocale } from "@/shared/i18n/requestLocale";
+import { getIntlLocale, type Locale } from "@/shared/i18n";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 import "@/styles/global.scss";
@@ -11,7 +12,7 @@ import "@/styles/global.scss";
  * Web app manifest is locale-aware for all routes.
  */
 export const generateMetadata = async (): Promise<Metadata> => {
-  const locale = await getRequestLocale();
+  const locale = await getLocale();
   const siteUrl = getSiteUrl();
 
   return {
@@ -33,12 +34,15 @@ const RootLayout = async ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  const locale = await getRequestLocale();
+  const locale = (await getLocale()) as Locale;
+  const messages = await getMessages();
 
   return (
     <html lang={getIntlLocale(locale)} suppressHydrationWarning>
       <body>
-        <div className="app-root">{children}</div>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <div className="app-root">{children}</div>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

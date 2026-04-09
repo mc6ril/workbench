@@ -1,5 +1,5 @@
 import Badge from "@/shared/design-system/badge";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.module.scss";
 import type { ProjectToolbarSearchSuggestion } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
@@ -21,7 +21,7 @@ const ProjectToolbarSuggestions = ({
   onSuggestionMouseDown,
   onSuggestionSelect,
 }: Props) => {
-  const t = useTranslation("pages.board.search");
+  const t = useTranslations("pages.board.search");
 
   return (
     <div

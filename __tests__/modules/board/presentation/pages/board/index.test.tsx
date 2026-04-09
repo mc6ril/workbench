@@ -1,5 +1,11 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
+import { PROJECT_VIEWS } from "@/shared/constants/routes";
+import {
+  buildProjectRoute,
+  buildTicketDetailRoute,
+} from "@/shared/utils/routes";
+
 import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
@@ -14,7 +20,8 @@ import BoardPage from "@/modules/board/presentation/pages/board";
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
-const mockPathname = "/projects/project-1/board";
+const PROJECT_ID = "project-1";
+const mockPathname = buildProjectRoute(PROJECT_ID, PROJECT_VIEWS.BOARD);
 let mockSearchParams = new URLSearchParams();
 
 jest.mock("next/navigation", () => ({
@@ -163,9 +170,14 @@ jest.mock("@/modules/board/presentation/hooks/ticket/useTickets", () => ({
 
 jest.mock("@/modules/board/presentation/stores/useFilterStore", () => ({
   useFilterStore: (
-    selector: (state: { filters: Record<string, unknown>; search: string }) => unknown
+    selector: (state: {
+      projectId: string | null;
+      filters: Record<string, unknown>;
+      search: string;
+    }) => unknown
   ) =>
     selector({
+      projectId: "project-1",
       filters: {},
       search: "",
     }),
@@ -289,7 +301,7 @@ describe("BoardPage onboarding", () => {
   });
 
   it("auto-opens the onboarding when getting started is still pending", () => {
-    render(<BoardPage projectId="project-1" />);
+    render(<BoardPage projectId={PROJECT_ID} />);
 
     expect(screen.getByTestId("board-onboarding-panel")).toHaveAttribute(
       "data-expanded",
@@ -350,17 +362,19 @@ describe("BoardPage onboarding", () => {
       })
     );
 
-    expect(mockPush).toHaveBeenCalledWith("/project-1/board/tickets/ticket-1");
+    expect(mockPush).toHaveBeenCalledWith(
+      buildTicketDetailRoute(PROJECT_ID, "ticket-1")
+    );
   });
 
   it("redirects legacy ticket query params to the ticket detail page", async () => {
     mockSearchParams = new URLSearchParams("ticket=ticket-1");
 
-    render(<BoardPage projectId="project-1" />);
+    render(<BoardPage projectId={PROJECT_ID} />);
 
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith(
-        "/project-1/board/tickets/ticket-1",
+        buildTicketDetailRoute(PROJECT_ID, "ticket-1"),
         {
           scroll: false,
         }
@@ -449,5 +463,81 @@ describe("BoardPage onboarding", () => {
     await waitFor(() => {
       expect(mockSetStatusAsync).toHaveBeenCalledWith("completed");
     });
+  });
+
+  it("seeds board queries from server snapshots on the first render", () => {
+    const initialBoardConfiguration = {
+      board: {
+        id: "board-1",
+        projectId: PROJECT_ID,
+      },
+      columns: [
+        {
+          id: "column-todo",
+          name: "Todo",
+          key: "todo",
+          state: "todo",
+          position: 0,
+          visible: true,
+        },
+      ],
+    };
+    const initialTickets = [
+      {
+        id: "ticket-1",
+        columnId: "column-todo",
+        title: "First task",
+        codeNumber: 1,
+      },
+    ];
+    const initialTicketAssigneesByProjectId = {
+      "ticket-1": [
+        {
+          userId: "user-1",
+          displayName: "Ada",
+          avatarUrl: null,
+          assignedAt: new Date("2026-04-09T08:00:00.000Z"),
+        },
+      ],
+    };
+
+    render(
+      <BoardPage
+        projectId={PROJECT_ID}
+        initialBoardConfiguration={
+          initialBoardConfiguration as Parameters<
+            typeof BoardPage
+          >[0]["initialBoardConfiguration"]
+        }
+        initialTickets={
+          initialTickets as Parameters<typeof BoardPage>[0]["initialTickets"]
+        }
+        initialTicketAssigneesByProjectId={
+          initialTicketAssigneesByProjectId as Parameters<
+            typeof BoardPage
+          >[0]["initialTicketAssigneesByProjectId"]
+        }
+        initialProjectShortCode="WB"
+      />
+    );
+
+    expect(useBoardConfiguration).toHaveBeenCalledWith(PROJECT_ID, {
+      initialData: initialBoardConfiguration,
+    });
+    expect(useProjectShortCode).toHaveBeenCalledWith(PROJECT_ID, {
+      initialData: "WB",
+    });
+    expect(useTicketAssigneesByProjectId).toHaveBeenCalledWith(PROJECT_ID, {
+      initialData: initialTicketAssigneesByProjectId,
+    });
+    expect(useTickets).toHaveBeenNthCalledWith(
+      1,
+      PROJECT_ID,
+      {},
+      "",
+      {
+        initialData: initialTickets,
+      }
+    );
   });
 });

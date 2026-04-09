@@ -1,6 +1,7 @@
 // Re-export route constants for convenience
 export type { ProjectView } from "./routes";
 export {
+  API_ROUTES,
   AUTH_PAGE_ROUTES,
   PAGE_ROUTES,
   PROJECT_VIEWS,

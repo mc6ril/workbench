@@ -5,7 +5,7 @@ import React from "react";
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { ErrorIcon } from "@/shared/design-system/icons";
 import Title from "@/shared/design-system/title";
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import styles from "./error_message.module.scss";
 
@@ -48,7 +48,7 @@ const ErrorMessage = ({
   ariaLabel,
   className,
 }: Props) => {
-  const tCommon = useTranslation("common");
+  const tCommon = useTranslations("common");
   const displayAriaLabel = ariaLabel || message;
   const errorId = getAccessibilityId("error-message");
   const titleId = title ? getAccessibilityId("error-message-title") : undefined;

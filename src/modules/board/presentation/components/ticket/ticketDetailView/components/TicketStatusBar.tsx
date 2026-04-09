@@ -1,4 +1,4 @@
-import { useTranslation } from "@/shared/i18n";
+import { useTranslations } from "@/shared/i18n";
 
 import TicketDetailInlinePopover from "./TicketDetailInlinePopover";
 
@@ -52,7 +52,7 @@ const TicketStatusBar = ({
   onColumnChange,
   onPriorityChange,
 }: Props) => {
-  const t = useTranslation("pages.ticketDetail.page");
+  const t = useTranslations("pages.ticketDetail.page");
 
   const selectedStatus =
     statusOptions.find((option) => option.value === effectiveColumnId) ?? null;
