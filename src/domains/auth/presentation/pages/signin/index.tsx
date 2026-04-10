@@ -3,20 +3,21 @@
 import { useCallback, useEffect } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/button";
 import Form from "@/shared/design-system/form";
 import Input from "@/shared/design-system/input";
+import Link from "@/shared/design-system/link";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { getAppErrorCode } from "@/shared/errors/appError";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import styles from "./styles.module.scss";
 
@@ -30,7 +31,7 @@ import { useResendVerification } from "@/domains/auth/presentation/hooks/verific
 type FormData = SignInInput;
 
 const SigninPage = () => {
-  const router = useRouter();
+  const router = useAppRouter();
   const searchParams = useSearchParams();
   const signInMutation = useSignIn();
   const signInWithGoogleMutation = useSignInWithGoogle();

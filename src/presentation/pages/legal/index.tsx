@@ -1,18 +1,18 @@
 "use client";
 
 import { useCallback } from "react";
-import { useRouter } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { GDPR_RIGHTS_KEYS, LEGAL_SECTIONS } from "@/shared/constants";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { useTranslations } from "@/shared/i18n";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import styles from "./styles.module.scss";
 
 const LegalPage = () => {
-  const router = useRouter();
+  const router = useAppRouter();
   const t = useTranslations("pages.legal");
 
   const handleGoBack = useCallback(() => {

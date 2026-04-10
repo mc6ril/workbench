@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useMemo } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
@@ -10,6 +10,7 @@ import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { useTranslations } from "@/shared/i18n";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import styles from "./UpgradePrompt.module.scss";
 
@@ -27,7 +28,7 @@ type Props = {
  * Displays the feature name, required plan, and a CTA to the pricing page.
  */
 const UpgradePrompt = ({ feature, minimumPlan }: Props) => {
-  const router = useRouter();
+  const router = useAppRouter();
   const pathname = usePathname();
   const { pricing } = useMarketingRoutes();
   const t = useTranslations("pages.upgrade");

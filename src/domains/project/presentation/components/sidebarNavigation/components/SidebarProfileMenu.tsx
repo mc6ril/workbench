@@ -1,8 +1,8 @@
 import type { RefObject } from "react";
-import Link from "next/link";
 
 import Avatar from "@/shared/design-system/avatar";
 import { UserProfileIcon } from "@/shared/design-system/icons";
+import Link from "@/shared/design-system/link";
 
 import styles from "@/domains/project/presentation/components/sidebarNavigation/SidebarNavigation.module.scss";
 

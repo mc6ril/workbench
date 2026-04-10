@@ -1,10 +1,10 @@
 "use client";
 
 import { Suspense } from "react";
-import Link from "next/link";
 
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import ErrorMessage from "@/shared/design-system/error_message";
+import Link from "@/shared/design-system/link";
 import Loader from "@/shared/design-system/loader";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";

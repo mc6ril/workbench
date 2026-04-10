@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { getAccessibilityId } from "@/shared/a11y";
@@ -31,6 +30,7 @@ import {
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { markNavigationStart } from "@/shared/navigationPerf";
 import { shouldShowLoading } from "@/shared/utils/queryStatus";
 import { buildProjectRoute } from "@/shared/utils/routes";
@@ -59,7 +59,7 @@ type WorkspacePageProps = {
 };
 
 const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
-  const router = useRouter();
+  const router = useAppRouter();
   const {
     data: viewer,
     isLoading: isViewerLoading,

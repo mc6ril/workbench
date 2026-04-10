@@ -1,9 +1,10 @@
 import { useEffect, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import {
   buildAuthCallbackPath,
   VERIFIED_EMAIL_REDIRECT_PATH,
@@ -20,7 +21,7 @@ import { useOptionalSession } from "@/domains/session/presentation/hooks/useOpti
  * Encapsulates the full email verification orchestration.
  */
 export const useVerifyEmailFlow = () => {
-  const router = useRouter();
+  const router = useAppRouter();
   const searchParams = useSearchParams();
   const verifyEmailMutation = useVerifyEmail();
   const tErrors = useTranslations("errors");

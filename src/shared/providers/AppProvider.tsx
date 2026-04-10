@@ -7,6 +7,7 @@ import type { DehydratedState } from "@tanstack/react-query";
 
 import Loader from "@/shared/design-system/loader";
 import Toast from "@/shared/design-system/toast";
+import NavigationFeedbackController from "@/shared/navigation/NavigationFeedbackController";
 import { markNavigationSettled } from "@/shared/navigationPerf";
 
 import AppErrorBoundary from "./AppErrorBoundary";
@@ -51,6 +52,7 @@ const AppProvider = ({ children, dehydratedState }: AppProviderProps) => {
           <RuntimeSyncProvider>
             <NavigationPerfTracker />
             {children}
+            <NavigationFeedbackController />
             <Toast />
           </RuntimeSyncProvider>
         </ReactQueryProvider>
