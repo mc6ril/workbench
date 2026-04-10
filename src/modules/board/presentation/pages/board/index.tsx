@@ -39,6 +39,7 @@ import { useBoardTickets } from "@/modules/board/presentation/hooks/board/useBoa
 import { useHasProjectComments } from "@/modules/board/presentation/hooks/comment";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCreateTicket";
+import { usePrefetchTicketDetail } from "@/modules/board/presentation/hooks/ticket/usePrefetchTicketDetail";
 import { useTicketAssigneesByProjectId } from "@/modules/board/presentation/hooks/ticket/useTicketAssigneesByProjectId";
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
@@ -90,6 +91,7 @@ const BoardLayout = ({
     setStatusAsync,
   } = useTicketGettingStartedStatus();
   const createTicketMutation = useCreateTicket();
+  const prefetchTicketDetail = usePrefetchTicketDetail();
   const completionTriggeredRef = useRef(false);
 
   const replaceSearchParams = useCallback(
@@ -226,9 +228,10 @@ const BoardLayout = ({
       return {
         tickets: ticketsForColumn,
         onTicketClick: handleOpenTicketDetail,
+        onTicketPrefetch: prefetchTicketDetail,
       };
     };
-  }, [boardColumnTickets, handleOpenTicketDetail]);
+  }, [boardColumnTickets, handleOpenTicketDetail, prefetchTicketDetail]);
 
   const closeCreateTicketModal = useCallback(() => {
     replaceSearchParams({
