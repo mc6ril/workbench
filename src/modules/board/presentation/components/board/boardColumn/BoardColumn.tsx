@@ -35,12 +35,14 @@ type SortableTicketItemProps = {
   ticket: BoardTicketViewModel;
   isSortable: boolean;
   onTicketClick?: (ticketId: string) => void;
+  onTicketPrefetch?: (ticketId: string) => void;
 };
 
 const SortableTicketItemComponent = ({
   ticket,
   isSortable,
   onTicketClick,
+  onTicketPrefetch,
 }: SortableTicketItemProps) => {
   const {
     attributes,
@@ -72,7 +74,11 @@ const SortableTicketItemComponent = ({
       data-dragging={isDragging}
     >
       <div {...sortableProps} className={styles["board-column__sortable-card"]}>
-        <TicketCard {...ticket} onEdit={onTicketClick} />
+        <TicketCard
+          {...ticket}
+          onEdit={onTicketClick}
+          onPrefetch={onTicketPrefetch}
+        />
       </div>
     </li>
   );
@@ -88,6 +94,7 @@ const BoardColumn = ({
   isDragging,
   isSortable = true,
   onTicketClick,
+  onTicketPrefetch,
   className,
 }: BoardColumnProps) => {
   const t = useTranslations("pages.board.column");
@@ -152,6 +159,7 @@ const BoardColumn = ({
                 ticket={ticket}
                 isSortable={isSortable}
                 onTicketClick={onTicketClick}
+                onTicketPrefetch={onTicketPrefetch}
               />
             );
           })}

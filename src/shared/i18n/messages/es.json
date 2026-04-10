@@ -1439,6 +1439,7 @@
         "title": "Vista previa de una semana real",
         "columns": {
           "todo": "Por hacer",
+          "in_progress": "En curso",
           "inProgress": "En curso",
           "done": "Hecho"
         },
@@ -1447,6 +1448,7 @@
           "description": "Reparte rutinas para evitar sobrecarga silenciosa.",
           "todo1": "Poner lavadora de la tarde",
           "todo2": "Preparar mochilas del cole",
+          "in_progress1": "Recoger cocina",
           "inProgress1": "Recoger cocina",
           "done1": "Sacar la basura"
         }

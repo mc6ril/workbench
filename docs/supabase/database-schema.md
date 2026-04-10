@@ -45,6 +45,7 @@ The current product keeps tickets, comments, assignees, invitations, and billing
 - `app_runtime_config`
   - Runtime remote-config entries (one row per key) used for product flags and A/B tests
   - `key` (text) + `value` (jsonb) where `value` can be boolean/number/text/json
+  - Used for product flags such as billing visibility and recipes visibility
 
 ## Key Relationships
 

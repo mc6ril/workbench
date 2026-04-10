@@ -1439,6 +1439,7 @@
         "title": "A concrete snapshot",
         "columns": {
           "todo": "To do",
+          "in_progress": "In progress",
           "inProgress": "In progress",
           "done": "Done"
         },
@@ -1447,6 +1448,7 @@
           "description": "Add, assign, track — from your phone.",
           "todo1": "Book doctor appointment",
           "todo2": "Groceries for tonight",
+          "in_progress1": "Administrative paperwork",
           "inProgress1": "Administrative paperwork",
           "done1": "Rent transfer done"
         }
