@@ -1080,6 +1080,7 @@
         "title": "Aperçu concret",
         "columns": {
           "todo": "À faire",
+          "in_progress": "En cours",
           "inProgress": "En cours",
           "done": "Fait"
         },
@@ -1088,6 +1089,7 @@
           "description": "Ajoutez, assignez, suivez — depuis votre téléphone.",
           "todo1": "Rappel médecin à prendre",
           "todo2": "Faire les courses du soir",
+          "in_progress1": "Démarches administratives",
           "inProgress1": "Démarches administratives",
           "done1": "Virement loyer effectué"
         }

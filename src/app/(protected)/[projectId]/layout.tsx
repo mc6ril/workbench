@@ -7,19 +7,12 @@ import { createLoggerFactory } from "@/shared/observability";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
-import { getBillingVisibility } from "@/domains/billing/core/usecases/getBillingVisibility";
-import { getUserSubscription } from "@/domains/billing/core/usecases/getUserSubscription";
-import { createBillingVisibilityPort } from "@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase";
-import { createSubscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
-import { queryKeys as billingQueryKeys } from "@/domains/billing/presentation/hooks/queryKeys";
 import { getCurrentProjectRole } from "@/domains/project/core/usecases/member/getCurrentProjectRole";
 import { listProjectMembers } from "@/domains/project/core/usecases/member/listProjectMembers";
 import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
 import { createProjectMemberGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys as projectQueryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import ProjectShell from "@/domains/project/presentation/layouts/projectShell/ProjectShell";
-import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
-import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 import BoardShellAdapter from "@/modules/board/presentation/projectShell/boardShellAdapter";
 
 const logger = createLoggerFactory().forScope("ProjectLayout");
@@ -67,14 +60,6 @@ const ProjectLayout = async ({
   const queryClient = createAppQueryClient();
   const supabaseClient = await createSupabaseServerClient();
   const projectMemberGateway = createProjectMemberGateway(supabaseClient);
-  const billingVisibilityPort = createBillingVisibilityPort(supabaseClient);
-  const sessionGateway = createSessionGateway(supabaseClient);
-
-  const session = await getCurrentSession(sessionGateway);
-  const subscriptionRepository = createSubscriptionRepository(
-    supabaseClient,
-    supabaseClient
-  );
 
   await Promise.all([
     queryClient.prefetchQuery({
@@ -84,18 +69,6 @@ const ProjectLayout = async ({
     queryClient.prefetchQuery({
       queryKey: projectQueryKeys.members.byProject(projectId),
       queryFn: () => listProjectMembers(projectMemberGateway, projectId),
-    }),
-    queryClient.prefetchQuery({
-      queryKey: billingQueryKeys.config.billingVisibility(),
-      queryFn: () => getBillingVisibility(billingVisibilityPort),
-    }),
-    queryClient.prefetchQuery({
-      queryKey: billingQueryKeys.subscription.current(),
-      queryFn: () =>
-        getUserSubscription(subscriptionRepository, {
-          userId: session.userId,
-          isSuperuser: session.isSuperuser,
-        }),
     }),
   ]);
 

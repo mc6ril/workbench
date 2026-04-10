@@ -43,7 +43,8 @@ The current product keeps tickets, comments, assignees, invitations, and billing
 - `subscriptions`
   - User subscription state (`free/pro/team`) and billing metadata
 - `app_runtime_config`
-  - Runtime flags for product surfaces such as billing visibility
+  - Runtime config entries stored as `key -> jsonb value`
+  - Used for product flags such as billing visibility
 
 ## Key Relationships
 

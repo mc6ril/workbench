@@ -1,6 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
+import {
+  DEFAULT_USER_PREFERENCES,
+  type UserProfile,
+} from "@/domains/profile/core/domain/profile.types";
 import {
   updatePreferences,
   type UpdatePreferencesInput,
@@ -17,12 +20,10 @@ export const useUpdatePreferences = () => {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
   const { data: profile } = useMyProfile();
+  const currentPreferences = profile?.preferences ?? DEFAULT_USER_PREFERENCES;
 
   return useMutation({
     mutationFn: (input: UpdatePreferencesInput) => {
-      const currentPreferences =
-        profile?.preferences ?? DEFAULT_USER_PREFERENCES;
-
       return updatePreferences(
         profileGateway,
         session?.userId ?? "",
@@ -30,11 +31,24 @@ export const useUpdatePreferences = () => {
         input
       );
     },
-    onSuccess: () => {
+    onSuccess: (_data, input) => {
       if (session) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.userProfiles.detail(session.userId),
-        });
+        queryClient.setQueryData<UserProfile | null>(
+          queryKeys.userProfiles.detail(session.userId),
+          (currentProfile) => {
+            if (!currentProfile) {
+              return currentProfile;
+            }
+
+            return {
+              ...currentProfile,
+              preferences: {
+                ...currentPreferences,
+                ...input,
+              },
+            };
+          }
+        );
       }
     },
   });

@@ -7,5 +7,6 @@ export type BoardColumnProps = {
   isDragging?: boolean;
   isSortable?: boolean;
   onTicketClick?: (ticketId: string) => void;
+  onTicketPrefetch?: (ticketId: string) => void;
   className?: string;
 };

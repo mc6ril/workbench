@@ -14,6 +14,7 @@ import { useBoardTickets } from "@/modules/board/presentation/hooks/board/useBoa
 import { useHasProjectComments } from "@/modules/board/presentation/hooks/comment";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCreateTicket";
+import { usePrefetchTicketDetail } from "@/modules/board/presentation/hooks/ticket/usePrefetchTicketDetail";
 import { useTicketAssigneesByProjectId } from "@/modules/board/presentation/hooks/ticket/useTicketAssigneesByProjectId";
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
 import BoardPage from "@/modules/board/presentation/pages/board";
@@ -158,6 +159,13 @@ jest.mock("@/modules/board/presentation/hooks/ticket/useCreateTicket", () => ({
 }));
 
 jest.mock(
+  "@/modules/board/presentation/hooks/ticket/usePrefetchTicketDetail",
+  () => ({
+    usePrefetchTicketDetail: jest.fn(),
+  })
+);
+
+jest.mock(
   "@/modules/board/presentation/hooks/ticket/useTicketAssigneesByProjectId",
   () => ({
     useTicketAssigneesByProjectId: jest.fn(),
@@ -188,6 +196,7 @@ const asMockedReturn = <T,>(value: unknown): T => value as T;
 describe("BoardPage onboarding", () => {
   const mockSetStatusAsync = jest.fn();
   const mockCreateTicketMutateAsync = jest.fn();
+  const mockPrefetchTicketDetail = jest.fn();
   let mockTicketsData: Array<{
     id: string;
     columnId: string;
@@ -285,6 +294,10 @@ describe("BoardPage onboarding", () => {
         isPending: false,
         error: null,
       })
+    );
+
+    jest.mocked(usePrefetchTicketDetail).mockReturnValue(
+      mockPrefetchTicketDetail
     );
 
     jest.mocked(useTicketAssigneesByProjectId).mockReturnValue(

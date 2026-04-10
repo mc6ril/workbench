@@ -2,6 +2,7 @@ export { useCreateTicket } from "./useCreateTicket";
 export { useDeleteTicket } from "./useDeleteTicket";
 export { useMoveAndReorderTicket } from "./useMoveAndReorderTicket";
 export { useMoveTicket } from "./useMoveTicket";
+export { usePrefetchTicketDetail } from "./usePrefetchTicketDetail";
 export { useReorderTicket } from "./useReorderTicket";
 export { useTicket } from "./useTicket";
 export {
