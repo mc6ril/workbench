@@ -400,6 +400,7 @@ const mapFixtureSourceToCatalogSummary = (
     summary: source.summary,
     totalTimeLabel: source.totalTimeLabel,
     servingsLabel: source.servingsLabel,
+    coverImageUrl: source.coverImageUrl,
     tags: source.tags,
     coverStyle: source.coverStyle,
     isInQuickList: QUICK_LIST_RECIPE_IDS.includes(

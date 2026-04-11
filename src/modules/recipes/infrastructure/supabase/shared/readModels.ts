@@ -105,6 +105,7 @@ export const mapRecipeRowToCatalogSummary = (
     servingsLabel: buildRecipeServingsLabel({
       servingsCount: recipe.servings_count,
     }),
+    coverImageUrl: recipe.cover_image_url,
     tags,
     coverStyle: recipe.cover_style,
     isInQuickList,

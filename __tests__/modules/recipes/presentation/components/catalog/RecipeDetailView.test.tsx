@@ -10,6 +10,7 @@ const baseRecipe = {
   totalTimeMinutes: 35,
   servingsLabel: "4 personnes",
   servingsCount: 4,
+  coverImageUrl: null,
   note: "Bien saisir avant d'ajouter le bouillon.",
   coverStyle: "citrus" as const,
   isInQuickList: true,

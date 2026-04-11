@@ -907,6 +907,12 @@
           "loadingMessage": "Chargement des recettes suivantes...",
           "loadingAriaLabel": "Chargement des recettes suivantes"
         },
+        "card": {
+          "openRecipeAriaLabel": "Ouvrir la recette {title}",
+          "addToQuickListAriaLabel": "Ajouter {title} à la quick list",
+          "removeFromQuickListAriaLabel": "Retirer {title} de la quick list",
+          "quickListUpdateFailed": "La quick list n'a pas pu être mise à jour."
+        },
         "sheet": {
           "ariaLabel": "Filtres du catalogue de recettes",
           "kicker": "Filtres",

@@ -67,6 +67,7 @@ const RecipesCatalogClientPage = (props: Props) => {
           <RecipesCatalogResults
             projectId={props.projectId}
             recipes={recipes}
+            quickListRecipes={quickListRecipes}
             hasActiveFilters={hasActiveFilters}
             showInitialLoader={showInitialLoader}
             showLoadMoreControls={showLoadMoreControls}

@@ -52,7 +52,12 @@ export type CatalogRecipeListInput = {
 
 export type CatalogRecipeSummary = Pick<
   Recipe,
-  "id" | "title" | "summary" | "totalTimeLabel" | "servingsLabel"
+  | "id"
+  | "title"
+  | "summary"
+  | "totalTimeLabel"
+  | "servingsLabel"
+  | "coverImageUrl"
 > & {
   tags: CatalogRecipeTag[];
   coverStyle: CatalogRecipeCoverStyle;

@@ -7,11 +7,13 @@ import RecipesCatalogPagination from "./RecipesCatalogPagination";
 import styles from "./styles.module.scss";
 
 import type { CatalogRecipeSummary } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
 import RecipeCatalogCard from "@/modules/recipes/presentation/components/catalog/RecipeCatalogCard/index";
 
 type Props = {
   projectId: string;
   recipes: CatalogRecipeSummary[];
+  quickListRecipes: QuickListRecipe[];
   hasActiveFilters: boolean;
   showInitialLoader: boolean;
   showLoadMoreControls: boolean;
@@ -26,6 +28,7 @@ type Props = {
 const RecipesCatalogResults = ({
   projectId,
   recipes,
+  quickListRecipes,
   hasActiveFilters,
   showInitialLoader,
   showLoadMoreControls,
@@ -36,6 +39,10 @@ const RecipesCatalogResults = ({
   onClearFilters,
   onFetchNextPage,
 }: Props) => {
+  const quickListSelectionIdByRecipeId = new Map(
+    quickListRecipes.map((selection) => [selection.recipeId, selection.id])
+  );
+
   return (
     <div className={styles["recipes-page__catalog-layout"]}>
       <div ref={catalogMainRef} className={styles["recipes-page__catalog-main"]}>
@@ -56,6 +63,9 @@ const RecipesCatalogResults = ({
                   key={recipe.id}
                   projectId={projectId}
                   recipe={recipe}
+                  quickListSelectionId={
+                    quickListSelectionIdByRecipeId.get(recipe.id) ?? null
+                  }
                 />
               ))}
             </div>
