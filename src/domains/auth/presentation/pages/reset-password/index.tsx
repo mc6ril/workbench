@@ -1,11 +1,10 @@
 "use client";
 
-import Link from "next/link";
-
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
 import Button from "@/shared/design-system/button";
 import Form from "@/shared/design-system/form";
 import Input from "@/shared/design-system/input";
+import Link from "@/shared/design-system/link";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { useTranslations } from "@/shared/i18n";

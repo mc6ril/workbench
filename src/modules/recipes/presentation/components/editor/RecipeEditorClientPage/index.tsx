@@ -10,7 +10,6 @@ import {
   useTransition,
 } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ZodError } from "zod";
 
@@ -27,6 +26,7 @@ import Select from "@/shared/design-system/select";
 import Text from "@/shared/design-system/text";
 import Textarea from "@/shared/design-system/textarea";
 import { useTranslation } from "@/shared/i18n";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import styles from "./styles.module.scss";
 
@@ -366,7 +366,7 @@ const RecipeEditorClientPage = ({
 }: Props) => {
   const t = useTranslation("pages.recipes.editor");
   const isCreate = mode === "create";
-  const router = useRouter();
+  const router = useAppRouter();
   const [tagDraft, setTagDraft] = useState("");
   const [isRouting, startRouting] = useTransition();
   const titleTextareaRef = useRef<HTMLTextAreaElement | null>(null);

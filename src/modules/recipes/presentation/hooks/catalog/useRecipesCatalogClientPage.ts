@@ -7,9 +7,10 @@ import {
   useMemo,
   useRef,
 } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { useTranslation } from "@/shared/i18n";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import type { CatalogRecipeListResponse } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
@@ -45,7 +46,7 @@ export const useRecipesCatalogClientPage = ({
   quickListRecipes,
 }: Input) => {
   const t = useTranslation("pages.recipes.catalog");
-  const router = useRouter();
+  const router = useAppRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const searchParamsKey = searchParams.toString();
@@ -147,6 +148,7 @@ export const useRecipesCatalogClientPage = ({
           : pathname,
         {
           scroll: false,
+          feedback: "none",
         }
       );
     });

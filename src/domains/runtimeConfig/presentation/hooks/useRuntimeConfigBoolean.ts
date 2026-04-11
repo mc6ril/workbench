@@ -10,4 +10,3 @@ export const useRuntimeConfigBoolean = (key: string, defaultValue: boolean) => {
     queryFn: () => getRuntimeConfigBoolean(runtimeConfigPort, { key, defaultValue }),
   });
 };
-

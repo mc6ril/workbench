@@ -9,4 +9,3 @@ export const runtimeConfigPort = createRuntimeConfigPort(
 
 // Factory function for server contexts (Route Handlers, Server Components)
 export { createRuntimeConfigPort } from "./RuntimeConfigPort.supabase";
-

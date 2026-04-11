@@ -24,4 +24,3 @@ export const createRuntimeConfigPort = (
     return row?.value;
   },
 });
-

@@ -51,4 +51,22 @@ describe("projectViews.config", () => {
       )
     ).toEqual({ locked: false });
   });
+
+  it("hides Recipes when the runtime visibility marks the view as hidden", () => {
+    expect(
+      canAccessProjectView(PROJECT_VIEWS.RECIPES, {
+        enabledModules: [ProjectModuleKey.RECIPES],
+        effectivePlan: SubscriptionPlan.FREE,
+        hiddenViews: [PROJECT_VIEWS.RECIPES],
+      })
+    ).toBe(false);
+
+    expect(
+      getDefaultProjectViewKey({
+        enabledModules: [ProjectModuleKey.RECIPES],
+        effectivePlan: SubscriptionPlan.FREE,
+        hiddenViews: [PROJECT_VIEWS.RECIPES],
+      })
+    ).toBe(PROJECT_VIEWS.BOARD);
+  });
 });

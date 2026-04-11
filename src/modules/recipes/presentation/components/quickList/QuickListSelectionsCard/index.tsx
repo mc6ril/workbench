@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 import Badge from "@/shared/design-system/badge";
 import Button from "@/shared/design-system/button";
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import styles from "./styles.module.scss";
 
@@ -28,7 +28,7 @@ type Props = {
 };
 
 const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
-  const router = useRouter();
+  const router = useAppRouter();
   const [doneSelection, setDoneSelection] =
     useState<DoneQuickListSelection | null>(null);
   const selectionsQuery = useListActiveSelections(projectId, {

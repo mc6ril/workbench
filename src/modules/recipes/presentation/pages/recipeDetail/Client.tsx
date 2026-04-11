@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { useTranslation } from "@/shared/i18n";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { isUuid } from "@/shared/utils/uuid";
 
 import type { CatalogRecipeDetail } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
@@ -17,7 +17,7 @@ type Props = {
 
 const Client = ({ projectId, recipe }: Props) => {
   const t = useTranslation("pages.recipes.detail");
-  const router = useRouter();
+  const router = useAppRouter();
   const promoteAdditionMutation = usePromoteRecipeAddition();
   const [actionError, setActionError] = useState<string | null>(null);
   const canValidateAdditions = isUuid(recipe.id);

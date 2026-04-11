@@ -6,11 +6,12 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { GuideIcon } from "@/shared/design-system/icons";
 import { useTranslations } from "@/shared/i18n";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { buildProjectRoute, normalizePath } from "@/shared/utils/routes";
 
 import type { ProjectMember } from "@/domains/project/core/domain/project.types";
@@ -66,7 +67,7 @@ const BoardShellRuntimeAdapter = ({
 };
 
 const BoardShellContributionAdapter = ({ projectId }: Props) => {
-  const router = useRouter();
+  const router = useAppRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const searchParamsString = searchParams.toString();
@@ -153,6 +154,7 @@ const BoardShellContributionAdapter = ({ projectId }: Props) => {
       const query = params.toString();
       router.replace(query ? `${pathname}?${query}` : pathname, {
         scroll: false,
+        feedback: "none",
       });
     },
     [pathname, router, searchParamsString]

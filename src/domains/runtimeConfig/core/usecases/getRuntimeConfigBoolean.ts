@@ -23,4 +23,3 @@ export const getRuntimeConfigBoolean = async (
     return input.defaultValue;
   }
 };
-

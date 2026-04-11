@@ -7,12 +7,21 @@ import { createLoggerFactory } from "@/shared/observability";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
+import { getBillingVisibility } from "@/domains/billing/core/usecases/getBillingVisibility";
+import { getUserSubscription } from "@/domains/billing/core/usecases/getUserSubscription";
+import { createBillingVisibilityPort } from "@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase";
+import { createSubscriptionRepository } from "@/domains/billing/infrastructure/supabase/SubscriptionRepository.supabase";
+import { queryKeys as billingQueryKeys } from "@/domains/billing/presentation/hooks/queryKeys";
 import { getCurrentProjectRole } from "@/domains/project/core/usecases/member/getCurrentProjectRole";
 import { listProjectMembers } from "@/domains/project/core/usecases/member/listProjectMembers";
 import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
 import { createProjectMemberGateway } from "@/domains/project/infrastructure/supabase/gateways";
 import { queryKeys as projectQueryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import ProjectShell from "@/domains/project/presentation/layouts/projectShell/ProjectShell";
+import { getRuntimeConfigBoolean } from "@/domains/runtimeConfig/core/usecases/getRuntimeConfigBoolean";
+import { createRuntimeConfigPort } from "@/domains/runtimeConfig/infrastructure/supabase/RuntimeConfigPort.supabase";
+import { queryKeys as runtimeConfigQueryKeys } from "@/domains/runtimeConfig/presentation/hooks/queryKeys";
+import { createSessionGateway } from "@/domains/session/infrastructure/supabase/SessionGateway.supabase";
 import BoardShellAdapter from "@/modules/board/presentation/projectShell/boardShellAdapter";
 import RecipesShellAdapter from "@/modules/recipes/presentation/projectShell/recipesShellAdapter";
 
@@ -61,8 +70,12 @@ const ProjectLayout = async ({
   const queryClient = createAppQueryClient();
   const supabaseClient = await createSupabaseServerClient();
   const projectMemberGateway = createProjectMemberGateway(supabaseClient);
+  const billingVisibilityPort = createBillingVisibilityPort(supabaseClient);
+  const runtimeConfigPort = createRuntimeConfigPort(supabaseClient);
+  const sessionGateway = createSessionGateway(supabaseClient);
+  const session = await sessionGateway.getCurrentSession();
 
-  await Promise.all([
+  const prefetches = [
     queryClient.prefetchQuery({
       queryKey: projectQueryKeys.projects.currentRole(projectId),
       queryFn: () => getCurrentProjectRole(projectMemberGateway, projectId),
@@ -71,7 +84,41 @@ const ProjectLayout = async ({
       queryKey: projectQueryKeys.members.byProject(projectId),
       queryFn: () => listProjectMembers(projectMemberGateway, projectId),
     }),
-  ]);
+    queryClient.prefetchQuery({
+      queryKey: billingQueryKeys.config.billingVisibility(),
+      queryFn: () => getBillingVisibility(billingVisibilityPort),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: runtimeConfigQueryKeys.runtimeConfig.boolean(
+        "is_recipes_board_visible"
+      ),
+      queryFn: () =>
+        getRuntimeConfigBoolean(runtimeConfigPort, {
+          key: "is_recipes_board_visible",
+          defaultValue: false,
+        }),
+    }),
+  ];
+
+  if (session?.userId) {
+    const subscriptionRepository = createSubscriptionRepository(
+      supabaseClient,
+      supabaseClient
+    );
+
+    prefetches.push(
+      queryClient.prefetchQuery({
+        queryKey: billingQueryKeys.subscription.current(),
+        queryFn: () =>
+          getUserSubscription(subscriptionRepository, {
+            userId: session.userId,
+            isSuperuser: session.isSuperuser,
+          }),
+      })
+    );
+  }
+
+  await Promise.all(prefetches);
 
   // User has access, render children
   // Note: We don't pass project data here - client pages fetch via React Query

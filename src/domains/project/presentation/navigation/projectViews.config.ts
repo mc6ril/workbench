@@ -40,6 +40,7 @@ export type ProjectViewConfig = {
 export type ProjectViewAvailabilityInput = {
   enabledModules?: readonly ProjectModuleKey[];
   effectivePlan: SubscriptionPlan;
+  hiddenViews?: readonly ProjectViewKey[];
 };
 
 export type ProjectViewFeatureLockState = {
@@ -171,6 +172,10 @@ export const canAccessProjectView = (
   key: ProjectViewKey,
   options: ProjectViewAvailabilityInput
 ): boolean => {
+  if (options.hiddenViews?.includes(key)) {
+    return false;
+  }
+
   if (!isProjectViewModuleEnabled(key, options.enabledModules)) {
     return false;
   }

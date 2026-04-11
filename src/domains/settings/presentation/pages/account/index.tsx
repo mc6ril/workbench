@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -31,6 +31,7 @@ import {
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
@@ -72,7 +73,7 @@ const LANGUAGE_SELECT_OPTIONS = supportedLocaleOptions.map((locale) => ({
 const THEME_OPTIONS_KEYS: Theme[] = ["light", "dark", "system"];
 
 const AccountPage = () => {
-  const router = useRouter();
+  const router = useAppRouter();
   const searchParams = useSearchParams();
   const { data: session, isLoading: isSessionLoading } = useSession();
   const { data: viewer, isLoading: isViewerLoading } = useViewer();
@@ -111,7 +112,10 @@ const AccountPage = () => {
         variant: "success",
         duration: 6000,
       });
-      router.replace(PAGE_ROUTES.ACCOUNT, { scroll: false });
+      router.replace(PAGE_ROUTES.ACCOUNT, {
+        scroll: false,
+        feedback: "none",
+      });
     }
   }, [searchParams, addToast, tStripe, router]);
 

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { getAccessibilityId } from "@/shared/a11y";
@@ -11,6 +10,7 @@ import {
   VALUE_KEYS,
 } from "@/shared/constants/landing";
 import { AUTH_PAGE_ROUTES } from "@/shared/constants/routes";
+import Link from "@/shared/design-system/link";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import type { Locale } from "@/shared/i18n/config";

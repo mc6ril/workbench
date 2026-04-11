@@ -7,4 +7,3 @@ const queryKeysObject = {
 export const queryKeys = Object.freeze({
   runtimeConfig: Object.freeze(queryKeysObject.runtimeConfig),
 });
-

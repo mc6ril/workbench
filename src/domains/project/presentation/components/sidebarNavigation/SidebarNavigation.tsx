@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
@@ -16,6 +16,7 @@ import Button from "@/shared/design-system/button";
 import Modal from "@/shared/design-system/modal";
 import { useTranslations } from "@/shared/i18n";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { markNavigationStart } from "@/shared/navigationPerf";
 
 import SidebarNavigationList from "./components/SidebarNavigationList";
@@ -43,7 +44,7 @@ const RECIPES_MODULE_POINTS = [
 
 const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const pathname = usePathname();
-  const router = useRouter();
+  const router = useAppRouter();
   const { pricing } = useMarketingRoutes();
   const t = useTranslations("navigation.sidebar");
   const signOutMutation = useSignOut();

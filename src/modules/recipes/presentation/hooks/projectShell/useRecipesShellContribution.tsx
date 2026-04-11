@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import { EyeIcon, EyeOffIcon, FilterIcon } from "@/shared/design-system/icons";
 import { useTranslation } from "@/shared/i18n";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { normalizePath } from "@/shared/utils/routes";
 
 import ProjectToolbar from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar";
@@ -20,7 +21,7 @@ import { useRecipesCatalogFiltersStore } from "@/modules/recipes/presentation/st
 export const useRecipesShellContribution = (
   projectId: string
 ): ProjectViewContribution => {
-  const router = useRouter();
+  const router = useAppRouter();
   const pathname = usePathname();
   const tSidebar = useTranslation("navigation.sidebar");
   const tCatalog = useTranslation("pages.recipes.catalog");

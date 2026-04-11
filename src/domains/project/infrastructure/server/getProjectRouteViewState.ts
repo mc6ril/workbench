@@ -8,18 +8,29 @@ import { getEffectivePlan } from "@/domains/billing/core/domain/planFeatures.rul
 import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import { getUserSubscription } from "@/domains/billing/core/usecases/getUserSubscription";
 import { createSubscriptionRepository } from "@/domains/billing/infrastructure/supabase/SubscriptionRepository.supabase";
+import { getRuntimeConfigBoolean } from "@/domains/runtimeConfig/core/usecases/getRuntimeConfigBoolean";
+import { createRuntimeConfigPort } from "@/domains/runtimeConfig/infrastructure/supabase/RuntimeConfigPort.supabase";
 import { createSessionGateway } from "@/domains/session/infrastructure/supabase/SessionGateway.supabase";
 
 export const getProjectRouteViewState = cache(async (projectId: string) => {
   const project = await getProjectForRoute(projectId);
   const serverClient = await createSupabaseServerClient();
   const sessionGateway = createSessionGateway(serverClient);
+  const runtimeConfigPort = createRuntimeConfigPort(serverClient);
   const session = await sessionGateway.getCurrentSession();
+  const isRecipesBoardVisible = await getRuntimeConfigBoolean(
+    runtimeConfigPort,
+    {
+      key: "is_recipes_board_visible",
+      defaultValue: false,
+    }
+  );
 
   if (!session?.userId) {
     return {
       project,
       effectivePlan: SubscriptionPlan.FREE,
+      isRecipesBoardVisible,
     };
   }
 
@@ -35,5 +46,6 @@ export const getProjectRouteViewState = cache(async (projectId: string) => {
   return {
     project,
     effectivePlan: getEffectivePlan(subscription),
+    isRecipesBoardVisible,
   };
 });

@@ -1,7 +1,6 @@
 "use client";
 
 import { type FormEvent, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import {
@@ -20,6 +19,7 @@ import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import ProjectPeopleSettingsSection from "./components/ProjectPeopleSettingsSection";
 import styles from "./styles.module.scss";
@@ -37,7 +37,7 @@ type ProjectSettingsPageProps = {
 };
 
 const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
-  const router = useRouter();
+  const router = useAppRouter();
   const tPage = useTranslations("pages.settings.page");
   const tProject = useTranslations("pages.settings.project");
   const tAccess = useTranslations("pages.settings.access");

@@ -13,10 +13,12 @@ export const withRecipesRouteAccess = async <T>(
   projectId: string,
   render: () => Promise<T> | T
 ): Promise<T> => {
-  const { project, effectivePlan } = await getProjectRouteViewState(projectId);
+  const { project, effectivePlan, isRecipesBoardVisible } =
+    await getProjectRouteViewState(projectId);
   const viewState = {
     enabledModules: project.enabledModules,
     effectivePlan,
+    hiddenViews: isRecipesBoardVisible ? [] : [PROJECT_VIEWS.RECIPES],
   };
 
   if (!canAccessProjectView(PROJECT_VIEWS.RECIPES, viewState)) {

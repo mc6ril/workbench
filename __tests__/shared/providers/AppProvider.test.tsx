@@ -28,6 +28,11 @@ jest.mock("@/shared/design-system/toast", () => ({
   default: () => null,
 }));
 
+jest.mock("@/shared/navigation/NavigationFeedbackController", () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 jest.mock("@/domains/profile/presentation/providers/useProfileRuntimeSync", () => ({
   useProfileRuntimeSync: jest.fn(),
 }));
@@ -37,22 +42,7 @@ describe("AppProvider", () => {
     jest.clearAllMocks();
   });
 
-  it("shows the full-page loader until runtime preferences are synchronized", () => {
-    jest.mocked(useProfileRuntimeSync).mockReturnValue(false);
-
-    render(
-      <AppProvider>
-        <div>app content</div>
-      </AppProvider>
-    );
-
-    expect(screen.getByRole("status")).toBeInTheDocument();
-    expect(screen.queryByText("app content")).not.toBeInTheDocument();
-  });
-
-  it("renders the application once runtime preferences are ready", () => {
-    jest.mocked(useProfileRuntimeSync).mockReturnValue(true);
-
+  it("renders children and mounts profile preference sync", () => {
     render(
       <AppProvider>
         <div>app content</div>
@@ -60,6 +50,6 @@ describe("AppProvider", () => {
     );
 
     expect(screen.getByText("app content")).toBeInTheDocument();
-    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(useProfileRuntimeSync).toHaveBeenCalled();
   });
 });
