@@ -295,6 +295,14 @@ main() {
     esac
 }
 
+convert_to_webp() {
+    echo "Converting PNG files to WebP..."
+    chmod +x convert_to_webp.sh
+
+    #Convert all PNG files in public directory to WebP
+    ./convert-to-webp.sh public/
+}
+
 # Execute main function with all arguments
 main "$@"
 

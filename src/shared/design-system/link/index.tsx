@@ -1,7 +1,11 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
+import { shouldAnnounceNavigationFeedbackOnLinkClick } from "@/shared/navigation/navigationFeedbackClick";
+import { useNavigationFeedbackStore } from "@/shared/stores/useNavigationFeedbackStore";
 
 import styles from "./link.module.scss";
 
@@ -14,6 +18,8 @@ type Props = {
   children: React.ReactNode;
   /** Link variant style */
   variant?: LinkVariant;
+  /** Whether the link should opt out of default design-system styling */
+  unstyled?: boolean;
   /** Whether this is an external link */
   external?: boolean;
   /** Custom ARIA label for accessibility */
@@ -43,14 +49,21 @@ const LinkComponent = ({
   href,
   children,
   variant = "default",
+  unstyled = false,
   external = false,
   ariaLabel,
   className,
+  onClick,
+  target,
   ...linkProps
 }: Props) => {
   const linkId = getAccessibilityId(`link-${href}`);
 
-  const linkClasses = [styles.link, styles[`link--${variant}`], className]
+  const linkClasses = [
+    !unstyled ? styles.link : undefined,
+    !unstyled ? styles[`link--${variant}`] : undefined,
+    className,
+  ]
     .filter(Boolean)
     .join(" ");
 
@@ -73,6 +86,7 @@ const LinkComponent = ({
         id={linkId}
         href={href}
         className={linkClasses}
+        onClick={onClick}
         {...externalProps}
         {...linkProps}
       >
@@ -81,11 +95,26 @@ const LinkComponent = ({
     );
   }
 
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    onClick?.(event);
+
+    if (
+      shouldAnnounceNavigationFeedbackOnLinkClick(event, href, {
+        external,
+        target,
+      })
+    ) {
+      useNavigationFeedbackStore.getState().beginNavigation(href);
+    }
+  };
+
   return (
     <Link
       id={linkId}
       href={href}
       className={linkClasses}
+      target={target}
+      onClick={handleClick}
       {...externalProps}
       {...linkProps}
     >

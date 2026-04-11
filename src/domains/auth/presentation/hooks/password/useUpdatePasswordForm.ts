@@ -1,12 +1,12 @@
 import { useCallback, useEffect } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm, useWatch } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import { translateAuthFieldError } from "@/domains/auth/presentation/forms/authFieldErrors";
 import type { UpdatePasswordFormInput } from "@/domains/auth/presentation/forms/authForms.schema";
@@ -15,7 +15,7 @@ import { useUpdatePassword } from "@/domains/auth/presentation/hooks/password/us
 import { getNextUnmetCriterion } from "@/domains/auth/presentation/password/passwordStrength";
 
 export const useUpdatePasswordForm = () => {
-  const router = useRouter();
+  const router = useAppRouter();
   const updatePasswordMutation = useUpdatePassword();
   const tErrors = useTranslations("errors");
   const tFields = useTranslations("pages.updatePassword.fields");

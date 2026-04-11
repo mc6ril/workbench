@@ -5,6 +5,8 @@ import Link from "next/link";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslations } from "@/shared/i18n";
+import { shouldAnnounceNavigationFeedbackOnLinkClick } from "@/shared/navigation/navigationFeedbackClick";
+import { useNavigationFeedbackStore } from "@/shared/stores/useNavigationFeedbackStore";
 
 import styles from "./navigation_item.module.scss";
 
@@ -132,6 +134,17 @@ const NavigationItem = ({
       }
     : {};
 
+  const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (
+      shouldAnnounceNavigationFeedbackOnLinkClick(event, href, {
+        external: false,
+      })
+    ) {
+      useNavigationFeedbackStore.getState().beginNavigation(href);
+    }
+    onClick?.();
+  };
+
   return (
     <li id={navItemId} className={navItemClasses} role="none">
       <Link
@@ -139,7 +152,7 @@ const NavigationItem = ({
         className={styles["navigation-item__link"]}
         data-sidebar-dismiss="true"
         aria-label={displayAriaLabel}
-        onClick={onClick}
+        onClick={handleLinkClick}
         onMouseEnter={onMouseEnter}
         onFocus={onFocus}
         {...linkProps}
