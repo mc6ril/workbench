@@ -14,8 +14,10 @@ import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import type { CatalogRecipeListResponse } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
+import type { RecipeTag } from "@/modules/recipes/core/domain/recipe.types";
 import { buildRecipesCatalogFilterGroups } from "@/modules/recipes/presentation/components/catalog/recipesCatalogFilterGroups";
 import { useListRecipes } from "@/modules/recipes/presentation/hooks/catalog/listRecipes";
+import { useListRecipeTags } from "@/modules/recipes/presentation/hooks/catalog/listRecipeTags";
 import { useListActiveSelections } from "@/modules/recipes/presentation/hooks/planner/listActiveSelections";
 import type { RecipesCatalogQueryState } from "@/modules/recipes/presentation/routing/catalogSearchParams";
 import {
@@ -28,6 +30,7 @@ type Input = {
   projectId: string;
   initialRecipesPage: CatalogRecipeListResponse;
   initialQueryState: RecipesCatalogQueryState;
+  initialTags: RecipeTag[];
   quickListRecipes: QuickListRecipe[];
 };
 
@@ -43,6 +46,7 @@ export const useRecipesCatalogClientPage = ({
   projectId,
   initialRecipesPage,
   initialQueryState,
+  initialTags,
   quickListRecipes,
 }: Input) => {
   const t = useTranslation("pages.recipes.catalog");
@@ -174,6 +178,9 @@ export const useRecipesCatalogClientPage = ({
   const quickListQuery = useListActiveSelections(projectId, {
     initialData: quickListRecipes,
   });
+  const tagsQuery = useListRecipeTags(projectId, {
+    initialData: initialTags,
+  });
 
   const {
     recipes,
@@ -183,7 +190,10 @@ export const useRecipesCatalogClientPage = ({
     isLoading,
     isFetching,
   } = recipesQuery;
-  const filterGroups = useMemo(() => buildRecipesCatalogFilterGroups(t), [t]);
+  const filterGroups = useMemo(
+    () => buildRecipesCatalogFilterGroups(t, tagsQuery.data ?? []),
+    [t, tagsQuery.data]
+  );
   const selectedFilterLabels = useMemo(() => {
     const labelsById = new Map(
       filterGroups.flatMap((group) =>
@@ -204,7 +214,11 @@ export const useRecipesCatalogClientPage = ({
     recipes.length > 0 && (hasNextPage || isFetchingNextPage);
 
   useEffect(() => {
-    if (!hasNextPage || isFetchingNextPage || typeof IntersectionObserver === "undefined") {
+    if (
+      !hasNextPage ||
+      isFetchingNextPage ||
+      typeof IntersectionObserver === "undefined"
+    ) {
       return;
     }
 

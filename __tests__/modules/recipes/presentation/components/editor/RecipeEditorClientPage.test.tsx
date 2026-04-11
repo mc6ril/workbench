@@ -196,6 +196,28 @@ describe("RecipeEditorClientPage local draft", () => {
     expect(screen.queryByLabelText("Repère")).not.toBeInTheDocument();
   });
 
+  it("offers default filter tags alongside custom project tags", () => {
+    render(
+      <RecipeEditorClientPage
+        projectId={PROJECT_ID}
+        mode="create"
+        draft={baseDraft}
+        availableTags={[
+          {
+            id: "tag-1",
+            label: "Batch cooking",
+            slug: "batch-cooking",
+          },
+        ]}
+      />
+    );
+
+    expect(screen.getByRole("button", { name: "Express" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Batch cooking" })
+    ).toBeInTheDocument();
+  });
+
   it("autosaves locally and clears the draft after a successful creation", async () => {
     render(
       <RecipeEditorClientPage

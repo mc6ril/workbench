@@ -16,6 +16,8 @@ export type CatalogRecipeFilterOptionDefinition = {
   tagSlugs: string[];
 };
 
+export const CATALOG_RECIPE_TAG_FILTER_OPTION_PREFIX = "tag.";
+
 const createOption = (
   id: string,
   category: CatalogRecipeFilterCategoryKey,
@@ -45,20 +47,14 @@ export const CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS = [
     "proteinee",
     "riche-en-legumes",
   ]),
-  createOption("popular-organic-vegetables", "popular", [
-    "legumes-bio",
-    "bio",
-  ]),
+  createOption("popular-organic-vegetables", "popular", ["legumes-bio", "bio"]),
   createOption("popular-vegetarian", "popular", [
     "vegetarien",
     "vegetarian",
     "veggie",
     "vege",
   ]),
-  createOption("popular-gourmand", "popular", [
-    "gourmand",
-    "grand-gourmet",
-  ]),
+  createOption("popular-gourmand", "popular", ["gourmand", "grand-gourmet"]),
   createOption("type-crustaceans", "type", [
     "crustaces",
     "crevette",
@@ -169,12 +165,48 @@ export const CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS = [
   createOption("equipment-no-blender", "equipment", ["sans-mixeur"]),
 ] as const satisfies readonly CatalogRecipeFilterOptionDefinition[];
 
-export type CatalogRecipeFilterOptionId =
+export type CatalogRecipePredefinedFilterOptionId =
   (typeof CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS)[number]["id"];
+export type CatalogRecipeTagFilterOptionId =
+  `${typeof CATALOG_RECIPE_TAG_FILTER_OPTION_PREFIX}${string}`;
+export type CatalogRecipeFilterOptionId =
+  | CatalogRecipePredefinedFilterOptionId
+  | CatalogRecipeTagFilterOptionId;
 
 const FILTER_OPTION_IDS = new Set<string>(
   CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS.map((option) => option.id)
 );
+
+export const createCatalogRecipeTagFilterOptionId = (
+  tagSlug: string
+): CatalogRecipeTagFilterOptionId => {
+  return `${CATALOG_RECIPE_TAG_FILTER_OPTION_PREFIX}${tagSlug}`;
+};
+
+export const parseCatalogRecipeTagFilterOptionId = (
+  optionId: string
+): string | null => {
+  if (!optionId.startsWith(CATALOG_RECIPE_TAG_FILTER_OPTION_PREFIX)) {
+    return null;
+  }
+
+  const tagSlug = optionId
+    .slice(CATALOG_RECIPE_TAG_FILTER_OPTION_PREFIX.length)
+    .trim()
+    .toLocaleLowerCase();
+
+  return tagSlug ? tagSlug : null;
+};
+
+export const listCatalogRecipeDefaultTagSlugs = (): string[] => {
+  return [
+    ...new Set(
+      CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS.flatMap(
+        (option) => option.tagSlugs
+      )
+    ),
+  ].sort();
+};
 
 export const normalizeCatalogRecipeFilterOptionIds = (
   value: string[] | null | undefined
@@ -184,9 +216,19 @@ export const normalizeCatalogRecipeFilterOptionIds = (
   }
 
   return [...new Set(value.map((optionId) => optionId.trim()).filter(Boolean))]
-    .filter((optionId): optionId is CatalogRecipeFilterOptionId =>
-      FILTER_OPTION_IDS.has(optionId)
-    )
+    .flatMap((optionId) => {
+      if (FILTER_OPTION_IDS.has(optionId)) {
+        return [optionId as CatalogRecipePredefinedFilterOptionId];
+      }
+
+      const tagSlug = parseCatalogRecipeTagFilterOptionId(optionId);
+
+      if (!tagSlug) {
+        return [];
+      }
+
+      return [createCatalogRecipeTagFilterOptionId(tagSlug)];
+    })
     .sort();
 };
 
@@ -202,7 +244,10 @@ export const getCatalogRecipeFilterOptionDefinition = (
 
 export const groupCatalogRecipeFilterOptionIdsByCategory = (
   optionIds: string[]
-): Map<CatalogRecipeFilterCategoryKey, CatalogRecipeFilterOptionDefinition[]> => {
+): Map<
+  CatalogRecipeFilterCategoryKey,
+  CatalogRecipeFilterOptionDefinition[]
+> => {
   const groupedOptions = new Map<
     CatalogRecipeFilterCategoryKey,
     CatalogRecipeFilterOptionDefinition[]

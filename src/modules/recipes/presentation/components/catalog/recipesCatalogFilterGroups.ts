@@ -4,7 +4,10 @@ import {
   CATALOG_RECIPE_FILTER_CATEGORY_KEYS,
   CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS,
   type CatalogRecipeFilterCategoryKey,
+  createCatalogRecipeTagFilterOptionId,
+  listCatalogRecipeDefaultTagSlugs,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
+import type { RecipeTag } from "@/modules/recipes/core/domain/recipe.types";
 
 export type RecipesCatalogFilterOption = {
   id: string;
@@ -12,22 +15,43 @@ export type RecipesCatalogFilterOption = {
 };
 
 export type RecipesCatalogFilterGroup = {
-  key: CatalogRecipeFilterCategoryKey;
+  key: CatalogRecipeFilterCategoryKey | "customTags";
   title: string;
   options: RecipesCatalogFilterOption[];
 };
 
 export const buildRecipesCatalogFilterGroups = (
-  t: TranslationFunction
+  t: TranslationFunction,
+  availableTags: RecipeTag[]
 ): RecipesCatalogFilterGroup[] => {
-  return CATALOG_RECIPE_FILTER_CATEGORY_KEYS.map((categoryKey) => ({
-    key: categoryKey,
-    title: t(`sheet.groups.${categoryKey}.title`),
-    options: CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS.filter(
-      (option) => option.category === categoryKey
-    ).map((option) => ({
-      id: option.id,
-      label: t(`sheet.options.${option.id}`),
-    })),
-  }));
+  const groups: RecipesCatalogFilterGroup[] =
+    CATALOG_RECIPE_FILTER_CATEGORY_KEYS.map((categoryKey) => ({
+      key: categoryKey,
+      title: t(`sheet.groups.${categoryKey}.title`),
+      options: CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS.filter(
+        (option) => option.category === categoryKey
+      ).map((option) => ({
+        id: option.id,
+        label: t(`sheet.options.${option.id}`),
+      })),
+    }));
+
+  const defaultTagSlugs = new Set(listCatalogRecipeDefaultTagSlugs());
+  const customTagOptions = availableTags
+    .filter((tag) => !defaultTagSlugs.has(tag.slug))
+    .map((tag) => ({
+      id: createCatalogRecipeTagFilterOptionId(tag.slug),
+      label: tag.label,
+    }))
+    .sort((left, right) => left.label.localeCompare(right.label, "fr"));
+
+  if (customTagOptions.length > 0) {
+    groups.push({
+      key: "customTags",
+      title: t("sheet.groups.customTags.title"),
+      options: customTagOptions,
+    });
+  }
+
+  return groups;
 };

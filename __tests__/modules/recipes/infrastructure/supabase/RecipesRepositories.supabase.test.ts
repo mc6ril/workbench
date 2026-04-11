@@ -182,7 +182,9 @@ describe("Recipes Supabase repositories", () => {
           const builder = configuredBuilder[currentCallCount];
 
           if (!builder) {
-            throw new Error(`Missing builder for ${table} call #${currentCallCount + 1}`);
+            throw new Error(
+              `Missing builder for ${table} call #${currentCallCount + 1}`
+            );
           }
 
           callsByTable.set(table, currentCallCount + 1);
@@ -201,7 +203,9 @@ describe("Recipes Supabase repositories", () => {
       ingredientRow,
     ]);
     const stepQuery = createQueryBuilderMock<RecipeStepRow[]>([stepRow]);
-    const tagLinkQuery = createQueryBuilderMock<RecipeTagLinkRow[]>([tagLinkRow]);
+    const tagLinkQuery = createQueryBuilderMock<RecipeTagLinkRow[]>([
+      tagLinkRow,
+    ]);
     const tagQuery = createQueryBuilderMock<RecipeTagRow[]>([tagRow]);
     const client = createClient({
       recipes: recipeQuery,
@@ -285,7 +289,9 @@ describe("Recipes Supabase repositories", () => {
       ingredientRow,
     ]);
     const stepQuery = createQueryBuilderMock<RecipeStepRow[]>([stepRow]);
-    const tagLinkQuery = createQueryBuilderMock<RecipeTagLinkRow[]>([tagLinkRow]);
+    const tagLinkQuery = createQueryBuilderMock<RecipeTagLinkRow[]>([
+      tagLinkRow,
+    ]);
     const tagQuery = createQueryBuilderMock<RecipeTagRow[]>([tagRow]);
     const selectionQuery = createQueryBuilderMock<{ id: string } | null>({
       id: selectionId,
@@ -305,7 +311,9 @@ describe("Recipes Supabase repositories", () => {
     expect(selectionQuery.eq).toHaveBeenCalledWith("project_id", projectId);
     expect(selectionQuery.eq).toHaveBeenCalledWith("recipe_id", recipeId);
     expect(detail?.isInQuickList).toBe(true);
-    expect(detail?.ingredients[0]?.displayName).toBe(ingredientRow.display_name);
+    expect(detail?.ingredients[0]?.displayName).toBe(
+      ingredientRow.display_name
+    );
   });
 
   it("lists persisted quick list selections in project order", async () => {
@@ -340,9 +348,9 @@ describe("Recipes Supabase repositories", () => {
   });
 
   it("filters catalog recipes through repository-side search and multi-tag queries", async () => {
-    const recipeTitleSearchQuery = createQueryBuilderMock<Array<Pick<RecipeRow, "id">>>(
-      [{ id: recipeId }]
-    );
+    const recipeTitleSearchQuery = createQueryBuilderMock<
+      Array<Pick<RecipeRow, "id">>
+    >([{ id: recipeId }]);
     const recipeSummarySearchQuery = createQueryBuilderMock<
       Array<Pick<RecipeRow, "id">>
     >([]);
@@ -396,7 +404,10 @@ describe("Recipes Supabase repositories", () => {
       },
     });
 
-    expect(recipeTitleSearchQuery.ilike).toHaveBeenCalledWith("title", "%citron%");
+    expect(recipeTitleSearchQuery.ilike).toHaveBeenCalledWith(
+      "title",
+      "%citron%"
+    );
     expect(recipeSummarySearchQuery.ilike).toHaveBeenCalledWith(
       "summary",
       "%citron%"
@@ -410,7 +421,9 @@ describe("Recipes Supabase repositories", () => {
       secondTagId,
     ]);
     expect(recipeListQuery.in).toHaveBeenCalledWith("id", [recipeId]);
-    expect(recipeTagLinksQuery.in).toHaveBeenCalledWith("recipe_id", [recipeId]);
+    expect(recipeTagLinksQuery.in).toHaveBeenCalledWith("recipe_id", [
+      recipeId,
+    ]);
     expect(recipeListQuery.order).toHaveBeenCalledWith("updated_at", {
       ascending: false,
     });
@@ -437,12 +450,12 @@ describe("Recipes Supabase repositories", () => {
   });
 
   it("short-circuits catalog listing when at least one requested tag is missing", async () => {
-    const filterTagsQuery = createQueryBuilderMock<Array<Pick<RecipeTagRow, "id">>>([
-      { id: tagId },
-    ]);
-    const persistedRecipesQuery = createQueryBuilderMock<Array<Pick<RecipeRow, "id">>>([
-      { id: recipeId },
-    ]);
+    const filterTagsQuery = createQueryBuilderMock<
+      Array<Pick<RecipeTagRow, "id">>
+    >([{ id: tagId }]);
+    const persistedRecipesQuery = createQueryBuilderMock<
+      Array<Pick<RecipeRow, "id">>
+    >([{ id: recipeId }]);
     const client = createClient({
       recipes: persistedRecipesQuery,
       recipe_tags: [filterTagsQuery],
@@ -467,6 +480,70 @@ describe("Recipes Supabase repositories", () => {
       hasMore: false,
       nextCursor: null,
     });
+  });
+
+  it("filters the catalogue with custom tag filters coming from added recipe tags", async () => {
+    const customTagId = "543e4567-e89b-12d3-a456-426614174000";
+    const customTagRow: RecipeTagRow = {
+      id: customTagId,
+      project_id: projectId,
+      label: "Batch cooking",
+      slug: "batch-cooking",
+      created_at: "2026-03-31T08:00:00.000Z",
+      updated_at: "2026-03-31T08:00:00.000Z",
+    };
+    const customTagLinkRow: RecipeTagLinkRow = {
+      project_id: projectId,
+      recipe_id: recipeId,
+      tag_id: customTagId,
+      created_at: "2026-03-31T08:00:00.000Z",
+    };
+    const filterTagsQuery = createQueryBuilderMock<
+      Array<Pick<RecipeTagRow, "id" | "slug">>
+    >([
+      {
+        id: customTagId,
+        slug: customTagRow.slug,
+      },
+    ]);
+    const recipeListQuery = createQueryBuilderMock<RecipeRow[]>([recipeRow]);
+    const filteredTagLinksQuery = createQueryBuilderMock<RecipeTagLinkRow[]>([
+      customTagLinkRow,
+    ]);
+    const recipeTagLinksQuery = createQueryBuilderMock<RecipeTagLinkRow[]>([
+      customTagLinkRow,
+    ]);
+    const loadedTagsQuery = createQueryBuilderMock<RecipeTagRow[]>([
+      customTagRow,
+    ]);
+    const selectionQuery = createQueryBuilderMock<RecipeSelectionRow[]>([]);
+    const client = createClient({
+      recipes: [recipeListQuery],
+      recipe_tags: [filterTagsQuery, loadedTagsQuery],
+      recipe_tag_links: [filteredTagLinksQuery, recipeTagLinksQuery],
+      recipe_selections: selectionQuery,
+    });
+
+    const repository = createCatalogRepository(client);
+    const recipes = await repository.listByProject({
+      projectId,
+      filters: {
+        search: "",
+        filterOptionIds: ["tag.batch-cooking"],
+      },
+    });
+
+    expect(filterTagsQuery.in).toHaveBeenCalledWith("slug", ["batch-cooking"]);
+    expect(filteredTagLinksQuery.in).toHaveBeenCalledWith("tag_id", [
+      customTagId,
+    ]);
+    expect(recipeListQuery.in).toHaveBeenCalledWith("id", [recipeId]);
+    expect(recipes.items[0]?.tags).toEqual([
+      expect.objectContaining({
+        label: customTagRow.label,
+        slug: customTagRow.slug,
+      }),
+    ]);
   });
 
   it("returns a bounded catalog page with hasMore and a stable next cursor", async () => {
@@ -551,9 +628,8 @@ describe("Recipes Supabase repositories", () => {
     const shoppingListQuery = createQueryBuilderMock<ShoppingListRow | null>(
       shoppingListRow
     );
-    const shoppingItemsQuery = createQueryBuilderMock<ShoppingListItemRow[]>(
-      shoppingItemRows
-    );
+    const shoppingItemsQuery =
+      createQueryBuilderMock<ShoppingListItemRow[]>(shoppingItemRows);
     const client = createClient({
       shopping_lists: shoppingListQuery,
       shopping_list_items: shoppingItemsQuery,

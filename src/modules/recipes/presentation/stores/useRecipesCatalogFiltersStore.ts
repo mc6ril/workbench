@@ -1,12 +1,15 @@
 import { create } from "zustand";
 
 import { normalizeCatalogRecipeSearch } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
-import { normalizeCatalogRecipeFilterOptionIds } from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
+import {
+  type CatalogRecipeFilterOptionId,
+  normalizeCatalogRecipeFilterOptionIds,
+} from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
 
 type RecipesCatalogFiltersState = {
   search: string;
-  selectedFilterOptionIds: string[];
-  draftSelectedFilterOptionIds: string[];
+  selectedFilterOptionIds: CatalogRecipeFilterOptionId[];
+  draftSelectedFilterOptionIds: CatalogRecipeFilterOptionId[];
   isQuickListOpen: boolean;
   isFiltersOpen: boolean;
 };
@@ -44,11 +47,12 @@ const initialState: RecipesCatalogFiltersState = {
 };
 
 const toggleFilterOptionIdInSelection = (
-  selectedFilterOptionIds: string[],
+  selectedFilterOptionIds: CatalogRecipeFilterOptionId[],
   filterOptionId: string
 ) => {
-  const normalizedFilterOptionId =
-    normalizeCatalogRecipeFilterOptionIds([filterOptionId])[0];
+  const normalizedFilterOptionId = normalizeCatalogRecipeFilterOptionIds([
+    filterOptionId,
+  ])[0];
 
   if (!normalizedFilterOptionId) {
     return selectedFilterOptionIds;

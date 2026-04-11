@@ -934,6 +934,9 @@
             },
             "equipment": {
               "title": "Equipment"
+            },
+            "customTags": {
+              "title": "Added tags"
             }
           },
           "options": {

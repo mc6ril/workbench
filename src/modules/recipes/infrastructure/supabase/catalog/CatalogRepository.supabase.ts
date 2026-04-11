@@ -12,6 +12,7 @@ import {
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import {
   groupCatalogRecipeFilterOptionIdsByCategory,
+  parseCatalogRecipeTagFilterOptionId,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
 import type { RecipeTag } from "@/modules/recipes/core/domain/recipe.types";
 import type { CatalogRepository } from "@/modules/recipes/core/ports/catalog/catalogRepository";
@@ -119,23 +120,39 @@ const resolveRecipeIdsMatchingSearch = async (
   }
 
   if (ingredientDisplayError) {
-    return handleRepositoryError(ingredientDisplayError, "RecipeIngredient", projectId);
+    return handleRepositoryError(
+      ingredientDisplayError,
+      "RecipeIngredient",
+      projectId
+    );
   }
 
   if (ingredientNormalizedError) {
-    return handleRepositoryError(ingredientNormalizedError, "RecipeIngredient", projectId);
+    return handleRepositoryError(
+      ingredientNormalizedError,
+      "RecipeIngredient",
+      projectId
+    );
   }
 
   return [
     ...new Set([
-      ...((titleMatches ?? []) as Array<Pick<RecipeRow, "id">>).map((row) => row.id),
-      ...((summaryMatches ?? []) as Array<Pick<RecipeRow, "id">>).map((row) => row.id),
-      ...((ingredientDisplayMatches ?? []) as Array<Pick<RecipeIngredientRow, "recipe_id">>).map(
-        (row) => row.recipe_id
+      ...((titleMatches ?? []) as Array<Pick<RecipeRow, "id">>).map(
+        (row) => row.id
       ),
-      ...((ingredientNormalizedMatches ?? []) as Array<
-        Pick<RecipeIngredientRow, "recipe_id">
-      >).map((row) => row.recipe_id),
+      ...((summaryMatches ?? []) as Array<Pick<RecipeRow, "id">>).map(
+        (row) => row.id
+      ),
+      ...(
+        (ingredientDisplayMatches ?? []) as Array<
+          Pick<RecipeIngredientRow, "recipe_id">
+        >
+      ).map((row) => row.recipe_id),
+      ...(
+        (ingredientNormalizedMatches ?? []) as Array<
+          Pick<RecipeIngredientRow, "recipe_id">
+        >
+      ).map((row) => row.recipe_id),
     ]),
   ];
 };
@@ -147,8 +164,17 @@ const resolveRecipeIdsMatchingFilters = async (
 ): Promise<string[] | null> => {
   const selectedOptionsByCategory =
     groupCatalogRecipeFilterOptionIdsByCategory(filterOptionIds);
+  const customTagSlugs = [
+    ...new Set(
+      filterOptionIds.flatMap((filterOptionId) => {
+        const tagSlug = parseCatalogRecipeTagFilterOptionId(filterOptionId);
 
-  if (selectedOptionsByCategory.size === 0) {
+        return tagSlug ? [tagSlug] : [];
+      })
+    ),
+  ];
+
+  if (selectedOptionsByCategory.size === 0 && customTagSlugs.length === 0) {
     return null;
   }
 
@@ -158,6 +184,7 @@ const resolveRecipeIdsMatchingFilters = async (
         options.flatMap((option) => option.tagSlugs)
       )
     ),
+    ...customTagSlugs,
   ];
 
   const { data: tagData, error: tagError } = await client
@@ -191,7 +218,19 @@ const resolveRecipeIdsMatchingFilters = async (
     tagIdsByCategory.set(categoryKey, tagIds);
   }
 
-  const selectedTagIds = [...new Set([...tagIdsByCategory.values()].flatMap((ids) => [...ids]))];
+  for (const customTagSlug of customTagSlugs) {
+    const tagId = tagIdBySlug.get(customTagSlug);
+
+    if (!tagId) {
+      return [];
+    }
+
+    tagIdsByCategory.set(`custom:${customTagSlug}`, new Set([tagId]));
+  }
+
+  const selectedTagIds = [
+    ...new Set([...tagIdsByCategory.values()].flatMap((ids) => [...ids])),
+  ];
   const { data: tagLinkData, error: tagLinkError } = await client
     .from("recipe_tag_links")
     .select("recipe_id, tag_id")
@@ -221,11 +260,16 @@ const resolveRecipeIdsMatchingFilters = async (
       currentMatchedCategories.add(categoryKey);
     }
 
-    matchedCategoriesByRecipeId.set(tagLink.recipe_id, currentMatchedCategories);
+    matchedCategoriesByRecipeId.set(
+      tagLink.recipe_id,
+      currentMatchedCategories
+    );
   }
 
   return [...matchedCategoriesByRecipeId.entries()]
-    .filter(([, matchedCategories]) => matchedCategories.size === categoryKeys.length)
+    .filter(
+      ([, matchedCategories]) => matchedCategories.size === categoryKeys.length
+    )
     .map(([recipeId]) => recipeId);
 };
 
@@ -296,7 +340,10 @@ const loadCatalogRecipeRows = async (
       normalizedFilters.filterOptionIds
     ),
   ]);
-  const filteredRecipeIds = intersectRecipeIds(searchRecipeIds, filterRecipeIds);
+  const filteredRecipeIds = intersectRecipeIds(
+    searchRecipeIds,
+    filterRecipeIds
+  );
 
   if (filteredRecipeIds && filteredRecipeIds.length === 0) {
     return {
@@ -333,7 +380,10 @@ const loadCatalogRecipeRows = async (
     return handleRepositoryError(error, "Recipe", projectId);
   }
 
-  return toCatalogRecipeRowPage((data ?? []) as RecipeRow[], pagination.pageSize);
+  return toCatalogRecipeRowPage(
+    (data ?? []) as RecipeRow[],
+    pagination.pageSize
+  );
 };
 
 const listPersistedCatalogTags = async (
@@ -395,7 +445,10 @@ export const createCatalogRepository = (
     );
 
     if (recipePage.items.length === 0) {
-      const hasPersistedRecipes = await hasPersistedCatalogRecipes(client, projectId);
+      const hasPersistedRecipes = await hasPersistedCatalogRecipes(
+        client,
+        projectId
+      );
 
       if (!hasPersistedRecipes) {
         return listCatalogFixtureRecipePage(filters, normalizedPagination);
@@ -434,7 +487,10 @@ export const createCatalogRepository = (
       return tags;
     }
 
-    const hasPersistedRecipes = await hasPersistedCatalogRecipes(client, projectId);
+    const hasPersistedRecipes = await hasPersistedCatalogRecipes(
+      client,
+      projectId
+    );
 
     if (!hasPersistedRecipes) {
       return listCatalogFixtureTags();
@@ -448,7 +504,9 @@ export const createCatalogRepository = (
       return getCatalogFixtureDetail(recipeId);
     }
 
-    const recipeGraphs = await loadRecipeGraphsByIds(client, projectId, [recipeId]);
+    const recipeGraphs = await loadRecipeGraphsByIds(client, projectId, [
+      recipeId,
+    ]);
     const recipeGraph = recipeGraphs.get(recipeId);
 
     if (!recipeGraph) {
@@ -466,6 +524,9 @@ export const createCatalogRepository = (
       return handleRepositoryError(selectionError, "RecipeSelection", recipeId);
     }
 
-    return mapLoadedRecipeGraphToCatalogDetail(recipeGraph, Boolean(selectionData));
+    return mapLoadedRecipeGraphToCatalogDetail(
+      recipeGraph,
+      Boolean(selectionData)
+    );
   },
 });

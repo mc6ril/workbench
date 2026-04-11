@@ -9,13 +9,15 @@ import {
 
 import RecipesCatalogClientPage from "@/modules/recipes/presentation/components/catalog/RecipesCatalogClientPage/index";
 import { useListRecipes } from "@/modules/recipes/presentation/hooks/catalog/listRecipes";
+import { useListRecipeTags } from "@/modules/recipes/presentation/hooks/catalog/listRecipeTags";
 import { useListActiveSelections } from "@/modules/recipes/presentation/hooks/planner/listActiveSelections";
 import { useRecipesCatalogFiltersStore } from "@/modules/recipes/presentation/stores";
 
 const mockReplace = jest.fn();
 const mockPathname = "/project-1/recipes";
 let mockSearchParams = new URLSearchParams();
-let mockIntersectionObserverCallback: IntersectionObserverCallback | null = null;
+let mockIntersectionObserverCallback: IntersectionObserverCallback | null =
+  null;
 const mockIntersectionObserve = jest.fn();
 const mockIntersectionDisconnect = jest.fn();
 
@@ -58,7 +60,9 @@ jest.mock(
   "@/modules/recipes/presentation/components/catalog/RecipeCatalogCard/index",
   () => ({
     __esModule: true,
-    default: ({ recipe }: { recipe: { title: string } }) => <div>{recipe.title}</div>,
+    default: ({ recipe }: { recipe: { title: string } }) => (
+      <div>{recipe.title}</div>
+    ),
   })
 );
 
@@ -74,9 +78,19 @@ jest.mock("@/modules/recipes/presentation/hooks/catalog/listRecipes", () => ({
   useListRecipes: jest.fn(),
 }));
 
-jest.mock("@/modules/recipes/presentation/hooks/planner/listActiveSelections", () => ({
-  useListActiveSelections: jest.fn(),
-}));
+jest.mock(
+  "@/modules/recipes/presentation/hooks/catalog/listRecipeTags",
+  () => ({
+    useListRecipeTags: jest.fn(),
+  })
+);
+
+jest.mock(
+  "@/modules/recipes/presentation/hooks/planner/listActiveSelections",
+  () => ({
+    useListActiveSelections: jest.fn(),
+  })
+);
 
 const asMockedReturn = <T,>(value: unknown): T => value as T;
 
@@ -117,6 +131,12 @@ describe("RecipesCatalogClientPage", () => {
       })
     );
 
+    jest.mocked(useListRecipeTags).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useListRecipeTags>>({
+        data: [],
+      })
+    );
+
     jest.mocked(useListActiveSelections).mockReturnValue(
       asMockedReturn<ReturnType<typeof useListActiveSelections>>({
         data: [],
@@ -148,6 +168,7 @@ describe("RecipesCatalogClientPage", () => {
           search: "",
           filterOptionIds: [],
         }}
+        initialTags={[]}
         quickListRecipes={[]}
       />
     );
@@ -156,13 +177,18 @@ describe("RecipesCatalogClientPage", () => {
       useRecipesCatalogFiltersStore.getState().openFilters();
     });
 
-    const typeSection = screen.getByRole("heading", { name: "Type" }).closest("section");
+    const typeSection = screen
+      .getByRole("heading", { name: "Type" })
+      .closest("section");
 
     expect(typeSection).not.toBeNull();
 
-    const tagCheckbox = within(typeSection as HTMLElement).getByRole("checkbox", {
-      name: "Express",
-    });
+    const tagCheckbox = within(typeSection as HTMLElement).getByRole(
+      "checkbox",
+      {
+        name: "Express",
+      }
+    );
 
     expect(tagCheckbox).not.toBeChecked();
 
@@ -172,7 +198,9 @@ describe("RecipesCatalogClientPage", () => {
 
     expect(tagCheckbox).toBeChecked();
 
-    fireEvent.click(screen.getByRole("button", { name: "Valider les filtres" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Valider les filtres" })
+    );
 
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith(
@@ -235,6 +263,7 @@ describe("RecipesCatalogClientPage", () => {
           search: "",
           filterOptionIds: [],
         }}
+        initialTags={[]}
         quickListRecipes={[]}
       />
     );
@@ -295,6 +324,7 @@ describe("RecipesCatalogClientPage", () => {
           search: "",
           filterOptionIds: [],
         }}
+        initialTags={[]}
         quickListRecipes={[]}
       />
     );
@@ -309,5 +339,86 @@ describe("RecipesCatalogClientPage", () => {
     });
 
     expect(fetchNextPage).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows custom recipe tags in the filters sheet and active filters bar", async () => {
+    jest.mocked(useListRecipeTags).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useListRecipeTags>>({
+        data: [
+          {
+            id: "tag-1",
+            label: "Batch cooking",
+            slug: "batch-cooking",
+          },
+        ],
+      })
+    );
+
+    render(
+      <RecipesCatalogClientPage
+        projectId="project-1"
+        initialRecipesPage={{
+          items: [
+            {
+              id: "recipe-1",
+              title: "Pasta primavera",
+              summary: "summary",
+              totalTimeLabel: "30 min",
+              servingsLabel: "4 portions",
+              tags: [],
+              coverStyle: "citrus",
+              isInQuickList: false,
+            },
+          ],
+          hasMore: false,
+          nextCursor: null,
+        }}
+        initialQueryState={{
+          search: "",
+          filterOptionIds: [],
+        }}
+        initialTags={[
+          {
+            id: "tag-1",
+            label: "Batch cooking",
+            slug: "batch-cooking",
+          },
+        ]}
+        quickListRecipes={[]}
+      />
+    );
+
+    act(() => {
+      useRecipesCatalogFiltersStore.getState().openFilters();
+    });
+
+    const customTagsSection = screen
+      .getByRole("heading", { name: "Tags ajoutés" })
+      .closest("section");
+
+    expect(customTagsSection).not.toBeNull();
+
+    const tagCheckbox = within(customTagsSection as HTMLElement).getByRole(
+      "checkbox",
+      {
+        name: "Batch cooking",
+      }
+    );
+
+    fireEvent.click(tagCheckbox);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Valider les filtres" })
+    );
+
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith(
+        "/project-1/recipes?filters=tag.batch-cooking",
+        {
+          scroll: false,
+        }
+      );
+    });
+
+    expect(screen.getAllByText("Batch cooking").length).toBeGreaterThan(0);
   });
 });

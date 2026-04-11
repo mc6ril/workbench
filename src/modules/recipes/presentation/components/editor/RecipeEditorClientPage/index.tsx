@@ -31,6 +31,7 @@ import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import styles from "./styles.module.scss";
 
+import { CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS } from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
 import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
 import {
   buildRecipeTagSlug,
@@ -185,6 +186,20 @@ const focusNamedField = (fieldName: string) => {
   >(`[name="${fieldName}"]`);
 
   field?.focus();
+};
+
+const formatSuggestedTagLabelFromSlug = (tagSlug: string): string => {
+  if (tagSlug.startsWith("nutri-")) {
+    return `Nutri ${tagSlug.slice("nutri-".length).toUpperCase()}`;
+  }
+
+  return tagSlug
+    .split("-")
+    .filter(Boolean)
+    .map((part, index) =>
+      index === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part
+    )
+    .join(" ");
 };
 
 const mapDraftToFormValues = (
@@ -420,6 +435,7 @@ const RecipeEditorClientPage = ({
   availableTags,
 }: Props) => {
   const t = useTranslation("pages.recipes.editor");
+  const tCatalog = useTranslation("pages.recipes.catalog");
   const isCreate = mode === "create";
   const router = useAppRouter();
   const [tagDraft, setTagDraft] = useState("");
@@ -572,8 +588,51 @@ const RecipeEditorClientPage = ({
   }, [watchedTags]);
 
   const remainingTagSuggestions = useMemo(() => {
-    return availableTags.filter((tag) => !selectedTagSlugs.has(tag.slug));
-  }, [availableTags, selectedTagSlugs]);
+    const defaultFilterTagSlugs = new Set(
+      CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS.flatMap(
+        (option) => option.tagSlugs
+      )
+    );
+    const suggestedTagsBySlug = new Map<string, RecipeTag>();
+
+    for (const option of CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS) {
+      const translatedLabel = tCatalog(`sheet.options.${option.id}`);
+      const translatedSlug = buildRecipeTagSlug(translatedLabel);
+      const preferredLabel = option.tagSlugs.includes(translatedSlug)
+        ? translatedLabel
+        : formatSuggestedTagLabelFromSlug(option.tagSlugs[0] ?? translatedSlug);
+      const preferredSlug = buildRecipeTagSlug(preferredLabel);
+
+      if (!preferredSlug || selectedTagSlugs.has(preferredSlug)) {
+        continue;
+      }
+
+      if (!suggestedTagsBySlug.has(preferredSlug)) {
+        suggestedTagsBySlug.set(preferredSlug, {
+          id: `default-filter-tag-${option.id}`,
+          label: preferredLabel,
+          slug: preferredSlug,
+        });
+      }
+    }
+
+    for (const tag of availableTags) {
+      if (
+        defaultFilterTagSlugs.has(tag.slug) ||
+        selectedTagSlugs.has(tag.slug)
+      ) {
+        continue;
+      }
+
+      if (!suggestedTagsBySlug.has(tag.slug)) {
+        suggestedTagsBySlug.set(tag.slug, tag);
+      }
+    }
+
+    return Array.from(suggestedTagsBySlug.values()).sort((left, right) =>
+      left.label.localeCompare(right.label, "fr")
+    );
+  }, [availableTags, selectedTagSlugs, tCatalog]);
 
   const normalizedServingsCount = normalizeRecipeTagLabel(watchedServingsCount);
   const resolvedServingsValue =

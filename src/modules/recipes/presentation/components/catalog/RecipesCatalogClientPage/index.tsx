@@ -9,6 +9,7 @@ import styles from "./styles.module.scss";
 
 import type { CatalogRecipeListResponse } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
+import type { RecipeTag } from "@/modules/recipes/core/domain/recipe.types";
 import { useRecipesCatalogClientPage } from "@/modules/recipes/presentation/hooks/catalog/useRecipesCatalogClientPage";
 import type { RecipesCatalogQueryState } from "@/modules/recipes/presentation/routing/catalogSearchParams";
 
@@ -16,6 +17,7 @@ type Props = {
   projectId: string;
   initialRecipesPage: CatalogRecipeListResponse;
   initialQueryState: RecipesCatalogQueryState;
+  initialTags: RecipeTag[];
   quickListRecipes: QuickListRecipe[];
 };
 

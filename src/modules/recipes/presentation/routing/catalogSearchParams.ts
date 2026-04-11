@@ -1,9 +1,10 @@
 import type { ReadonlyURLSearchParams } from "next/navigation";
 
+import { normalizeCatalogRecipeSearch } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import {
-  normalizeCatalogRecipeSearch,
-} from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
-import { normalizeCatalogRecipeFilterOptionIds } from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
+  type CatalogRecipeFilterOptionId,
+  normalizeCatalogRecipeFilterOptionIds,
+} from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
 
 type SearchParamsLike =
   | URLSearchParams
@@ -18,7 +19,7 @@ const hasSearchParamsGetter = (
 
 export type RecipesCatalogQueryState = {
   search: string;
-  filterOptionIds: string[];
+  filterOptionIds: CatalogRecipeFilterOptionId[];
 };
 
 const readValue = (
