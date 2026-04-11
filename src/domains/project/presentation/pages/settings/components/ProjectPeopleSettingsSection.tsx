@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import Avatar from "@/shared/design-system/avatar";
@@ -16,6 +15,7 @@ import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./projectPeopleSettingsSection.module.scss";
@@ -67,7 +67,7 @@ const isActiveInvitation = (invitation: ProjectInvitation): boolean => {
 const ProjectPeopleSettingsSection = ({
   projectId,
 }: ProjectPeopleSettingsSectionProps) => {
-  const router = useRouter();
+  const router = useAppRouter();
   const { data: session } = useSession();
   const { canManageMembers } = useProjectPermissions();
   const showInvitationCard = canManageMembers;

@@ -1,8 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslations } from "@/shared/i18n";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
@@ -42,7 +43,7 @@ export const useTicketDetailController = ({
   projectId,
   ticketId,
 }: UseTicketDetailControllerParams) => {
-  const router = useRouter();
+  const router = useAppRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const tColumns = useTranslations("pages.board.columns");
@@ -235,6 +236,7 @@ export const useTicketDetailController = ({
       const query = params.toString();
       router.replace(query ? `${pathname}?${query}` : pathname, {
         scroll: false,
+        feedback: "none",
       });
       return;
     }

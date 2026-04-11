@@ -3,8 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
@@ -12,6 +11,7 @@ import Button from "@/shared/design-system/button";
 import Checkbox from "@/shared/design-system/checkbox";
 import Form from "@/shared/design-system/form";
 import Input from "@/shared/design-system/input";
+import Link from "@/shared/design-system/link";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { getAppErrorCode } from "@/shared/errors/appError";
@@ -25,6 +25,7 @@ import {
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import styles from "./styles.module.scss";
 
@@ -41,7 +42,7 @@ import { useResendVerification } from "@/domains/auth/presentation/hooks/verific
 import { getNextUnmetCriterion } from "@/domains/auth/presentation/password/passwordStrength";
 
 const SignupPage = () => {
-  const router = useRouter();
+  const router = useAppRouter();
   const searchParams = useSearchParams();
   const signUpMutation = useSignUp();
   const signInWithGoogleMutation = useSignInWithGoogle();

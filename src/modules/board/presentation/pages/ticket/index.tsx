@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback } from "react";
-import { useRouter } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
 import TicketDetailView from "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView";
@@ -14,7 +14,7 @@ type Props = {
 };
 
 const TicketDetailPage = ({ projectId, ticketId }: Props) => {
-  const router = useRouter();
+  const router = useAppRouter();
 
   const handleClose = useCallback(() => {
     if (window.history.length > 1) {

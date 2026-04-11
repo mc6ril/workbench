@@ -1,7 +1,7 @@
 import React from "react";
-import NextLink from "next/link";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
+import Link from "@/shared/design-system/link";
 import Title from "@/shared/design-system/title";
 
 import styles from "./route_fallback_page.module.scss";
@@ -120,14 +120,15 @@ const RouteFallbackPage = ({
 
                 if (typeof href === "string") {
                   return (
-                    <NextLink
+                    <Link
                       key={`${action.label}-${href}`}
                       href={href}
+                      unstyled
                       className={actionClasses}
-                      aria-label={action.ariaLabel ?? action.label}
+                      ariaLabel={action.ariaLabel ?? action.label}
                     >
                       {action.label}
-                    </NextLink>
+                    </Link>
                   );
                 }
 

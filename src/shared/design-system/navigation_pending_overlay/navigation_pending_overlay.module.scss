@@ -1,0 +1,21 @@
+@use "@/styles/variables/colors" as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // Keep the full-screen layer interactive so repeated clicks do not reach
+  // the page underneath while navigation is pending.
+  pointer-events: auto;
+  background-color: color-mix(in srgb, $color-background 65%, transparent);
+}
+
+.overlay__inner {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background-color: color-mix(in srgb, $color-background 92%, transparent);
+  box-shadow: 0 4px 24px color-mix(in srgb, $color-text 12%, transparent);
+}

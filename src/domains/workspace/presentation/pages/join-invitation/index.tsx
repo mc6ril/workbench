@@ -1,19 +1,20 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
 import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import { useAcceptInvitation } from "@/domains/project/presentation/hooks/invitation/useAcceptInvitation";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 const JoinInvitationPage = () => {
   const params = useParams<{ token: string }>();
-  const router = useRouter();
+  const router = useAppRouter();
   const t = useTranslations("pages.join");
   const tErrors = useTranslations("errors");
 

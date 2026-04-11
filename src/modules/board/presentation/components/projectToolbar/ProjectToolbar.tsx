@@ -1,7 +1,4 @@
-"use client";
-
 import React, { useCallback, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import Button from "@/shared/design-system/button";
@@ -9,6 +6,7 @@ import { PlusIcon, SearchIcon } from "@/shared/design-system/icons";
 import Input from "@/shared/design-system/input";
 import Title from "@/shared/design-system/title";
 import { useTranslations } from "@/shared/i18n";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import ProjectToolbarAssigneeFilters from "./components/ProjectToolbarAssigneeFilters";
 import ProjectToolbarSuggestions from "./components/ProjectToolbarSuggestions";
@@ -36,7 +34,7 @@ const ProjectToolbar = ({
   assigneeFiltersLabel = "",
   onAssigneeFilterChange,
 }: ProjectToolbarProps) => {
-  const router = useRouter();
+  const router = useAppRouter();
   const isDesktopViewport = useIsDesktopDashboardViewport();
   const tNavbar = useTranslations("navigation.navbar");
   const tSearch = useTranslations("navigation.searchBar");

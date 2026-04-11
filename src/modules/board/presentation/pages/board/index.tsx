@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 
 import { getAccessibilityId } from "@/shared/a11y";
@@ -9,6 +9,7 @@ import Loader from "@/shared/design-system/loader";
 import Modal from "@/shared/design-system/modal";
 import Text from "@/shared/design-system/text";
 import { useTranslations } from "@/shared/i18n";
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { buildTicketDetailRoute } from "@/shared/utils/routes";
 
 import { getBoardOnboardingProgress } from "./boardOnboardingProgress";
@@ -64,7 +65,7 @@ const BoardLayout = ({
   initialTicketAssigneesByProjectId,
   initialProjectShortCode,
 }: BoardLayoutProps) => {
-  const router = useRouter();
+  const router = useAppRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const layoutId = useMemo(() => getAccessibilityId("board-layout"), []);
@@ -80,7 +81,6 @@ const BoardLayout = ({
     canEditTicket,
     canMoveTicket,
     canCreateTicket,
-    isLoading: isPermissionsLoading,
   } = useProjectPermissions();
   const {
     status: gettingStartedStatus,
@@ -109,6 +109,7 @@ const BoardLayout = ({
       const query = params.toString();
       router.replace(query ? `${pathname}?${query}` : pathname, {
         scroll: false,
+        feedback: "none",
       });
     },
     [pathname, router, searchParams]
@@ -451,10 +452,6 @@ const BoardLayout = ({
       ticketsForCreatePosition,
     ]
   );
-
-  if (isPermissionsLoading) {
-    return <Loader variant="full-page" />;
-  }
 
   if (legacyTicketId) {
     return <Loader variant="full-page" />;

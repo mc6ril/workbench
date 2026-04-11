@@ -1,14 +1,13 @@
-"use client";
-
 import { startTransition, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
+
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import { persistLocaleCookie } from "./config";
 import type { Locale } from "./routing";
 
 export const useLocalePreference = () => {
-  const router = useRouter();
+  const router = useAppRouter();
   const activeLocale = useLocale();
 
   return useCallback(

@@ -160,6 +160,7 @@ const eslintConfig = defineConfig([
   },
   {
     files: [
+      "src/presentation/**/*",
       "src/domains/*/presentation/**/*",
       "src/modules/*/presentation/**/*",
     ],
@@ -167,6 +168,19 @@ const eslintConfig = defineConfig([
       "no-restricted-imports": [
         "error",
         {
+          paths: [
+            {
+              name: "next/link",
+              message:
+                "Import Link from @/shared/design-system/link instead.",
+            },
+            {
+              name: "next/navigation",
+              importNames: ["useRouter"],
+              message:
+                "Use useAppRouter from @/shared/navigation/useAppRouter instead.",
+            },
+          ],
           patterns: [
             {
               group: ["../*", "../../*", "../../../*", "../../../../*"],
