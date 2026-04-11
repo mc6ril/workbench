@@ -81,7 +81,6 @@ const BoardLayout = ({
     canEditTicket,
     canMoveTicket,
     canCreateTicket,
-    isLoading: isPermissionsLoading,
   } = useProjectPermissions();
   const {
     status: gettingStartedStatus,
@@ -453,10 +452,6 @@ const BoardLayout = ({
       ticketsForCreatePosition,
     ]
   );
-
-  if (isPermissionsLoading) {
-    return <Loader variant="full-page" />;
-  }
 
   if (legacyTicketId) {
     return <Loader variant="full-page" />;

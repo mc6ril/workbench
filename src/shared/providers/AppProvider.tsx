@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { ThemeProvider } from "next-themes";
 import type { DehydratedState } from "@tanstack/react-query";
 
-import Loader from "@/shared/design-system/loader";
 import Toast from "@/shared/design-system/toast";
 import NavigationFeedbackController from "@/shared/navigation/NavigationFeedbackController";
 import { markNavigationSettled } from "@/shared/navigationPerf";
@@ -30,14 +29,12 @@ const NavigationPerfTracker = () => {
   return null;
 };
 
-const RuntimeSyncProvider = ({ children }: { children: React.ReactNode }) => {
-  const isRuntimeReady = useProfileRuntimeSync();
-
-  if (!isRuntimeReady) {
-    return <Loader variant="full-page" />;
-  }
-
-  return <>{children}</>;
+/**
+ * Applies hydrated profile preferences (locale, theme) without blocking the tree.
+ */
+const ProfilePreferencesSync = () => {
+  useProfileRuntimeSync();
+  return null;
 };
 
 /**
@@ -49,12 +46,11 @@ const AppProvider = ({ children, dehydratedState }: AppProviderProps) => {
     <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
       <AppErrorBoundary>
         <ReactQueryProvider dehydratedState={dehydratedState}>
-          <RuntimeSyncProvider>
-            <NavigationPerfTracker />
-            {children}
-            <NavigationFeedbackController />
-            <Toast />
-          </RuntimeSyncProvider>
+          <ProfilePreferencesSync />
+          <NavigationPerfTracker />
+          {children}
+          <NavigationFeedbackController />
+          <Toast />
         </ReactQueryProvider>
       </AppErrorBoundary>
     </ThemeProvider>

@@ -60,11 +60,7 @@ type WorkspacePageProps = {
 
 const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
   const router = useAppRouter();
-  const {
-    data: viewer,
-    isLoading: isViewerLoading,
-    isPending: isViewerPending,
-  } = useViewer();
+  const { data: viewer } = useViewer();
   const {
     data: projects,
     isLoading: isLoadingProjects,
@@ -229,24 +225,13 @@ const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
     );
   }, [selectedEmoji]);
 
-  const showInitialLoader =
-    isViewerLoading ||
-    isViewerPending ||
-    (shouldShowLoading({
+  const hasProjects = Array.isArray(projects) && projects.length > 0;
+  const showProjectsListPlaceholder =
+    projects === undefined &&
+    shouldShowLoading({
       isLoading: isLoadingProjects,
       isFetching: isFetchingProjects,
-    }) &&
-      projects === undefined);
-
-  if (showInitialLoader) {
-    return (
-      <main className={styles["workspace-page"]}>
-        <Loader variant="full-page" />
-      </main>
-    );
-  }
-
-  const hasProjects = Array.isArray(projects) && projects.length > 0;
+    });
   const showWelcomeGuide = !hasProjects && canAutoOpenGettingStarted;
   const gettingStartedErrorMessage = gettingStartedError
     ? getErrorMessage(gettingStartedError, tErrors)
@@ -351,7 +336,14 @@ const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
             </section>
           )}
 
-        {shouldShowLoading({
+        {showProjectsListPlaceholder ? (
+          <section
+            className={styles["workspace-main"]}
+            aria-busy="true"
+          >
+            <Loader variant="inline" />
+          </section>
+        ) : shouldShowLoading({
           isLoading: isLoadingProjects,
           isPending: addUserToProjectMutation.isPending,
         }) && hasProjects ? (
