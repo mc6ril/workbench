@@ -1021,6 +1021,8 @@
           "kicker": "Fiche recette",
           "createMode": "Création",
           "editMode": "Édition",
+          "localDraftBadge": "Brouillon local",
+          "localDraftHelper": "Appuyez sur le bouton \"Créer la recette\" tout en bas pour l’enregistrer.",
           "descriptionCreate": "Commence par le titre puis complète les blocs utiles, comme sur l’écran de mise à jour d’une tâche.",
           "descriptionEdit": "Retouche la recette bloc par bloc avec la même lecture compacte que sur l’écran de mise à jour d’une tâche."
         },

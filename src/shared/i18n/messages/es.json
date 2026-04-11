@@ -1021,6 +1021,8 @@
           "kicker": "Ficha de receta",
           "createMode": "Creación",
           "editMode": "Edición",
+          "localDraftBadge": "Borrador local",
+          "localDraftHelper": "Pulsa el botón \"Crear receta\" al final de la página para guardarla.",
           "descriptionCreate": "Empieza por el título y después completa los bloques útiles, como en la pantalla de actualización de una tarea.",
           "descriptionEdit": "Ajusta la receta bloque por bloque con la misma lectura compacta que en la pantalla de actualización de una tarea."
         },

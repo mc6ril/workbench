@@ -20,6 +20,7 @@ export const STORAGE_KEYS = Object.freeze({
   // USER_PREFERENCES: "workbench:user:preferences",
   // DRAFT_DATA: "workbench:draft:data",
   // THEME: "workbench:theme",
+  RECIPE_EDITOR_CREATE_DRAFT_PREFIX: "workbench:recipes:create-draft:v1",
 });
 
 /**

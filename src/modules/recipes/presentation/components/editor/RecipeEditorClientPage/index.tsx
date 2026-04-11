@@ -2,6 +2,7 @@
 
 import {
   type ChangeEvent,
+  type KeyboardEvent,
   useCallback,
   useLayoutEffect,
   useMemo,
@@ -33,6 +34,7 @@ import styles from "./styles.module.scss";
 import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
 import {
   buildRecipeTagSlug,
+  normalizeRecipeEditorText,
   normalizeRecipeTagLabel,
 } from "@/modules/recipes/core/domain/editor/recipeEditor.helpers";
 import type { SaveRecipeEditorInput } from "@/modules/recipes/core/domain/editor/recipeEditor.types";
@@ -42,6 +44,7 @@ import {
 } from "@/modules/recipes/core/domain/recipe.types";
 import { RecipeEditorSubmissionSchema } from "@/modules/recipes/core/usecases/editor/saveRecipe";
 import { useCreateRecipe } from "@/modules/recipes/presentation/hooks/editor/useCreateRecipe";
+import { useCreateRecipeLocalDraft } from "@/modules/recipes/presentation/hooks/editor/useCreateRecipeLocalDraft";
 import { useUpdateRecipe } from "@/modules/recipes/presentation/hooks/editor/useUpdateRecipe";
 import { useUploadRecipeCover } from "@/modules/recipes/presentation/hooks/editor/useUploadRecipeCover";
 import {
@@ -78,6 +81,7 @@ type IngredientSectionProps = {
   }>;
   ingredientErrors: unknown;
   appendIngredient: () => void;
+  onIngredientNameEnter: (index: number) => void;
   moveIngredient: (from: number, to: number) => void;
   removeIngredient: (index: number) => void;
   register: ReturnType<typeof useForm<SaveRecipeEditorInput>>["register"];
@@ -116,9 +120,8 @@ const createEmptyStepRow = () => ({
   meta: "",
 });
 
-const RECIPE_COVER_ACCEPT = APP_LIMITS.RECIPE_COVER.ALLOWED_MIME_TYPES.join(
-  ","
-);
+const RECIPE_COVER_ACCEPT =
+  APP_LIMITS.RECIPE_COVER.ALLOWED_MIME_TYPES.join(",");
 const RECIPE_COVER_ALLOWED_MIME_TYPES = new Set<string>(
   APP_LIMITS.RECIPE_COVER.ALLOWED_MIME_TYPES
 );
@@ -133,6 +136,55 @@ const getFieldMessage = (error: unknown): string | undefined => {
   }
 
   return undefined;
+};
+
+const isPlainEnterKey = (
+  event: KeyboardEvent<HTMLInputElement> | KeyboardEvent<HTMLTextAreaElement>
+): boolean => {
+  return (
+    event.key === "Enter" &&
+    !event.shiftKey &&
+    !event.altKey &&
+    !event.ctrlKey &&
+    !event.metaKey &&
+    !event.nativeEvent.isComposing
+  );
+};
+
+const hasIngredientRowContent = (
+  ingredient: SaveRecipeEditorInput["validatedIngredients"][number] | undefined
+) => {
+  if (!ingredient) {
+    return false;
+  }
+
+  return Boolean(
+    normalizeRecipeEditorText(ingredient.amount) ||
+    normalizeRecipeEditorText(ingredient.unit) ||
+    normalizeRecipeEditorText(ingredient.displayName) ||
+    normalizeRecipeEditorText(ingredient.notes)
+  );
+};
+
+const hasStepRowContent = (
+  step: SaveRecipeEditorInput["steps"][number] | undefined
+) => {
+  if (!step) {
+    return false;
+  }
+
+  return Boolean(
+    normalizeRecipeEditorText(step.instruction) ||
+    normalizeRecipeEditorText(step.meta)
+  );
+};
+
+const focusNamedField = (fieldName: string) => {
+  const field = document.querySelector<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  >(`[name="${fieldName}"]`);
+
+  field?.focus();
 };
 
 const mapDraftToFormValues = (
@@ -199,11 +251,7 @@ const SectionHeading = ({ title }: SectionHeadingProps) => {
   );
 };
 
-const MetaBadge = ({
-  label,
-  value,
-  tone = "default",
-}: MetaBadgeProps) => {
+const MetaBadge = ({ label, value, tone = "default" }: MetaBadgeProps) => {
   return (
     <div
       className={[
@@ -213,11 +261,7 @@ const MetaBadge = ({
         .filter(Boolean)
         .join(" ")}
     >
-      <Text
-        as="span"
-        variant="caption"
-        className={styles["editor-meta-label"]}
-      >
+      <Text as="span" variant="caption" className={styles["editor-meta-label"]}>
         {label}
       </Text>
       <Text as="span" variant="small" className={styles["editor-meta-value"]}>
@@ -237,6 +281,7 @@ const IngredientSection = ({
   fields,
   ingredientErrors,
   appendIngredient,
+  onIngredientNameEnter,
   moveIngredient,
   removeIngredient,
   register,
@@ -336,9 +381,20 @@ const IngredientSection = ({
                   label={nameLabel}
                   error={rowErrors?.displayName?.message}
                   disabled={isPending}
+                  onKeyDown={(event) => {
+                    if (!isPlainEnterKey(event)) {
+                      return;
+                    }
+
+                    event.preventDefault();
+                    onIngredientNameEnter(index);
+                  }}
                   {...register(`${sectionKey}.${index}.displayName` as const)}
                 />
-                <input type="hidden" {...register(`${sectionKey}.${index}.notes` as const)} />
+                <input
+                  type="hidden"
+                  {...register(`${sectionKey}.${index}.notes` as const)}
+                />
               </div>
             </div>
           );
@@ -370,6 +426,7 @@ const RecipeEditorClientPage = ({
   const [isRouting, startRouting] = useTransition();
   const titleTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const coverUploadInputRef = useRef<HTMLInputElement | null>(null);
+  const pendingFocusFieldNameRef = useRef<string | null>(null);
   const createRecipeMutation = useCreateRecipe();
   const coverUploadMutation = useUploadRecipeCover();
   const updateRecipeMutation = useUpdateRecipe();
@@ -384,6 +441,9 @@ const RecipeEditorClientPage = ({
     setError,
     clearErrors,
     setValue,
+    reset,
+    watch,
+    getValues,
     formState: { errors },
   } = useForm<SaveRecipeEditorInput>({
     resolver: zodResolver(RecipeEditorSubmissionSchema),
@@ -446,30 +506,62 @@ const RecipeEditorClientPage = ({
     name: "tags",
   });
   const watchedTags = useMemo(() => watchedTagsValue ?? [], [watchedTagsValue]);
-  const watchedValidatedIngredients = useWatch({
+  const watchedValidatedIngredientsValue = useWatch({
     control,
     name: "validatedIngredients",
-  }) ?? [];
-  const watchedAdditionIngredients = useWatch({
+  });
+  const watchedAdditionIngredientsValue = useWatch({
     control,
     name: "additionIngredients",
-  }) ?? [];
-  const watchedSteps = useWatch({
+  });
+  const watchedStepsValue = useWatch({
     control,
     name: "steps",
-  }) ?? [];
+  });
+  const watchedValidatedIngredients = useMemo(
+    () => watchedValidatedIngredientsValue ?? [],
+    [watchedValidatedIngredientsValue]
+  );
+  const watchedAdditionIngredients = useMemo(
+    () => watchedAdditionIngredientsValue ?? [],
+    [watchedAdditionIngredientsValue]
+  );
+  const watchedSteps = useMemo(
+    () => watchedStepsValue ?? [],
+    [watchedStepsValue]
+  );
 
   const isPending =
     createRecipeMutation.isPending ||
     coverUploadMutation.isPending ||
     updateRecipeMutation.isPending ||
     isRouting;
+  const { clearDraft } = useCreateRecipeLocalDraft({
+    enabled: isCreate,
+    projectId,
+    reset,
+    watch,
+    getValues,
+  });
 
   const titleField = register("title");
 
   useLayoutEffect(() => {
     resizeTextarea(titleTextareaRef.current);
   }, [watchedTitle]);
+
+  useLayoutEffect(() => {
+    if (!pendingFocusFieldNameRef.current) {
+      return;
+    }
+
+    focusNamedField(pendingFocusFieldNameRef.current);
+    pendingFocusFieldNameRef.current = null;
+  }, [
+    additionIngredientFields.length,
+    stepFields.length,
+    validatedIngredientFields.length,
+  ]);
 
   const selectedTagSlugs = useMemo(() => {
     return new Set(
@@ -491,28 +583,6 @@ const RecipeEditorClientPage = ({
         count: watchedTotalTimeMinutes,
       })
     : t("meta.timeFallback");
-  const resolvedImageLabel = normalizeRecipeTagLabel(watchedCoverImageUrl)
-    ? t("meta.imageReady")
-    : t("meta.imageEmpty");
-  const nonBlankValidatedIngredients = watchedValidatedIngredients.filter(
-    (ingredient) =>
-      normalizeRecipeTagLabel(ingredient.amount) ||
-      normalizeRecipeTagLabel(ingredient.unit) ||
-      normalizeRecipeTagLabel(ingredient.displayName) ||
-      normalizeRecipeTagLabel(ingredient.notes)
-  );
-  const nonBlankAdditionIngredients = watchedAdditionIngredients.filter(
-    (ingredient) =>
-      normalizeRecipeTagLabel(ingredient.amount) ||
-      normalizeRecipeTagLabel(ingredient.unit) ||
-      normalizeRecipeTagLabel(ingredient.displayName) ||
-      normalizeRecipeTagLabel(ingredient.notes)
-  );
-  const nonBlankSteps = watchedSteps.filter(
-    (step) =>
-      normalizeRecipeTagLabel(step.instruction) ||
-      normalizeRecipeTagLabel(step.meta)
-  );
   const backHref = isCreate
     ? buildRecipesCatalogRoute(projectId)
     : buildRecipeDetailRoute(projectId, draft.id ?? "");
@@ -530,7 +600,9 @@ const RecipeEditorClientPage = ({
     [t]
   );
   const coverImageFieldId = getAccessibilityId("recipe-cover-image-url");
-  const coverImageFieldHintId = getAccessibilityId("recipe-cover-image-url-hint");
+  const coverImageFieldHintId = getAccessibilityId(
+    "recipe-cover-image-url-hint"
+  );
   const coverImageFieldErrorId = getAccessibilityId(
     "recipe-cover-image-url-error"
   );
@@ -566,6 +638,54 @@ const RecipeEditorClientPage = ({
   const handleCloseEditor = useCallback(() => {
     router.push(backHref);
   }, [backHref, router]);
+
+  const handleAppendValidatedIngredient = useCallback(() => {
+    pendingFocusFieldNameRef.current = `validatedIngredients.${validatedIngredientFields.length}.displayName`;
+    appendValidatedIngredient(createEmptyIngredientRow());
+  }, [appendValidatedIngredient, validatedIngredientFields.length]);
+
+  const handleAppendAdditionIngredient = useCallback(() => {
+    pendingFocusFieldNameRef.current = `additionIngredients.${additionIngredientFields.length}.displayName`;
+    appendAdditionIngredient(createEmptyIngredientRow());
+  }, [additionIngredientFields.length, appendAdditionIngredient]);
+
+  const handleAppendStep = useCallback(() => {
+    pendingFocusFieldNameRef.current = `steps.${stepFields.length}.instruction`;
+    appendStep(createEmptyStepRow());
+  }, [appendStep, stepFields.length]);
+
+  const handleValidatedIngredientEnter = useCallback(
+    (index: number) => {
+      if (!hasIngredientRowContent(watchedValidatedIngredients[index])) {
+        return;
+      }
+
+      handleAppendValidatedIngredient();
+    },
+    [handleAppendValidatedIngredient, watchedValidatedIngredients]
+  );
+
+  const handleAdditionIngredientEnter = useCallback(
+    (index: number) => {
+      if (!hasIngredientRowContent(watchedAdditionIngredients[index])) {
+        return;
+      }
+
+      handleAppendAdditionIngredient();
+    },
+    [handleAppendAdditionIngredient, watchedAdditionIngredients]
+  );
+
+  const handleStepEnter = useCallback(
+    (index: number) => {
+      if (!hasStepRowContent(watchedSteps[index])) {
+        return;
+      }
+
+      handleAppendStep();
+    },
+    [handleAppendStep, watchedSteps]
+  );
 
   const handleCoverFileChange = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
@@ -636,6 +756,10 @@ const RecipeEditorClientPage = ({
         return;
       }
 
+      if (isCreate) {
+        clearDraft();
+      }
+
       startRouting(() => {
         router.push(buildRecipeDetailRoute(projectId, savedRecipe.id ?? ""));
       });
@@ -677,27 +801,6 @@ const RecipeEditorClientPage = ({
         ? "accent"
         : "muted",
     },
-    {
-      label: t("meta.image"),
-      value: resolvedImageLabel,
-      tone: normalizeRecipeTagLabel(watchedCoverImageUrl) ? "accent" : "muted",
-    },
-    {
-      label: t("meta.tags"),
-      value: String(watchedTags.length),
-    },
-    {
-      label: t("meta.validatedIngredients"),
-      value: String(nonBlankValidatedIngredients.length),
-    },
-    {
-      label: t("meta.additionIngredients"),
-      value: String(nonBlankAdditionIngredients.length),
-    },
-    {
-      label: t("meta.steps"),
-      value: String(nonBlankSteps.length),
-    },
   ];
 
   return (
@@ -712,14 +815,29 @@ const RecipeEditorClientPage = ({
         <div className={styles["editor-form-shell"]}>
           <header className={styles["editor-header"]}>
             <div className={styles["editor-header-top"]}>
-              <span className={styles["editor-header-mode"]}>
-                {isCreate ? t("header.createMode") : t("header.editMode")}
-              </span>
+              <div className={styles["editor-header-statuses"]}>
+                <span className={styles["editor-header-mode"]}>
+                  {isCreate ? t("header.createMode") : t("header.editMode")}
+                </span>
+                {isCreate ? (
+                  <span className={styles["editor-header-draft"]}>
+                    {t("header.localDraftBadge")}
+                  </span>
+                ) : null}
+              </div>
               <CloseButton
                 ariaLabel={t("actions.close")}
                 onClick={handleCloseEditor}
               />
             </div>
+
+            {isCreate ? (
+              <div className={styles["editor-draft-note"]}>
+                <Text variant="small" className={styles["editor-draft-copy"]}>
+                  {t("header.localDraftHelper")}
+                </Text>
+              </div>
+            ) : null}
 
             <textarea
               ref={(element) => {
@@ -941,9 +1059,8 @@ const RecipeEditorClientPage = ({
               itemLabel={t("labels.validatedIngredient")}
               fields={validatedIngredientFields}
               ingredientErrors={errors.validatedIngredients}
-              appendIngredient={() =>
-                appendValidatedIngredient(createEmptyIngredientRow())
-              }
+              appendIngredient={handleAppendValidatedIngredient}
+              onIngredientNameEnter={handleValidatedIngredientEnter}
               moveIngredient={moveValidatedIngredient}
               removeIngredient={removeValidatedIngredient}
               register={register}
@@ -960,12 +1077,11 @@ const RecipeEditorClientPage = ({
               emptyCopy={t("sections.additionIngredients.empty")}
               addLabel={t("actions.addAdditionIngredient")}
               nameLabel={t("sections.additionIngredients.nameLabel")}
-              itemLabel={t("labels.validatedIngredient")}
+              itemLabel={t("labels.additionIngredient")}
               fields={additionIngredientFields}
               ingredientErrors={errors.additionIngredients}
-              appendIngredient={() =>
-                appendAdditionIngredient(createEmptyIngredientRow())
-              }
+              appendIngredient={handleAppendAdditionIngredient}
+              onIngredientNameEnter={handleAdditionIngredientEnter}
               moveIngredient={moveAdditionIngredient}
               removeIngredient={removeAdditionIngredient}
               register={register}
@@ -1024,7 +1140,9 @@ const RecipeEditorClientPage = ({
                             })}
                             variant="ghost"
                             onClick={() => moveStep(index, index + 1)}
-                            disabled={isPending || index === stepFields.length - 1}
+                            disabled={
+                              isPending || index === stepFields.length - 1
+                            }
                           >
                             {t("actions.moveDown")}
                           </Button>
@@ -1042,23 +1160,28 @@ const RecipeEditorClientPage = ({
                         </div>
                       </div>
 
-                      <div
-                        className={`${styles["editor-grid"]} ${styles["editor-grid--step"]}`}
-                      >
+                      <div className={styles["editor-grid"]}>
                         <Textarea
                           label={t("fields.stepInstruction.label")}
                           rows={4}
                           resize="vertical"
-                          placeholder={t("sections.steps.instructionPlaceholder")}
+                          placeholder={t(
+                            "sections.steps.instructionPlaceholder"
+                          )}
                           error={rowErrors?.instruction?.message}
                           disabled={isPending}
+                          onKeyDown={(event) => {
+                            if (!isPlainEnterKey(event)) {
+                              return;
+                            }
+
+                            event.preventDefault();
+                            handleStepEnter(index);
+                          }}
                           {...register(`steps.${index}.instruction` as const)}
                         />
-                        <Input
-                          label={t("fields.stepMeta.label")}
-                          placeholder={t("sections.steps.metaPlaceholder")}
-                          error={rowErrors?.meta?.message}
-                          disabled={isPending}
+                        <input
+                          type="hidden"
                           {...register(`steps.${index}.meta` as const)}
                         />
                       </div>
@@ -1071,7 +1194,7 @@ const RecipeEditorClientPage = ({
                 <Button
                   label={t("actions.addStep")}
                   variant="secondary"
-                  onClick={() => appendStep(createEmptyStepRow())}
+                  onClick={handleAppendStep}
                   disabled={isPending}
                 />
               </div>

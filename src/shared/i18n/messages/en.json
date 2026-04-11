@@ -1021,6 +1021,8 @@
           "kicker": "Recipe sheet",
           "createMode": "Create",
           "editMode": "Edit",
+          "localDraftBadge": "Local draft",
+          "localDraftHelper": "Press the \"Create recipe\" button at the very bottom to save it.",
           "descriptionCreate": "Start with the title, then fill the useful blocks just like on the task update screen.",
           "descriptionEdit": "Adjust the recipe block by block with the same compact reading as on the task update screen."
         },
