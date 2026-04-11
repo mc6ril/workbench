@@ -161,7 +161,6 @@ const mapDraftToFormValues = (
     title: draft.title,
     summary: draft.summary,
     servingsCount: draft.servingsCount?.toString() ?? "",
-    servingsLabel: draft.servingsLabel,
     totalTimeMinutes: draft.totalTimeMinutes?.toString() ?? "",
     coverImageUrl: draft.coverImageUrl ?? "",
     note: draft.note ?? "",
@@ -434,10 +433,6 @@ const RecipeEditorClientPage = ({
     control,
     name: "servingsCount",
   });
-  const watchedServingsLabel = useWatch({
-    control,
-    name: "servingsLabel",
-  });
   const watchedTotalTimeMinutes = useWatch({
     control,
     name: "totalTimeMinutes",
@@ -488,13 +483,9 @@ const RecipeEditorClientPage = ({
     return availableTags.filter((tag) => !selectedTagSlugs.has(tag.slug));
   }, [availableTags, selectedTagSlugs]);
 
-  const resolvedServingsLabel =
-    normalizeRecipeTagLabel(watchedServingsLabel) ??
-    (normalizeRecipeTagLabel(watchedServingsCount)
-      ? t("meta.servingsWithCount", {
-          count: watchedServingsCount,
-        })
-      : t("meta.servingsFallback"));
+  const normalizedServingsCount = normalizeRecipeTagLabel(watchedServingsCount);
+  const resolvedServingsValue =
+    normalizedServingsCount ?? t("meta.servingsFallback");
   const resolvedTimeLabel = normalizeRecipeTagLabel(watchedTotalTimeMinutes)
     ? t("meta.timeWithCount", {
         count: watchedTotalTimeMinutes,
@@ -676,8 +667,8 @@ const RecipeEditorClientPage = ({
   const metaBadges: MetaBadgeProps[] = [
     {
       label: t("meta.servings"),
-      value: resolvedServingsLabel,
-      tone: normalizeRecipeTagLabel(watchedServingsCount) ? "accent" : "muted",
+      value: resolvedServingsValue,
+      tone: normalizedServingsCount ? "accent" : "muted",
     },
     {
       label: t("meta.time"),
@@ -776,9 +767,7 @@ const RecipeEditorClientPage = ({
             <section className={styles["editor-main-section"]}>
               <SectionHeading title={t("sections.identity.kicker")} />
 
-              <div
-                className={`${styles["editor-grid"]} ${styles["editor-grid--details"]}`}
-              >
+              <div className={styles["editor-grid"]}>
                 <div className={styles["editor-cover-field"]}>
                   <label
                     htmlFor={coverImageFieldId}
@@ -839,6 +828,11 @@ const RecipeEditorClientPage = ({
                     </Text>
                   )}
                 </div>
+              </div>
+
+              <div
+                className={`${styles["editor-grid"]} ${styles["editor-grid--details"]}`}
+              >
                 <Input
                   label={t("fields.servingsCount.label")}
                   type="number"
@@ -847,14 +841,6 @@ const RecipeEditorClientPage = ({
                   error={errors.servingsCount?.message}
                   disabled={isPending}
                   {...register("servingsCount")}
-                />
-                <Input
-                  label={t("fields.servingsLabel.label")}
-                  placeholder={t("fields.servingsLabel.placeholder")}
-                  helperText={t("fields.servingsLabel.helper")}
-                  error={errors.servingsLabel?.message}
-                  disabled={isPending}
-                  {...register("servingsLabel")}
                 />
                 <Input
                   label={t("fields.totalTimeMinutes.label")}

@@ -1101,11 +1101,6 @@
             "label": "Portions",
             "placeholder": "2"
           },
-          "servingsLabel": {
-            "label": "Libellé portions",
-            "placeholder": "2 portions",
-            "helper": "2 portions par défaut."
-          },
           "totalTimeMinutes": {
             "label": "Temps estimé",
             "placeholder": "35",

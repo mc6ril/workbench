@@ -22,7 +22,6 @@ export type SaveRecipeEditorInput = {
   title: string;
   summary: string;
   servingsCount: string;
-  servingsLabel: string;
   totalTimeMinutes: string;
   coverImageUrl: string;
   note: string;

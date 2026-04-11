@@ -22,6 +22,7 @@ import type {
   CatalogRecipeSummary,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
+import { buildRecipeServingsLabel } from "@/modules/recipes/core/domain/editor/recipeEditor.helpers";
 import {
   type Recipe,
   type RecipeSelection,
@@ -62,7 +63,9 @@ const mapLoadedRecipeGraphToRecipe = (graph: LoadedRecipeGraph): Recipe => {
     totalTimeMinutes: graph.recipe.total_time_minutes,
     totalTimeLabel: graph.recipe.total_time_label,
     servingsCount: graph.recipe.servings_count,
-    servingsLabel: graph.recipe.servings_label,
+    servingsLabel: buildRecipeServingsLabel({
+      servingsCount: graph.recipe.servings_count,
+    }),
     tags: graph.tags,
     ingredients: graph.ingredients.map(mapRecipeIngredientRowToDomain),
     steps: graph.steps.map(mapRecipeStepRowToDomain),
@@ -99,7 +102,9 @@ export const mapRecipeRowToCatalogSummary = (
     title: recipe.title,
     summary: recipe.summary,
     totalTimeLabel: recipe.total_time_label,
-    servingsLabel: recipe.servings_label,
+    servingsLabel: buildRecipeServingsLabel({
+      servingsCount: recipe.servings_count,
+    }),
     tags,
     coverStyle: recipe.cover_style,
     isInQuickList,
@@ -125,8 +130,6 @@ export const mapRecipeSelectionRowToDomain = (
   recipe: RecipeRow
 ): RecipeSelection => {
   const servingsCount = selection.servings_count ?? recipe.servings_count;
-  const servingsLabel =
-    selection.servings_label.trim() || recipe.servings_label;
 
   return {
     id: selection.id,
@@ -134,7 +137,9 @@ export const mapRecipeSelectionRowToDomain = (
     title: recipe.title,
     note: selection.note,
     servingsCount,
-    servingsLabel,
+    servingsLabel: buildRecipeServingsLabel({
+      servingsCount,
+    }),
   };
 };
 

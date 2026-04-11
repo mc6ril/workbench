@@ -1101,11 +1101,6 @@
             "label": "Servings",
             "placeholder": "2"
           },
-          "servingsLabel": {
-            "label": "Servings label",
-            "placeholder": "2 servings",
-            "helper": "2 servings by default."
-          },
           "totalTimeMinutes": {
             "label": "Estimated time",
             "placeholder": "35",

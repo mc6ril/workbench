@@ -16,6 +16,32 @@ export const normalizeRecipeTagLabel = (
   return normalizeRecipeEditorText(value);
 };
 
+export const DEFAULT_RECIPE_SERVINGS_LABEL = "portions";
+
+const normalizeRecipeServingsCount = (
+  value?: string | number | null
+): string | null => {
+  if (typeof value === "number") {
+    return Number.isFinite(value) && value > 0 ? String(value) : null;
+  }
+
+  return normalizeRecipeEditorText(value);
+};
+
+export const buildRecipeServingsLabel = ({
+  servingsCount,
+}: {
+  servingsCount?: string | number | null;
+}): string => {
+  const normalizedCount = normalizeRecipeServingsCount(servingsCount);
+
+  if (!normalizedCount) {
+    return "";
+  }
+
+  return `${normalizedCount} ${DEFAULT_RECIPE_SERVINGS_LABEL}`;
+};
+
 export const buildRecipeTagSlug = (value: string): string => {
   return value
     .normalize("NFD")

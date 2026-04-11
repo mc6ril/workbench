@@ -1101,11 +1101,6 @@
             "label": "Raciones",
             "placeholder": "2"
           },
-          "servingsLabel": {
-            "label": "Etiqueta de raciones",
-            "placeholder": "2 raciones",
-            "helper": "2 raciones por defecto."
-          },
           "totalTimeMinutes": {
             "label": "Tiempo estimado",
             "placeholder": "35",

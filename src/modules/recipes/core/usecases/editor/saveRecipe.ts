@@ -3,6 +3,7 @@ import { z } from "zod";
 import { validateUrl } from "@/shared/utils/validation";
 
 import {
+  buildRecipeServingsLabel,
   buildRecipeTagSlug,
   normalizeRecipeEditorText,
   normalizeRecipeTagLabel,
@@ -101,7 +102,6 @@ export const RecipeEditorSubmissionSchema = z
       .pipe(z.string().min(1, "Le titre est requis.")),
     summary: z.string(),
     servingsCount: z.string(),
-    servingsLabel: z.string(),
     totalTimeMinutes: z.string(),
     coverImageUrl: z.string(),
     note: z.string(),
@@ -311,9 +311,9 @@ export const normalizeRecipeEditorSubmission = (
   const validatedInput = RecipeEditorSubmissionSchema.parse(input);
   const title = validatedInput.title;
   const servingsCount = parseInteger(validatedInput.servingsCount);
-  const servingsLabel =
-    normalizeRecipeEditorText(validatedInput.servingsLabel) ??
-    (servingsCount ? `${servingsCount} portions` : "");
+  const servingsLabel = buildRecipeServingsLabel({
+    servingsCount,
+  });
   const totalTimeMinutes = parseInteger(validatedInput.totalTimeMinutes);
   const totalTimeLabel = totalTimeMinutes ? `${totalTimeMinutes} min` : "";
   const validatedIngredients = normalizeIngredients(

@@ -10,7 +10,6 @@ describe("normalizeRecipeEditorSubmission", () => {
       title: "  Poulet citron & riz pilaf  ",
       summary: "  Un diner simple et rassurant. ",
       servingsCount: "2",
-      servingsLabel: "",
       totalTimeMinutes: "35",
       coverImageUrl: "https://example.com/recipe.jpg",
       note: "  Tester le sumac sur une seule portion. ",
@@ -112,7 +111,6 @@ describe("normalizeRecipeEditorSubmission", () => {
         title: "Recette test",
         summary: "",
         servingsCount: "",
-        servingsLabel: "",
         totalTimeMinutes: "",
         coverImageUrl: "",
         note: "",
@@ -138,7 +136,6 @@ describe("normalizeRecipeEditorSubmission", () => {
         title: "Recette test",
         summary: "",
         servingsCount: "",
-        servingsLabel: "",
         totalTimeMinutes: "",
         coverImageUrl: "pas-une-url",
         note: "",
@@ -155,5 +152,31 @@ describe("normalizeRecipeEditorSubmission", () => {
         steps: [{ instruction: "Melanger.", meta: "" }],
       })
     ).toThrow("L'image doit etre une URL complete.");
+  });
+
+  it("builds the servings label from the servings count", () => {
+    const result = normalizeRecipeEditorSubmission({
+      projectId: "11111111-1111-4111-8111-111111111111",
+      title: "Recette test",
+      summary: "",
+      servingsCount: "4",
+      totalTimeMinutes: "",
+      coverImageUrl: "",
+      note: "",
+      tags: [],
+      validatedIngredients: [
+        {
+          amount: "1",
+          unit: "piece",
+          displayName: "citron",
+          notes: "",
+        },
+      ],
+      additionIngredients: [],
+      steps: [{ instruction: "Melanger.", meta: "" }],
+    });
+
+    expect(result.servingsCount).toBe(4);
+    expect(result.servingsLabel).toBe("4 portions");
   });
 });
