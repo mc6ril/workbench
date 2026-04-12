@@ -9,13 +9,29 @@
 }
 
 .recipe-detail-page__header {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
+  width: 100%;
+}
+
+.recipe-detail-page__header-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  text-align: center;
+  gap: $spacing-sm;
+  width: 100%;
+}
+
+.recipe-detail-page__header-spacer {
+  min-width: 0;
 }
 
 .recipe-detail-page__title {
+  grid-column: 2;
+  justify-self: center;
   margin: 0;
+  text-align: center;
+}
+
+.recipe-detail-page__edit {
+  grid-column: 3;
+  justify-self: end;
 }

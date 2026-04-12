@@ -909,6 +909,7 @@
         },
         "card": {
           "openRecipeAriaLabel": "Abrir la receta {title}",
+          "editRecipeAriaLabel": "Editar la receta {title}",
           "addToQuickListAriaLabel": "Añadir {title} a la quick list",
           "removeFromQuickListAriaLabel": "Quitar {title} de la quick list",
           "quickListUpdateFailed": "No se pudo actualizar la quick list."
@@ -988,6 +989,8 @@
         }
       },
       "detail": {
+        "editAction": "Editar",
+        "editRecipeAriaLabel": "Editar la receta {title}",
         "additions": {
           "title": "Por probar",
           "validate": "Validar este añadido",

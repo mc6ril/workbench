@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import Image from "next/image";
 
 import Link from "@/shared/design-system/link";
 import { useTranslation } from "@/shared/i18n";
@@ -15,7 +15,10 @@ import {
 } from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
 import { useRemoveSelection } from "@/modules/recipes/presentation/hooks/planner/useRemoveSelection";
 import { useSelectRecipe } from "@/modules/recipes/presentation/hooks/planner/useSelectRecipe";
-import { buildRecipeDetailRoute } from "@/modules/recipes/presentation/routes";
+import {
+  buildRecipeDetailRoute,
+  buildRecipeEditRoute,
+} from "@/modules/recipes/presentation/routes";
 
 type Props = {
   projectId: string;
@@ -55,12 +58,19 @@ const findCategoryOption = (
   return null;
 };
 
-const buildRecipeMediaBackground = (coverImageUrl: string | null) => {
-  if (!coverImageUrl) {
-    return undefined;
-  }
-
-  return `linear-gradient(180deg, rgba(61, 46, 50, 0.08) 0%, rgba(61, 46, 50, 0.32) 100%), url("${coverImageUrl}")`;
+const EditRecipeIcon = () => {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      className={styles["recipes-page__recipe-edit-icon"]}
+    >
+      <path
+        d="M12.3 3.5l4.2 4.2-9.8 9.8H2.5v-4.2l9.8-9.8zm1.4-1.4a2 2 0 012.8 0l1.4 1.4a2 2 0 010 2.8l-1 1-4.2-4.2 1-1z"
+        fill="currentColor"
+      />
+    </svg>
+  );
 };
 
 const QuickListToggleIcon = ({ selected }: { selected: boolean }) => {
@@ -88,6 +98,7 @@ const RecipeCatalogCard = ({
 }: Props) => {
   const t = useTranslation("pages.recipes.catalog");
   const detailHref = buildRecipeDetailRoute(projectId, recipe.id);
+  const editHref = buildRecipeEditRoute(projectId, recipe.id);
   const selectRecipeMutation = useSelectRecipe();
   const removeSelectionMutation = useRemoveSelection();
   const isSelecting =
@@ -123,9 +134,6 @@ const RecipeCatalogCard = ({
   const quickListActionLabel = recipe.isInQuickList
     ? t("card.removeFromQuickListAriaLabel", { title: recipe.title })
     : t("card.addToQuickListAriaLabel", { title: recipe.title });
-  const mediaStyle = {
-    backgroundImage: buildRecipeMediaBackground(recipe.coverImageUrl),
-  } satisfies CSSProperties;
   const canToggleQuickList =
     !recipe.isInQuickList || Boolean(quickListSelectionId);
   const hasQuickListError =
@@ -142,6 +150,15 @@ const RecipeCatalogCard = ({
       )}
     >
       <div className={styles["recipes-page__recipe-card-toggle-row"]}>
+        <Link
+          href={editHref}
+          unstyled
+          ariaLabel={t("card.editRecipeAriaLabel", { title: recipe.title })}
+          className={styles["recipes-page__recipe-edit-link"]}
+          title={t("card.editRecipeAriaLabel", { title: recipe.title })}
+        >
+          <EditRecipeIcon />
+        </Link>
         <button
           type="button"
           className={cx(
@@ -184,8 +201,23 @@ const RecipeCatalogCard = ({
             styles["recipes-page__recipe-media"],
             styles[`recipes-page__recipe-media--${recipe.coverStyle}`]
           )}
-          style={mediaStyle}
-        />
+        >
+          {recipe.coverImageUrl ? (
+            <>
+              <Image
+                src={recipe.coverImageUrl}
+                alt=""
+                fill
+                className={styles["recipes-page__recipe-media-image"]}
+                sizes="(max-width: 480px) calc(100vw - 2rem), 16rem"
+              />
+              <span
+                aria-hidden="true"
+                className={styles["recipes-page__recipe-media-overlay"]}
+              />
+            </>
+          ) : null}
+        </div>
 
         <div className={styles["recipes-page__recipe-card-body"]}>
           <h3 className={styles["recipes-page__recipe-title"]}>{recipe.title}</h3>

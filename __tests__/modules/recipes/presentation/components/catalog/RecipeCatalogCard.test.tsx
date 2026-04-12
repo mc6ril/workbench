@@ -80,6 +80,9 @@ describe("RecipeCatalogCard", () => {
     expect(
       screen.getByRole("link", { name: "Ouvrir la recette Poulet citron" })
     ).toHaveAttribute("href", "/project-1/recipes/recipe-1");
+    expect(
+      screen.getByRole("link", { name: "Modifier la recette Poulet citron" })
+    ).toHaveAttribute("href", "/project-1/recipes/recipe-1/edit");
     expect(screen.getByText("35 min")).toBeInTheDocument();
     expect(screen.getByText("Viande")).toBeInTheDocument();
     expect(screen.getByText("Express")).toBeInTheDocument();
@@ -110,6 +113,26 @@ describe("RecipeCatalogCard", () => {
       recipeId: "recipe-1",
     });
     expect(removeMutate).not.toHaveBeenCalled();
+  });
+
+  it("renders the cover image centered inside the media area when a cover exists", () => {
+    const { container } = render(
+      <RecipeCatalogCard
+        projectId="project-1"
+        recipe={{
+          ...baseRecipe,
+          coverImageUrl: "https://example.com/recipe-cover.jpg",
+        }}
+        quickListSelectionId={null}
+      />
+    );
+
+    const coverImage = container.querySelector("img");
+
+    expect(coverImage?.getAttribute("src")).toContain(
+      encodeURIComponent("https://example.com/recipe-cover.jpg")
+    );
+    expect(coverImage).toHaveClass("recipes-page__recipe-media-image");
   });
 
   it("removes a recipe from the quick list from the toggle button", () => {
