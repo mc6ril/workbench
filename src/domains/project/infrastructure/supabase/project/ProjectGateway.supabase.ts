@@ -18,6 +18,7 @@ import type {
   ProjectWithRole,
 } from "@/domains/project/core/domain/project.types";
 import { isProjectRole } from "@/domains/project/core/domain/project.types";
+import type { ProjectModuleKey } from "@/domains/project/core/domain/projectModule.types";
 import type { ProjectGateway } from "@/domains/project/core/ports/project.gateway";
 import type { ProjectRow } from "@/domains/project/infrastructure/supabase/types";
 
@@ -232,10 +233,18 @@ export const createProjectGateway = (
 
   async update(
     id: string,
-    input: { name?: string; boardEmoji?: string }
+    input: {
+      name?: string;
+      boardEmoji?: string;
+      enabledModules?: ProjectModuleKey[];
+    }
   ): Promise<Project> {
     try {
-      const updateData: Partial<{ name: string; board_emoji: string }> = {};
+      const updateData: Partial<{
+        name: string;
+        board_emoji: string;
+        enabled_modules: ProjectModuleKey[];
+      }> = {};
 
       if (input.name !== undefined) {
         if (!isNonEmptyString(input.name)) {
@@ -254,6 +263,10 @@ export const createProjectGateway = (
 
       if (input.boardEmoji !== undefined) {
         updateData.board_emoji = input.boardEmoji;
+      }
+
+      if (input.enabledModules !== undefined) {
+        updateData.enabled_modules = input.enabledModules;
       }
 
       if (Object.keys(updateData).length === 0) {

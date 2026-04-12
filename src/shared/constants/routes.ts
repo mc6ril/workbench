@@ -13,6 +13,7 @@ export const PAGE_ROUTES = Object.freeze({
   LEGAL: "/legal",
   WORKSPACE: "/workspace",
   ACCOUNT: "/account",
+  RUNTIME_CONFIG_LAB: "/runtime-config-lab",
 });
 
 /**
@@ -23,15 +24,17 @@ export const PAGE_ROUTES = Object.freeze({
 export const PROTECTED_ROUTES: readonly string[] = Object.freeze([
   PAGE_ROUTES.WORKSPACE,
   PAGE_ROUTES.ACCOUNT,
+  PAGE_ROUTES.RUNTIME_CONFIG_LAB,
 ]);
 
 /**
  * Project route patterns.
  * Project routes follow the pattern: /{projectId}/{view}
- * where projectId is a UUID and view can be: board, settings, etc.
+ * where projectId is a UUID and view can be: board, recipes, settings, etc.
  */
 export const PROJECT_VIEWS = Object.freeze({
   BOARD: "board",
+  RECIPES: "recipes",
   SETTINGS: "settings",
 });
 

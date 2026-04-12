@@ -2,9 +2,24 @@ import { getRuntimeConfigBoolean } from "@/domains/runtimeConfig/core/usecases/g
 
 const createRuntimeConfigPortMock = () => ({
   getValue: jest.fn<Promise<unknown>, [string]>(),
+  listEntries: jest.fn(),
 });
 
 describe("getRuntimeConfigBoolean", () => {
+  it("returns the local override without reading runtime config", async () => {
+    const runtimeConfigPort = createRuntimeConfigPortMock();
+
+    await expect(
+      getRuntimeConfigBoolean(runtimeConfigPort, {
+        key: "is_billing_visible",
+        defaultValue: false,
+        overrideValue: false,
+      })
+    ).resolves.toBe(false);
+
+    expect(runtimeConfigPort.getValue).not.toHaveBeenCalled();
+  });
+
   it("returns the boolean value when the config entry is a boolean", async () => {
     const runtimeConfigPort = createRuntimeConfigPortMock();
     runtimeConfigPort.getValue.mockResolvedValue(true);

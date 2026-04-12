@@ -1,0 +1,235 @@
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/breakpoints" as *;
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/gradients" as *;
+@use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+
+.lab-page {
+  min-height: 100vh;
+  padding-top: $spacing-3xl;
+  padding-bottom: $spacing-4xl;
+}
+
+.lab-shell {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xl;
+}
+
+.lab-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: $spacing-xl;
+  padding: $spacing-3xl;
+  border: $border-width solid rgba($color-border, 0.7);
+  border-radius: $border-radius-xl;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba($color-accent-peach, 0.25),
+      transparent 38%
+    ),
+    linear-gradient(
+      $gradient-angle-diagonal,
+      rgba($color-secondary, 0.96) 0%,
+      rgba($color-background, 0.9) 100%
+    );
+  box-shadow: $shadow-card;
+}
+
+.lab-header__copy {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.lab-header__actions {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+}
+
+.lab-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wide;
+  color: $color-text-secondary;
+}
+
+.lab-title {
+  margin: 0;
+}
+
+.lab-description {
+  max-width: 48rem;
+  color: $color-text-secondary;
+}
+
+.lab-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $spacing-lg;
+}
+
+.lab-summary__item {
+  padding: $spacing-xl;
+  border-radius: $border-radius-lg;
+  border: $border-width solid rgba($color-border, 0.7);
+  background: rgba($color-secondary, 0.88);
+  box-shadow: $shadow-sm;
+}
+
+.lab-summary__label {
+  margin-bottom: $spacing-sm;
+  color: $color-text-secondary;
+}
+
+.lab-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.lab-section__header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+}
+
+.lab-section__title {
+  margin: 0;
+}
+
+.lab-section__description {
+  color: $color-text-secondary;
+}
+
+.lab-list {
+  display: grid;
+  gap: $spacing-lg;
+}
+
+.lab-card {
+  padding: $spacing-xl;
+  border-radius: $border-radius-lg;
+  border: $border-width solid rgba($color-border, 0.7);
+  background:
+    linear-gradient(
+      $gradient-angle-diagonal,
+      rgba($color-secondary, 0.98) 0%,
+      rgba($color-surface-subtle, 0.9) 100%
+    );
+  box-shadow: $shadow-card;
+  content-visibility: auto;
+  contain-intrinsic-size: 180px;
+}
+
+.lab-card--overridden {
+  border-color: rgba($color-accent, 0.55);
+  box-shadow: 0 0 0 1px rgba($color-accent, 0.12), $shadow-card;
+}
+
+.lab-card__main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-lg;
+}
+
+.lab-card__copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.lab-card__key {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  word-break: break-word;
+}
+
+.lab-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.lab-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0 $spacing-md;
+  border-radius: 999px;
+  background: rgba($color-surface-subtle, 0.92);
+  border: $border-width solid rgba($color-border, 0.7);
+  color: $color-text-secondary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.lab-card__controls {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.lab-card__value {
+  margin: 0;
+  padding: $spacing-md;
+  border-radius: $border-radius-md;
+  background: rgba($color-background, 0.7);
+  border: $border-width solid rgba($color-border, 0.55);
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.lab-empty {
+  padding: $spacing-xl;
+  border-radius: $border-radius-lg;
+  border: $border-width dashed rgba($color-border, 0.8);
+  background: rgba($color-secondary, 0.78);
+}
+
+@media (max-width: $breakpoint-lg) {
+  .lab-header {
+    grid-template-columns: 1fr;
+  }
+
+  .lab-header__actions {
+    flex-wrap: wrap;
+  }
+
+  .lab-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .lab-card__main {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lab-card__controls {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .lab-page {
+    padding-top: $spacing-xl;
+    padding-bottom: $spacing-3xl;
+  }
+
+  .lab-header,
+  .lab-card,
+  .lab-summary__item {
+    padding: $spacing-lg;
+  }
+}

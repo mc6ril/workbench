@@ -14,6 +14,7 @@ describe("deleteProject", () => {
       name: "Workspace",
       shortCode: "WS",
       boardEmoji: "📋",
+      enabledModules: [],
       createdAt: new Date(),
       updatedAt: new Date(),
     });

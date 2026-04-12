@@ -1,0 +1,46 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+
+.recipes-scaffold__list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin: 0;
+  padding-left: calc(#{$spacing-md} + #{$spacing-xs});
+}
+
+.recipes-scaffold__list li {
+  color: $color-text;
+  line-height: $line-height-relaxed;
+}
+
+.recipes-scaffold__panel-head {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+}
+
+.recipes-scaffold__panel-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  color: $color-text-secondary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+}
+
+.recipes-scaffold__panel-title {
+  margin: 0;
+  color: $color-text;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+}
+
+.recipes-scaffold__stack {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}

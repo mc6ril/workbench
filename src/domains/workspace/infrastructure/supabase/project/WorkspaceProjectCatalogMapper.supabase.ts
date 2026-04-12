@@ -23,6 +23,7 @@ export const mapProjectWithStatsRowToDomain = (
   name: row.name,
   shortCode: row.short_code,
   boardEmoji: row.board_emoji,
+  enabledModules: [],
   createdAt: new Date(row.created_at),
   updatedAt: new Date(row.updated_at),
   role: row.role as ProjectRole,

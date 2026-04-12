@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
+import { APP_COOKIE_KEYS, getCookie } from "@/shared/infrastructure/storage/cookies";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
@@ -11,6 +12,10 @@ import { getBillingVisibility } from "@/domains/billing/core/usecases/getBilling
 import { stripePaymentGateway } from "@/domains/billing/infrastructure/stripe/stripePaymentGateway";
 import { createBillingVisibilityPort } from "@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase";
 import { createSubscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
+import {
+  getRuntimeConfigBooleanOverride,
+  readRuntimeConfigBooleanOverridesFromCookieValue,
+} from "@/domains/runtimeConfig/infrastructure/local/runtimeConfigLocalOverrides";
 import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
 import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 
@@ -39,8 +44,17 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
   try {
     const supabaseClient = await createSupabaseServerClient();
+    const runtimeConfigOverrides = readRuntimeConfigBooleanOverridesFromCookieValue(
+      getCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES, request.cookies)
+    );
+    const billingOverride = getRuntimeConfigBooleanOverride(
+      runtimeConfigOverrides,
+      "is_billing_visible"
+    );
     const billingVisibilityPort = createBillingVisibilityPort(supabaseClient);
-    const isBillingVisible = await getBillingVisibility(billingVisibilityPort);
+    const isBillingVisible = await getBillingVisibility(billingVisibilityPort, {
+      overrideValue: billingOverride,
+    });
 
     if (!isBillingVisible) {
       return NextResponse.json(

@@ -15,6 +15,12 @@ import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { buildProjectRoute, normalizePath } from "@/shared/utils/routes";
 
 import type { ProjectMember } from "@/domains/project/core/domain/project.types";
+import ProjectToolbar from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar";
+import {
+  PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID,
+  type ProjectToolbarAssigneeFilter,
+  type ProjectToolbarExtraTool,
+} from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useRegisterProjectViewContribution } from "@/domains/project/presentation/layouts/projectShell/ProjectShellContributionContext";
 import type { ProjectViewContribution } from "@/domains/project/presentation/layouts/projectShell/projectViewContribution";
@@ -24,12 +30,6 @@ import {
 } from "@/domains/project/presentation/navigation/projectViews.config";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import type { TicketFilters } from "@/modules/board/core/domain/ticket.types";
-import ProjectToolbar from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar";
-import {
-  PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID,
-  type ProjectToolbarAssigneeFilter,
-  type ProjectToolbarExtraTool,
-} from "@/modules/board/presentation/components/projectToolbar/ProjectToolbar.types";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { useProjectSearchSuggestions } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
 import { useProjectRealtime } from "@/modules/board/presentation/hooks/realtime/useProjectRealtime";
@@ -66,7 +66,7 @@ const BoardShellRuntimeAdapter = ({
   return null;
 };
 
-const BoardShellAdapter = ({ projectId }: Props) => {
+const BoardShellContributionAdapter = ({ projectId }: Props) => {
   const router = useAppRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -317,6 +317,19 @@ const BoardShellAdapter = ({ projectId }: Props) => {
       initializeProject={initializeProject}
     />
   );
+};
+
+const BoardShellAdapter = ({ projectId }: Props) => {
+  const pathname = usePathname();
+  const currentViewKey = useMemo(() => {
+    return getProjectViewKeyFromPath(normalizePath(pathname), projectId);
+  }, [pathname, projectId]);
+
+  if (currentViewKey === PROJECT_VIEWS.RECIPES) {
+    return null;
+  }
+
+  return <BoardShellContributionAdapter projectId={projectId} />;
 };
 
 export default BoardShellAdapter;

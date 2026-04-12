@@ -11,6 +11,7 @@ describe("getProject", () => {
     name: "Test Project",
     shortCode: "TP",
     boardEmoji: "📋",
+    enabledModules: [],
     createdAt: new Date("2024-01-01T00:00:00Z"),
     updatedAt: new Date("2024-01-01T00:00:00Z"),
   };
@@ -88,6 +89,7 @@ describe("getProject", () => {
       name: "Different Project",
       shortCode: "DP",
       boardEmoji: "📋",
+      enabledModules: [],
       createdAt: new Date("2024-01-02T00:00:00Z"),
       updatedAt: new Date("2024-01-02T00:00:00Z"),
     };

@@ -31,6 +31,7 @@ import {
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
+import { navigateToDocumentPath } from "@/shared/navigation/documentNavigation";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
@@ -100,6 +101,8 @@ const AccountPage = () => {
   const tAvatar = useTranslations("ui.avatarUpload");
   const addToast = useToastStore((s) => s.addToast);
   const checkoutHandled = useRef(false);
+  const hiddenRuntimeConfigClickCountRef = useRef(0);
+  const hiddenRuntimeConfigResetTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (
@@ -122,6 +125,39 @@ const AccountPage = () => {
   const [emailDraft, setEmailDraft] = useState<string | undefined>(undefined);
   const [nameDraft, setNameDraft] = useState<string | undefined>(undefined);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+  const resetSecretEntranceSequence = useCallback(() => {
+    hiddenRuntimeConfigClickCountRef.current = 0;
+
+    if (hiddenRuntimeConfigResetTimeoutRef.current !== null) {
+      window.clearTimeout(hiddenRuntimeConfigResetTimeoutRef.current);
+      hiddenRuntimeConfigResetTimeoutRef.current = null;
+    }
+  }, []);
+
+  const handleSecretEntranceClick = useCallback(() => {
+    if (hiddenRuntimeConfigResetTimeoutRef.current !== null) {
+      window.clearTimeout(hiddenRuntimeConfigResetTimeoutRef.current);
+    }
+
+    hiddenRuntimeConfigClickCountRef.current += 1;
+
+    if (hiddenRuntimeConfigClickCountRef.current >= 5) {
+      resetSecretEntranceSequence();
+      navigateToDocumentPath(PAGE_ROUTES.RUNTIME_CONFIG_LAB);
+      return;
+    }
+
+    hiddenRuntimeConfigResetTimeoutRef.current = window.setTimeout(() => {
+      resetSecretEntranceSequence();
+    }, 1500);
+  }, [resetSecretEntranceSequence]);
+
+  useEffect(() => {
+    return () => {
+      resetSecretEntranceSequence();
+    };
+  }, [resetSecretEntranceSequence]);
 
   const email = emailDraft ?? viewer?.loginEmail ?? "";
   const name = nameDraft ?? viewer?.displayName ?? "";
@@ -825,7 +861,11 @@ const AccountPage = () => {
           aria-labelledby={getAccessibilityId("account-signout-title")}
         >
           <div className={styles["section-header"]}>
-            <div className={styles["section-header__icon"]} aria-hidden="true">
+            <div
+              className={styles["section-header__icon"]}
+              aria-hidden="true"
+              onClick={handleSecretEntranceClick}
+            >
               {t("signOut.icon")}
             </div>
             <div>

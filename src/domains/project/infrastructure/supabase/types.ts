@@ -5,6 +5,7 @@ export type ProjectRow = {
   name: string;
   short_code: string;
   board_emoji: string;
+  enabled_modules: string[];
   created_at: string;
   updated_at: string;
 };

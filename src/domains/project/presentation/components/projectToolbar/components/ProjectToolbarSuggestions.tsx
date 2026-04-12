@@ -1,0 +1,72 @@
+import Badge from "@/shared/design-system/badge";
+import { useTranslations } from "@/shared/i18n";
+
+import styles from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.module.scss";
+import type { ProjectToolbarSearchSuggestion } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
+
+type Props = {
+  suggestionsId: string;
+  searchSuggestions: ProjectToolbarSearchSuggestion[];
+  activeSuggestionIndex: number;
+  onSuggestionMouseEnter: (index: number) => void;
+  onSuggestionMouseDown: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onSuggestionSelect: (href: string) => void;
+};
+
+const ProjectToolbarSuggestions = ({
+  suggestionsId,
+  searchSuggestions,
+  activeSuggestionIndex,
+  onSuggestionMouseEnter,
+  onSuggestionMouseDown,
+  onSuggestionSelect,
+}: Props) => {
+  const t = useTranslations("pages.board.search");
+
+  return (
+    <div
+      id={suggestionsId}
+      role="listbox"
+      className={styles["project-toolbar__search-results"]}
+    >
+      {searchSuggestions.map((suggestion, index) => (
+        <button
+          id={`${suggestionsId}-option-${index}`}
+          key={suggestion.id}
+          type="button"
+          role="option"
+          aria-selected={index === activeSuggestionIndex}
+          className={[
+            styles["project-toolbar__search-result-item"],
+            index === activeSuggestionIndex
+              ? styles["project-toolbar__search-result-item--active"]
+              : undefined,
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          onMouseEnter={() => {
+            onSuggestionMouseEnter(index);
+          }}
+          onMouseDown={onSuggestionMouseDown}
+          onClick={() => {
+            onSuggestionSelect(suggestion.href);
+          }}
+        >
+          <span className={styles["project-toolbar__search-result-label"]}>
+            {suggestion.label}
+          </span>
+          {suggestion.isArchived ? (
+            <Badge
+              label={t("archivedBadge")}
+              variant="warning"
+              size="small"
+              className={`${styles["project-toolbar__search-result-badge"]} ${styles["project-toolbar__search-result-badge--warning"]}`}
+            />
+          ) : null}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+export default ProjectToolbarSuggestions;
