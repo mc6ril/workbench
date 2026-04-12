@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { render, screen } from "@testing-library/react";
 
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
@@ -21,6 +22,10 @@ jest.mock("@tanstack/react-query", () => ({
     <>{children}</>
   ),
   dehydrate: (queryClient: unknown) => dehydrateMock(queryClient),
+}));
+
+jest.mock("next/headers", () => ({
+  cookies: jest.fn(),
 }));
 
 jest.mock("@/shared/providers/queryClient", () => ({
@@ -70,6 +75,9 @@ describe("WorkspaceRoutePage hydration", () => {
   const mockSupabaseClient = { tag: "supabase" };
   const mockWorkspaceGateway = { tag: "workspaceGateway" };
   const mockBillingVisibilityPort = { tag: "billingVisibilityPort" };
+  const mockCookieStore = {
+    get: jest.fn(),
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -92,9 +100,11 @@ describe("WorkspaceRoutePage hydration", () => {
     jest
       .mocked(createBillingVisibilityPort)
       .mockReturnValue(mockBillingVisibilityPort as never);
+    jest.mocked(cookies).mockResolvedValue(mockCookieStore as never);
     jest.mocked(listProjectsWithStats).mockResolvedValue([]);
     jest.mocked(listReclaimableProjects).mockResolvedValue([]);
     jest.mocked(getBillingVisibility).mockResolvedValue(false);
+    mockCookieStore.get.mockReturnValue(undefined);
   });
 
   it("prefetches workspace queries and renders hydrated content", async () => {
@@ -112,13 +122,16 @@ describe("WorkspaceRoutePage hydration", () => {
       queryFn: expect.any(Function),
     });
     expect(mockQueryClient.prefetchQuery).toHaveBeenNthCalledWith(3, {
-      queryKey: billingQueryKeys.config.billingVisibility(),
+      queryKey: billingQueryKeys.config.billingVisibility("standard"),
       queryFn: expect.any(Function),
     });
     expect(listProjectsWithStats).toHaveBeenCalledWith(mockWorkspaceGateway);
     expect(listReclaimableProjects).toHaveBeenCalledWith(mockWorkspaceGateway);
     expect(getBillingVisibility).toHaveBeenCalledWith(
-      mockBillingVisibilityPort
+      mockBillingVisibilityPort,
+      {
+        overrideValue: undefined,
+      }
     );
     expect(dehydrateMock).toHaveBeenCalledWith(mockQueryClient);
   });

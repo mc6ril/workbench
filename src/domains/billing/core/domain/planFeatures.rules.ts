@@ -15,6 +15,7 @@ export enum PlanFeature {
   MEMBERS_PER_WORKSPACE = "membersPerWorkspace",
   TICKETS = "tickets",
   CUSTOM_COLUMNS = "customColumns",
+  RECIPES = "recipes",
 }
 
 export type FeatureAccessType = "boolean" | "limit";
@@ -44,6 +45,7 @@ export const PLAN_CAPABILITIES: Record<SubscriptionPlan, PlanCapabilityMap> = {
     [PlanFeature.MEMBERS_PER_WORKSPACE]: { type: "limit", limit: 2 },
     [PlanFeature.TICKETS]: { type: "limit", limit: 100 },
     [PlanFeature.CUSTOM_COLUMNS]: { type: "limit", limit: 0 },
+    [PlanFeature.RECIPES]: { type: "boolean", access: true },
   },
   [SubscriptionPlan.PRO]: {
     [PlanFeature.ADVANCED_ROLES]: { type: "boolean", access: false },
@@ -51,6 +53,7 @@ export const PLAN_CAPABILITIES: Record<SubscriptionPlan, PlanCapabilityMap> = {
     [PlanFeature.MEMBERS_PER_WORKSPACE]: { type: "limit", limit: 4 },
     [PlanFeature.TICKETS]: { type: "limit", limit: UNLIMITED },
     [PlanFeature.CUSTOM_COLUMNS]: { type: "limit", limit: UNLIMITED },
+    [PlanFeature.RECIPES]: { type: "boolean", access: true },
   },
   [SubscriptionPlan.TEAM]: {
     [PlanFeature.ADVANCED_ROLES]: { type: "boolean", access: true },
@@ -58,6 +61,7 @@ export const PLAN_CAPABILITIES: Record<SubscriptionPlan, PlanCapabilityMap> = {
     [PlanFeature.MEMBERS_PER_WORKSPACE]: { type: "limit", limit: 20 },
     [PlanFeature.TICKETS]: { type: "limit", limit: UNLIMITED },
     [PlanFeature.CUSTOM_COLUMNS]: { type: "limit", limit: UNLIMITED },
+    [PlanFeature.RECIPES]: { type: "boolean", access: true },
   },
 };
 

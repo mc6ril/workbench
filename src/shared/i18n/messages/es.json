@@ -40,13 +40,35 @@
       "ariaLabel": "Navegación del proyecto",
       "openMenu": "Abrir el menu del proyecto",
       "closeMenu": "Cerrar el menu del proyecto",
-      "addTab": "Añadir pestaña",
-      "addTabAriaLabel": "Añadir pestaña (próximamente)",
+      "addTab": "Añadir módulo",
+      "addTabAriaLabel": "Añadir un módulo al proyecto",
       "items": {
         "home": "Inicio",
         "board": "Tablero",
+        "recipes": "Recipes",
         "ticketDetail": "Tarea",
         "settings": "Configuración"
+      },
+      "moduleLibrary": {
+        "title": "Añadir módulo",
+        "intro": "Compón un proyecto que se adapte de verdad al día a día del hogar. Aquí solo aparecen los módulos listos y aún no activados.",
+        "preview": {
+          "kicker": "Vista previa del módulo",
+          "title": "Catálogo suave, quick list visible y paso limpio a compras"
+        },
+        "recipes": {
+          "status": "Disponible",
+          "lockedStatus": "Plan {plan}",
+          "subtitle": "El módulo de comidas del hogar, pensado para resultar deseable en cuanto entra en un proyecto.",
+          "teaser": "Un espacio premium para elegir recetas, tener a mano los platos adecuados y convertir la semana en un plan de compras muy simple.",
+          "cta": "Añadir Recipes al proyecto",
+          "upgradeCta": "Ver planes"
+        },
+        "empty": {
+          "badge": "Proyecto al día",
+          "title": "No hay nuevos módulos para añadir por ahora",
+          "description": "Los módulos ya integrados desaparecen de aquí, y los futuros siguen ocultos hasta que estén listos."
+        }
       },
       "locked": {
         "ariaLabel": "{feature} — requiere el plan {plan}",
@@ -847,6 +869,352 @@
           "bannerDescription": "Esta tarea ya no aparece en el tablero activo. Puedes desarchivarla para volver a incluirla en el flujo.",
           "unarchiveAction": "Desarchivar"
         }
+      }
+    },
+    "recipes": {
+      "catalog": {
+        "header": {
+          "kicker": "Catálogo",
+          "title": "Todas las recetas",
+          "filteredTitle": "Resultados filtrados"
+        },
+        "summary": {
+          "availableResults": "{count} receta disponible",
+          "availableResults_other": "{count} recetas disponibles",
+          "filteredResults": "{count} receta tras los filtros",
+          "filteredResults_other": "{count} recetas tras los filtros",
+          "refreshing": "Actualizando..."
+        },
+        "filterBar": {
+          "open": "Filtrar",
+          "openAriaLabel": "Abrir los filtros del catálogo",
+          "helper": "{count} categoría de filtro disponible",
+          "helper_other": "{count} categorías de filtro disponibles",
+          "reset": "Restablecer"
+        },
+        "activeFilters": {
+          "search": "Búsqueda: {search}"
+        },
+        "empty": {
+          "kicker": "Sin resultados",
+          "title": "Ninguna receta coincide con los filtros actuales.",
+          "description": "Prueba una búsqueda más corta o quita un filtro para reabrir el catálogo.",
+          "reset": "Restablecer filtros"
+        },
+        "pagination": {
+          "loadMore": "Cargar más",
+          "loading": "Cargando...",
+          "loadingMessage": "Cargando las siguientes recetas...",
+          "loadingAriaLabel": "Cargando las siguientes recetas"
+        },
+        "card": {
+          "openRecipeAriaLabel": "Abrir la receta {title}",
+          "editRecipeAriaLabel": "Editar la receta {title}",
+          "addToQuickListAriaLabel": "Añadir {title} a la quick list",
+          "removeFromQuickListAriaLabel": "Quitar {title} de la quick list",
+          "quickListUpdateFailed": "No se pudo actualizar la quick list."
+        },
+        "sheet": {
+          "ariaLabel": "Filtros del catálogo de recetas",
+          "kicker": "Filtros",
+          "title": "Afinar el catálogo",
+          "close": "Cerrar",
+          "closeAriaLabel": "Cerrar el panel de filtros",
+          "reset": "Restablecer",
+          "apply": "Validar",
+          "applyPending": "Validar filtros",
+          "groups": {
+            "popular": {
+              "title": "Populares"
+            },
+            "type": {
+              "title": "Tipo"
+            },
+            "nutrition": {
+              "title": "Nutrición"
+            },
+            "nutriScore": {
+              "title": "Nutri-score"
+            },
+            "dietary": {
+              "title": "Hábitos alimentarios"
+            },
+            "equipment": {
+              "title": "Equipamiento"
+            },
+            "customTags": {
+              "title": "Tags añadidos"
+            }
+          },
+          "options": {
+            "popular-express": "Exprés",
+            "popular-low-calories": "Bajas en calorías",
+            "popular-boost-nutri": "Boost Nutri",
+            "popular-organic-vegetables": "Verduras BIO",
+            "popular-vegetarian": "Vegetariano",
+            "popular-gourmand": "Gourmet",
+            "type-crustaceans": "Crustáceos",
+            "type-express": "Exprés",
+            "type-family": "Familia",
+            "type-healthy": "Healthy",
+            "type-world": "Mundo",
+            "type-fish": "Pescado",
+            "type-veggie": "Veggie",
+            "type-meat": "Carne",
+            "nutrition-low-calories": "Bajo en calorías",
+            "nutrition-fibers-plus": "Fibras+",
+            "nutrition-omega-3": "Omega 3",
+            "nutrition-protein": "Proteico",
+            "nutrition-vegetables-rich": "Rico en verduras",
+            "nutri-score-a": "A",
+            "nutri-score-b": "B",
+            "nutri-score-c": "C",
+            "nutri-score-d": "D",
+            "nutri-score-e": "E",
+            "dietary-naturally-gluten-free": "Naturalmente sin gluten",
+            "equipment-two-hobs-max": "Máximo 2 fuegos",
+            "equipment-food-processor": "Compatible con robot de cocina",
+            "equipment-no-oven": "Sin horno",
+            "equipment-no-blender": "Sin batidora"
+          }
+        },
+        "toolbar": {
+          "filter": "Filtrar",
+          "filterAriaLabel": "Abrir los filtros del catálogo",
+          "quickList": "Quick list",
+          "quickListShowAriaLabel": "Mostrar la quick list",
+          "quickListHideAriaLabel": "Ocultar la quick list",
+          "addRecipe": "Añadir una receta",
+          "addRecipeAriaLabel": "Crear una nueva receta"
+        }
+      },
+      "detail": {
+        "editAction": "Editar",
+        "editRecipeAriaLabel": "Editar la receta {title}",
+        "additions": {
+          "title": "Por probar",
+          "validate": "Validar este añadido",
+          "validating": "Validando..."
+        },
+        "ingredients": {
+          "title": "Ingredientes",
+          "empty": "Todavía no hay ingredientes validados."
+        },
+        "steps": {
+          "label": "Paso {position}",
+          "empty": "Todavía no hay pasos."
+        },
+        "errors": {
+          "validateAddition": "La validación del añadido ha fallado. Inténtalo de nuevo."
+        }
+      },
+      "editor": {
+        "page": {
+          "create": {
+            "eyebrow": "Recipes / crear",
+            "title": "Crear una receta",
+            "description": "Una pantalla más directa para capturar la idea, estructurar la base y guardar la ficha correctamente."
+          },
+          "edit": {
+            "eyebrow": "Recipes / editar",
+            "title": "Editar receta",
+            "description": "Una ficha de edición legible para ajustar la base, los añadidos y los pasos sin perder el hilo."
+          },
+          "aside": {
+            "kicker": "Reglas activas",
+            "title": "Marco v1",
+            "ruleQuantities": "Cantidades estructuradas aceptadas: {formats}.",
+            "ruleUnits": "Unidades v1: {units}.",
+            "ruleFallback": "El fallback conserva `amountText` si la cantidad sigue siendo libre.",
+            "ruleReorder": "La reorganización sigue siendo simple con los botones subir / bajar."
+          }
+        },
+        "header": {
+          "kicker": "Ficha de receta",
+          "createMode": "Creación",
+          "editMode": "Edición",
+          "localDraftBadge": "Borrador local",
+          "localDraftHelper": "Pulsa el botón \"Crear receta\" al final de la página para guardarla.",
+          "descriptionCreate": "Empieza por el título y después completa los bloques útiles, como en la pantalla de actualización de una tarea.",
+          "descriptionEdit": "Ajusta la receta bloque por bloque con la misma lectura compacta que en la pantalla de actualización de una tarea."
+        },
+        "meta": {
+          "servings": "Raciones",
+          "time": "Tiempo",
+          "image": "Imagen",
+          "tags": "Tags",
+          "validatedIngredients": "Base",
+          "additionIngredients": "Añadidos",
+          "steps": "Pasos",
+          "servingsFallback": "Por definir",
+          "servingsWithCount": "{count} raciones",
+          "timeFallback": "Por estimar",
+          "timeWithCount": "{count} min",
+          "imageReady": "Indicada",
+          "imageEmpty": "Opcional"
+        },
+        "sections": {
+          "identity": {
+            "kicker": "Identidad",
+            "title": "Las pistas que hacen reconocible la receta",
+            "description": "El título se mantiene visible arriba y después completamos la imagen, el tiempo, las raciones y el resumen."
+          },
+          "tags": {
+            "kicker": "Tags",
+            "title": "Tags del proyecto, sin duplicados",
+            "description": "Las sugerencias reutilizan los tags ya usados y el slug evita repeticiones.",
+            "empty": "Todavía no hay ningún tag seleccionado."
+          },
+          "validatedIngredients": {
+            "kicker": "Ingredientes",
+            "title": "La base estable de la receta",
+            "description": "Cantidades estructuradas aceptadas: {formats}. Unidades v1: {units}.",
+            "empty": "Todavía no hay ningún ingrediente.",
+            "rowLabel": "Ingrediente {position}",
+            "nameLabel": "Ingrediente"
+          },
+          "additionIngredients": {
+            "kicker": "Añadidos",
+            "title": "Variaciones por probar sin ensuciar la base",
+            "description": "Los añadidos siguen siendo persistentes, pero claramente identificados como hipótesis o variaciones.",
+            "empty": "Todavía no hay ningún ingrediente.",
+            "rowLabel": "Ingrediente {position}",
+            "nameLabel": "Ingrediente"
+          },
+          "steps": {
+            "kicker": "Pasos",
+            "title": "Una secuencia de bloques cortos y fáciles de retomar",
+            "description": "Cada paso mantiene una instrucción clara y una referencia opcional para releer mejor.",
+            "empty": "Todavía no hay ningún paso.",
+            "rowLabel": "Paso {position}",
+            "instructionPlaceholder": "Describe la acción que hay que hacer…",
+            "metaPlaceholder": "Salsa, horno, 10 min…"
+          },
+          "note": {
+            "kicker": "Nota",
+            "title": "El retorno de prueba o el recordatorio personal",
+            "description": "Opcional, pero útil para conservar una decisión después de probar."
+          },
+          "summary": {
+            "kicker": "Resumen",
+            "title": "Revisar antes de guardar",
+            "description": "Una vista rápida de la ficha tal y como se releerá después."
+          }
+        },
+        "fields": {
+          "title": {
+            "label": "Título",
+            "placeholder": "Pollo al limón y arroz pilaf"
+          },
+          "coverImageUrl": {
+            "label": "Imagen",
+            "placeholder": "https://...",
+            "helper": "Pega la dirección de una imagen en línea o sube una."
+          },
+          "servingsCount": {
+            "label": "Raciones",
+            "placeholder": "2"
+          },
+          "totalTimeMinutes": {
+            "label": "Tiempo estimado",
+            "placeholder": "35",
+            "helper": "En minutos."
+          },
+          "summary": {
+            "label": "Resumen",
+            "helper": "Una o dos líneas para reconocer la receta rápido."
+          },
+          "note": {
+            "label": "Nota de receta",
+            "helper": "Opcional. Útil para conservar un arbitraje después de probar."
+          },
+          "tagDraft": {
+            "label": "Nuevo tag",
+            "placeholder": "Rápida"
+          },
+          "ingredientAmount": {
+            "label": "Cantidad"
+          },
+          "ingredientUnit": {
+            "label": "Unidad",
+            "options": {
+              "none": "Sin unidad",
+              "g": "g",
+              "kg": "kg",
+              "ml": "ml",
+              "cl": "cl",
+              "l": "l",
+              "piece": "pieza",
+              "botte": "manojo",
+              "cs": "cda",
+              "cc": "cdta"
+            }
+          },
+          "ingredientNotes": {
+            "label": "Nota"
+          },
+          "stepInstruction": {
+            "label": "Instrucción"
+          },
+          "stepMeta": {
+            "label": "Referencia"
+          }
+        },
+        "actions": {
+          "close": "Cerrar",
+          "backToCatalog": "Volver al catálogo",
+          "backToRecipe": "Volver a la receta",
+          "addTag": "Añadir",
+          "addValidatedIngredient": "Añadir",
+          "addAdditionIngredient": "Añadir",
+          "addStep": "Añadir",
+          "uploadCover": "Subir imagen",
+          "replaceCover": "Reemplazar imagen",
+          "uploadingCover": "Subiendo...",
+          "moveUp": "Subir",
+          "moveDown": "Bajar",
+          "remove": "Eliminar",
+          "removeTagAriaLabel": "Quitar {label}",
+          "moveUpItemAriaLabel": "Subir {label} {position}",
+          "moveDownItemAriaLabel": "Bajar {label} {position}",
+          "removeItemAriaLabel": "Eliminar {label} {position}",
+          "saveCreate": "Crear receta",
+          "saveEdit": "Guardar cambios",
+          "saving": "Guardando..."
+        },
+        "labels": {
+          "validatedIngredient": "el ingrediente",
+          "additionIngredient": "el añadido",
+          "step": "el paso"
+        },
+        "summary": {
+          "untitled": "Receta sin título",
+          "noTags": "Ningún tag seleccionado.",
+          "validatedIngredients": "{count} ingrediente validado",
+          "validatedIngredients_other": "{count} ingredientes validados",
+          "additionIngredients": "{count} añadido",
+          "additionIngredients_other": "{count} añadidos",
+          "steps": "{count} paso",
+          "steps_other": "{count} pasos"
+        },
+        "errors": {
+          "missingId": "La receta se ha guardado sin un identificador usable.",
+          "saveFailed": "No se puede guardar la receta ahora mismo.",
+          "coverUploadFailed": "No se puede subir la imagen ahora mismo.",
+          "coverUploadTooLarge": "La imagen es demasiado pesada.",
+          "coverUploadInvalidType": "Formato de imagen no compatible."
+        }
+      },
+      "quickListSummary": {
+        "kicker": "Quick list",
+        "titleEmpty": "Visible incluso vacía",
+        "titleFilled": "Comidas previstas para la semana",
+        "copyEmpty": "La quick list mantiene su lugar en el recorrido, incluso antes de la primera selección.",
+        "copyFilled": "El resumen mantiene las recetas activas legibles desde las otras pantallas del módulo.",
+        "emptyNote": "Todavía no hay ninguna receta activa.",
+        "open": "Abrir la quick list",
+        "activeBadge": "Activa",
+        "defaultNote": "Receta guardada para una próxima comida."
       }
     },
     "account": {

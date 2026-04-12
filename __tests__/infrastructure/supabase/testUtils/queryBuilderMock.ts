@@ -6,6 +6,7 @@ type QueryResult<T> = {
 export type QueryBuilderMock<T> = QueryResult<T> & {
   select: jest.Mock<QueryBuilderMock<T>, [string?]>;
   eq: jest.Mock<QueryBuilderMock<T>, [string, unknown]>;
+  ilike: jest.Mock<QueryBuilderMock<T>, [string, string]>;
   is: jest.Mock<QueryBuilderMock<T>, [string, unknown]>;
   order: jest.Mock<QueryBuilderMock<T>, [string, { ascending: boolean }]>;
   limit: jest.Mock<QueryBuilderMock<T>, [number]>;
@@ -21,6 +22,7 @@ export const createQueryBuilderMock = <T>(data: T): QueryBuilderMock<T> => {
     error: null,
     select: jest.fn(),
     eq: jest.fn(),
+    ilike: jest.fn(),
     is: jest.fn(),
     order: jest.fn(),
     limit: jest.fn(),
@@ -32,6 +34,7 @@ export const createQueryBuilderMock = <T>(data: T): QueryBuilderMock<T> => {
 
   builder.select.mockReturnValue(builder);
   builder.eq.mockReturnValue(builder);
+  builder.ilike.mockReturnValue(builder);
   builder.is.mockReturnValue(builder);
   builder.order.mockReturnValue(builder);
   builder.limit.mockReturnValue(builder);

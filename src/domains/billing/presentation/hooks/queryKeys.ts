@@ -3,7 +3,8 @@ const queryKeysObject = {
     current: () => ["subscription", "current"] as const,
   },
   config: {
-    billingVisibility: () => ["billing", "config", "visibility"] as const,
+    billingVisibility: (evaluationTag = "standard") =>
+      ["billing", "config", "visibility", evaluationTag] as const,
   },
 } as const;
 

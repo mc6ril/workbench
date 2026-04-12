@@ -24,4 +24,6 @@ export const useLocale = (): Locale => {
   return useNextIntlLocale() as Locale;
 };
 
+export type TranslationFunction = ReturnType<typeof useTranslations>;
+export const useTranslation = useTranslations;
 export { useTranslations };

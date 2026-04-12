@@ -9,6 +9,7 @@ export type SidebarItem = {
   href: string;
   label: string;
   exactOnly: boolean;
+  enabled: boolean;
   locked: boolean;
   planBadge?: string;
 };

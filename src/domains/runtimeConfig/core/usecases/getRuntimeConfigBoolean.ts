@@ -3,6 +3,7 @@ import type { RuntimeConfigPort } from "@/domains/runtimeConfig/core/ports/runti
 type Input = {
   key: string;
   defaultValue: boolean;
+  overrideValue?: boolean;
 };
 
 /**
@@ -13,6 +14,10 @@ export const getRuntimeConfigBoolean = async (
   runtimeConfigPort: RuntimeConfigPort,
   input: Input
 ): Promise<boolean> => {
+  if (typeof input.overrideValue === "boolean") {
+    return input.overrideValue;
+  }
+
   try {
     const value = await runtimeConfigPort.getValue(input.key);
     if (typeof value !== "boolean") {

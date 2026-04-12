@@ -6,6 +6,7 @@ import { getAccessibilityId } from "@/shared/a11y/constants";
 import Avatar from "@/shared/design-system/avatar";
 import Card from "@/shared/design-system/card";
 import Loader from "@/shared/design-system/loader";
+import SectionTitle from "@/shared/design-system/section_title";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { getIntlLocale, useLocale, useTranslations } from "@/shared/i18n";
@@ -227,12 +228,9 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
       <Card className={styles["ticket-detail__card"]}>
         <div className={styles["ticket-detail__section"]}>
           <div className={styles["ticket-detail__section-header"]}>
-            <label
-              htmlFor={notesFieldId}
-              className={styles["ticket-detail__section-label"]}
-            >
+            <SectionTitle as="label" htmlFor={notesFieldId}>
               {t("fields.notes")}
-            </label>
+            </SectionTitle>
           </div>
           <textarea
             id={notesFieldId}
@@ -249,9 +247,7 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
 
         <div className={styles["ticket-detail__section"]}>
           <div className={styles["ticket-detail__section-header"]}>
-            <span className={styles["ticket-detail__section-label"]}>
-              {t("sections.details")}
-            </span>
+            <SectionTitle>{t("sections.details")}</SectionTitle>
           </div>
 
           <div className={styles["ticket-detail__meta-list"]}>

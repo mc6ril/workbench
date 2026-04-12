@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { isAllowedProjectBoardEmoji } from "@/domains/project/core/domain/constants/projectBoardEmoji.constants";
 import type { Project } from "@/domains/project/core/domain/project.types";
+import { ProjectModuleKey } from "@/domains/project/core/domain/projectModule.types";
 import { containsEmoji } from "@/domains/project/core/domain/rules/projectName.rules";
 import type { ProjectGateway } from "@/domains/project/core/ports/project.gateway";
 
@@ -22,6 +23,10 @@ export const UpdateProjectInputSchema = z
       .refine((value) => isAllowedProjectBoardEmoji(value), {
         message: "INVALID_BOARD_EMOJI",
       })
+      .optional(),
+    enabledModules: z
+      .array(z.nativeEnum(ProjectModuleKey))
+      .transform((modules) => Array.from(new Set(modules)))
       .optional(),
   })
   .refine((input) => Object.keys(input).length > 0, {

@@ -1,14 +1,8 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { loadNormalizedMigrationSql } from "./loadMigrationSql";
 
-const migrationPath = join(
-  process.cwd(),
-  "supabase/migrations/000047_remove_legacy_epics_labels_subtasks.sql"
+const normalizedSql = loadNormalizedMigrationSql(
+  "000047_remove_legacy_epics_labels_subtasks.sql"
 );
-
-const normalizedSql = readFileSync(migrationPath, "utf8")
-  .replace(/\s+/g, " ")
-  .trim();
 
 describe("000047_remove_legacy_epics_labels_subtasks.sql", () => {
   it("removes legacy realtime tables before dropping schema objects", () => {

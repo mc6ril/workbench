@@ -1,0 +1,131 @@
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/breakpoints" as *;
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+
+.recipes-scaffold__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.recipes-scaffold__empty,
+.recipes-scaffold__selection-card,
+.recipes-scaffold__success-banner {
+  padding: $spacing-md;
+  border: $border-width solid rgba(var(--shadow-color), 0.08);
+  border-radius: $border-radius-md;
+  background: rgba(var(--shadow-color), 0.02);
+}
+
+.recipes-scaffold__empty {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  align-items: flex-start;
+}
+
+.recipes-scaffold__error {
+  color: $color-error;
+  font-size: $font-size-sm;
+}
+
+.recipes-scaffold__helper,
+.recipes-scaffold__panel-copy {
+  color: $color-text-secondary;
+  line-height: $line-height-relaxed;
+}
+
+.recipes-scaffold__panel-head {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xs;
+}
+
+.recipes-scaffold__panel-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  color: $color-text-secondary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+}
+
+.recipes-scaffold__panel-title,
+.recipes-scaffold__section-title {
+  margin: 0;
+  color: $color-text;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+}
+
+.recipes-scaffold__selection-card,
+.recipes-scaffold__success-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $spacing-sm;
+}
+
+.recipes-scaffold__selection-side,
+.recipes-scaffold__stack,
+.recipes-scaffold__summary-copy,
+.recipes-scaffold__summary-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.recipes-scaffold__selection-side {
+  gap: $spacing-sm;
+  align-items: flex-end;
+}
+
+.recipes-scaffold__stack {
+  gap: $spacing-lg;
+}
+
+.recipes-scaffold__success-banner {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(var(--shadow-color-accent), 0.08) 0%,
+      rgba(var(--shadow-color-accent), 0.02) 100%
+    ),
+    $color-secondary;
+}
+
+.recipes-scaffold__summary-copy {
+  gap: $spacing-2xs;
+  min-width: 0;
+}
+
+.recipes-scaffold__summary-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.recipes-scaffold__summary-list {
+  gap: $spacing-sm;
+}
+
+.recipes-scaffold__summary-meta {
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  white-space: nowrap;
+}
+
+@media (max-width: $breakpoint-md) {
+  .recipes-scaffold__selection-card,
+  .recipes-scaffold__success-banner {
+    flex-direction: column;
+  }
+
+  .recipes-scaffold__selection-side {
+    align-items: flex-start;
+  }
+}

@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 
+import CloseButton from "@/shared/design-system/close_button";
 import Text from "@/shared/design-system/text";
 import { useTranslations } from "@/shared/i18n";
 
@@ -43,17 +44,10 @@ const TicketDetailHeader = ({
         >
           {ticketCode}
         </Text>
-        <button
-          type="button"
-          className={styles["ticket-detail__close-button"]}
+        <CloseButton
+          ariaLabel={t("actions.close")}
           onClick={onBack}
-          aria-label={t("actions.close")}
-        >
-          <span
-            aria-hidden="true"
-            className={styles["ticket-detail__close-button-icon"]}
-          />
-        </button>
+        />
       </div>
       <textarea
         ref={titleRef}

@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
+import { APP_COOKIE_KEYS } from "@/shared/infrastructure/storage/cookies";
 import { navigateToDocumentPath } from "@/shared/navigation/documentNavigation";
 
 import { signOutUser } from "@/domains/auth/core/usecases/user/signOutUser";
@@ -37,6 +38,7 @@ describe("useSignOut", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    document.cookie = `${APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES}=; Path=/; Max-Age=0; SameSite=Lax`;
 
     queryClient = new QueryClient();
     clearSpy.mockReset();
@@ -48,6 +50,7 @@ describe("useSignOut", () => {
   });
 
   it("clears auth caches and performs a document redirect to home", async () => {
+    document.cookie = `${APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES}=test; Path=/; SameSite=Lax`;
     const { result } = renderHook(() => useSignOut(), { wrapper });
 
     result.current.mutate();
@@ -62,5 +65,6 @@ describe("useSignOut", () => {
 
     expect(clearSpy).toHaveBeenCalledTimes(1);
     expect(navigateToDocumentPath).toHaveBeenCalledWith(PAGE_ROUTES.HOME);
+    expect(document.cookie).not.toContain(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES);
   });
 });

@@ -1,14 +1,8 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { loadNormalizedMigrationSql } from "./loadMigrationSql";
 
-const migrationPath = join(
-  process.cwd(),
-  "supabase/migrations/000045_simplify_ticket_priority.sql"
+const normalizedSql = loadNormalizedMigrationSql(
+  "000045_simplify_ticket_priority.sql"
 );
-
-const normalizedSql = readFileSync(migrationPath, "utf8")
-  .replace(/\s+/g, " ")
-  .trim();
 
 describe("000045_simplify_ticket_priority.sql", () => {
   it("remaps legacy priority values to the simplified set", () => {

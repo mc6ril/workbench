@@ -43,6 +43,7 @@ describe("isPublicRoute", () => {
   it("should return false for non-public routes", () => {
     expect(isPublicRoute(PAGE_ROUTES.WORKSPACE)).toBe(false);
     expect(isPublicRoute(PAGE_ROUTES.ACCOUNT)).toBe(false);
+    expect(isPublicRoute(PAGE_ROUTES.RUNTIME_CONFIG_LAB)).toBe(false);
     expect(isPublicRoute("/unknown")).toBe(false);
   });
 });
@@ -67,6 +68,7 @@ describe("isProtectedRoute", () => {
   it("should return true for exact protected routes", () => {
     expect(isProtectedRoute(PAGE_ROUTES.WORKSPACE)).toBe(true);
     expect(isProtectedRoute(PAGE_ROUTES.ACCOUNT)).toBe(true);
+    expect(isProtectedRoute(PAGE_ROUTES.RUNTIME_CONFIG_LAB)).toBe(true);
   });
 
   it("should return true for project routes", () => {

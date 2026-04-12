@@ -1,0 +1,40 @@
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/breakpoints" as *;
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+
+.recipes-scaffold__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $spacing-lg;
+}
+
+.recipes-scaffold__metric {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  min-height: 7.5rem;
+  padding: $spacing-lg;
+  border: $border-width solid rgba(var(--shadow-color), 0.08);
+  border-radius: $border-radius-md;
+  background: rgba(var(--shadow-color), 0.03);
+}
+
+.recipes-scaffold__metric-label {
+  color: $color-text-secondary;
+  line-height: $line-height-relaxed;
+}
+
+.recipes-scaffold__metric-value {
+  color: $color-text;
+  font-family: $font-family-serif;
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  line-height: 1;
+}
+
+@media (max-width: $breakpoint-lg) {
+  .recipes-scaffold__grid {
+    grid-template-columns: 1fr;
+  }
+}
