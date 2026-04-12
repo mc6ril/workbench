@@ -13,6 +13,7 @@ export const PAGE_ROUTES = Object.freeze({
   LEGAL: "/legal",
   WORKSPACE: "/workspace",
   ACCOUNT: "/account",
+  RUNTIME_CONFIG_LAB: "/runtime-config-lab",
 });
 
 /**
@@ -23,6 +24,7 @@ export const PAGE_ROUTES = Object.freeze({
 export const PROTECTED_ROUTES: readonly string[] = Object.freeze([
   PAGE_ROUTES.WORKSPACE,
   PAGE_ROUTES.ACCOUNT,
+  PAGE_ROUTES.RUNTIME_CONFIG_LAB,
 ]);
 
 /**

@@ -1,6 +1,7 @@
 const queryKeysObject = {
   runtimeConfig: {
-    boolean: (key: string) => ["runtime-config", "boolean", key] as const,
+    boolean: (key: string, evaluationTag = "standard") =>
+      ["runtime-config", "boolean", key, evaluationTag] as const,
   },
 } as const;
 

@@ -1,3 +1,4 @@
+import { APP_COOKIE_KEYS, updateCookie } from "../infrastructure/storage/cookies";
 import type { Locale } from "./routing";
 import { localeCookieMaxAgeSeconds, routing } from "./routing";
 
@@ -6,10 +7,7 @@ export type { Locale } from "./routing";
 
 export const defaultLocale: Locale = routing.defaultLocale;
 export const supportedLocales = routing.locales;
-export const localeCookieName: string =
-  routing.localeCookie && typeof routing.localeCookie === "object"
-    ? (routing.localeCookie.name ?? "workbench-locale")
-    : "workbench-locale";
+export const localeCookieName: string = APP_COOKIE_KEYS.LOCALE;
 
 export const supportedLocaleOptions: readonly {
   code: Locale;
@@ -120,14 +118,11 @@ export const persistLocaleCookie = (locale: Locale): void => {
     return;
   }
 
-  const secureSuffix =
-    typeof window !== "undefined" && window.location.protocol === "https:"
-      ? "; Secure"
-      : "";
-
-  document.cookie =
-    `${localeCookieName}=${locale}; Path=/; Max-Age=${localeCookieMaxAgeSeconds}; ` +
-    `SameSite=Lax${secureSuffix}`;
+  updateCookie(localeCookieName, locale, {
+    maxAgeSeconds: localeCookieMaxAgeSeconds,
+    secure:
+      typeof window !== "undefined" && window.location.protocol === "https:",
+  });
 };
 
 export const getIntlLocale = (locale: Locale): string => {

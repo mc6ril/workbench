@@ -1,6 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
+import {
+  APP_COOKIE_KEYS,
+  resetCookie,
+} from "@/shared/infrastructure/storage/cookies";
 import { navigateToDocumentPath } from "@/shared/navigation/documentNavigation";
 
 import { signOutUser } from "@/domains/auth/core/usecases/user/signOutUser";
@@ -19,6 +23,7 @@ export const useSignOut = () => {
     onSuccess: async () => {
       await invalidatePostAuthMutation(queryClient);
       queryClient.clear();
+      resetCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES);
 
       // Use a document navigation so middleware and server layouts re-evaluate
       // against the cleared auth cookies instead of reusing protected client state.

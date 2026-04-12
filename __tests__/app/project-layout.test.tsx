@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { render, screen } from "@testing-library/react";
 
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
@@ -26,6 +27,10 @@ const dehydrateMock = jest.fn((_queryClient?: unknown) => ({
 
 jest.mock("next/navigation", () => ({
   redirect: jest.fn(),
+}));
+
+jest.mock("next/headers", () => ({
+  cookies: jest.fn(),
 }));
 
 jest.mock("@tanstack/react-query", () => ({
@@ -129,6 +134,9 @@ describe("ProjectLayout hydration", () => {
   const mockBillingVisibilityPort = { tag: "billingVisibilityPort" };
   const mockRuntimeConfigPort = { tag: "runtimeConfigPort" };
   const mockSubscriptionRepository = { tag: "subscriptionRepository" };
+  const mockCookieStore = {
+    get: jest.fn(),
+  };
   const mockSessionGateway = {
     getCurrentSession: jest.fn(),
   };
@@ -161,6 +169,7 @@ describe("ProjectLayout hydration", () => {
     jest
       .mocked(createSubscriptionRepository)
       .mockReturnValue(mockSubscriptionRepository as never);
+    jest.mocked(cookies).mockResolvedValue(mockCookieStore as never);
     jest
       .mocked(createSessionGateway)
       .mockReturnValue(mockSessionGateway as never);
@@ -171,6 +180,7 @@ describe("ProjectLayout hydration", () => {
     jest.mocked(getUserSubscription).mockResolvedValue({
       id: "sub-1",
     } as never);
+    mockCookieStore.get.mockReturnValue(undefined);
     mockSessionGateway.getCurrentSession.mockResolvedValue({
       userId: "user-1",
       isSuperuser: false,
@@ -202,12 +212,13 @@ describe("ProjectLayout hydration", () => {
       queryFn: expect.any(Function),
     });
     expect(mockQueryClient.prefetchQuery).toHaveBeenNthCalledWith(3, {
-      queryKey: billingQueryKeys.config.billingVisibility(),
+      queryKey: billingQueryKeys.config.billingVisibility("standard"),
       queryFn: expect.any(Function),
     });
     expect(mockQueryClient.prefetchQuery).toHaveBeenNthCalledWith(4, {
       queryKey: runtimeConfigQueryKeys.runtimeConfig.boolean(
-        "is_recipes_board_visible"
+        "is_recipes_board_visible",
+        "standard"
       ),
       queryFn: expect.any(Function),
     });
@@ -224,12 +235,18 @@ describe("ProjectLayout hydration", () => {
       mockProjectMemberGateway,
       PROJECT_ID
     );
-    expect(getBillingVisibility).toHaveBeenCalledWith(mockBillingVisibilityPort);
+    expect(getBillingVisibility).toHaveBeenCalledWith(
+      mockBillingVisibilityPort,
+      {
+        overrideValue: undefined,
+      }
+    );
     expect(getRuntimeConfigBoolean).toHaveBeenCalledWith(
       mockRuntimeConfigPort,
       {
         key: "is_recipes_board_visible",
         defaultValue: false,
+        overrideValue: undefined,
       }
     );
     expect(getUserSubscription).toHaveBeenCalledWith(

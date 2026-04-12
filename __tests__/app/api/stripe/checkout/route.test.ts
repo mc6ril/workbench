@@ -6,6 +6,7 @@ import { NextRequest } from "next/server";
 import { API_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { localeCookieName } from "@/shared/i18n/config";
 import { buildMarketingPricingPath } from "@/shared/i18n/marketingPaths";
+import { APP_COOKIE_KEYS } from "@/shared/infrastructure/storage/cookies";
 
 jest.mock("@/shared/infrastructure/web/security/csrf", () => ({
   verifyCsrfOrigin: jest.fn(() => null),
@@ -151,5 +152,19 @@ describe("POST /api/stripe/checkout", () => {
         cancelUrl: `https://example.com${buildMarketingPricingPath("es")}?checkout=canceled&from=${encodeURIComponent(PAGE_ROUTES.WORKSPACE)}`,
       })
     );
+  });
+
+  it("applies the local billing override from the request cookie", async () => {
+    const request = createRequest();
+    request.cookies.set(
+      APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES,
+      encodeURIComponent(JSON.stringify({ is_billing_visible: false }))
+    );
+
+    await POST(request);
+
+    expect(getBillingVisibility).toHaveBeenCalledWith(expect.anything(), {
+      overrideValue: false,
+    });
   });
 });
