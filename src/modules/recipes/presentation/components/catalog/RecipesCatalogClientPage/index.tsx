@@ -1,6 +1,9 @@
 "use client";
 
+import { useCallback } from "react";
+
 import RecipesCatalogFiltersSheet from "../RecipesCatalogFiltersSheet";
+import RecipesQuickListFeedbackLayer from "../RecipesQuickListFeedbackLayer";
 import RecipesQuickListRail from "../RecipesQuickListRail";
 import RecipesCatalogActiveFilters from "./RecipesCatalogActiveFilters";
 import RecipesCatalogHeader from "./RecipesCatalogHeader";
@@ -10,8 +13,13 @@ import styles from "./styles.module.scss";
 import type { CatalogRecipeListResponse } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
 import type { RecipeTag } from "@/modules/recipes/core/domain/recipe.types";
+import {
+  RECIPES_QUICK_LIST_FEEDBACK_DURATION_MS,
+  RECIPES_QUICK_LIST_TOOL_ID,
+} from "@/modules/recipes/presentation/constants/quickListFeedback";
 import { useRecipesCatalogClientPage } from "@/modules/recipes/presentation/hooks/catalog/useRecipesCatalogClientPage";
 import type { RecipesCatalogQueryState } from "@/modules/recipes/presentation/routing/catalogSearchParams";
+import { useRecipesQuickListFeedbackStore } from "@/modules/recipes/presentation/stores/useRecipesQuickListFeedbackStore";
 
 type Props = {
   projectId: string;
@@ -22,6 +30,18 @@ type Props = {
 };
 
 const RecipesCatalogClientPage = (props: Props) => {
+  const commitAnimatedCount = useRecipesQuickListFeedbackStore(
+    (state) => state.commitAnimatedCount
+  );
+  const completeAnimation = useRecipesQuickListFeedbackStore(
+    (state) => state.completeAnimation
+  );
+  const enqueueAnimation = useRecipesQuickListFeedbackStore(
+    (state) => state.enqueueAnimation
+  );
+  const getProjectedCount = useRecipesQuickListFeedbackStore(
+    (state) => state.getProjectedCount
+  );
   const {
     search,
     recipes,
@@ -48,6 +68,50 @@ const RecipesCatalogClientPage = (props: Props) => {
     applyDraftFilters,
     resetDraftFilters,
   } = useRecipesCatalogClientPage(props);
+  const handleQuickListMutationSuccess = useCallback(
+    ({
+      sourceElement,
+      delta,
+    }: {
+      sourceElement: HTMLButtonElement;
+      delta: 1 | -1;
+    }) => {
+      const targetCount = Math.max(
+        getProjectedCount(quickListRecipes.length) + delta,
+        0
+      );
+      const targetElement = document.getElementById(RECIPES_QUICK_LIST_TOOL_ID);
+      const prefersReducedMotion =
+        window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ??
+        false;
+
+      if (!targetElement || prefersReducedMotion) {
+        commitAnimatedCount(targetCount);
+        return;
+      }
+
+      const sourceRect = sourceElement.getBoundingClientRect();
+      const targetRect = targetElement.getBoundingClientRect();
+      const animation = enqueueAnimation({
+        startX: sourceRect.left + sourceRect.width / 2,
+        startY: sourceRect.top + sourceRect.height / 2,
+        endX: targetRect.left + targetRect.width / 2,
+        endY: targetRect.top + targetRect.height / 2,
+        targetCount,
+      });
+
+      window.setTimeout(() => {
+        completeAnimation(animation.id);
+      }, RECIPES_QUICK_LIST_FEEDBACK_DURATION_MS);
+    },
+    [
+      commitAnimatedCount,
+      completeAnimation,
+      enqueueAnimation,
+      getProjectedCount,
+      quickListRecipes.length,
+    ]
+  );
 
   return (
     <>
@@ -79,6 +143,7 @@ const RecipesCatalogClientPage = (props: Props) => {
             onFetchNextPage={() => {
               void fetchNextPage();
             }}
+            onQuickListMutationSuccess={handleQuickListMutationSuccess}
           />
         </section>
       </div>
@@ -101,6 +166,8 @@ const RecipesCatalogClientPage = (props: Props) => {
         onApplyFilters={applyDraftFilters}
         onResetFilters={resetDraftFilters}
       />
+
+      <RecipesQuickListFeedbackLayer />
     </>
   );
 };

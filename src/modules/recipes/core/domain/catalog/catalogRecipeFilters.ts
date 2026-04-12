@@ -10,6 +10,10 @@ export const CATALOG_RECIPE_FILTER_CATEGORY_KEYS = [
 export type CatalogRecipeFilterCategoryKey =
   (typeof CATALOG_RECIPE_FILTER_CATEGORY_KEYS)[number];
 
+export const CATALOG_RECIPE_HIDDEN_FILTER_CATEGORY_KEYS = [
+  "nutriScore",
+] as const satisfies readonly CatalogRecipeFilterCategoryKey[];
+
 export type CatalogRecipeFilterOptionDefinition = {
   id: string;
   category: CatalogRecipeFilterCategoryKey;
@@ -164,6 +168,15 @@ export const CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS = [
   createOption("equipment-no-oven", "equipment", ["sans-four"]),
   createOption("equipment-no-blender", "equipment", ["sans-mixeur"]),
 ] as const satisfies readonly CatalogRecipeFilterOptionDefinition[];
+
+const HIDDEN_FILTER_CATEGORY_KEYS = new Set<string>(
+  CATALOG_RECIPE_HIDDEN_FILTER_CATEGORY_KEYS
+);
+
+export const CATALOG_RECIPE_VISIBLE_FILTER_CATEGORY_KEYS: CatalogRecipeFilterCategoryKey[] =
+  CATALOG_RECIPE_FILTER_CATEGORY_KEYS.filter(
+    (categoryKey) => !HIDDEN_FILTER_CATEGORY_KEYS.has(categoryKey)
+  );
 
 export type CatalogRecipePredefinedFilterOptionId =
   (typeof CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS)[number]["id"];

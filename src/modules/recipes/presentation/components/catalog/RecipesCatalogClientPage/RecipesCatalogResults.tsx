@@ -23,6 +23,10 @@ type Props = {
   loadMoreSentinelRef: RefObject<HTMLDivElement | null>;
   onClearFilters: () => void;
   onFetchNextPage: () => void;
+  onQuickListMutationSuccess: (input: {
+    sourceElement: HTMLButtonElement;
+    delta: 1 | -1;
+  }) => void;
 };
 
 const RecipesCatalogResults = ({
@@ -38,6 +42,7 @@ const RecipesCatalogResults = ({
   loadMoreSentinelRef,
   onClearFilters,
   onFetchNextPage,
+  onQuickListMutationSuccess,
 }: Props) => {
   const quickListSelectionIdByRecipeId = new Map(
     quickListRecipes.map((selection) => [selection.recipeId, selection.id])
@@ -66,6 +71,7 @@ const RecipesCatalogResults = ({
                   quickListSelectionId={
                     quickListSelectionIdByRecipeId.get(recipe.id) ?? null
                   }
+                  onQuickListMutationSuccess={onQuickListMutationSuccess}
                 />
               ))}
             </div>

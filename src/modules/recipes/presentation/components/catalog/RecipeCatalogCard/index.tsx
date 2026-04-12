@@ -1,5 +1,6 @@
 "use client";
 
+import { type MouseEvent,useEffect, useRef } from "react";
 import Image from "next/image";
 
 import Link from "@/shared/design-system/link";
@@ -24,6 +25,10 @@ type Props = {
   projectId: string;
   recipe: CatalogRecipeSummary;
   quickListSelectionId: string | null;
+  onQuickListMutationSuccess?: (input: {
+    sourceElement: HTMLButtonElement;
+    delta: 1 | -1;
+  }) => void;
 };
 
 const DEFAULT_TAG_SLUGS = new Set(listCatalogRecipeDefaultTagSlugs());
@@ -95,12 +100,18 @@ const RecipeCatalogCard = ({
   projectId,
   recipe,
   quickListSelectionId,
+  onQuickListMutationSuccess,
 }: Props) => {
   const t = useTranslation("pages.recipes.catalog");
   const detailHref = buildRecipeDetailRoute(projectId, recipe.id);
   const editHref = buildRecipeEditRoute(projectId, recipe.id);
   const selectRecipeMutation = useSelectRecipe();
   const removeSelectionMutation = useRemoveSelection();
+  const pendingQuickListFeedbackRef = useRef<{
+    mutation: "select" | "remove";
+    sourceElement: HTMLButtonElement;
+    delta: 1 | -1;
+  } | null>(null);
   const isSelecting =
     selectRecipeMutation.isPending &&
     selectRecipeMutation.variables?.recipeId === recipe.id;
@@ -142,6 +153,73 @@ const RecipeCatalogCard = ({
     (removeSelectionMutation.isError &&
       removeSelectionMutation.variables?.selectionId === quickListSelectionId);
 
+  useEffect(() => {
+    if (
+      !selectRecipeMutation.isSuccess ||
+      !pendingQuickListFeedbackRef.current ||
+      pendingQuickListFeedbackRef.current.mutation !== "select"
+    ) {
+      return;
+    }
+
+    onQuickListMutationSuccess?.({
+      sourceElement: pendingQuickListFeedbackRef.current.sourceElement,
+      delta: pendingQuickListFeedbackRef.current.delta,
+    });
+    pendingQuickListFeedbackRef.current = null;
+  }, [onQuickListMutationSuccess, selectRecipeMutation.isSuccess]);
+
+  useEffect(() => {
+    if (
+      !removeSelectionMutation.isSuccess ||
+      !pendingQuickListFeedbackRef.current ||
+      pendingQuickListFeedbackRef.current.mutation !== "remove"
+    ) {
+      return;
+    }
+
+    onQuickListMutationSuccess?.({
+      sourceElement: pendingQuickListFeedbackRef.current.sourceElement,
+      delta: pendingQuickListFeedbackRef.current.delta,
+    });
+    pendingQuickListFeedbackRef.current = null;
+  }, [onQuickListMutationSuccess, removeSelectionMutation.isSuccess]);
+
+  useEffect(() => {
+    if (!selectRecipeMutation.isError && !removeSelectionMutation.isError) {
+      return;
+    }
+
+    pendingQuickListFeedbackRef.current = null;
+  }, [removeSelectionMutation.isError, selectRecipeMutation.isError]);
+
+  const handleQuickListToggle = (event: MouseEvent<HTMLButtonElement>) => {
+    const sourceElement = event.currentTarget;
+
+    if (recipe.isInQuickList && quickListSelectionId) {
+      pendingQuickListFeedbackRef.current = {
+        mutation: "remove",
+        sourceElement,
+        delta: -1,
+      };
+      removeSelectionMutation.mutate({
+        projectId,
+        selectionId: quickListSelectionId,
+      });
+      return;
+    }
+
+    pendingQuickListFeedbackRef.current = {
+      mutation: "select",
+      sourceElement,
+      delta: 1,
+    };
+    selectRecipeMutation.mutate({
+      projectId,
+      recipeId: recipe.id,
+    });
+  };
+
   return (
     <article
       className={cx(
@@ -171,20 +249,7 @@ const RecipeCatalogCard = ({
           aria-pressed={recipe.isInQuickList}
           disabled={!canToggleQuickList || isUpdatingQuickList}
           title={quickListActionLabel}
-          onClick={() => {
-            if (recipe.isInQuickList && quickListSelectionId) {
-              removeSelectionMutation.mutate({
-                projectId,
-                selectionId: quickListSelectionId,
-              });
-              return;
-            }
-
-            selectRecipeMutation.mutate({
-              projectId,
-              recipeId: recipe.id,
-            });
-          }}
+          onClick={handleQuickListToggle}
         >
           <QuickListToggleIcon selected={recipe.isInQuickList} />
         </button>

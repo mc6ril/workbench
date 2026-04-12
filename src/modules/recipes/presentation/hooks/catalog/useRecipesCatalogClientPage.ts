@@ -25,6 +25,7 @@ import {
   parseRecipesCatalogSearchParams,
 } from "@/modules/recipes/presentation/routing/catalogSearchParams";
 import { useRecipesCatalogFiltersStore } from "@/modules/recipes/presentation/stores";
+import { useRecipesQuickListFeedbackStore } from "@/modules/recipes/presentation/stores/useRecipesQuickListFeedbackStore";
 
 type Input = {
   projectId: string;
@@ -95,6 +96,9 @@ export const useRecipesCatalogClientPage = ({
   );
   const closeFilters = useRecipesCatalogFiltersStore(
     (state) => state.closeFilters
+  );
+  const syncQuickListDisplayedCount = useRecipesQuickListFeedbackStore(
+    (state) => state.syncDisplayedCount
   );
   const deferredSearch = useDeferredValue(search);
 
@@ -212,6 +216,10 @@ export const useRecipesCatalogClientPage = ({
   const isRefreshing = isFetching && !showInitialLoader && !isFetchingNextPage;
   const showLoadMoreControls =
     recipes.length > 0 && (hasNextPage || isFetchingNextPage);
+
+  useEffect(() => {
+    syncQuickListDisplayedCount((quickListQuery.data ?? []).length);
+  }, [quickListQuery.data, syncQuickListDisplayedCount]);
 
   useEffect(() => {
     if (

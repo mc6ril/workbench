@@ -12,11 +12,13 @@ import ProjectToolbar from "@/domains/project/presentation/components/projectToo
 import type { ProjectToolbarExtraTool } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
 import type { ProjectViewContribution } from "@/domains/project/presentation/layouts/projectShell/projectViewContribution";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
+import { RECIPES_QUICK_LIST_TOOL_ID } from "@/modules/recipes/presentation/constants/quickListFeedback";
 import {
   buildRecipeCreationRoute,
   buildRecipesCatalogRoute,
 } from "@/modules/recipes/presentation/routes";
 import { useRecipesCatalogFiltersStore } from "@/modules/recipes/presentation/stores";
+import { useRecipesQuickListFeedbackStore } from "@/modules/recipes/presentation/stores/useRecipesQuickListFeedbackStore";
 
 export const useRecipesShellContribution = (
   projectId: string
@@ -44,6 +46,12 @@ export const useRecipesShellContribution = (
   );
   const selectedFilterOptionIds = useRecipesCatalogFiltersStore(
     (state) => state.selectedFilterOptionIds
+  );
+  const quickListCount = useRecipesQuickListFeedbackStore(
+    (state) => state.displayedCount
+  );
+  const quickListBadgePulseKey = useRecipesQuickListFeedbackStore(
+    (state) => state.badgePulseKey
   );
   const [searchInput, setSearchInput] = useState(search);
   const isCatalogRoute =
@@ -97,11 +105,14 @@ export const useRecipesShellContribution = (
       },
       {
         key: "recipes-quick-list",
+        domId: RECIPES_QUICK_LIST_TOOL_ID,
         label: tCatalog("toolbar.quickList"),
         ariaLabel: isQuickListOpen
           ? tCatalog("toolbar.quickListHideAriaLabel")
           : tCatalog("toolbar.quickListShowAriaLabel"),
         icon: isQuickListOpen ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />,
+        badgeCount: quickListCount ?? 0,
+        badgePulseKey: quickListBadgePulseKey,
         onClick: toggleQuickList,
         isActive: isQuickListOpen,
       },
@@ -110,6 +121,8 @@ export const useRecipesShellContribution = (
     activeFilterCount,
     isCatalogRoute,
     isFiltersOpen,
+    quickListBadgePulseKey,
+    quickListCount,
     isQuickListOpen,
     tCatalog,
     toggleFilters,

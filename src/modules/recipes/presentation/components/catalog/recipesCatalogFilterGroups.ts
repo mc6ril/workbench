@@ -1,8 +1,8 @@
 import type { TranslationFunction } from "@/shared/i18n";
 
 import {
-  CATALOG_RECIPE_FILTER_CATEGORY_KEYS,
   CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS,
+  CATALOG_RECIPE_VISIBLE_FILTER_CATEGORY_KEYS,
   type CatalogRecipeFilterCategoryKey,
   createCatalogRecipeTagFilterOptionId,
   listCatalogRecipeDefaultTagSlugs,
@@ -25,7 +25,7 @@ export const buildRecipesCatalogFilterGroups = (
   availableTags: RecipeTag[]
 ): RecipesCatalogFilterGroup[] => {
   const groups: RecipesCatalogFilterGroup[] =
-    CATALOG_RECIPE_FILTER_CATEGORY_KEYS.map((categoryKey) => ({
+    CATALOG_RECIPE_VISIBLE_FILTER_CATEGORY_KEYS.map((categoryKey) => ({
       key: categoryKey,
       title: t(`sheet.groups.${categoryKey}.title`),
       options: CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS.filter(
