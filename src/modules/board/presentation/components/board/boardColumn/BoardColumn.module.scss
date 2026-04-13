@@ -102,13 +102,23 @@
 }
 
 .board-column__sortable-card {
-  cursor: grab;
+  cursor: pointer;
   transition:
     transform $transition-base,
     opacity $transition-base;
   transform: translateZ(0);
+  border-radius: $border-radius-md;
 
-  &:active {
+  &:focus-visible {
+    outline: none;
+    box-shadow: $shadow-focus;
+  }
+
+  &[data-sortable="true"] {
+    cursor: grab;
+  }
+
+  &[data-sortable="true"]:active {
     cursor: grabbing;
   }
 

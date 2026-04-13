@@ -560,7 +560,6 @@
         },
         "priorityLabel": "Priorité",
         "storyPointsLabel": "{count, plural, one {# point} other {# points}}",
-        "openTicketLabel": "Ouvrir la tâche",
         "editTicketLabel": "Modifier la tâche"
       },
       "columnsConfiguration": {
