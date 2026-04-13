@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import Button from "@/shared/design-system/button";
 import Title from "@/shared/design-system/title";
 import { useTranslations } from "@/shared/i18n";
 
@@ -22,13 +21,9 @@ export type TicketCardProps = {
   assigneeAvatarUrl?: string | null;
   priority?: TicketPriority | null;
   storyPoints?: number | null;
-  onEdit?: (id: string) => void;
-  onPrefetch?: (id: string) => void;
 };
 
 type Props = TicketCardProps;
-
-const HOVER_PREFETCH_DELAY_MS = 120;
 
 const TicketCard = ({
   id,
@@ -38,65 +33,11 @@ const TicketCard = ({
   assigneeAvatarUrl,
   priority,
   storyPoints,
-  onEdit,
-  onPrefetch,
 }: Props) => {
   const t = useTranslations("pages.board.ticketCard");
-  const hoverPrefetchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null
-  );
-
   const baseId = useMemo(() => getAccessibilityId(`board-ticket-${id}`), [id]);
 
   const titleId = `${baseId}-title`;
-  const descriptionId = `${baseId}-description`;
-
-  const handleEdit = useCallback((): void => {
-    if (onEdit) {
-      onEdit(id);
-    }
-  }, [onEdit, id]);
-
-  const clearHoverPrefetch = useCallback((): void => {
-    if (hoverPrefetchTimeoutRef.current !== null) {
-      clearTimeout(hoverPrefetchTimeoutRef.current);
-      hoverPrefetchTimeoutRef.current = null;
-    }
-  }, []);
-
-  const handlePrefetch = useCallback((): void => {
-    if (onPrefetch) {
-      onPrefetch(id);
-    }
-  }, [id, onPrefetch]);
-
-  const handleMouseEnter = useCallback((): void => {
-    if (!onPrefetch) {
-      return;
-    }
-
-    clearHoverPrefetch();
-    hoverPrefetchTimeoutRef.current = setTimeout(() => {
-      hoverPrefetchTimeoutRef.current = null;
-      handlePrefetch();
-    }, HOVER_PREFETCH_DELAY_MS);
-  }, [clearHoverPrefetch, handlePrefetch, onPrefetch]);
-
-  const handleFocusCapture = useCallback((): void => {
-    clearHoverPrefetch();
-    handlePrefetch();
-  }, [clearHoverPrefetch, handlePrefetch]);
-
-  const handlePointerDown = useCallback((): void => {
-    clearHoverPrefetch();
-    handlePrefetch();
-  }, [clearHoverPrefetch, handlePrefetch]);
-
-  useEffect(() => {
-    return () => {
-      clearHoverPrefetch();
-    };
-  }, [clearHoverPrefetch]);
 
   const cardAriaLabel = useMemo(() => {
     return buildTicketAriaLabel({
@@ -129,12 +70,7 @@ const TicketCard = ({
     <article
       className={cardClasses}
       aria-labelledby={titleId}
-      aria-describedby={descriptionId}
       aria-label={cardAriaLabel}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={clearHoverPrefetch}
-      onFocusCapture={handleFocusCapture}
-      onPointerDown={handlePointerDown}
     >
       <div className={styles["ticket-card__main"]}>
         <TicketMeta
@@ -153,15 +89,6 @@ const TicketCard = ({
         >
           {title}
         </Title>
-      </div>
-      <div className={styles["ticket-card__actions"]}>
-        {onEdit && (
-          <Button
-            label={t("openTicketLabel")}
-            onClick={handleEdit}
-            variant="edit"
-          />
-        )}
       </div>
     </article>
   );

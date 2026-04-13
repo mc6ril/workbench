@@ -112,12 +112,6 @@
   }
 }
 
-.ticket-card__actions {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-}
-
 @keyframes ticket-card-fade-up {
   from {
     opacity: 0;

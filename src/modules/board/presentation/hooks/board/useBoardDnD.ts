@@ -22,6 +22,11 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
 import type { BoardColumnTickets } from "./types";
 
+import {
+  BOARD_MOUSE_DRAG_ACTIVATION_DISTANCE_PX,
+  BOARD_TOUCH_DRAG_ACTIVATION_DELAY_MS,
+  BOARD_TOUCH_DRAG_ACTIVATION_TOLERANCE_PX,
+} from "@/modules/board/constants/board";
 import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 import type {
   BoardTicketIds,
@@ -104,12 +109,14 @@ export const useBoardDnD = ({
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
-      activationConstraint: { distance: 4 },
+      activationConstraint: {
+        distance: BOARD_MOUSE_DRAG_ACTIVATION_DISTANCE_PX,
+      },
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 150,
-        tolerance: 8,
+        delay: BOARD_TOUCH_DRAG_ACTIVATION_DELAY_MS,
+        tolerance: BOARD_TOUCH_DRAG_ACTIVATION_TOLERANCE_PX,
       },
     }),
     useSensor(KeyboardSensor, {
