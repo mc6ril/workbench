@@ -1,8 +1,9 @@
+import { cookies, headers } from "next/headers";
 import { getRequestConfig } from "next-intl/server";
 
-import { isSupportedLocale } from "./config";
+import { localeCookieName, resolveLocale } from "./config";
 import type { IntlMessages } from "./messageCatalog";
-import { type Locale, routing } from "./routing";
+import type { Locale } from "./routing";
 
 const messageLoaders: Record<Locale, () => Promise<IntlMessages>> = {
   fr: async () => (await import("./messages/fr.json")).default,
@@ -12,10 +13,13 @@ const messageLoaders: Record<Locale, () => Promise<IntlMessages>> = {
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const requestedLocale = await requestLocale;
-  const localeCandidate = requestedLocale ?? "";
-  const locale = isSupportedLocale(localeCandidate)
-    ? localeCandidate
-    : routing.defaultLocale;
+  const cookieStore = await cookies();
+  const headerStore = await headers();
+  const locale = resolveLocale({
+    preferredLocale: requestedLocale,
+    cookieLocale: cookieStore.get(localeCookieName)?.value,
+    acceptLanguage: headerStore.get("accept-language"),
+  });
 
   return {
     locale,
