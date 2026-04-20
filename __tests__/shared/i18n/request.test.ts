@@ -57,5 +57,7 @@ describe("shared i18n request config", () => {
 
     expect(result.locale).toBe("es");
     expect(result.messages).toEqual(messagesEs);
+    expect(cookiesMock).not.toHaveBeenCalled();
+    expect(headersMock).not.toHaveBeenCalled();
   });
 });

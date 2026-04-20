@@ -209,12 +209,6 @@ li {
   padding: 0;
 }
 
-// Add spacing for list items when they contain content
-ul > li + li,
-ol > li + li {
-  margin-top: $spacing-md;
-}
-
 // ============================================================================
 // Application Root Layout
 // ============================================================================

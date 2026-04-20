@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
 
 import { isSupportedLocale } from "@/shared/i18n/config";
 import { buildMarketingLegalPath } from "@/shared/i18n/marketingPaths";
+import { getStaticTranslator } from "@/shared/i18n/staticTranslator";
 import { buildPublicMetadata } from "@/shared/seo/buildPublicMetadata";
 
 export const generateMetadata = async ({
@@ -17,10 +17,7 @@ export const generateMetadata = async ({
     return {};
   }
 
-  const tMetadata = await getTranslations({
-    locale,
-    namespace: "pages.legal.metadata",
-  });
+  const tMetadata = getStaticTranslator(locale, "pages.legal.metadata");
 
   return buildPublicMetadata({
     locale,

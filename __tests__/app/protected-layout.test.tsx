@@ -36,6 +36,13 @@ jest.mock("@/shared/providers/AppProvider", () => ({
   ),
 }));
 
+jest.mock("@/shared/providers/RequestIntlProvider", () => ({
+  __esModule: true,
+  default: jest.fn(({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  )),
+}));
+
 jest.mock("@/shared/providers/queryClient", () => ({
   createAppQueryClient: jest.fn(),
 }));
@@ -86,9 +93,7 @@ describe("ProtectedLayout hydration", () => {
       return queryFn();
     });
 
-    jest
-      .mocked(createAppQueryClient)
-      .mockReturnValue(mockQueryClient as never);
+    jest.mocked(createAppQueryClient).mockReturnValue(mockQueryClient as never);
     jest
       .mocked(createSupabaseServerClient)
       .mockResolvedValue(mockSupabaseClient as never);

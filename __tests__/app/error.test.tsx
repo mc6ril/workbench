@@ -1,14 +1,22 @@
 import { render, screen } from "@testing-library/react";
 
-import * as i18n from "@/shared/i18n";
+import { localeCookieName } from "@/shared/i18n/config";
+import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
 import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+
+let mockPathname = "/";
+
+jest.mock("next/navigation", () => ({
+  usePathname: () => mockPathname,
+}));
 
 import ErrorPage from "@/app/error";
 
 describe("ErrorPage", () => {
   beforeEach(() => {
     jest.spyOn(console, "error").mockImplementation(() => {});
-    jest.spyOn(i18n, "useLocale").mockReturnValue("fr");
+    mockPathname = "/";
+    document.cookie = `${localeCookieName}=; Max-Age=0; path=/`;
   });
 
   afterEach(() => {
@@ -16,12 +24,14 @@ describe("ErrorPage", () => {
   });
 
   it("routes the home action to the current marketing locale", () => {
-    jest.spyOn(i18n, "useLocale").mockReturnValue("en");
+    mockPathname = "/en";
 
     render(<ErrorPage error={new Error("boom")} reset={jest.fn()} />);
 
     expect(
-      screen.getByRole("link", { name: "Revenir à la page d'accueil" })
+      screen.getByRole("link", {
+        name: getFallbackMessages("en").error.secondaryActionAriaLabel,
+      })
     ).toHaveAttribute("href", buildMarketingHomePath("en"));
   });
 });

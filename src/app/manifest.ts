@@ -1,34 +1,16 @@
 import type { MetadataRoute } from "next";
 
-import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
-import { PAGE_ROUTES } from "@/shared/constants/routes";
-import { getSiteUrl } from "@/shared/seo/siteUrl";
+import { defaultLocale } from "@/shared/i18n/config";
+import { getStaticTranslator } from "@/shared/i18n/staticTranslator";
+import { buildManifest } from "@/shared/seo/buildManifest";
 
 /**
- * Web app manifest (PWA install). Single default language string for the manifest spec.
+ * Default web app manifest (PWA install).
+ * Prefer the localized manifest route (`/manifest/{locale}`) for marketing pages.
  */
 const manifest = (): MetadataRoute.Manifest => {
-  const base = getSiteUrl();
-
-  return {
-    name: PRODUCT_BRAND_NAME,
-    short_name: PRODUCT_BRAND_NAME,
-    description:
-      "Outil d'aide au couple pour réduire la charge mentale et clarifier le quotidien.",
-    start_url: PAGE_ROUTES.HOME,
-    scope: PAGE_ROUTES.HOME,
-    display: "standalone",
-    background_color: "#faf7f4",
-    theme_color: "#2a1f1a",
-    icons: [
-      {
-        src: new URL("/icon", base).toString(),
-        sizes: "32x32",
-        type: "image/png",
-        purpose: "any",
-      },
-    ],
-  };
+  const tManifest = getStaticTranslator(defaultLocale, "app.manifest");
+  return buildManifest(defaultLocale, tManifest("description"));
 };
 
 export default manifest;

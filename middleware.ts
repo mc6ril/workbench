@@ -5,12 +5,15 @@ import { type CookieOptions, createServerClient } from "@supabase/ssr";
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { requireNonEmptyEnv } from "@/shared/errors/programmingError";
 import {
+  defaultLocale,
   localeCookieMaxAgeSeconds,
   localeCookieName,
 } from "@/shared/i18n/config";
 import {
   getMarketingLocaleFromPathname,
   getResolvedMarketingLocaleFromPathname,
+  isDefaultLocaleMarketingPathname,
+  localizeMarketingPathname,
 } from "@/shared/i18n/marketingPaths";
 import { routing } from "@/shared/i18n/routing";
 import { resolveRuntimeLocale } from "@/shared/i18n/runtimeLocale";
@@ -27,6 +30,19 @@ import {
 const NEXT_INTL_LOCALE_HEADER_NAME = "X-NEXT-INTL-LOCALE";
 const INTERNAL_MARKETING_ROOT = "/marketing";
 const handleMarketingLocale = createMiddleware(routing);
+
+const setLocaleCookie = (
+  response: NextResponse,
+  locale: string
+): NextResponse => {
+  response.cookies.set(localeCookieName, locale, {
+    path: "/",
+    sameSite: "lax",
+    maxAge: localeCookieMaxAgeSeconds,
+  });
+
+  return response;
+};
 
 /**
  * Create Supabase client for Edge Runtime (middleware).
@@ -87,18 +103,13 @@ const appendLocaleResponseCookies = (
   pathname: string,
   currentCookieLocale?: string
 ): NextResponse => {
-  const resolvedMarketingLocale = getResolvedMarketingLocaleFromPathname(
-    pathname
-  );
+  const resolvedMarketingLocale =
+    getResolvedMarketingLocaleFromPathname(pathname);
   if (
     resolvedMarketingLocale &&
     resolvedMarketingLocale !== currentCookieLocale
   ) {
-    response.cookies.set(localeCookieName, resolvedMarketingLocale, {
-      path: "/",
-      sameSite: "lax",
-      maxAge: localeCookieMaxAgeSeconds,
-    });
+    return setLocaleCookie(response, resolvedMarketingLocale);
   }
 
   return response;
@@ -107,9 +118,9 @@ const appendLocaleResponseCookies = (
 /**
  * Next.js middleware for route optimization (UX redirects).
  *
- * IMPORTANT: This is NOT the source of truth for security.
- * - Security is enforced by AuthLayout and ProjectLayout (server components)
- * - RLS policies at the database level are the ultimate source of truth
+ * Security model:
+ * - Authentication gating is enforced here (Edge) for protected routes.
+ * - Authorization is enforced by database RLS (ultimate source of truth) and route-level loaders.
  *
  * This middleware provides:
  * - Default-locale marketing URLs without redirect on `/`
@@ -118,7 +129,7 @@ const appendLocaleResponseCookies = (
  * - Route filtering: prevents loading unnecessary pages
  * - Email verification checks: redirects unverified users
  *
- * On error, fails open (allows access) - layouts and RLS will still protect.
+ * On error, fails open (allows access) - RLS will still protect data access.
  */
 export const middleware = async (
   request: NextRequest
@@ -177,6 +188,28 @@ export const middleware = async (
   }
 
   if (isMarketingPublicRoute(pathname)) {
+    if (
+      !cookieLocale &&
+      !pathLocale &&
+      isDefaultLocaleMarketingPathname(pathname)
+    ) {
+      const initialMarketingLocale = resolveRuntimeLocale({ acceptLanguage });
+
+      if (initialMarketingLocale !== defaultLocale) {
+        const localizedPathname = localizeMarketingPathname(
+          pathname,
+          initialMarketingLocale
+        );
+        const redirectUrl = new URL(localizedPathname, request.url);
+        redirectUrl.search = request.nextUrl.search;
+
+        return setLocaleCookie(
+          NextResponse.redirect(redirectUrl),
+          initialMarketingLocale
+        );
+      }
+    }
+
     return appendLocaleResponseCookies(
       handleMarketingLocale(request),
       pathname,

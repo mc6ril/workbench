@@ -1,17 +1,13 @@
-import { getTranslations } from "next-intl/server";
-
 import type { Locale } from "@/shared/i18n/config";
 import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { getStaticTranslator } from "@/shared/i18n/staticTranslator";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 /**
  * Server-only JSON-LD for the marketing home page (WebSite + Organization).
  */
 const WebsiteJsonLd = async ({ locale }: { locale: Locale }) => {
-  const tMetadata = await getTranslations({
-    locale,
-    namespace: "app.metadata",
-  });
+  const tMetadata = getStaticTranslator(locale, "app.metadata");
   const name = tMetadata("title");
   const description = tMetadata("description");
   const base = getSiteUrl();

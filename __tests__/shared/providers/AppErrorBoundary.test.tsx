@@ -1,10 +1,9 @@
-import { NextIntlClientProvider } from "next-intl";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
-import * as i18n from "@/shared/i18n";
+import { localeCookieName } from "@/shared/i18n/config";
+import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
 import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
-import messages from "@/shared/i18n/messages/fr.json";
 import AppErrorBoundary from "@/shared/providers/AppErrorBoundary";
 
 let mockPathname: string = PAGE_ROUTES.WORKSPACE;
@@ -13,19 +12,11 @@ jest.mock("next/navigation", () => ({
   usePathname: () => mockPathname,
 }));
 
-const renderWithLocale = (children: React.ReactNode) => {
-  return render(
-    <NextIntlClientProvider locale="fr" messages={messages}>
-      {children}
-    </NextIntlClientProvider>
-  );
-};
-
 describe("AppErrorBoundary", () => {
   beforeEach(() => {
     mockPathname = PAGE_ROUTES.WORKSPACE;
     jest.spyOn(console, "error").mockImplementation(() => {});
-    jest.spyOn(i18n, "useLocale").mockReturnValue("fr");
+    document.cookie = `${localeCookieName}=fr; path=/`;
   });
 
   afterEach(() => {
@@ -43,17 +34,21 @@ describe("AppErrorBoundary", () => {
       return <div>safe screen</div>;
     };
 
-    renderWithLocale(
+    render(
       <AppErrorBoundary>
         <ProblemChild />
       </AppErrorBoundary>
     );
 
-    expect(screen.getByText("Quelque chose a dérapé")).toBeInTheDocument();
+    expect(
+      screen.getByText(getFallbackMessages("fr").error.title)
+    ).toBeInTheDocument();
 
     shouldThrow = false;
     fireEvent.click(
-      screen.getByRole("button", { name: "Réessayer de charger la page" })
+      screen.getByRole("button", {
+        name: getFallbackMessages("fr").error.primaryActionAriaLabel,
+      })
     );
 
     await waitFor(() => {
@@ -68,22 +63,22 @@ describe("AppErrorBoundary", () => {
       throw new Error("route crash");
     };
 
-    const { rerender } = renderWithLocale(
+    const { rerender } = render(
       <AppErrorBoundary>
         <ThrowingChild />
       </AppErrorBoundary>
     );
 
-    expect(screen.getByText("Quelque chose a dérapé")).toBeInTheDocument();
+    expect(
+      screen.getByText(getFallbackMessages("fr").error.title)
+    ).toBeInTheDocument();
 
     mockPathname = PAGE_ROUTES.ACCOUNT;
 
     rerender(
-      <NextIntlClientProvider locale="fr" messages={messages}>
-        <AppErrorBoundary>
-          <StableChild />
-        </AppErrorBoundary>
-      </NextIntlClientProvider>
+      <AppErrorBoundary>
+        <StableChild />
+      </AppErrorBoundary>
     );
 
     await waitFor(() => {
@@ -92,20 +87,23 @@ describe("AppErrorBoundary", () => {
   });
 
   it("keeps the fallback home action on the active locale", () => {
-    jest.spyOn(i18n, "useLocale").mockReturnValue("en");
+    document.cookie = `${localeCookieName}=en; path=/`;
+    mockPathname = "/en";
 
     const ThrowingChild = () => {
       throw new Error("route crash");
     };
 
-    renderWithLocale(
+    render(
       <AppErrorBoundary>
         <ThrowingChild />
       </AppErrorBoundary>
     );
 
     expect(
-      screen.getByRole("link", { name: "Revenir à la page d'accueil" })
+      screen.getByRole("link", {
+        name: getFallbackMessages("en").error.secondaryActionAriaLabel,
+      })
     ).toHaveAttribute("href", buildMarketingHomePath("en"));
   });
 });

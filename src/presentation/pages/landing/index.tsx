@@ -1,5 +1,3 @@
-import { getTranslations } from "next-intl/server";
-
 import { getAccessibilityId } from "@/shared/a11y";
 import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
 import {
@@ -18,6 +16,7 @@ import {
   buildMarketingLegalPath,
   buildMarketingPricingPath,
 } from "@/shared/i18n/marketingPaths";
+import { getStaticTranslator } from "@/shared/i18n/staticTranslator";
 import { buildFeaturePreviewContent } from "@/shared/utils";
 
 import styles from "./styles.module.scss";
@@ -31,7 +30,7 @@ const createNamespaceTranslationGetter = async (
   locale: Locale,
   namespace: string
 ) => {
-  const t = await getTranslations({ locale, namespace });
+  const t = getStaticTranslator(locale, namespace);
   return (key: string): string => t(key);
 };
 
@@ -113,17 +112,13 @@ const LandingPage = async ({ locale, isBillingVisible }: LandingPageProps) => {
           >
             {tHero("subtitle")}
           </Text>
-          <div className={styles["landing-hero__proofs"]} role="list">
+          <ul className={styles["landing-hero__proofs"]}>
             {HERO_PROOF_KEYS.map((proofKey) => (
-              <span
-                key={proofKey}
-                className={styles["landing-hero__proof"]}
-                role="listitem"
-              >
+              <li key={proofKey} className={styles["landing-hero__proof"]}>
                 {tHero(proofKey)}
-              </span>
+              </li>
             ))}
-          </div>
+          </ul>
           <div className={styles["landing-hero__actions"]}>
             <Link
               href={AUTH_PAGE_ROUTES.SIGNUP}
@@ -162,21 +157,17 @@ const LandingPage = async ({ locale, isBillingVisible }: LandingPageProps) => {
           >
             {tValues("title")}
           </Title>
-          <div className={styles["values-grid"]} role="list">
+          <ul className={styles["values-grid"]}>
             {VALUE_KEYS.map((key) => (
-              <article
-                key={key}
-                className={styles["value-card"]}
-                role="listitem"
-              >
+              <li key={key} className={styles["value-card"]}>
                 <span className={styles["value-card__icon"]} aria-hidden="true">
                   {tValues(`${key}.icon`)}
                 </span>
                 <Title variant="h3">{tValues(`${key}.title`)}</Title>
                 <Text variant="body">{tValues(`${key}.description`)}</Text>
-              </article>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
 
         <section
@@ -228,15 +219,11 @@ const LandingPage = async ({ locale, isBillingVisible }: LandingPageProps) => {
                   {PRODUCT_BRAND_NAME}
                 </span>
               </div>
-              <div
-                className={styles["landing-example-preview__board"]}
-                role="list"
-              >
+              <ul className={styles["landing-example-preview__board"]}>
                 {PREVIEW_COLUMNS.map((columnKey) => (
-                  <article
+                  <li
                     key={columnKey}
                     className={styles["landing-example-preview__column"]}
-                    role="listitem"
                   >
                     <Title
                       variant="h4"
@@ -264,9 +251,9 @@ const LandingPage = async ({ locale, isBillingVisible }: LandingPageProps) => {
                         </li>
                       ))}
                     </ul>
-                  </article>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           </section>
         </section>
@@ -288,13 +275,9 @@ const LandingPage = async ({ locale, isBillingVisible }: LandingPageProps) => {
           >
             {tImpact("description")}
           </Text>
-          <div className={styles["impact-grid"]} role="list">
+          <ul className={styles["impact-grid"]}>
             {IMPACT_KEYS.map((key) => (
-              <article
-                key={key}
-                className={styles["impact-card"]}
-                role="listitem"
-              >
+              <li key={key} className={styles["impact-card"]}>
                 <Text
                   variant="metric"
                   className={styles["impact-card__metric"]}
@@ -303,9 +286,9 @@ const LandingPage = async ({ locale, isBillingVisible }: LandingPageProps) => {
                 </Text>
                 <Title variant="h3">{tImpact(`${key}.title`)}</Title>
                 <Text variant="body">{tImpact(`${key}.description`)}</Text>
-              </article>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
 
         <section
@@ -319,13 +302,9 @@ const LandingPage = async ({ locale, isBillingVisible }: LandingPageProps) => {
           >
             {tRhythm("title")}
           </Title>
-          <div className={styles["rhythm-grid"]} role="list">
+          <ul className={styles["rhythm-grid"]}>
             {RHYTHM_KEYS.map((key, index) => (
-              <article
-                key={key}
-                className={styles["rhythm-card"]}
-                role="listitem"
-              >
+              <li key={key} className={styles["rhythm-card"]}>
                 <div className={styles["rhythm-card__header"]}>
                   <span className={styles["rhythm-card__step"]}>
                     {String(index + 1).padStart(2, "0")}
@@ -339,9 +318,9 @@ const LandingPage = async ({ locale, isBillingVisible }: LandingPageProps) => {
                 </div>
                 <Title variant="h3">{tRhythm(`${key}.title`)}</Title>
                 <Text variant="body">{tRhythm(`${key}.description`)}</Text>
-              </article>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
 
         <section

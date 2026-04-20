@@ -1,7 +1,18 @@
 import { notFound } from "next/navigation";
+import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 
-import { isSupportedLocale } from "@/shared/i18n/config";
+import { getIntlLocale, isSupportedLocale, supportedLocales } from "@/shared/i18n";
+import { getStaticMessages } from "@/shared/i18n/staticTranslator";
+import DocumentLang from "@/shared/providers/DocumentLang";
+
+export const revalidate = 300;
+export const dynamicParams = false;
+export const dynamic = "error";
+
+export const generateStaticParams = () => {
+  return supportedLocales.map((locale) => ({ locale }));
+};
 
 type Props = {
   children: React.ReactNode;
@@ -17,7 +28,16 @@ const LocaleLayout = async ({ children, params }: Props) => {
 
   setRequestLocale(locale);
 
-  return children;
+  const messages = getStaticMessages(locale);
+
+  return (
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <DocumentLang lang={getIntlLocale(locale)} />
+      <div className="app-root" lang={getIntlLocale(locale)}>
+        {children}
+      </div>
+    </NextIntlClientProvider>
+  );
 };
 
 export default LocaleLayout;

@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
-import { getIntlLocale, type Locale } from "@/shared/i18n";
+import { defaultLocale, getIntlLocale } from "@/shared/i18n";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 import "@/styles/global.scss";
@@ -11,14 +10,12 @@ import "@/styles/global.scss";
  * Per-locale SEO for marketing lives under `[locale]/(marketing)/*` via `buildHomeMetadata` / `buildPublicMetadata`.
  * Web app manifest is locale-aware for all routes.
  */
-export const generateMetadata = async (): Promise<Metadata> => {
-  const locale = await getLocale();
-  const siteUrl = getSiteUrl();
+const siteUrl = getSiteUrl();
 
-  return {
-    metadataBase: siteUrl,
-    manifest: new URL(`/manifest/${locale}`, siteUrl).toString(),
-  };
+export const metadata: Metadata = {
+  metadataBase: siteUrl,
+  // Locale-specific manifests are set on marketing routes; keep root metadata static for SSG.
+  manifest: new URL(`/manifest/${defaultLocale}`, siteUrl).toString(),
 };
 
 export const viewport: Viewport = {
@@ -29,20 +26,16 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const RootLayout = async ({
+const RootLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  const locale = (await getLocale()) as Locale;
-  const messages = await getMessages();
-
   return (
-    <html lang={getIntlLocale(locale)} suppressHydrationWarning>
+    <html lang={getIntlLocale(defaultLocale)} suppressHydrationWarning>
       <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <div className="app-root">{children}</div>
-        </NextIntlClientProvider>
+        {children}
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -378,36 +378,6 @@
         "title": "El proyecto va tomando forma",
         "message": "Estamos cargando el board y los permisos para abrir el proyecto listo para usar.",
         "ariaLabel": "Cargando proyecto"
-      },
-      "notFound": {
-        "eyebrow": "Pagina no encontrada",
-        "status": "404",
-        "title": "Esta pagina se nos escapo",
-        "message": "El enlace puede estar desactualizado, incompleto o ya obsoleto. Podemos llevarte de vuelta a un lugar mas seguro.",
-        "primaryAction": "Volver al inicio",
-        "primaryActionAriaLabel": "Volver a la pagina de inicio",
-        "secondaryAction": "Ir al espacio de trabajo",
-        "secondaryActionAriaLabel": "Ir al espacio de trabajo"
-      },
-      "error": {
-        "eyebrow": "Incidente temporal",
-        "status": "Error",
-        "title": "Algo se desvio",
-        "message": "Esta pantalla no pudo cargarse correctamente. Puedes intentarlo de nuevo sin perder tu sesion.",
-        "primaryAction": "Reintentar",
-        "primaryActionAriaLabel": "Intentar cargar la pagina de nuevo",
-        "secondaryAction": "Volver al inicio",
-        "secondaryActionAriaLabel": "Volver a la pagina de inicio"
-      },
-      "globalError": {
-        "eyebrow": "Incidente global",
-        "status": "Error critico",
-        "title": "Perdimos el hilo",
-        "message": "La aplicacion no pudo recuperar esta pantalla. Un reinicio limpio suele bastar para volver a empezar.",
-        "primaryAction": "Reiniciar",
-        "primaryActionAriaLabel": "Reiniciar la aplicacion",
-        "secondaryAction": "Volver al inicio",
-        "secondaryActionAriaLabel": "Volver a la pagina de inicio"
       }
     },
     "workspace": {
