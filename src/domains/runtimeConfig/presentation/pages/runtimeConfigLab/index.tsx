@@ -160,12 +160,19 @@ const RuntimeConfigLabPage = ({ entries, initialOverrides }: Props) => {
 
         <section className={styles["lab-section"]} aria-labelledby="lab-flags">
           <div className={styles["lab-section__header"]}>
-            <Title variant="h2" id="lab-flags" className={styles["lab-section__title"]}>
+            <Title
+              variant="h2"
+              id="lab-flags"
+              className={styles["lab-section__title"]}
+            >
               Boolean flags
             </Title>
-            <Text variant="small" className={styles["lab-section__description"]}>
-              Toggle the effective value. Reset removes the local cookie override
-              and goes back to the remote value.
+            <Text
+              variant="small"
+              className={styles["lab-section__description"]}
+            >
+              Toggle the effective value. Reset removes the local cookie
+              override and goes back to the remote value.
             </Text>
           </div>
 
@@ -262,7 +269,10 @@ const RuntimeConfigLabPage = ({ entries, initialOverrides }: Props) => {
             >
               Read-only values
             </Title>
-            <Text variant="small" className={styles["lab-section__description"]}>
+            <Text
+              variant="small"
+              className={styles["lab-section__description"]}
+            >
               Non-boolean keys are shown here for inspection only.
             </Text>
           </div>

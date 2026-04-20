@@ -1,22 +1,22 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 
 import BoardOnboardingPanel from "@/modules/board/presentation/components/boardOnboardingPanel/BoardOnboardingPanel";
-import {
-  type OnboardingStep,
-} from "@/modules/board/presentation/components/boardOnboardingPanel/onboarding.types";
+import { type OnboardingStep } from "@/modules/board/presentation/components/boardOnboardingPanel/onboarding.types";
 
 describe("BoardOnboardingPanel", () => {
   const steps: OnboardingStep[] = [
     {
       id: "create-ticket",
       title: "Creer un ticket",
-      description: "Creez votre premiere tache pour voir comment le board organise le travail.",
+      description:
+        "Creez votre premiere tache pour voir comment le board organise le travail.",
       status: "complete",
     },
     {
       id: "assign-ticket",
       title: "Ouvrir et assigner un ticket",
-      description: "Ouvrez un ticket puis assignez-le a une personne pour clarifier qui prend le sujet en charge.",
+      description:
+        "Ouvrez un ticket puis assignez-le a une personne pour clarifier qui prend le sujet en charge.",
       status: "current",
       actionLabel: "Ouvrir le ticket",
       actionAriaLabel: "Ouvrir un ticket pour l'assigner",
@@ -25,7 +25,8 @@ describe("BoardOnboardingPanel", () => {
     {
       id: "comment-ticket",
       title: "Commenter un ticket",
-      description: "Ajoutez un commentaire dans le ticket pour centraliser le contexte et les decisions.",
+      description:
+        "Ajoutez un commentaire dans le ticket pour centraliser le contexte et les decisions.",
       status: "blocked",
       actionLabel: "Ouvrir les commentaires",
       actionAriaLabel: "Ouvrir un ticket pour ajouter un commentaire",
@@ -87,7 +88,9 @@ describe("BoardOnboardingPanel", () => {
       screen.getByText("Prenez vos reperes sur le board")
     ).toBeInTheDocument();
     expect(screen.getByText("Creer un ticket")).toBeInTheDocument();
-    expect(screen.getByText("Ouvrir et assigner un ticket")).toBeInTheDocument();
+    expect(
+      screen.getByText("Ouvrir et assigner un ticket")
+    ).toBeInTheDocument();
     expect(screen.getByText("Commenter un ticket")).toBeInTheDocument();
     expect(screen.getByText("Fait")).toBeInTheDocument();
     expect(screen.getByText("En cours")).toBeInTheDocument();

@@ -1,4 +1,7 @@
-import { APP_COOKIE_KEYS, updateCookie } from "../infrastructure/storage/cookies";
+import {
+  APP_COOKIE_KEYS,
+  updateCookie,
+} from "../infrastructure/storage/cookies";
 import type { Locale } from "./routing";
 import { localeCookieMaxAgeSeconds, routing } from "./routing";
 

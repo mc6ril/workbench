@@ -1,4 +1,3 @@
- 
 import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
 
 import { DEFAULT_COLUMN_KEY_BY_STATE } from "@/modules/board/core/domain/board.defaults";

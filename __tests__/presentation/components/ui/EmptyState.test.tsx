@@ -83,10 +83,7 @@ describe("EmptyState Component", () => {
   it("should use custom aria-label when provided", () => {
     // Arrange & Act
     render(
-      <EmptyState
-        title="No items"
-        ariaLabel="Custom empty state label"
-      />
+      <EmptyState title="No items" ariaLabel="Custom empty state label" />
     );
 
     // Assert

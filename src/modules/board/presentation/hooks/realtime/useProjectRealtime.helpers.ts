@@ -184,9 +184,7 @@ export const toDomainTicketAssignee = (
   };
 };
 
-const sortTicketAssignees = (
-  assignees: TicketAssignee[]
-): TicketAssignee[] => {
+const sortTicketAssignees = (assignees: TicketAssignee[]): TicketAssignee[] => {
   return [...assignees].sort((first, second) => {
     return first.assignedAt.getTime() - second.assignedAt.getTime();
   });
@@ -288,7 +286,9 @@ export const patchTicketAcrossProjectLists = (
       continue;
     }
 
-    const currentIndex = data.findIndex((ticket) => ticket.id === nextTicket.id);
+    const currentIndex = data.findIndex(
+      (ticket) => ticket.id === nextTicket.id
+    );
     if (currentIndex < 0) {
       continue;
     }

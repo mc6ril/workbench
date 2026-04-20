@@ -121,6 +121,8 @@ export type AppErrorLogPayload = {
 
 export const toLogPayload = (error: AppError): AppErrorLogPayload => ({
   code: error.code,
-  ...(error.debugMessage !== undefined ? { debugMessage: error.debugMessage } : {}),
+  ...(error.debugMessage !== undefined
+    ? { debugMessage: error.debugMessage }
+    : {}),
   ...(error.context !== undefined ? { context: error.context } : {}),
 });

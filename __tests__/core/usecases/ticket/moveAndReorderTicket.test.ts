@@ -113,20 +113,28 @@ describe("moveAndReorderTicket", () => {
       },
     ];
     const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => board),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => columns),
+      findByProject: jest.fn<Promise<Board | null>, [string]>(
+        async () => board
+      ),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
     });
     const repository = createTicketRepositoryMock({
-      findById: jest.fn<Promise<Ticket | null>, [string]>(async () => mockTicket),
+      findById: jest.fn<Promise<Ticket | null>, [string]>(
+        async () => mockTicket
+      ),
       moveAndReorderTicket: jest.fn<
         Promise<Ticket[]>,
         [RepositoryMoveAndReorderInput]
-      >(
-        async () => updatedTickets
-      ),
+      >(async () => updatedTickets),
     });
 
-    const result = await moveAndReorderTicket(repository, boardRepository, input);
+    const result = await moveAndReorderTicket(
+      repository,
+      boardRepository,
+      input
+    );
 
     expect(repository.moveAndReorderTicket).toHaveBeenCalledTimes(1);
     expect(repository.moveAndReorderTicket).toHaveBeenCalledWith({
@@ -144,23 +152,27 @@ describe("moveAndReorderTicket", () => {
       ticketPositions: [],
     };
     const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => board),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => columns),
+      findByProject: jest.fn<Promise<Board | null>, [string]>(
+        async () => board
+      ),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
     });
     const repository = createTicketRepositoryMock({
-      findById: jest.fn<Promise<Ticket | null>, [string]>(async () => mockTicket),
+      findById: jest.fn<Promise<Ticket | null>, [string]>(
+        async () => mockTicket
+      ),
       moveAndReorderTicket: jest.fn<
         Promise<Ticket[]>,
         [RepositoryMoveAndReorderInput]
-      >(
-        async () => [
-          {
-            ...mockTicket,
-            columnId: doingColumnId,
-            position: 1,
-          },
-        ]
-      ),
+      >(async () => [
+        {
+          ...mockTicket,
+          columnId: doingColumnId,
+          position: 1,
+        },
+      ]),
     });
 
     await expect(
@@ -192,11 +204,17 @@ describe("moveAndReorderTicket", () => {
 
   it("should propagate NotFoundError from repository", async () => {
     const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => board),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => columns),
+      findByProject: jest.fn<Promise<Board | null>, [string]>(
+        async () => board
+      ),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
     });
     const repository = createTicketRepositoryMock({
-      findById: jest.fn<Promise<Ticket | null>, [string]>(async () => mockTicket),
+      findById: jest.fn<Promise<Ticket | null>, [string]>(
+        async () => mockTicket
+      ),
       moveAndReorderTicket: jest.fn<
         Promise<Ticket[]>,
         [RepositoryMoveAndReorderInput]

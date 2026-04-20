@@ -35,7 +35,11 @@ export const updateMemberRole = async (
   memberId: string,
   role: ProjectRole
 ): Promise<void> => {
-  const parsed = UpdateMemberRoleInputSchema.parse({ projectId, memberId, role });
+  const parsed = UpdateMemberRoleInputSchema.parse({
+    projectId,
+    memberId,
+    role,
+  });
 
   const currentRole = await gateway.getCurrentRole(parsed.projectId);
 

@@ -1,4 +1,4 @@
-import { fireEvent,render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 
 import Checkbox from "@/shared/design-system/checkbox";
 
@@ -44,9 +44,7 @@ describe("Checkbox Component", () => {
   it("should call onChange when clicked", () => {
     // Arrange
     const handleChange = jest.fn();
-    render(
-      <Checkbox label="I agree" name="agree" onChange={handleChange} />
-    );
+    render(<Checkbox label="I agree" name="agree" onChange={handleChange} />);
 
     // Act
     const checkbox = screen.getByLabelText(/i agree/i);
@@ -107,12 +105,7 @@ describe("Checkbox Component", () => {
     // Arrange & Act
     const handleChange = jest.fn();
     render(
-      <Checkbox
-        label="I agree"
-        name="agree"
-        required
-        onChange={handleChange}
-      />
+      <Checkbox label="I agree" name="agree" required onChange={handleChange} />
     );
 
     // Assert
@@ -188,9 +181,7 @@ describe("Checkbox Component", () => {
   it("should toggle on Space key press", () => {
     // Arrange
     const handleChange = jest.fn();
-    render(
-      <Checkbox label="I agree" name="agree" onChange={handleChange} />
-    );
+    render(<Checkbox label="I agree" name="agree" onChange={handleChange} />);
 
     // Act
     const checkbox = screen.getByLabelText(/i agree/i);
@@ -204,12 +195,7 @@ describe("Checkbox Component", () => {
     // Arrange
     const handleChange = jest.fn();
     render(
-      <Checkbox
-        label="I agree"
-        name="agree"
-        disabled
-        onChange={handleChange}
-      />
+      <Checkbox label="I agree" name="agree" disabled onChange={handleChange} />
     );
 
     // Act

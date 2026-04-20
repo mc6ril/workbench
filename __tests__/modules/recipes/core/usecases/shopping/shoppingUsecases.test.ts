@@ -24,7 +24,9 @@ describe("Recipes shopping use cases", () => {
       shoppingRepository,
     })("project-1");
 
-    expect(shoppingRepository.getShoppingList).toHaveBeenCalledWith("project-1");
+    expect(shoppingRepository.getShoppingList).toHaveBeenCalledWith(
+      "project-1"
+    );
   });
 
   it("delegates shopping list generation to the shopping repository", async () => {
@@ -44,7 +46,9 @@ describe("Recipes shopping use cases", () => {
   });
 
   it("delegates checked state updates to the shopping repository", async () => {
-    shoppingRepository.setShoppingListItemChecked.mockResolvedValueOnce(undefined);
+    shoppingRepository.setShoppingListItemChecked.mockResolvedValueOnce(
+      undefined
+    );
 
     await setShoppingListItemChecked({
       shoppingRepository,

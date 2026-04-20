@@ -321,9 +321,7 @@
   z-index: 1;
   margin: 0;
   box-sizing: border-box;
-  padding-right: calc(
-    #{$spacing-button-height} * 2 + #{$spacing-xs} * 3
-  );
+  padding-right: calc(#{$spacing-button-height} * 2 + #{$spacing-xs} * 3);
   background-color: $color-background;
 
   .project-toolbar__search-field {

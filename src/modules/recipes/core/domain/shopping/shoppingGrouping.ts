@@ -127,7 +127,9 @@ export const compareShoppingGroupIds = (
   leftGroupId: string,
   rightGroupId: string
 ): number => {
-  return getShoppingGroupOrder(leftGroupId) - getShoppingGroupOrder(rightGroupId);
+  return (
+    getShoppingGroupOrder(leftGroupId) - getShoppingGroupOrder(rightGroupId)
+  );
 };
 
 export const resolveShoppingIngredientGroup = (

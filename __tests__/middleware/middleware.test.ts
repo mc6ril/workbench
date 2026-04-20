@@ -109,6 +109,7 @@ const createRequest = (
 
 describe("middleware", () => {
   beforeEach(() => {
+    mockGetUser.mockClear();
     mockGetUser.mockResolvedValue({
       data: { user: null },
       error: null,
@@ -200,6 +201,7 @@ describe("middleware", () => {
       })
     );
     expect(res.status).toBe(200);
+    expect(mockGetUser).not.toHaveBeenCalled();
   });
 
   it("redirects OAuth code on marketing home to auth callback", async () => {
@@ -221,7 +223,11 @@ describe("middleware", () => {
       },
       error: null,
     });
-    const res = await middleware(createRequest(AUTH_PAGE_ROUTES.SIGNIN));
+    const res = await middleware(
+      createRequest(AUTH_PAGE_ROUTES.SIGNIN, {
+        cookies: { "sb-workbench-auth-token": "token" },
+      })
+    );
     expect(res.status).toBe(307);
     expect(res.headers.get("location")).toBe(
       `${baseUrl}${PAGE_ROUTES.WORKSPACE}`
@@ -236,5 +242,6 @@ describe("middleware", () => {
     expect(location).toContain(
       `redirect=${encodeURIComponent(PAGE_ROUTES.WORKSPACE)}`
     );
+    expect(mockGetUser).not.toHaveBeenCalled();
   });
 });

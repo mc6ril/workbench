@@ -167,11 +167,13 @@ It is organized by feature domain and includes execution notes.
 ## 11) Plan Entitlements
 
 ### Free
+
 - [ ] Maximum 1 project enforced
 - [ ] Maximum 2 users enforced
 - [ ] Custom column editing blocked
 
 ### Paid
+
 - [ ] 3+ projects allowed according to configured plan caps
 - [ ] User caps enforced for configured ranges (5 to 20 depending on plan)
 - [ ] Custom column management enabled

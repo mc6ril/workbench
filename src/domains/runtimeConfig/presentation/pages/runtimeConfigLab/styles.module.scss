@@ -115,12 +115,11 @@
   padding: $spacing-xl;
   border-radius: $border-radius-lg;
   border: $border-width solid rgba($color-border, 0.7);
-  background:
-    linear-gradient(
-      $gradient-angle-diagonal,
-      rgba($color-secondary, 0.98) 0%,
-      rgba($color-surface-subtle, 0.9) 100%
-    );
+  background: linear-gradient(
+    $gradient-angle-diagonal,
+    rgba($color-secondary, 0.98) 0%,
+    rgba($color-surface-subtle, 0.9) 100%
+  );
   box-shadow: $shadow-card;
   content-visibility: auto;
   contain-intrinsic-size: 180px;
@@ -128,7 +127,9 @@
 
 .lab-card--overridden {
   border-color: rgba($color-accent, 0.55);
-  box-shadow: 0 0 0 1px rgba($color-accent, 0.12), $shadow-card;
+  box-shadow:
+    0 0 0 1px rgba($color-accent, 0.12),
+    $shadow-card;
 }
 
 .lab-card__main {

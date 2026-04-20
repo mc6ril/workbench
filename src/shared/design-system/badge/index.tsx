@@ -42,10 +42,15 @@ const Badge = ({
   className,
 }: Props) => {
   const badgeId = getAccessibilityId(`badge-${label}`);
-  const variantClass =
-    ["default", "success", "warning", "error", "info"].includes(variant)
-      ? variant
-      : "default";
+  const variantClass = [
+    "default",
+    "success",
+    "warning",
+    "error",
+    "info",
+  ].includes(variant)
+    ? variant
+    : "default";
 
   const badgeClasses = [
     styles.badge,

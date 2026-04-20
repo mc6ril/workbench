@@ -17,9 +17,11 @@ Workbench is built around a simple idea:
 - each enabled module provides one concrete way of working inside that project
 
 Current module:
+
 - **Board** — tickets, comments, Kanban / Jira-like workflow
 
 Future modules:
+
 - **Recipes** — meal planning, recipe base, shopping support
 - **Vacation** — trip planning, timeline or board-like planning
 - **Budget** — shared expenses, categories, periods

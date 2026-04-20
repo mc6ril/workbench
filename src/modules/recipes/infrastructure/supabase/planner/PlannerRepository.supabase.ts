@@ -156,8 +156,9 @@ const loadNextSelectionPosition = async (
     return handleRepositoryError(error, "RecipeSelection", projectId);
   }
 
-  const highestPosition = (data?.[0] as Pick<RecipeSelectionRow, "position"> | undefined)
-    ?.position;
+  const highestPosition = (
+    data?.[0] as Pick<RecipeSelectionRow, "position"> | undefined
+  )?.position;
 
   return typeof highestPosition === "number" ? highestPosition + 1 : 0;
 };
@@ -221,7 +222,11 @@ export const createPlannerRepository = (
       input.projectId,
       input.recipeId
     );
-    const recipe = await loadRecipeById(client, input.projectId, input.recipeId);
+    const recipe = await loadRecipeById(
+      client,
+      input.projectId,
+      input.recipeId
+    );
 
     if (existingSelection) {
       return mapSelectionToActiveQuickListRecipe(existingSelection, recipe);
@@ -238,7 +243,11 @@ export const createPlannerRepository = (
       input.projectId,
       input.selectionId
     );
-    const recipe = await loadRecipeById(client, input.projectId, selection.recipe_id);
+    const recipe = await loadRecipeById(
+      client,
+      input.projectId,
+      selection.recipe_id
+    );
     const { error } = await client
       .from("recipe_selections")
       .delete()

@@ -174,6 +174,6 @@ This document provides a checklist for manually testing the route guard implemen
 - [ ] Performance acceptable
 - [ ] Documentation updated if needed
 
-**Tester**: ********\_********  
-**Date**: ********\_********  
-**Status**: ********\_********
+**Tester**: **\*\*\*\***\_**\*\*\*\***  
+**Date**: **\*\*\*\***\_**\*\*\*\***  
+**Status**: **\*\*\*\***\_**\*\*\*\***

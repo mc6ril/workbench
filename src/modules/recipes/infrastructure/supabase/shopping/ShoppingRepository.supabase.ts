@@ -195,7 +195,9 @@ const applyPersistedCheckedState = (
   );
 };
 
-const mapItemRowsToShoppingList = (itemRows: ShoppingListItemRow[]): ShoppingList => {
+const mapItemRowsToShoppingList = (
+  itemRows: ShoppingListItemRow[]
+): ShoppingList => {
   if (itemRows.length === 0) {
     return createEmptyShoppingList();
   }
@@ -347,7 +349,8 @@ const buildSourcesFromSelections = (
         return [];
       }
 
-      const ingredientRows = ingredientsByRecipeId.get(selection.recipe_id) ?? [];
+      const ingredientRows =
+        ingredientsByRecipeId.get(selection.recipe_id) ?? [];
 
       return ingredientRows.map((ingredientRow) => {
         const ingredient = mapRecipeIngredientRowToDomain(ingredientRow);
@@ -454,7 +457,9 @@ const generateAndPersistShoppingList = async (
     return emptyShoppingList;
   }
 
-  const recipeIds = [...new Set(selections.map((selection) => selection.recipe_id))];
+  const recipeIds = [
+    ...new Set(selections.map((selection) => selection.recipe_id)),
+  ];
   const [recipesById, ingredientsByRecipeId] = await Promise.all([
     loadRecipeTitlesByIds(client, projectId, recipeIds),
     loadIngredientRowsByRecipeIds(client, projectId, recipeIds),
@@ -490,7 +495,11 @@ export const createShoppingRepository = (
       .maybeSingle();
 
     if (shoppingListError) {
-      return handleRepositoryError(shoppingListError, "ShoppingList", projectId);
+      return handleRepositoryError(
+        shoppingListError,
+        "ShoppingList",
+        projectId
+      );
     }
 
     const shoppingList = shoppingListData as ShoppingListRow | null;
@@ -499,7 +508,11 @@ export const createShoppingRepository = (
       return createEmptyShoppingList();
     }
 
-    const itemRows = await loadShoppingItemRows(client, projectId, shoppingList.id);
+    const itemRows = await loadShoppingItemRows(
+      client,
+      projectId,
+      shoppingList.id
+    );
     return mapItemRowsToShoppingList(itemRows);
   },
 

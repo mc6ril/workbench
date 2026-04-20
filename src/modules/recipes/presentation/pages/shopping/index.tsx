@@ -59,7 +59,9 @@ const RecipesShoppingPage = async ({ projectId }: Props) => {
             <ul className={styles["recipes-scaffold__list"]}>
               <li>Nom visible et nom normalise sont gardes separes.</li>
               <li>Les quantites libres restent affichees via `amountText`.</li>
-              <li>Les ajouts a tester restent identifies jusqu&apos;aux courses.</li>
+              <li>
+                Les ajouts a tester restent identifies jusqu&apos;aux courses.
+              </li>
             </ul>
           </div>
         </Card>

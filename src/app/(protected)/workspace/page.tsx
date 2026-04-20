@@ -1,7 +1,10 @@
 import { cookies } from "next/headers";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
-import { APP_COOKIE_KEYS, getCookie } from "@/shared/infrastructure/storage/cookies";
+import {
+  APP_COOKIE_KEYS,
+  getCookie,
+} from "@/shared/infrastructure/storage/cookies";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 
@@ -26,9 +29,10 @@ const WorkspaceRoutePage = async () => {
   const workspaceProjectCatalogGateway =
     createWorkspaceProjectCatalogGateway(supabaseClient);
   const billingVisibilityPort = createBillingVisibilityPort(supabaseClient);
-  const runtimeConfigOverrides = readRuntimeConfigBooleanOverridesFromCookieValue(
-    getCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES, cookieStore)
-  );
+  const runtimeConfigOverrides =
+    readRuntimeConfigBooleanOverridesFromCookieValue(
+      getCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES, cookieStore)
+    );
   const billingOverride = getRuntimeConfigBooleanOverride(
     runtimeConfigOverrides,
     "is_billing_visible"

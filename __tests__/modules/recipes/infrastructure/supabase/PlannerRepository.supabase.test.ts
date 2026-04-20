@@ -70,19 +70,19 @@ describe("createPlannerRepository", () => {
     });
     const repository = createPlannerRepository(client);
 
-    await expect(
-      repository.listActiveSelections("project-1")
-    ).resolves.toEqual([
-      {
-        id: "selection-1",
-        recipeId: "recipe-1",
-        title: "Poulet citron",
-        note: "Mardi soir.",
-        servingsCount: 4,
-        servingsLabel: "4 portions",
-        status: "active",
-      },
-    ]);
+    await expect(repository.listActiveSelections("project-1")).resolves.toEqual(
+      [
+        {
+          id: "selection-1",
+          recipeId: "recipe-1",
+          title: "Poulet citron",
+          note: "Mardi soir.",
+          servingsCount: 4,
+          servingsLabel: "4 portions",
+          status: "active",
+        },
+      ]
+    );
   });
 
   it("selects a recipe with the next planner position", async () => {
@@ -124,11 +124,7 @@ describe("createPlannerRepository", () => {
       insert,
     };
     const client = createClientMock({
-      recipe_selections: [
-        existingSelectionQuery,
-        positionQuery,
-        insertQuery,
-      ],
+      recipe_selections: [existingSelectionQuery, positionQuery, insertQuery],
       recipes: [recipeQuery],
     });
     const repository = createPlannerRepository(client);

@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { API_MESSAGES_COMMON, API_MESSAGES_STRIPE } from "@/shared/constants";
-import { APP_COOKIE_KEYS, getCookie } from "@/shared/infrastructure/storage/cookies";
+import {
+  APP_COOKIE_KEYS,
+  getCookie,
+} from "@/shared/infrastructure/storage/cookies";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
@@ -44,9 +47,10 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
   try {
     const supabaseClient = await createSupabaseServerClient();
-    const runtimeConfigOverrides = readRuntimeConfigBooleanOverridesFromCookieValue(
-      getCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES, request.cookies)
-    );
+    const runtimeConfigOverrides =
+      readRuntimeConfigBooleanOverridesFromCookieValue(
+        getCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES, request.cookies)
+      );
     const billingOverride = getRuntimeConfigBooleanOverride(
       runtimeConfigOverrides,
       "is_billing_visible"

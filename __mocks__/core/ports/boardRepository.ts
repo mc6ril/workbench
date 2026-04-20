@@ -24,7 +24,10 @@ export type BoardRepositoryMock = {
     Promise<Column[]>,
     [Array<{ id: string; position: number }>]
   >;
-  countTicketsByColumnIds: jest.Mock<Promise<Record<string, number>>, [string[]]>;
+  countTicketsByColumnIds: jest.Mock<
+    Promise<Record<string, number>>,
+    [string[]]
+  >;
 };
 
 type BoardRepositoryMockOverrides = Partial<BoardRepositoryMock>;
@@ -54,7 +57,10 @@ export const createBoardRepositoryMock = (
       Promise<Column[]>,
       [Array<{ id: string; position: number }>]
     >(),
-    countTicketsByColumnIds: jest.fn<Promise<Record<string, number>>, [string[]]>(),
+    countTicketsByColumnIds: jest.fn<
+      Promise<Record<string, number>>,
+      [string[]]
+    >(),
   };
 
   return {

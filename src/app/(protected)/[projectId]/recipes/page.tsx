@@ -12,7 +12,9 @@ const RecipesPageRoute = async ({
   const resolvedSearchParams = await searchParams;
 
   return withRecipesRouteAccess(projectId, () => {
-    return <RecipesPage projectId={projectId} searchParams={resolvedSearchParams} />;
+    return (
+      <RecipesPage projectId={projectId} searchParams={resolvedSearchParams} />
+    );
   });
 };
 

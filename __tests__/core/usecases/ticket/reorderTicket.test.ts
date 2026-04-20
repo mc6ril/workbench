@@ -100,9 +100,7 @@ describe("reorderTicket", () => {
   it("should throw ZodError on invalid ticket ID", async () => {
     // Arrange
     const input = {
-      ticketPositions: [
-        { id: "invalid-uuid", position: 0 },
-      ],
+      ticketPositions: [{ id: "invalid-uuid", position: 0 }],
     };
     const repository = createTicketRepositoryMock();
 
@@ -114,9 +112,7 @@ describe("reorderTicket", () => {
   it("should throw ZodError on negative position", async () => {
     // Arrange
     const input = {
-      ticketPositions: [
-        { id: mockTicket1.id, position: -1 },
-      ],
+      ticketPositions: [{ id: mockTicket1.id, position: -1 }],
     };
     const repository = createTicketRepositoryMock();
 
@@ -128,9 +124,7 @@ describe("reorderTicket", () => {
   it("should propagate repository errors", async () => {
     // Arrange
     const input = {
-      ticketPositions: [
-        { id: mockTicket1.id, position: 1 },
-      ],
+      ticketPositions: [{ id: mockTicket1.id, position: 1 }],
     };
     const repositoryError = new Error("Database connection failed");
     const repository = createTicketRepositoryMock({

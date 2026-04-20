@@ -1,4 +1,6 @@
-const normalizeRecipeIngredientText = (value?: string | null): string | null => {
+const normalizeRecipeIngredientText = (
+  value?: string | null
+): string | null => {
   if (!value) {
     return null;
   }
@@ -91,9 +93,7 @@ export const normalizeRecipeIngredientUnit = (
 export const isRecipeIngredientUnitSupported = (
   value?: string | null
 ): value is RecipeIngredientUnit => {
-  return RECIPE_INGREDIENT_UNIT_VALUES.includes(
-    value as RecipeIngredientUnit
-  );
+  return RECIPE_INGREDIENT_UNIT_VALUES.includes(value as RecipeIngredientUnit);
 };
 
 export const normalizeRecipeIngredientAmount = (

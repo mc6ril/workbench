@@ -83,11 +83,7 @@ describe("useListRecipes", () => {
       },
     });
 
-    const TestQueryClientProvider = ({
-      children,
-    }: {
-      children: ReactNode;
-    }) => (
+    const TestQueryClientProvider = ({ children }: { children: ReactNode }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
 

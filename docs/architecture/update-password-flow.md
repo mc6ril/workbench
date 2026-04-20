@@ -1,4 +1,4 @@
-````mermaid
+```mermaid
 sequenceDiagram
 participant User as 👤 User
 participant Route as 📄 src/app/auth/update-password/page.tsx<br/>(routing only)
@@ -39,7 +39,7 @@ participant Supabase as ☁️ Supabase
     Note over AuthPage: 5. Auth domain handles UX and handoff
     AuthPage-->>Route: Password updated
     Route->>User: Redirect to /workspace
-````
+```
 
 # Notes
 

@@ -27,7 +27,9 @@ const createBillingSessionsClientMock = (
 describe("createCheckoutSessionClient", () => {
   it("should create a checkout session and return the url", async () => {
     const client = createBillingSessionsClientMock({
-      createCheckoutSession: jest.fn(async () => ({ url: "https://stripe.test" })),
+      createCheckoutSession: jest.fn(async () => ({
+        url: "https://stripe.test",
+      })),
     });
 
     const result = await createCheckoutSessionClient(client, {

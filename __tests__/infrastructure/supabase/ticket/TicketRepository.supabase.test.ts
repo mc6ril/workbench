@@ -72,10 +72,16 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     } as unknown as SupabaseClient;
 
     const repository = createTicketRepository(client);
-    const result = await repository.listSearchSuggestions(projectId, "ticket", 6);
+    const result = await repository.listSearchSuggestions(
+      projectId,
+      "ticket",
+      6
+    );
 
     expect(client.from).toHaveBeenCalledWith("tickets");
-    expect(suggestionsQuery.select).toHaveBeenCalledWith("id,title,code_number");
+    expect(suggestionsQuery.select).toHaveBeenCalledWith(
+      "id,title,code_number"
+    );
     expect(suggestionsQuery.eq).toHaveBeenCalledWith("project_id", projectId);
     expect(suggestionsQuery.is).toHaveBeenCalledWith("archived_at", null);
     expect(suggestionsQuery.order).toHaveBeenCalledWith("created_at", {

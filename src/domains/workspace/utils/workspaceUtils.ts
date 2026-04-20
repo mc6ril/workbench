@@ -5,7 +5,16 @@
 /**
  * Available workspace emojis for visual identification.
  */
-const WORKSPACE_EMOJIS = ["🎨", "🛍️", "📸", "✨", "🌸", "💡", "📝", "🎯"] as const;
+const WORKSPACE_EMOJIS = [
+  "🎨",
+  "🛍️",
+  "📸",
+  "✨",
+  "🌸",
+  "💡",
+  "📝",
+  "🎯",
+] as const;
 
 /**
  * Returns an emoji for a workspace based on its index.

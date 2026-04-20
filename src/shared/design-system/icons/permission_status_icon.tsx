@@ -12,11 +12,7 @@ type Props = {
 /**
  * Displays a small check or cross icon for permission status.
  */
-const PermissionStatusIcon = ({
-  isAllowed,
-  className,
-  size = 16,
-}: Props) => {
+const PermissionStatusIcon = ({ isAllowed, className, size = 16 }: Props) => {
   return (
     <svg
       className={className}

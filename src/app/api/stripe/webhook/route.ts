@@ -12,7 +12,9 @@ import { createSubscriptionRepository } from "@/domains/billing/infrastructure/s
 const logger = createLoggerFactory().forScope("API.Webhook");
 
 const isStripeSignatureVerificationError = (error: unknown): boolean => {
-  return error instanceof Error && error.name === "StripeSignatureVerificationError";
+  return (
+    error instanceof Error && error.name === "StripeSignatureVerificationError"
+  );
 };
 
 /**

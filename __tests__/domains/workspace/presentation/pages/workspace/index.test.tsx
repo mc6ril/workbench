@@ -17,9 +17,12 @@ jest.mock("next/navigation", () => ({
   }),
 }));
 
-jest.mock("@/domains/profile/presentation/hooks/useTicketGettingStartedStatus", () => ({
-  useTicketGettingStartedStatus: jest.fn(),
-}));
+jest.mock(
+  "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus",
+  () => ({
+    useTicketGettingStartedStatus: jest.fn(),
+  })
+);
 
 jest.mock("@/domains/project/presentation/hooks/useAddUserToProject", () => ({
   useAddUserToProject: jest.fn(),
@@ -33,17 +36,26 @@ jest.mock("@/domains/viewer/presentation/hooks/useViewer", () => ({
   useViewer: jest.fn(),
 }));
 
-jest.mock("@/domains/workspace/presentation/hooks/useLastActivitySubtitle", () => ({
-  useLastActivitySubtitle: jest.fn(),
-}));
+jest.mock(
+  "@/domains/workspace/presentation/hooks/useLastActivitySubtitle",
+  () => ({
+    useLastActivitySubtitle: jest.fn(),
+  })
+);
 
-jest.mock("@/domains/workspace/presentation/hooks/useProjectsWithStats", () => ({
-  useProjectsWithStats: jest.fn(),
-}));
+jest.mock(
+  "@/domains/workspace/presentation/hooks/useProjectsWithStats",
+  () => ({
+    useProjectsWithStats: jest.fn(),
+  })
+);
 
-jest.mock("@/domains/workspace/presentation/hooks/useReclaimableProjects", () => ({
-  useReclaimableProjects: jest.fn(),
-}));
+jest.mock(
+  "@/domains/workspace/presentation/hooks/useReclaimableProjects",
+  () => ({
+    useReclaimableProjects: jest.fn(),
+  })
+);
 
 jest.mock("@/domains/billing/presentation/hooks/useBillingVisibility", () => ({
   useBillingVisibility: jest.fn(),
@@ -106,9 +118,11 @@ describe("WorkspacePage onboarding", () => {
       })
     );
 
-    jest.mocked(useLastActivitySubtitle).mockReturnValue(
-      (() => "") as ReturnType<typeof useLastActivitySubtitle>
-    );
+    jest
+      .mocked(useLastActivitySubtitle)
+      .mockReturnValue(
+        (() => "") as ReturnType<typeof useLastActivitySubtitle>
+      );
   });
 
   it("renders the workspace onboarding block when there is no project and getting started is pending", () => {

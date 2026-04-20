@@ -81,9 +81,7 @@ describe("Select Component", () => {
 
   it("should link label with select using htmlFor and id", () => {
     // Arrange & Act
-    render(
-      <Select label="Status" options={mockOptions} id="status-select" />
-    );
+    render(<Select label="Status" options={mockOptions} id="status-select" />);
 
     // Assert
     const label = screen.getByText(/status/i);
@@ -115,7 +113,10 @@ describe("Select Component", () => {
     // Assert
     const select = screen.getByLabelText(/status/i);
     const errorId = "a11y-select-status-error";
-    expect(select).toHaveAttribute("aria-describedby", expect.stringContaining(errorId));
+    expect(select).toHaveAttribute(
+      "aria-describedby",
+      expect.stringContaining(errorId)
+    );
     expect(screen.getByText("Invalid status")).toHaveAttribute("id", errorId);
   });
 
@@ -205,9 +206,7 @@ describe("Select Component", () => {
 
   it("should set value correctly", () => {
     // Arrange & Act
-    render(
-      <Select label="Status" options={mockOptions} value="option2" />
-    );
+    render(<Select label="Status" options={mockOptions} value="option2" />);
 
     // Assert
     const select = screen.getByLabelText(/status/i) as HTMLSelectElement;

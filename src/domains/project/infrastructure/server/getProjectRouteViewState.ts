@@ -1,7 +1,10 @@
 import { cache } from "react";
 import { cookies } from "next/headers";
 
-import { APP_COOKIE_KEYS, getCookie } from "@/shared/infrastructure/storage/cookies";
+import {
+  APP_COOKIE_KEYS,
+  getCookie,
+} from "@/shared/infrastructure/storage/cookies";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
 import { getProjectForRoute } from "./getProjectForRoute";
@@ -25,9 +28,10 @@ export const getProjectRouteViewState = cache(async (projectId: string) => {
   const sessionGateway = createSessionGateway(serverClient);
   const runtimeConfigPort = createRuntimeConfigPort(serverClient);
   const session = await sessionGateway.getCurrentSession();
-  const runtimeConfigOverrides = readRuntimeConfigBooleanOverridesFromCookieValue(
-    getCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES, cookieStore)
-  );
+  const runtimeConfigOverrides =
+    readRuntimeConfigBooleanOverridesFromCookieValue(
+      getCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES, cookieStore)
+    );
   const recipesBoardOverride = getRuntimeConfigBooleanOverride(
     runtimeConfigOverrides,
     "is_recipes_board_visible"

@@ -2,7 +2,10 @@ import { buildTicketDetailRoute } from "@/shared/utils/routes";
 
 import type { ProjectToolbarSearchSuggestion } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
 import type { Ticket } from "@/modules/board/core/domain/ticket.types";
-import { buildTicketCode, parseTicketCodeForProject } from "@/modules/board/utils/ticketUtils";
+import {
+  buildTicketCode,
+  parseTicketCodeForProject,
+} from "@/modules/board/utils/ticketUtils";
 
 type BuildArchivedSuggestionFallbackInput = {
   projectId: string;

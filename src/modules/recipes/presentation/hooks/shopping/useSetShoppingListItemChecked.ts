@@ -26,7 +26,8 @@ export const useSetShoppingListItemChecked = () => {
         queryKey,
       });
 
-      const previousShoppingList = queryClient.getQueryData<ShoppingList>(queryKey);
+      const previousShoppingList =
+        queryClient.getQueryData<ShoppingList>(queryKey);
 
       if (previousShoppingList) {
         queryClient.setQueryData<ShoppingList>(

@@ -21,15 +21,10 @@ const AppFooter = ({ className }: Props) => {
     .join(" ");
 
   return (
-    <footer
-      id={footerId}
-      className={footerClasses}
-      aria-label={t("ariaLabel")}
-    >
+    <footer id={footerId} className={footerClasses} aria-label={t("ariaLabel")}>
       <div className={styles["app-footer__content"]}>{t("label")}</div>
     </footer>
   );
 };
 
 export default React.memo(AppFooter);
-

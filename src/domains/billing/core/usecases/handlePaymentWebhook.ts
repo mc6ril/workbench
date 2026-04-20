@@ -36,7 +36,10 @@ export const handlePaymentWebhook = async (
     case "checkout.session.completed": {
       const existing = await subscriptionRepository.getByUserId(event.userId);
 
-      if (existing?.subscriptionId && existing.subscriptionId !== event.subscriptionId) {
+      if (
+        existing?.subscriptionId &&
+        existing.subscriptionId !== event.subscriptionId
+      ) {
         await paymentGateway.cancelSubscription(existing.subscriptionId);
       }
 
@@ -70,7 +73,9 @@ export const handlePaymentWebhook = async (
     }
 
     case "customer.subscription.deleted": {
-      const sub = await subscriptionRepository.getByCustomerId(event.customerId);
+      const sub = await subscriptionRepository.getByCustomerId(
+        event.customerId
+      );
       if (sub) {
         await subscriptionRepository.deleteByUserId(sub.userId);
       }
@@ -78,7 +83,9 @@ export const handlePaymentWebhook = async (
     }
 
     case "invoice.payment_failed": {
-      const sub = await subscriptionRepository.getByCustomerId(event.customerId);
+      const sub = await subscriptionRepository.getByCustomerId(
+        event.customerId
+      );
       if (sub) {
         await subscriptionRepository.save({
           userId: sub.userId,

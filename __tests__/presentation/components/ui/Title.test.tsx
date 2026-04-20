@@ -8,7 +8,10 @@ describe("Title Component", () => {
     render(<Title>Main Title</Title>);
 
     // Assert
-    const heading = screen.getByRole("heading", { level: 1, name: /main title/i });
+    const heading = screen.getByRole("heading", {
+      level: 1,
+      name: /main title/i,
+    });
     expect(heading).toBeInTheDocument();
   });
 
@@ -71,7 +74,11 @@ describe("Title Component", () => {
 
   it("should render children correctly", () => {
     // Arrange & Act
-    render(<Title>Complex <strong>Title</strong> Content</Title>);
+    render(
+      <Title>
+        Complex <strong>Title</strong> Content
+      </Title>
+    );
 
     // Assert
     const heading = screen.getByRole("heading");
@@ -79,4 +86,3 @@ describe("Title Component", () => {
     expect(heading.querySelector("strong")).toBeInTheDocument();
   });
 });
-

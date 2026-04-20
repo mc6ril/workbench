@@ -29,13 +29,9 @@ export const useTickets = (
   const limit = options?.limit;
 
   return useQuery<Ticket[]>({
-    queryKey: queryKeys.projects.ticketsList(
-      projectId,
-      filters,
-      search,
-      limit
-    ),
-    queryFn: () => listTickets(ticketRepository, projectId, filters, search, limit),
+    queryKey: queryKeys.projects.ticketsList(projectId, filters, search, limit),
+    queryFn: () =>
+      listTickets(ticketRepository, projectId, filters, search, limit),
     enabled: !!projectId && (options?.enabled ?? true),
     initialData: options?.initialData,
   });

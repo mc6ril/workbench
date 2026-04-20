@@ -8,7 +8,7 @@ export type SupabaseClientMockOverrides = Partial<SupabaseClient>;
  * Tests can pass only the subset of properties they need, typically using jest.fn().
  */
 export const createSupabaseClientMock = (
-  overrides: SupabaseClientMockOverrides = {},
+  overrides: SupabaseClientMockOverrides = {}
 ): SupabaseClient => {
   return overrides as SupabaseClient;
 };

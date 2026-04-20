@@ -44,10 +44,7 @@ const TicketDetailHeader = ({
         >
           {ticketCode}
         </Text>
-        <CloseButton
-          ariaLabel={t("actions.close")}
-          onClick={onBack}
-        />
+        <CloseButton ariaLabel={t("actions.close")} onClick={onBack} />
       </div>
       <textarea
         ref={titleRef}

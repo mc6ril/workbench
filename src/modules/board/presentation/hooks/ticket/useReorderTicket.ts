@@ -30,7 +30,10 @@ export const useReorderTicket = () => {
       });
 
       const positionById = new Map(
-        ticketPositions.map((ticketPosition) => [ticketPosition.id, ticketPosition.position])
+        ticketPositions.map((ticketPosition) => [
+          ticketPosition.id,
+          ticketPosition.position,
+        ])
       );
 
       queryClient.setQueriesData<Ticket[]>(
@@ -70,4 +73,3 @@ export const useReorderTicket = () => {
     },
   });
 };
-

@@ -26,9 +26,7 @@ describe("authRedirect", () => {
       );
       expect(
         sanitizeInternalRedirectPath(undefined, PAGE_ROUTES.WORKSPACE)
-      ).toBe(
-        PAGE_ROUTES.WORKSPACE
-      );
+      ).toBe(PAGE_ROUTES.WORKSPACE);
     });
   });
 
@@ -38,7 +36,9 @@ describe("authRedirect", () => {
         buildAuthCallbackPath({
           nextPath: VERIFIED_EMAIL_REDIRECT_PATH,
         })
-      ).toBe(`${AUTH_PAGE_ROUTES.CALLBACK}?next=%2Fauth%2Fverify-email%3Fverified%3D1`);
+      ).toBe(
+        `${AUTH_PAGE_ROUTES.CALLBACK}?next=%2Fauth%2Fverify-email%3Fverified%3D1`
+      );
     });
 
     it("includes the code when routing a fallback redirect back through the callback", () => {

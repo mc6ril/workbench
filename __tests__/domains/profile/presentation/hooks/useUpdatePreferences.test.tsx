@@ -67,7 +67,10 @@ describe("useUpdatePreferences", () => {
     useUpdatePreferences();
 
     const mutationOptions = useMutationMock.mock.calls[0]?.[0] as {
-      onSuccess?: (data: void, input: { gettingStartedStatus: "completed" }) => void;
+      onSuccess?: (
+        data: void,
+        input: { gettingStartedStatus: "completed" }
+      ) => void;
     };
 
     mutationOptions.onSuccess?.(undefined, {

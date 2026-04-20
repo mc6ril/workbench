@@ -90,7 +90,11 @@ describe("Text Component", () => {
 
   it("should render children correctly", () => {
     // Arrange & Act
-    const { container } = render(<Text>Complex <strong>text</strong> content</Text>);
+    const { container } = render(
+      <Text>
+        Complex <strong>text</strong> content
+      </Text>
+    );
 
     // Assert
     const text = container.querySelector("p");
@@ -100,4 +104,3 @@ describe("Text Component", () => {
     expect(text?.querySelector("strong")).toHaveTextContent("text");
   });
 });
-

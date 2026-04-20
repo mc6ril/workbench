@@ -5,9 +5,7 @@ import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandl
 
 import { mapSubscriptionRowToDomain } from "./SubscriptionMapper.supabase";
 
-import type {
-  Subscription,
-} from "@/domains/billing/core/domain/subscription.types";
+import type { Subscription } from "@/domains/billing/core/domain/subscription.types";
 import type {
   SaveSubscriptionInput,
   SubscriptionRepository,

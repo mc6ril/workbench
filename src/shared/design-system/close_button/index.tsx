@@ -32,10 +32,7 @@ const CloseButton = ({
       disabled={disabled}
       title={title}
     >
-      <span
-        aria-hidden="true"
-        className={styles["close-button__icon"]}
-      />
+      <span aria-hidden="true" className={styles["close-button__icon"]} />
     </button>
   );
 };

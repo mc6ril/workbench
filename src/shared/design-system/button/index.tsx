@@ -1,4 +1,4 @@
-import React, { type ReactNode,useCallback } from "react";
+import React, { type ReactNode, useCallback } from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { isEnterKey, isSpaceKey } from "@/shared/a11y/utilities";

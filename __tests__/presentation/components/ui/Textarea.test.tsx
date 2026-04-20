@@ -88,7 +88,10 @@ describe("Textarea Component", () => {
     // Assert
     const textarea = screen.getByLabelText(/description/i);
     const errorId = "a11y-textarea-description-error";
-    expect(textarea).toHaveAttribute("aria-describedby", expect.stringContaining(errorId));
+    expect(textarea).toHaveAttribute(
+      "aria-describedby",
+      expect.stringContaining(errorId)
+    );
     expect(screen.getByText("Invalid description")).toHaveAttribute(
       "id",
       errorId
@@ -139,7 +142,9 @@ describe("Textarea Component", () => {
     );
 
     // Act
-    rerender(<Textarea label="Description" maxLength={100} value="Hello World" />);
+    rerender(
+      <Textarea label="Description" maxLength={100} value="Hello World" />
+    );
 
     // Assert
     expect(screen.getByText("11/100")).toBeInTheDocument();
@@ -184,7 +189,9 @@ describe("Textarea Component", () => {
 
   it("should use aria-label when provided", () => {
     // Arrange & Act
-    render(<Textarea label="Description" aria-label="Custom description label" />);
+    render(
+      <Textarea label="Description" aria-label="Custom description label" />
+    );
 
     // Assert
     const textarea = screen.getByLabelText(/custom description label/i);

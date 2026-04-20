@@ -10,11 +10,7 @@ type Props = {
   className?: string;
 };
 
-const TicketPriorityDot = ({
-  priority,
-  size = "md",
-  className,
-}: Props) => {
+const TicketPriorityDot = ({ priority, size = "md", className }: Props) => {
   const classes = [
     styles["ticket-priority-dot"],
     styles[`ticket-priority-dot--${priority}`],

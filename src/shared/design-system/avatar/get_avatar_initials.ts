@@ -1,6 +1,4 @@
-export const getAvatarInitials = (
-  input: string | null | undefined
-): string => {
+export const getAvatarInitials = (input: string | null | undefined): string => {
   if (!input || input.trim().length === 0) {
     return "?";
   }

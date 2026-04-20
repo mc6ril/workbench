@@ -33,9 +33,12 @@ jest.mock("@/shared/navigation/NavigationFeedbackController", () => ({
   default: () => null,
 }));
 
-jest.mock("@/domains/profile/presentation/providers/useProfileRuntimeSync", () => ({
-  useProfileRuntimeSync: jest.fn(),
-}));
+jest.mock(
+  "@/domains/profile/presentation/providers/useProfileRuntimeSync",
+  () => ({
+    useProfileRuntimeSync: jest.fn(),
+  })
+);
 
 describe("AppProvider", () => {
   beforeEach(() => {

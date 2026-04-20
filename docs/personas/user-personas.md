@@ -5,6 +5,7 @@
 Workbench now targets one primary segment: **families managing daily life together**.
 
 The product is intentionally simple:
+
 - One clear default flow (a shared project starts free)
 - Two core views (`Board` and `Objectives`)
 - Fast onboarding and low cognitive load
@@ -19,16 +20,16 @@ These personas are used to guide product decisions, UX copy, and prioritization.
 
 ### Profile
 
-| Attribute | Value |
-|---|---|
-| Name | Emma Laurent |
-| Age | 38 |
-| Situation | Parent of two children |
-| Location | Nantes, France |
-| Tech comfort | Medium |
-| Devices | Smartphone first, laptop occasionally |
-| Current tools | Notes app, WhatsApp, sticky notes |
-| Typical role | Project admin / coordinator |
+| Attribute     | Value                                 |
+| ------------- | ------------------------------------- |
+| Name          | Emma Laurent                          |
+| Age           | 38                                    |
+| Situation     | Parent of two children                |
+| Location      | Nantes, France                        |
+| Tech comfort  | Medium                                |
+| Devices       | Smartphone first, laptop occasionally |
+| Current tools | Notes app, WhatsApp, sticky notes     |
+| Typical role  | Project admin / coordinator           |
 
 ### Context
 
@@ -66,16 +67,16 @@ The family runs a weekly check-in from the board in less than 10 minutes.
 
 ### Profile
 
-| Attribute | Value |
-|---|---|
-| Name | Lucas Martin |
-| Age | 41 |
-| Situation | Co-parent with alternating weeks |
-| Location | Bordeaux, France |
-| Tech comfort | Medium-low |
-| Devices | Mobile only most of the time |
-| Current tools | Calendar + SMS + memory |
-| Typical role | Project admin or member |
+| Attribute     | Value                            |
+| ------------- | -------------------------------- |
+| Name          | Lucas Martin                     |
+| Age           | 41                               |
+| Situation     | Co-parent with alternating weeks |
+| Location      | Bordeaux, France                 |
+| Tech comfort  | Medium-low                       |
+| Devices       | Mobile only most of the time     |
+| Current tools | Calendar + SMS + memory          |
+| Typical role  | Project admin or member          |
 
 ### Context
 
@@ -111,16 +112,16 @@ Lucas can open the app, update one task, and leave in under 30 seconds.
 
 ### Profile
 
-| Attribute | Value |
-|---|---|
-| Name | Chloé Bernard |
-| Age | 15 |
-| Situation | Teenager participating in family tasks |
-| Location | Toulouse, France |
-| Tech comfort | High |
-| Devices | Smartphone |
-| Current tools | Messaging apps |
-| Typical role | Project member |
+| Attribute     | Value                                  |
+| ------------- | -------------------------------------- |
+| Name          | Chloé Bernard                          |
+| Age           | 15                                     |
+| Situation     | Teenager participating in family tasks |
+| Location      | Toulouse, France                       |
+| Tech comfort  | High                                   |
+| Devices       | Smartphone                             |
+| Current tools | Messaging apps                         |
+| Typical role  | Project member                         |
 
 ### Context
 
@@ -152,16 +153,16 @@ Chloé completes and updates tasks without additional reminders.
 
 ## Persona Comparison Matrix
 
-| Dimension | Emma (Coordinator) | Lucas (Co-Parent) | Chloé (Teen) |
-|---|---|---|---|
-| Main need | Plan and orchestrate | Track and execute fast | Understand and complete |
-| Usage frequency | Daily | Daily / every other day | A few times per week |
-| Preferred device | Mobile + laptop | Mobile | Mobile |
-| Key view | Board | Board | Board |
-| Secondary view | Objectives | Objectives | Objectives |
-| Tolerance for complexity | Low | Very low | Low |
-| Typical project role | Admin / creator | Admin or member | Member |
-| Billing involvement | May upgrade or manage invoices | May co-manage billing if admin | No billing involvement |
+| Dimension                | Emma (Coordinator)             | Lucas (Co-Parent)              | Chloé (Teen)            |
+| ------------------------ | ------------------------------ | ------------------------------ | ----------------------- |
+| Main need                | Plan and orchestrate           | Track and execute fast         | Understand and complete |
+| Usage frequency          | Daily                          | Daily / every other day        | A few times per week    |
+| Preferred device         | Mobile + laptop                | Mobile                         | Mobile                  |
+| Key view                 | Board                          | Board                          | Board                   |
+| Secondary view           | Objectives                     | Objectives                     | Objectives              |
+| Tolerance for complexity | Low                            | Very low                       | Low                     |
+| Typical project role     | Admin / creator                | Admin or member                | Member                  |
+| Billing involvement      | May upgrade or manage invoices | May co-manage billing if admin | No billing involvement  |
 
 ---
 

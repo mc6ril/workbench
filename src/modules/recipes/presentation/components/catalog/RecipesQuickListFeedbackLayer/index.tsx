@@ -11,7 +11,9 @@ const clamp = (value: number, min: number, max: number) => {
 };
 
 const RecipesQuickListFeedbackLayer = () => {
-  const animations = useRecipesQuickListFeedbackStore((state) => state.animations);
+  const animations = useRecipesQuickListFeedbackStore(
+    (state) => state.animations
+  );
 
   if (animations.length === 0) {
     return null;

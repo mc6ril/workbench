@@ -5,13 +5,12 @@ import Loader from "@/shared/design-system/loader";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 
+import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
 import { getBoardConfiguration } from "@/modules/board/core/usecases/board/getBoardConfiguration";
-import { getProjectShortCode } from "@/modules/board/core/usecases/project/getProjectShortCode";
 import { getTicketAssigneesByProjectId } from "@/modules/board/core/usecases/ticket/getTicketAssigneesByProjectId";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 import {
   createBoardRepository,
-  createProjectLookupRepository,
   createTicketRepository,
 } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
@@ -27,13 +26,12 @@ const BoardPage = async ({
   const supabaseClient = await createSupabaseServerClient();
   const boardRepository = createBoardRepository(supabaseClient);
   const ticketRepository = createTicketRepository(supabaseClient);
-  const projectLookupRepository = createProjectLookupRepository(supabaseClient);
+  const project = await getProjectForRoute(projectId);
 
   const [
     initialBoardConfiguration,
     initialTickets,
     initialTicketAssigneesByProjectId,
-    initialProjectShortCode,
   ] = await Promise.all([
     queryClient.fetchQuery({
       queryKey: queryKeys.projects.boardConfiguration(projectId),
@@ -47,11 +45,12 @@ const BoardPage = async ({
       queryKey: queryKeys.tickets.assigneesByProjectId(projectId),
       queryFn: () => getTicketAssigneesByProjectId(ticketRepository, projectId),
     }),
-    queryClient.fetchQuery({
-      queryKey: queryKeys.projects.shortCode(projectId),
-      queryFn: () => getProjectShortCode(projectLookupRepository, projectId),
-    }),
   ]);
+  const initialProjectShortCode = project.shortCode;
+  queryClient.setQueryData(
+    queryKeys.projects.shortCode(projectId),
+    initialProjectShortCode
+  );
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
