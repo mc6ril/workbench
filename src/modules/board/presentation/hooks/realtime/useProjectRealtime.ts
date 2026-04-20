@@ -6,21 +6,15 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   extractEntityId,
   extractEventType,
-  extractTicketId,
   invalidateProjectTickets,
-  mapCommentRowFromPayload,
-  mapTicketAssigneeRowFromPayload,
   mapTicketFromPayload,
-  patchCommentInTicketCache,
-  patchProjectAssigneesCache,
   patchTicketAcrossProjectLists,
-  patchTicketAssigneesCache,
-  removeAssigneeFromTicketCaches,
-  removeCommentFromTicketCache,
   removeTicketFromProjectLists,
-  toDomainTicketAssignee,
-  upsertAssigneeInTicketCaches,
 } from "./useProjectRealtime.helpers";
+import {
+  registerCommentSubscriptions,
+  registerTicketAssigneeSubscriptions,
+} from "./useProjectRealtime.subscriptions";
 
 import { getRealtimeRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
@@ -112,8 +106,8 @@ export const useProjectRealtime = (
     // We intentionally keep tickets subscriptions active immediately and attach
     // columns subscription as soon as boardId is resolved.
 
-    // comments/ticket_assignees are scoped by project_id to avoid receiving events
-    // from unrelated projects in the project shell.
+    // comments/ticket_assignees can use project_id filters for INSERT/UPDATE, but
+    // Supabase Realtime does not support filtered DELETE subscriptions.
     const channelWithProjectMembers = channelWithColumns.on(
       "postgres_changes",
       {
@@ -134,173 +128,17 @@ export const useProjectRealtime = (
       }
     );
 
-    const channelWithComments = channelWithProjectMembers.on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "comments",
-        filter: `project_id=eq.${projectId}`,
-      },
-      (payload) => {
-        const eventType = extractEventType(payload);
-        const commentFromNew = mapCommentRowFromPayload(payload, "new");
-        const commentFromOld = mapCommentRowFromPayload(payload, "old");
-        const ticketId =
-          extractTicketId(payload) ??
-          commentFromNew?.ticket_id ??
-          commentFromOld?.ticket_id ??
-          null;
+    const channelWithComments = registerCommentSubscriptions({
+      channel: channelWithProjectMembers,
+      projectId,
+      queryClient,
+    });
 
-        if (!ticketId) {
-          void queryClient.invalidateQueries({
-            queryKey: queryKeys.comments.root(),
-            refetchType: "active",
-          });
-          return;
-        }
-
-        if (eventType === "UPDATE" && commentFromNew) {
-          const didPatch = patchCommentInTicketCache(
-            queryClient,
-            ticketId,
-            commentFromNew.id,
-            {
-              content: commentFromNew.content,
-              updated_at: commentFromNew.updated_at,
-            }
-          );
-
-          if (didPatch) {
-            return;
-          }
-        }
-
-        if (eventType === "DELETE" && commentFromOld) {
-          const didRemove = removeCommentFromTicketCache(
-            queryClient,
-            ticketId,
-            commentFromOld.id
-          );
-          if (didRemove) {
-            return;
-          }
-        }
-
-        if (eventType === "INSERT" || eventType === "DELETE") {
-          void queryClient.invalidateQueries({
-            queryKey: queryKeys.comments.byProject(projectId),
-            refetchType: "active",
-          });
-        }
-
-        void queryClient.invalidateQueries({
-          queryKey: queryKeys.comments.byTicket(ticketId),
-          refetchType: "active",
-        });
-      }
-    );
-
-    const channelWithTicketAssignees = channelWithComments.on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "ticket_assignees",
-        filter: `project_id=eq.${projectId}`,
-      },
-      (payload) => {
-        const eventType = extractEventType(payload);
-        const nextAssigneeRow = mapTicketAssigneeRowFromPayload(payload, "new");
-        const previousAssigneeRow = mapTicketAssigneeRowFromPayload(
-          payload,
-          "old"
-        );
-        const ticketId =
-          extractTicketId(payload) ??
-          nextAssigneeRow?.ticket_id ??
-          previousAssigneeRow?.ticket_id ??
-          null;
-
-        if (!ticketId) {
-          void queryClient.invalidateQueries({
-            queryKey: queryKeys.tickets.assigneesByProjectId(projectId),
-            refetchType: "active",
-          });
-          return;
-        }
-
-        const hasTicketAssigneesCache =
-          queryClient.getQueryState(queryKeys.tickets.assignees(ticketId)) !=
-          null;
-        const hasProjectAssigneesCache =
-          queryClient.getQueryState(
-            queryKeys.tickets.assigneesByProjectId(projectId)
-          ) != null;
-
-        let didPatchTicketAssignees = false;
-        let didPatchProjectAssignees = false;
-
-        if (
-          (eventType === "INSERT" || eventType === "UPDATE") &&
-          nextAssigneeRow
-        ) {
-          const nextAssignee = toDomainTicketAssignee(nextAssigneeRow);
-
-          if (nextAssignee) {
-            didPatchTicketAssignees = patchTicketAssigneesCache(
-              queryClient,
-              ticketId,
-              (previous) =>
-                upsertAssigneeInTicketCaches(previous, nextAssignee)
-            );
-            didPatchProjectAssignees = patchProjectAssigneesCache(
-              queryClient,
-              projectId,
-              ticketId,
-              (previous) =>
-                upsertAssigneeInTicketCaches(previous, nextAssignee)
-            );
-          }
-        }
-
-        if (eventType === "DELETE" && previousAssigneeRow) {
-          didPatchTicketAssignees = patchTicketAssigneesCache(
-            queryClient,
-            ticketId,
-            (previous) =>
-              removeAssigneeFromTicketCaches(
-                previous,
-                previousAssigneeRow.user_id
-              )
-          );
-          didPatchProjectAssignees = patchProjectAssigneesCache(
-            queryClient,
-            projectId,
-            ticketId,
-            (previous) =>
-              removeAssigneeFromTicketCaches(
-                previous,
-                previousAssigneeRow.user_id
-              )
-          );
-        }
-
-        if (hasTicketAssigneesCache && !didPatchTicketAssignees) {
-          void queryClient.invalidateQueries({
-            queryKey: queryKeys.tickets.assignees(ticketId),
-            refetchType: "active",
-          });
-        }
-
-        if (hasProjectAssigneesCache && !didPatchProjectAssignees) {
-          void queryClient.invalidateQueries({
-            queryKey: queryKeys.tickets.assigneesByProjectId(projectId),
-            refetchType: "active",
-          });
-        }
-      }
-    );
+    const channelWithTicketAssignees = registerTicketAssigneeSubscriptions({
+      channel: channelWithComments,
+      projectId,
+      queryClient,
+    });
 
     const channelSubscription = channelWithTicketAssignees.subscribe();
 
