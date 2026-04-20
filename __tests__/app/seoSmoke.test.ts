@@ -25,7 +25,9 @@ describe("SEO smoke: sitemap and manifest", () => {
       { params: Promise.resolve({ locale: "fr" }) }
     );
     expect(res.status).toBe(200);
-    expect(res.headers.get("content-type")).toContain("application/manifest+json");
+    expect(res.headers.get("content-type")).toContain(
+      "application/manifest+json"
+    );
     const body = (await res.json()) as {
       lang: string;
       name: string;
@@ -52,7 +54,11 @@ describe("SEO smoke: sitemap and manifest", () => {
       new Request("http://localhost:3000/manifest/en"),
       { params: Promise.resolve({ locale: "en" }) }
     );
-    const body = (await res.json()) as { lang: string; scope: string; start_url: string };
+    const body = (await res.json()) as {
+      lang: string;
+      scope: string;
+      start_url: string;
+    };
 
     expect(body.lang).toBe("en");
     expect(body.start_url).toBe("/en");

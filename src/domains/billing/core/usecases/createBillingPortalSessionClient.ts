@@ -21,4 +21,3 @@ export const createBillingPortalSessionClient = async (
   const parsed = CreateBillingPortalSessionClientSchema.parse(input);
   return billingSessionsClient.createBillingPortalSession(parsed);
 };
-

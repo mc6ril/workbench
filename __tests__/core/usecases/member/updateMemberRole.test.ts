@@ -13,12 +13,7 @@ describe("updateMemberRole", () => {
       updateRole: jest.fn<Promise<void>, [string, ProjectRole]>(async () => {}),
     });
 
-    await updateMemberRole(
-      repository,
-      projectId,
-      memberId,
-      ProjectRole.VIEWER
-    );
+    await updateMemberRole(repository, projectId, memberId, ProjectRole.VIEWER);
 
     expect(repository.updateRole).toHaveBeenCalledWith(
       memberId,

@@ -1,4 +1,7 @@
-import type { Ticket, TicketFilters } from "@/modules/board/core/domain/ticket.types";
+import type {
+  Ticket,
+  TicketFilters,
+} from "@/modules/board/core/domain/ticket.types";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
 /**

@@ -68,8 +68,7 @@ export const useMoveAndReorderTicket = () => {
 
             return {
               ...ticket,
-              columnId:
-                ticket.id === ticketId ? columnId : ticket.columnId,
+              columnId: ticket.id === ticketId ? columnId : ticket.columnId,
               position:
                 ticket.id === ticketId
                   ? position

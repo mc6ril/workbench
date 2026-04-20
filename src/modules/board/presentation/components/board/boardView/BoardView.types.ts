@@ -3,9 +3,7 @@ import type { BoardColumnConfig } from "@/modules/board/presentation/types/board
 
 export type BoardViewProps = {
   columns: BoardColumnConfig[];
-  renderColumn: (
-    config: BoardColumnConfig
-  ) => Omit<
+  renderColumn: (config: BoardColumnConfig) => Omit<
     BoardColumnProps,
     "id" | "title" | "tickets" | "isSortable" | "isDragging"
   > & {

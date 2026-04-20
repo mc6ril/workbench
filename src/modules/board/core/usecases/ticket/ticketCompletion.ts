@@ -12,7 +12,10 @@ type ResolveCompletedAtInput = {
   now?: Date;
 };
 
-type ResolveCompletedAtByProjectInput = Omit<ResolveCompletedAtInput, "columns">;
+type ResolveCompletedAtByProjectInput = Omit<
+  ResolveCompletedAtInput,
+  "columns"
+>;
 
 export const getDoneWorkflowColumnIds = (
   columns: WorkflowColumn[]
@@ -52,7 +55,10 @@ export const resolveCompletedAtForProjectColumnChange = async (
   projectId: string,
   input: ResolveCompletedAtByProjectInput
 ): Promise<Date | null> => {
-  const boardConfiguration = await getBoardConfiguration(boardRepository, projectId);
+  const boardConfiguration = await getBoardConfiguration(
+    boardRepository,
+    projectId
+  );
 
   return resolveCompletedAtForColumnChange({
     ...input,

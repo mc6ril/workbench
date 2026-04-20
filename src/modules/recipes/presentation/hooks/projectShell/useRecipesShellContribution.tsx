@@ -110,7 +110,11 @@ export const useRecipesShellContribution = (
         ariaLabel: isQuickListOpen
           ? tCatalog("toolbar.quickListHideAriaLabel")
           : tCatalog("toolbar.quickListShowAriaLabel"),
-        icon: isQuickListOpen ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />,
+        icon: isQuickListOpen ? (
+          <EyeOffIcon size={16} />
+        ) : (
+          <EyeIcon size={16} />
+        ),
         badgeCount: quickListCount ?? 0,
         badgePulseKey: quickListBadgePulseKey,
         onClick: toggleQuickList,

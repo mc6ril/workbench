@@ -60,7 +60,13 @@ const queryKeysObject = {
   tickets: {
     detail: (id: string) => ["tickets", id] as const,
     byCodeInProjectIncludingArchived: (projectId: string, codeNumber: number) =>
-      ["tickets", "by-code", "including-archived", projectId, codeNumber] as const,
+      [
+        "tickets",
+        "by-code",
+        "including-archived",
+        projectId,
+        codeNumber,
+      ] as const,
     assigneesRoot: () => ["ticket-assignees"] as const,
     assignees: (ticketId: string) => ["ticket-assignees", ticketId] as const,
     assigneesByProjectId: (projectId: string) =>
@@ -71,7 +77,8 @@ const queryKeysObject = {
   comments: {
     root: () => ["comments"] as const,
     byTicket: (ticketId: string) => ["comments", "ticket", ticketId] as const,
-    byProject: (projectId: string) => ["comments", "project", projectId] as const,
+    byProject: (projectId: string) =>
+      ["comments", "project", projectId] as const,
   },
   subscription: {
     current: () => ["subscription", "current"] as const,

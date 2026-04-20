@@ -60,9 +60,11 @@ describe("createProject", () => {
   it("should pass boardEmoji to the gateway when provided", async () => {
     const input: CreateProjectInput = { name: "Rocket", boardEmoji: "🚀" };
     const repository = createProjectGatewayMock({
-      create: jest.fn<Promise<Project>, [CreateProjectInput]>(
-        async () => ({ ...mockProject, name: "Rocket", boardEmoji: "🚀" })
-      ),
+      create: jest.fn<Promise<Project>, [CreateProjectInput]>(async () => ({
+        ...mockProject,
+        name: "Rocket",
+        boardEmoji: "🚀",
+      })),
     });
 
     await createProject(repository, input);

@@ -23,11 +23,7 @@ import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { getAppErrorCode } from "@/shared/errors/appError";
 import { REPOSITORY_ERROR_CODE } from "@/shared/errors/appErrorCodes";
-import {
-  getIntlLocale,
-  useLocale,
-  useTranslations,
-} from "@/shared/i18n";
+import { getIntlLocale, useLocale, useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
@@ -289,7 +285,8 @@ const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
                       0,
                       30 -
                         Math.floor(
-                          (referenceTime.getTime() - project.orphanedAt.getTime()) /
+                          (referenceTime.getTime() -
+                            project.orphanedAt.getTime()) /
                             (1000 * 60 * 60 * 24)
                         )
                     );
@@ -337,16 +334,13 @@ const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
           )}
 
         {showProjectsListPlaceholder ? (
-          <section
-            className={styles["workspace-main"]}
-            aria-busy="true"
-          >
+          <section className={styles["workspace-main"]} aria-busy="true">
             <Loader variant="inline" />
           </section>
         ) : shouldShowLoading({
-          isLoading: isLoadingProjects,
-          isPending: addUserToProjectMutation.isPending,
-        }) && hasProjects ? (
+            isLoading: isLoadingProjects,
+            isPending: addUserToProjectMutation.isPending,
+          }) && hasProjects ? (
           <Loader variant="inline" />
         ) : hasProjects ? (
           <section

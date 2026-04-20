@@ -3,7 +3,4 @@ export {
   useProjectPermissions,
 } from "./ProjectPermissionsProvider";
 export { resolveProjectPermissions } from "./resolveProjectPermissions";
-export type {
-  ProjectPermissionFlags,
-  ProjectPermissions,
-} from "./types";
+export type { ProjectPermissionFlags, ProjectPermissions } from "./types";

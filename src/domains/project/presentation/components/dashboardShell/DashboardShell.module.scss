@@ -151,9 +151,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: $spacing-md;
-  padding:
-    calc(#{$spacing-lg} + env(safe-area-inset-top))
-    $spacing-md
+  padding: calc(#{$spacing-lg} + env(safe-area-inset-top)) $spacing-md
     $spacing-md;
   border-bottom: $border-width solid $color-border;
   background-color: $color-secondary;
@@ -217,7 +215,9 @@
   height: 100%;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: minmax($layout-dashboard-header-height, auto) minmax(0, 1fr) $layout-dashboard-footer-height;
+  grid-template-rows:
+    minmax($layout-dashboard-header-height, auto) minmax(0, 1fr)
+    $layout-dashboard-footer-height;
 }
 
 .dashboard-shell__content--no-footer {

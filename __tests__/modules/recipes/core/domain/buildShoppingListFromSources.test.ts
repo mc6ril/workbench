@@ -1,6 +1,4 @@
-import {
-  createRecipeIngredientFromDraftInput,
-} from "@/modules/recipes/core/domain/recipe.types";
+import { createRecipeIngredientFromDraftInput } from "@/modules/recipes/core/domain/recipe.types";
 import { buildShoppingListFromSources } from "@/modules/recipes/core/domain/shopping/buildShoppingListFromSources";
 
 describe("buildShoppingListFromSources", () => {

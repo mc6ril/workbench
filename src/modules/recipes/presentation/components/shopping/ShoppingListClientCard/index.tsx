@@ -86,7 +86,9 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
               className={styles["recipes-scaffold__shopping-group"]}
             >
               <div className={styles["recipes-scaffold__shopping-group-head"]}>
-                <h3 className={styles["recipes-scaffold__shopping-group-title"]}>
+                <h3
+                  className={styles["recipes-scaffold__shopping-group-title"]}
+                >
                   {group.title}
                 </h3>
                 <span className={styles["recipes-scaffold__helper"]}>
@@ -96,7 +98,9 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
 
               <div className={styles["recipes-scaffold__shopping-items"]}>
                 {group.items.map((item) => {
-                  const isAddition = isAdditionCandidateIngredient(item.ingredient);
+                  const isAddition = isAdditionCandidateIngredient(
+                    item.ingredient
+                  );
                   const isPendingCurrentItem =
                     setItemCheckedMutation.isPending &&
                     setItemCheckedMutation.variables?.itemId === item.id;
@@ -111,7 +115,9 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
                       className={[
                         styles["recipes-scaffold__shopping-item-button"],
                         item.checked &&
-                          styles["recipes-scaffold__shopping-item-button--checked"],
+                          styles[
+                            "recipes-scaffold__shopping-item-button--checked"
+                          ],
                       ]
                         .filter(Boolean)
                         .join(" ")}
@@ -134,9 +140,15 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
                           .join(" ")}
                       />
 
-                      <span className={styles["recipes-scaffold__shopping-item-copy"]}>
+                      <span
+                        className={
+                          styles["recipes-scaffold__shopping-item-copy"]
+                        }
+                      >
                         <span
-                          className={styles["recipes-scaffold__shopping-item-top"]}
+                          className={
+                            styles["recipes-scaffold__shopping-item-top"]
+                          }
                         >
                           <span
                             className={
@@ -157,12 +169,16 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
                             styles["recipes-scaffold__shopping-item-recipes"]
                           }
                         >
-                          {item.recipes.map((recipe) => recipe.title).join(", ")}
+                          {item.recipes
+                            .map((recipe) => recipe.title)
+                            .join(", ")}
                         </span>
 
                         {item.ingredient.notes ? (
                           <span
-                            className={styles["recipes-scaffold__shopping-item-note"]}
+                            className={
+                              styles["recipes-scaffold__shopping-item-note"]
+                            }
                           >
                             {item.ingredient.notes}
                           </span>

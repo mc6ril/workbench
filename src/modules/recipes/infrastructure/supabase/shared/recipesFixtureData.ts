@@ -330,9 +330,7 @@ const normalizeFixtureRecipeSource = (
 };
 
 const formatTitleFromRecipeId = (recipeId: string): string => {
-  const normalized = decodeURIComponent(recipeId)
-    .replace(/[-_]+/g, " ")
-    .trim();
+  const normalized = decodeURIComponent(recipeId).replace(/[-_]+/g, " ").trim();
 
   if (!normalized) {
     return "Recette";
@@ -352,9 +350,7 @@ export const getCreationDraftFixture = (): RecipeDraft => {
   };
 };
 
-export const getRecipeDraftFixture = (
-  recipeId: string
-): RecipeDraft | null => {
+export const getRecipeDraftFixture = (recipeId: string): RecipeDraft | null => {
   const source = EDIT_RECIPE_SOURCES[recipeId];
 
   if (source) {
@@ -430,9 +426,10 @@ const fixtureSourceMatchesFilters = (
 
   if (normalizedFilters.filterOptionIds.length > 0) {
     const sourceTagSlugs = new Set(source.tags.map((tag) => tag.slug));
-    const selectedOptionsByCategory = groupCatalogRecipeFilterOptionIdsByCategory(
-      normalizedFilters.filterOptionIds
-    );
+    const selectedOptionsByCategory =
+      groupCatalogRecipeFilterOptionIdsByCategory(
+        normalizedFilters.filterOptionIds
+      );
 
     for (const options of selectedOptionsByCategory.values()) {
       const hasCategoryMatch = options.some((option) =>
@@ -464,7 +461,9 @@ const fixtureSourceMatchesFilters = (
 };
 
 export const listCatalogFixtureRecipes = (): CatalogRecipeSummary[] => {
-  return Object.values(EDIT_RECIPE_SOURCES).map(mapFixtureSourceToCatalogSummary);
+  return Object.values(EDIT_RECIPE_SOURCES).map(
+    mapFixtureSourceToCatalogSummary
+  );
 };
 
 export const listCatalogFixtureRecipesByFilters = (
@@ -484,7 +483,9 @@ const paginateCatalogFixtureRecipes = (
   const normalizedPagination =
     pagination ?? normalizeCatalogRecipeListPagination(undefined);
   const startIndex = normalizedPagination.cursor
-    ? recipes.findIndex((recipe) => recipe.id === normalizedPagination.cursor?.id) + 1
+    ? recipes.findIndex(
+        (recipe) => recipe.id === normalizedPagination.cursor?.id
+      ) + 1
     : 0;
   const items = recipes.slice(
     Math.max(startIndex, 0),
@@ -558,22 +559,24 @@ const buildShoppingIngredientSource = (
   };
 };
 
-export const listShoppingFixtureSources = (): ShoppingListIngredientSource[] => {
-  return QUICK_LIST_RECIPE_IDS.flatMap((recipeId) => {
-    const recipe = EDIT_RECIPE_SOURCES[recipeId];
+export const listShoppingFixtureSources =
+  (): ShoppingListIngredientSource[] => {
+    return QUICK_LIST_RECIPE_IDS.flatMap((recipeId) => {
+      const recipe = EDIT_RECIPE_SOURCES[recipeId];
 
-    return recipe.ingredients
-      .filter(
-        (
-          ingredient
-        ): ingredient is FixtureIngredientSource & {
-          shoppingGroupId: string;
-          shoppingGroupTitle: string;
-        } => Boolean(ingredient.shoppingGroupId && ingredient.shoppingGroupTitle)
-      )
-      .map((ingredient) => buildShoppingIngredientSource(recipe, ingredient));
-  });
-};
+      return recipe.ingredients
+        .filter(
+          (
+            ingredient
+          ): ingredient is FixtureIngredientSource & {
+            shoppingGroupId: string;
+            shoppingGroupTitle: string;
+          } =>
+            Boolean(ingredient.shoppingGroupId && ingredient.shoppingGroupTitle)
+        )
+        .map((ingredient) => buildShoppingIngredientSource(recipe, ingredient));
+    });
+  };
 
 export const getQuickListFixtureSelectionCount = (): number => {
   return QUICK_LIST_RECIPE_IDS.length;

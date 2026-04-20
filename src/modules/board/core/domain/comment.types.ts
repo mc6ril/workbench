@@ -24,4 +24,3 @@ export type CreateCommentInput = {
 export type UpdateCommentInput = {
   content: string;
 };
-

@@ -87,7 +87,9 @@ export type CreateRecipeIngredientFromDraftInput = {
 export const resolveRecipeIngredientAmountText = ({
   amountValue,
   amountText,
-}: Pick<CreateRecipeIngredientInput, "amountValue" | "amountText">): string | null => {
+}: Pick<CreateRecipeIngredientInput, "amountValue" | "amountText">):
+  | string
+  | null => {
   const normalizedAmountText =
     normalizeRecipeIngredientAmount(amountText).amountText;
 
@@ -110,8 +112,9 @@ export const createRecipeIngredient = (
   return {
     id: input.id,
     displayName,
-    normalizedName:
-      normalizeRecipeIngredientName(input.normalizedName ?? displayName),
+    normalizedName: normalizeRecipeIngredientName(
+      input.normalizedName ?? displayName
+    ),
     amountValue: input.amountValue ?? null,
     amountText: resolveRecipeIngredientAmountText(input),
     unit: normalizeRecipeIngredientUnit(input.unit),

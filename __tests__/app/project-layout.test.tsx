@@ -56,73 +56,100 @@ jest.mock("@/domains/project/infrastructure/supabase/gateways", () => ({
   createProjectMemberGateway: jest.fn(),
 }));
 
-jest.mock("@/domains/project/core/usecases/member/getCurrentProjectRole", () => ({
-  getCurrentProjectRole: jest.fn(),
-}));
+jest.mock(
+  "@/domains/project/core/usecases/member/getCurrentProjectRole",
+  () => ({
+    getCurrentProjectRole: jest.fn(),
+  })
+);
 
 jest.mock("@/domains/project/core/usecases/member/listProjectMembers", () => ({
   listProjectMembers: jest.fn(),
 }));
 
-jest.mock("@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase", () => ({
-  createBillingVisibilityPort: jest.fn(),
-}));
+jest.mock(
+  "@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase",
+  () => ({
+    createBillingVisibilityPort: jest.fn(),
+  })
+);
 
 jest.mock("@/domains/billing/core/usecases/getBillingVisibility", () => ({
   getBillingVisibility: jest.fn(),
 }));
 
-jest.mock("@/domains/billing/infrastructure/supabase/SubscriptionRepository.supabase", () => ({
-  createSubscriptionRepository: jest.fn(),
-}));
+jest.mock(
+  "@/domains/billing/infrastructure/supabase/SubscriptionRepository.supabase",
+  () => ({
+    createSubscriptionRepository: jest.fn(),
+  })
+);
 
 jest.mock("@/domains/billing/core/usecases/getUserSubscription", () => ({
   getUserSubscription: jest.fn(),
 }));
 
-jest.mock("@/domains/runtimeConfig/infrastructure/supabase/RuntimeConfigPort.supabase", () => ({
-  createRuntimeConfigPort: jest.fn(),
-}));
+jest.mock(
+  "@/domains/runtimeConfig/infrastructure/supabase/RuntimeConfigPort.supabase",
+  () => ({
+    createRuntimeConfigPort: jest.fn(),
+  })
+);
 
-jest.mock("@/domains/runtimeConfig/core/usecases/getRuntimeConfigBoolean", () => ({
-  getRuntimeConfigBoolean: jest.fn(),
-}));
+jest.mock(
+  "@/domains/runtimeConfig/core/usecases/getRuntimeConfigBoolean",
+  () => ({
+    getRuntimeConfigBoolean: jest.fn(),
+  })
+);
 
-jest.mock("@/domains/session/infrastructure/supabase/SessionGateway.supabase", () => ({
-  createSessionGateway: jest.fn(),
-}));
+jest.mock(
+  "@/domains/session/infrastructure/supabase/SessionGateway.supabase",
+  () => ({
+    createSessionGateway: jest.fn(),
+  })
+);
 
-jest.mock("@/modules/board/presentation/projectShell/boardShellAdapter", () => ({
-  __esModule: true,
-  default: ({ projectId }: { projectId: string }) => (
-    <div data-testid="board-shell-adapter">{projectId}</div>
-  ),
-}));
+jest.mock(
+  "@/modules/board/presentation/projectShell/boardShellAdapter",
+  () => ({
+    __esModule: true,
+    default: ({ projectId }: { projectId: string }) => (
+      <div data-testid="board-shell-adapter">{projectId}</div>
+    ),
+  })
+);
 
-jest.mock("@/modules/recipes/presentation/projectShell/recipesShellAdapter", () => ({
-  __esModule: true,
-  default: ({ projectId }: { projectId: string }) => (
-    <div data-testid="recipes-shell-adapter">{projectId}</div>
-  ),
-}));
+jest.mock(
+  "@/modules/recipes/presentation/projectShell/recipesShellAdapter",
+  () => ({
+    __esModule: true,
+    default: ({ projectId }: { projectId: string }) => (
+      <div data-testid="recipes-shell-adapter">{projectId}</div>
+    ),
+  })
+);
 
-jest.mock("@/domains/project/presentation/layouts/projectShell/ProjectShell", () => ({
-  __esModule: true,
-  default: jest.fn(
-    ({
-      children,
-      shellAdapter,
-    }: {
-      children: React.ReactNode;
-      shellAdapter?: React.ReactNode;
-    }) => (
-      <>
-        {shellAdapter}
-        {children}
-      </>
-    )
-  ),
-}));
+jest.mock(
+  "@/domains/project/presentation/layouts/projectShell/ProjectShell",
+  () => ({
+    __esModule: true,
+    default: jest.fn(
+      ({
+        children,
+        shellAdapter,
+      }: {
+        children: React.ReactNode;
+        shellAdapter?: React.ReactNode;
+      }) => (
+        <>
+          {shellAdapter}
+          {children}
+        </>
+      )
+    ),
+  })
+);
 
 describe("ProjectLayout hydration", () => {
   const PROJECT_ID = "62353928-f54a-43da-bb64-9be9c562413a";

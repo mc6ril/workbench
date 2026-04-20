@@ -67,4 +67,3 @@ describe("getTicketByCodeInProject", () => {
     ).rejects.toBeInstanceOf(Error);
   });
 });
-

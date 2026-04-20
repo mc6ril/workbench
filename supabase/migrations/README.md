@@ -48,17 +48,17 @@ The seed migration is **idempotent** - safe to run multiple times. See [docs/sup
 The `000001_initial_schema.sql` migration is a consolidated migration that includes:
 
 - **Tables**: projects, boards, columns, epics, tickets
-- **Constraints**: 
+- **Constraints**:
   - All foreign key constraints
   - All unique constraints
   - All CHECK constraints (position >= 0, string length validation for non-empty fields)
-- **Indexes**: 
+- **Indexes**:
   - All single-column indexes
   - All composite indexes (including `idx_tickets_project_epic` for performance)
-- **Triggers**: 
+- **Triggers**:
   - `update_updated_at_column()` function
   - All `updated_at` triggers for automatic timestamp updates
-- **Features**: 
+- **Features**:
   - `visible` field on columns table (default: true)
 
 This consolidated migration makes it easier to set up fresh databases with the complete schema in a single step. The migration is idempotent and can be safely applied multiple times.

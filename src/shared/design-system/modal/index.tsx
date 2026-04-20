@@ -77,10 +77,7 @@ const Modal = ({
   }
 
   return createPortal(
-    <div
-      className={styles["modal-backdrop"]}
-      onClick={handleBackdropClick}
-    >
+    <div className={styles["modal-backdrop"]} onClick={handleBackdropClick}>
       <ModalDialog
         modalRef={modalRef}
         modalId={modalId}

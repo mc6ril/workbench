@@ -18,7 +18,9 @@ import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 const dehydrateMock = jest.fn((_queryClient?: unknown) => ({
   board: true,
 }));
-const boardPageContentMock = jest.fn((_props: unknown) => <div>Board content</div>);
+const boardPageContentMock = jest.fn((_props: unknown) => (
+  <div>Board content</div>
+));
 
 jest.mock("@tanstack/react-query", () => ({
   HydrationBoundary: ({ children }: { children: React.ReactNode }) => (
@@ -153,7 +155,9 @@ describe("BoardRoutePage hydration", () => {
     jest
       .mocked(createSupabaseServerClient)
       .mockResolvedValue(mockSupabaseClient as never);
-    jest.mocked(createBoardRepository).mockReturnValue(mockBoardRepository as never);
+    jest
+      .mocked(createBoardRepository)
+      .mockReturnValue(mockBoardRepository as never);
     jest
       .mocked(createTicketRepository)
       .mockReturnValue(mockTicketRepository as never);
@@ -178,7 +182,11 @@ describe("BoardRoutePage hydration", () => {
       queryFn: expect.any(Function),
     });
     expect(mockQueryClient.fetchQuery).toHaveBeenNthCalledWith(2, {
-      queryKey: queryKeys.projects.ticketsList(PROJECT_ID, undefined, undefined),
+      queryKey: queryKeys.projects.ticketsList(
+        PROJECT_ID,
+        undefined,
+        undefined
+      ),
       queryFn: expect.any(Function),
     });
     expect(mockQueryClient.fetchQuery).toHaveBeenNthCalledWith(3, {

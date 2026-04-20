@@ -34,7 +34,8 @@
   border-radius: $border-radius-full;
   background-color: $color-surface;
   cursor: pointer;
-  transition: background-color $animation-duration-base $easing-ease-out,
+  transition:
+    background-color $animation-duration-base $easing-ease-out,
     border-color $animation-duration-base $easing-ease-out;
   flex-shrink: 0;
 
@@ -69,7 +70,8 @@
   height: 18px;
   border-radius: $border-radius-full;
   background-color: $color-text-secondary;
-  transition: transform $animation-duration-base $easing-ease-out,
+  transition:
+    transform $animation-duration-base $easing-ease-out,
     background-color $animation-duration-base $easing-ease-out;
   pointer-events: none;
 }

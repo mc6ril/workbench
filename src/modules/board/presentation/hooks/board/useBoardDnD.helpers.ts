@@ -45,7 +45,9 @@ const canReuseColumnTickets = ({
   }
 
   for (let index = 0; index < nextTicketIds.length; index += 1) {
-    if (previousTickets[index] !== ticketViewModelById.get(nextTicketIds[index])) {
+    if (
+      previousTickets[index] !== ticketViewModelById.get(nextTicketIds[index])
+    ) {
       return false;
     }
   }
@@ -77,7 +79,10 @@ export const buildStableBoardColumnTickets = ({
         ticketViewModelById,
       })
     ) {
-      nextBoardColumnTickets.set(column.id, previousTickets ?? EMPTY_BOARD_TICKETS);
+      nextBoardColumnTickets.set(
+        column.id,
+        previousTickets ?? EMPTY_BOARD_TICKETS
+      );
       continue;
     }
 

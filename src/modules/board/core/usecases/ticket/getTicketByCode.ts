@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-import type { GetTicketByCodeInProjectInput, Ticket } from "@/modules/board/core/domain/ticket.types";
+import type {
+  GetTicketByCodeInProjectInput,
+  Ticket,
+} from "@/modules/board/core/domain/ticket.types";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
 
 const GetTicketByCodeInProjectInputSchema = z.object({

@@ -10,7 +10,9 @@ const FOCUSABLE_SELECTOR =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 const getFocusableElements = (container: HTMLElement): HTMLElement[] => {
-  return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
+  return Array.from(
+    container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
+  );
 };
 
 const focusFirstFocusableElement = (
@@ -78,12 +80,10 @@ export const useModalAccessibility = ({
       }
 
       const firstFocusableElement = focusableElements[0];
-      const lastFocusableElement = focusableElements[focusableElements.length - 1];
+      const lastFocusableElement =
+        focusableElements[focusableElements.length - 1];
 
-      if (
-        event.shiftKey &&
-        document.activeElement === firstFocusableElement
-      ) {
+      if (event.shiftKey && document.activeElement === firstFocusableElement) {
         event.preventDefault();
         lastFocusableElement.focus();
         return;

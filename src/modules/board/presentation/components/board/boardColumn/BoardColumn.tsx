@@ -53,9 +53,9 @@ const SortableTicketItemComponent = ({
   const hoverPrefetchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
-  const touchDragIntentTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null
-  );
+  const touchDragIntentTimeoutRef = useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
   const mouseOriginRef = useRef<{
     x: number;
     y: number;
@@ -191,12 +191,7 @@ const SortableTicketItemComponent = ({
         touchDragIntentTimeoutRef.current = null;
       }, BOARD_TOUCH_DRAG_ACTIVATION_DELAY_MS);
     },
-    [
-      clearHoverPrefetch,
-      clearTouchDragIntent,
-      handlePrefetch,
-      isSortable,
-    ]
+    [clearHoverPrefetch, clearTouchDragIntent, handlePrefetch, isSortable]
   );
 
   const handleTouchMove = useCallback(

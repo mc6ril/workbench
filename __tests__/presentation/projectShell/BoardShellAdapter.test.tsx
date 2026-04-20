@@ -34,26 +34,38 @@ jest.mock(
   })
 );
 
-jest.mock("@/domains/project/presentation/hooks/member/useProjectMembers", () => ({
-  useProjectMembers: () => ({
-    data: undefined,
-  }),
-}));
+jest.mock(
+  "@/domains/project/presentation/hooks/member/useProjectMembers",
+  () => ({
+    useProjectMembers: () => ({
+      data: undefined,
+    }),
+  })
+);
 
-jest.mock("@/modules/board/presentation/hooks/board/useBoardConfiguration", () => ({
-  useBoardConfiguration: (...args: unknown[]) =>
-    useBoardConfigurationMock(...args),
-}));
+jest.mock(
+  "@/modules/board/presentation/hooks/board/useBoardConfiguration",
+  () => ({
+    useBoardConfiguration: (...args: unknown[]) =>
+      useBoardConfigurationMock(...args),
+  })
+);
 
-jest.mock("@/modules/board/presentation/hooks/project/useProjectShortCode", () => ({
-  useProjectShortCode: () => ({
-    data: null,
-  }),
-}));
+jest.mock(
+  "@/modules/board/presentation/hooks/project/useProjectShortCode",
+  () => ({
+    useProjectShortCode: () => ({
+      data: null,
+    }),
+  })
+);
 
-jest.mock("@/modules/board/presentation/hooks/realtime/useProjectRealtime", () => ({
-  useProjectRealtime: (...args: unknown[]) => useProjectRealtimeMock(...args),
-}));
+jest.mock(
+  "@/modules/board/presentation/hooks/realtime/useProjectRealtime",
+  () => ({
+    useProjectRealtime: (...args: unknown[]) => useProjectRealtimeMock(...args),
+  })
+);
 
 jest.mock("@/modules/board/presentation/hooks/ticket/useTickets", () => ({
   useTickets: () => ({
@@ -111,13 +123,9 @@ describe("BoardShellAdapter", () => {
         enabled: true,
       }
     );
-    expect(useBoardConfigurationMock).toHaveBeenNthCalledWith(
-      1,
-      "project-1",
-      {
-        enabled: false,
-      }
-    );
+    expect(useBoardConfigurationMock).toHaveBeenNthCalledWith(1, "project-1", {
+      enabled: false,
+    });
     expect(useBoardConfigurationMock).toHaveBeenLastCalledWith("project-1", {
       enabled: true,
     });

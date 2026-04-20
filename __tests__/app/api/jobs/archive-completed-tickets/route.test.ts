@@ -38,10 +38,7 @@ jest.mock("@/shared/observability", () => ({
 
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
 
-import {
-  GET,
-  POST,
-} from "@/app/api/jobs/archive-completed-tickets/route";
+import { GET, POST } from "@/app/api/jobs/archive-completed-tickets/route";
 import { WEEKLY_TICKET_ARCHIVE_TIME_ZONE } from "@/modules/board/core/domain/rules/ticketArchival.rules";
 import { archiveCompletedTicketsBatch } from "@/modules/board/core/usecases/ticket/archiveCompletedTicketsBatch";
 import { createTicketRepository } from "@/modules/board/infrastructure/supabase/ticket/TicketRepository.supabase";

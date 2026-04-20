@@ -8,10 +8,13 @@ export const projectInvitationGateway = createProjectInvitationGateway(
   createSupabaseBrowserClient()
 );
 
-export const projectMemberGateway =
-  createProjectMemberGateway(createSupabaseBrowserClient());
+export const projectMemberGateway = createProjectMemberGateway(
+  createSupabaseBrowserClient()
+);
 
-export const projectGateway = createProjectGateway(createSupabaseBrowserClient());
+export const projectGateway = createProjectGateway(
+  createSupabaseBrowserClient()
+);
 
 export { createProjectInvitationGateway } from "./invitation/ProjectInvitationGateway.supabase";
 export { createProjectMemberGateway } from "./member/ProjectMemberGateway.supabase";

@@ -7,7 +7,11 @@ import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
 import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
 import { useRuntimeLocaleSnapshot } from "@/shared/i18n/useRuntimeLocaleSnapshot";
 import DocumentLang from "@/shared/providers/DocumentLang";
-const NotFoundContent = ({ locale }: { locale: ReturnType<typeof useRuntimeLocaleSnapshot> }) => {
+const NotFoundContent = ({
+  locale,
+}: {
+  locale: ReturnType<typeof useRuntimeLocaleSnapshot>;
+}) => {
   const copy = getFallbackMessages(locale).notFound;
 
   return (

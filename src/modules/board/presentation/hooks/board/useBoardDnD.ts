@@ -337,7 +337,8 @@ export const useBoardDnD = ({
       }
 
       const finalSourceIds = boardAfterDrop[finalSourceColumnId] ?? [];
-      const initialSourceIds = snapshot.boardTicketIds[initialSourceColumnId] ?? [];
+      const initialSourceIds =
+        snapshot.boardTicketIds[initialSourceColumnId] ?? [];
       const noPositionChange =
         finalSourceColumnId === initialSourceColumnId &&
         areIdArraysEqual(finalSourceIds, initialSourceIds);

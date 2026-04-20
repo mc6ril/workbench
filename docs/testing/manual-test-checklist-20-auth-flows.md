@@ -306,6 +306,6 @@ This document provides a checklist for manually testing the authentication flows
 - [ ] Accessibility requirements met
 - [ ] Code quality verified
 
-**Tester**: ********\_********  
-**Date**: ********\_********  
-**Status**: ********\_********
+**Tester**: **\*\*\*\***\_**\*\*\*\***  
+**Date**: **\*\*\*\***\_**\*\*\*\***  
+**Status**: **\*\*\*\***\_**\*\*\*\***

@@ -14,9 +14,7 @@ import type {
 } from "@/modules/board/infrastructure/supabase/board/types";
 
 const parseColumnWorkflowState = (raw: string): ColumnWorkflowState => {
-  if (
-    (COLUMN_WORKFLOW_STATE_VALUES as readonly string[]).includes(raw)
-  ) {
+  if ((COLUMN_WORKFLOW_STATE_VALUES as readonly string[]).includes(raw)) {
     return raw as ColumnWorkflowState;
   }
 

@@ -40,9 +40,12 @@ jest.mock("@/domains/workspace/infrastructure/supabase/gateways", () => ({
   createWorkspaceProjectCatalogGateway: jest.fn(),
 }));
 
-jest.mock("@/domains/workspace/core/usecases/project/listProjectsWithStats", () => ({
-  listProjectsWithStats: jest.fn(),
-}));
+jest.mock(
+  "@/domains/workspace/core/usecases/project/listProjectsWithStats",
+  () => ({
+    listProjectsWithStats: jest.fn(),
+  })
+);
 
 jest.mock(
   "@/domains/workspace/core/usecases/project/listReclaimableProjects",
@@ -88,9 +91,7 @@ describe("WorkspaceRoutePage hydration", () => {
       return queryFn();
     });
 
-    jest
-      .mocked(createAppQueryClient)
-      .mockReturnValue(mockQueryClient as never);
+    jest.mocked(createAppQueryClient).mockReturnValue(mockQueryClient as never);
     jest
       .mocked(createSupabaseServerClient)
       .mockResolvedValue(mockSupabaseClient as never);

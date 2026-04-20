@@ -9,5 +9,7 @@ type Dependencies = {
 export const createRecipe =
   ({ editorRepository }: Dependencies) =>
   (input: SaveRecipeEditorInput) => {
-    return editorRepository.createRecipe(normalizeRecipeEditorSubmission(input));
+    return editorRepository.createRecipe(
+      normalizeRecipeEditorSubmission(input)
+    );
   };

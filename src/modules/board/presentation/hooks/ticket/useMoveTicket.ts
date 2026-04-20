@@ -79,7 +79,9 @@ export const useMoveTicket = () => {
                 position: index,
               }));
 
-            const byId = new Map(ticketsInStatus.map((ticket) => [ticket.id, ticket]));
+            const byId = new Map(
+              ticketsInStatus.map((ticket) => [ticket.id, ticket])
+            );
             normalizedTickets = normalizedTickets.map((ticket) => {
               return byId.get(ticket.id) ?? ticket;
             });

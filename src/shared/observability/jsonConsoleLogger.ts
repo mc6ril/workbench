@@ -3,7 +3,12 @@
  * Pure implementation with no React dependencies.
  */
 
-import type { LogError, Logger, LogLevel, LogMeta } from "@/shared/observability/logger.port";
+import type {
+  LogError,
+  Logger,
+  LogLevel,
+  LogMeta,
+} from "@/shared/observability/logger.port";
 import { isArray, isPlainObject } from "@/shared/utils";
 
 import { shouldLog } from "./config";

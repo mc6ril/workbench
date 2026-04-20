@@ -37,9 +37,9 @@ export const createTicketListFilterKey = (
 
   const hasMeaningfulFilters = Boolean(
     filters.columnId ??
-      filters.priority ??
-      filters.assigneeUserId ??
-      filters.unassignedOnly
+    filters.priority ??
+    filters.assigneeUserId ??
+    filters.unassignedOnly
   );
   if (!hasMeaningfulFilters) {
     return null;

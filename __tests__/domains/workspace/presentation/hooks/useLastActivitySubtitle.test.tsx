@@ -7,25 +7,26 @@ jest.mock("@/shared/i18n", () => {
   return {
     getIntlLocale: actual.getIntlLocale,
     useLocale: () => "fr",
-    useTranslations: () => (key: string, params?: Record<string, string | number>) => {
-      if (key === "lastActivityDate") {
-        return `Dernière activité: ${params?.date ?? ""}`;
-      }
-      if (key === "lastActivityDays") {
-        return params?.days === 1
-          ? "Dernière activité: 1 jour"
-          : `Dernière activité: ${params?.days ?? ""} jours`;
-      }
-      if (key === "lastActivityHours") {
-        return params?.hours === 1
-          ? "Dernière activité: 1 heure"
-          : `Dernière activité: ${params?.hours ?? ""} heures`;
-      }
-      if (key === "lastActivityNow") {
-        return "Dernière activité: à l'instant";
-      }
-      return key;
-    },
+    useTranslations:
+      () => (key: string, params?: Record<string, string | number>) => {
+        if (key === "lastActivityDate") {
+          return `Dernière activité: ${params?.date ?? ""}`;
+        }
+        if (key === "lastActivityDays") {
+          return params?.days === 1
+            ? "Dernière activité: 1 jour"
+            : `Dernière activité: ${params?.days ?? ""} jours`;
+        }
+        if (key === "lastActivityHours") {
+          return params?.hours === 1
+            ? "Dernière activité: 1 heure"
+            : `Dernière activité: ${params?.hours ?? ""} heures`;
+        }
+        if (key === "lastActivityNow") {
+          return "Dernière activité: à l'instant";
+        }
+        return key;
+      },
   };
 });
 

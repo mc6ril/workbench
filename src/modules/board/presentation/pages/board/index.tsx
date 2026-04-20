@@ -79,12 +79,8 @@ const BoardLayout = ({
   const tColumns = useTranslations("pages.board.columns");
   const isCreateTicketModalOpen = searchParams.get("createTicket") === "1";
   const isOnboardingReviewRequested = searchParams.get("onboarding") === "1";
-  const {
-    canComment,
-    canEditTicket,
-    canMoveTicket,
-    canCreateTicket,
-  } = useProjectPermissions();
+  const { canComment, canEditTicket, canMoveTicket, canCreateTicket } =
+    useProjectPermissions();
   const {
     status: gettingStartedStatus,
     canAutoOpen: canAutoOpenGettingStarted,
@@ -151,15 +147,20 @@ const BoardLayout = ({
       !filters.assigneeUserId &&
       !filters.unassignedOnly &&
       effectiveSearch.trim() === "");
-  const { data: tickets = [] } = useTickets(projectId, filters, effectiveSearch, {
-    initialData: shouldUseInitialTickets ? initialTickets : undefined,
-  });
+  const { data: tickets = [] } = useTickets(
+    projectId,
+    filters,
+    effectiveSearch,
+    {
+      initialData: shouldUseInitialTickets ? initialTickets : undefined,
+    }
+  );
   const hasActiveFilters = useMemo(() => {
     return Boolean(
       filters.columnId ||
-        filters.priority ||
-        filters.assigneeUserId ||
-        filters.unassignedOnly
+      filters.priority ||
+      filters.assigneeUserId ||
+      filters.unassignedOnly
     );
   }, [filters]);
   const shouldLoadProjectWideTicketsForProgress =

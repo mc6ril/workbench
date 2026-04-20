@@ -45,10 +45,8 @@
 @keyframes recipes-quick-list-feedback-travel {
   0% {
     opacity: 0;
-    transform:
-      translate3d(0, 0, 0)
-      rotate(var(--recipes-quick-list-feedback-angle))
-      scaleX(0.56);
+    transform: translate3d(0, 0, 0)
+      rotate(var(--recipes-quick-list-feedback-angle)) scaleX(0.56);
   }
 
   18% {
@@ -61,14 +59,12 @@
 
   100% {
     opacity: 0;
-    transform:
-      translate3d(
+    transform: translate3d(
         var(--recipes-quick-list-feedback-translate-x),
         var(--recipes-quick-list-feedback-translate-y),
         0
       )
-      rotate(var(--recipes-quick-list-feedback-angle))
-      scaleX(0.08);
+      rotate(var(--recipes-quick-list-feedback-angle)) scaleX(0.08);
   }
 }
 

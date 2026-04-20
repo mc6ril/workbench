@@ -21,12 +21,7 @@ const getFieldValue = (value: string | null | undefined, fallback: string) => {
   return value;
 };
 
-const RecipeEditorOutlineCard = ({
-  href,
-  mode,
-  draft,
-  ctaLabel,
-}: Props) => {
+const RecipeEditorOutlineCard = ({ href, mode, draft, ctaLabel }: Props) => {
   const isCreate = mode === "create";
 
   return (
@@ -177,8 +172,8 @@ const RecipeEditorOutlineCard = ({
 
         <p className={styles["recipes-scaffold__helper"]}>
           Les quantites simples restent structurees. Si la saisie n&apos;entre
-          pas dans `2`, `2.5` ou `1/2`, on garde le texte tel quel sans
-          supposer une interpretation fragile.
+          pas dans `2`, `2.5` ou `1/2`, on garde le texte tel quel sans supposer
+          une interpretation fragile.
         </p>
       </div>
 

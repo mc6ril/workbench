@@ -32,7 +32,10 @@ export type ProjectInvitationGateway = {
    * Create a new invitation link for a project.
    * @throws DatabaseError if database operation fails or permission denied
    */
-  create(input: { projectId: string; role: ProjectRole }): Promise<ProjectInvitation>;
+  create(input: {
+    projectId: string;
+    role: ProjectRole;
+  }): Promise<ProjectInvitation>;
 
   /**
    * Accept a pending invitation using its token.

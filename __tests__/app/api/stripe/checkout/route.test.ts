@@ -20,9 +20,12 @@ jest.mock("@/shared/infrastructure/supabase/client-server", () => ({
   createSupabaseServerClient: jest.fn(),
 }));
 
-jest.mock("@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase", () => ({
-  createBillingVisibilityPort: jest.fn(),
-}));
+jest.mock(
+  "@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase",
+  () => ({
+    createBillingVisibilityPort: jest.fn(),
+  })
+);
 
 jest.mock("@/domains/billing/core/usecases/getBillingVisibility", () => ({
   getBillingVisibility: jest.fn(),
@@ -44,9 +47,12 @@ jest.mock("@/domains/billing/core/usecases/createCheckoutSession", () => ({
   createCheckoutSession: jest.fn(),
 }));
 
-jest.mock("@/domains/billing/infrastructure/stripe/stripePaymentGateway", () => ({
-  stripePaymentGateway: { provider: "stripe" },
-}));
+jest.mock(
+  "@/domains/billing/infrastructure/stripe/stripePaymentGateway",
+  () => ({
+    stripePaymentGateway: { provider: "stripe" },
+  })
+);
 
 jest.mock("@/shared/observability", () => ({
   createLoggerFactory: () => ({

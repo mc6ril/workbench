@@ -26,9 +26,11 @@ const parseSerializedOverrides = (
     }
 
     return Object.fromEntries(
-      Object.entries(parsedValue).filter((entry): entry is [string, boolean] => {
-        return typeof entry[0] === "string" && typeof entry[1] === "boolean";
-      })
+      Object.entries(parsedValue).filter(
+        (entry): entry is [string, boolean] => {
+          return typeof entry[0] === "string" && typeof entry[1] === "boolean";
+        }
+      )
     );
   } catch {
     return {};

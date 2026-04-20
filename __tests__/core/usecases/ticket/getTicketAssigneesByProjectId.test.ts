@@ -1,4 +1,3 @@
- 
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
 import type { TicketAssignee } from "@/modules/board/core/domain/ticket.types";

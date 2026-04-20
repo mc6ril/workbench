@@ -2,7 +2,10 @@ import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boar
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
 import type { Board, Column } from "@/modules/board/core/domain/board.types";
-import type { Ticket, UpdateTicketInput } from "@/modules/board/core/domain/ticket.types";
+import type {
+  Ticket,
+  UpdateTicketInput,
+} from "@/modules/board/core/domain/ticket.types";
 import { updateTicket } from "@/modules/board/core/usecases/ticket/updateTicket";
 
 describe("updateTicket completedAt workflow logic", () => {
@@ -72,11 +75,17 @@ describe("updateTicket completedAt workflow logic", () => {
   it("sets completedAt when a ticket enters a done column", async () => {
     const now = new Date("2026-03-25T12:00:00.000Z");
     const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => board),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => columns),
+      findByProject: jest.fn<Promise<Board | null>, [string]>(
+        async () => board
+      ),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
     });
     const repository = createTicketRepositoryMock({
-      findById: jest.fn<Promise<Ticket | null>, [string]>(async () => baseTicket),
+      findById: jest.fn<Promise<Ticket | null>, [string]>(
+        async () => baseTicket
+      ),
       update: jest.fn<Promise<Ticket>, [string, UpdateTicketInput]>(
         async (_id, input) => ({
           ...baseTicket,
@@ -106,8 +115,12 @@ describe("updateTicket completedAt workflow logic", () => {
       completedAt: new Date("2026-03-24T08:00:00.000Z"),
     };
     const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => board),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => columns),
+      findByProject: jest.fn<Promise<Board | null>, [string]>(
+        async () => board
+      ),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
     });
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(

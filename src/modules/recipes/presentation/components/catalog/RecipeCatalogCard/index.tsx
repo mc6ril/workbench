@@ -1,6 +1,6 @@
 "use client";
 
-import { type MouseEvent,useEffect, useRef } from "react";
+import { type MouseEvent, useEffect, useRef } from "react";
 import Image from "next/image";
 
 import Link from "@/shared/design-system/link";
@@ -133,8 +133,7 @@ const RecipeCatalogCard = ({
   );
   const customTags = recipe.tags
     .filter(
-      (tag) =>
-        !DEFAULT_TAG_SLUGS.has(tag.slug) && !usedTagSlugs.has(tag.slug)
+      (tag) => !DEFAULT_TAG_SLUGS.has(tag.slug) && !usedTagSlugs.has(tag.slug)
     )
     .slice(0, 2);
   const displayTags = [
@@ -285,7 +284,9 @@ const RecipeCatalogCard = ({
         </div>
 
         <div className={styles["recipes-page__recipe-card-body"]}>
-          <h3 className={styles["recipes-page__recipe-title"]}>{recipe.title}</h3>
+          <h3 className={styles["recipes-page__recipe-title"]}>
+            {recipe.title}
+          </h3>
 
           {recipe.totalTimeLabel ? (
             <p className={styles["recipes-page__recipe-meta"]}>

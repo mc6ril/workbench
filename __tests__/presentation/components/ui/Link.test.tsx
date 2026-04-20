@@ -132,9 +132,11 @@ describe("Link Component", () => {
   });
 
   it("should not call beginNavigation when onClick prevents default", () => {
-    const handleClick = jest.fn((event: React.MouseEvent<HTMLAnchorElement>) => {
-      event.preventDefault();
-    });
+    const handleClick = jest.fn(
+      (event: React.MouseEvent<HTMLAnchorElement>) => {
+        event.preventDefault();
+      }
+    );
 
     render(
       <Link href="/dashboard" onClick={handleClick}>

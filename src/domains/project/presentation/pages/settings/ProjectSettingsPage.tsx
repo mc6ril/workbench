@@ -1,6 +1,12 @@
 "use client";
 
-import { type SubmitEventHandler, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type SubmitEventHandler,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import {
@@ -172,7 +178,9 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
     setBoardEmoji(value);
   };
 
-  const handleProjectSave: SubmitEventHandler<HTMLFormElement> = async (event) => {
+  const handleProjectSave: SubmitEventHandler<HTMLFormElement> = async (
+    event
+  ) => {
     event.preventDefault();
 
     if (isSaveDisabled || project == null) {

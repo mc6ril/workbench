@@ -86,7 +86,9 @@ const loadPersistedDraft = async (
   projectId: string,
   recipeId: string
 ) => {
-  const recipeGraphs = await loadRecipeGraphsByIds(client, projectId, [recipeId]);
+  const recipeGraphs = await loadRecipeGraphsByIds(client, projectId, [
+    recipeId,
+  ]);
   const recipeGraph = recipeGraphs.get(recipeId);
 
   if (!recipeGraph) {
@@ -151,7 +153,9 @@ const replaceRecipeSteps = async (
 
   const { error: insertError } = await client
     .from("recipe_steps")
-    .insert(steps.map((step) => mapPersistedStepToRow(projectId, recipeId, step)));
+    .insert(
+      steps.map((step) => mapPersistedStepToRow(projectId, recipeId, step))
+    );
 
   if (insertError) {
     return handleRepositoryError(insertError, "RecipeStep", recipeId);
@@ -310,10 +314,14 @@ export const createEditorRepository = (
 
   async getDraft(projectId, recipeId) {
     if (!isUuid(recipeId)) {
-      return hasRecipeFixture(recipeId) ? getRecipeDraftFixture(recipeId) : null;
+      return hasRecipeFixture(recipeId)
+        ? getRecipeDraftFixture(recipeId)
+        : null;
     }
 
-    const recipeGraphs = await loadRecipeGraphsByIds(client, projectId, [recipeId]);
+    const recipeGraphs = await loadRecipeGraphsByIds(client, projectId, [
+      recipeId,
+    ]);
     const recipeGraph = recipeGraphs.get(recipeId);
 
     if (!recipeGraph) {

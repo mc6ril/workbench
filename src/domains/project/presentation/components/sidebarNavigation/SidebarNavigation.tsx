@@ -333,7 +333,9 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
                   className={styles["sidebar-navigation__module-preview-card"]}
                 >
                   <div
-                    className={styles["sidebar-navigation__module-preview-topbar"]}
+                    className={
+                      styles["sidebar-navigation__module-preview-topbar"]
+                    }
                     aria-hidden="true"
                   >
                     <span />
@@ -343,30 +345,40 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
 
                   <div>
                     <p
-                      className={styles["sidebar-navigation__module-preview-kicker"]}
+                      className={
+                        styles["sidebar-navigation__module-preview-kicker"]
+                      }
                     >
                       {t("moduleLibrary.preview.kicker")}
                     </p>
                     <h3
-                      className={styles["sidebar-navigation__module-preview-title"]}
+                      className={
+                        styles["sidebar-navigation__module-preview-title"]
+                      }
                     >
                       {t("moduleLibrary.preview.title")}
                     </h3>
                   </div>
 
                   <div
-                    className={styles["sidebar-navigation__module-preview-visual"]}
+                    className={
+                      styles["sidebar-navigation__module-preview-visual"]
+                    }
                     aria-hidden="true"
                   >
                     <div
-                      className={styles["sidebar-navigation__module-preview-catalogue"]}
+                      className={
+                        styles["sidebar-navigation__module-preview-catalogue"]
+                      }
                     >
                       <span />
                       <span />
                       <span />
                     </div>
                     <div
-                      className={styles["sidebar-navigation__module-preview-sidebar"]}
+                      className={
+                        styles["sidebar-navigation__module-preview-sidebar"]
+                      }
                     >
                       <div />
                       <div />
@@ -380,14 +392,13 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
                     ))}
                   </ul>
 
-                  <div
-                    className={styles["sidebar-navigation__module-actions"]}
-                  >
+                  <div className={styles["sidebar-navigation__module-actions"]}>
                     <Button
                       label={recipesModuleCtaLabel}
                       onClick={handleRecipesModuleAction}
                       disabled={
-                        canEnableRecipes && enableProjectModuleMutation.isPending
+                        canEnableRecipes &&
+                        enableProjectModuleMutation.isPending
                       }
                     />
                   </div>
@@ -396,10 +407,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
             </div>
           ) : (
             <div className={styles["sidebar-navigation__module-empty"]}>
-              <Badge
-                label={t("moduleLibrary.empty.badge")}
-                variant="success"
-              />
+              <Badge label={t("moduleLibrary.empty.badge")} variant="success" />
               <h3 className={styles["sidebar-navigation__module-empty-title"]}>
                 {t("moduleLibrary.empty.title")}
               </h3>

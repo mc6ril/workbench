@@ -23,7 +23,8 @@ export const getUserSubscription = async (
   subscriptionRepository: SubscriptionRepository,
   input: GetUserSubscriptionInput
 ): Promise<Subscription> => {
-  const { userId, isSuperuser = false } = GetUserSubscriptionSchema.parse(input);
+  const { userId, isSuperuser = false } =
+    GetUserSubscriptionSchema.parse(input);
 
   if (isSuperuser) {
     return createSuperuserSubscription(userId);

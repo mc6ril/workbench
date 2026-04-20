@@ -39,4 +39,3 @@ describe("getTicketByCodeInProjectIncludingArchived", () => {
     expect(result).toBe(ticket);
   });
 });
-

@@ -16,9 +16,7 @@ import type {
   PersistedRecipeTagInput,
   SaveRecipeEditorInput,
 } from "@/modules/recipes/core/domain/editor/recipeEditor.types";
-import {
-  createRecipeIngredientFromDraftInput,
-} from "@/modules/recipes/core/domain/recipe.types";
+import { createRecipeIngredientFromDraftInput } from "@/modules/recipes/core/domain/recipe.types";
 
 const RecipeEditorTagInputSchema = z.object({
   label: z.string(),
@@ -39,15 +37,19 @@ const RecipeEditorStepInputSchema = z.object({
 const isBlankIngredientRow = (
   ingredient: SaveRecipeEditorInput["validatedIngredients"][number]
 ) => {
-  return !normalizeRecipeEditorText(ingredient.amount) &&
+  return (
+    !normalizeRecipeEditorText(ingredient.amount) &&
     !normalizeRecipeEditorText(ingredient.unit) &&
     !normalizeRecipeEditorText(ingredient.displayName) &&
-    !normalizeRecipeEditorText(ingredient.notes);
+    !normalizeRecipeEditorText(ingredient.notes)
+  );
 };
 
 const isBlankStepRow = (step: SaveRecipeEditorInput["steps"][number]) => {
-  return !normalizeRecipeEditorText(step.instruction) &&
-    !normalizeRecipeEditorText(step.meta);
+  return (
+    !normalizeRecipeEditorText(step.instruction) &&
+    !normalizeRecipeEditorText(step.meta)
+  );
 };
 
 const isBlankTagRow = (tag: SaveRecipeEditorInput["tags"][number]) => {

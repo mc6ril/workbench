@@ -90,11 +90,9 @@ describe("getUserSubscription", () => {
   it("should propagate repository errors", async () => {
     const repositoryError = new Error("database down");
     const repo = createSubscriptionRepositoryMock({
-      getByUserId: jest.fn<Promise<Subscription | null>, [string]>(
-        async () => {
-          throw repositoryError;
-        }
-      ),
+      getByUserId: jest.fn<Promise<Subscription | null>, [string]>(async () => {
+        throw repositoryError;
+      }),
     });
 
     await expect(

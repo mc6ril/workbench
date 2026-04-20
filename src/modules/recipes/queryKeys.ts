@@ -1,7 +1,5 @@
 import type { CatalogRecipeListFilters } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
-import {
-  normalizeCatalogRecipeListFilters,
-} from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import { normalizeCatalogRecipeListFilters } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 
 const createCatalogListFiltersKey = (filters?: CatalogRecipeListFilters) => {
   return normalizeCatalogRecipeListFilters(filters);
@@ -24,7 +22,8 @@ const recipesQueryKeysObject = {
         "infinite",
         createCatalogListFiltersKey(filters),
       ] as const,
-    tags: (projectId: string) => ["recipes", projectId, "catalog", "tags"] as const,
+    tags: (projectId: string) =>
+      ["recipes", projectId, "catalog", "tags"] as const,
     detail: (projectId: string, recipeId: string) =>
       ["recipes", projectId, "catalog", recipeId] as const,
   },

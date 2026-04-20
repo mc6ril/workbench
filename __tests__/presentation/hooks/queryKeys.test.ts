@@ -30,7 +30,9 @@ describe("queryKeys ticket list mapper", () => {
   });
 
   it("returns null for non ticket-list query keys", () => {
-    expect(mapTicketListQueryKey(queryKeys.projects.detail("project-1"))).toBeNull();
+    expect(
+      mapTicketListQueryKey(queryKeys.projects.detail("project-1"))
+    ).toBeNull();
   });
 
   it("returns null for malformed ticket list query keys", () => {

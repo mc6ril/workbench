@@ -44,7 +44,9 @@ export const mapRecipeTagRowToDomain = (row: RecipeTagRow): RecipeTag => {
   };
 };
 
-const mapRecipeStepRowToDomain = (row: RecipeStepRow): Recipe["steps"][number] => {
+const mapRecipeStepRowToDomain = (
+  row: RecipeStepRow
+): Recipe["steps"][number] => {
   return {
     id: row.id,
     position: row.position,
@@ -167,9 +169,7 @@ export const parseShoppingListRecipeSources = (
   });
 };
 
-export const mapShoppingListItemRowToDomain = (
-  row: ShoppingListItemRow
-) => {
+export const mapShoppingListItemRowToDomain = (row: ShoppingListItemRow) => {
   return {
     id: row.id,
     ingredient: mapShoppingListItemIngredientRowToDomain(row),
@@ -216,7 +216,10 @@ export const loadRecipeTagsByRecipeIds = async (
   }
 
   const tagRowsById = new Map(
-    ((tagData ?? []) as RecipeTagRow[]).map((tag) => [tag.id, mapRecipeTagRowToDomain(tag)])
+    ((tagData ?? []) as RecipeTagRow[]).map((tag) => [
+      tag.id,
+      mapRecipeTagRowToDomain(tag),
+    ])
   );
 
   const tagsByRecipeId = new Map<string, RecipeTag[]>();
@@ -299,7 +302,11 @@ export const loadRecipeGraphsByIds = async (
   ]);
 
   if (ingredientError) {
-    return handleRepositoryError(ingredientError, "RecipeIngredient", projectId);
+    return handleRepositoryError(
+      ingredientError,
+      "RecipeIngredient",
+      projectId
+    );
   }
 
   if (stepError) {
@@ -332,7 +339,9 @@ export const loadRecipeGraphsByIds = async (
   const ingredientsByRecipeId = new Map<string, RecipeIngredientRow[]>();
   const stepsByRecipeId = new Map<string, RecipeStepRow[]>();
   const tagsByRecipeId = new Map<string, RecipeTag[]>();
-  const tagRowsById = new Map(tags.map((tag) => [tag.id, mapRecipeTagRowToDomain(tag)]));
+  const tagRowsById = new Map(
+    tags.map((tag) => [tag.id, mapRecipeTagRowToDomain(tag)])
+  );
 
   for (const ingredient of (ingredientData ?? []) as RecipeIngredientRow[]) {
     const currentRecipeIngredients =

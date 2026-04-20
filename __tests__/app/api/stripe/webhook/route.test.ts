@@ -113,8 +113,9 @@ describe("POST /api/stripe/webhook", () => {
 
   it("processes valid webhook requests with the admin repository", async () => {
     const adminClient = {} as ReturnType<typeof createSupabaseAdminClient>;
-    const subscriptionRepository =
-      {} as ReturnType<typeof createSubscriptionRepository>;
+    const subscriptionRepository = {} as ReturnType<
+      typeof createSubscriptionRepository
+    >;
 
     jest.mocked(createSupabaseAdminClient).mockReturnValue(adminClient);
     jest

@@ -73,17 +73,21 @@ export const useRecipesQuickListFeedbackStore =
     },
 
     getProjectedCount: (fallbackCount) => {
-      const latestAnimation = get().animations.reduce<
-        RecipesQuickListFeedbackAnimation | null
-      >((currentLatest, animation) => {
-        if (!currentLatest || animation.sequence > currentLatest.sequence) {
-          return animation;
-        }
+      const latestAnimation =
+        get().animations.reduce<RecipesQuickListFeedbackAnimation | null>(
+          (currentLatest, animation) => {
+            if (!currentLatest || animation.sequence > currentLatest.sequence) {
+              return animation;
+            }
 
-        return currentLatest;
-      }, null);
+            return currentLatest;
+          },
+          null
+        );
 
-      return latestAnimation?.targetCount ?? get().displayedCount ?? fallbackCount;
+      return (
+        latestAnimation?.targetCount ?? get().displayedCount ?? fallbackCount
+      );
     },
 
     enqueueAnimation: (input) => {
@@ -104,7 +108,9 @@ export const useRecipesQuickListFeedbackStore =
 
     completeAnimation: (animationId) => {
       set((state) => {
-        const animation = state.animations.find((item) => item.id === animationId);
+        const animation = state.animations.find(
+          (item) => item.id === animationId
+        );
 
         if (!animation) {
           return state;
@@ -112,12 +118,16 @@ export const useRecipesQuickListFeedbackStore =
 
         if (animation.sequence <= state.lastCommittedSequence) {
           return {
-            animations: state.animations.filter((item) => item.id !== animationId),
+            animations: state.animations.filter(
+              (item) => item.id !== animationId
+            ),
           };
         }
 
         return {
-          animations: state.animations.filter((item) => item.id !== animationId),
+          animations: state.animations.filter(
+            (item) => item.id !== animationId
+          ),
           displayedCount: animation.targetCount,
           badgePulseKey: state.badgePulseKey + 1,
           lastCommittedSequence: animation.sequence,

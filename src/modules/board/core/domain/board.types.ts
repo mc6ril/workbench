@@ -1,4 +1,8 @@
-export const COLUMN_WORKFLOW_STATE_VALUES = ["todo", "in_progress", "done"] as const;
+export const COLUMN_WORKFLOW_STATE_VALUES = [
+  "todo",
+  "in_progress",
+  "done",
+] as const;
 
 /**
  * Canonical workflow state for board columns.
@@ -66,4 +70,3 @@ export type ConfigureColumnsInput = {
     visible: boolean;
   }>;
 };
-

@@ -5,10 +5,7 @@ type Props = {
   extraTools?: ProjectToolbarExtraTool[];
 };
 
-const buildToolClassName = (
-  isActive: boolean,
-  hasBadge: boolean
-): string => {
+const buildToolClassName = (isActive: boolean, hasBadge: boolean): string => {
   return [
     styles["project-toolbar__tool"],
     isActive ? styles["project-toolbar__tool--active"] : undefined,
@@ -27,7 +24,8 @@ const ProjectToolbarTools = ({ extraTools = [] }: Props) => {
     <div className={styles["project-toolbar__tools"]}>
       {extraTools.map((tool) => {
         const hasBadge = (tool.badgeCount ?? 0) > 0;
-        const badgeLabel = (tool.badgeCount ?? 0) > 99 ? "99+" : tool.badgeCount;
+        const badgeLabel =
+          (tool.badgeCount ?? 0) > 99 ? "99+" : tool.badgeCount;
 
         return (
           <button

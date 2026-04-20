@@ -4,10 +4,7 @@ import {
   isAppError,
   normalizeToAppError,
 } from "@/shared/errors/appError";
-import {
-  APP_ERROR_CODE,
-  AUTH_ERROR_CODE,
-} from "@/shared/errors/appErrorCodes";
+import { APP_ERROR_CODE, AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 
 describe("AppError", () => {

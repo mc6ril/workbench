@@ -18,9 +18,12 @@ jest.mock("@/domains/auth/infrastructure/supabase/repositories", () => ({
   authGateway: { tag: "authGateway" },
 }));
 
-jest.mock("@/domains/auth/presentation/utils/invalidatePostAuthMutation", () => ({
-  invalidatePostAuthMutation: jest.fn(),
-}));
+jest.mock(
+  "@/domains/auth/presentation/utils/invalidatePostAuthMutation",
+  () => ({
+    invalidatePostAuthMutation: jest.fn(),
+  })
+);
 
 jest.mock("@/shared/navigation/documentNavigation", () => ({
   navigateToDocumentPath: jest.fn(),
@@ -65,6 +68,8 @@ describe("useSignOut", () => {
 
     expect(clearSpy).toHaveBeenCalledTimes(1);
     expect(navigateToDocumentPath).toHaveBeenCalledWith(PAGE_ROUTES.HOME);
-    expect(document.cookie).not.toContain(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES);
+    expect(document.cookie).not.toContain(
+      APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES
+    );
   });
 });

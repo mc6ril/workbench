@@ -1,4 +1,4 @@
-import { fireEvent,render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 
 import Card from "@/shared/design-system/card";
 

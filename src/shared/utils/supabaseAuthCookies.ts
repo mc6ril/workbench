@@ -38,7 +38,9 @@ export const getCookieNames = (cookieHeader: string): string[] => {
 /**
  * Check whether a cookie collection contains a Supabase auth token cookie.
  */
-export const hasSupabaseAuthCookie = (cookieNames: Iterable<string>): boolean => {
+export const hasSupabaseAuthCookie = (
+  cookieNames: Iterable<string>
+): boolean => {
   for (const cookieName of cookieNames) {
     if (isSupabaseAuthCookieName(cookieName)) {
       return true;

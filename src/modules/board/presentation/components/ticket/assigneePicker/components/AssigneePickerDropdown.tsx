@@ -54,7 +54,10 @@ const AssigneePickerDropdown = ({
               {member.profile.displayName || member.profile.email}
             </span>
             {isAssigned && (
-              <span className={styles["assignee-picker__check"]} aria-hidden="true">
+              <span
+                className={styles["assignee-picker__check"]}
+                aria-hidden="true"
+              >
                 ✓
               </span>
             )}
