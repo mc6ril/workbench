@@ -143,6 +143,19 @@ describe("middleware", () => {
     expect(setCookie).toContain(`${localeCookieName}=en`);
   });
 
+  it("redirects a first marketing visit to the preferred locale from Accept-Language", async () => {
+    const res = await middleware(
+      createRequest(PAGE_ROUTES.PRICING, {
+        headers: { "accept-language": "en-GB,en;q=0.9" },
+      })
+    );
+    expect(res.status).toBe(307);
+    expect(res.headers.get("location")).toBe(
+      `${baseUrl}${buildMarketingPricingPath("en")}`
+    );
+    expect(res.headers.get("set-cookie")).toContain(`${localeCookieName}=en`);
+  });
+
   it("resets a stale locale cookie on default-locale marketing URLs", async () => {
     const res = await middleware(
       createRequest(PAGE_ROUTES.PRICING, {
@@ -152,6 +165,17 @@ describe("middleware", () => {
     );
     const setCookie = res.headers.get("set-cookie");
     expect(setCookie).toContain(`${localeCookieName}=fr`);
+  });
+
+  it("keeps an explicit marketing locale URL stable even when headers prefer another language", async () => {
+    const res = await middleware(
+      createRequest(buildMarketingPricingPath("en"), {
+        headers: { "accept-language": "es-ES,es;q=0.9" },
+      })
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers.get("location")).toBeNull();
+    expect(res.headers.get("set-cookie")).toContain(`${localeCookieName}=en`);
   });
 
   it("passes through when locale cookie is set on auth route (server reads header in RSC)", async () => {

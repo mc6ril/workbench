@@ -1,12 +1,13 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
 
 import { defaultLocale, isSupportedLocale } from "@/shared/i18n/config";
 import {
   buildMarketingHomePath,
   buildMarketingPricingPath,
 } from "@/shared/i18n/marketingPaths";
+import { getStaticTranslator } from "@/shared/i18n/staticTranslator";
 import AppProvider from "@/shared/providers/AppProvider";
 import { buildPublicMetadata } from "@/shared/seo/buildPublicMetadata";
 
@@ -26,10 +27,7 @@ export const generateMetadata = async ({
     return {};
   }
 
-  const tMetadata = await getTranslations({
-    locale,
-    namespace: "pages.pricing.metadata",
-  });
+  const tMetadata = getStaticTranslator(locale, "pages.pricing.metadata");
 
   return buildPublicMetadata({
     locale,
@@ -55,7 +53,9 @@ const Pricing = async ({ params }: PageProps) => {
 
   return (
     <AppProvider>
-      <PricingPage />
+      <Suspense fallback={null}>
+        <PricingPage />
+      </Suspense>
     </AppProvider>
   );
 };

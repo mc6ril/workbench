@@ -5,6 +5,7 @@ import {
   buildMarketingPricingPath,
   getResolvedMarketingLocaleFromPathname,
   isDefaultLocaleMarketingPathname,
+  localizeMarketingPathname,
 } from "@/shared/i18n/marketingPaths";
 
 describe("marketingPaths", () => {
@@ -47,6 +48,19 @@ describe("marketingPaths", () => {
     );
     expect(isDefaultLocaleMarketingPathname(buildMarketingHomePath("en"))).toBe(
       false
+    );
+  });
+
+  it("localizes marketing paths while keeping their public canonical shape", () => {
+    expect(localizeMarketingPathname(PAGE_ROUTES.HOME, "en")).toBe("/en");
+    expect(localizeMarketingPathname(PAGE_ROUTES.PRICING, "es")).toBe(
+      "/es/pricing"
+    );
+    expect(localizeMarketingPathname("/legal/privacy", "en")).toBe(
+      "/en/legal/privacy"
+    );
+    expect(localizeMarketingPathname("/en/pricing", "fr")).toBe(
+      PAGE_ROUTES.PRICING
     );
   });
 });

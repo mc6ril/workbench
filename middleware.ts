@@ -5,12 +5,15 @@ import { type CookieOptions, createServerClient } from "@supabase/ssr";
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { requireNonEmptyEnv } from "@/shared/errors/programmingError";
 import {
+  defaultLocale,
   localeCookieMaxAgeSeconds,
   localeCookieName,
 } from "@/shared/i18n/config";
 import {
   getMarketingLocaleFromPathname,
   getResolvedMarketingLocaleFromPathname,
+  isDefaultLocaleMarketingPathname,
+  localizeMarketingPathname,
 } from "@/shared/i18n/marketingPaths";
 import { routing } from "@/shared/i18n/routing";
 import { resolveRuntimeLocale } from "@/shared/i18n/runtimeLocale";
@@ -27,6 +30,19 @@ import {
 const NEXT_INTL_LOCALE_HEADER_NAME = "X-NEXT-INTL-LOCALE";
 const INTERNAL_MARKETING_ROOT = "/marketing";
 const handleMarketingLocale = createMiddleware(routing);
+
+const setLocaleCookie = (
+  response: NextResponse,
+  locale: string
+): NextResponse => {
+  response.cookies.set(localeCookieName, locale, {
+    path: "/",
+    sameSite: "lax",
+    maxAge: localeCookieMaxAgeSeconds,
+  });
+
+  return response;
+};
 
 /**
  * Create Supabase client for Edge Runtime (middleware).
@@ -87,18 +103,13 @@ const appendLocaleResponseCookies = (
   pathname: string,
   currentCookieLocale?: string
 ): NextResponse => {
-  const resolvedMarketingLocale = getResolvedMarketingLocaleFromPathname(
-    pathname
-  );
+  const resolvedMarketingLocale =
+    getResolvedMarketingLocaleFromPathname(pathname);
   if (
     resolvedMarketingLocale &&
     resolvedMarketingLocale !== currentCookieLocale
   ) {
-    response.cookies.set(localeCookieName, resolvedMarketingLocale, {
-      path: "/",
-      sameSite: "lax",
-      maxAge: localeCookieMaxAgeSeconds,
-    });
+    return setLocaleCookie(response, resolvedMarketingLocale);
   }
 
   return response;
@@ -177,6 +188,28 @@ export const middleware = async (
   }
 
   if (isMarketingPublicRoute(pathname)) {
+    if (
+      !cookieLocale &&
+      !pathLocale &&
+      isDefaultLocaleMarketingPathname(pathname)
+    ) {
+      const initialMarketingLocale = resolveRuntimeLocale({ acceptLanguage });
+
+      if (initialMarketingLocale !== defaultLocale) {
+        const localizedPathname = localizeMarketingPathname(
+          pathname,
+          initialMarketingLocale
+        );
+        const redirectUrl = new URL(localizedPathname, request.url);
+        redirectUrl.search = request.nextUrl.search;
+
+        return setLocaleCookie(
+          NextResponse.redirect(redirectUrl),
+          initialMarketingLocale
+        );
+      }
+    }
+
     return appendLocaleResponseCookies(
       handleMarketingLocale(request),
       pathname,

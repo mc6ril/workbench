@@ -46,6 +46,36 @@ export const buildMarketingLegalPath = (locale: Locale): string => {
 };
 
 /**
+ * Rewrites a marketing pathname to its locale-specific public URL.
+ * Non-marketing paths are returned unchanged.
+ */
+export const localizeMarketingPathname = (
+  pathname: string,
+  locale: Locale
+): string => {
+  const normalizedPathname = normalizeMarketingPathname(pathname);
+  const explicitLocale = getMarketingLocaleFromPathname(normalizedPathname);
+
+  if (explicitLocale) {
+    const suffix = normalizedPathname.slice(explicitLocale.length + 1);
+
+    return locale === defaultLocale
+      ? suffix || PAGE_ROUTES.HOME
+      : `/${locale}${suffix}`;
+  }
+
+  if (!isDefaultLocaleMarketingPathname(normalizedPathname)) {
+    return normalizedPathname;
+  }
+
+  return locale === defaultLocale
+    ? normalizedPathname
+    : normalizedPathname === PAGE_ROUTES.HOME
+      ? `/${locale}`
+      : `/${locale}${normalizedPathname}`;
+};
+
+/**
  * Returns the locale segment when the pathname uses an explicit locale prefix.
  */
 export const getMarketingLocaleFromPathname = (

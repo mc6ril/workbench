@@ -2,12 +2,12 @@
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
-import { getIntlLocale } from "@/shared/i18n";
 import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
 import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
 import { useRuntimeLocaleSnapshot } from "@/shared/i18n/useRuntimeLocaleSnapshot";
-import DocumentLang from "@/shared/providers/DocumentLang";
-const NotFoundContent = ({ locale }: { locale: ReturnType<typeof useRuntimeLocaleSnapshot> }) => {
+
+const MarketingNotFoundPage = () => {
+  const locale = useRuntimeLocaleSnapshot();
   const copy = getFallbackMessages(locale).notFound;
 
   return (
@@ -36,17 +36,4 @@ const NotFoundContent = ({ locale }: { locale: ReturnType<typeof useRuntimeLocal
   );
 };
 
-const NotFoundPage = () => {
-  const locale = useRuntimeLocaleSnapshot();
-
-  return (
-    <>
-      <DocumentLang lang={getIntlLocale(locale)} />
-      <div className="app-root" lang={getIntlLocale(locale)}>
-        <NotFoundContent locale={locale} />
-      </div>
-    </>
-  );
-};
-
-export default NotFoundPage;
+export default MarketingNotFoundPage;

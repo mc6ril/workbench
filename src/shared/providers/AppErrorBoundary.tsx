@@ -5,8 +5,9 @@ import { Component } from "react";
 import { usePathname } from "next/navigation";
 
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
-import { useLocale, useTranslations } from "@/shared/i18n";
+import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
 import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { useRuntimeLocaleSnapshot } from "@/shared/i18n/useRuntimeLocaleSnapshot";
 
 type AppErrorBoundaryProps = {
   children: ReactNode;
@@ -63,9 +64,9 @@ class InternalAppErrorBoundary extends Component<BoundaryProps, BoundaryState> {
 }
 
 const AppErrorBoundary = ({ children }: AppErrorBoundaryProps) => {
-  const locale = useLocale();
+  const locale = useRuntimeLocaleSnapshot();
   const pathname = usePathname() ?? "";
-  const t = useTranslations("pages.fallback");
+  const copy = getFallbackMessages(locale).error;
   const homePath = buildMarketingHomePath(locale);
 
   return (
@@ -74,24 +75,24 @@ const AppErrorBoundary = ({ children }: AppErrorBoundaryProps) => {
       fallback={({ error, reset }) => (
         <RouteFallbackPage
           tone="error"
-          eyebrow={t("error.eyebrow")}
-          statusLabel={t("error.status")}
+          eyebrow={copy.eyebrow}
+          statusLabel={copy.status}
           statusValue="500"
-          title={t("error.title")}
-          message={t("error.message")}
+          title={copy.title}
+          message={copy.message}
           detail={
             process.env.NODE_ENV === "development" ? error.message : undefined
           }
           actions={[
             {
-              label: t("error.primaryAction"),
-              ariaLabel: t("error.primaryActionAriaLabel"),
+              label: copy.primaryAction,
+              ariaLabel: copy.primaryActionAriaLabel,
               onClick: reset,
               variant: "primary",
             },
             {
-              label: t("error.secondaryAction"),
-              ariaLabel: t("error.secondaryActionAriaLabel"),
+              label: copy.secondaryAction,
+              ariaLabel: copy.secondaryActionAriaLabel,
               href: homePath,
               variant: "secondary",
             },

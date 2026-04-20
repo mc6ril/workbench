@@ -7,6 +7,7 @@ import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/cli
 import { createLoggerFactory } from "@/shared/observability";
 import AppProvider from "@/shared/providers/AppProvider";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
+import RequestIntlProvider from "@/shared/providers/RequestIntlProvider";
 import { noIndexMetadata } from "@/shared/seo/noIndexMetadata";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
@@ -51,7 +52,10 @@ const ProtectedLayout = async ({
         queryFn: () => getProfile(profileGateway, session.userId),
       })
       .catch((error: unknown) => {
-        logger.warn("Profile prefetch failed", { error, userId: session.userId });
+        logger.warn("Profile prefetch failed", {
+          error,
+          userId: session.userId,
+        });
       });
   } catch (error) {
     // Next.js redirect() throws a special error that must be re-thrown
@@ -76,9 +80,11 @@ const ProtectedLayout = async ({
   }
   // User is authenticated, render children
   return (
-    <AppProvider dehydratedState={dehydrate(queryClient)}>
-      {children}
-    </AppProvider>
+    <RequestIntlProvider>
+      <AppProvider dehydratedState={dehydrate(queryClient)}>
+        {children}
+      </AppProvider>
+    </RequestIntlProvider>
   );
 };
 
