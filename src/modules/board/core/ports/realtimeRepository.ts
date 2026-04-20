@@ -1,7 +1,9 @@
 import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 
+export type RealtimePostgresEvent = "*" | "INSERT" | "UPDATE" | "DELETE";
+
 export type RealtimePostgresChangesFilter = {
-  event: "*";
+  event: RealtimePostgresEvent;
   schema: string;
   table: string;
   filter?: string;
