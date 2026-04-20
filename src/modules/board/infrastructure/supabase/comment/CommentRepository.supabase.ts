@@ -29,8 +29,8 @@ export const createCommentRepository = (
     try {
       const { data, error } = await client
         .from("comments")
-        .select("id, tickets!inner(project_id)")
-        .eq("tickets.project_id", projectId)
+        .select("id")
+        .eq("project_id", projectId)
         .limit(1);
 
       if (error) {

@@ -3,6 +3,7 @@
  */
 export type CommentRow = {
   id: string;
+  project_id: string;
   ticket_id: string;
   author_id: string;
   content: string;
