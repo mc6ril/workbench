@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
 
 import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
 import type { Locale } from "@/shared/i18n/config";
@@ -8,6 +7,7 @@ import {
   buildMarketingLegalPath,
   buildMarketingPricingPath,
 } from "@/shared/i18n/marketingPaths";
+import { getStaticTranslator } from "@/shared/i18n/staticTranslator";
 import { getLanguageAlternates } from "@/shared/seo/languageAlternates";
 import {
   getAlternateOpenGraphLocales,
@@ -16,10 +16,7 @@ import {
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 export const buildHomeMetadata = async (locale: Locale): Promise<Metadata> => {
-  const tMetadata = await getTranslations({
-    locale,
-    namespace: "app.metadata",
-  });
+  const tMetadata = getStaticTranslator(locale, "app.metadata");
   const siteUrl = getSiteUrl();
 
   const appTitle = tMetadata("title");

@@ -198,6 +198,9 @@
   justify-content: center;
   gap: $spacing-sm;
   width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 
   @media (min-width: $breakpoint-md) {
     width: auto;
@@ -423,6 +426,9 @@
   grid-template-columns: 1fr;
   gap: $spacing-lg;
   align-items: stretch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 
   @media (min-width: $breakpoint-md) {
     grid-template-columns: repeat(2, 1fr);
@@ -584,6 +590,9 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: $spacing-md;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 
   @media (min-width: $breakpoint-md) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -639,6 +648,9 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: $spacing-lg;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 
   @media (min-width: $breakpoint-md) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -696,6 +708,9 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: $spacing-lg;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 
   @media (min-width: $breakpoint-md) {
     grid-template-columns: repeat(2, minmax(0, 1fr));

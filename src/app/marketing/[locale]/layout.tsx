@@ -1,7 +1,16 @@
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 
-import { isSupportedLocale } from "@/shared/i18n/config";
+import { isSupportedLocale, supportedLocales } from "@/shared/i18n";
+import RequestIntlProvider from "@/shared/providers/RequestIntlProvider";
+
+export const revalidate = 300;
+export const dynamicParams = false;
+export const dynamic = "error";
+
+export const generateStaticParams = () => {
+  return supportedLocales.map((locale) => ({ locale }));
+};
 
 type Props = {
   children: React.ReactNode;
@@ -17,7 +26,7 @@ const LocaleLayout = async ({ children, params }: Props) => {
 
   setRequestLocale(locale);
 
-  return children;
+  return <RequestIntlProvider>{children}</RequestIntlProvider>;
 };
 
 export default LocaleLayout;

@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { localeCookieName } from "@/shared/i18n/config";
+import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
 import {
   buildMarketingHomePath,
   buildMarketingPricingPath,
@@ -36,7 +37,9 @@ describe("GlobalErrorPage", () => {
     });
 
     expect(
-      screen.getByRole("link", { name: "Revenir à la page d'accueil" })
+      screen.getByRole("link", {
+        name: getFallbackMessages("es").globalError.secondaryActionAriaLabel,
+      })
     ).toHaveAttribute("href", buildMarketingHomePath("es"));
   });
 
@@ -50,7 +53,9 @@ describe("GlobalErrorPage", () => {
     });
 
     expect(
-      screen.getByRole("link", { name: "Revenir à la page d'accueil" })
+      screen.getByRole("link", {
+        name: getFallbackMessages("en").globalError.secondaryActionAriaLabel,
+      })
     ).toHaveAttribute("href", buildMarketingHomePath("en"));
   });
 });
