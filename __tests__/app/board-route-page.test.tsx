@@ -4,13 +4,13 @@ import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/cli
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 
 import BoardRoutePage from "@/app/(protected)/[projectId]/board/page";
+import type { Project } from "@/domains/project/core/domain/project.types";
+import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
 import { getBoardConfiguration } from "@/modules/board/core/usecases/board/getBoardConfiguration";
-import { getProjectShortCode } from "@/modules/board/core/usecases/project/getProjectShortCode";
 import { getTicketAssigneesByProjectId } from "@/modules/board/core/usecases/ticket/getTicketAssigneesByProjectId";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 import {
   createBoardRepository,
-  createProjectLookupRepository,
   createTicketRepository,
 } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
@@ -42,7 +42,6 @@ jest.mock("@/shared/infrastructure/supabase/client-server", () => ({
 
 jest.mock("@/modules/board/infrastructure/supabase/repositories", () => ({
   createBoardRepository: jest.fn(),
-  createProjectLookupRepository: jest.fn(),
   createTicketRepository: jest.fn(),
 }));
 
@@ -61,8 +60,8 @@ jest.mock(
   })
 );
 
-jest.mock("@/modules/board/core/usecases/project/getProjectShortCode", () => ({
-  getProjectShortCode: jest.fn(),
+jest.mock("@/domains/project/infrastructure/server/getProjectForRoute", () => ({
+  getProjectForRoute: jest.fn(),
 }));
 
 jest.mock("@/modules/board/presentation/pages/board", () => ({
@@ -71,14 +70,14 @@ jest.mock("@/modules/board/presentation/pages/board", () => ({
 }));
 
 describe("BoardRoutePage hydration", () => {
-  const PROJECT_ID = "project-1";
+  const PROJECT_ID = "a1111111-1111-4111-8111-111111111111";
   const mockQueryClient = {
     fetchQuery: jest.fn(),
+    setQueryData: jest.fn(),
   };
   const mockSupabaseClient = { tag: "supabase" };
   const mockBoardRepository = { tag: "boardRepository" };
   const mockTicketRepository = { tag: "ticketRepository" };
-  const mockProjectLookupRepository = { tag: "projectLookupRepository" };
   const boardConfiguration = {
     board: {
       id: "board-1",
@@ -131,6 +130,15 @@ describe("BoardRoutePage hydration", () => {
     ],
   };
   const projectShortCode = "WB";
+  const projectFromRoute: Project = {
+    id: PROJECT_ID,
+    name: "Test project",
+    shortCode: projectShortCode,
+    boardEmoji: "📋",
+    enabledModules: [],
+    createdAt: new Date("2026-04-09T08:00:00.000Z"),
+    updatedAt: new Date("2026-04-09T08:00:00.000Z"),
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -149,15 +157,12 @@ describe("BoardRoutePage hydration", () => {
     jest
       .mocked(createTicketRepository)
       .mockReturnValue(mockTicketRepository as never);
-    jest
-      .mocked(createProjectLookupRepository)
-      .mockReturnValue(mockProjectLookupRepository as never);
     jest.mocked(getBoardConfiguration).mockResolvedValue(boardConfiguration);
     jest.mocked(listTickets).mockResolvedValue(tickets);
     jest
       .mocked(getTicketAssigneesByProjectId)
       .mockResolvedValue(ticketAssigneesByProjectId);
-    jest.mocked(getProjectShortCode).mockResolvedValue(projectShortCode);
+    jest.mocked(getProjectForRoute).mockResolvedValue(projectFromRoute);
   });
 
   it("hydrates the board page and forwards server snapshots to the client page", async () => {
@@ -180,10 +185,8 @@ describe("BoardRoutePage hydration", () => {
       queryKey: queryKeys.tickets.assigneesByProjectId(PROJECT_ID),
       queryFn: expect.any(Function),
     });
-    expect(mockQueryClient.fetchQuery).toHaveBeenNthCalledWith(4, {
-      queryKey: queryKeys.projects.shortCode(PROJECT_ID),
-      queryFn: expect.any(Function),
-    });
+    expect(mockQueryClient.fetchQuery).toHaveBeenCalledTimes(3);
+    expect(getProjectForRoute).toHaveBeenCalledWith(PROJECT_ID);
     expect(getBoardConfiguration).toHaveBeenCalledWith(
       mockBoardRepository,
       PROJECT_ID
@@ -191,10 +194,6 @@ describe("BoardRoutePage hydration", () => {
     expect(listTickets).toHaveBeenCalledWith(mockTicketRepository, PROJECT_ID);
     expect(getTicketAssigneesByProjectId).toHaveBeenCalledWith(
       mockTicketRepository,
-      PROJECT_ID
-    );
-    expect(getProjectShortCode).toHaveBeenCalledWith(
-      mockProjectLookupRepository,
       PROJECT_ID
     );
     expect(boardPageContentMock).toHaveBeenCalledWith({

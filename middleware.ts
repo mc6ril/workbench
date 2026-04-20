@@ -26,6 +26,7 @@ import {
   isMarketingPublicRoute,
   isProtectedRoute,
 } from "@/shared/utils/routes";
+import { hasSupabaseAuthCookie } from "@/shared/utils/supabaseAuthCookies";
 
 const NEXT_INTL_LOCALE_HEADER_NAME = "X-NEXT-INTL-LOCALE";
 const INTERNAL_MARKETING_ROOT = "/marketing";
@@ -230,6 +231,25 @@ export const middleware = async (
   const isProtected = isProtectedRoute(pathname);
 
   if (!isAuthPage && !isProtected) {
+    const response = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+    return appendLocaleResponseCookies(response, pathname, cookieLocale);
+  }
+
+  const hasAuthCookie = hasSupabaseAuthCookie(
+    request.cookies.getAll().map((cookie) => cookie.name)
+  );
+
+  if (!hasAuthCookie) {
+    if (isProtected) {
+      const signInUrl = new URL(AUTH_PAGE_ROUTES.SIGNIN, request.url);
+      signInUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(signInUrl);
+    }
+
     const response = NextResponse.next({
       request: {
         headers: requestHeaders,

@@ -3,7 +3,10 @@ import { redirect } from "next/navigation";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
-import { APP_COOKIE_KEYS, getCookie } from "@/shared/infrastructure/storage/cookies";
+import {
+  APP_COOKIE_KEYS,
+  getCookie,
+} from "@/shared/infrastructure/storage/cookies";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { createLoggerFactory } from "@/shared/observability";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
@@ -14,6 +17,7 @@ import { getUserSubscription } from "@/domains/billing/core/usecases/getUserSubs
 import { createBillingVisibilityPort } from "@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase";
 import { createSubscriptionRepository } from "@/domains/billing/infrastructure/supabase/SubscriptionRepository.supabase";
 import { queryKeys as billingQueryKeys } from "@/domains/billing/presentation/hooks/queryKeys";
+import type { Project } from "@/domains/project/core/domain/project.types";
 import { getCurrentProjectRole } from "@/domains/project/core/usecases/member/getCurrentProjectRole";
 import { listProjectMembers } from "@/domains/project/core/usecases/member/listProjectMembers";
 import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
@@ -48,11 +52,12 @@ const ProjectLayout = async ({
   params: Promise<{ projectId: string }>;
 }>) => {
   const { projectId } = await params;
+  let project: Project;
 
   try {
     // If project not found or user has no access (per RLS), NotFoundError is thrown.
     // This loader is shared with the segment page and deduplicated per request.
-    await getProjectForRoute(projectId);
+    project = await getProjectForRoute(projectId);
   } catch (error) {
     // Next.js redirect() throws a special error that must be re-thrown
     if (
@@ -82,9 +87,10 @@ const ProjectLayout = async ({
   const runtimeConfigPort = createRuntimeConfigPort(supabaseClient);
   const sessionGateway = createSessionGateway(supabaseClient);
   const session = await sessionGateway.getCurrentSession();
-  const runtimeConfigOverrides = readRuntimeConfigBooleanOverridesFromCookieValue(
-    getCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES, cookieStore)
-  );
+  const runtimeConfigOverrides =
+    readRuntimeConfigBooleanOverridesFromCookieValue(
+      getCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES, cookieStore)
+    );
   const billingOverride = getRuntimeConfigBooleanOverride(
     runtimeConfigOverrides,
     "is_billing_visible"
@@ -148,10 +154,15 @@ const ProjectLayout = async ({
     );
   }
 
+  queryClient.setQueryData(
+    projectQueryKeys.projects.detail(projectId),
+    project
+  );
   await Promise.all(prefetches);
 
   // User has access, render children
-  // Note: We don't pass project data here - client pages fetch via React Query
+  // Project detail is hydrated here so the persistent project shell does not
+  // trigger a duplicate browser fetch for data we already resolved on the server.
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <ProjectShell

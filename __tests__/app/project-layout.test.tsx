@@ -127,6 +127,7 @@ jest.mock("@/domains/project/presentation/layouts/projectShell/ProjectShell", ()
 describe("ProjectLayout hydration", () => {
   const PROJECT_ID = "62353928-f54a-43da-bb64-9be9c562413a";
   const mockQueryClient = {
+    setQueryData: jest.fn(),
     prefetchQuery: jest.fn(),
   };
   const mockSupabaseClient = { tag: "supabase" };
@@ -145,6 +146,7 @@ describe("ProjectLayout hydration", () => {
     jest.clearAllMocks();
     dehydrateMock.mockReturnValue({ dehydrated: true });
 
+    mockQueryClient.setQueryData.mockReset();
     mockQueryClient.prefetchQuery.mockReset();
     mockQueryClient.prefetchQuery.mockImplementation(async ({ queryFn }) => {
       return queryFn();
@@ -203,6 +205,12 @@ describe("ProjectLayout hydration", () => {
     );
     expect(screen.getByText("Project content")).toBeInTheDocument();
     expect(getProjectForRoute).toHaveBeenCalledWith(PROJECT_ID);
+    expect(mockQueryClient.setQueryData).toHaveBeenCalledWith(
+      projectQueryKeys.projects.detail(PROJECT_ID),
+      expect.objectContaining({
+        id: PROJECT_ID,
+      })
+    );
     expect(mockQueryClient.prefetchQuery).toHaveBeenNthCalledWith(1, {
       queryKey: projectQueryKeys.projects.currentRole(PROJECT_ID),
       queryFn: expect.any(Function),
