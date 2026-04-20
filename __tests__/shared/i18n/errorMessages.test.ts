@@ -3,7 +3,10 @@ import {
   AUTH_ERROR_CODE,
   REPOSITORY_ERROR_CODE,
 } from "@/shared/errors/appErrorCodes";
-import { getErrorMessage, getErrorMessageFromAppError } from "@/shared/i18n/errorMessages";
+import {
+  getErrorMessage,
+  getErrorMessageFromAppError,
+} from "@/shared/i18n/errorMessages";
 
 const echoT = (key: string): string => key;
 
@@ -17,7 +20,9 @@ describe("getErrorMessage", () => {
     const err = createAppError(REPOSITORY_ERROR_CODE.NOT_FOUND, {
       context: { entityType: "Ticket", entityId: "t1" },
     });
-    expect(getErrorMessage(err, echoT)).toBe("repository.NOT_FOUND_WITH_ENTITY");
+    expect(getErrorMessage(err, echoT)).toBe(
+      "repository.NOT_FOUND_WITH_ENTITY"
+    );
   });
 
   it("maps domain constraint to domain i18n key", () => {

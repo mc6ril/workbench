@@ -4,13 +4,19 @@ import RecipeCatalogCard from "@/modules/recipes/presentation/components/catalog
 import { useRemoveSelection } from "@/modules/recipes/presentation/hooks/planner/useRemoveSelection";
 import { useSelectRecipe } from "@/modules/recipes/presentation/hooks/planner/useSelectRecipe";
 
-jest.mock("@/modules/recipes/presentation/hooks/planner/useSelectRecipe", () => ({
-  useSelectRecipe: jest.fn(),
-}));
+jest.mock(
+  "@/modules/recipes/presentation/hooks/planner/useSelectRecipe",
+  () => ({
+    useSelectRecipe: jest.fn(),
+  })
+);
 
-jest.mock("@/modules/recipes/presentation/hooks/planner/useRemoveSelection", () => ({
-  useRemoveSelection: jest.fn(),
-}));
+jest.mock(
+  "@/modules/recipes/presentation/hooks/planner/useRemoveSelection",
+  () => ({
+    useRemoveSelection: jest.fn(),
+  })
+);
 
 const selectMutate = jest.fn();
 const removeMutate = jest.fn();

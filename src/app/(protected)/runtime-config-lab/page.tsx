@@ -1,6 +1,9 @@
 import { cookies } from "next/headers";
 
-import { APP_COOKIE_KEYS, getCookie } from "@/shared/infrastructure/storage/cookies";
+import {
+  APP_COOKIE_KEYS,
+  getCookie,
+} from "@/shared/infrastructure/storage/cookies";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 
 import { listRuntimeConfigEntries } from "@/domains/runtimeConfig/core/usecases/listRuntimeConfigEntries";
@@ -15,9 +18,10 @@ const RuntimeConfigLabRoutePage = async () => {
     cookies(),
     listRuntimeConfigEntries(runtimeConfigPort),
   ]);
-  const runtimeConfigOverrides = readRuntimeConfigBooleanOverridesFromCookieValue(
-    getCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES, cookieStore)
-  );
+  const runtimeConfigOverrides =
+    readRuntimeConfigBooleanOverridesFromCookieValue(
+      getCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES, cookieStore)
+    );
 
   return (
     <RuntimeConfigLabPage

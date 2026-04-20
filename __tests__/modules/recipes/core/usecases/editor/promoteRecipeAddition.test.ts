@@ -20,7 +20,9 @@ describe("promoteRecipeAddition", () => {
   });
 
   it("promotes the addition and regenerates the shopping list", async () => {
-    editorRepository.promoteAdditionToValidated.mockResolvedValueOnce(undefined);
+    editorRepository.promoteAdditionToValidated.mockResolvedValueOnce(
+      undefined
+    );
     shoppingRepository.generateShoppingList.mockResolvedValueOnce({
       groups: [],
       checkedCount: 0,

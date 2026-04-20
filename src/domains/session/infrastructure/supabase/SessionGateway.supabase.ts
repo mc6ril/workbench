@@ -10,6 +10,7 @@ import {
   canUpdatePasswordFromAppMetadata,
   isSuperuserFromAppMetadata,
 } from "@/domains/auth/infrastructure/supabase/providerCapabilities";
+import type { CurrentSession } from "@/domains/session/core/domain/session.types";
 import type { SessionGateway } from "@/domains/session/core/ports/session.gateway";
 
 const createAuthenticationError = (debugMessage: string): AppError =>
@@ -34,24 +35,33 @@ const hasBrowserAuthCookie = (): boolean => {
   return hasSupabaseAuthCookieInHeader(document.cookie);
 };
 
-const mapAuthenticatedUserToCurrentSession = (user: {
-  id: string;
+const mapAuthenticatedIdentityToCurrentSession = (identity: {
+  id?: string | null;
   email?: string | null;
   app_metadata?: Record<string, unknown>;
-}) => {
-  const userEmail = user.email;
-
-  if (!userEmail) {
-    handleAuthError(
-      createAuthenticationError("User email not found in authenticated user data")
-    );
-  }
+}): CurrentSession => {
+  const userId =
+    typeof identity.id === "string" && identity.id.length > 0
+      ? identity.id
+      : handleAuthError(
+          createAuthenticationError(
+            "User id not found in authenticated user data"
+          )
+        );
+  const userEmail =
+    typeof identity.email === "string" && identity.email.length > 0
+      ? identity.email
+      : handleAuthError(
+          createAuthenticationError(
+            "User email not found in authenticated user data"
+          )
+        );
 
   return {
-    userId: user.id,
-    loginEmail: userEmail!,
+    userId,
+    loginEmail: userEmail,
     accessToken: "",
-    isSuperuser: isSuperuserFromAppMetadata(user.app_metadata),
+    isSuperuser: isSuperuserFromAppMetadata(identity.app_metadata),
   };
 };
 
@@ -91,10 +101,7 @@ export const createSessionGateway = (
       const isServerContext = typeof window === "undefined";
 
       if (isServerContext) {
-        const {
-          data: { user },
-          error,
-        } = await client.auth.getUser();
+        const { data, error } = await client.auth.getClaims();
 
         if (error) {
           if (isAuthSessionMissingError(error)) {
@@ -104,11 +111,17 @@ export const createSessionGateway = (
           handleAuthError(error);
         }
 
-        if (!user) {
+        const claims = data?.claims;
+
+        if (!claims) {
           return null;
         }
 
-        return mapAuthenticatedUserToCurrentSession(user);
+        return mapAuthenticatedIdentityToCurrentSession({
+          id: claims.sub,
+          email: claims.email,
+          app_metadata: claims.app_metadata,
+        });
       }
 
       if (!hasBrowserAuthCookie()) {
@@ -132,7 +145,7 @@ export const createSessionGateway = (
         return null;
       }
 
-      return mapAuthenticatedUserToCurrentSession(user);
+      return mapAuthenticatedIdentityToCurrentSession(user);
     } catch (error) {
       return handleAuthError(error);
     }

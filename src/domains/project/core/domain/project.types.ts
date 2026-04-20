@@ -7,10 +7,7 @@ export enum ProjectRole {
   VIEWER = "viewer",
 }
 
-export type ProjectRoleLabelKey =
-  | "roleAdmin"
-  | "roleMember"
-  | "roleViewer";
+export type ProjectRoleLabelKey = "roleAdmin" | "roleMember" | "roleViewer";
 
 export const PROJECT_ROLE_LABEL_KEYS = {
   [ProjectRole.ADMIN]: "roleAdmin",

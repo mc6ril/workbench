@@ -8,7 +8,10 @@ const createBillingSessionsClientMock = (
 ): BillingSessionsClientPort => {
   const base: BillingSessionsClientPort = {
     createCheckoutSession: jest.fn(),
-    createBillingPortalSession: jest.fn<Promise<{ url: string }>, [{ from?: string }]>(),
+    createBillingPortalSession: jest.fn<
+      Promise<{ url: string }>,
+      [{ from?: string }]
+    >(),
   };
 
   return {
@@ -20,7 +23,9 @@ const createBillingSessionsClientMock = (
 describe("createBillingPortalSessionClient", () => {
   it("should create a portal session and return the url", async () => {
     const client = createBillingSessionsClientMock({
-      createBillingPortalSession: jest.fn(async () => ({ url: "https://portal.test" })),
+      createBillingPortalSession: jest.fn(async () => ({
+        url: "https://portal.test",
+      })),
     });
 
     const result = await createBillingPortalSessionClient(client, {

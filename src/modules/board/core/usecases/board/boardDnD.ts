@@ -117,7 +117,10 @@ export const buildNextBoardFromDragOver = (
   overId: string
 ): BoardTicketIds => {
   const sourceLocation = getTicketLocation(activeId, previousLocationIndex);
-  const targetColumnId = getBoardDragOverColumnId(overId, previousLocationIndex);
+  const targetColumnId = getBoardDragOverColumnId(
+    overId,
+    previousLocationIndex
+  );
 
   if (sourceLocation == null || targetColumnId == null) {
     return previous;

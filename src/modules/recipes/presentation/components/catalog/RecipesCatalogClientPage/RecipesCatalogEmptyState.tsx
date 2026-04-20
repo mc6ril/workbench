@@ -29,7 +29,10 @@ const RecipesCatalogEmptyState = ({
       <Title variant="h2" className={styles["recipes-page__empty-state-title"]}>
         {t("empty.title")}
       </Title>
-      <Text variant="small" className={styles["recipes-page__empty-state-copy"]}>
+      <Text
+        variant="small"
+        className={styles["recipes-page__empty-state-copy"]}
+      >
         {t("empty.description")}
       </Text>
 

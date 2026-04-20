@@ -93,16 +93,21 @@ describe("moveTicket", () => {
   it("should move ticket to new status and position", async () => {
     // Arrange
     const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => board),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => columns),
+      findByProject: jest.fn<Promise<Board | null>, [string]>(
+        async () => board
+      ),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
     });
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(
         async () => mockTicket
       ),
-      moveTicket: jest.fn<Promise<Ticket>, [string, string, number, Date | null]>(
-        async () => updatedTicket
-      ),
+      moveTicket: jest.fn<
+        Promise<Ticket>,
+        [string, string, number, Date | null]
+      >(async () => updatedTicket),
     });
 
     // Act
@@ -130,11 +135,17 @@ describe("moveTicket", () => {
   it("should set completedAt when moving a ticket into a done column", async () => {
     const now = new Date("2026-03-25T10:00:00.000Z");
     const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => board),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => columns),
+      findByProject: jest.fn<Promise<Board | null>, [string]>(
+        async () => board
+      ),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
     });
     const repository = createTicketRepositoryMock({
-      findById: jest.fn<Promise<Ticket | null>, [string]>(async () => mockTicket),
+      findById: jest.fn<Promise<Ticket | null>, [string]>(
+        async () => mockTicket
+      ),
       moveTicket: jest.fn<
         Promise<Ticket>,
         [string, string, number, Date | null]
@@ -163,8 +174,12 @@ describe("moveTicket", () => {
       completedAt: new Date("2026-03-24T09:00:00.000Z"),
     };
     const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => board),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => columns),
+      findByProject: jest.fn<Promise<Board | null>, [string]>(
+        async () => board
+      ),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
     });
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(
@@ -241,8 +256,12 @@ describe("moveTicket", () => {
     // Arrange
     const repositoryError = new Error("Database connection failed");
     const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => board),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => columns),
+      findByProject: jest.fn<Promise<Board | null>, [string]>(
+        async () => board
+      ),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
     });
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(
@@ -251,11 +270,9 @@ describe("moveTicket", () => {
       moveTicket: jest.fn<
         Promise<Ticket>,
         [string, string, number, Date | null]
-      >(
-        async () => {
-          throw repositoryError;
-        }
-      ),
+      >(async () => {
+        throw repositoryError;
+      }),
     });
 
     // Act & Assert

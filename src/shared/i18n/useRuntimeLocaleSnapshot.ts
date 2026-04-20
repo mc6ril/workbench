@@ -4,7 +4,10 @@ import { useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 
 import type { Locale } from "./config";
-import { getBrowserAcceptLanguage, resolveRuntimeLocale } from "./runtimeLocale";
+import {
+  getBrowserAcceptLanguage,
+  resolveRuntimeLocale,
+} from "./runtimeLocale";
 
 const subscribeToRuntimeLocale = () => {
   return () => {};

@@ -29,12 +29,8 @@ describe("TicketMapper.supabase", () => {
       archived_week_start: "2026-03-24",
     });
 
-    expect(result.completedAt).toEqual(
-      new Date("2026-03-21T10:00:00.000Z")
-    );
-    expect(result.archivedAt).toEqual(
-      new Date("2026-03-24T08:30:00.000Z")
-    );
+    expect(result.completedAt).toEqual(new Date("2026-03-21T10:00:00.000Z"));
+    expect(result.archivedAt).toEqual(new Date("2026-03-24T08:30:00.000Z"));
     expect(result.archivedWeekStart).toEqual(new Date("2026-03-24"));
     expect(result.columnId).toBe(baseRow.column_id);
   });

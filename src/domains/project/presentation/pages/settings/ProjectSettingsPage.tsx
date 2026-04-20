@@ -1,6 +1,12 @@
 "use client";
 
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import {
+  type SubmitEventHandler,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import {
@@ -17,7 +23,7 @@ import Loader from "@/shared/design-system/loader";
 import Modal from "@/shared/design-system/modal";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useTranslations } from "@/shared/i18n";
+import { getIntlLocale, useLocale, useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
@@ -44,6 +50,8 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
   const tDanger = useTranslations("pages.settings.dangerZone");
   const tDelete = useTranslations("pages.settings.delete");
   const tErrors = useTranslations("errors");
+  const locale = useLocale();
+  const intlLocale = useMemo(() => getIntlLocale(locale), [locale]);
 
   const {
     data: project,
@@ -134,11 +142,15 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
       isAllowed: canManageMembers,
     },
   ];
-  const createdAtLabel = project
-    ? new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(
-        project.createdAt
-      )
-    : "";
+  const createdAtLabel = useMemo(() => {
+    if (!project) {
+      return "";
+    }
+
+    return new Intl.DateTimeFormat(intlLocale, {
+      dateStyle: "medium",
+    }).format(project.createdAt);
+  }, [intlLocale, project]);
 
   const projectErrorMessage = projectError
     ? getErrorMessage(projectError, tErrors)
@@ -166,7 +178,9 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
     setBoardEmoji(value);
   };
 
-  const handleProjectSave = async (event: FormEvent<HTMLFormElement>) => {
+  const handleProjectSave: SubmitEventHandler<HTMLFormElement> = async (
+    event
+  ) => {
     event.preventDefault();
 
     if (isSaveDisabled || project == null) {

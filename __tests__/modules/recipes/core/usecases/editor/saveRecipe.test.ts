@@ -115,7 +115,9 @@ describe("normalizeRecipeEditorSubmission", () => {
         coverImageUrl: "",
         note: "",
         tags: [],
-        validatedIngredients: [{ amount: "", unit: "", displayName: "", notes: "" }],
+        validatedIngredients: [
+          { amount: "", unit: "", displayName: "", notes: "" },
+        ],
         additionIngredients: [
           {
             amount: "1",

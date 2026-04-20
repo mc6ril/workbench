@@ -35,7 +35,11 @@ export const moveTicket = async (
   columnId: string,
   position: number
 ): Promise<Ticket> => {
-  const validatedInput = MoveTicketInputSchema.parse({ id, columnId, position });
+  const validatedInput = MoveTicketInputSchema.parse({
+    id,
+    columnId,
+    position,
+  });
 
   const ticket = await repository.findById(validatedInput.id);
   if (!ticket) {

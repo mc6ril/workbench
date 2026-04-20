@@ -8,7 +8,10 @@ import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authR
 import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
 import { createSessionGatewayMock } from "../../../../__mocks__/core/ports/sessionGateway";
 
-import type { AuthResult, SignUpInput } from "@/domains/auth/core/domain/auth.types";
+import type {
+  AuthResult,
+  SignUpInput,
+} from "@/domains/auth/core/domain/auth.types";
 import { signInUser } from "@/domains/auth/core/usecases/user/signInUser";
 import { signUpUser } from "@/domains/auth/core/usecases/user/signUpUser";
 import {
@@ -72,11 +75,9 @@ describe("Auth Flow Tests", () => {
       // Arrange
       const repositoryError = createAuthError.emailAlreadyExists();
       const authRepository = createAuthRepositoryMock({
-        signUp: jest.fn<Promise<AuthResult>, [SignUpInput]>(
-          async () => {
-            throw repositoryError;
-          }
-        ),
+        signUp: jest.fn<Promise<AuthResult>, [SignUpInput]>(async () => {
+          throw repositoryError;
+        }),
       });
 
       // Act & Assert

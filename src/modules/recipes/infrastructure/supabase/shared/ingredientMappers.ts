@@ -1,4 +1,7 @@
-import type { RecipeIngredientRow, ShoppingListItemRow } from "./persistence.types";
+import type {
+  RecipeIngredientRow,
+  ShoppingListItemRow,
+} from "./persistence.types";
 
 import {
   createRecipeIngredient,

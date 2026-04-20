@@ -198,7 +198,13 @@ const TicketDetailCommentsSection = ({
             !canComment || isCreatingComment || commentInput.trim().length === 0
           }
         >
-          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
             <path d="M14 8L2 14l4-6-4-6L14 8z" fill="currentColor" />
           </svg>
         </button>

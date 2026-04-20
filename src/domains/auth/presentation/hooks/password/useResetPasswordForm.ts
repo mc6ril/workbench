@@ -31,7 +31,10 @@ export const useResetPasswordForm = () => {
   useEffect(() => {
     if (resetPasswordMutation.error) {
       const code = getAppErrorCode(resetPasswordMutation.error);
-      const errorMessage = getErrorMessage(resetPasswordMutation.error, tErrors);
+      const errorMessage = getErrorMessage(
+        resetPasswordMutation.error,
+        tErrors
+      );
 
       if (
         code === AUTH_ERROR_CODE.INVALID_EMAIL ||

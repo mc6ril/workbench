@@ -54,7 +54,9 @@ const QuickListSummaryCard = ({ projectId, recipes }: Props) => {
             >
               <div className={styles["recipes-scaffold__summary-copy"]}>
                 <div className={styles["recipes-scaffold__summary-head"]}>
-                  <Link href={buildRecipeDetailRoute(projectId, recipe.recipeId)}>
+                  <Link
+                    href={buildRecipeDetailRoute(projectId, recipe.recipeId)}
+                  >
                     {recipe.title}
                   </Link>
                   <Badge label="Active" variant="success" size="small" />

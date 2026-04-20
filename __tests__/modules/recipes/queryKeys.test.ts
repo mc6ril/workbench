@@ -5,11 +5,7 @@ describe("recipesQueryKeys.catalog.infinite", () => {
     expect(
       recipesQueryKeys.catalog.infinite("project-1", {
         search: "  citron  ",
-        filterOptionIds: [
-          "type-express",
-          "popular-vegetarian",
-          "type-express",
-        ],
+        filterOptionIds: ["type-express", "popular-vegetarian", "type-express"],
       })
     ).toEqual([
       "recipes",

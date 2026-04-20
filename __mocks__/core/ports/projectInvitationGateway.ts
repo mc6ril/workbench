@@ -1,6 +1,4 @@
-import type {
-  ProjectInvitation,
-} from "@/domains/project/core/domain/project.types";
+import type { ProjectInvitation } from "@/domains/project/core/domain/project.types";
 import type { AcceptedProjectInvitation } from "@/domains/project/core/ports/project-invitation.gateway";
 import type { InviteToProjectInput } from "@/domains/project/core/usecases/invitation/inviteToProject";
 

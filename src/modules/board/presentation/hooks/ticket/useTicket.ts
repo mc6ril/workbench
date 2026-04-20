@@ -16,4 +16,3 @@ export const useTicket = (ticketId: string) => {
     enabled: !!ticketId,
   });
 };
-

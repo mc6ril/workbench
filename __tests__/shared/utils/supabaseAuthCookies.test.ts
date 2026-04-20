@@ -12,15 +12,15 @@ describe("supabaseAuthCookies", () => {
     });
 
     it("detects secure chunked Supabase auth cookies", () => {
-      expect(isSupabaseAuthCookieName("__Secure-sb-projectref-auth-token.0")).toBe(
-        true
-      );
+      expect(
+        isSupabaseAuthCookieName("__Secure-sb-projectref-auth-token.0")
+      ).toBe(true);
     });
 
     it("ignores non-auth Supabase cookies", () => {
-      expect(isSupabaseAuthCookieName("sb-projectref-auth-token-code-verifier")).toBe(
-        false
-      );
+      expect(
+        isSupabaseAuthCookieName("sb-projectref-auth-token-code-verifier")
+      ).toBe(false);
       expect(isSupabaseAuthCookieName("sb-projectref-code-verifier")).toBe(
         false
       );

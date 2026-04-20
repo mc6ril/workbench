@@ -23,10 +23,7 @@ jest.mock("next-intl", () => {
     );
   };
 
-  const resolveValue = (
-    namespace: string,
-    key: string
-  ): string | undefined => {
+  const resolveValue = (namespace: string, key: string): string | undefined => {
     const path = namespace ? `${namespace}.${key}` : key;
     const parts = path.split(".");
     let current: unknown = messagesFr;
@@ -40,7 +37,10 @@ jest.mock("next-intl", () => {
     return typeof current === "string" ? current : undefined;
   };
 
-  const translatorCache = new Map<string, ReturnType<typeof createTranslator>>();
+  const translatorCache = new Map<
+    string,
+    ReturnType<typeof createTranslator>
+  >();
 
   function createTranslator(namespace: string) {
     const t = (
@@ -70,11 +70,8 @@ jest.mock("next-intl", () => {
 
   return {
     __esModule: true,
-    NextIntlClientProvider: ({
+    NextIntlClientProvider: ({ children }: { children: React.ReactNode }) =>
       children,
-    }: {
-      children: React.ReactNode;
-    }) => children,
     useLocale: () => "fr",
     useTranslations,
   };

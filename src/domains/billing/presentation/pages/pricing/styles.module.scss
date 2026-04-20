@@ -96,7 +96,8 @@
   position: relative;
   overflow: hidden;
   animation: fadeInUp $animation-duration-slower $easing-ease-out backwards;
-  transition: transform $animation-duration-slow $easing-smooth,
+  transition:
+    transform $animation-duration-slow $easing-smooth,
     box-shadow $animation-duration-slow $easing-smooth;
 
   &:nth-child(1) {
@@ -128,17 +129,15 @@
     left: 0;
     width: 100%;
     height: $accent-bar-width;
-    background: linear-gradient(
-      90deg,
-      $color-accent,
-      $color-accent-peach
-    );
+    background: linear-gradient(90deg, $color-accent, $color-accent-peach);
   }
 }
 
 .pricing-card--current {
   border-color: $color-sage-border;
-  box-shadow: 0 0 0 1px $color-sage-border, $shadow-card;
+  box-shadow:
+    0 0 0 1px $color-sage-border,
+    $shadow-card;
 
   &::after {
     content: "";

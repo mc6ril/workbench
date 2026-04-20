@@ -22,13 +22,10 @@ export const VerifyEmailSchema = z
     code: z.string().min(1, "Code is required").optional(),
     type: VerifyEmailLinkTypeSchema.optional(),
   })
-  .refine(
-    (input) => Boolean(input.token || input.tokenHash || input.code),
-    {
-      message: "A verification token, token hash, or code is required",
-      path: ["token"],
-    }
-  );
+  .refine((input) => Boolean(input.token || input.tokenHash || input.code), {
+    message: "A verification token, token hash, or code is required",
+    path: ["token"],
+  });
 
 /**
  * Verify email address using a verification token.

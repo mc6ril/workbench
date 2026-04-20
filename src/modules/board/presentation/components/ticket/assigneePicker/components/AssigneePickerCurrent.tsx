@@ -45,7 +45,9 @@ const AssigneePickerCurrent = ({
           })}
         </div>
       ) : (
-        <span className={styles["assignee-picker__empty"]}>{noAssigneeLabel}</span>
+        <span className={styles["assignee-picker__empty"]}>
+          {noAssigneeLabel}
+        </span>
       )}
 
       <Button

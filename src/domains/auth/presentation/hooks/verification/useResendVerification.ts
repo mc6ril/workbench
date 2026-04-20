@@ -11,8 +11,7 @@ export const useResendVerification = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (email: string) =>
-      resendVerificationEmail(authGateway, email),
+    mutationFn: (email: string) => resendVerificationEmail(authGateway, email),
     retry: false,
     onSuccess: async () => {
       await invalidatePostAuthMutation(queryClient);

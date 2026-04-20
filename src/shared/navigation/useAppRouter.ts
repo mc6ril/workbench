@@ -19,7 +19,9 @@ type NextNavigateOptions = {
 
 type AppRouterFeedbackOnlyOptions = AppRouterNavigationOptions;
 
-const omitFeedback = <T extends { feedback?: AppRouterNavigationOptions["feedback"] }>(
+const omitFeedback = <
+  T extends { feedback?: AppRouterNavigationOptions["feedback"] },
+>(
   options: T | undefined
 ): Omit<T, "feedback"> | undefined => {
   if (!options) {

@@ -29,7 +29,9 @@ type ParsedNavigationHref = {
 const getNavigationBaseOrigin = (baseOrigin?: string): string => {
   return (
     baseOrigin ??
-    (typeof window !== "undefined" ? window.location.origin : "http://localhost")
+    (typeof window !== "undefined"
+      ? window.location.origin
+      : "http://localhost")
   );
 };
 
@@ -132,7 +134,10 @@ export const doesNavigationCompletionMatchTarget = (
     return redirectTarget?.pathname === target.pathname;
   }
 
-  if (isProjectRoute(target.pathname) && resolved.pathname === PAGE_ROUTES.WORKSPACE) {
+  if (
+    isProjectRoute(target.pathname) &&
+    resolved.pathname === PAGE_ROUTES.WORKSPACE
+  ) {
     return true;
   }
 

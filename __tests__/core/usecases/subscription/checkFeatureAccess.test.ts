@@ -149,7 +149,10 @@ describe("checkFeatureAccess", () => {
         status: SubscriptionStatus.TRIALING,
       });
 
-      const result = checkFeatureAccess(subscription, PlanFeature.CUSTOM_COLUMNS);
+      const result = checkFeatureAccess(
+        subscription,
+        PlanFeature.CUSTOM_COLUMNS
+      );
 
       expect(result.hasAccess).toBe(true);
       expect(result.currentPlan).toBe(SubscriptionPlan.PRO);

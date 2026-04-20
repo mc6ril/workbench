@@ -33,4 +33,3 @@ export type BillingSessionsClientPort = {
     input: CreateBillingPortalSessionClientInput
   ): Promise<{ url: string }>;
 };
-

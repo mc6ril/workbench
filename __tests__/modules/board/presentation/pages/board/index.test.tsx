@@ -36,13 +36,7 @@ jest.mock("next/navigation", () => ({
 }));
 
 jest.mock("@dnd-kit/core", () => ({
-  DndContext: ({
-    id,
-    children,
-  }: {
-    id?: string;
-    children: ReactNode;
-  }) => (
+  DndContext: ({ id, children }: { id?: string; children: ReactNode }) => (
     <div data-testid="dnd-context" data-dnd-id={id}>
       {children}
     </div>
@@ -110,10 +104,13 @@ jest.mock(
   })
 );
 
-jest.mock("@/modules/board/presentation/components/board/boardView/BoardView", () => ({
-  __esModule: true,
-  default: () => <div data-testid="board-view" />,
-}));
+jest.mock(
+  "@/modules/board/presentation/components/board/boardView/BoardView",
+  () => ({
+    __esModule: true,
+    default: () => <div data-testid="board-view" />,
+  })
+);
 
 jest.mock(
   "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView",
@@ -131,18 +128,27 @@ jest.mock(
   })
 );
 
-jest.mock("@/modules/board/presentation/components/ticket/ticketCard/TicketCard", () => ({
-  __esModule: true,
-  default: () => <div data-testid="ticket-card" />,
-}));
+jest.mock(
+  "@/modules/board/presentation/components/ticket/ticketCard/TicketCard",
+  () => ({
+    __esModule: true,
+    default: () => <div data-testid="ticket-card" />,
+  })
+);
 
-jest.mock("@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider", () => ({
-  useProjectPermissions: jest.fn(),
-}));
+jest.mock(
+  "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider",
+  () => ({
+    useProjectPermissions: jest.fn(),
+  })
+);
 
-jest.mock("@/domains/profile/presentation/hooks/useTicketGettingStartedStatus", () => ({
-  useTicketGettingStartedStatus: jest.fn(),
-}));
+jest.mock(
+  "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus",
+  () => ({
+    useTicketGettingStartedStatus: jest.fn(),
+  })
+);
 
 jest.mock(
   "@/modules/board/presentation/hooks/board/useBoardConfiguration",
@@ -218,8 +224,7 @@ describe("BoardPage onboarding", () => {
     columnId: string;
     title: string;
     codeNumber: number;
-  }> =
-    [];
+  }> = [];
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -312,9 +317,9 @@ describe("BoardPage onboarding", () => {
       })
     );
 
-    jest.mocked(usePrefetchTicketDetail).mockReturnValue(
-      mockPrefetchTicketDetail
-    );
+    jest
+      .mocked(usePrefetchTicketDetail)
+      .mockReturnValue(mockPrefetchTicketDetail);
 
     jest.mocked(useTicketAssigneesByProjectId).mockReturnValue(
       asMockedReturn<ReturnType<typeof useTicketAssigneesByProjectId>>({
@@ -559,15 +564,9 @@ describe("BoardPage onboarding", () => {
     expect(useTicketAssigneesByProjectId).toHaveBeenCalledWith(PROJECT_ID, {
       initialData: initialTicketAssigneesByProjectId,
     });
-    expect(useTickets).toHaveBeenNthCalledWith(
-      1,
-      PROJECT_ID,
-      {},
-      "",
-      {
-        initialData: initialTickets,
-      }
-    );
+    expect(useTickets).toHaveBeenNthCalledWith(1, PROJECT_ID, {}, "", {
+      initialData: initialTickets,
+    });
   });
 
   it("passes a stable id to DndContext to avoid SSR hydration mismatches", () => {

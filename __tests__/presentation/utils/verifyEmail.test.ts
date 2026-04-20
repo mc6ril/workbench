@@ -56,9 +56,7 @@ describe("parseVerifyEmailParams", () => {
   });
 
   it("marks callback redirects as session recovery flows", () => {
-    const result = parseVerifyEmailParams(
-      new URLSearchParams("verified=1")
-    );
+    const result = parseVerifyEmailParams(new URLSearchParams("verified=1"));
 
     expect(result).toEqual({
       input: null,

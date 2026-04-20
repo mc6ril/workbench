@@ -92,7 +92,9 @@ export const useProjectSearchSuggestions = ({
         archivedTicket,
       });
 
-      return archivedFallback.length > 0 ? archivedFallback : EMPTY_SEARCH_SUGGESTIONS;
+      return archivedFallback.length > 0
+        ? archivedFallback
+        : EMPTY_SEARCH_SUGGESTIONS;
     }
 
     return EMPTY_SEARCH_SUGGESTIONS;

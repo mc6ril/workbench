@@ -70,8 +70,7 @@ export const APP_ERROR_CODE = Object.freeze({
   ...INFRA_ERROR_CODE,
 } as const);
 
-export type AppErrorCode =
-  (typeof APP_ERROR_CODE)[keyof typeof APP_ERROR_CODE];
+export type AppErrorCode = (typeof APP_ERROR_CODE)[keyof typeof APP_ERROR_CODE];
 
 export const APP_ERROR_CODES = Object.freeze(
   Object.values(APP_ERROR_CODE) as AppErrorCode[]

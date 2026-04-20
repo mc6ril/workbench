@@ -1,7 +1,4 @@
-import {
-  useLocale as useNextIntlLocale,
-  useTranslations,
-} from "next-intl";
+import { useLocale as useNextIntlLocale, useTranslations } from "next-intl";
 
 import type { Locale } from "./routing";
 

@@ -5,6 +5,7 @@ This document explains the project to someone who has never seen the codebase. I
 ## What is Workbench?
 
 Workbench is a web app for managing projects through a **Kanban board**. Each project has:
+
 - a **board** with columns (workflow lanes),
 - **tickets** that move across columns,
 - collaboration features (members, invitations, roles, comments, assignees),
@@ -15,7 +16,9 @@ Think: “a lightweight Jira/Trello-style board per project”, with strong data
 ## What can a user do?
 
 ### Authentication
+
 Users can:
+
 - sign up with email/password,
 - sign in with email/password,
 - sign in with Google OAuth (when supported),
@@ -23,7 +26,9 @@ Users can:
 - verify email (depending on configuration).
 
 ### Workspace
+
 After sign-in, users access the **workspace** area to:
+
 - list projects they can access,
 - create a new project (project name + a board emoji),
 - potentially reclaim access to projects (when applicable).
@@ -31,7 +36,9 @@ After sign-in, users access the **workspace** area to:
 Creating a project navigates the user to the project board route `/{projectId}/board`.
 
 ### Project board (Kanban)
+
 Inside a project, users can:
+
 - view columns (default workflow lanes exist even for new projects),
 - create tickets,
 - move and reorder tickets via drag & drop,
@@ -39,6 +46,7 @@ Inside a project, users can:
 - open a ticket detail page.
 
 Tickets have common agile fields:
+
 - title (required),
 - description (optional),
 - priority,
@@ -50,7 +58,9 @@ Tickets have common agile fields:
 Tickets also have a project-scoped **code number** (incremental identifier inside the project) and support completion and archival timestamps.
 
 ### Project settings and collaboration
+
 Project settings include:
+
 - project metadata (name and board emoji),
 - membership management (list members, remove members, update roles),
 - invitation management (create/revoke invitations),
@@ -59,7 +69,9 @@ Project settings include:
 Invitations are token-based links. A user can join using `/join/{token}`, which enforces authentication before accepting the invitation.
 
 ### Account settings
+
 Users can manage:
+
 - display name and login email,
 - avatar upload/remove,
 - preferences (language, theme, email notifications),
@@ -67,25 +79,32 @@ Users can manage:
 - subscription and billing actions (when billing is enabled).
 
 ### Billing (optional)
+
 Workbench supports paid plans with Stripe:
+
 - `/pricing` shows plan cards and triggers checkout or billing portal actions,
 - subscription entitlements can gate features and/or enforce limits.
 
 ## How the codebase is organized
 
 ### Routes (`src/app/`)
+
 All Next.js routes live here. The codebase uses route groups:
+
 - public routes (landing and static pages),
 - auth routes (signup/signin/reset/update/verify/callback),
 - protected routes (workspace, project board, project settings, account),
 - API routes for Stripe, auth deletion, and background jobs.
 
 Protected route groups use server-side layouts to enforce:
+
 - authenticated session,
 - project access (via RLS-protected lookups).
 
 ### Domains (`src/domains/*`)
+
 Domains contain stable business capabilities:
+
 - `auth`: sign-up/sign-in/sign-out, verification, password flows, OAuth
 - `session`: session loading and auth capability checks
 - `viewer`: “current user” read model used by UI
@@ -96,19 +115,24 @@ Domains contain stable business capabilities:
 - `billing`: subscriptions, entitlements, Stripe integration, billing visibility
 
 Within a domain:
+
 - `core/usecases/*` orchestrate business flows and validate inputs (Zod).
 - `core/ports/*` define interfaces used by usecases.
 - `infrastructure/*` provides Supabase-backed implementations.
 - `presentation/*` provides UI components, pages, hooks, and UI stores.
 
 ### Modules (`src/modules/*`)
+
 Modules are project-scoped, pluggable capabilities.
 
 Current module:
+
 - `board`: board configuration, columns, tickets, drag & drop, comments, assignees, and related flows.
 
 ### Shared (`src/shared/*`)
+
 Cross-cutting code:
+
 - design system components,
 - i18n utilities and translation lookups,
 - accessibility ID helpers,
@@ -118,7 +142,9 @@ Cross-cutting code:
 ## Database and security model (Supabase)
 
 ### Key tables (conceptual)
+
 From migrations and domain types, the core entities are:
+
 - projects
 - project_members (role: admin/member/viewer)
 - project_invitations (token-based)
@@ -130,18 +156,22 @@ From migrations and domain types, the core entities are:
 - subscriptions (Stripe)
 
 ### RLS-first access control
+
 Supabase Row Level Security (RLS) is central:
+
 - membership determines what a user can read,
 - editor roles determine what a user can create/update/delete,
 - admin role is required for member management and project deletion,
 - subscription rows are readable only by the owning user.
 
 If you are debugging “access denied” behavior, start by checking:
+
 - whether the user is in `project_members` for the project,
 - whether their role satisfies `can_edit_project(...)`,
 - whether the UI is calling a usecase that maps to an RLS-protected table/RPC.
 
 ## Practical “first steps” for a new engineer
+
 1. Start at `src/app/` to understand routes and server-side guards.
 2. Read the main pages:
    - workspace page (project list and create project),
@@ -151,4 +181,3 @@ If you are debugging “access denied” behavior, start by checking:
    - account page (profile/preferences/security/billing).
 3. Trace each feature through: presentation hook → usecase → port → Supabase adapter.
 4. Use `supabase/migrations/` to understand the authoritative data model, RLS policies, and RPCs.
-

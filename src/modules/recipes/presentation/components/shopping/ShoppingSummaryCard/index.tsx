@@ -72,7 +72,9 @@ const ShoppingSummaryCard = ({
               className={styles["recipes-scaffold__shopping-group"]}
             >
               <div className={styles["recipes-scaffold__shopping-group-head"]}>
-                <h3 className={styles["recipes-scaffold__shopping-group-title"]}>
+                <h3
+                  className={styles["recipes-scaffold__shopping-group-title"]}
+                >
                   {group.title}
                 </h3>
                 <span className={styles["recipes-scaffold__helper"]}>
@@ -82,7 +84,9 @@ const ShoppingSummaryCard = ({
 
               <div className={styles["recipes-scaffold__shopping-items"]}>
                 {group.items.map((item) => {
-                  const isAddition = isAdditionCandidateIngredient(item.ingredient);
+                  const isAddition = isAdditionCandidateIngredient(
+                    item.ingredient
+                  );
 
                   return (
                     <article
@@ -95,8 +99,16 @@ const ShoppingSummaryCard = ({
                         .filter(Boolean)
                         .join(" ")}
                     >
-                      <div className={styles["recipes-scaffold__shopping-item-top"]}>
-                        <p className={styles["recipes-scaffold__shopping-item-label"]}>
+                      <div
+                        className={
+                          styles["recipes-scaffold__shopping-item-top"]
+                        }
+                      >
+                        <p
+                          className={
+                            styles["recipes-scaffold__shopping-item-label"]
+                          }
+                        >
                           {formatRecipeIngredientLabel(item.ingredient)}
                         </p>
                         {isAddition ? (
@@ -106,12 +118,20 @@ const ShoppingSummaryCard = ({
                         ) : null}
                       </div>
 
-                      <p className={styles["recipes-scaffold__shopping-item-recipes"]}>
+                      <p
+                        className={
+                          styles["recipes-scaffold__shopping-item-recipes"]
+                        }
+                      >
                         {item.recipes.map((recipe) => recipe.title).join(", ")}
                       </p>
 
                       {item.ingredient.notes ? (
-                        <p className={styles["recipes-scaffold__shopping-item-note"]}>
+                        <p
+                          className={
+                            styles["recipes-scaffold__shopping-item-note"]
+                          }
+                        >
                           {item.ingredient.notes}
                         </p>
                       ) : null}

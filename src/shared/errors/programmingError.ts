@@ -13,7 +13,9 @@ export class ProgrammingError extends Error {
   }
 }
 
-export const isProgrammingError = (error: unknown): error is ProgrammingError => {
+export const isProgrammingError = (
+  error: unknown
+): error is ProgrammingError => {
   return error instanceof ProgrammingError;
 };
 

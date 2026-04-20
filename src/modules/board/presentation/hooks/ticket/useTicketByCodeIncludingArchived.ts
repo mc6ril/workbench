@@ -13,7 +13,10 @@ export const useTicketByCodeIncludingArchived = (
     queryKey:
       codeNumber == null
         ? ["tickets", "by-code", "including-archived", projectId, null]
-        : queryKeys.tickets.byCodeInProjectIncludingArchived(projectId, codeNumber),
+        : queryKeys.tickets.byCodeInProjectIncludingArchived(
+            projectId,
+            codeNumber
+          ),
     queryFn: () => {
       if (codeNumber == null) {
         return Promise.resolve(null);
@@ -24,7 +27,7 @@ export const useTicketByCodeIncludingArchived = (
         codeNumber,
       });
     },
-    enabled: Boolean(projectId) && codeNumber != null && (options?.enabled ?? true),
+    enabled:
+      Boolean(projectId) && codeNumber != null && (options?.enabled ?? true),
   });
 };
-

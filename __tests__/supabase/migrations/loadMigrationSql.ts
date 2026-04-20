@@ -1,4 +1,4 @@
-import { existsSync, readdirSync,readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const MIGRATIONS_ROOT = join(process.cwd(), "supabase", "migrations");

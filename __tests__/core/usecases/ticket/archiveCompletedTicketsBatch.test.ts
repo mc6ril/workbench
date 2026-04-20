@@ -7,9 +7,10 @@ describe("archiveCompletedTicketsBatch", () => {
   it("uses the default archival timezone", async () => {
     const runAt = new Date("2026-03-30T00:05:00.000Z");
     const repository = createTicketRepositoryMock({
-      archiveCompletedTicketsBatch: jest.fn<Promise<number>, [{ runAt: Date; timeZone: string }]>(
-        async () => 3
-      ),
+      archiveCompletedTicketsBatch: jest.fn<
+        Promise<number>,
+        [{ runAt: Date; timeZone: string }]
+      >(async () => 3),
     });
 
     const result = await archiveCompletedTicketsBatch(repository, { runAt });
@@ -24,9 +25,10 @@ describe("archiveCompletedTicketsBatch", () => {
   it("allows overriding the archival timezone", async () => {
     const runAt = new Date("2026-03-30T00:05:00.000Z");
     const repository = createTicketRepositoryMock({
-      archiveCompletedTicketsBatch: jest.fn<Promise<number>, [{ runAt: Date; timeZone: string }]>(
-        async () => 1
-      ),
+      archiveCompletedTicketsBatch: jest.fn<
+        Promise<number>,
+        [{ runAt: Date; timeZone: string }]
+      >(async () => 1),
     });
 
     const result = await archiveCompletedTicketsBatch(repository, {

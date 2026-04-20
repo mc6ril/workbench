@@ -3,7 +3,8 @@ import { z } from "zod";
 import type { BillingSessionsClientPort } from "@/domains/billing/core/ports/billingSessionsClient.port";
 import { CreateCheckoutSessionClientInputSchema } from "@/domains/billing/core/ports/billingSessionsClient.port";
 
-const CreateCheckoutSessionClientSchema = CreateCheckoutSessionClientInputSchema;
+const CreateCheckoutSessionClientSchema =
+  CreateCheckoutSessionClientInputSchema;
 
 type CreateCheckoutSessionClientInput = z.infer<
   typeof CreateCheckoutSessionClientSchema
@@ -20,4 +21,3 @@ export const createCheckoutSessionClient = async (
   const parsed = CreateCheckoutSessionClientSchema.parse(input);
   return billingSessionsClient.createCheckoutSession(parsed);
 };
-

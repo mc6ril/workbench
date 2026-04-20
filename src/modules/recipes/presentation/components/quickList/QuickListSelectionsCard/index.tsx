@@ -90,7 +90,8 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
                 markSelectionDoneMutation.variables?.selectionId ===
                   selection.id) ||
               (removeSelectionMutation.isPending &&
-                removeSelectionMutation.variables?.selectionId === selection.id);
+                removeSelectionMutation.variables?.selectionId ===
+                  selection.id);
 
             return (
               <article
@@ -100,14 +101,18 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
                 <div className={styles["recipes-scaffold__summary-copy"]}>
                   <div className={styles["recipes-scaffold__summary-head"]}>
                     <Link
-                      href={buildRecipeDetailRoute(projectId, selection.recipeId)}
+                      href={buildRecipeDetailRoute(
+                        projectId,
+                        selection.recipeId
+                      )}
                     >
                       {selection.title}
                     </Link>
                     <Badge label="Active" variant="success" size="small" />
                   </div>
                   <p className={styles["recipes-scaffold__helper"]}>
-                    {selection.note ?? "Recette retenue pour un prochain repas."}
+                    {selection.note ??
+                      "Recette retenue pour un prochain repas."}
                   </p>
                 </div>
 
@@ -117,7 +122,10 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
                   </span>
                   <div className={styles["recipes-scaffold__actions"]}>
                     <Link
-                      href={buildRecipeDetailRoute(projectId, selection.recipeId)}
+                      href={buildRecipeDetailRoute(
+                        projectId,
+                        selection.recipeId
+                      )}
                     >
                       Voir la fiche
                     </Link>

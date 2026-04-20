@@ -37,9 +37,7 @@ const asMockedReturn = <T,>(value: unknown): T => value as T;
 
 const wrapper = ({ children }: { children: React.ReactNode }) => {
   return (
-    <NextIntlClientProvider locale="en">
-      {children}
-    </NextIntlClientProvider>
+    <NextIntlClientProvider locale="en">{children}</NextIntlClientProvider>
   );
 };
 
@@ -137,6 +135,5 @@ describe("useProfileRuntimeSync", () => {
     await waitFor(() => {
       expect(setThemeMock).toHaveBeenCalledWith("dark");
     });
-
   });
 });

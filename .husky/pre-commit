@@ -2,4 +2,5 @@ yarn lint --fix
 yarn i18n:check-keys
 yarn lint
 yarn tsc
+yarn format
 yarn test

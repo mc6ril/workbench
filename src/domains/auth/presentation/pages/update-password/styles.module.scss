@@ -14,8 +14,7 @@
   align-items: stretch;
   justify-content: flex-start;
   overflow-y: auto;
-  padding:
-    calc(#{$spacing-4xl} + env(safe-area-inset-top))
+  padding: calc(#{$spacing-4xl} + env(safe-area-inset-top))
     calc(#{$spacing-lg} + env(safe-area-inset-right))
     calc(#{$spacing-3xl} + env(safe-area-inset-bottom))
     calc(#{$spacing-lg} + env(safe-area-inset-left));

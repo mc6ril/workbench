@@ -54,9 +54,8 @@ const STRENGTH_LEVEL: Record<PasswordStrength, number> = {
 
 export const MAX_STRENGTH_LEVEL = STRENGTH_LEVEL[PasswordStrength.STRONG];
 
-export const getPasswordStrengthLevel = (
-  strength: PasswordStrength
-): number => STRENGTH_LEVEL[strength];
+export const getPasswordStrengthLevel = (strength: PasswordStrength): number =>
+  STRENGTH_LEVEL[strength];
 
 export const calculatePasswordStrength = (
   password: string

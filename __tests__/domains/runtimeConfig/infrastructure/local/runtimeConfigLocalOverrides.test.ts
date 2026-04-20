@@ -16,12 +16,12 @@ describe("runtimeConfigLocalOverrides", () => {
       is_recipes_board_visible: false,
     });
 
-    expect(readRuntimeConfigBooleanOverridesFromCookieValue(serializedValue)).toEqual(
-      {
-        is_billing_visible: true,
-        is_recipes_board_visible: false,
-      }
-    );
+    expect(
+      readRuntimeConfigBooleanOverridesFromCookieValue(serializedValue)
+    ).toEqual({
+      is_billing_visible: true,
+      is_recipes_board_visible: false,
+    });
   });
 
   it("ignores non-boolean entries from the cookie payload", () => {
@@ -33,11 +33,11 @@ describe("runtimeConfigLocalOverrides", () => {
       })
     );
 
-    expect(readRuntimeConfigBooleanOverridesFromCookieValue(cookieValue)).toEqual(
-      {
-        is_billing_visible: true,
-      }
-    );
+    expect(
+      readRuntimeConfigBooleanOverridesFromCookieValue(cookieValue)
+    ).toEqual({
+      is_billing_visible: true,
+    });
   });
 
   it("reads overrides from a cookie header", () => {

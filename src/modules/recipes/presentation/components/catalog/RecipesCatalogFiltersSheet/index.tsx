@@ -104,7 +104,9 @@ const RecipesCatalogFiltersSheet = ({
 
                 <div className={styles["recipes-page__sheet-options"]}>
                   {group.options.map((option) => {
-                    const isActive = selectedFilterOptionIds.includes(option.id);
+                    const isActive = selectedFilterOptionIds.includes(
+                      option.id
+                    );
 
                     return (
                       <div

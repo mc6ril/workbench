@@ -102,7 +102,7 @@ export const useVerifyEmailFlow = () => {
         ? getErrorMessage(verifyEmailMutation.error, tErrors)
         : hasSessionRecoveryError
           ? tErrors("auth.EMAIL_VERIFICATION_ERROR")
-        : undefined;
+          : undefined;
 
   return {
     isMissingToken: parsedParams.isMissingToken,

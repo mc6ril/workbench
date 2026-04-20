@@ -2,7 +2,11 @@ import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 
-import { getIntlLocale, isSupportedLocale, supportedLocales } from "@/shared/i18n";
+import {
+  getIntlLocale,
+  isSupportedLocale,
+  supportedLocales,
+} from "@/shared/i18n";
 import { getStaticMessages } from "@/shared/i18n/staticTranslator";
 import DocumentLang from "@/shared/providers/DocumentLang";
 

@@ -2,7 +2,10 @@ import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boar
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
 import type { Board, Column } from "@/modules/board/core/domain/board.types";
-import type { CreateTicketInput, Ticket } from "@/modules/board/core/domain/ticket.types";
+import type {
+  CreateTicketInput,
+  Ticket,
+} from "@/modules/board/core/domain/ticket.types";
 import { createTicket } from "@/modules/board/core/usecases/ticket/createTicket";
 
 describe("createTicket completedAt workflow logic", () => {
@@ -58,8 +61,12 @@ describe("createTicket completedAt workflow logic", () => {
       position: 0,
     };
     const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => board),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => columns),
+      findByProject: jest.fn<Promise<Board | null>, [string]>(
+        async () => board
+      ),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
     });
     const repository = createTicketRepositoryMock({
       getNextCodeNumberForProject: jest.fn<Promise<number>, [string]>(
@@ -102,8 +109,12 @@ describe("createTicket completedAt workflow logic", () => {
       position: 0,
     };
     const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(async () => board),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => columns),
+      findByProject: jest.fn<Promise<Board | null>, [string]>(
+        async () => board
+      ),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => columns
+      ),
     });
     const repository = createTicketRepositoryMock({
       getNextCodeNumberForProject: jest.fn<Promise<number>, [string]>(
@@ -114,9 +125,9 @@ describe("createTicket completedAt workflow logic", () => {
       }),
     });
 
-    await expect(createTicket(repository, boardRepository, input)).rejects.toThrow(
-      "stop"
-    );
+    await expect(
+      createTicket(repository, boardRepository, input)
+    ).rejects.toThrow("stop");
     expect(repository.create).toHaveBeenCalledWith({
       ...input,
       completedAt: null,

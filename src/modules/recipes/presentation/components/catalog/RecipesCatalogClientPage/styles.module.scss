@@ -228,10 +228,12 @@
   .recipes-page {
     gap: $spacing-xl;
     min-height: calc(
-      100dvh - #{$layout-dashboard-header-height} - (#{$layout-dashboard-main-padding} * 2)
+      100dvh - #{$layout-dashboard-header-height} -
+        (#{$layout-dashboard-main-padding} * 2)
     );
     min-height: calc(
-      100vh - #{$layout-dashboard-header-height} - (#{$layout-dashboard-main-padding} * 2)
+      100vh - #{$layout-dashboard-header-height} -
+        (#{$layout-dashboard-main-padding} * 2)
     );
     padding-bottom: 0;
   }

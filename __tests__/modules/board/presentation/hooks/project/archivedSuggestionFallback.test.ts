@@ -145,4 +145,3 @@ describe("buildArchivedSuggestionFallback", () => {
     expect(result[0].label).toContain("WB-75");
   });
 });
-

@@ -50,7 +50,10 @@ const RecipesCatalogResults = ({
 
   return (
     <div className={styles["recipes-page__catalog-layout"]}>
-      <div ref={catalogMainRef} className={styles["recipes-page__catalog-main"]}>
+      <div
+        ref={catalogMainRef}
+        className={styles["recipes-page__catalog-main"]}
+      >
         {showInitialLoader ? (
           <div className={styles["recipes-page__loading-shell"]}>
             <Loader variant="inline" size="medium" />

@@ -1,6 +1,9 @@
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
-import type { Ticket, TicketFilters } from "@/modules/board/core/domain/ticket.types";
+import type {
+  Ticket,
+  TicketFilters,
+} from "@/modules/board/core/domain/ticket.types";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 
 describe("listTickets", () => {
@@ -51,9 +54,7 @@ describe("listTickets", () => {
       listByProject: jest.fn<
         Promise<Ticket[]>,
         [string, TicketFilters?, string?, number?]
-      >(
-        async () => tickets
-      ),
+      >(async () => tickets),
     });
 
     // Act
@@ -87,9 +88,7 @@ describe("listTickets", () => {
       listByProject: jest.fn<
         Promise<Ticket[]>,
         [string, TicketFilters?, string?, number?]
-      >(
-        async () => []
-      ),
+      >(async () => []),
     });
 
     // Act
@@ -114,11 +113,9 @@ describe("listTickets", () => {
       listByProject: jest.fn<
         Promise<Ticket[]>,
         [string, TicketFilters?, string?, number?]
-      >(
-        async () => {
-          throw repositoryError;
-        }
-      ),
+      >(async () => {
+        throw repositoryError;
+      }),
     });
 
     // Act & Assert
@@ -141,9 +138,7 @@ describe("listTickets", () => {
       listByProject: jest.fn<
         Promise<Ticket[]>,
         [string, TicketFilters?, string?, number?]
-      >(
-        async () => []
-      ),
+      >(async () => []),
     });
 
     // Act
@@ -168,9 +163,7 @@ describe("listTickets", () => {
       listByProject: jest.fn<
         Promise<Ticket[]>,
         [string, TicketFilters?, string?, number?]
-      >(
-        async () => tickets
-      ),
+      >(async () => tickets),
     });
 
     // Act

@@ -37,9 +37,13 @@ const getStatusChipClassName = (
   return null;
 };
 
-const getPriorityChipClassName = (priority: TicketPriority | ""): string | null => {
-  if (priority === "urgent") return styles["ticket-detail__chip--priority-urgent"];
-  if (priority === "normal") return styles["ticket-detail__chip--priority-normal"];
+const getPriorityChipClassName = (
+  priority: TicketPriority | ""
+): string | null => {
+  if (priority === "urgent")
+    return styles["ticket-detail__chip--priority-urgent"];
+  if (priority === "normal")
+    return styles["ticket-detail__chip--priority-normal"];
   if (priority === "low") return styles["ticket-detail__chip--priority-low"];
   return null;
 };
@@ -75,7 +79,10 @@ const TicketStatusBar = ({
             <span className={styles["ticket-detail__chip-label"]}>
               {t("fields.status")}
             </span>
-            <span className={styles["ticket-detail__chip-dot"]} aria-hidden="true" />
+            <span
+              className={styles["ticket-detail__chip-dot"]}
+              aria-hidden="true"
+            />
             <span>{selectedStatus?.label ?? t("fields.none")}</span>
           </button>
         )}
@@ -142,7 +149,10 @@ const TicketStatusBar = ({
             {effectivePriority ? (
               <TicketPriorityDot priority={effectivePriority} size="sm" />
             ) : (
-              <span className={styles["ticket-detail__chip-dot"]} aria-hidden="true" />
+              <span
+                className={styles["ticket-detail__chip-dot"]}
+                aria-hidden="true"
+              />
             )}
             <span>
               {effectivePriority
@@ -168,7 +178,10 @@ const TicketStatusBar = ({
                 close();
               }}
             >
-              <span className={styles["ticket-detail__popover-dot"]} aria-hidden="true" />
+              <span
+                className={styles["ticket-detail__popover-dot"]}
+                aria-hidden="true"
+              />
               <span>{t("fields.none")}</span>
             </button>
 

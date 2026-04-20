@@ -248,7 +248,10 @@ describe("createShoppingRepository", () => {
       }
     );
     expect(deleteByProject).toHaveBeenCalledWith("project_id", projectId);
-    expect(deleteByList).toHaveBeenCalledWith("shopping_list_id", shoppingListId);
+    expect(deleteByList).toHaveBeenCalledWith(
+      "shopping_list_id",
+      shoppingListId
+    );
     expect(insert).toHaveBeenCalledWith(
       expect.arrayContaining([
         expect.objectContaining({
@@ -376,7 +379,10 @@ describe("createShoppingRepository", () => {
     const shoppingList = await repository.generateShoppingList(projectId);
 
     expect(deleteByProject).toHaveBeenCalledWith("project_id", projectId);
-    expect(deleteByList).toHaveBeenCalledWith("shopping_list_id", shoppingListId);
+    expect(deleteByList).toHaveBeenCalledWith(
+      "shopping_list_id",
+      shoppingListId
+    );
     expect(insert).not.toHaveBeenCalled();
     expect(shoppingList.groups).toEqual([]);
     expect(shoppingList.checkedCount).toBe(0);

@@ -91,9 +91,7 @@ describe("NavigationItem Component", () => {
   it("should call onClick when provided", () => {
     // Arrange
     const handleClick = jest.fn();
-    render(
-      <NavigationItem href="/test" label="Test" onClick={handleClick} />
-    );
+    render(<NavigationItem href="/test" label="Test" onClick={handleClick} />);
 
     // Act
     const link = screen.getByText("Test").closest("a");

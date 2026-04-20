@@ -72,7 +72,10 @@ export const useNavigationFeedbackStore = create<NavigationFeedbackStore>(
 
       if (status === "visible" && visibleAt !== null) {
         const elapsed = Date.now() - visibleAt;
-        const remaining = Math.max(0, NAVIGATION_FEEDBACK_MIN_VISIBLE_MS - elapsed);
+        const remaining = Math.max(
+          0,
+          NAVIGATION_FEEDBACK_MIN_VISIBLE_MS - elapsed
+        );
 
         if (remaining === 0) {
           set({

@@ -84,10 +84,7 @@ const TicketDetailInlinePopover = ({
     .filter(Boolean)
     .join(" ");
 
-  const popoverClassName = [
-    styles["ticket-detail__popover"],
-    panelClassName,
-  ]
+  const popoverClassName = [styles["ticket-detail__popover"], panelClassName]
     .filter(Boolean)
     .join(" ");
 

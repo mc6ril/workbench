@@ -27,9 +27,7 @@ const ReactQueryProvider = ({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <HydrationBoundary state={dehydratedState}>
-        {children}
-      </HydrationBoundary>
+      <HydrationBoundary state={dehydratedState}>{children}</HydrationBoundary>
       {process.env.NODE_ENV === "development" && (
         <ReactQueryDevtools initialIsOpen={false} />
       )}

@@ -16,5 +16,7 @@ export const isDynamicServerUsageError = (error: unknown): boolean => {
   }
 
   // Backward-compatible fallback in case older runtime variants omit digest.
-  return error instanceof Error && error.message.includes("Dynamic server usage");
+  return (
+    error instanceof Error && error.message.includes("Dynamic server usage")
+  );
 };

@@ -15,9 +15,7 @@ const NavigationRouteSync = () => {
   );
 
   const searchString = searchParams.toString();
-  const currentHref = searchString
-    ? `${pathname}?${searchString}`
-    : pathname;
+  const currentHref = searchString ? `${pathname}?${searchString}` : pathname;
 
   useEffect(() => {
     // Run after every router-driven render so refresh/back/forward feedback can

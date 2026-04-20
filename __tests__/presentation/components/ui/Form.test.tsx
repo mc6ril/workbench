@@ -29,7 +29,7 @@ describe("Form Component", () => {
     const legend = screen.getByText("Form Title");
     expect(legend).toBeInTheDocument();
     expect(legend.tagName).toBe("LEGEND");
-    
+
     const fieldset = legend.closest("fieldset");
     expect(fieldset).toBeInTheDocument();
   });
@@ -85,7 +85,7 @@ describe("Form Component", () => {
     // Assert
     const form = container.querySelector("form");
     expect(form).toHaveAttribute("aria-describedby", "a11y-form-error");
-    
+
     const error = screen.getByText("Form error");
     expect(error).toHaveAttribute("id", "a11y-form-error");
   });
@@ -147,4 +147,3 @@ describe("Form Component", () => {
     expect(form).toHaveAttribute("noValidate");
   });
 });
-
