@@ -50,20 +50,18 @@ RETURNS trigger
 LANGUAGE plpgsql
 SET search_path = 'public'
 AS $$
-DECLARE
-  v_project_id uuid;
 BEGIN
-  SELECT t.project_id
-  INTO v_project_id
-  FROM public.tickets t
-  WHERE t.id = NEW.ticket_id;
+  NEW.project_id := (
+    SELECT t.project_id
+    FROM public.tickets t
+    WHERE t.id = NEW.ticket_id
+  );
 
-  IF v_project_id IS NULL THEN
+  IF NEW.project_id IS NULL THEN
     RAISE EXCEPTION 'Ticket % not found for comment sync', NEW.ticket_id
       USING ERRCODE = 'foreign_key_violation';
   END IF;
 
-  NEW.project_id = v_project_id;
   RETURN NEW;
 END;
 $$;
@@ -73,20 +71,18 @@ RETURNS trigger
 LANGUAGE plpgsql
 SET search_path = 'public'
 AS $$
-DECLARE
-  v_project_id uuid;
 BEGIN
-  SELECT t.project_id
-  INTO v_project_id
-  FROM public.tickets t
-  WHERE t.id = NEW.ticket_id;
+  NEW.project_id := (
+    SELECT t.project_id
+    FROM public.tickets t
+    WHERE t.id = NEW.ticket_id
+  );
 
-  IF v_project_id IS NULL THEN
+  IF NEW.project_id IS NULL THEN
     RAISE EXCEPTION 'Ticket % not found for ticket_assignees sync', NEW.ticket_id
       USING ERRCODE = 'foreign_key_violation';
   END IF;
 
-  NEW.project_id = v_project_id;
   RETURN NEW;
 END;
 $$;
