@@ -8,7 +8,6 @@ import {
   extractEventType,
   extractTicketId,
   invalidateProjectTickets,
-  isTicketKnownInCurrentProject,
   mapCommentRowFromPayload,
   mapTicketAssigneeRowFromPayload,
   mapTicketFromPayload,
@@ -113,10 +112,8 @@ export const useProjectRealtime = (
     // We intentionally keep tickets subscriptions active immediately and attach
     // columns subscription as soon as boardId is resolved.
 
-    // Important: comments/ticket_assignees have no project_id column.
-    // Supabase Realtime filters are table-column based only, so we cannot scope these
-    // subscriptions directly by project at SQL filter level.
-    // We therefore subscribe globally and keep invalidations as targeted as possible.
+    // comments/ticket_assignees are scoped by project_id to avoid receiving events
+    // from unrelated projects in the project shell.
     const channelWithProjectMembers = channelWithColumns.on(
       "postgres_changes",
       {
@@ -142,8 +139,8 @@ export const useProjectRealtime = (
       {
         event: "*",
         schema: "public",
-        // No project_id column on this table — subscription is project-unscoped.
         table: "comments",
+        filter: `project_id=eq.${projectId}`,
       },
       (payload) => {
         const eventType = extractEventType(payload);
@@ -190,6 +187,13 @@ export const useProjectRealtime = (
           }
         }
 
+        if (eventType === "INSERT" || eventType === "DELETE") {
+          void queryClient.invalidateQueries({
+            queryKey: queryKeys.comments.byProject(projectId),
+            refetchType: "active",
+          });
+        }
+
         void queryClient.invalidateQueries({
           queryKey: queryKeys.comments.byTicket(ticketId),
           refetchType: "active",
@@ -202,8 +206,8 @@ export const useProjectRealtime = (
       {
         event: "*",
         schema: "public",
-        // No project_id column on this table — subscription is project-unscoped.
         table: "ticket_assignees",
+        filter: `project_id=eq.${projectId}`,
       },
       (payload) => {
         const eventType = extractEventType(payload);
@@ -223,10 +227,6 @@ export const useProjectRealtime = (
             queryKey: queryKeys.tickets.assigneesByProjectId(projectId),
             refetchType: "active",
           });
-          return;
-        }
-
-        if (!isTicketKnownInCurrentProject(queryClient, projectId, ticketId)) {
           return;
         }
 
