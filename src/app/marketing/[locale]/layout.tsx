@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
+import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 
-import { isSupportedLocale, supportedLocales } from "@/shared/i18n";
-import RequestIntlProvider from "@/shared/providers/RequestIntlProvider";
+import { getIntlLocale, isSupportedLocale, supportedLocales } from "@/shared/i18n";
+import { getStaticMessages } from "@/shared/i18n/staticTranslator";
+import DocumentLang from "@/shared/providers/DocumentLang";
 
 export const revalidate = 300;
 export const dynamicParams = false;
@@ -26,7 +28,16 @@ const LocaleLayout = async ({ children, params }: Props) => {
 
   setRequestLocale(locale);
 
-  return <RequestIntlProvider>{children}</RequestIntlProvider>;
+  const messages = getStaticMessages(locale);
+
+  return (
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <DocumentLang lang={getIntlLocale(locale)} />
+      <div className="app-root" lang={getIntlLocale(locale)}>
+        {children}
+      </div>
+    </NextIntlClientProvider>
+  );
 };
 
 export default LocaleLayout;

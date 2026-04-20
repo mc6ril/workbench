@@ -14,7 +14,8 @@ const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,
-  manifest: new URL("/manifest.webmanifest", siteUrl).toString(),
+  // Locale-specific manifests are set on marketing routes; keep root metadata static for SSG.
+  manifest: new URL(`/manifest/${defaultLocale}`, siteUrl).toString(),
 };
 
 export const viewport: Viewport = {

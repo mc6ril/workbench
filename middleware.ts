@@ -118,9 +118,9 @@ const appendLocaleResponseCookies = (
 /**
  * Next.js middleware for route optimization (UX redirects).
  *
- * IMPORTANT: This is NOT the source of truth for security.
- * - Security is enforced by AuthLayout and ProjectLayout (server components)
- * - RLS policies at the database level are the ultimate source of truth
+ * Security model:
+ * - Authentication gating is enforced here (Edge) for protected routes.
+ * - Authorization is enforced by database RLS (ultimate source of truth) and route-level loaders.
  *
  * This middleware provides:
  * - Default-locale marketing URLs without redirect on `/`
@@ -129,7 +129,7 @@ const appendLocaleResponseCookies = (
  * - Route filtering: prevents loading unnecessary pages
  * - Email verification checks: redirects unverified users
  *
- * On error, fails open (allows access) - layouts and RLS will still protect.
+ * On error, fails open (allows access) - RLS will still protect data access.
  */
 export const middleware = async (
   request: NextRequest
