@@ -35,8 +35,10 @@ describe("SessionGateway.supabase", () => {
 
   it("skips browser session validation when no Supabase auth cookie is present", async () => {
     const getUser = jest.fn();
+    const getClaims = jest.fn();
     const client = createSupabaseClientMock({
       auth: {
+        getClaims,
         getUser,
       } as unknown as SupabaseClient["auth"],
     });
@@ -44,12 +46,14 @@ describe("SessionGateway.supabase", () => {
     const gateway = createSessionGateway(client);
 
     await expect(gateway.getCurrentSession()).resolves.toBeNull();
+    expect(getClaims).not.toHaveBeenCalled();
     expect(getUser).not.toHaveBeenCalled();
   });
 
   it("validates the browser session through getUser when a Supabase auth cookie exists", async () => {
     document.cookie = "sb-projectref-auth-token=session; path=/";
 
+    const getClaims = jest.fn();
     const getUser = jest.fn().mockResolvedValue({
       data: {
         user: createAuthenticatedUser(),
@@ -58,6 +62,7 @@ describe("SessionGateway.supabase", () => {
     });
     const client = createSupabaseClientMock({
       auth: {
+        getClaims,
         getUser,
       } as unknown as SupabaseClient["auth"],
     });
@@ -68,12 +73,14 @@ describe("SessionGateway.supabase", () => {
       ...mockCurrentSession,
       accessToken: "",
     });
+    expect(getClaims).not.toHaveBeenCalled();
     expect(getUser).toHaveBeenCalledTimes(1);
   });
 
   it("treats missing Supabase sessions as signed out even when a stale cookie exists", async () => {
     document.cookie = "sb-projectref-auth-token.0=stale; path=/";
 
+    const getClaims = jest.fn();
     const getUser = jest.fn().mockResolvedValue({
       data: { user: null },
       error: {
@@ -83,6 +90,7 @@ describe("SessionGateway.supabase", () => {
     });
     const client = createSupabaseClientMock({
       auth: {
+        getClaims,
         getUser,
       } as unknown as SupabaseClient["auth"],
     });
@@ -90,6 +98,7 @@ describe("SessionGateway.supabase", () => {
     const gateway = createSessionGateway(client);
 
     await expect(gateway.getCurrentSession()).resolves.toBeNull();
+    expect(getClaims).not.toHaveBeenCalled();
     expect(getUser).toHaveBeenCalledTimes(1);
   });
 });

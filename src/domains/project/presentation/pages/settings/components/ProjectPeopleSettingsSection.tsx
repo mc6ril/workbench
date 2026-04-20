@@ -13,7 +13,7 @@ import Modal from "@/shared/design-system/modal";
 import Select from "@/shared/design-system/select";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useTranslations } from "@/shared/i18n";
+import { getIntlLocale, useLocale, useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { useToastStore } from "@/shared/stores/useToastStore";
@@ -102,6 +102,8 @@ const ProjectPeopleSettingsSection = ({
   const tUpgrade = useTranslations("pages.upgrade");
   const tMembersGlobal = useTranslations("pages.members");
   const tErrors = useTranslations("errors");
+  const locale = useLocale();
+  const intlLocale = useMemo(() => getIntlLocale(locale), [locale]);
 
   const [inviteRole, setInviteRole] =
     useState<ProjectRole>(DEFAULT_INVITE_ROLE);
@@ -124,8 +126,8 @@ const ProjectPeopleSettingsSection = ({
   }, [advancedRolesAccess.hasAccess, inviteRole]);
 
   const dateFormatter = useMemo(() => {
-    return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" });
-  }, []);
+    return new Intl.DateTimeFormat(intlLocale, { dateStyle: "medium" });
+  }, [intlLocale]);
   const currentPlanLabel = tUpgrade(
     `planBadges.${membersLimitAccess.currentPlan}`
   );

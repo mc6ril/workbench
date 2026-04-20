@@ -1,6 +1,6 @@
 "use client";
 
-import React, { type FormEvent, useState } from "react";
+import { type SubmitEventHandler, useState } from "react";
 
 import { BUTTON_LABELS } from "@/shared/a11y/constants";
 import ErrorMessage from "@/shared/design-system/error_message";
@@ -45,7 +45,7 @@ const CreateTicketForm = ({
     initialValues?.columnId ?? columnOptions[0]?.value ?? ""
   );
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event): void => {
     event.preventDefault();
 
     onSubmit(
