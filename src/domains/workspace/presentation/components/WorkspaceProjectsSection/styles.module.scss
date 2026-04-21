@@ -1,0 +1,185 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/shadows" as *;
+@use "@/styles/variables/breakpoints" as *;
+
+.section-header {
+  margin-bottom: $spacing-2xl;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: $spacing-3xl;
+  margin-bottom: $spacing-3xl;
+}
+
+.card {
+  background: $color-secondary;
+  border-radius: $border-radius-lg;
+  border: $border-width solid $color-border;
+  transition: all $animation-duration-slow $easing-smooth;
+  cursor: pointer;
+  position: relative;
+  overflow: visible;
+  box-shadow: $shadow-card;
+  animation: fadeInUp $animation-duration-slower $easing-ease-out backwards;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: $spacing-md;
+    height: 100%;
+    border-top-left-radius: $border-radius-xl;
+    border-bottom-left-radius: $border-radius-xl;
+    background: linear-gradient(180deg, $color-accent, $color-accent-peach);
+    opacity: 0;
+    transition: opacity $animation-duration-slow;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+    border-color: $color-accent;
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:focus {
+    outline: $border-width-thick solid $color-focus;
+    outline-offset: $border-width-thick;
+  }
+
+  @for $i from 1 through 12 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 100}ms;
+    }
+  }
+}
+
+.card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: $spacing-3xl;
+}
+
+.card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-lg;
+}
+
+.icon {
+  width: $spacing-5xl;
+  height: $spacing-5xl;
+  border-radius: $border-radius-sm;
+  background: linear-gradient(
+    135deg,
+    $color-accent-bg-soft,
+    $color-accent-peach-bg-soft
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-2xl;
+  margin-bottom: $spacing-lg;
+}
+
+.card__title {
+  margin-bottom: $spacing-sm;
+}
+
+.card__description {
+  margin-top: 0;
+  margin-bottom: $spacing-lg;
+}
+
+.meta {
+  display: flex;
+  gap: $spacing-xl;
+  font-size: $font-size-base;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-xl;
+}
+
+.meta__item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.card__body .badge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: $spacing-2xs $spacing-xl;
+  background: linear-gradient(
+    135deg,
+    $color-accent-bg-soft,
+    $color-accent-peach-bg-soft
+  );
+  color: $color-accent;
+  border-radius: $radius-xl;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  border: $border-width solid $color-accent-border-soft;
+}
+
+.stats {
+  display: flex;
+  gap: $spacing-3xl;
+  padding-top: $spacing-lg;
+  border-top: $border-width solid $color-border-subtle;
+}
+
+.stat {
+  flex: 1;
+}
+
+.card__body .stat__value {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+  display: block;
+}
+
+.card__body .stat__label {
+  margin-top: $spacing-2xs;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY($spacing-2xl);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: none;
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}

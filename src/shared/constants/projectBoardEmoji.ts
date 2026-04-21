@@ -16,6 +16,9 @@ export const PROJECT_BOARD_EMOJI_PRESETS = [
   "💡",
 ] as const;
 
+export type ProjectBoardEmojiPreset =
+  (typeof PROJECT_BOARD_EMOJI_PRESETS)[number];
+
 /**
  * Removes a leading board emoji preset from a project name.
  */

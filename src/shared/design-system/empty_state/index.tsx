@@ -15,12 +15,20 @@ type Props = {
   message?: string;
   /** Optional icon component to display */
   icon?: React.ReactNode;
+  /** Additional CSS class name for the icon wrapper */
+  iconClassName?: string;
   /** Optional action button or link */
   action?: React.ReactNode;
+  /** Additional CSS class name for the action wrapper */
+  actionClassName?: string;
   /** Custom ARIA label for accessibility (falls back to title) */
   ariaLabel?: string;
   /** Additional CSS class name */
   className?: string;
+  /** Additional CSS class name for the title */
+  titleClassName?: string;
+  /** Additional CSS class name for the message */
+  messageClassName?: string;
 };
 
 /**
@@ -49,9 +57,13 @@ const EmptyState = ({
   title,
   message,
   icon,
+  iconClassName,
   action,
+  actionClassName,
   ariaLabel,
   className,
+  titleClassName,
+  messageClassName,
 }: Props) => {
   const t = useTranslations("common.emptyState");
   const displayMessage = message || t("defaultMessage");
@@ -77,19 +89,43 @@ const EmptyState = ({
       aria-describedby={describedBy}
     >
       {icon && (
-        <div className={styles["empty-state__icon"]} aria-hidden="true">
+        <div
+          className={[styles["empty-state__icon"], iconClassName]
+            .filter(Boolean)
+            .join(" ")}
+          aria-hidden="true"
+        >
           {icon}
         </div>
       )}
-      <Title variant="h2" id={titleId} className={styles["empty-state__title"]}>
+      <Title
+        variant="h2"
+        id={titleId}
+        className={[styles["empty-state__title"], titleClassName]
+          .filter(Boolean)
+          .join(" ")}
+      >
         {title}
       </Title>
       {displayMessage && (
-        <p id={messageId} className={styles["empty-state__message"]}>
+        <p
+          id={messageId}
+          className={[styles["empty-state__message"], messageClassName]
+            .filter(Boolean)
+            .join(" ")}
+        >
           {displayMessage}
         </p>
       )}
-      {action && <div className={styles["empty-state__action"]}>{action}</div>}
+      {action && (
+        <div
+          className={[styles["empty-state__action"], actionClassName]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          {action}
+        </div>
+      )}
     </div>
   );
 };

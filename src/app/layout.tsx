@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
+import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
 import { defaultLocale, getIntlLocale } from "@/shared/i18n";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
@@ -15,6 +16,10 @@ const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,
+  title: {
+    default: PRODUCT_BRAND_NAME,
+    template: `%s | ${PRODUCT_BRAND_NAME}`,
+  },
   // Locale-specific manifests are set on marketing routes; keep root metadata static for SSG.
   manifest: new URL(`/manifest/${defaultLocale}`, siteUrl).toString(),
 };

@@ -1,15 +1,14 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { render, screen } from "@testing-library/react";
 
+import { localeCookieName } from "@/shared/i18n";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 
-import WorkspaceRoutePage from "@/app/(protected)/workspace/page";
-import { getBillingVisibility } from "@/domains/billing/core/usecases/getBillingVisibility";
-import { createBillingVisibilityPort } from "@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase";
-import { queryKeys as billingQueryKeys } from "@/domains/billing/presentation/hooks/queryKeys";
+import WorkspaceRoutePage, {
+  generateMetadata as generateWorkspaceMetadata,
+} from "@/app/(protected)/workspace/page";
 import { listProjectsWithStats } from "@/domains/workspace/core/usecases/project/listProjectsWithStats";
-import { listReclaimableProjects } from "@/domains/workspace/core/usecases/project/listReclaimableProjects";
 import { createWorkspaceProjectCatalogGateway } from "@/domains/workspace/infrastructure/supabase/gateways";
 import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
 
@@ -26,6 +25,7 @@ jest.mock("@tanstack/react-query", () => ({
 
 jest.mock("next/headers", () => ({
   cookies: jest.fn(),
+  headers: jest.fn(),
 }));
 
 jest.mock("@/shared/providers/queryClient", () => ({
@@ -47,24 +47,6 @@ jest.mock(
   })
 );
 
-jest.mock(
-  "@/domains/workspace/core/usecases/project/listReclaimableProjects",
-  () => ({
-    listReclaimableProjects: jest.fn(),
-  })
-);
-
-jest.mock(
-  "@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase",
-  () => ({
-    createBillingVisibilityPort: jest.fn(),
-  })
-);
-
-jest.mock("@/domains/billing/core/usecases/getBillingVisibility", () => ({
-  getBillingVisibility: jest.fn(),
-}));
-
 jest.mock("@/domains/workspace/presentation/pages/workspace", () => ({
   __esModule: true,
   default: () => <div>Workspace content</div>,
@@ -77,8 +59,10 @@ describe("WorkspaceRoutePage hydration", () => {
 
   const mockSupabaseClient = { tag: "supabase" };
   const mockWorkspaceGateway = { tag: "workspaceGateway" };
-  const mockBillingVisibilityPort = { tag: "billingVisibilityPort" };
   const mockCookieStore = {
+    get: jest.fn(),
+  };
+  const mockHeaderStore = {
     get: jest.fn(),
   };
 
@@ -98,14 +82,11 @@ describe("WorkspaceRoutePage hydration", () => {
     jest
       .mocked(createWorkspaceProjectCatalogGateway)
       .mockReturnValue(mockWorkspaceGateway as never);
-    jest
-      .mocked(createBillingVisibilityPort)
-      .mockReturnValue(mockBillingVisibilityPort as never);
     jest.mocked(cookies).mockResolvedValue(mockCookieStore as never);
+    jest.mocked(headers).mockResolvedValue(mockHeaderStore as never);
     jest.mocked(listProjectsWithStats).mockResolvedValue([]);
-    jest.mocked(listReclaimableProjects).mockResolvedValue([]);
-    jest.mocked(getBillingVisibility).mockResolvedValue(false);
     mockCookieStore.get.mockReturnValue(undefined);
+    mockHeaderStore.get.mockReturnValue(null);
   });
 
   it("prefetches workspace queries and renders hydrated content", async () => {
@@ -118,22 +99,21 @@ describe("WorkspaceRoutePage hydration", () => {
       queryKey: workspaceQueryKeys.projects.withStats(),
       queryFn: expect.any(Function),
     });
-    expect(mockQueryClient.prefetchQuery).toHaveBeenNthCalledWith(2, {
-      queryKey: workspaceQueryKeys.projects.reclaimable(),
-      queryFn: expect.any(Function),
-    });
-    expect(mockQueryClient.prefetchQuery).toHaveBeenNthCalledWith(3, {
-      queryKey: billingQueryKeys.config.billingVisibility("standard"),
-      queryFn: expect.any(Function),
-    });
+    expect(mockQueryClient.prefetchQuery).toHaveBeenCalledTimes(1);
     expect(listProjectsWithStats).toHaveBeenCalledWith(mockWorkspaceGateway);
-    expect(listReclaimableProjects).toHaveBeenCalledWith(mockWorkspaceGateway);
-    expect(getBillingVisibility).toHaveBeenCalledWith(
-      mockBillingVisibilityPort,
-      {
-        overrideValue: undefined,
-      }
-    );
     expect(dehydrateMock).toHaveBeenCalledWith(mockQueryClient);
+  });
+
+  it("exposes translated metadata for the workspace page", async () => {
+    mockCookieStore.get.mockImplementation((key: string) => {
+      return key === localeCookieName ? { value: "en" } : undefined;
+    });
+
+    const metadata = await generateWorkspaceMetadata();
+
+    expect(metadata.title).toBe("Family spaces");
+    expect(metadata.description).toBe(
+      "Create a workspace or join those you have access to."
+    );
   });
 });
