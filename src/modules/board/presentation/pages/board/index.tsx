@@ -20,7 +20,6 @@ import { useProjectPermissions } from "@/domains/project/presentation/providers/
 import type { BoardConfiguration } from "@/modules/board/core/domain/board.types";
 import type {
   Ticket,
-  TicketAssignee,
   TicketFilters,
 } from "@/modules/board/core/domain/ticket.types";
 import BoardView from "@/modules/board/presentation/components/board/boardView/BoardView";
@@ -54,7 +53,6 @@ type BoardLayoutProps = {
   projectId: string;
   initialBoardConfiguration?: BoardConfiguration;
   initialTickets?: Ticket[];
-  initialTicketAssigneesByProjectId?: Record<string, TicketAssignee[]>;
   initialProjectShortCode?: string | null;
 };
 
@@ -62,7 +60,6 @@ const BoardLayout = ({
   projectId,
   initialBoardConfiguration,
   initialTickets,
-  initialTicketAssigneesByProjectId,
   initialProjectShortCode,
 }: BoardLayoutProps) => {
   const router = useAppRouter();
@@ -192,9 +189,7 @@ const BoardLayout = ({
   const shouldLoadBoardOnboardingSignals =
     gettingStartedStatus === "pending" || isOnboardingReviewRequested;
   const { data: ticketAssigneesByProjectId = {} } =
-    useTicketAssigneesByProjectId(projectId, {
-      initialData: initialTicketAssigneesByProjectId,
-    });
+    useTicketAssigneesByProjectId(projectId);
   const { data: hasProjectComments = false } = useHasProjectComments(
     projectId,
     {

@@ -57,15 +57,20 @@ export const ProjectShellContributionProvider = ({
   );
 };
 
+export const useRegisteredProjectShellContribution =
+  (): ProjectViewContribution => {
+    const context = useContext(ProjectShellContributionContext);
+
+    assertDefined(
+      context,
+      "useRegisteredProjectShellContribution must be used within ProjectShellContributionProvider"
+    );
+
+    return context.contribution;
+  };
+
 export const useProjectShellContribution = (): ProjectViewContribution => {
-  const context = useContext(ProjectShellContributionContext);
-
-  assertDefined(
-    context,
-    "useProjectShellContribution must be used within ProjectShellContributionProvider"
-  );
-
-  return context.contribution;
+  return useRegisteredProjectShellContribution();
 };
 
 export const useRegisterProjectViewContribution = (

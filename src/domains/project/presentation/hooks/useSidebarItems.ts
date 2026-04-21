@@ -15,16 +15,16 @@ import {
   getProjectViewFeatureLockState,
   isProjectViewModuleEnabled,
 } from "@/domains/project/presentation/navigation/projectViews.config";
-import { useRuntimeConfigBoolean } from "@/domains/runtimeConfig/presentation/hooks/useRuntimeConfigBoolean";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
-type UseSidebarItemsOptions = {
-  enabledModules?: readonly ProjectModuleKey[];
+export type UseSidebarItemsOptions = {
+  enabledModules: readonly ProjectModuleKey[];
+  isRecipesBoardVisible: boolean;
 };
 
 export const useSidebarItems = (
   projectId: string,
-  options?: UseSidebarItemsOptions
+  options: UseSidebarItemsOptions
 ): SidebarItem[] => {
   const t = useTranslations("navigation.sidebar");
   const { data: session, isLoading: isSessionLoading } = useSession();
@@ -34,10 +34,8 @@ export const useSidebarItems = (
     isFetched: isSubscriptionFetched,
   } = useSubscription();
   const { data: isBillingVisible } = useBillingVisibility();
-  const { data: isRecipesBoardVisible } = useRuntimeConfigBoolean(
-    "is_recipes_board_visible",
-    false
-  );
+
+  const { enabledModules, isRecipesBoardVisible } = options;
 
   const isEntitlementsReady = useMemo((): boolean => {
     if (isSessionLoading) {
@@ -67,10 +65,7 @@ export const useSidebarItems = (
     return getEffectivePlan(subscription);
   }, [isEntitlementsReady, subscription]);
 
-  const enabledModules = options?.enabledModules;
-
   return useMemo((): SidebarItem[] => {
-    const availableModules = enabledModules ?? [];
     const configs = getProjectViewConfigsForSidebar();
 
     return configs.flatMap((config) => {
@@ -78,13 +73,28 @@ export const useSidebarItems = (
         return [];
       }
 
-      const enabled = isProjectViewModuleEnabled(config.key, availableModules);
-      const { locked, minimumPlan } =
-        effectivePlan === null
-          ? { locked: false, minimumPlan: undefined }
-          : getProjectViewFeatureLockState(config.key, effectivePlan);
+      const enabled = isProjectViewModuleEnabled(config.key, enabledModules);
 
-      if (!isBillingVisible && locked) {
+      if (!isEntitlementsReady || effectivePlan === null) {
+        return [
+          {
+            key: config.key,
+            href: buildProjectViewHref(projectId, config.key),
+            label: t(`items.${config.sidebarLabelKey}`),
+            exactOnly: false,
+            enabled,
+            locked: false,
+            planBadge: undefined,
+          },
+        ];
+      }
+
+      const { locked, minimumPlan } = getProjectViewFeatureLockState(
+        config.key,
+        effectivePlan
+      );
+
+      if (isBillingVisible === false && locked) {
         return [];
       }
 
@@ -104,6 +114,7 @@ export const useSidebarItems = (
     effectivePlan,
     enabledModules,
     isBillingVisible,
+    isEntitlementsReady,
     isRecipesBoardVisible,
     projectId,
     t,
