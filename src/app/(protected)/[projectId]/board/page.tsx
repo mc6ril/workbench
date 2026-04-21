@@ -7,7 +7,6 @@ import { createAppQueryClient } from "@/shared/providers/queryClient";
 
 import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
 import { getBoardConfiguration } from "@/modules/board/core/usecases/board/getBoardConfiguration";
-import { getTicketAssigneesByProjectId } from "@/modules/board/core/usecases/ticket/getTicketAssigneesByProjectId";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 import {
   createBoardRepository,
@@ -28,11 +27,7 @@ const BoardPage = async ({
   const ticketRepository = createTicketRepository(supabaseClient);
   const project = await getProjectForRoute(projectId);
 
-  const [
-    initialBoardConfiguration,
-    initialTickets,
-    initialTicketAssigneesByProjectId,
-  ] = await Promise.all([
+  const [initialBoardConfiguration, initialTickets] = await Promise.all([
     queryClient.fetchQuery({
       queryKey: queryKeys.projects.boardConfiguration(projectId),
       queryFn: () => getBoardConfiguration(boardRepository, projectId),
@@ -40,10 +35,6 @@ const BoardPage = async ({
     queryClient.fetchQuery({
       queryKey: queryKeys.projects.ticketsList(projectId, undefined, undefined),
       queryFn: () => listTickets(ticketRepository, projectId),
-    }),
-    queryClient.fetchQuery({
-      queryKey: queryKeys.tickets.assigneesByProjectId(projectId),
-      queryFn: () => getTicketAssigneesByProjectId(ticketRepository, projectId),
     }),
   ]);
   const initialProjectShortCode = project.shortCode;
@@ -59,7 +50,6 @@ const BoardPage = async ({
           projectId={projectId}
           initialBoardConfiguration={initialBoardConfiguration}
           initialTickets={initialTickets}
-          initialTicketAssigneesByProjectId={initialTicketAssigneesByProjectId}
           initialProjectShortCode={initialProjectShortCode}
         />
       </Suspense>

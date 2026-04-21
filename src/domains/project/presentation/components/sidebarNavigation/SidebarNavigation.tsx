@@ -30,9 +30,9 @@ import type {
 import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";
 import { ProjectModuleKey } from "@/domains/project/core/domain/projectModule.types";
 import { useEnableProjectModule } from "@/domains/project/presentation/hooks/useEnableProjectModule";
-import { useProject } from "@/domains/project/presentation/hooks/useProject";
 import { useSidebarItems } from "@/domains/project/presentation/hooks/useSidebarItems";
 import { buildProjectViewHref } from "@/domains/project/presentation/navigation/projectViews.config";
+import { useProjectShellSnapshot } from "@/domains/project/presentation/providers/ProjectShellSnapshotProvider";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 
 const RECIPES_MODULE_TAGS = ["Repas", "Quick list", "Courses"];
@@ -49,7 +49,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const t = useTranslations("navigation.sidebar");
   const signOutMutation = useSignOut();
   const enableProjectModuleMutation = useEnableProjectModule();
-  const { data: project } = useProject(projectId);
+  const { enabledModules, isRecipesBoardVisible } = useProjectShellSnapshot();
   const { data: viewer } = useViewer();
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -61,7 +61,8 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const profileMenuId = getAccessibilityId("sidebar-profile-menu");
   const profileTriggerId = getAccessibilityId("sidebar-profile-trigger");
   const items = useSidebarItems(projectId, {
-    enabledModules: project?.enabledModules,
+    enabledModules,
+    isRecipesBoardVisible,
   });
   const recipesHref = buildProjectViewHref(projectId, PROJECT_VIEWS.RECIPES);
   const recipesItem = useMemo(() => {

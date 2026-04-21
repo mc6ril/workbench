@@ -524,17 +524,6 @@ describe("BoardPage onboarding", () => {
         codeNumber: 1,
       },
     ];
-    const initialTicketAssigneesByProjectId = {
-      "ticket-1": [
-        {
-          userId: "user-1",
-          displayName: "Ada",
-          avatarUrl: null,
-          assignedAt: new Date("2026-04-09T08:00:00.000Z"),
-        },
-      ],
-    };
-
     render(
       <BoardPage
         projectId={PROJECT_ID}
@@ -546,11 +535,6 @@ describe("BoardPage onboarding", () => {
         initialTickets={
           initialTickets as Parameters<typeof BoardPage>[0]["initialTickets"]
         }
-        initialTicketAssigneesByProjectId={
-          initialTicketAssigneesByProjectId as Parameters<
-            typeof BoardPage
-          >[0]["initialTicketAssigneesByProjectId"]
-        }
         initialProjectShortCode="WB"
       />
     );
@@ -561,9 +545,7 @@ describe("BoardPage onboarding", () => {
     expect(useProjectShortCode).toHaveBeenCalledWith(PROJECT_ID, {
       initialData: "WB",
     });
-    expect(useTicketAssigneesByProjectId).toHaveBeenCalledWith(PROJECT_ID, {
-      initialData: initialTicketAssigneesByProjectId,
-    });
+    expect(useTicketAssigneesByProjectId).toHaveBeenCalledWith(PROJECT_ID);
     expect(useTickets).toHaveBeenNthCalledWith(1, PROJECT_ID, {}, "", {
       initialData: initialTickets,
     });

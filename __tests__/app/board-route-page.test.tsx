@@ -7,7 +7,6 @@ import BoardRoutePage from "@/app/(protected)/[projectId]/board/page";
 import type { Project } from "@/domains/project/core/domain/project.types";
 import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
 import { getBoardConfiguration } from "@/modules/board/core/usecases/board/getBoardConfiguration";
-import { getTicketAssigneesByProjectId } from "@/modules/board/core/usecases/ticket/getTicketAssigneesByProjectId";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 import {
   createBoardRepository,
@@ -54,13 +53,6 @@ jest.mock("@/modules/board/core/usecases/board/getBoardConfiguration", () => ({
 jest.mock("@/modules/board/core/usecases/ticket/listTickets", () => ({
   listTickets: jest.fn(),
 }));
-
-jest.mock(
-  "@/modules/board/core/usecases/ticket/getTicketAssigneesByProjectId",
-  () => ({
-    getTicketAssigneesByProjectId: jest.fn(),
-  })
-);
 
 jest.mock("@/domains/project/infrastructure/server/getProjectForRoute", () => ({
   getProjectForRoute: jest.fn(),
@@ -121,16 +113,6 @@ describe("BoardRoutePage hydration", () => {
       updatedAt: new Date("2026-04-09T08:00:00.000Z"),
     },
   ];
-  const ticketAssigneesByProjectId = {
-    "ticket-1": [
-      {
-        userId: "user-2",
-        displayName: "Ada",
-        avatarUrl: null,
-        assignedAt: new Date("2026-04-09T08:00:00.000Z"),
-      },
-    ],
-  };
   const projectShortCode = "WB";
   const projectFromRoute: Project = {
     id: PROJECT_ID,
@@ -163,9 +145,6 @@ describe("BoardRoutePage hydration", () => {
       .mockReturnValue(mockTicketRepository as never);
     jest.mocked(getBoardConfiguration).mockResolvedValue(boardConfiguration);
     jest.mocked(listTickets).mockResolvedValue(tickets);
-    jest
-      .mocked(getTicketAssigneesByProjectId)
-      .mockResolvedValue(ticketAssigneesByProjectId);
     jest.mocked(getProjectForRoute).mockResolvedValue(projectFromRoute);
   });
 
@@ -189,26 +168,17 @@ describe("BoardRoutePage hydration", () => {
       ),
       queryFn: expect.any(Function),
     });
-    expect(mockQueryClient.fetchQuery).toHaveBeenNthCalledWith(3, {
-      queryKey: queryKeys.tickets.assigneesByProjectId(PROJECT_ID),
-      queryFn: expect.any(Function),
-    });
-    expect(mockQueryClient.fetchQuery).toHaveBeenCalledTimes(3);
+    expect(mockQueryClient.fetchQuery).toHaveBeenCalledTimes(2);
     expect(getProjectForRoute).toHaveBeenCalledWith(PROJECT_ID);
     expect(getBoardConfiguration).toHaveBeenCalledWith(
       mockBoardRepository,
       PROJECT_ID
     );
     expect(listTickets).toHaveBeenCalledWith(mockTicketRepository, PROJECT_ID);
-    expect(getTicketAssigneesByProjectId).toHaveBeenCalledWith(
-      mockTicketRepository,
-      PROJECT_ID
-    );
     expect(boardPageContentMock).toHaveBeenCalledWith({
       projectId: PROJECT_ID,
       initialBoardConfiguration: boardConfiguration,
       initialTickets: tickets,
-      initialTicketAssigneesByProjectId: ticketAssigneesByProjectId,
       initialProjectShortCode: projectShortCode,
     });
     expect(dehydrateMock).toHaveBeenCalledWith(mockQueryClient);
