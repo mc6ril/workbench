@@ -23,6 +23,8 @@ type Props = {
   ariaLabel?: string;
   /** Additional CSS class name */
   className?: string;
+  /** Additional CSS class name for the body wrapper */
+  bodyClassName?: string;
 };
 
 /**
@@ -56,6 +58,7 @@ const Card = ({
   variant = "default",
   ariaLabel,
   className,
+  bodyClassName,
 }: Props) => {
   const cardId = getAccessibilityId("card");
 
@@ -108,7 +111,13 @@ const Card = ({
           )}
         </div>
       )}
-      <div className={styles["card__body"]}>{children}</div>
+      <div
+        className={[styles["card__body"], bodyClassName]
+          .filter(Boolean)
+          .join(" ")}
+      >
+        {children}
+      </div>
       {footer && <div className={styles["card__footer"]}>{footer}</div>}
     </div>
   );

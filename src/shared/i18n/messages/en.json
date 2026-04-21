@@ -384,8 +384,6 @@
       "title": "Family spaces",
       "subtitle": "Create a workspace or join those you have access to.",
       "welcomeBanner": "Welcome {name}",
-      "welcomeLabel": "Hello 👋",
-      "welcomeSubtitle": "Ready to create something wonderful today?",
       "sectionDescription": "Find all your shared spaces",
       "membersCount": "{count, plural, one {# member} other {# members}}",
       "tasksCount": "{count, plural, one {# task} other {# tasks}}",

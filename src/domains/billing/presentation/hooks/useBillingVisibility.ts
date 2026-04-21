@@ -12,7 +12,7 @@ import {
 /**
  * Hook that returns runtime billing visibility from remote config.
  */
-export const useBillingVisibility = () => {
+export const useBillingVisibility = (enabled = true) => {
   const overrideValue =
     typeof document === "undefined"
       ? undefined
@@ -28,5 +28,6 @@ export const useBillingVisibility = () => {
       getBillingVisibility(billingVisibilityPort, {
         overrideValue,
       }),
+    enabled,
   });
 };

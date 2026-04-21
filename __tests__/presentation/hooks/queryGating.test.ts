@@ -5,6 +5,10 @@ jest.mock("@tanstack/react-query", () => ({
   useQuery: (...args: unknown[]) => useQueryMock(...args),
 }));
 
+jest.mock("@/domains/billing/core/usecases/getBillingVisibility", () => ({
+  getBillingVisibility: jest.fn(),
+}));
+
 jest.mock("@/domains/session/presentation/hooks/useSession", () => ({
   useSession: (...args: unknown[]) => useSessionMock(...args),
 }));
@@ -14,6 +18,7 @@ process.env.NEXT_PUBLIC_SUPABASE_URL =
 process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ?? "test-key";
 
+import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
 import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
@@ -99,6 +104,7 @@ describe("query hook gating", () => {
   it("respects an explicit disabled flag for workspace queries", () => {
     useProjectsWithStats(false);
     useReclaimableProjects(false);
+    useBillingVisibility(false);
 
     expect(useQueryMock).toHaveBeenNthCalledWith(
       1,
@@ -108,6 +114,12 @@ describe("query hook gating", () => {
     );
     expect(useQueryMock).toHaveBeenNthCalledWith(
       2,
+      expect.objectContaining({
+        enabled: false,
+      })
+    );
+    expect(useQueryMock).toHaveBeenNthCalledWith(
+      3,
       expect.objectContaining({
         enabled: false,
       })

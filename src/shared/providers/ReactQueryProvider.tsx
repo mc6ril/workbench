@@ -2,18 +2,30 @@
 
 import type { PropsWithChildren } from "react";
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import {
   type DehydratedState,
   HydrationBoundary,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { createAppQueryClient } from "./queryClient";
 
 type ReactQueryProviderProps = PropsWithChildren<{
   dehydratedState?: DehydratedState;
 }>;
+
+const ReactQueryDevtools = dynamic(
+  () =>
+    import("@tanstack/react-query-devtools").then(
+      (mod) => mod.ReactQueryDevtools
+    ),
+  { ssr: false }
+);
+
+const isReactQueryDevtoolsEnabled =
+  process.env.NODE_ENV === "development" &&
+  process.env.NEXT_PUBLIC_ENABLE_QUERY_DEVTOOLS === "true";
 
 /**
  * React Query Provider component.
@@ -28,7 +40,7 @@ const ReactQueryProvider = ({
   return (
     <QueryClientProvider client={queryClient}>
       <HydrationBoundary state={dehydratedState}>{children}</HydrationBoundary>
-      {process.env.NODE_ENV === "development" && (
+      {isReactQueryDevtoolsEnabled && (
         <ReactQueryDevtools initialIsOpen={false} />
       )}
     </QueryClientProvider>

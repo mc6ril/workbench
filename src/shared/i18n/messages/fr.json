@@ -384,8 +384,6 @@
       "title": "Espaces famille",
       "subtitle": "Créez un espace ou rejoignez ceux auxquels vous avez accès.",
       "welcomeBanner": "Bienvenue {name}",
-      "welcomeLabel": "Bonjour 👋",
-      "welcomeSubtitle": "Prêt à créer quelque chose de merveilleux aujourd'hui ?",
       "sectionDescription": "Retrouvez tous vos espaces partagés",
       "membersCount": "{count, plural, one {# membre} other {# membres}}",
       "tasksCount": "{count, plural, one {# tâche} other {# tâches}}",

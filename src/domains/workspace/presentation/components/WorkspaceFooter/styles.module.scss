@@ -1,0 +1,38 @@
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/animations" as *;
+
+.footer {
+  margin-top: auto;
+  width: 100%;
+  padding: $spacing-lg $spacing-2xl;
+  border-top: $border-width solid $color-border;
+  background-color: $color-surface-subtle;
+  border-radius: $border-radius-md;
+}
+
+.footer__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm $spacing-lg;
+  justify-content: center;
+}
+
+.footer__link {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  text-decoration: none;
+  transition: color $animation-duration-base $easing-ease-out;
+
+  &:hover {
+    color: $color-primary;
+  }
+
+  &:focus {
+    outline: $border-width-thick solid $color-focus;
+    outline-offset: $border-width-thick;
+    border-radius: $border-radius-sm;
+  }
+}
