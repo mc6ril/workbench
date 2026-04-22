@@ -4,8 +4,6 @@ import React from "react";
 import Link from "next/link";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
-import { shouldAnnounceNavigationFeedbackOnLinkClick } from "@/shared/navigation/navigationFeedbackClick";
-import { useNavigationFeedbackStore } from "@/shared/stores/useNavigationFeedbackStore";
 
 import styles from "./link.module.scss";
 
@@ -95,26 +93,13 @@ const LinkComponent = ({
     );
   }
 
-  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    onClick?.(event);
-
-    if (
-      shouldAnnounceNavigationFeedbackOnLinkClick(event, href, {
-        external,
-        target,
-      })
-    ) {
-      useNavigationFeedbackStore.getState().beginNavigation(href);
-    }
-  };
-
   return (
     <Link
       id={linkId}
       href={href}
       className={linkClasses}
       target={target}
-      onClick={handleClick}
+      onClick={onClick}
       {...externalProps}
       {...linkProps}
     >

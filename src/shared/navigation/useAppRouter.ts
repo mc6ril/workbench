@@ -3,12 +3,6 @@
 import { useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 
-import {
-  getCurrentLocationHrefNormalized,
-  normalizeNavigationHref,
-} from "@/shared/navigation/navigationFeedback.utils";
-import { useNavigationFeedbackStore } from "@/shared/stores/useNavigationFeedbackStore";
-
 export type AppRouterNavigationOptions = {
   feedback?: "auto" | "none";
 };
@@ -31,49 +25,21 @@ const omitFeedback = <
   return rest as Omit<T, "feedback">;
 };
 
-const shouldBeginAutoFeedback = (
-  href: string,
-  feedback: NonNullable<AppRouterNavigationOptions["feedback"]>
-): boolean => {
-  if (feedback === "none") {
-    return false;
-  }
-  const next = normalizeNavigationHref(href);
-  const current = getCurrentLocationHrefNormalized();
-  return next !== current;
-};
-
 /**
- * App-wide router with optional navigation feedback for client navigations.
+ * App-wide router wrapper.
  * Prefer this over `useRouter` from `next/navigation` in presentation code (see ESLint).
+ * The optional `feedback` flag is kept for API compatibility but no longer drives
+ * a separate client-side loading overlay; route `loading.tsx` fallbacks own the UX.
  */
 export const useAppRouter = () => {
   const router = useRouter();
-  const beginCurrentRouteFeedback = useCallback(
-    (options?: AppRouterFeedbackOnlyOptions) => {
-      const feedback = options?.feedback ?? "auto";
-      if (feedback === "none") {
-        return;
-      }
-
-      const currentHref = getCurrentLocationHrefNormalized();
-      useNavigationFeedbackStore
-        .getState()
-        .beginNavigation(currentHref || "/", { completionMode: "render" });
-    },
-    []
-  );
 
   const push = useCallback(
     (
       href: string,
       options?: NextNavigateOptions & AppRouterNavigationOptions
     ) => {
-      const feedback = options?.feedback ?? "auto";
       const nextOpts = omitFeedback(options);
-      if (shouldBeginAutoFeedback(href, feedback)) {
-        useNavigationFeedbackStore.getState().beginNavigation(href);
-      }
       if (nextOpts === undefined) {
         return router.push(href);
       }
@@ -87,11 +53,7 @@ export const useAppRouter = () => {
       href: string,
       options?: NextNavigateOptions & AppRouterNavigationOptions
     ) => {
-      const feedback = options?.feedback ?? "auto";
       const nextOpts = omitFeedback(options);
-      if (shouldBeginAutoFeedback(href, feedback)) {
-        useNavigationFeedbackStore.getState().beginNavigation(href);
-      }
       if (nextOpts === undefined) {
         return router.replace(href);
       }
@@ -101,27 +63,24 @@ export const useAppRouter = () => {
   );
 
   const back = useCallback(
-    (options?: AppRouterFeedbackOnlyOptions) => {
-      beginCurrentRouteFeedback(options);
+    (_options?: AppRouterFeedbackOnlyOptions) => {
       return router.back();
     },
-    [beginCurrentRouteFeedback, router]
+    [router]
   );
 
   const forward = useCallback(
-    (options?: AppRouterFeedbackOnlyOptions) => {
-      beginCurrentRouteFeedback(options);
+    (_options?: AppRouterFeedbackOnlyOptions) => {
       return router.forward();
     },
-    [beginCurrentRouteFeedback, router]
+    [router]
   );
 
   const refresh = useCallback(
-    (options?: AppRouterFeedbackOnlyOptions) => {
-      beginCurrentRouteFeedback(options);
+    (_options?: AppRouterFeedbackOnlyOptions) => {
       return router.refresh();
     },
-    [beginCurrentRouteFeedback, router]
+    [router]
   );
 
   return useMemo(
