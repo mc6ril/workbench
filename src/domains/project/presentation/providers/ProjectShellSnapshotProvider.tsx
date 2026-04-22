@@ -16,7 +16,9 @@ import type { ProjectShellSnapshot } from "@/domains/project/core/domain/project
 type ProjectShellSnapshotContextValue = {
   snapshot: ProjectShellSnapshot;
   setSnapshot: (snapshot: ProjectShellSnapshot) => void;
-  updateEnabledModules: (enabledModules: ProjectShellSnapshot["enabledModules"]) => void;
+  updateEnabledModules: (
+    enabledModules: ProjectShellSnapshot["enabledModules"]
+  ) => void;
 };
 
 const ProjectShellSnapshotContext =

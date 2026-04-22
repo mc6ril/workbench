@@ -14,7 +14,9 @@ const RecipeEditPageData = async ({
   recipeId,
 }: RecipeEditPageDataProps) => {
   return withRecipesRouteAccess(projectId, () => {
-    return <RecipeEditorPage projectId={projectId} mode="edit" recipeId={recipeId} />;
+    return (
+      <RecipeEditorPage projectId={projectId} mode="edit" recipeId={recipeId} />
+    );
   });
 };
 

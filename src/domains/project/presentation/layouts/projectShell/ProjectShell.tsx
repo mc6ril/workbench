@@ -70,14 +70,7 @@ const ProjectShellContent = ({
         })}
       />
     );
-  }, [
-    pathname,
-    projectId,
-    tBoardFilters,
-    tBoardOnboarding,
-    tNavbar,
-    tSidebar,
-  ]);
+  }, [pathname, projectId, tBoardFilters, tBoardOnboarding, tNavbar, tSidebar]);
 
   const header = registeredToolbar ?? baseToolbar;
 

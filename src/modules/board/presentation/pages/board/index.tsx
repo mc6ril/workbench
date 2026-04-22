@@ -463,7 +463,9 @@ const BoardLayout = ({
           errorMessage={onboardingErrorMessage}
           isSkipPending={isGettingStartedPending}
           onReviewGuide={openOnboardingReview}
-          onHideGuide={isOnboardingReviewRequested ? closeOnboardingReview : undefined}
+          onHideGuide={
+            isOnboardingReviewRequested ? closeOnboardingReview : undefined
+          }
           onSkipOnboarding={
             gettingStartedStatus === "pending"
               ? handleSkipOnboarding

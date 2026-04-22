@@ -9,7 +9,10 @@ type RecipesPageDataProps = {
   searchParams: Record<string, string | string[] | undefined>;
 };
 
-const RecipesPageData = async ({ projectId, searchParams }: RecipesPageDataProps) => {
+const RecipesPageData = async ({
+  projectId,
+  searchParams,
+}: RecipesPageDataProps) => {
   return withRecipesRouteAccess(projectId, () => {
     return <RecipesPage projectId={projectId} searchParams={searchParams} />;
   });
@@ -27,7 +30,10 @@ const RecipesPageRoute = async ({
 
   return (
     <Suspense fallback={<ProjectLoading />}>
-      <RecipesPageData projectId={projectId} searchParams={resolvedSearchParams} />
+      <RecipesPageData
+        projectId={projectId}
+        searchParams={resolvedSearchParams}
+      />
     </Suspense>
   );
 };

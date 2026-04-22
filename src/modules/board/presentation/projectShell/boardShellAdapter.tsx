@@ -262,10 +262,12 @@ const BoardShellContributionAdapter = ({ projectId }: Props) => {
       overrides: {
         searchValue: currentViewConfig.navbar.showSearch ? searchInput : "",
         isSearchDisabled: false,
-        searchSuggestions:
-          currentViewConfig.navbar.showSearch ? searchSuggestions : [],
-        onSearchChange:
-          currentViewConfig.navbar.showSearch ? setSearchInput : undefined,
+        searchSuggestions: currentViewConfig.navbar.showSearch
+          ? searchSuggestions
+          : [],
+        onSearchChange: currentViewConfig.navbar.showSearch
+          ? setSearchInput
+          : undefined,
         onAddClick: handleAddClick,
         canAddAction: canCreateTicket,
         isPermissionsLoading,

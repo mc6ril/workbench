@@ -5,38 +5,56 @@ import BoardShellAdapter from "@/modules/board/presentation/projectShell/boardSh
 const registerContributionMock = jest.fn();
 const projectToolbarMock = jest.fn((_props: unknown) => null);
 
-jest.mock("@/domains/project/presentation/layouts/projectShell/ProjectShellContributionContext", () => ({
-  useRegisterProjectViewContribution: (contribution: unknown) =>
-    registerContributionMock(contribution),
-}));
+jest.mock(
+  "@/domains/project/presentation/layouts/projectShell/ProjectShellContributionContext",
+  () => ({
+    useRegisterProjectViewContribution: (contribution: unknown) =>
+      registerContributionMock(contribution),
+  })
+);
 
 jest.mock("next/navigation", () => ({
   usePathname: () => "/a1111111-1111-4111-8111-111111111111/board",
   useSearchParams: () => new URLSearchParams(""),
 }));
 
-jest.mock("@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider", () => ({
-  useProjectPermissions: () => ({
-    canCreateTicket: false,
-    isLoading: true,
-  }),
-}));
+jest.mock(
+  "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider",
+  () => ({
+    useProjectPermissions: () => ({
+      canCreateTicket: false,
+      isLoading: true,
+    }),
+  })
+);
 
-jest.mock("@/domains/project/presentation/hooks/member/useProjectMembers", () => ({
-  useProjectMembers: () => ({ data: undefined }),
-}));
+jest.mock(
+  "@/domains/project/presentation/hooks/member/useProjectMembers",
+  () => ({
+    useProjectMembers: () => ({ data: undefined }),
+  })
+);
 
-jest.mock("@/modules/board/presentation/hooks/board/useBoardConfiguration", () => ({
-  useBoardConfiguration: () => ({ data: undefined }),
-}));
+jest.mock(
+  "@/modules/board/presentation/hooks/board/useBoardConfiguration",
+  () => ({
+    useBoardConfiguration: () => ({ data: undefined }),
+  })
+);
 
-jest.mock("@/modules/board/presentation/hooks/project/useProjectSearchSuggestions", () => ({
-  useProjectSearchSuggestions: () => [],
-}));
+jest.mock(
+  "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions",
+  () => ({
+    useProjectSearchSuggestions: () => [],
+  })
+);
 
-jest.mock("@/modules/board/presentation/hooks/realtime/useProjectRealtime", () => ({
-  useProjectRealtime: () => undefined,
-}));
+jest.mock(
+  "@/modules/board/presentation/hooks/realtime/useProjectRealtime",
+  () => ({
+    useProjectRealtime: () => undefined,
+  })
+);
 
 jest.mock("@/modules/board/presentation/stores/useFilterStore", () => ({
   useFilterStore: (selector: (state: unknown) => unknown) =>
@@ -52,10 +70,13 @@ jest.mock("@/modules/board/presentation/stores/useFilterStore", () => ({
     }),
 }));
 
-jest.mock("@/domains/project/presentation/components/projectToolbar/ProjectToolbar", () => ({
-  __esModule: true,
-  default: (props: unknown) => projectToolbarMock(props),
-}));
+jest.mock(
+  "@/domains/project/presentation/components/projectToolbar/ProjectToolbar",
+  () => ({
+    __esModule: true,
+    default: (props: unknown) => projectToolbarMock(props),
+  })
+);
 
 jest.mock("@/shared/navigation/useAppRouter", () => ({
   useAppRouter: () => ({
@@ -65,7 +86,8 @@ jest.mock("@/shared/navigation/useAppRouter", () => ({
 }));
 
 jest.mock("@/shared/i18n", () => ({
-  useTranslations: () => (_key: string, _values?: Record<string, unknown>) => "t",
+  useTranslations: () => (_key: string, _values?: Record<string, unknown>) =>
+    "t",
 }));
 
 describe("BoardShellAdapter toolbar immediacy", () => {
