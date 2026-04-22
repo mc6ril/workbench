@@ -3,9 +3,7 @@ import { createAppQueryClient } from "@/shared/providers/queryClient";
 
 import BoardRoutePage from "@/app/(protected)/[projectId]/board/page";
 import ProjectLoading from "@/app/(protected)/[projectId]/loading";
-import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
 import { getBoardConfiguration } from "@/modules/board/core/usecases/board/getBoardConfiguration";
-import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
 
 const boardPageContentMock = jest.fn((_props: unknown) => (
   <div>Board content</div>
@@ -44,14 +42,6 @@ jest.mock("@/modules/board/core/usecases/board/getBoardConfiguration", () => ({
   getBoardConfiguration: jest.fn(),
 }));
 
-jest.mock("@/modules/board/core/usecases/ticket/listTickets", () => ({
-  listTickets: jest.fn(),
-}));
-
-jest.mock("@/domains/project/infrastructure/server/getProjectForRoute", () => ({
-  getProjectForRoute: jest.fn(),
-}));
-
 jest.mock("@/modules/board/presentation/pages/board", () => ({
   __esModule: true,
   default: (props: unknown) => boardPageContentMock(props),
@@ -71,9 +61,7 @@ describe("BoardRoutePage hydration", () => {
 
     expect(createSupabaseServerClient).not.toHaveBeenCalled();
     expect(createAppQueryClient).not.toHaveBeenCalled();
-    expect(getProjectForRoute).not.toHaveBeenCalled();
     expect(getBoardConfiguration).not.toHaveBeenCalled();
-    expect(listTickets).not.toHaveBeenCalled();
 
     // The server page returns a Suspense boundary whose child owns the awaits.
     expect(result).toEqual(
