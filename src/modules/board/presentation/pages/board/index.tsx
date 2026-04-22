@@ -143,7 +143,7 @@ const BoardLayout = ({
       !filters.assigneeUserId &&
       !filters.unassignedOnly &&
       effectiveSearch.trim() === "");
-  const { data: tickets = [] } = useTickets(
+  const { data: tickets = [], isLoading: isTicketsLoading } = useTickets(
     projectId,
     filters,
     effectiveSearch,
@@ -488,7 +488,7 @@ const BoardLayout = ({
           renderColumn={renderColumnProps}
           isDragging={activeTicketId != null}
           isDragEnabled={canMoveTicket}
-          isLoading={isLoading}
+          isLoading={isLoading || isTicketsLoading}
           isEmpty={!boardConfiguration?.columns?.length}
           errorMessage={error?.message}
         />
