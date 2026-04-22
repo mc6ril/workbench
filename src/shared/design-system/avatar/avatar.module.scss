@@ -7,6 +7,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   border-radius: $radius-full;
   overflow: hidden;
   background-color: $color-primary;
@@ -44,9 +45,22 @@
   object-fit: cover;
 }
 
+.avatar__image--hidden {
+  opacity: 0;
+}
+
 .avatar__initials {
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-weight: $font-weight-semibold;
   line-height: 1;
   text-transform: uppercase;
   user-select: none;
+}
+
+.avatar__initials--hidden {
+  opacity: 0;
 }

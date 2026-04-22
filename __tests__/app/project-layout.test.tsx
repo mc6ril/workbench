@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 
-import ProjectLayout from "@/app/(protected)/[projectId]/layout";
 import { ProjectModuleKey } from "@/domains/project/core/domain/projectModule.types";
 import { getProjectShellSnapshot } from "@/domains/project/infrastructure/server/getProjectShellSnapshot";
+import ProjectRouteLayoutContent from "@/domains/project/presentation/layouts/projectRoute/ProjectRouteLayoutContent";
 import ProjectShell from "@/domains/project/presentation/layouts/projectShell/ProjectShell";
 
 jest.mock("next/navigation", () => ({
@@ -70,9 +70,9 @@ describe("ProjectLayout", () => {
   });
 
   it("resolves shell snapshot and renders project shell without hydrating legacy layout queries", async () => {
-    const result = await ProjectLayout({
+    const result = await ProjectRouteLayoutContent({
       children: <div>Project content</div>,
-      params: Promise.resolve({ projectId: PROJECT_ID }),
+      projectId: PROJECT_ID,
     });
 
     render(result);

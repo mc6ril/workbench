@@ -16,6 +16,9 @@ const AVATAR_SIZE_PX: Record<AvatarSize, number> = {
   xl: 64,
 };
 
+const TRANSPARENT_PIXEL_DATA_URI =
+  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+
 type Props = {
   /** URL of the avatar image */
   src?: string | null;
@@ -34,32 +37,25 @@ type Props = {
  */
 const Avatar = ({ src, name, size = "md", "aria-label": ariaLabel }: Props) => {
   const initials = getAvatarInitials(name);
-  const avatarId = getAccessibilityId(`avatar-${name ?? "unknown"}`);
-  const displayLabel = ariaLabel ?? name ?? "User avatar";
+  const avatarId = getAccessibilityId("avatar-utilisateur");
+  const displayLabel = ariaLabel ?? "User avatar";
   const sizePx = AVATAR_SIZE_PX[size];
 
   const containerClasses = [styles.avatar, styles[`avatar--${size}`]]
     .filter(Boolean)
     .join(" ");
-
-  if (src) {
-    return (
-      <div
-        id={avatarId}
-        className={containerClasses}
-        role="img"
-        aria-label={displayLabel}
-      >
-        <Image
-          src={src}
-          alt={displayLabel}
-          width={sizePx}
-          height={sizePx}
-          className={styles.avatar__image}
-        />
-      </div>
-    );
-  }
+  const imageClasses = [
+    styles.avatar__image,
+    !src ? styles["avatar__image--hidden"] : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const initialsClasses = [
+    styles.avatar__initials,
+    src ? styles["avatar__initials--hidden"] : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div
@@ -68,7 +64,15 @@ const Avatar = ({ src, name, size = "md", "aria-label": ariaLabel }: Props) => {
       role="img"
       aria-label={displayLabel}
     >
-      <span className={styles.avatar__initials} aria-hidden="true">
+      <Image
+        src={src ?? TRANSPARENT_PIXEL_DATA_URI}
+        alt={displayLabel}
+        width={sizePx}
+        height={sizePx}
+        className={imageClasses}
+        unoptimized={!src}
+      />
+      <span className={initialsClasses} aria-hidden="true">
         {initials}
       </span>
     </div>

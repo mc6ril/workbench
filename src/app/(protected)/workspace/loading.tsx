@@ -1,12 +1,10 @@
-import { getTranslations } from "next-intl/server";
+"use client";
 
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
+import { useTranslations } from "@/shared/i18n";
 
-/**
- * Loading state for workspace route.
- */
-const WorkspaceLoading = async () => {
-  const t = await getTranslations("pages.fallback");
+export const WorkspaceLoadingContent = () => {
+  const t = useTranslations("pages.fallback");
 
   return (
     <RouteFallbackPage
@@ -18,6 +16,13 @@ const WorkspaceLoading = async () => {
       ariaLabel={t("workspaceLoading.ariaLabel")}
     />
   );
+};
+
+/**
+ * Loading state for workspace route.
+ */
+const WorkspaceLoading = () => {
+  return <WorkspaceLoadingContent />;
 };
 
 export default WorkspaceLoading;
