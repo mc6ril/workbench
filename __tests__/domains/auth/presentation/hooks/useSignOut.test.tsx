@@ -4,6 +4,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { APP_COOKIE_KEYS } from "@/shared/infrastructure/storage/cookies";
 import { navigateToDocumentPath } from "@/shared/navigation/documentNavigation";
+import { clearPersistedIdentityCache } from "@/shared/providers/persistedIdentityCache";
 
 import { signOutUser } from "@/domains/auth/core/usecases/user/signOutUser";
 import { authGateway } from "@/domains/auth/infrastructure/supabase/repositories";
@@ -27,6 +28,10 @@ jest.mock(
 
 jest.mock("@/shared/navigation/documentNavigation", () => ({
   navigateToDocumentPath: jest.fn(),
+}));
+
+jest.mock("@/shared/providers/persistedIdentityCache", () => ({
+  clearPersistedIdentityCache: jest.fn(),
 }));
 
 describe("useSignOut", () => {
@@ -66,6 +71,7 @@ describe("useSignOut", () => {
       expect(invalidatePostAuthMutation).toHaveBeenCalledWith(queryClient);
     });
 
+    expect(clearPersistedIdentityCache).toHaveBeenCalledTimes(1);
     expect(clearSpy).toHaveBeenCalledTimes(1);
     expect(navigateToDocumentPath).toHaveBeenCalledWith(PAGE_ROUTES.HOME);
     expect(document.cookie).not.toContain(
