@@ -34,6 +34,13 @@ export const isNumber = (value: unknown): value is number => {
 };
 
 /**
+ * Type guard to check if a value is a boolean.
+ */
+export const isBoolean = (value: unknown): value is boolean => {
+  return typeof value === "boolean";
+};
+
+/**
  * Type guard to check if a value is an array.
  * @template T The element type of the array
  * @param value - Value to check

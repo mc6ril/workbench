@@ -5,21 +5,29 @@
 
 import * as Sentry from "@sentry/nextjs";
 
-const isDevelopment = process.env.NODE_ENV === "development";
+const isSentryEnabled = process.env.NODE_ENV === "production";
 
-Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+if (isSentryEnabled) {
+  Sentry.init({
+    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
-  sendDefaultPii: false,
+    sendDefaultPii: false,
 
-  tracesSampleRate: isDevelopment ? 1.0 : 0.1,
+    tracesSampleRate: 0.1,
 
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0,
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1.0,
 
-  enableLogs: true,
+    enableLogs: true,
 
-  integrations: [Sentry.replayIntegration()],
-});
+    integrations: [Sentry.replayIntegration()],
+  });
+}
 
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+type OnRouterTransitionStart = typeof Sentry.captureRouterTransitionStart;
+
+export const onRouterTransitionStart: OnRouterTransitionStart = isSentryEnabled
+  ? Sentry.captureRouterTransitionStart
+  : (...args) => {
+      void args;
+    };

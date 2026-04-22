@@ -1,7 +1,7 @@
 "use client";
 
 import type { PropsWithChildren } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   type DehydratedState,
@@ -9,6 +9,10 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 
+import {
+  hydratePersistedIdentityCache,
+  syncPersistedIdentityCache,
+} from "./persistedIdentityCache";
 import { createAppQueryClient } from "./queryClient";
 
 type ReactQueryProviderProps = PropsWithChildren<{
@@ -36,6 +40,15 @@ const ReactQueryProvider = ({
   dehydratedState,
 }: ReactQueryProviderProps) => {
   const [queryClient] = useState(createAppQueryClient);
+
+  useEffect(() => {
+    hydratePersistedIdentityCache(queryClient);
+    syncPersistedIdentityCache(queryClient);
+
+    return queryClient.getQueryCache().subscribe(() => {
+      syncPersistedIdentityCache(queryClient);
+    });
+  }, [queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>

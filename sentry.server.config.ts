@@ -4,16 +4,18 @@
 
 import * as Sentry from "@sentry/nextjs";
 
-const isDevelopment = process.env.NODE_ENV === "development";
+const isSentryEnabled = process.env.NODE_ENV === "production";
 
-Sentry.init({
-  dsn: process.env.SENTRY_DSN ?? process.env.NEXT_PUBLIC_SENTRY_DSN,
+if (isSentryEnabled) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN ?? process.env.NEXT_PUBLIC_SENTRY_DSN,
 
-  sendDefaultPii: false,
+    sendDefaultPii: false,
 
-  tracesSampleRate: isDevelopment ? 1.0 : 0.1,
+    tracesSampleRate: 0.1,
 
-  includeLocalVariables: true,
+    includeLocalVariables: true,
 
-  enableLogs: true,
-});
+    enableLogs: true,
+  });
+}

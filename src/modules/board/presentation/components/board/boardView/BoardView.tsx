@@ -29,8 +29,10 @@ const BoardView = ({
   const containerClasses = [styles["board-view"], className]
     .filter(Boolean)
     .join(" ");
+  const visibleColumns = columns.filter((column) => column.isVisible !== false);
+  const shouldShowLoadingMessage = isLoading && visibleColumns.length === 0;
 
-  if (isLoading) {
+  if (shouldShowLoadingMessage) {
     return (
       <section
         className={containerClasses}
@@ -86,6 +88,7 @@ const BoardView = ({
       className={containerClasses}
       aria-labelledby={containerId}
       aria-label={t("ariaLabel")}
+      aria-busy={isLoading ? "true" : undefined}
     >
       <Title id={containerId} variant="h2" className="visually-hidden">
         {t("title")}
@@ -95,27 +98,25 @@ const BoardView = ({
         role="list"
         data-dragging={isDragging}
       >
-        {columns
-          .filter((column) => column.isVisible !== false)
-          .map((column) => {
-            const columnProps = renderColumn(column);
+        {visibleColumns.map((column) => {
+          const columnProps = renderColumn(column);
 
-            return (
-              <div
-                key={column.id}
-                role="listitem"
-                className={styles["board-view__column-wrapper"]}
-              >
-                <BoardColumn
-                  {...columnProps}
-                  id={column.id}
-                  title={column.title}
-                  isDragging={isDragging}
-                  isSortable={isDragEnabled}
-                />
-              </div>
-            );
-          })}
+          return (
+            <div
+              key={column.id}
+              role="listitem"
+              className={styles["board-view__column-wrapper"]}
+            >
+              <BoardColumn
+                {...columnProps}
+                id={column.id}
+                title={column.title}
+                isDragging={isDragging}
+                isSortable={isDragEnabled}
+              />
+            </div>
+          );
+        })}
       </div>
     </section>
   );

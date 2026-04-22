@@ -22,6 +22,9 @@ import BoardPage from "@/modules/board/presentation/pages/board";
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
+const boardViewMock = jest.fn((_props: unknown) => (
+  <div data-testid="board-view" />
+));
 const PROJECT_ID = "project-1";
 const mockPathname = buildProjectRoute(PROJECT_ID, PROJECT_VIEWS.BOARD);
 let mockSearchParams = new URLSearchParams();
@@ -108,7 +111,7 @@ jest.mock(
   "@/modules/board/presentation/components/board/boardView/BoardView",
   () => ({
     __esModule: true,
-    default: () => <div data-testid="board-view" />,
+    default: (props: unknown) => boardViewMock(props),
   })
 );
 
@@ -340,6 +343,23 @@ describe("BoardPage onboarding", () => {
     expect(
       screen.queryByTestId("board-onboarding-panel")
     ).not.toBeInTheDocument();
+  });
+
+  it("keeps the board area in loading state while client tickets are still fetching", () => {
+    jest.mocked(useTickets).mockImplementation(() => {
+      return asMockedReturn<ReturnType<typeof useTickets>>({
+        data: [],
+        isLoading: true,
+      });
+    });
+
+    render(<BoardPage projectId={PROJECT_ID} />);
+
+    expect(boardViewMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isLoading: true,
+      })
+    );
   });
 
   it("persists skipped status and closes the guide", async () => {
