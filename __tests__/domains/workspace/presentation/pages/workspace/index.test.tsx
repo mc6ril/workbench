@@ -9,7 +9,7 @@ import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 import { useLastActivitySubtitle } from "@/domains/workspace/presentation/hooks/useLastActivitySubtitle";
 import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
 import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
-import WorkspacePage from "@/domains/workspace/presentation/pages/workspace";
+import WorkspacePageContainer from "@/domains/workspace/presentation/pages/workspace/WorkspacePageContainer";
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({
@@ -140,7 +140,7 @@ describe("WorkspacePage onboarding", () => {
       })
     );
 
-    render(<WorkspacePage />);
+    render(<WorkspacePageContainer />);
 
     expect(screen.getByText("Guide de demarrage")).toBeInTheDocument();
     expect(
@@ -173,7 +173,7 @@ describe("WorkspacePage onboarding", () => {
       })
     );
 
-    render(<WorkspacePage />);
+    render(<WorkspacePageContainer />);
 
     expect(screen.queryByText("Guide de demarrage")).not.toBeInTheDocument();
     expect(
@@ -221,7 +221,7 @@ describe("WorkspacePage onboarding", () => {
       })
     );
 
-    render(<WorkspacePage />);
+    render(<WorkspacePageContainer />);
 
     expect(screen.getByText("Maison")).toBeInTheDocument();
     expect(

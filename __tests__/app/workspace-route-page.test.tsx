@@ -5,9 +5,14 @@ import { localeCookieName } from "@/shared/i18n";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 
+import { loadWorkspaceRouteData } from "@/app/(protected)/workspace/loadWorkspaceRouteData";
 import WorkspaceRoutePage, {
   generateMetadata as generateWorkspaceMetadata,
 } from "@/app/(protected)/workspace/page";
+import { getProfile } from "@/domains/profile/core/usecases/getProfile";
+import { createProfileGateway } from "@/domains/profile/infrastructure/profileGateway.supabase";
+import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
+import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 import { listProjectsWithStats } from "@/domains/workspace/core/usecases/project/listProjectsWithStats";
 import { createWorkspaceProjectCatalogGateway } from "@/domains/workspace/infrastructure/supabase/gateways";
 import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
@@ -36,6 +41,22 @@ jest.mock("@/shared/infrastructure/supabase/client-server", () => ({
   createSupabaseServerClient: jest.fn(),
 }));
 
+jest.mock("@/domains/session/core/usecases/getCurrentSession", () => ({
+  getCurrentSession: jest.fn(),
+}));
+
+jest.mock("@/domains/session/infrastructure/supabase/repositories", () => ({
+  createSessionGateway: jest.fn(),
+}));
+
+jest.mock("@/domains/profile/core/usecases/getProfile", () => ({
+  getProfile: jest.fn(),
+}));
+
+jest.mock("@/domains/profile/infrastructure/profileGateway.supabase", () => ({
+  createProfileGateway: jest.fn(),
+}));
+
 jest.mock("@/domains/workspace/infrastructure/supabase/gateways", () => ({
   createWorkspaceProjectCatalogGateway: jest.fn(),
 }));
@@ -58,6 +79,8 @@ describe("WorkspaceRoutePage hydration", () => {
   };
 
   const mockSupabaseClient = { tag: "supabase" };
+  const mockSessionGateway = { tag: "sessionGateway" };
+  const mockProfileGateway = { tag: "profileGateway" };
   const mockWorkspaceGateway = { tag: "workspaceGateway" };
   const mockCookieStore = {
     get: jest.fn(),
@@ -80,26 +103,52 @@ describe("WorkspaceRoutePage hydration", () => {
       .mocked(createSupabaseServerClient)
       .mockResolvedValue(mockSupabaseClient as never);
     jest
+      .mocked(createSessionGateway)
+      .mockReturnValue(mockSessionGateway as never);
+    jest
+      .mocked(createProfileGateway)
+      .mockReturnValue(mockProfileGateway as never);
+    jest
       .mocked(createWorkspaceProjectCatalogGateway)
       .mockReturnValue(mockWorkspaceGateway as never);
     jest.mocked(cookies).mockResolvedValue(mockCookieStore as never);
     jest.mocked(headers).mockResolvedValue(mockHeaderStore as never);
+    jest.mocked(getCurrentSession).mockResolvedValue({
+      userId: "user-1",
+      loginEmail: "cyril@example.com",
+      accessToken: "",
+      isSuperuser: false,
+    } as never);
+    jest.mocked(getProfile).mockResolvedValue({
+      displayName: "Cyril Lesot",
+    } as never);
     jest.mocked(listProjectsWithStats).mockResolvedValue([]);
     mockCookieStore.get.mockReturnValue(undefined);
     mockHeaderStore.get.mockReturnValue(null);
   });
 
-  it("prefetches workspace queries and renders hydrated content", async () => {
+  it("renders workspace route content", async () => {
     const result = await WorkspaceRoutePage();
 
     render(result);
 
     expect(screen.getByText("Workspace content")).toBeInTheDocument();
+  });
+
+  it("prefetches workspace queries in the layout loader", async () => {
+    const result = await loadWorkspaceRouteData();
+
+    expect(result.displayName).toBe("Cyril Lesot");
+    expect(typeof result.referenceTimeIso).toBe("string");
     expect(mockQueryClient.prefetchQuery).toHaveBeenNthCalledWith(1, {
       queryKey: workspaceQueryKeys.projects.withStats(),
       queryFn: expect.any(Function),
     });
     expect(mockQueryClient.prefetchQuery).toHaveBeenCalledTimes(1);
+    expect(createSessionGateway).toHaveBeenCalledWith(mockSupabaseClient);
+    expect(createProfileGateway).toHaveBeenCalledWith(mockSupabaseClient);
+    expect(getCurrentSession).toHaveBeenCalledWith(mockSessionGateway);
+    expect(getProfile).toHaveBeenCalledWith(mockProfileGateway, "user-1");
     expect(listProjectsWithStats).toHaveBeenCalledWith(mockWorkspaceGateway);
     expect(dehydrateMock).toHaveBeenCalledWith(mockQueryClient);
   });

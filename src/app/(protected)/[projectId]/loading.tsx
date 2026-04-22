@@ -1,12 +1,10 @@
-import { getTranslations } from "next-intl/server";
+"use client";
 
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
+import { useTranslations } from "@/shared/i18n";
 
-/**
- * Loading state for project routes.
- */
-const ProjectLoading = async () => {
-  const t = await getTranslations("pages.fallback");
+export const ProjectLoading = () => {
+  const t = useTranslations("pages.fallback");
 
   return (
     <RouteFallbackPage

@@ -18,8 +18,6 @@ import {
   stripProjectBoardEmojiPrefix,
 } from "@/shared/constants/projectBoardEmoji";
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
-import ErrorMessage from "@/shared/design-system/error_message";
-import Loader from "@/shared/design-system/loader";
 import { getAppErrorCode } from "@/shared/errors/appError";
 import { REPOSITORY_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { useTranslations } from "@/shared/i18n";
@@ -30,7 +28,11 @@ import { markNavigationStart } from "@/shared/navigationPerf";
 import { shouldShowLoading } from "@/shared/utils/queryStatus";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
-import styles from "./styles.module.scss";
+import {
+  useWorkspaceRouteDisplayName,
+  useWorkspaceRouteReferenceTimeIso,
+} from "./WorkspacePageRouteContext";
+import WorkspacePageView from "./WorkspacePageView";
 
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
@@ -40,26 +42,15 @@ import {
 } from "@/domains/project/core/usecases/project/createProject";
 import { useAddUserToProject } from "@/domains/project/presentation/hooks/useAddUserToProject";
 import { useCreateProject } from "@/domains/project/presentation/hooks/useCreateProject";
-import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 import CreateWorkspaceModal from "@/domains/workspace/presentation/components/CreateWorkspaceModal";
-import ReclaimableProjectsSection from "@/domains/workspace/presentation/components/ReclaimableProjectsSection";
-import WorkspaceEmptyState from "@/domains/workspace/presentation/components/WorkspaceEmptyState";
-import WorkspaceFooter from "@/domains/workspace/presentation/components/WorkspaceFooter";
-import WorkspaceHeader from "@/domains/workspace/presentation/components/WorkspaceHeader";
-import WorkspaceProjectsSection from "@/domains/workspace/presentation/components/WorkspaceProjectsSection";
 import { useLastActivitySubtitle } from "@/domains/workspace/presentation/hooks/useLastActivitySubtitle";
 import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
 import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
 
 type CreateProjectFormData = CreateProjectInput;
 
-type WorkspacePageProps = {
-  referenceTimeIso?: string;
-};
-
-const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
+const WorkspacePageContainer = () => {
   const router = useAppRouter();
-  const { data: viewer } = useViewer();
   const {
     data: projects,
     isLoading: isLoadingProjects,
@@ -114,6 +105,8 @@ const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
   }, []);
 
   const tErrors = useTranslations("errors");
+  const displayName = useWorkspaceRouteDisplayName();
+  const referenceTimeIso = useWorkspaceRouteReferenceTimeIso();
   const referenceTime = useMemo(() => {
     return referenceTimeIso ? new Date(referenceTimeIso) : new Date();
   }, [referenceTimeIso]);
@@ -247,79 +240,55 @@ const WorkspacePage = ({ referenceTimeIso }: WorkspacePageProps) => {
       isLoading: isLoadingProjects,
       isFetching: isFetchingProjects,
     });
+  const showProjectsRefreshLoader =
+    shouldShowLoading({
+      isLoading: isLoadingProjects,
+      isPending: addUserToProjectMutation.isPending,
+    }) && hasProjects;
   const showWelcomeGuide = !hasProjects && canAutoOpenGettingStarted;
   const gettingStartedErrorMessage = gettingStartedError
     ? getErrorMessage(gettingStartedError, tErrors)
     : null;
+  const projectsErrorMessage = projectsError
+    ? getErrorMessage(projectsError, tErrors)
+    : null;
 
   return (
-    <main className={styles["workspace-page"]}>
-      <WorkspaceHeader
-        displayName={viewer?.displayName}
-        onCreateWorkspace={openCreateModal}
-      />
-
-      <div className={styles["workspace-container"]}>
-        {projectsError && (
-          <ErrorMessage message={getErrorMessage(projectsError, tErrors)} />
-        )}
-
-        {Array.isArray(reclaimableProjects) &&
-          reclaimableProjects.length > 0 && (
-            <ReclaimableProjectsSection
-              projects={reclaimableProjects}
-              referenceTime={referenceTime}
-              reclaimingProjectId={reclaimingProjectId}
-              onReclaimProject={handleReclaimProject}
-            />
-          )}
-
-        {showProjectsListPlaceholder ? (
-          <section aria-busy="true">
-            <Loader variant="inline" />
-          </section>
-        ) : shouldShowLoading({
-            isLoading: isLoadingProjects,
-            isPending: addUserToProjectMutation.isPending,
-          }) && hasProjects ? (
-          <Loader variant="inline" />
-        ) : hasProjects ? (
-          <WorkspaceProjectsSection
-            projects={projects}
-            referenceTime={referenceTime}
-            formatLastActivity={formatLastActivity}
-            onOpenProject={handleOpenProject}
-          />
-        ) : Array.isArray(projects) && projects.length === 0 ? (
-          <WorkspaceEmptyState
-            showWelcomeGuide={showWelcomeGuide}
-            gettingStartedErrorMessage={gettingStartedErrorMessage}
-            isGettingStartedPending={isGettingStartedPending}
-            onCreateWorkspace={openCreateModal}
-            onSkipWelcomeGuide={handleSkipWelcomeGuide}
-          />
-        ) : null}
-      </div>
-
-      <WorkspaceFooter
-        isBillingVisible={isBillingVisible}
-        legal={legal}
-        pricing={pricing}
-      />
-
-      <CreateWorkspaceModal
-        isOpen={createModalOpen}
-        onClose={closeCreateModal}
-        selectedEmoji={selectedEmoji}
-        onSelectEmoji={handleSelectEmoji}
-        register={register}
-        handleSubmit={handleSubmit}
-        onSubmit={onCreateProjectSubmit}
-        errors={errors}
-        isSubmitting={createProjectMutation.isPending}
-      />
-    </main>
+    <WorkspacePageView
+      displayName={displayName}
+      onCreateWorkspace={openCreateModal}
+      isBillingVisible={isBillingVisible}
+      legal={legal}
+      pricing={pricing}
+      projects={projects}
+      projectsErrorMessage={projectsErrorMessage}
+      reclaimableProjects={reclaimableProjects}
+      referenceTime={referenceTime}
+      reclaimingProjectId={reclaimingProjectId}
+      onReclaimProject={handleReclaimProject}
+      showProjectsListPlaceholder={showProjectsListPlaceholder}
+      showProjectsRefreshLoader={showProjectsRefreshLoader}
+      showWelcomeGuide={showWelcomeGuide}
+      gettingStartedErrorMessage={gettingStartedErrorMessage}
+      isGettingStartedPending={isGettingStartedPending}
+      onSkipWelcomeGuide={handleSkipWelcomeGuide}
+      onOpenProject={handleOpenProject}
+      formatLastActivity={formatLastActivity}
+      createWorkspaceModal={
+        <CreateWorkspaceModal
+          isOpen={createModalOpen}
+          onClose={closeCreateModal}
+          selectedEmoji={selectedEmoji}
+          onSelectEmoji={handleSelectEmoji}
+          register={register}
+          handleSubmit={handleSubmit}
+          onSubmit={onCreateProjectSubmit}
+          errors={errors}
+          isSubmitting={createProjectMutation.isPending}
+        />
+      }
+    />
   );
 };
 
-export default WorkspacePage;
+export default WorkspacePageContainer;

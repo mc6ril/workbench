@@ -68,7 +68,10 @@ const SidebarProfileMenu = ({
         >
           <Avatar src={avatarUrl} name={displayName} size="md" />
         </span>
-        <span className={styles["sidebar-navigation__profile-name"]}>
+        <span
+          className={styles["sidebar-navigation__profile-name"]}
+          suppressHydrationWarning
+        >
           {displayName}
         </span>
         <UserProfileIcon
