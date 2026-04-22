@@ -334,30 +334,11 @@ describe("BoardPage onboarding", () => {
     });
   });
 
-  it("auto-opens the onboarding when getting started is still pending", () => {
+  it("does not auto-open the onboarding when getting started is still pending", () => {
     render(<BoardPage projectId={PROJECT_ID} />);
 
-    expect(screen.getByTestId("board-onboarding-panel")).toHaveAttribute(
-      "data-expanded",
-      "true"
-    );
-    expect(screen.getByText("skip-onboarding")).toBeInTheDocument();
-    expect(screen.getByText("assign-ticket:blocked")).toBeInTheDocument();
-    expect(screen.getByText("comment-ticket:blocked")).toBeInTheDocument();
     expect(
-      screen.getByText(
-        "Créez d'abord un premier ticket. Vous pourrez ensuite l'ouvrir et l'assigner a une personne."
-      )
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        "Créez d'abord un premier ticket. Vous pourrez ensuite l'ouvrir et y ajouter un commentaire."
-      )
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", {
-        name: "Ouvrir un ticket pour l'assigner",
-      })
+      screen.queryByTestId("board-onboarding-panel")
     ).not.toBeInTheDocument();
   });
 
@@ -378,7 +359,7 @@ describe("BoardPage onboarding", () => {
     });
   });
 
-  it("opens the ticket detail from the onboarding step action", () => {
+  it("opens the ticket detail from the onboarding step action when the guide is explicitly opened", () => {
     mockTicketsData = [
       {
         id: "ticket-1",
@@ -387,6 +368,7 @@ describe("BoardPage onboarding", () => {
         codeNumber: 1,
       },
     ];
+    mockSearchParams = new URLSearchParams("onboarding=1");
 
     render(<BoardPage projectId="project-1" />);
 

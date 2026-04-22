@@ -6,7 +6,6 @@ import { ThemeProvider } from "next-themes";
 import type { DehydratedState } from "@tanstack/react-query";
 
 import Toast from "@/shared/design-system/toast";
-import NavigationFeedbackController from "@/shared/navigation/NavigationFeedbackController";
 import { markNavigationSettled } from "@/shared/navigationPerf";
 
 import AppErrorBoundary from "./AppErrorBoundary";
@@ -49,7 +48,6 @@ const AppProvider = ({ children, dehydratedState }: AppProviderProps) => {
           <ProfilePreferencesSync />
           <NavigationPerfTracker />
           {children}
-          <NavigationFeedbackController />
           <Toast />
         </ReactQueryProvider>
       </AppErrorBoundary>

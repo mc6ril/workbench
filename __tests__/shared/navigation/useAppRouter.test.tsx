@@ -1,12 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
-import { useNavigationFeedbackStore } from "@/shared/stores/useNavigationFeedbackStore";
-
-jest.mock("@/shared/navigation/navigationFeedback.utils", () => ({
-  ...jest.requireActual("@/shared/navigation/navigationFeedback.utils"),
-  getCurrentLocationHrefNormalized: jest.fn(() => "/current"),
-}));
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
@@ -29,12 +23,9 @@ jest.mock("next/navigation", () => ({
 describe("useAppRouter", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    act(() => {
-      useNavigationFeedbackStore.getState().reset();
-    });
   });
 
-  it("starts navigation feedback on push when href differs from current location", () => {
+  it("pushes immediately without extra feedback state", () => {
     const { result } = renderHook(() => {
       return useAppRouter();
     });
@@ -43,12 +34,10 @@ describe("useAppRouter", () => {
       result.current.push("/other");
     });
 
-    expect(useNavigationFeedbackStore.getState().targetHref).toBe("/other");
-    expect(useNavigationFeedbackStore.getState().status).toBe("delaying");
     expect(mockPush).toHaveBeenCalledWith("/other");
   });
 
-  it("does not start feedback when replace uses feedback none", () => {
+  it("keeps omitting the feedback option for replace", () => {
     const { result } = renderHook(() => {
       return useAppRouter();
     });
@@ -57,7 +46,6 @@ describe("useAppRouter", () => {
       result.current.replace("/x", { feedback: "none" });
     });
 
-    expect(useNavigationFeedbackStore.getState().status).toBe("idle");
     expect(mockReplace).toHaveBeenCalledWith("/x", {});
   });
 
@@ -73,7 +61,7 @@ describe("useAppRouter", () => {
     expect(mockPush).toHaveBeenCalledWith("/z", { scroll: false });
   });
 
-  it("starts navigation feedback immediately on back", () => {
+  it("navigates back immediately", () => {
     const { result } = renderHook(() => {
       return useAppRouter();
     });
@@ -82,12 +70,10 @@ describe("useAppRouter", () => {
       result.current.back();
     });
 
-    expect(useNavigationFeedbackStore.getState().targetHref).toBe("/current");
-    expect(useNavigationFeedbackStore.getState().status).toBe("delaying");
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
 
-  it("starts navigation feedback immediately on refresh", () => {
+  it("refreshes immediately", () => {
     const { result } = renderHook(() => {
       return useAppRouter();
     });
@@ -96,12 +82,10 @@ describe("useAppRouter", () => {
       result.current.refresh();
     });
 
-    expect(useNavigationFeedbackStore.getState().targetHref).toBe("/current");
-    expect(useNavigationFeedbackStore.getState().status).toBe("delaying");
     expect(mockRefresh).toHaveBeenCalledTimes(1);
   });
 
-  it("allows opting out of feedback for back-like navigations", () => {
+  it("accepts the legacy feedback option on back-like navigations", () => {
     const { result } = renderHook(() => {
       return useAppRouter();
     });
@@ -110,7 +94,6 @@ describe("useAppRouter", () => {
       result.current.back({ feedback: "none" });
     });
 
-    expect(useNavigationFeedbackStore.getState().status).toBe("idle");
     expect(mockBack).toHaveBeenCalledTimes(1);
   });
 });

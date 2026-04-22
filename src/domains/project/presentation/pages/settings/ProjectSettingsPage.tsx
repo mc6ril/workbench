@@ -19,8 +19,8 @@ import Card from "@/shared/design-system/card";
 import ErrorMessage from "@/shared/design-system/error_message";
 import { PermissionStatusIcon } from "@/shared/design-system/icons";
 import Input from "@/shared/design-system/input";
-import Loader from "@/shared/design-system/loader";
 import Modal from "@/shared/design-system/modal";
+import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { getIntlLocale, useLocale, useTranslations } from "@/shared/i18n";
@@ -49,6 +49,7 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
   const tAccess = useTranslations("pages.settings.access");
   const tDanger = useTranslations("pages.settings.dangerZone");
   const tDelete = useTranslations("pages.settings.delete");
+  const tFallback = useTranslations("pages.fallback");
   const tErrors = useTranslations("errors");
   const locale = useLocale();
   const intlLocale = useMemo(() => getIntlLocale(locale), [locale]);
@@ -248,11 +249,13 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
 
   if (isProjectLoading || isPermissionsLoading) {
     return (
-      <Loader
-        variant="inline"
-        size="large"
-        message={tPage("loading")}
-        ariaLabel={tPage("loading")}
+      <RouteFallbackPage
+        tone="loading"
+        eyebrow={tFallback("projectLoading.eyebrow")}
+        statusLabel={tFallback("projectLoading.status")}
+        title={tFallback("projectLoading.title")}
+        message={tFallback("projectLoading.message")}
+        ariaLabel={tFallback("projectLoading.ariaLabel")}
       />
     );
   }

@@ -2,16 +2,6 @@ import { fireEvent, render, screen } from "@testing-library/react";
 
 import Link from "@/shared/design-system/link";
 
-const mockBeginNavigation = jest.fn();
-
-jest.mock("@/shared/stores/useNavigationFeedbackStore", () => ({
-  useNavigationFeedbackStore: {
-    getState: () => ({
-      beginNavigation: (...args: unknown[]) => mockBeginNavigation(...args),
-    }),
-  },
-}));
-
 // Mock Next.js Link
 jest.mock("next/link", () => {
   const MockLink = ({
@@ -34,10 +24,6 @@ jest.mock("next/link", () => {
 });
 
 describe("Link Component", () => {
-  beforeEach(() => {
-    mockBeginNavigation.mockClear();
-  });
-
   it("should render children", () => {
     // Arrange & Act
     render(<Link href="/test">Link Text</Link>);
@@ -119,19 +105,7 @@ describe("Link Component", () => {
     expect(link).toHaveAttribute("aria-label", "Custom link label");
   });
 
-  it("should call beginNavigation on internal navigation click", () => {
-    render(<Link href="/dashboard">Go</Link>);
-    fireEvent.click(screen.getByText("Go"));
-    expect(mockBeginNavigation).toHaveBeenCalledWith("/dashboard");
-  });
-
-  it("should not call beginNavigation on meta-click", () => {
-    render(<Link href="/dashboard">Go</Link>);
-    fireEvent.click(screen.getByText("Go"), { metaKey: true });
-    expect(mockBeginNavigation).not.toHaveBeenCalled();
-  });
-
-  it("should not call beginNavigation when onClick prevents default", () => {
+  it("should preserve custom onClick handling for internal links", () => {
     const handleClick = jest.fn(
       (event: React.MouseEvent<HTMLAnchorElement>) => {
         event.preventDefault();
@@ -147,7 +121,6 @@ describe("Link Component", () => {
     fireEvent.click(screen.getByText("Go"));
 
     expect(handleClick).toHaveBeenCalledTimes(1);
-    expect(mockBeginNavigation).not.toHaveBeenCalled();
   });
 
   it("should apply custom className", () => {

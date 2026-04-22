@@ -1,25 +1,19 @@
-import { render, screen } from "@testing-library/react";
-
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 
 import BoardRoutePage from "@/app/(protected)/[projectId]/board/page";
-import type { Project } from "@/domains/project/core/domain/project.types";
+import ProjectLoading from "@/app/(protected)/[projectId]/loading";
 import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
 import { getBoardConfiguration } from "@/modules/board/core/usecases/board/getBoardConfiguration";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
-import {
-  createBoardRepository,
-  createTicketRepository,
-} from "@/modules/board/infrastructure/supabase/repositories";
-import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
+
+const boardPageContentMock = jest.fn((_props: unknown) => (
+  <div>Board content</div>
+));
 
 const dehydrateMock = jest.fn((_queryClient?: unknown) => ({
   board: true,
 }));
-const boardPageContentMock = jest.fn((_props: unknown) => (
-  <div>Board content</div>
-));
 
 jest.mock("@tanstack/react-query", () => ({
   HydrationBoundary: ({ children }: { children: React.ReactNode }) => (
@@ -65,122 +59,32 @@ jest.mock("@/modules/board/presentation/pages/board", () => ({
 
 describe("BoardRoutePage hydration", () => {
   const PROJECT_ID = "a1111111-1111-4111-8111-111111111111";
-  const mockQueryClient = {
-    fetchQuery: jest.fn(),
-    setQueryData: jest.fn(),
-  };
-  const mockSupabaseClient = { tag: "supabase" };
-  const mockBoardRepository = { tag: "boardRepository" };
-  const mockTicketRepository = { tag: "ticketRepository" };
-  const boardConfiguration = {
-    board: {
-      id: "board-1",
-      projectId: PROJECT_ID,
-      createdAt: new Date("2026-04-09T08:00:00.000Z"),
-      updatedAt: new Date("2026-04-09T08:00:00.000Z"),
-    },
-    columns: [
-      {
-        id: "column-todo",
-        boardId: "board-1",
-        name: "Todo",
-        key: "todo",
-        state: "todo" as const,
-        position: 0,
-        visible: true,
-        createdAt: new Date("2026-04-09T08:00:00.000Z"),
-        updatedAt: new Date("2026-04-09T08:00:00.000Z"),
-      },
-    ],
-  };
-  const tickets = [
-    {
-      id: "ticket-1",
-      projectId: PROJECT_ID,
-      title: "First task",
-      description: null,
-      columnId: "column-todo",
-      position: 0,
-      codeNumber: 1,
-      priority: null,
-      dueDate: null,
-      storyPoints: null,
-      createdBy: "user-1",
-      completedAt: null,
-      archivedAt: null,
-      archivedWeekStart: null,
-      createdAt: new Date("2026-04-09T08:00:00.000Z"),
-      updatedAt: new Date("2026-04-09T08:00:00.000Z"),
-    },
-  ];
-  const projectShortCode = "WB";
-  const projectFromRoute: Project = {
-    id: PROJECT_ID,
-    name: "Test project",
-    shortCode: projectShortCode,
-    boardEmoji: "📋",
-    enabledModules: [],
-    createdAt: new Date("2026-04-09T08:00:00.000Z"),
-    updatedAt: new Date("2026-04-09T08:00:00.000Z"),
-  };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    dehydrateMock.mockReturnValue({ board: true });
-
-    mockQueryClient.fetchQuery.mockReset();
-    mockQueryClient.fetchQuery.mockImplementation(async ({ queryFn }) => {
-      return queryFn();
-    });
-
-    jest.mocked(createAppQueryClient).mockReturnValue(mockQueryClient as never);
-    jest
-      .mocked(createSupabaseServerClient)
-      .mockResolvedValue(mockSupabaseClient as never);
-    jest
-      .mocked(createBoardRepository)
-      .mockReturnValue(mockBoardRepository as never);
-    jest
-      .mocked(createTicketRepository)
-      .mockReturnValue(mockTicketRepository as never);
-    jest.mocked(getBoardConfiguration).mockResolvedValue(boardConfiguration);
-    jest.mocked(listTickets).mockResolvedValue(tickets);
-    jest.mocked(getProjectForRoute).mockResolvedValue(projectFromRoute);
   });
 
-  it("hydrates the board page and forwards server snapshots to the client page", async () => {
+  it("moves board awaits into a Suspense boundary (route returns immediately)", async () => {
     const result = await BoardRoutePage({
       params: Promise.resolve({ projectId: PROJECT_ID }),
     });
 
-    render(result);
+    expect(createSupabaseServerClient).not.toHaveBeenCalled();
+    expect(createAppQueryClient).not.toHaveBeenCalled();
+    expect(getProjectForRoute).not.toHaveBeenCalled();
+    expect(getBoardConfiguration).not.toHaveBeenCalled();
+    expect(listTickets).not.toHaveBeenCalled();
 
-    expect(screen.getByText("Board content")).toBeInTheDocument();
-    expect(mockQueryClient.fetchQuery).toHaveBeenNthCalledWith(1, {
-      queryKey: queryKeys.projects.boardConfiguration(PROJECT_ID),
-      queryFn: expect.any(Function),
-    });
-    expect(mockQueryClient.fetchQuery).toHaveBeenNthCalledWith(2, {
-      queryKey: queryKeys.projects.ticketsList(
-        PROJECT_ID,
-        undefined,
-        undefined
-      ),
-      queryFn: expect.any(Function),
-    });
-    expect(mockQueryClient.fetchQuery).toHaveBeenCalledTimes(2);
-    expect(getProjectForRoute).toHaveBeenCalledWith(PROJECT_ID);
-    expect(getBoardConfiguration).toHaveBeenCalledWith(
-      mockBoardRepository,
-      PROJECT_ID
+    // The server page returns a Suspense boundary whose child owns the awaits.
+    expect(result).toEqual(
+      expect.objectContaining({
+        props: expect.objectContaining({
+          fallback: expect.objectContaining({
+            type: ProjectLoading,
+          }),
+          children: expect.any(Object),
+        }),
+      })
     );
-    expect(listTickets).toHaveBeenCalledWith(mockTicketRepository, PROJECT_ID);
-    expect(boardPageContentMock).toHaveBeenCalledWith({
-      projectId: PROJECT_ID,
-      initialBoardConfiguration: boardConfiguration,
-      initialTickets: tickets,
-      initialProjectShortCode: projectShortCode,
-    });
-    expect(dehydrateMock).toHaveBeenCalledWith(mockQueryClient);
   });
 });

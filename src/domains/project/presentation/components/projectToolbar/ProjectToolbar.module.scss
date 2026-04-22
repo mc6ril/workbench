@@ -504,6 +504,13 @@
   }
 }
 
+.project-toolbar__add-button--loading:disabled {
+  cursor: progress;
+  background-color: $color-action-publish-bg;
+  color: $color-action-publish-text;
+  border-color: transparent;
+}
+
 .project-toolbar__add-label {
   display: inline-flex;
   align-items: center;
