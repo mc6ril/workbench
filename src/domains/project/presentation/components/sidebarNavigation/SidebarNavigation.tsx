@@ -32,7 +32,10 @@ import { ProjectModuleKey } from "@/domains/project/core/domain/projectModule.ty
 import { useEnableProjectModule } from "@/domains/project/presentation/hooks/useEnableProjectModule";
 import { useSidebarItems } from "@/domains/project/presentation/hooks/useSidebarItems";
 import { buildProjectViewHref } from "@/domains/project/presentation/navigation/projectViews.config";
-import { useProjectShellSnapshot } from "@/domains/project/presentation/providers/ProjectShellSnapshotProvider";
+import {
+  useProjectShellSnapshot,
+  useProjectShellSnapshotActions,
+} from "@/domains/project/presentation/providers/ProjectShellSnapshotProvider";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 
 const RECIPES_MODULE_TAGS = ["Repas", "Quick list", "Courses"];
@@ -50,6 +53,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const signOutMutation = useSignOut();
   const enableProjectModuleMutation = useEnableProjectModule();
   const { enabledModules, isRecipesBoardVisible } = useProjectShellSnapshot();
+  const { updateEnabledModules } = useProjectShellSnapshotActions();
   const { data: viewer } = useViewer();
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -126,6 +130,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
       },
       {
         onSuccess: () => {
+          updateEnabledModules([...enabledModules, ProjectModuleKey.RECIPES]);
           closeModuleLibrary();
           router.push(recipesHref);
         },
@@ -134,9 +139,11 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   }, [
     closeModuleLibrary,
     enableProjectModuleMutation,
+    enabledModules,
     projectId,
     recipesHref,
     router,
+    updateEnabledModules,
   ]);
 
   const handleRecipesModuleAction = useCallback(() => {

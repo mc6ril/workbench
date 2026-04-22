@@ -19,6 +19,7 @@ export type ProjectToolbarExtraTool = {
   badgePulseKey?: number;
   onClick?: () => void;
   isActive?: boolean;
+  disabled?: boolean;
 };
 
 /** Sentinel id for the "no assignees" filter (not a user UUID). */
@@ -44,6 +45,7 @@ export type ProjectToolbarProps = {
   addActionLabel?: string;
   addActionAriaLabel?: string;
   searchValue?: string;
+  isSearchDisabled?: boolean;
   onSearchChange?: (value: string) => void;
   onAddClick?: () => void;
   canAddAction?: boolean;
@@ -51,6 +53,7 @@ export type ProjectToolbarProps = {
   searchSuggestions?: ProjectToolbarSearchSuggestion[];
   extraTools?: ProjectToolbarExtraTool[];
   assigneeFilters?: ProjectToolbarAssigneeFilter[];
+  areAssigneeFiltersDisabled?: boolean;
   /** Selected member user id, {@link PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID}, or null. */
   selectedAssigneeFilterId?: string | null;
   assigneeFiltersLabel?: string;

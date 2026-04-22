@@ -1,5 +1,19 @@
+import { Suspense } from "react";
+
+import ProjectLoading from "@/app/(protected)/[projectId]/loading";
 import RecipesPage from "@/modules/recipes/presentation/pages/recipes";
 import { withRecipesRouteAccess } from "@/modules/recipes/presentation/pages/shared/withRecipesRouteAccess";
+
+type RecipesPageDataProps = {
+  projectId: string;
+  searchParams: Record<string, string | string[] | undefined>;
+};
+
+const RecipesPageData = async ({ projectId, searchParams }: RecipesPageDataProps) => {
+  return withRecipesRouteAccess(projectId, () => {
+    return <RecipesPage projectId={projectId} searchParams={searchParams} />;
+  });
+};
 
 const RecipesPageRoute = async ({
   params,
@@ -11,11 +25,11 @@ const RecipesPageRoute = async ({
   const { projectId } = await params;
   const resolvedSearchParams = await searchParams;
 
-  return withRecipesRouteAccess(projectId, () => {
-    return (
-      <RecipesPage projectId={projectId} searchParams={resolvedSearchParams} />
-    );
-  });
+  return (
+    <Suspense fallback={<ProjectLoading />}>
+      <RecipesPageData projectId={projectId} searchParams={resolvedSearchParams} />
+    </Suspense>
+  );
 };
 
 export default RecipesPageRoute;

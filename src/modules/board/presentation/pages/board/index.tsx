@@ -80,7 +80,6 @@ const BoardLayout = ({
     useProjectPermissions();
   const {
     status: gettingStartedStatus,
-    canAutoOpen: canAutoOpenGettingStarted,
     isLoading: isGettingStartedLoading,
     isPending: isGettingStartedPending,
     error: gettingStartedError,
@@ -299,8 +298,7 @@ const BoardLayout = ({
     tickets.length,
   ]);
   const isOnboardingExpanded =
-    !isGettingStartedLoading &&
-    (canAutoOpenGettingStarted || isOnboardingReviewRequested);
+    !isGettingStartedLoading && isOnboardingReviewRequested;
   const onboardingErrorMessage = gettingStartedError
     ? gettingStartedError instanceof Error
       ? gettingStartedError.message
@@ -465,11 +463,7 @@ const BoardLayout = ({
           errorMessage={onboardingErrorMessage}
           isSkipPending={isGettingStartedPending}
           onReviewGuide={openOnboardingReview}
-          onHideGuide={
-            isOnboardingReviewRequested && !canAutoOpenGettingStarted
-              ? closeOnboardingReview
-              : undefined
-          }
+          onHideGuide={isOnboardingReviewRequested ? closeOnboardingReview : undefined}
           onSkipOnboarding={
             gettingStartedStatus === "pending"
               ? handleSkipOnboarding

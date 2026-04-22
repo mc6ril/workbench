@@ -13,6 +13,7 @@ import type { ProjectShellSnapshot } from "@/domains/project/core/domain/project
 import DashboardShell from "@/domains/project/presentation/components/dashboardShell";
 import ProjectToolbar from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar";
 import SidebarNavigation from "@/domains/project/presentation/components/sidebarNavigation/SidebarNavigation";
+import { buildProjectToolbarProps } from "@/domains/project/presentation/layouts/projectShell/buildProjectToolbarProps";
 import {
   ProjectShellContributionProvider,
   useRegisteredProjectShellContribution,
@@ -39,6 +40,9 @@ const ProjectShellContent = ({
   const pathname = usePathname();
   const tSkipLink = useTranslations("navigation.skipLink");
   const tSidebar = useTranslations("navigation.sidebar");
+  const tNavbar = useTranslations("navigation.navbar");
+  const tBoardFilters = useTranslations("pages.board.filters");
+  const tBoardOnboarding = useTranslations("pages.board.onboarding");
   const mainContentId = getAccessibilityId("main-content");
   const { toolbar: registeredToolbar, filters } =
     useRegisteredProjectShellContribution();
@@ -56,12 +60,24 @@ const ProjectShellContent = ({
 
     return (
       <ProjectToolbar
-        pageTitle={pageTitle}
-        showSearch={false}
-        addActionType={null}
+        {...buildProjectToolbarProps({
+          pageTitle,
+          viewKey,
+          viewConfig,
+          tNavbar,
+          tBoardFilters,
+          tBoardOnboarding,
+        })}
       />
     );
-  }, [pathname, projectId, tSidebar]);
+  }, [
+    pathname,
+    projectId,
+    tBoardFilters,
+    tBoardOnboarding,
+    tNavbar,
+    tSidebar,
+  ]);
 
   const header = registeredToolbar ?? baseToolbar;
 

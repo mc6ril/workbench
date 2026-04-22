@@ -33,8 +33,15 @@ const ProjectToolbarTools = ({ extraTools = [] }: Props) => {
             id={tool.domId}
             type="button"
             className={buildToolClassName(tool.isActive ?? false, hasBadge)}
-            onClick={tool.onClick}
+            onClick={() => {
+              if (tool.disabled) {
+                return;
+              }
+
+              tool.onClick?.();
+            }}
             aria-label={tool.ariaLabel}
+            aria-disabled={tool.disabled}
             title={tool.label}
             aria-pressed={tool.isActive ?? false}
           >
