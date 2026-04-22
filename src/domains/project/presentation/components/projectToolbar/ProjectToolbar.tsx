@@ -25,6 +25,7 @@ const ProjectToolbar = ({
   addActionLabel,
   addActionAriaLabel,
   searchValue = "",
+  isSearchDisabled = false,
   onSearchChange,
   onAddClick,
   canAddAction = true,
@@ -32,6 +33,7 @@ const ProjectToolbar = ({
   searchSuggestions = [],
   extraTools = [],
   assigneeFilters = [],
+  areAssigneeFiltersDisabled = false,
   selectedAssigneeFilterId = null,
   assigneeFiltersLabel = "",
   onAssigneeFilterChange,
@@ -43,6 +45,8 @@ const ProjectToolbar = ({
   const showAddAction = addActionType !== null;
   const hasAssigneeFilters = assigneeFilters.length > 0;
   const hasToolbarTools = extraTools.length > 0;
+  const isAddActionLoading = showAddAction && isPermissionsLoading;
+  const isAddActionDisabled = !isPermissionsLoading && !canAddAction;
   const searchInputRef = useRef<HTMLInputElement>(null);
   const hasSearchQuery = searchValue.trim().length > 0;
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
@@ -82,6 +86,14 @@ const ProjectToolbar = ({
     });
   }, [isDesktopViewport, isMobileSearchExpanded, onSearchChange]);
 
+  const handleAddActionClick = useCallback(() => {
+    if (isPermissionsLoading || !canAddAction) {
+      return;
+    }
+
+    onAddClick?.();
+  }, [canAddAction, isPermissionsLoading, onAddClick]);
+
   const searchClasses = [
     styles["project-toolbar__search"],
     !isDesktopViewport &&
@@ -95,6 +107,13 @@ const ProjectToolbar = ({
     styles["project-toolbar__tool"],
     isMobileSearchExpanded && styles["project-toolbar__tool--active"],
     styles["project-toolbar__search-trigger"],
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const addButtonClasses = [
+    styles["project-toolbar__add-button"],
+    isAddActionLoading && styles["project-toolbar__add-button--loading"],
   ]
     .filter(Boolean)
     .join(" ");
@@ -126,7 +145,7 @@ const ProjectToolbar = ({
     handleSuggestionMouseDown,
     handleSuggestionSelect,
   } = useProjectToolbarSuggestions({
-    enabled: showSearch,
+    enabled: showSearch && !isSearchDisabled,
     searchValue,
     searchSuggestions,
     onSearchChange,
@@ -158,6 +177,7 @@ const ProjectToolbar = ({
                 filters={assigneeFilters}
                 selectedFilterId={selectedAssigneeFilterId}
                 label={assigneeFiltersLabel}
+                disabled={areAssigneeFiltersDisabled}
                 onChange={onAssigneeFilterChange}
               />
             ) : null}
@@ -166,12 +186,13 @@ const ProjectToolbar = ({
           <div className={styles["project-toolbar__actions"]}>
             {showSearch ? (
               <>
-                {!isDesktopViewport ? (
+                {!isDesktopViewport && !isSearchDisabled ? (
                   <Button
                     label={searchLabel}
                     type="button"
                     variant="secondary"
                     onClick={handleSearchTriggerClick}
+                    disabled={isSearchDisabled}
                     className={searchTriggerClasses}
                     title={searchLabel}
                     aria-controls={searchId}
@@ -198,6 +219,8 @@ const ProjectToolbar = ({
                           ? `${suggestionsId}-option-${activeSuggestionIndex}`
                           : undefined
                       }
+                      aria-disabled={isSearchDisabled}
+                      tabIndex={isSearchDisabled ? -1 : undefined}
                       value={searchValue}
                       onChange={handleSearchChange}
                       onFocus={openSuggestions}
@@ -218,12 +241,13 @@ const ProjectToolbar = ({
                 </div>
               </>
             ) : null}
-            {showAddAction && !isPermissionsLoading && (
+            {showAddAction && (
               <button
                 type="button"
-                className={styles["project-toolbar__add-button"]}
-                onClick={onAddClick}
-                disabled={!canAddAction}
+                className={addButtonClasses}
+                onClick={handleAddActionClick}
+                disabled={isAddActionDisabled}
+                aria-disabled={isPermissionsLoading || !canAddAction}
                 aria-label={addAriaLabel}
                 title={addLabel}
               >

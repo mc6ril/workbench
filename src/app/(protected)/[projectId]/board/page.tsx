@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
-import Loader from "@/shared/design-system/loader";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 
+import ProjectLoading from "@/app/(protected)/[projectId]/loading";
 import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
 import { getBoardConfiguration } from "@/modules/board/core/usecases/board/getBoardConfiguration";
 import { listTickets } from "@/modules/board/core/usecases/ticket/listTickets";
@@ -15,12 +15,11 @@ import {
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 import BoardPageContent from "@/modules/board/presentation/pages/board";
 
-const BoardPage = async ({
-  params,
-}: {
-  params: Promise<{ projectId: string }>;
-}) => {
-  const { projectId } = await params;
+type BoardPageDataProps = {
+  projectId: string;
+};
+
+const BoardPageData = async ({ projectId }: BoardPageDataProps) => {
   const queryClient = createAppQueryClient();
   const supabaseClient = await createSupabaseServerClient();
   const boardRepository = createBoardRepository(supabaseClient);
@@ -45,15 +44,27 @@ const BoardPage = async ({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<Loader />}>
-        <BoardPageContent
-          projectId={projectId}
-          initialBoardConfiguration={initialBoardConfiguration}
-          initialTickets={initialTickets}
-          initialProjectShortCode={initialProjectShortCode}
-        />
-      </Suspense>
+      <BoardPageContent
+        projectId={projectId}
+        initialBoardConfiguration={initialBoardConfiguration}
+        initialTickets={initialTickets}
+        initialProjectShortCode={initialProjectShortCode}
+      />
     </HydrationBoundary>
+  );
+};
+
+const BoardPage = async ({
+  params,
+}: {
+  params: Promise<{ projectId: string }>;
+}) => {
+  const { projectId } = await params;
+
+  return (
+    <Suspense fallback={<ProjectLoading />}>
+      <BoardPageData projectId={projectId} />
+    </Suspense>
   );
 };
 

@@ -17,6 +17,7 @@ import {
   type ProjectToolbarExtraTool,
 } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
+import { buildProjectToolbarProps } from "@/domains/project/presentation/layouts/projectShell/buildProjectToolbarProps";
 import { useRegisterProjectViewContribution } from "@/domains/project/presentation/layouts/projectShell/ProjectShellContributionContext";
 import type { ProjectViewContribution } from "@/domains/project/presentation/layouts/projectShell/projectViewContribution";
 import {
@@ -251,48 +252,53 @@ const BoardShellContributionAdapter = ({ projectId }: Props) => {
   ]);
 
   const toolbar = useMemo(() => {
-    return (
-      <ProjectToolbar
-        pageTitle={currentViewLabel}
-        showSearch={currentViewConfig.navbar.showSearch}
-        hideTitleOnMobile={isBoardShellView}
-        addActionType={currentViewConfig.navbar.addActionType}
-        searchValue={currentViewConfig.navbar.showSearch ? searchInput : ""}
-        searchSuggestions={
-          currentViewConfig.navbar.showSearch ? searchSuggestions : []
-        }
-        onSearchChange={
-          currentViewConfig.navbar.showSearch ? setSearchInput : undefined
-        }
-        onAddClick={handleAddClick}
-        canAddAction={canCreateTicket}
-        isPermissionsLoading={isPermissionsLoading}
-        extraTools={toolbarExtraTools}
-        assigneeFilters={assigneeFilters}
-        selectedAssigneeFilterId={
-          filters.unassignedOnly
-            ? PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID
-            : (filters.assigneeUserId ?? null)
-        }
-        assigneeFiltersLabel={tBoardFilters("assigneeLabel")}
-        onAssigneeFilterChange={handleAssigneeFilterChange}
-      />
-    );
+    const toolbarProps = buildProjectToolbarProps({
+      pageTitle: currentViewLabel,
+      viewKey: currentViewKey,
+      viewConfig: currentViewConfig,
+      tNavbar,
+      tBoardFilters,
+      tBoardOnboarding,
+      overrides: {
+        searchValue: currentViewConfig.navbar.showSearch ? searchInput : "",
+        isSearchDisabled: false,
+        searchSuggestions: currentViewConfig.navbar.showSearch
+          ? searchSuggestions
+          : [],
+        onSearchChange: currentViewConfig.navbar.showSearch
+          ? setSearchInput
+          : undefined,
+        onAddClick: handleAddClick,
+        canAddAction: canCreateTicket,
+        isPermissionsLoading,
+        extraTools: toolbarExtraTools,
+        assigneeFilters,
+        areAssigneeFiltersDisabled: false,
+        selectedAssigneeFilterId: filters.unassignedOnly
+          ? PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID
+          : (filters.assigneeUserId ?? null),
+        assigneeFiltersLabel: tBoardFilters("assigneeLabel"),
+        onAssigneeFilterChange: handleAssigneeFilterChange,
+      },
+    });
+
+    return <ProjectToolbar {...toolbarProps} />;
   }, [
     assigneeFilters,
     canCreateTicket,
+    currentViewConfig,
+    currentViewKey,
     currentViewLabel,
-    currentViewConfig.navbar.addActionType,
-    currentViewConfig.navbar.showSearch,
     handleAddClick,
     handleAssigneeFilterChange,
-    isBoardShellView,
     isPermissionsLoading,
     filters.assigneeUserId,
     filters.unassignedOnly,
     searchInput,
     searchSuggestions,
     tBoardFilters,
+    tBoardOnboarding,
+    tNavbar,
     toolbarExtraTools,
   ]);
 

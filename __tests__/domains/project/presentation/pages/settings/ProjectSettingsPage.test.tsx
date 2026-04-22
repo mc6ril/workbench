@@ -97,6 +97,38 @@ describe("ProjectSettingsPage", () => {
     );
   });
 
+  it("uses the shared project loading fallback while settings data is loading", () => {
+    jest.mocked(useProject).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useProject>>({
+        data: undefined,
+        isLoading: true,
+        error: null,
+        refetch: jest.fn(),
+      })
+    );
+
+    jest.mocked(useProjectPermissions).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useProjectPermissions>>({
+        role: null,
+        isLoading: false,
+        canEditProject: false,
+        canDeleteProject: false,
+        canManageMembers: false,
+      })
+    );
+
+    render(<ProjectSettingsPage projectId={PROJECT_ID} />);
+
+    expect(
+      screen.getByRole("heading", { name: "Le projet prend forme" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Nous chargeons le board et les permissions pour ouvrir le projet dans un etat pret a l'emploi."
+      )
+    ).toBeInTheDocument();
+  });
+
   it("renders the page in read-only mode for viewers", () => {
     jest.mocked(useProjectPermissions).mockReturnValue(
       asMockedReturn<ReturnType<typeof useProjectPermissions>>({

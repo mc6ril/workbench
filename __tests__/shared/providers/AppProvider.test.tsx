@@ -28,11 +28,6 @@ jest.mock("@/shared/design-system/toast", () => ({
   default: () => null,
 }));
 
-jest.mock("@/shared/navigation/NavigationFeedbackController", () => ({
-  __esModule: true,
-  default: () => null,
-}));
-
 jest.mock(
   "@/domains/profile/presentation/providers/useProfileRuntimeSync",
   () => ({

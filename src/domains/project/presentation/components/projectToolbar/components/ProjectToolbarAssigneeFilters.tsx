@@ -11,6 +11,7 @@ type Props = {
   filters: ProjectToolbarAssigneeFilter[];
   selectedFilterId?: string | null;
   label: string;
+  disabled?: boolean;
   onChange?: (filterId: string | null) => void;
 };
 
@@ -26,6 +27,7 @@ const ProjectToolbarAssigneeFilters = ({
   filters,
   selectedFilterId,
   label,
+  disabled = false,
   onChange,
 }: Props) => {
   if (filters.length === 0) {
@@ -54,9 +56,14 @@ const ProjectToolbarAssigneeFilters = ({
               .filter(Boolean)
               .join(" ")}
             onClick={() => {
+              if (disabled) {
+                return;
+              }
+
               onChange?.(isSelected ? null : filterKey);
             }}
             aria-label={`${label}: ${filter.label}`}
+            aria-disabled={disabled}
             aria-pressed={isSelected}
             title={filter.label}
           >

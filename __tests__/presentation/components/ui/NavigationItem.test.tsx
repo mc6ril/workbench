@@ -2,14 +2,6 @@ import { render, screen } from "@testing-library/react";
 
 import NavigationItem from "@/shared/design-system/navigation_item";
 
-jest.mock("@/shared/stores/useNavigationFeedbackStore", () => ({
-  useNavigationFeedbackStore: {
-    getState: () => ({
-      beginNavigation: jest.fn(),
-    }),
-  },
-}));
-
 // Mock Next.js Link
 jest.mock("next/link", () => {
   const MockLink = ({
