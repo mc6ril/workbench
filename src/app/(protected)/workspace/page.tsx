@@ -1,4 +1,4 @@
-import WorkspacePageContainer from "@/domains/workspace/presentation/pages/workspace";
+import WorkspacePageContainer from "@/domains/workspace/presentation/pages/workspace/WorkspacePageContainer";
 
 export { generateMetadata } from "./layout";
 

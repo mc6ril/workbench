@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
+import { cookies } from "next/headers";
 
 import AppProvider from "@/shared/providers/AppProvider";
 import RequestIntlProvider from "@/shared/providers/RequestIntlProvider";
 import { noIndexMetadata } from "@/shared/seo/noIndexMetadata";
+import { getThemePreferenceFromCookie } from "@/shared/theme/config";
 
 export const metadata: Metadata = noIndexMetadata;
 
@@ -21,9 +23,12 @@ const AuthPagesLayout = async ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
+  const cookieStore = await cookies();
+  const initialTheme = getThemePreferenceFromCookie(cookieStore);
+
   return (
     <RequestIntlProvider>
-      <AppProvider>{children}</AppProvider>
+      <AppProvider initialTheme={initialTheme}>{children}</AppProvider>
     </RequestIntlProvider>
   );
 };

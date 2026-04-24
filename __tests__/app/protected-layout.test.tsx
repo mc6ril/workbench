@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { render, screen } from "@testing-library/react";
 
 import AppProvider from "@/shared/providers/AppProvider";
@@ -11,6 +12,10 @@ const dehydrateMock = jest.fn((_queryClient?: unknown) => ({
 
 jest.mock("next/navigation", () => ({
   redirect: jest.fn(),
+}));
+
+jest.mock("next/headers", () => ({
+  cookies: jest.fn(),
 }));
 
 jest.mock("@tanstack/react-query", () => ({
@@ -54,6 +59,9 @@ describe("ProtectedLayout hydration", () => {
     mockQueryClient.prefetchQuery.mockReset();
 
     jest.mocked(createAppQueryClient).mockReturnValue(mockQueryClient as never);
+    jest.mocked(cookies).mockResolvedValue({
+      get: jest.fn().mockReturnValue({ value: "dark" }),
+    } as never);
   });
 
   it("renders protected children without SSR session/profile hydration", async () => {
@@ -73,6 +81,7 @@ describe("ProtectedLayout hydration", () => {
     expect(appProviderMock.mock.calls[0]?.[0]).toEqual(
       expect.objectContaining({
         dehydratedState: { dehydrated: true },
+        initialTheme: "dark",
       })
     );
   });

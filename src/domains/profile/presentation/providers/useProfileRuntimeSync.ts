@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useTheme } from "next-themes";
 
-import { useLocale, useLocalePreference } from "@/shared/i18n";
+import { persistLocaleCookie, useLocale } from "@/shared/i18n";
 import {
   defaultLocale,
   type Locale,
   supportedLocales,
 } from "@/shared/i18n/config";
+import { persistThemeCookie } from "@/shared/theme/config";
 
 import { resolveThemePreference } from "@/domains/profile/core/domain/profile.types";
 import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
@@ -22,8 +23,9 @@ export const useProfileRuntimeSync = (): boolean => {
   const { data: session } = useSession();
   const profileQuery = useMyProfile();
   const locale = useLocale();
-  const applyLocalePreference = useLocalePreference();
   const { theme, setTheme } = useTheme();
+  const lastSyncedLocaleRef = useRef<Locale | null>(null);
+  const lastSyncedThemeRef = useRef<string | null>(null);
 
   const hasAuthenticatedSession = !!session?.userId;
 
@@ -51,18 +53,35 @@ export const useProfileRuntimeSync = (): boolean => {
 
   useEffect(() => {
     if (!hasAuthenticatedSession || !nextLocale || locale === nextLocale) {
+      lastSyncedLocaleRef.current = null;
       return;
     }
 
-    applyLocalePreference(nextLocale);
-  }, [applyLocalePreference, hasAuthenticatedSession, locale, nextLocale]);
+    if (lastSyncedLocaleRef.current === nextLocale) {
+      return;
+    }
+
+    // Passive runtime sync should not refresh the current route. Persist the
+    // preferred locale for the next server navigation and keep explicit locale
+    // changes (for example from /account) as the only source of router.refresh().
+    persistLocaleCookie(nextLocale);
+    lastSyncedLocaleRef.current = nextLocale;
+  }, [hasAuthenticatedSession, locale, nextLocale]);
 
   useEffect(() => {
-    if (!hasAuthenticatedSession || !nextTheme || theme === nextTheme) {
+    if (!hasAuthenticatedSession || !nextTheme) {
+      lastSyncedThemeRef.current = null;
       return;
     }
 
-    setTheme(nextTheme);
+    if (lastSyncedThemeRef.current !== nextTheme) {
+      persistThemeCookie(nextTheme);
+      lastSyncedThemeRef.current = nextTheme;
+    }
+
+    if (theme !== nextTheme) {
+      setTheme(nextTheme);
+    }
   }, [hasAuthenticatedSession, nextTheme, setTheme, theme]);
 
   if (!hasAuthenticatedSession) {
