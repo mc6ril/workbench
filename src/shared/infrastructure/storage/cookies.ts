@@ -5,6 +5,7 @@ export const APP_COOKIE_KEYS = Object.freeze({
     routing.localeCookie && typeof routing.localeCookie === "object"
       ? (routing.localeCookie.name ?? "workbench-locale")
       : "workbench-locale",
+  THEME: "workbench-theme",
   RUNTIME_CONFIG_OVERRIDES: "workbench-runtime-config-overrides",
 });
 

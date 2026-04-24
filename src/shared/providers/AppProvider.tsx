@@ -10,11 +10,13 @@ import Toast from "@/shared/design-system/toast";
 import AppErrorBoundary from "./AppErrorBoundary";
 import ReactQueryProvider from "./ReactQueryProvider";
 
+import type { Theme } from "@/domains/profile/core/domain/profile.types";
 import { useProfileRuntimeSync } from "@/domains/profile/presentation/providers/useProfileRuntimeSync";
 
 type AppProviderProps = {
   children: React.ReactNode;
   dehydratedState?: DehydratedState;
+  initialTheme?: Theme | null;
 };
 
 /**
@@ -29,9 +31,17 @@ const ProfilePreferencesSync = () => {
  * Central place for global providers.
  * Keep this file free of business logic and side effects.
  */
-const AppProvider = ({ children, dehydratedState }: AppProviderProps) => {
+const AppProvider = ({
+  children,
+  dehydratedState,
+  initialTheme,
+}: AppProviderProps) => {
   return (
-    <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
+    <ThemeProvider
+      attribute="data-theme"
+      defaultTheme={initialTheme ?? "system"}
+      enableSystem
+    >
       <AppErrorBoundary>
         <ReactQueryProvider dehydratedState={dehydratedState}>
           <ProfilePreferencesSync />

@@ -7,16 +7,9 @@ import { useProfileRuntimeSync } from "@/domains/profile/presentation/providers/
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 let themeValue: string | undefined = "system";
-const refreshMock = jest.fn();
 const setThemeMock = jest.fn((nextTheme: string) => {
   themeValue = nextTheme;
 });
-
-jest.mock("next/navigation", () => ({
-  useRouter: () => ({
-    refresh: refreshMock,
-  }),
-}));
 
 jest.mock("next-themes", () => ({
   useTheme: () => ({
@@ -24,6 +17,32 @@ jest.mock("next-themes", () => ({
     setTheme: setThemeMock,
   }),
 }));
+
+jest.mock("@/shared/i18n", () => {
+  const actual = jest.requireActual("@/shared/i18n");
+
+  return {
+    ...actual,
+    persistLocaleCookie: jest.fn(),
+    useLocale: jest.fn(() => "en"),
+  };
+});
+
+const { persistLocaleCookie: persistLocaleCookieMock } = jest.requireMock(
+  "@/shared/i18n"
+) as {
+  persistLocaleCookie: jest.Mock;
+};
+
+jest.mock("@/shared/theme/config", () => ({
+  persistThemeCookie: jest.fn(),
+}));
+
+const { persistThemeCookie: persistThemeCookieMock } = jest.requireMock(
+  "@/shared/theme/config"
+) as {
+  persistThemeCookie: jest.Mock;
+};
 
 jest.mock("@/domains/session/presentation/hooks/useSession", () => ({
   useSession: jest.fn(),
@@ -45,7 +64,6 @@ describe("useProfileRuntimeSync", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     themeValue = "system";
-    document.cookie = "workbench-locale=; Max-Age=0; Path=/";
 
     jest.mocked(useSession).mockReturnValue(
       asMockedReturn<ReturnType<typeof useSession>>({
@@ -74,8 +92,8 @@ describe("useProfileRuntimeSync", () => {
 
     expect(result.current).toBe(true);
     expect(setThemeMock).not.toHaveBeenCalled();
-    expect(document.cookie).not.toContain("workbench-locale=");
-    expect(refreshMock).not.toHaveBeenCalled();
+    expect(persistLocaleCookieMock).not.toHaveBeenCalled();
+    expect(persistThemeCookieMock).not.toHaveBeenCalled();
   });
 
   it("stays ready while the authenticated profile is still loading", () => {
@@ -100,11 +118,11 @@ describe("useProfileRuntimeSync", () => {
 
     expect(result.current).toBe(true);
     expect(setThemeMock).not.toHaveBeenCalled();
-    expect(document.cookie).not.toContain("workbench-locale=");
-    expect(refreshMock).not.toHaveBeenCalled();
+    expect(persistLocaleCookieMock).not.toHaveBeenCalled();
+    expect(persistThemeCookieMock).not.toHaveBeenCalled();
   });
 
-  it("stays ready once the profile is available while applying locale and theme", async () => {
+  it("stays ready once the profile is available while applying locale cookie and theme", async () => {
     jest.mocked(useSession).mockReturnValue(
       asMockedReturn<ReturnType<typeof useSession>>({
         data: { userId: "user-1" },
@@ -134,6 +152,14 @@ describe("useProfileRuntimeSync", () => {
 
     await waitFor(() => {
       expect(setThemeMock).toHaveBeenCalledWith("dark");
+    });
+
+    await waitFor(() => {
+      expect(persistLocaleCookieMock).toHaveBeenCalledWith("fr");
+    });
+
+    await waitFor(() => {
+      expect(persistThemeCookieMock).toHaveBeenCalledWith("dark");
     });
   });
 });

@@ -1,3 +1,4 @@
+import { ThemeProvider } from "next-themes";
 import { render, screen } from "@testing-library/react";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
@@ -10,7 +11,9 @@ jest.mock("next/navigation", () => ({
 }));
 
 jest.mock("next-themes", () => ({
-  ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
+  ThemeProvider: jest.fn(
+    ({ children }: { children: React.ReactNode }) => children
+  ),
 }));
 
 jest.mock("@/shared/providers/AppErrorBoundary", () => ({
@@ -42,12 +45,20 @@ describe("AppProvider", () => {
 
   it("renders children and mounts profile preference sync", () => {
     render(
-      <AppProvider>
+      <AppProvider initialTheme="dark">
         <div>app content</div>
       </AppProvider>
     );
 
     expect(screen.getByText("app content")).toBeInTheDocument();
     expect(useProfileRuntimeSync).toHaveBeenCalled();
+    expect(jest.mocked(ThemeProvider)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        attribute: "data-theme",
+        defaultTheme: "dark",
+        enableSystem: true,
+      }),
+      undefined
+    );
   });
 });

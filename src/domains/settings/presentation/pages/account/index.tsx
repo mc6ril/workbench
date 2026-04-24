@@ -34,6 +34,7 @@ import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { navigateToDocumentPath } from "@/shared/navigation/documentNavigation";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { useToastStore } from "@/shared/stores/useToastStore";
+import { persistThemeCookie } from "@/shared/theme/config";
 
 import styles from "./styles.module.scss";
 
@@ -392,6 +393,7 @@ const AccountPage = () => {
       if ((ThemeValues as readonly string[]).includes(value)) {
         const nextTheme = value as Theme;
         setThemePreference(nextTheme);
+        persistThemeCookie(nextTheme);
         setTheme(nextTheme);
         updatePreferencesMutation.mutate({ theme: nextTheme });
       }

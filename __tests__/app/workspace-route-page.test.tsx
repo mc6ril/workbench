@@ -68,10 +68,13 @@ jest.mock(
   })
 );
 
-jest.mock("@/domains/workspace/presentation/pages/workspace", () => ({
-  __esModule: true,
-  default: () => <div>Workspace content</div>,
-}));
+jest.mock(
+  "@/domains/workspace/presentation/pages/workspace/WorkspacePageContainer",
+  () => ({
+    __esModule: true,
+    default: () => <div>Workspace content</div>,
+  })
+);
 
 describe("WorkspaceRoutePage hydration", () => {
   const mockQueryClient = {
