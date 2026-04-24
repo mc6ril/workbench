@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import { useTranslations } from "@/shared/i18n";
-import { recordFullPageLoaderShown } from "@/shared/navigationPerf";
 
 import styles from "./loader.module.scss";
 
@@ -75,12 +74,6 @@ const Loader = ({
   ]
     .filter(Boolean)
     .join(" ");
-
-  useEffect(() => {
-    if (variant === "full-page") {
-      recordFullPageLoaderShown();
-    }
-  }, [variant]);
 
   return (
     <div

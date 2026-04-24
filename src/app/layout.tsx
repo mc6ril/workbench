@@ -1,6 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
 import { defaultLocale, getIntlLocale } from "@/shared/i18n";
@@ -39,11 +37,7 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang={getIntlLocale(defaultLocale)} suppressHydrationWarning>
-      <body>
-        {children}
-        <Analytics />
-        <SpeedInsights />
-      </body>
+      <body>{children}</body>
     </html>
   );
 };

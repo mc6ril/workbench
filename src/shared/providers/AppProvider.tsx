@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { ThemeProvider } from "next-themes";
 import type { DehydratedState } from "@tanstack/react-query";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import Toast from "@/shared/design-system/toast";
-import { markNavigationSettled } from "@/shared/navigationPerf";
 
 import AppErrorBoundary from "./AppErrorBoundary";
 import ReactQueryProvider from "./ReactQueryProvider";
@@ -16,16 +15,6 @@ import { useProfileRuntimeSync } from "@/domains/profile/presentation/providers/
 type AppProviderProps = {
   children: React.ReactNode;
   dehydratedState?: DehydratedState;
-};
-
-const NavigationPerfTracker = () => {
-  const pathname = usePathname();
-
-  useEffect(() => {
-    markNavigationSettled(pathname);
-  }, [pathname]);
-
-  return null;
 };
 
 /**
@@ -46,9 +35,10 @@ const AppProvider = ({ children, dehydratedState }: AppProviderProps) => {
       <AppErrorBoundary>
         <ReactQueryProvider dehydratedState={dehydratedState}>
           <ProfilePreferencesSync />
-          <NavigationPerfTracker />
           {children}
           <Toast />
+          <Analytics />
+          <SpeedInsights />
         </ReactQueryProvider>
       </AppErrorBoundary>
     </ThemeProvider>

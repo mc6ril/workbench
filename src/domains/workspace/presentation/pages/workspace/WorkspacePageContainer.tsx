@@ -17,14 +17,13 @@ import {
   type ProjectBoardEmojiPreset,
   stripProjectBoardEmojiPrefix,
 } from "@/shared/constants/projectBoardEmoji";
-import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
+import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { getAppErrorCode } from "@/shared/errors/appError";
 import { REPOSITORY_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
-import { markNavigationStart } from "@/shared/navigationPerf";
 import { shouldShowLoading } from "@/shared/utils/queryStatus";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
@@ -172,7 +171,6 @@ const WorkspacePageContainer = () => {
         createProjectMutation.data.id,
         PROJECT_VIEWS.BOARD
       );
-      markNavigationStart(targetRoute, "programmatic", PAGE_ROUTES.WORKSPACE);
       router.push(targetRoute);
     }
   }, [
@@ -216,7 +214,6 @@ const WorkspacePageContainer = () => {
   const handleOpenProject = useCallback(
     (projectId: string) => {
       const targetRoute = buildProjectRoute(projectId, PROJECT_VIEWS.BOARD);
-      markNavigationStart(targetRoute, "workspace-card", PAGE_ROUTES.WORKSPACE);
       router.push(targetRoute);
     },
     [router]

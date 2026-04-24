@@ -2,8 +2,6 @@
 
 Centralized logging system following Clean Architecture principles with structured JSON logging, scoped loggers, and error handling.
 
-Navigation performance instrumentation lives in `shared/navigationPerf/` and is intentionally separate from this logger package.
-
 ## Architecture
 
 - **Port**: `shared/observability/logger.port.ts` - Pure TypeScript interfaces (no dependencies)
