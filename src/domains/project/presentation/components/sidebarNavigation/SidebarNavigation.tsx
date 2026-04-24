@@ -17,7 +17,6 @@ import Modal from "@/shared/design-system/modal";
 import { useTranslations } from "@/shared/i18n";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
-import { markNavigationStart } from "@/shared/navigationPerf";
 
 import SidebarNavigationList from "./components/SidebarNavigationList";
 import SidebarProfileMenu from "./components/SidebarProfileMenu";
@@ -204,21 +203,16 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
     (item: SidebarItem) => {
       if (item.locked) {
         handleLockedClick();
-        return;
       }
-
-      markNavigationStart(item.href, "sidebar");
     },
     [handleLockedClick]
   );
 
   const handleWorkspaceLinkClick = useCallback(() => {
-    markNavigationStart(PAGE_ROUTES.WORKSPACE, "profile-menu");
     closeProfileMenu();
   }, [closeProfileMenu]);
 
   const handleAccountLinkClick = useCallback(() => {
-    markNavigationStart(PAGE_ROUTES.ACCOUNT, "profile-menu");
     closeProfileMenu();
   }, [closeProfileMenu]);
 

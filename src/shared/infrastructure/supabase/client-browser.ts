@@ -2,7 +2,6 @@ import { createBrowserClient } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { throwProgrammingError } from "@/shared/errors/programmingError";
-import { createInstrumentedSupabaseFetch } from "@/shared/navigationPerf";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY =
@@ -47,30 +46,9 @@ export const createSupabaseBrowserClient = () => {
   }
 
   validateEnvironmentVariables();
-
-  const baseFetch =
-    typeof window !== "undefined" && typeof window.fetch === "function"
-      ? window.fetch.bind(window)
-      : typeof globalThis.fetch === "function"
-        ? globalThis.fetch.bind(globalThis)
-        : null;
-
-  if (!baseFetch) {
-    browserClientSingleton = createBrowserClient(
-      SUPABASE_URL!,
-      SUPABASE_PUBLISHABLE_KEY!
-    );
-    return browserClientSingleton;
-  }
-
   browserClientSingleton = createBrowserClient(
     SUPABASE_URL!,
-    SUPABASE_PUBLISHABLE_KEY!,
-    {
-      global: {
-        fetch: createInstrumentedSupabaseFetch(baseFetch),
-      },
-    }
+    SUPABASE_PUBLISHABLE_KEY!
   );
 
   return browserClientSingleton;

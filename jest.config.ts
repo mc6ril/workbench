@@ -10,6 +10,9 @@ const config: Config = {
     // Map SCSS/CSS files first (before path aliases)
     "^.+\\.(css|scss|sass)$": "<rootDir>/__mocks__/styleMock.ts",
     "^.+\\.(gif|jpg|jpeg|png|svg|webp)$": "<rootDir>/__mocks__/fileMock.ts",
+    "^@vercel/analytics/next$": "<rootDir>/__mocks__/vercelAnalyticsNext.tsx",
+    "^@vercel/speed-insights/next$":
+      "<rootDir>/__mocks__/vercelSpeedInsightsNext.tsx",
     "^@/(.*)$": "<rootDir>/src/$1",
   },
   setupFilesAfterEnv: ["<rootDir>/__tests__/setupTests.ts"],

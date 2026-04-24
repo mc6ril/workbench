@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
@@ -41,9 +40,12 @@ import { useSignUp } from "@/domains/auth/presentation/hooks/user/useSignUp";
 import { useResendVerification } from "@/domains/auth/presentation/hooks/verification/useResendVerification";
 import { getNextUnmetCriterion } from "@/domains/auth/presentation/password/passwordStrength";
 
-const SignupPage = () => {
+type SignupPageProps = {
+  redirectPath: string;
+};
+
+const SignupPage = ({ redirectPath }: SignupPageProps) => {
   const router = useAppRouter();
-  const searchParams = useSearchParams();
   const signUpMutation = useSignUp();
   const signInWithGoogleMutation = useSignInWithGoogle();
   const resendVerificationMutation = useResendVerification();
@@ -61,13 +63,6 @@ const SignupPage = () => {
     tone: "success" | "error";
     message: string;
   } | null>(null);
-  const redirectPathParam = searchParams.get("redirect");
-  const redirectPath =
-    redirectPathParam &&
-    redirectPathParam.startsWith(PAGE_ROUTES.HOME) &&
-    !redirectPathParam.startsWith("//")
-      ? redirectPathParam
-      : PAGE_ROUTES.WORKSPACE;
   const signinHref =
     redirectPath === PAGE_ROUTES.WORKSPACE
       ? AUTH_PAGE_ROUTES.SIGNIN
