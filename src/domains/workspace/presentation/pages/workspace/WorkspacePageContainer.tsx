@@ -10,6 +10,7 @@ import {
 } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
+import dynamic from "next/dynamic";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -41,12 +42,19 @@ import {
 } from "@/domains/project/core/usecases/project/createProject";
 import { useAddUserToProject } from "@/domains/project/presentation/hooks/useAddUserToProject";
 import { useCreateProject } from "@/domains/project/presentation/hooks/useCreateProject";
-import CreateWorkspaceModal from "@/domains/workspace/presentation/components/CreateWorkspaceModal";
 import { useLastActivitySubtitle } from "@/domains/workspace/presentation/hooks/useLastActivitySubtitle";
 import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
 import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
 
 type CreateProjectFormData = CreateProjectInput;
+
+const CreateWorkspaceModal = dynamic(
+  () =>
+    import("@/domains/workspace/presentation/components/CreateWorkspaceModal"),
+  {
+    loading: () => null,
+  }
+);
 
 const WorkspacePageContainer = () => {
   const router = useAppRouter();
@@ -67,12 +75,14 @@ const WorkspacePageContainer = () => {
     shouldLoadSecondaryData
   );
   const { legal, pricing } = useMarketingRoutes();
+  const shouldLoadGettingStarted =
+    Array.isArray(projects) && projects.length === 0;
   const {
     canAutoOpen: canAutoOpenGettingStarted,
     isPending: isGettingStartedPending,
     error: gettingStartedError,
     markSkipped,
-  } = useTicketGettingStartedStatus();
+  } = useTicketGettingStartedStatus(shouldLoadGettingStarted);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedEmoji, setSelectedEmoji] = useState<string>(
     PROJECT_BOARD_EMOJI_PRESETS[0]
@@ -242,7 +252,8 @@ const WorkspacePageContainer = () => {
       isLoading: isLoadingProjects,
       isPending: addUserToProjectMutation.isPending,
     }) && hasProjects;
-  const showWelcomeGuide = !hasProjects && canAutoOpenGettingStarted;
+  const showWelcomeGuide =
+    shouldLoadGettingStarted && canAutoOpenGettingStarted;
   const gettingStartedErrorMessage = gettingStartedError
     ? getErrorMessage(gettingStartedError, tErrors)
     : null;
@@ -272,17 +283,19 @@ const WorkspacePageContainer = () => {
       onOpenProject={handleOpenProject}
       formatLastActivity={formatLastActivity}
       createWorkspaceModal={
-        <CreateWorkspaceModal
-          isOpen={createModalOpen}
-          onClose={closeCreateModal}
-          selectedEmoji={selectedEmoji}
-          onSelectEmoji={handleSelectEmoji}
-          register={register}
-          handleSubmit={handleSubmit}
-          onSubmit={onCreateProjectSubmit}
-          errors={errors}
-          isSubmitting={createProjectMutation.isPending}
-        />
+        createModalOpen ? (
+          <CreateWorkspaceModal
+            isOpen={createModalOpen}
+            onClose={closeCreateModal}
+            selectedEmoji={selectedEmoji}
+            onSelectEmoji={handleSelectEmoji}
+            register={register}
+            handleSubmit={handleSubmit}
+            onSubmit={onCreateProjectSubmit}
+            errors={errors}
+            isSubmitting={createProjectMutation.isPending}
+          />
+        ) : null
       }
     />
   );

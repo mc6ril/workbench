@@ -104,4 +104,12 @@ describe("useTicketGettingStartedStatus", () => {
       gettingStartedStatus: "skipped",
     });
   });
+
+  it("does not load profile data when disabled", () => {
+    const { result } = renderHook(() => useTicketGettingStartedStatus(false));
+
+    expect(useMyProfile).toHaveBeenCalledWith({ enabled: false });
+    expect(result.current.canAutoOpen).toBe(false);
+    expect(result.current.isLoading).toBe(false);
+  });
 });

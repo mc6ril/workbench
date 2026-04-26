@@ -223,6 +223,7 @@ describe("WorkspacePage onboarding", () => {
 
     render(<WorkspacePageContainer />);
 
+    expect(useTicketGettingStartedStatus).toHaveBeenCalledWith(false);
     expect(screen.getByText("Maison")).toBeInTheDocument();
     expect(
       screen.queryByRole("button", {

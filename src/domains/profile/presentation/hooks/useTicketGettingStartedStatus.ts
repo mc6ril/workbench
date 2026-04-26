@@ -7,12 +7,15 @@ import {
 import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
 import { useUpdatePreferences } from "@/domains/profile/presentation/hooks/useUpdatePreferences";
 
+const noop = () => {};
+const noopAsync = async () => {};
+
 /**
  * Hook for reading and updating the persisted board/ticket onboarding state.
  * Uses profile preferences as the single source of truth.
  */
-export const useTicketGettingStartedStatus = () => {
-  const { data: profile, isLoading } = useMyProfile();
+export const useTicketGettingStartedStatus = (enabled = true) => {
+  const { data: profile, isLoading } = useMyProfile({ enabled });
   const updatePreferencesMutation = useUpdatePreferences();
 
   const status = useMemo<GettingStartedStatus>(() => {
@@ -50,13 +53,13 @@ export const useTicketGettingStartedStatus = () => {
 
   return {
     status,
-    canAutoOpen: status === "pending",
-    isLoading,
-    isPending: updatePreferencesMutation.isPending,
-    error: updatePreferencesMutation.error,
-    setStatus,
-    setStatusAsync,
-    markSkipped,
-    markCompleted,
+    canAutoOpen: enabled && status === "pending",
+    isLoading: enabled ? isLoading : false,
+    isPending: enabled ? updatePreferencesMutation.isPending : false,
+    error: enabled ? updatePreferencesMutation.error : null,
+    setStatus: enabled ? setStatus : noop,
+    setStatusAsync: enabled ? setStatusAsync : noopAsync,
+    markSkipped: enabled ? markSkipped : noop,
+    markCompleted: enabled ? markCompleted : noop,
   };
 };
