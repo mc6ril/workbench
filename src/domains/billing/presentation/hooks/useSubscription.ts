@@ -7,7 +7,6 @@ import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 /**
  * Hook for fetching the current user's subscription.
- * Automatically handles super user detection via session data.
  *
  * @returns React Query hook result with subscription data, loading state, and error
  */
@@ -18,7 +17,6 @@ export const useSubscription = () => {
     queryFn: () =>
       getUserSubscription(subscriptionRepository, {
         userId: session!.userId,
-        isSuperuser: session?.isSuperuser,
       }),
     enabled: !!session?.userId,
   });

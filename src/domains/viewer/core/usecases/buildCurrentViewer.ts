@@ -17,7 +17,6 @@ export const buildCurrentViewer = ({
   return {
     userId: session.userId,
     loginEmail: session.loginEmail,
-    isSuperuser: session.isSuperuser,
     displayName: profile.displayName,
     avatarUrl: profile.avatarUrl,
     preferences: profile.preferences,

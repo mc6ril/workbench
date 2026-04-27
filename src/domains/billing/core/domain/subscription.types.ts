@@ -39,7 +39,6 @@ export type Subscription = {
   cancelAtPeriodEnd: boolean;
   createdAt: Date;
   updatedAt: Date;
-  isSuperuser?: boolean;
 };
 
 const FREE_SUBSCRIPTION_VALUES = {
@@ -50,10 +49,7 @@ const FREE_SUBSCRIPTION_VALUES = {
   currentPeriodStart: null,
   currentPeriodEnd: null,
   cancelAtPeriodEnd: false,
-} satisfies Omit<
-  Subscription,
-  "id" | "userId" | "createdAt" | "updatedAt" | "isSuperuser"
->;
+} satisfies Omit<Subscription, "id" | "userId" | "createdAt" | "updatedAt">;
 
 type CreateFreeSubscriptionParams = {
   id: string;
@@ -81,17 +77,3 @@ export const createFreeSubscription = ({
 /**
  * Superusers are treated as TEAM for entitlement checks without requiring a paid row.
  */
-export const createSuperuserSubscription = (
-  userId: string,
-  now: Date = new Date()
-): Subscription => ({
-  ...createFreeSubscription({
-    id: "superuser",
-    userId,
-    createdAt: now,
-    updatedAt: now,
-  }),
-  plan: SubscriptionPlan.TEAM,
-  status: SubscriptionStatus.ACTIVE,
-  isSuperuser: true,
-});

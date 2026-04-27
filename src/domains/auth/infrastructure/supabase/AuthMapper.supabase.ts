@@ -5,7 +5,6 @@ import { createAppError } from "@/shared/errors/appError";
 import type { AuthErrorCode } from "@/shared/errors/appErrorCodes";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 
-import { isSuperuserFromAppMetadata } from "@/domains/auth/infrastructure/supabase/providerCapabilities";
 import type { CurrentSession } from "@/domains/session/core/domain/session.types";
 
 const createAuthInfrastructureError = (
@@ -28,8 +27,6 @@ export const mapSupabaseSessionToCurrentSession = (
   return {
     userId: session.user.id,
     loginEmail: userEmail,
-    accessToken: session.access_token,
-    isSuperuser: isSuperuserFromAppMetadata(session.user.app_metadata),
   };
 };
 

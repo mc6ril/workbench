@@ -119,8 +119,6 @@ describe("WorkspaceRoutePage hydration", () => {
     jest.mocked(getCurrentSession).mockResolvedValue({
       userId: "user-1",
       loginEmail: "cyril@example.com",
-      accessToken: "",
-      isSuperuser: false,
     } as never);
     jest.mocked(getProfile).mockResolvedValue({
       displayName: "Cyril Lesot",
