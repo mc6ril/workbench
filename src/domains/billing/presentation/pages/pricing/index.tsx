@@ -117,18 +117,8 @@ const PricingPage = () => {
       disabled: boolean;
       onClick: () => void;
     } => {
-      const isSuperuser = session?.isSuperuser ?? false;
       const currentPlan = subscription?.plan ?? SubscriptionPlan.FREE;
       const planName = t(`plans.${planKey}.name`);
-
-      if (isSuperuser) {
-        return {
-          label: tCta("superuserFullAccess"),
-          variant: "secondary",
-          disabled: true,
-          onClick: () => {},
-        };
-      }
 
       if (!session) {
         return {

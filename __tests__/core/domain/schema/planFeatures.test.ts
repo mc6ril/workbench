@@ -133,7 +133,6 @@ describe("Plan Features Domain Rules", () => {
       overrides?: Partial<{
         plan: SubscriptionPlan;
         status: SubscriptionStatus;
-        isSuperuser: boolean;
       }>
     ) => ({
       id: "123e4567-e89b-12d3-a456-426614174000",
@@ -147,17 +146,6 @@ describe("Plan Features Domain Rules", () => {
       cancelAtPeriodEnd: false,
       createdAt: new Date("2024-01-01T00:00:00Z"),
       updatedAt: new Date("2024-01-01T00:00:00Z"),
-      isSuperuser: overrides?.isSuperuser ?? false,
-    });
-
-    it("returns TEAM for superuser regardless of plan/status", () => {
-      const subscription = createSubscription({
-        plan: SubscriptionPlan.FREE,
-        status: SubscriptionStatus.CANCELED,
-        isSuperuser: true,
-      });
-
-      expect(getEffectivePlan(subscription)).toBe(SubscriptionPlan.TEAM);
     });
 
     it("returns FREE for canceled or past-due subscriptions", () => {

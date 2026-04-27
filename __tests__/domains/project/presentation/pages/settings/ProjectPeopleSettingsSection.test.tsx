@@ -177,7 +177,6 @@ describe("ProjectPeopleSettingsSection", () => {
         data: {
           userId: CURRENT_USER_ID,
           email: "owner@example.com",
-          isSuperuser: false,
         },
       })
     );

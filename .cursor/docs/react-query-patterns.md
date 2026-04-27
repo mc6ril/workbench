@@ -132,7 +132,6 @@ export const useViewer = () => {
       loginEmail: sessionQuery.data.loginEmail,
       displayName: profileQuery.data?.displayName ?? null,
       avatarUrl: profileQuery.data?.avatarUrl ?? null,
-      isSuperuser: sessionQuery.data.isSuperuser,
     };
   }, [profileQuery.data, sessionQuery.data]);
 

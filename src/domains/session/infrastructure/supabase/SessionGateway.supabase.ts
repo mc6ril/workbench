@@ -6,12 +6,10 @@ import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { hasSupabaseAuthCookieInHeader } from "@/shared/utils/supabaseAuthCookies";
 
 import { handleAuthError } from "@/domains/auth/infrastructure/errors/authErrorHandler";
-import {
-  canUpdatePasswordFromAppMetadata,
-  isSuperuserFromAppMetadata,
-} from "@/domains/auth/infrastructure/supabase/providerCapabilities";
+import { canUpdatePasswordFromAppMetadata } from "@/domains/auth/infrastructure/supabase/providerCapabilities";
 import type { CurrentSession } from "@/domains/session/core/domain/session.types";
 import type { SessionGateway } from "@/domains/session/core/ports/session.gateway";
+import { mapIdentityToCurrentSession } from "@/domains/session/infrastructure/sessionIdentity";
 
 const createAuthenticationError = (debugMessage: string): AppError =>
   createAppError(AUTH_ERROR_CODE.AUTHENTICATION_ERROR, { debugMessage });
@@ -39,30 +37,22 @@ const mapAuthenticatedIdentityToCurrentSession = (identity: {
   id?: string | null;
   email?: string | null;
   app_metadata?: Record<string, unknown>;
+  user_metadata?: Record<string, unknown>;
 }): CurrentSession => {
-  const userId =
-    typeof identity.id === "string" && identity.id.length > 0
-      ? identity.id
-      : handleAuthError(
-          createAuthenticationError(
-            "User id not found in authenticated user data"
-          )
-        );
-  const userEmail =
-    typeof identity.email === "string" && identity.email.length > 0
-      ? identity.email
-      : handleAuthError(
-          createAuthenticationError(
-            "User email not found in authenticated user data"
-          )
-        );
+  const mapped = mapIdentityToCurrentSession({
+    userId: identity.id,
+    email: identity.email,
+    appMetadata: identity.app_metadata ?? null,
+    userMetadata: identity.user_metadata ?? null,
+  });
 
-  return {
-    userId,
-    loginEmail: userEmail,
-    accessToken: "",
-    isSuperuser: isSuperuserFromAppMetadata(identity.app_metadata),
-  };
+  if (!mapped) {
+    return handleAuthError(
+      createAuthenticationError("Invalid authenticated user identity payload")
+    );
+  }
+
+  return mapped;
 };
 
 /**
@@ -121,6 +111,7 @@ export const createSessionGateway = (
           id: claims.sub,
           email: claims.email,
           app_metadata: claims.app_metadata,
+          user_metadata: claims.user_metadata,
         });
       }
 
