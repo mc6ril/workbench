@@ -207,36 +207,6 @@
 }
 
 // ============================================================================
-// Back Link
-// ============================================================================
-
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-xs;
-  font-size: $font-size-sm;
-  color: $color-text-secondary;
-  text-decoration: none;
-  transition: color $animation-duration-base $easing-ease-out;
-  margin-bottom: $spacing-lg;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  font-family: inherit;
-
-  &:hover {
-    color: $color-primary;
-  }
-
-  &:focus-visible {
-    outline: $border-width-thick solid $color-focus;
-    outline-offset: $border-width-thick;
-    border-radius: $border-radius-sm;
-  }
-}
-
-// ============================================================================
 // Responsive
 // ============================================================================
 

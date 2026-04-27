@@ -31,7 +31,6 @@ describe("SessionGateway.supabase (server)", () => {
 
     await expect(gateway.getCurrentSession()).resolves.toEqual({
       ...mockCurrentSession,
-      accessToken: "",
     });
     expect(getClaims).toHaveBeenCalledTimes(1);
     expect(getUser).not.toHaveBeenCalled();

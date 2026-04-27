@@ -1,36 +1,38 @@
-"use client";
-
-import { useCallback } from "react";
-
 import { getAccessibilityId } from "@/shared/a11y";
 import { GDPR_RIGHTS_KEYS, LEGAL_SECTIONS } from "@/shared/constants";
+import BackButton from "@/shared/design-system/back_button";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useTranslations } from "@/shared/i18n";
-import { useAppRouter } from "@/shared/navigation/useAppRouter";
+import type { Locale } from "@/shared/i18n";
+import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { getStaticTranslator } from "@/shared/i18n/staticTranslator";
 
 import styles from "./styles.module.scss";
 
-const LegalPage = () => {
-  const router = useAppRouter();
-  const t = useTranslations("pages.legal");
+type LegalPageProps = {
+  locale: Locale;
+};
 
-  const handleGoBack = useCallback(() => {
-    router.back();
-  }, [router]);
+const createNamespaceTranslationGetter = async (
+  locale: Locale,
+  namespace: string
+) => {
+  const t = getStaticTranslator(locale, namespace);
+  return (key: string): string => t(key);
+};
+
+const LegalPage = async ({ locale }: LegalPageProps) => {
+  const t = await createNamespaceTranslationGetter(locale, "pages.legal");
 
   return (
     <main className={styles["legal-page"]}>
       <header className={styles["legal-header"]}>
         <div className={styles["legal-header__content"]}>
-          <button
-            type="button"
-            className={styles["back-link"]}
-            aria-label={t("header.label")}
-            onClick={handleGoBack}
-          >
-            ← {t("header.label")}
-          </button>
+          <BackButton
+            label={t("header.label")}
+            ariaLabel={t("header.label")}
+            fallbackHref={buildMarketingHomePath(locale)}
+          />
           <div className={styles["legal-welcome"]}>
             <Title variant="h1" className={styles["legal-welcome__title"]}>
               {t("header.title")}

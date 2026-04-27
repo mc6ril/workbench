@@ -1,6 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query";
 
-import { isBoolean, isString } from "@/shared/utils";
+import { IDENTITY_CACHE_STORAGE_KEY } from "@/shared/infrastructure/storage/userIdentityStorageKeys";
+import { isNonEmptyString, isRecord, isString } from "@/shared/utils";
 
 import {
   type UserProfile,
@@ -9,8 +10,6 @@ import {
 import { queryKeys as profileQueryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
 import type { CurrentSession } from "@/domains/session/core/domain/session.types";
 import { queryKeys as sessionQueryKeys } from "@/domains/session/presentation/hooks/queryKeys";
-
-const IDENTITY_CACHE_STORAGE_KEY = "workbench.identity-cache.v1";
 
 type PersistedUserProfile = Omit<
   UserProfile,
@@ -29,17 +28,26 @@ type PersistedIdentityCache = {
 const isBrowser = (): boolean => typeof window !== "undefined";
 
 const isPersistedCurrentSession = (value: unknown): value is CurrentSession => {
-  if (!value || typeof value !== "object") {
+  if (!isRecord(value)) {
     return false;
   }
 
-  const candidate = value as Record<string, unknown>;
-
   return (
-    isString(candidate.userId) &&
-    isString(candidate.loginEmail) &&
-    isString(candidate.accessToken) &&
-    isBoolean(candidate.isSuperuser)
+    isNonEmptyString(value.userId) &&
+    isNonEmptyString(value.loginEmail) &&
+    (!("displayName" in value) ||
+      value.displayName === undefined ||
+      isNonEmptyString(value.displayName)) &&
+    (!("avatarUrl" in value) ||
+      value.avatarUrl === undefined ||
+      isNonEmptyString(value.avatarUrl)) &&
+    (!("language" in value) ||
+      value.language === undefined ||
+      isNonEmptyString(value.language)) &&
+    (!("theme" in value) ||
+      value.theme === undefined ||
+      (isString(value.theme) &&
+        ["light", "dark", "system"].includes(value.theme)))
   );
 };
 
@@ -84,19 +92,8 @@ const readPersistedIdentityCache = (): PersistedIdentityCache | null => {
     const profile = deserializeUserProfile(parsed.profile);
 
     return profile
-      ? {
-          session: {
-            ...parsed.session,
-            accessToken: "",
-          },
-          profile: serializeUserProfile(profile),
-        }
-      : {
-          session: {
-            ...parsed.session,
-            accessToken: "",
-          },
-        };
+      ? { session: parsed.session, profile: serializeUserProfile(profile) }
+      : { session: parsed.session };
   } catch {
     return null;
   }
@@ -144,10 +141,10 @@ export const hydratePersistedIdentityCache = (
     return;
   }
 
-  queryClient.setQueryData(sessionQueryKeys.session.current(), {
-    ...snapshot.session,
-    accessToken: "",
-  } satisfies CurrentSession);
+  queryClient.setQueryData(
+    sessionQueryKeys.session.current(),
+    snapshot.session satisfies CurrentSession
+  );
 
   if (!snapshot.profile) {
     return;
@@ -189,10 +186,7 @@ export const syncPersistedIdentityCache = (queryClient: QueryClient): void => {
   );
 
   writePersistedIdentityCache({
-    session: {
-      ...session,
-      accessToken: "",
-    },
+    session,
     profile:
       profile && profile.id === session.userId
         ? serializeUserProfile(profile)

@@ -15,13 +15,13 @@ The goal is to avoid mixing:
 
 ## Target Owners
 
-| Concern                   | Owner                   | Examples                                                                  |
-| ------------------------- | ----------------------- | ------------------------------------------------------------------------- |
-| Authentication actions    | `src/domains/auth/`     | `signIn`, `signOut`, `signUp`, OAuth, reset password, delete account      |
-| Current identity state    | `src/domains/session/`  | `userId`, `loginEmail`, `accessToken`, `isSuperuser`, `canUpdatePassword` |
-| User business data        | `src/domains/profile/`  | `displayName`, `avatarUrl`, preferences                                   |
-| Current viewer read-model | `src/domains/viewer/`   | `useViewer()`, current-user display model                                 |
-| Account/settings surfaces | `src/domains/settings/` | `/account`, cross-owner settings composition                              |
+| Concern                   | Owner                   | Examples                                                             |
+| ------------------------- | ----------------------- | -------------------------------------------------------------------- |
+| Authentication actions    | `src/domains/auth/`     | `signIn`, `signOut`, `signUp`, OAuth, reset password, delete account |
+| Current identity state    | `src/domains/session/`  | `userId`, `loginEmail`, `accessToken`, `canUpdatePassword`           |
+| User business data        | `src/domains/profile/`  | `displayName`, `avatarUrl`, preferences                              |
+| Current viewer read-model | `src/domains/viewer/`   | `useViewer()`, current-user display model                            |
+| Account/settings surfaces | `src/domains/settings/` | `/account`, cross-owner settings composition                         |
 
 ## Ownership Rules
 
@@ -53,7 +53,6 @@ Target fields:
 - `userId`
 - `loginEmail`
 - `accessToken`
-- `isSuperuser`
 - `canUpdatePassword`
 
 These values are identity/session/claim data, not profile data.
@@ -83,7 +82,6 @@ Examples of fields that may belong in `CurrentViewer`:
 - `loginEmail`
 - `displayName`
 - `avatarUrl`
-- `isSuperuser`
 - `canUpdatePassword`
 - `isAuthenticated`
 

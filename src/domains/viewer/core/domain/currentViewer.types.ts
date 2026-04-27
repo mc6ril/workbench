@@ -6,8 +6,5 @@ import type { CurrentSession } from "@/domains/session/core/domain/session.types
  * It intentionally exposes identity and profile information, but never raw
  * session tokens or infrastructure-specific details.
  */
-export type CurrentViewer = Pick<
-  CurrentSession,
-  "userId" | "loginEmail" | "isSuperuser"
-> &
+export type CurrentViewer = Pick<CurrentSession, "userId" | "loginEmail"> &
   Pick<UserProfile, "displayName" | "avatarUrl" | "preferences">;

@@ -130,10 +130,6 @@ export type FeatureAccessResult = {
 export const getEffectivePlan = (
   subscription: Subscription
 ): SubscriptionPlan => {
-  if (subscription.isSuperuser) {
-    return SubscriptionPlan.TEAM;
-  }
-
   const isDegraded =
     subscription.status === SubscriptionStatus.CANCELED ||
     subscription.status === SubscriptionStatus.PAST_DUE;

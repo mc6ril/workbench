@@ -26,8 +26,6 @@ describe("AuthMapper.supabase", () => {
       expect(result).toEqual({
         userId: "user-123",
         loginEmail: "test@example.com",
-        accessToken: "test-access-token",
-        isSuperuser: false,
       });
     });
 
@@ -49,7 +47,6 @@ describe("AuthMapper.supabase", () => {
       // Assert
       expect(result.loginEmail).toBe("different@example.com");
       expect(result.userId).toBe("user-123");
-      expect(result.accessToken).toBe("test-access-token");
     });
 
     it("should ignore profile data from user metadata", () => {
@@ -69,8 +66,6 @@ describe("AuthMapper.supabase", () => {
       expect(result).toEqual({
         userId: "user-123",
         loginEmail: "test@example.com",
-        accessToken: "test-access-token",
-        isSuperuser: false,
       });
     });
 
@@ -97,8 +92,6 @@ describe("AuthMapper.supabase", () => {
       expect(result).toEqual({
         userId: "user-123",
         loginEmail: "test@example.com",
-        accessToken: "test-access-token",
-        isSuperuser: false,
       });
     });
   });

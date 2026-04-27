@@ -138,3 +138,12 @@ export const toDate = (value: unknown): Date => {
   }
   return date;
 };
+
+/**
+ * Type guard to check if a value is a record (object with string keys).
+ * @param value - Value to check
+ * @returns true if value is a record
+ */
+export const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return !!value && isObject(value) && !isArray(value);
+};

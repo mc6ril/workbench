@@ -122,8 +122,6 @@ describe("DELETE /api/auth/delete-user", () => {
     jest.mocked(getCurrentSession).mockResolvedValue({
       userId: "user-123",
       loginEmail: "user@example.com",
-      accessToken: "",
-      isSuperuser: false,
     });
     jest.mocked(createSupabaseAdminClient).mockReturnValue(adminClient);
     jest.mocked(createAuthGateway).mockReturnValue(authGateway);
@@ -155,8 +153,6 @@ describe("DELETE /api/auth/delete-user", () => {
     jest.mocked(getCurrentSession).mockResolvedValue({
       userId: "user-123",
       loginEmail: "user@example.com",
-      accessToken: "",
-      isSuperuser: false,
     });
     jest.mocked(createSupabaseAdminClient).mockReturnValue(adminClient);
     jest.mocked(createAuthGateway).mockReturnValue(authGateway);
