@@ -78,6 +78,18 @@ const createPasswordUpdateAuthRequiredError = (): AuthenticationError =>
     debugMessage: "User must be authenticated to update password",
   }) as AuthenticationError;
 
+const ensurePasswordUpdateAllowed = (user: User | null | undefined): User => {
+  if (!user) {
+    return handleAuthError(createPasswordUpdateAuthRequiredError());
+  }
+
+  if (!canUpdatePasswordFromAppMetadata(user.app_metadata)) {
+    return handleAuthError(createPasswordUpdateNotAllowedError());
+  }
+
+  return user;
+};
+
 const buildBrowserAuthCallbackUrl = ({
   nextPath,
   fallbackPath,
@@ -294,64 +306,6 @@ export const createAuthGateway = (
 
   async updatePassword(input: UpdatePasswordInput): Promise<AuthResult> {
     try {
-      const ensurePasswordUpdateAllowed = (user: User | null | undefined) => {
-        if (!user) {
-          handleAuthError(createPasswordUpdateAuthRequiredError());
-        }
-
-        if (!canUpdatePasswordFromAppMetadata(user!.app_metadata)) {
-          handleAuthError(createPasswordUpdateNotAllowedError());
-        }
-      };
-
-      // PKCE flow: session was established by the auth callback route.
-      // Legacy token flow: verify OTP first then update.
-      const hasToken = input.token && input.token.trim() !== "";
-      const hasEmail = input.email && input.email.trim() !== "";
-
-      if (hasToken && hasEmail) {
-        // Legacy flow: verify OTP with email + token, then update password
-        const { data: verifyData, error: verifyError } =
-          await client.auth.verifyOtp({
-            email: input.email!,
-            token: input.token!,
-            type: "recovery",
-          });
-
-        if (verifyError) {
-          handleAuthError(verifyError);
-        }
-
-        if (!verifyData.session || !verifyData.user) {
-          const error: InvalidTokenError = createAppError(
-            AUTH_ERROR_CODE.INVALID_TOKEN,
-            {
-              debugMessage:
-                "No session or user returned from token verification",
-            }
-          ) as InvalidTokenError;
-          handleAuthError(error);
-        }
-
-        ensurePasswordUpdateAllowed(verifyData.user);
-
-        const { error: updateError } = await client.auth.updateUser({
-          password: input.password,
-        });
-
-        if (updateError) {
-          handleAuthError(updateError);
-        }
-
-        const userEmail = verifyData.user!.email || input.email!;
-        const baseSession = mapSupabaseSessionToCurrentSession(
-          verifyData.session!,
-          userEmail
-        );
-        return { session: baseSession, requiresEmailVerification: false };
-      }
-
-      // PKCE flow: session already exists from auth callback code exchange
       const { data: sessionData, error: sessionError } =
         await client.auth.getSession();
 
@@ -370,26 +324,20 @@ export const createAuthGateway = (
         return handleAuthError(error);
       }
 
-      ensurePasswordUpdateAllowed(sessionData.session.user);
+      const session = sessionData.session;
+      const sessionUser = ensurePasswordUpdateAllowed(session.user);
 
-      const { error: updateError } = await client.auth.updateUser({
-        password: input.password,
-      });
+      const { data: updateData, error: updateError } =
+        await client.auth.updateUser({
+          password: input.password,
+        });
 
       if (updateError) {
         return handleAuthError(updateError);
       }
 
-      const {
-        data: { user },
-        error: userError,
-      } = await client.auth.getUser();
-
-      if (userError) {
-        return handleAuthError(userError);
-      }
-
-      if (!user) {
+      const updatedUser = updateData.user;
+      if (!updatedUser) {
         const error: InvalidTokenError = createAppError(
           AUTH_ERROR_CODE.INVALID_TOKEN,
           {
@@ -400,8 +348,8 @@ export const createAuthGateway = (
       }
 
       const baseSession = mapSupabaseSessionToCurrentSession(
-        sessionData.session,
-        user.email || ""
+        session,
+        updatedUser.email || sessionUser.email || ""
       );
       return { session: baseSession, requiresEmailVerification: false };
     } catch (error) {
@@ -560,14 +508,7 @@ export const createAuthGateway = (
           handleAuthError(userError);
         }
 
-        if (!user) {
-          handleAuthError(createPasswordUpdateAuthRequiredError());
-        }
-
-        if (!canUpdatePasswordFromAppMetadata(user!.app_metadata)) {
-          handleAuthError(createPasswordUpdateNotAllowedError());
-        }
-
+        ensurePasswordUpdateAllowed(user);
         updateData.password = input.password;
       }
 

@@ -9,7 +9,7 @@ jest.mock("next/server", () => ({
   },
 }));
 
-jest.mock("@/shared/infrastructure/supabase/client-admin", () => ({
+jest.mock("@/shared/infrastructure/supabase/admin", () => ({
   createSupabaseAdminClient: jest.fn(),
 }));
 
@@ -36,7 +36,7 @@ jest.mock("@/shared/observability", () => ({
   }),
 }));
 
-import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
+import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/admin";
 
 import { GET, POST } from "@/app/api/jobs/archive-completed-tickets/route";
 import { WEEKLY_TICKET_ARCHIVE_TIME_ZONE } from "@/modules/board/core/domain/rules/ticketArchival.rules";

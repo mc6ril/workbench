@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 import { sanitizeInternalRedirectPath } from "@/shared/utils/authRedirect";
 
 import { exchangeCodeForSession } from "@/domains/auth/core/usecases/exchangeCodeForSession";

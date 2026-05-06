@@ -23,11 +23,11 @@ jest.mock("@/shared/infrastructure/web/rateLimit", () => ({
   withRateLimit: jest.fn(() => null),
 }));
 
-jest.mock("@/shared/infrastructure/supabase/client-server", () => ({
+jest.mock("@/shared/infrastructure/supabase/server", () => ({
   createSupabaseServerClient: jest.fn(),
 }));
 
-jest.mock("@/shared/infrastructure/supabase/client-admin", () => ({
+jest.mock("@/shared/infrastructure/supabase/admin", () => ({
   createSupabaseAdminClient: jest.fn(),
 }));
 
@@ -56,8 +56,8 @@ jest.mock("@/shared/observability", () => ({
   }),
 }));
 
-import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/admin";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 
 import { DELETE } from "@/app/api/auth/delete-user/route";
 import { deleteAccount } from "@/domains/auth/core/usecases/user/deleteAccount";

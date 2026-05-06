@@ -2,12 +2,12 @@ import type { PropsWithChildren } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook } from "@testing-library/react";
 
-import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
+import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client";
 
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 import { useProjectRealtime } from "@/modules/board/presentation/hooks/realtime/useProjectRealtime";
 
-jest.mock("@/shared/infrastructure/supabase/client-browser", () => ({
+jest.mock("@/shared/infrastructure/supabase/client", () => ({
   createSupabaseBrowserClient: jest.fn(),
 }));
 

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 
 import ProjectLoading from "@/app/(protected)/[projectId]/loading";

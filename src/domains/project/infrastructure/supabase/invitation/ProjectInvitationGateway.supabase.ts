@@ -43,12 +43,23 @@ export const createProjectInvitationGateway = (
     projectId: string;
     role: ProjectRole;
   }): Promise<ProjectInvitation> {
+    const { data: claimsData } = await client.auth.getClaims();
+
+    const claims = claimsData?.claims;
+
+    if (!claims) {
+      return handleRepositoryError(
+        createDatabaseError("User not authenticated"),
+        "ProjectInvitation"
+      );
+    }
+
     const { data, error } = await client
       .from("project_invitations")
       .insert({
         project_id: input.projectId,
         role: input.role,
-        invited_by: (await client.auth.getUser()).data.user?.id,
+        invited_by: claims.sub,
       })
       .select()
       .single();

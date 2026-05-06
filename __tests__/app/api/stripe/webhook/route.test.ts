@@ -13,7 +13,7 @@ jest.mock("next/server", () => ({
   },
 }));
 
-jest.mock("@/shared/infrastructure/supabase/client-admin", () => ({
+jest.mock("@/shared/infrastructure/supabase/admin", () => ({
   createSupabaseAdminClient: jest.fn(),
 }));
 
@@ -34,7 +34,7 @@ jest.mock("@/shared/observability", () => ({
   }),
 }));
 
-import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
+import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/admin";
 
 import { POST } from "@/app/api/stripe/webhook/route";
 import { handlePaymentWebhook } from "@/domains/billing/core/usecases/handlePaymentWebhook";

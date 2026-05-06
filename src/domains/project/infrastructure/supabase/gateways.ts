@@ -1,4 +1,4 @@
-import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
+import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client";
 
 import { createProjectInvitationGateway } from "./invitation/ProjectInvitationGateway.supabase";
 import { createProjectMemberGateway } from "./member/ProjectMemberGateway.supabase";

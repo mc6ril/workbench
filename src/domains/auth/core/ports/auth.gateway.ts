@@ -55,10 +55,10 @@ export type AuthGateway = {
 
   /**
    * Update password after a password reset.
-   * Supports PKCE flow (session-based, no token needed) and legacy token flow.
-   * @param input - Password update input (password required; token and email optional)
+   * Requires an active recovery session established by the auth callback.
+   * @param input - Password update input
    * @returns Authentication result with session (user is auto-logged in after password update)
-   * @throws InvalidTokenError if token/session is invalid or expired
+   * @throws InvalidTokenError if the recovery session is invalid or expired
    * @throws PasswordResetError for other password reset errors
    * @throws AuthenticationFailure for other authentication errors
    */

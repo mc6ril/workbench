@@ -656,8 +656,15 @@ export const createTicketRepository = (
       }));
 
       try {
-        const currentUser = await client.auth.getUser();
-        const assignedBy = currentUser.data.user?.id ?? null;
+        const { data: claimsData, error: claimsError } =
+          await client.auth.getClaims();
+
+        if (claimsError) {
+          return handleRepositoryError(claimsError, "TicketAssignee", ticketId);
+        }
+
+        const claims = claimsData?.claims;
+        const assignedBy = claims?.sub ?? null;
         rows.forEach((row) => {
           row.assigned_by = assignedBy;
         });
