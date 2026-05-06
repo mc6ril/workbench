@@ -6,7 +6,7 @@ import { authGateway } from "@/domains/auth/infrastructure/supabase/repositories
 import { invalidatePostAuthMutation } from "@/domains/auth/presentation/utils/invalidatePostAuthMutation";
 
 /**
- * Hook for updating password using a reset token.
+ * Hook for updating the password from an active recovery session.
  */
 export const useUpdatePassword = () => {
   const queryClient = useQueryClient();

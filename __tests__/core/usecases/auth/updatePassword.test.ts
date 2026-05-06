@@ -4,7 +4,6 @@ import {
   createAuthError,
   mockAuthResult,
   validUpdatePasswordInput,
-  validUpdatePasswordInputPkce,
 } from "../../../../__mocks__/core/domain/authMocks";
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
 
@@ -17,7 +16,7 @@ import { updatePassword } from "@/domains/auth/core/usecases/password/updatePass
 describe("updatePassword", () => {
   const validInput = validUpdatePasswordInput;
 
-  it("should update password with valid token (legacy flow)", async () => {
+  it("should update password with an active recovery session", async () => {
     // Arrange
     const repository = createAuthRepositoryMock({
       updatePassword: jest.fn<Promise<AuthResult>, [UpdatePasswordInput]>(
@@ -34,87 +33,9 @@ describe("updatePassword", () => {
     expect(result).toEqual(mockAuthResult);
   });
 
-  it("should update password without token (PKCE session-based flow)", async () => {
-    // Arrange
-    const repository = createAuthRepositoryMock({
-      updatePassword: jest.fn<Promise<AuthResult>, [UpdatePasswordInput]>(
-        async () => mockAuthResult
-      ),
-    });
-
-    // Act
-    const result = await updatePassword(
-      repository,
-      validUpdatePasswordInputPkce
-    );
-
-    // Assert
-    expect(repository.updatePassword).toHaveBeenCalledTimes(1);
-    expect(repository.updatePassword).toHaveBeenCalledWith(
-      validUpdatePasswordInputPkce
-    );
-    expect(result).toEqual(mockAuthResult);
-  });
-
-  it("should update password with valid token and empty email", async () => {
-    // Arrange
-    const inputWithEmptyEmail = {
-      email: "",
-      token: "valid-reset-token",
-      password: "newpassword123",
-    };
-    const repository = createAuthRepositoryMock({
-      updatePassword: jest.fn<Promise<AuthResult>, [UpdatePasswordInput]>(
-        async () => mockAuthResult
-      ),
-    });
-
-    // Act
-    const result = await updatePassword(repository, inputWithEmptyEmail);
-
-    // Assert
-    expect(repository.updatePassword).toHaveBeenCalledTimes(1);
-    expect(repository.updatePassword).toHaveBeenCalledWith(inputWithEmptyEmail);
-    expect(result).toEqual(mockAuthResult);
-  });
-
-  it("should throw ZodError on invalid email format", async () => {
-    // Arrange
-    const invalidInput = {
-      email: "invalid-email",
-      token: "valid-reset-token",
-      password: "newpassword123",
-    };
-    const repository = createAuthRepositoryMock();
-
-    // Act & Assert
-    await expect(updatePassword(repository, invalidInput)).rejects.toThrow(
-      z.ZodError
-    );
-    expect(repository.updatePassword).not.toHaveBeenCalled();
-  });
-
-  it("should throw ZodError on empty token", async () => {
-    // Arrange
-    const invalidInput = {
-      email: "test@example.com",
-      token: "",
-      password: "newpassword123",
-    };
-    const repository = createAuthRepositoryMock();
-
-    // Act & Assert
-    await expect(updatePassword(repository, invalidInput)).rejects.toThrow(
-      z.ZodError
-    );
-    expect(repository.updatePassword).not.toHaveBeenCalled();
-  });
-
   it("should throw ZodError on password too short", async () => {
     // Arrange
     const invalidInput = {
-      email: "test@example.com",
-      token: "valid-reset-token",
       password: "12345", // Less than 6 characters
     };
     const repository = createAuthRepositoryMock();
@@ -129,8 +50,6 @@ describe("updatePassword", () => {
   it("should throw ZodError on password too long", async () => {
     // Arrange
     const invalidInput = {
-      email: "test@example.com",
-      token: "valid-reset-token",
       password: "a".repeat(101), // More than 100 characters
     };
     const repository = createAuthRepositoryMock();
