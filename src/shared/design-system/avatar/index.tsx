@@ -70,7 +70,8 @@ const Avatar = ({ src, name, size = "md", "aria-label": ariaLabel }: Props) => {
         width={sizePx}
         height={sizePx}
         className={imageClasses}
-        unoptimized={!src}
+        unoptimized
+        loading="lazy"
       />
       <span className={initialsClasses} aria-hidden="true">
         {initials}
