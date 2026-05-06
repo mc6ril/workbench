@@ -24,10 +24,7 @@ export const createSessionGateway = (
 ): SessionGateway => ({
   async canUpdatePassword(): Promise<boolean> {
     try {
-      const {
-        data: { user },
-        error,
-      } = await client.auth.getUser();
+      const { data, error } = await client.auth.getClaims();
 
       if (error) {
         if (isAuthSessionMissingError(error)) {
@@ -37,11 +34,13 @@ export const createSessionGateway = (
         handleAuthError(error);
       }
 
-      if (!user) {
+      const claims = data?.claims;
+
+      if (!claims) {
         return false;
       }
 
-      return canUpdatePasswordFromAppMetadata(user.app_metadata);
+      return canUpdatePasswordFromAppMetadata(claims?.app_metadata);
     } catch (error) {
       return handleAuthError(error);
     }

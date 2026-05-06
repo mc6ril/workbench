@@ -28,16 +28,16 @@ export const createEditorCoverStorage = (
     projectId,
     file,
   }: UploadRecipeCoverInput): Promise<string> {
-    const {
-      data: { user },
-      error: userError,
-    } = await client.auth.getUser();
+    const { data: claimsData, error: claimsError } =
+      await client.auth.getClaims();
 
-    if (userError) {
-      return handleRepositoryError(userError, "RecipeCover", projectId);
+    if (claimsError) {
+      return handleRepositoryError(claimsError, "RecipeCover", projectId);
     }
 
-    if (!user) {
+    const claims = claimsData?.claims;
+
+    if (!claims) {
       throw createAppError(AUTH_ERROR_CODE.AUTHENTICATION_ERROR, {
         debugMessage: "Authenticated user is required to upload a recipe cover",
       });
@@ -45,7 +45,7 @@ export const createEditorCoverStorage = (
 
     const preparedFile = await prepareRecipeCoverUploadFile(file);
     const objectKey = createRecipeCoverObjectKey(projectId);
-    const filePath = `${user.id}/${objectKey}`;
+    const filePath = `${claims.sub}/${objectKey}`;
 
     const { error: uploadError } = await client.storage
       .from(APP_LIMITS.RECIPE_COVER.STORAGE_BUCKET)
