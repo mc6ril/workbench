@@ -24,8 +24,9 @@ jest.mock("@supabase/ssr", () => ({
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports -- load after mock
-const { proxy } = require("../../src/proxy") as {
+const { proxy, config } = require("../../src/proxy") as {
   proxy: (request: NextRequest) => Promise<import("next/server").NextResponse>;
+  config: { matcher: string[] };
 };
 
 const baseUrl = "https://app.example.com";
@@ -172,5 +173,26 @@ describe("proxy", () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get("location")).toBeNull();
+  });
+
+  it("keeps SEO and PWA metadata routes outside the proxy matcher", () => {
+    const matcher = new RegExp(`^${config.matcher[0]}$`);
+
+    expect(matcher.test("/robots.txt")).toBe(false);
+    expect(matcher.test("/sitemap.xml")).toBe(false);
+    expect(matcher.test("/manifest.webmanifest")).toBe(false);
+    expect(matcher.test("/manifest/fr")).toBe(false);
+    expect(matcher.test("/icon")).toBe(false);
+    expect(matcher.test("/og/fr")).toBe(false);
+  });
+
+  it("keeps application routes inside the proxy matcher", () => {
+    const matcher = new RegExp(`^${config.matcher[0]}$`);
+
+    expect(matcher.test(PAGE_ROUTES.HOME)).toBe(true);
+    expect(matcher.test(PAGE_ROUTES.WORKSPACE)).toBe(true);
+    expect(matcher.test("/123e4567-e89b-12d3-a456-426614174000/board")).toBe(
+      true
+    );
   });
 });
