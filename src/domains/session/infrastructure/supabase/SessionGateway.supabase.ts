@@ -64,12 +64,7 @@ export const createSessionGateway = (
         return null;
       }
 
-      return mapAuthenticatedIdentityToCurrentSession({
-        id: claims.sub,
-        isSuperuser: claims.app_metadata?.is_superuser,
-        email: claims.email,
-        app_metadata: claims.app_metadata,
-      });
+      return mapAuthenticatedIdentityToCurrentSession(claims);
     } catch (error) {
       return handleAuthError(error);
     }

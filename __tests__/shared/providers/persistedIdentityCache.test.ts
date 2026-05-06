@@ -15,8 +15,6 @@ describe("persistedIdentityCache", () => {
   const session: CurrentSession = {
     userId: "123e4567-e89b-12d3-a456-426614174000",
     loginEmail: "cyrille@example.com",
-    accessToken: "secret-token",
-    isSuperuser: false,
   };
 
   const profile: UserProfile = {
@@ -60,10 +58,7 @@ describe("persistedIdentityCache", () => {
       hydratedClient.getQueryData<CurrentSession>(
         sessionQueryKeys.session.current()
       )
-    ).toEqual({
-      ...session,
-      accessToken: "",
-    });
+    ).toEqual(session);
 
     expect(
       hydratedClient.getQueryData<UserProfile>(

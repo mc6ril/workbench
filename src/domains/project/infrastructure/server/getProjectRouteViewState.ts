@@ -59,7 +59,6 @@ export const getProjectRouteViewState = cache(async (projectId: string) => {
   );
   const subscription = await getUserSubscription(subscriptionRepository, {
     userId: session.userId,
-    isSuperuser: session.isSuperuser,
   });
 
   return {

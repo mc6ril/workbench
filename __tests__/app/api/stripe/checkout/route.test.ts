@@ -109,8 +109,6 @@ describe("POST /api/stripe/checkout", () => {
     jest.mocked(getCurrentSession).mockResolvedValue({
       userId: "user-1",
       loginEmail: "cyril@example.com",
-      accessToken: "",
-      isSuperuser: false,
     });
     jest
       .mocked(createSubscriptionRepository)

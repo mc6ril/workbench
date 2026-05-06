@@ -128,3 +128,6 @@ test.ts
 
 # lighthouse
 privateProd.lighthouse.json
+
+
+src/app/_isolated/

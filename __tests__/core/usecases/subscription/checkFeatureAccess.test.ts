@@ -95,23 +95,6 @@ describe("checkFeatureAccess", () => {
     });
   });
 
-  describe("superuser bypass", () => {
-    it("should grant full access to superusers regardless of plan", () => {
-      const subscription = createMockSubscription({
-        plan: SubscriptionPlan.FREE,
-        isSuperuser: true,
-      });
-
-      const result = checkFeatureAccess(
-        subscription,
-        PlanFeature.ADVANCED_ROLES
-      );
-
-      expect(result.hasAccess).toBe(true);
-      expect(result.currentPlan).toBe(SubscriptionPlan.TEAM);
-    });
-  });
-
   describe("degraded subscription statuses", () => {
     it("should downgrade canceled TEAM subscription to FREE capabilities", () => {
       const subscription = createMockSubscription({

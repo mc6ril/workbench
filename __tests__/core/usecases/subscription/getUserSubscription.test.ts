@@ -71,22 +71,6 @@ describe("getUserSubscription", () => {
     expect(result.userId).toBe(userId);
   });
 
-  it("should return a TEAM subscription for superusers", async () => {
-    const repo = createSubscriptionRepositoryMock();
-    const userId = "223e4567-e89b-12d3-a456-426614174000";
-
-    const result = await getUserSubscription(repo, {
-      userId,
-      isSuperuser: true,
-    });
-
-    expect(repo.getByUserId).not.toHaveBeenCalled();
-    expect(result.plan).toBe(SubscriptionPlan.TEAM);
-    expect(result.status).toBe(SubscriptionStatus.ACTIVE);
-    expect(result.userId).toBe(userId);
-    expect(result.isSuperuser).toBe(true);
-  });
-
   it("should propagate repository errors", async () => {
     const repositoryError = new Error("database down");
     const repo = createSubscriptionRepositoryMock({

@@ -40,12 +40,3 @@ export const canUpdatePasswordFromAppMetadata = (
 
   return providers.includes(EMAIL_PROVIDER);
 };
-
-/**
- * Superuser status is provider-controlled and stored in app_metadata.
- */
-export const isSuperuserFromAppMetadata = (
-  appMetadata: Record<string, unknown> | undefined
-): boolean => {
-  return appMetadata?.is_superuser === true;
-};

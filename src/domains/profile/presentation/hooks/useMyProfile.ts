@@ -1,4 +1,7 @@
+import { useEffect } from "react";
+
 import { useUserProfile } from "@/domains/profile/presentation/hooks/useUserProfile";
+import { persistLightUserCookieInBrowser } from "@/domains/session/infrastructure/lightUserCookie";
 import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 type UseMyProfileOptions = {
@@ -11,5 +14,18 @@ type UseMyProfileOptions = {
 export const useMyProfile = (options?: UseMyProfileOptions) => {
   const { data: session } = useSession();
 
-  return useUserProfile(session?.userId, options);
+  const profileQuery = useUserProfile(session?.userId, options);
+
+  useEffect(() => {
+    if (!profileQuery.data) {
+      return;
+    }
+
+    persistLightUserCookieInBrowser({
+      displayName: profileQuery.data.displayName ?? undefined,
+      avatarUrl: profileQuery.data.avatarUrl ?? undefined,
+    });
+  }, [profileQuery.data]);
+
+  return profileQuery;
 };
