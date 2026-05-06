@@ -24,7 +24,7 @@ jest.mock("@supabase/ssr", () => ({
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports -- load after mock
-const { proxy } = require("../../proxy") as {
+const { proxy } = require("../../src/proxy") as {
   proxy: (request: NextRequest) => Promise<import("next/server").NextResponse>;
 };
 
