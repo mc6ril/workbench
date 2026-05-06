@@ -17,7 +17,7 @@ jest.mock("@supabase/ssr", () => ({
   })),
 }));
 
-jest.mock("next-intl/middleware", () => {
+jest.mock("next-intl/proxy", () => {
   const { NextResponse } = jest.requireActual(
     "next/server"
   ) as typeof import("next/server");
@@ -80,10 +80,8 @@ jest.mock("next-intl/middleware", () => {
 });
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports -- load after mock
-const { middleware } = require("../../middleware") as {
-  middleware: (
-    request: NextRequest
-  ) => Promise<import("next/server").NextResponse>;
+const { proxy } = require("../../proxy") as {
+  proxy: (request: NextRequest) => Promise<import("next/server").NextResponse>;
 };
 
 const baseUrl = "https://app.example.com";
@@ -117,7 +115,7 @@ describe("middleware", () => {
   });
 
   it("redirects internal /marketing paths to public URLs", async () => {
-    const res = await middleware(
+    const res = await proxy(
       createRequest(`/marketing${buildMarketingPricingPath("fr")}`)
     );
     expect(res.status).toBe(307);
@@ -127,7 +125,7 @@ describe("middleware", () => {
   });
 
   it("canonicalizes the default-locale marketing prefix", async () => {
-    const res = await middleware(createRequest(`/fr${PAGE_ROUTES.PRICING}`));
+    const res = await proxy(createRequest(`/fr${PAGE_ROUTES.PRICING}`));
     expect(res.status).toBe(307);
     expect(res.headers.get("location")).toBe(
       `${baseUrl}${PAGE_ROUTES.PRICING}`
@@ -135,7 +133,7 @@ describe("middleware", () => {
   });
 
   it("persists locale cookie from marketing URL (en)", async () => {
-    const res = await middleware(
+    const res = await proxy(
       createRequest(buildMarketingPricingPath("en"), {
         headers: { "accept-language": "de-DE" },
       })
@@ -145,7 +143,7 @@ describe("middleware", () => {
   });
 
   it("redirects a first marketing visit to the preferred locale from Accept-Language", async () => {
-    const res = await middleware(
+    const res = await proxy(
       createRequest(PAGE_ROUTES.PRICING, {
         headers: { "accept-language": "en-GB,en;q=0.9" },
       })
@@ -158,7 +156,7 @@ describe("middleware", () => {
   });
 
   it("resets a stale locale cookie on default-locale marketing URLs", async () => {
-    const res = await middleware(
+    const res = await proxy(
       createRequest(PAGE_ROUTES.PRICING, {
         cookies: { [localeCookieName]: "en" },
         headers: { "accept-language": "en-US,en;q=0.9" },
@@ -169,7 +167,7 @@ describe("middleware", () => {
   });
 
   it("keeps an explicit marketing locale URL stable even when headers prefer another language", async () => {
-    const res = await middleware(
+    const res = await proxy(
       createRequest(buildMarketingPricingPath("en"), {
         headers: { "accept-language": "es-ES,es;q=0.9" },
       })
@@ -180,7 +178,7 @@ describe("middleware", () => {
   });
 
   it("passes through when locale cookie is set on auth route (server reads header in RSC)", async () => {
-    const res = await middleware(
+    const res = await proxy(
       createRequest(AUTH_PAGE_ROUTES.SIGNIN, {
         cookies: { [localeCookieName]: "es" },
         headers: { "accept-language": "en-US" },
@@ -195,7 +193,7 @@ describe("middleware", () => {
       data: { user: null },
       error: null,
     });
-    const res = await middleware(
+    const res = await proxy(
       createRequest(AUTH_PAGE_ROUTES.SIGNIN, {
         headers: { "accept-language": "en-GB,en;q=0.9" },
       })
@@ -205,7 +203,7 @@ describe("middleware", () => {
   });
 
   it("redirects OAuth code on marketing home to auth callback", async () => {
-    const res = await middleware(
+    const res = await proxy(
       createRequest(PAGE_ROUTES.HOME, {
         search: "?code=abc123&type=signup",
       })
@@ -223,7 +221,7 @@ describe("middleware", () => {
       },
       error: null,
     });
-    const res = await middleware(
+    const res = await proxy(
       createRequest(AUTH_PAGE_ROUTES.SIGNIN, {
         cookies: { "sb-workbench-auth-token": "token" },
       })
@@ -235,7 +233,7 @@ describe("middleware", () => {
   });
 
   it("redirects unauthenticated user from protected route to signin with redirect param", async () => {
-    const res = await middleware(createRequest(PAGE_ROUTES.WORKSPACE));
+    const res = await proxy(createRequest(PAGE_ROUTES.WORKSPACE));
     expect(res.status).toBe(307);
     const location = res.headers.get("location") ?? "";
     expect(location).toContain(AUTH_PAGE_ROUTES.SIGNIN);

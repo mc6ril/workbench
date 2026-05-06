@@ -14,6 +14,7 @@ import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
 import Badge from "@/shared/design-system/badge";
 import Button from "@/shared/design-system/button";
 import Modal from "@/shared/design-system/modal";
+import { useIsHydrated } from "@/shared/hooks/useIsHydrated";
 import { useTranslations } from "@/shared/i18n";
 import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
@@ -57,6 +58,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [isModuleLibraryOpen, setIsModuleLibraryOpen] = useState(false);
+  const isHydrated = useIsHydrated();
   const profileTriggerRef = useRef<HTMLButtonElement>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
 
@@ -91,10 +93,14 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
     router.push(`${pricing}?from=${from}`);
   }, [router, pathname, pricing]);
 
+  const fallbackDisplayName = t("profile.userFallbackName");
   const displayNameValue = viewer?.displayName?.trim();
   const emailValue = viewer?.loginEmail?.trim();
   const profileIdentity = displayNameValue || emailValue;
-  const displayName = profileIdentity ?? t("profile.userFallbackName");
+  const displayName = isHydrated
+    ? (profileIdentity ?? fallbackDisplayName)
+    : fallbackDisplayName;
+  const avatarUrl = isHydrated ? viewer?.avatarUrl : null;
   const workspaceHref = PAGE_ROUTES.WORKSPACE;
   const accountHref = `${PAGE_ROUTES.ACCOUNT}?from=${encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE)}`;
 
@@ -251,7 +257,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
           profileMenuId={profileMenuId}
           profileMenuOpen={profileMenuOpen}
           displayName={displayName}
-          avatarUrl={viewer?.avatarUrl}
+          avatarUrl={avatarUrl}
           profileAriaLabel={t("profile.ariaLabel")}
           workspaceHref={workspaceHref}
           workspaceLabel={t("profile.backToWorkspace")}
