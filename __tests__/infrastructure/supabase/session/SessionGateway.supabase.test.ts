@@ -5,19 +5,9 @@ import { createSupabaseClientMock } from "../../../../__mocks__/infrastructure/s
 
 import { createSessionGateway } from "@/domains/session/infrastructure/supabase/SessionGateway.supabase";
 
-const clearDocumentCookies = () => {
-  document.cookie.split(";").forEach((cookieEntry) => {
-    const cookieName = cookieEntry.split("=")[0]?.trim();
-
-    if (cookieName) {
-      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
-    }
-  });
-};
-
-const createAuthenticatedUser = (overrides: Record<string, unknown> = {}) => {
+const createAuthenticatedClaims = (overrides: Record<string, unknown> = {}) => {
   return {
-    id: mockCurrentSession.userId,
+    sub: mockCurrentSession.userId,
     email: mockCurrentSession.loginEmail,
     app_metadata: {},
     ...overrides,
@@ -25,17 +15,12 @@ const createAuthenticatedUser = (overrides: Record<string, unknown> = {}) => {
 };
 
 describe("SessionGateway.supabase", () => {
-  beforeEach(() => {
-    clearDocumentCookies();
-  });
-
-  afterEach(() => {
-    clearDocumentCookies();
-  });
-
-  it("skips browser session validation when no Supabase auth cookie is present", async () => {
+  it("returns null when getClaims has no authenticated claims", async () => {
+    const getClaims = jest.fn().mockResolvedValue({
+      data: { claims: null },
+      error: null,
+    });
     const getUser = jest.fn();
-    const getClaims = jest.fn();
     const client = createSupabaseClientMock({
       auth: {
         getClaims,
@@ -46,20 +31,18 @@ describe("SessionGateway.supabase", () => {
     const gateway = createSessionGateway(client);
 
     await expect(gateway.getCurrentSession()).resolves.toBeNull();
-    expect(getClaims).not.toHaveBeenCalled();
+    expect(getClaims).toHaveBeenCalledTimes(1);
     expect(getUser).not.toHaveBeenCalled();
   });
 
-  it("validates the browser session through getUser when a Supabase auth cookie exists", async () => {
-    document.cookie = "sb-projectref-auth-token=session; path=/";
-
-    const getClaims = jest.fn();
-    const getUser = jest.fn().mockResolvedValue({
+  it("maps authenticated getClaims data to the current session", async () => {
+    const getClaims = jest.fn().mockResolvedValue({
       data: {
-        user: createAuthenticatedUser(),
+        claims: createAuthenticatedClaims(),
       },
       error: null,
     });
+    const getUser = jest.fn();
     const client = createSupabaseClientMock({
       auth: {
         getClaims,
@@ -73,21 +56,19 @@ describe("SessionGateway.supabase", () => {
       ...mockCurrentSession,
       accessToken: "",
     });
-    expect(getClaims).not.toHaveBeenCalled();
-    expect(getUser).toHaveBeenCalledTimes(1);
+    expect(getClaims).toHaveBeenCalledTimes(1);
+    expect(getUser).not.toHaveBeenCalled();
   });
 
-  it("treats missing Supabase sessions as signed out even when a stale cookie exists", async () => {
-    document.cookie = "sb-projectref-auth-token.0=stale; path=/";
-
-    const getClaims = jest.fn();
-    const getUser = jest.fn().mockResolvedValue({
-      data: { user: null },
+  it("treats missing Supabase claims as signed out", async () => {
+    const getClaims = jest.fn().mockResolvedValue({
+      data: { claims: null },
       error: {
         name: "AuthSessionMissingError",
         message: "Auth session missing!",
       },
     });
+    const getUser = jest.fn();
     const client = createSupabaseClientMock({
       auth: {
         getClaims,
@@ -98,7 +79,7 @@ describe("SessionGateway.supabase", () => {
     const gateway = createSessionGateway(client);
 
     await expect(gateway.getCurrentSession()).resolves.toBeNull();
-    expect(getClaims).not.toHaveBeenCalled();
-    expect(getUser).toHaveBeenCalledTimes(1);
+    expect(getClaims).toHaveBeenCalledTimes(1);
+    expect(getUser).not.toHaveBeenCalled();
   });
 });
