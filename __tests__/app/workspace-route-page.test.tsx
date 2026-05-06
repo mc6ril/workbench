@@ -2,7 +2,7 @@ import { cookies, headers } from "next/headers";
 import { render, screen } from "@testing-library/react";
 
 import { localeCookieName } from "@/shared/i18n";
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 
 import { loadWorkspaceRouteData } from "@/app/(protected)/workspace/loadWorkspaceRouteData";
@@ -37,7 +37,7 @@ jest.mock("@/shared/providers/queryClient", () => ({
   createAppQueryClient: jest.fn(),
 }));
 
-jest.mock("@/shared/infrastructure/supabase/client-server", () => ({
+jest.mock("@/shared/infrastructure/supabase/server", () => ({
   createSupabaseServerClient: jest.fn(),
 }));
 

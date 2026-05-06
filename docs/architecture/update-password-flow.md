@@ -7,7 +7,7 @@ participant AuthHook as 🪝 domains/auth/presentation/hooks/useUpdatePassword.t
 participant Validation as 📋 domains/auth/core/domain/schema/
 participant Usecase as ⚙️ domains/auth/core/usecases/updatePassword.ts
 participant AuthRepo as 🗂️ domains/auth/infrastructure/supabase/AuthRepository.supabase.ts
-participant Client as 🏗️ src/shared/infrastructure/supabase/client-browser.ts
+participant Client as 🏗️ src/shared/infrastructure/supabase/client.ts
 participant Supabase as ☁️ Supabase
 
     User->>Route: Open /auth/update-password?token=xxx&email=yyy

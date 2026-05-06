@@ -4,7 +4,7 @@ import {
   APP_COOKIE_KEYS,
   getCookie,
 } from "@/shared/infrastructure/storage/cookies";
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client";
 
 import { listRuntimeConfigEntries } from "@/domains/runtimeConfig/core/usecases/listRuntimeConfigEntries";
 import { readRuntimeConfigBooleanOverridesFromCookieValue } from "@/domains/runtimeConfig/infrastructure/local/runtimeConfigLocalOverrides";

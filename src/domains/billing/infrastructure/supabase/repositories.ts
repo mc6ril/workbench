@@ -1,4 +1,4 @@
-import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
+import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client";
 
 import { createBillingVisibilityPort } from "./BillingVisibilityPort.supabase";
 import { createSubscriptionRepository } from "./SubscriptionRepository.supabase";

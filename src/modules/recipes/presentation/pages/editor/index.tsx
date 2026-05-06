@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 
 import { getRecipeDraft } from "@/modules/recipes/core/usecases/editor/getRecipeDraft";
 import { listRecipeEditorTags } from "@/modules/recipes/core/usecases/editor/listRecipeEditorTags";

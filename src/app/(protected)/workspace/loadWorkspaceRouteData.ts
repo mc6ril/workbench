@@ -1,6 +1,6 @@
 import { dehydrate } from "@tanstack/react-query";
 
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 
 import { getProfile } from "@/domains/profile/core/usecases/getProfile";

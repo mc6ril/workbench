@@ -164,9 +164,9 @@ Rules for composition owners:
 
 Shared Supabase client creation belongs in:
 
-- `src/shared/infrastructure/supabase/client-browser.ts`
-- `src/shared/infrastructure/supabase/client-server.ts`
-- `src/shared/infrastructure/supabase/client-admin.ts`
+- `src/shared/infrastructure/supabase/client.ts`
+- `src/shared/infrastructure/supabase/server.ts`
+- `src/shared/infrastructure/supabase/admin.ts`
 
 Owner infrastructure may wrap those clients in repository factories or prewired instances.
 

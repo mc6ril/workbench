@@ -1,5 +1,5 @@
 import { APP_LIMITS } from "@/shared/constants/app";
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 
 import { listCatalogRecipes } from "@/modules/recipes/core/usecases/catalog/listCatalogRecipes";
 import { listCatalogRecipeTags } from "@/modules/recipes/core/usecases/catalog/listCatalogRecipeTags";
