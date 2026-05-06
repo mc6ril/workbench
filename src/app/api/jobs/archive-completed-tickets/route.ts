@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
+import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/admin";
 import { createLoggerFactory } from "@/shared/observability";
 
 import { WEEKLY_TICKET_ARCHIVE_TIME_ZONE } from "@/modules/board/core/domain/rules/ticketArchival.rules";

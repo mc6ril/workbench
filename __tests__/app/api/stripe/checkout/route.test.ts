@@ -16,7 +16,7 @@ jest.mock("@/shared/infrastructure/web/rateLimit", () => ({
   withRateLimit: jest.fn(() => null),
 }));
 
-jest.mock("@/shared/infrastructure/supabase/client-server", () => ({
+jest.mock("@/shared/infrastructure/supabase/server", () => ({
   createSupabaseServerClient: jest.fn(),
 }));
 
@@ -63,7 +63,7 @@ jest.mock("@/shared/observability", () => ({
   }),
 }));
 
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 
 import { POST } from "@/app/api/stripe/checkout/route";
 import { createCheckoutSession } from "@/domains/billing/core/usecases/createCheckoutSession";

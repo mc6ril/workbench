@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { API_MESSAGES_AUTH, API_MESSAGES_COMMON } from "@/shared/constants";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
-import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/admin";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
 import { createLoggerFactory } from "@/shared/observability";

@@ -63,8 +63,22 @@ export const createCommentRepository = (
 
   async create(input: CreateCommentInput): Promise<CommentWithAuthor> {
     try {
-      const currentUser = await client.auth.getUser();
-      const authorId = currentUser.data.user?.id;
+      const { data: claimsData, error: claimsError } =
+        await client.auth.getClaims();
+
+      if (claimsError) {
+        return handleRepositoryError(claimsError, "Comment");
+      }
+
+      const claims = claimsData?.claims;
+
+      if (!claims) {
+        return handleRepositoryError(
+          createDatabaseError("User not authenticated"),
+          "Comment"
+        );
+      }
+      const authorId = claims?.sub;
 
       if (!authorId) {
         return handleRepositoryError(

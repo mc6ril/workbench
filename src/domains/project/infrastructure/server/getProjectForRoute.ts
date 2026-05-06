@@ -1,6 +1,6 @@
 import { cache } from "react";
 
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 
 import type { Project } from "@/domains/project/core/domain/project.types";
 import { getProject } from "@/domains/project/core/usecases/project/getProject";

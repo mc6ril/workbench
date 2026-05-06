@@ -5,7 +5,7 @@ import {
   APP_COOKIE_KEYS,
   getCookie,
 } from "@/shared/infrastructure/storage/cookies";
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 
 import type { ProjectShellSnapshot } from "@/domains/project/core/domain/projectShell.types";
 import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";

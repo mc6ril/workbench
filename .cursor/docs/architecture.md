@@ -251,7 +251,7 @@ src/app/(auth)/[projectId]/board/page.tsx
   -> src/modules/board/core/usecases/ticket/listTickets.ts
   -> src/modules/board/core/ports/ticketRepository.ts
   -> src/modules/board/infrastructure/supabase/ticket/TicketRepository.supabase.ts
-  -> src/shared/infrastructure/supabase/client-browser.ts
+  -> src/shared/infrastructure/supabase/client.ts
   -> Supabase
 ```
 

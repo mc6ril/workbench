@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { API_MESSAGES_STRIPE } from "@/shared/constants";
-import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/client-admin";
+import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/admin";
 import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { createLoggerFactory } from "@/shared/observability";
 

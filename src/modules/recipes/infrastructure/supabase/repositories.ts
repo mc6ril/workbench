@@ -1,4 +1,4 @@
-import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
+import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client";
 
 import { createCatalogRepository } from "./catalog/CatalogRepository.supabase";
 import { createEditorCoverStorage } from "./editor/EditorCoverStorage.supabase";

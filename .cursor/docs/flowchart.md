@@ -217,7 +217,7 @@ flowchart TD
    USECASE[modules/board/core/usecases/ticket/listTickets.ts]
    PORT[modules/board/core/ports/ticketRepository.ts]
    REPO[modules/board/infrastructure/supabase/ticket/TicketRepository.supabase.ts]
-   CLIENT[shared/infrastructure/supabase/client-browser.ts]
+   CLIENT[shared/infrastructure/supabase/client.ts]
    DB[Supabase]
 
    ROUTE --> SHELL

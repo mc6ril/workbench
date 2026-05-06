@@ -1,5 +1,5 @@
 import Card from "@/shared/design-system/card";
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 
 import styles from "./styles.module.scss";
 

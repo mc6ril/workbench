@@ -102,9 +102,9 @@ src/
   shared/
     infrastructure/
       supabase/
-        client-browser.ts
-        client-server.ts
-        client-admin.ts
+        client.ts
+        server.ts
+        admin.ts
       stripe/
         stripeClient.ts
 ```
@@ -142,9 +142,9 @@ export const createTicketRepository = (
 
 ### 2. Shared client in shared infrastructure
 
-- `client-browser.ts` for client-side hooks
-- `client-server.ts` for request-scoped server usage
-- `client-admin.ts` for privileged operations
+- `client.ts` for client-side hooks
+- `server.ts` for request-scoped server usage
+- `admin.ts` for privileged operations
 
 ### 3. Owner wiring entrypoint
 
@@ -178,7 +178,7 @@ export const useTickets = (projectId: string) => {
 
 ```typescript
 import { createTicketRepository } from "@/modules/board/infrastructure/supabase/ticket/TicketRepository.supabase";
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 
 const client = await createSupabaseServerClient();
 const ticketRepository = createTicketRepository(client);

@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 
 import BoardRoutePage from "@/app/(protected)/[projectId]/board/page";
@@ -29,7 +29,7 @@ jest.mock("@/shared/providers/queryClient", () => ({
   createAppQueryClient: jest.fn(),
 }));
 
-jest.mock("@/shared/infrastructure/supabase/client-server", () => ({
+jest.mock("@/shared/infrastructure/supabase/server", () => ({
   createSupabaseServerClient: jest.fn(),
 }));
 

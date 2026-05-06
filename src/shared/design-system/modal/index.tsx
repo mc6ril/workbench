@@ -1,19 +1,16 @@
 "use client";
 
-import React, { useCallback, useRef, useSyncExternalStore } from "react";
+import React, { useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
+import { useIsHydrated } from "@/shared/hooks/useIsHydrated";
 import { useTranslations } from "@/shared/i18n";
 
 import ModalDialog from "./components/modal_dialog";
 import styles from "./modal.module.scss";
 import type { ModalProps } from "./modal.types";
 import { useModalAccessibility } from "./use_modal_accessibility";
-
-const subscribeToHydration = (): (() => void) => {
-  return () => {};
-};
 
 /**
  * Reusable Modal component with focus management and accessibility.
@@ -44,11 +41,7 @@ const Modal = ({
 }: ModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("common");
-  const isHydrated = useSyncExternalStore(
-    subscribeToHydration,
-    () => true,
-    () => false
-  );
+  const isHydrated = useIsHydrated();
 
   const modalId = getAccessibilityId("modal");
   const titleId = getAccessibilityId("modal-title");

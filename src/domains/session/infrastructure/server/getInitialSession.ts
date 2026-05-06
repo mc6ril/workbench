@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 
-import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/client-server";
+import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 
 import type { CurrentSession } from "@/domains/session/core/domain/session.types";
 import {

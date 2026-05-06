@@ -1,4 +1,4 @@
-import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client-browser";
+import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client";
 
 import type { RealtimeRepository } from "@/modules/board/core/ports/realtimeRepository";
 import { mapTicketRowToDomain } from "@/modules/board/infrastructure/supabase/ticket/TicketMapper.supabase";
