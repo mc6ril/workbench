@@ -27,7 +27,10 @@ import type {
 } from "@/domains/auth/core/domain/auth.types";
 import type { AuthGateway } from "@/domains/auth/core/ports/auth.gateway";
 import { handleAuthError } from "@/domains/auth/infrastructure/errors/authErrorHandler";
-import { mapSupabaseSessionToCurrentSession } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
+import {
+  mapSupabaseSessionToCurrentAuthIdentity,
+  requireCurrentAuthIdentity,
+} from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 import { canUpdatePasswordFromAppMetadata } from "@/domains/auth/infrastructure/supabase/providerCapabilities";
 
 /**
@@ -63,7 +66,7 @@ const mapVerifiedSessionToAuthResult = (
   const userEmail = session.user.email || fallbackEmail || "";
 
   return {
-    session: mapSupabaseSessionToCurrentSession(session, userEmail),
+    session: mapSupabaseSessionToCurrentAuthIdentity(session, userEmail),
     requiresEmailVerification: false,
   };
 };
@@ -191,7 +194,7 @@ export const createAuthGateway = (
         handleAuthError(error);
       }
 
-      const baseSession = mapSupabaseSessionToCurrentSession(
+      const baseSession = mapSupabaseSessionToCurrentAuthIdentity(
         data.session!,
         data.user!.email || input.email
       );
@@ -222,7 +225,7 @@ export const createAuthGateway = (
         handleAuthError(error);
       }
 
-      const baseSession = mapSupabaseSessionToCurrentSession(
+      const baseSession = mapSupabaseSessionToCurrentAuthIdentity(
         data.session!,
         data.user!.email || input.email
       );
@@ -347,7 +350,7 @@ export const createAuthGateway = (
         return handleAuthError(error);
       }
 
-      const baseSession = mapSupabaseSessionToCurrentSession(
+      const baseSession = mapSupabaseSessionToCurrentAuthIdentity(
         session,
         updatedUser.email || sessionUser.email || ""
       );
@@ -499,16 +502,11 @@ export const createAuthGateway = (
       }
 
       if (input.password) {
-        const {
-          data: { user },
-          error: userError,
-        } = await client.auth.getUser();
+        const identity = await requireCurrentAuthIdentity(client);
 
-        if (userError) {
-          handleAuthError(userError);
+        if (!identity.canUpdatePassword) {
+          handleAuthError(createPasswordUpdateNotAllowedError());
         }
-
-        ensurePasswordUpdateAllowed(user);
         updateData.password = input.password;
       }
 
@@ -536,25 +534,11 @@ export const createAuthGateway = (
         return handleAuthError(error);
       }
 
-      // Get the current user to retrieve their ID
-      const {
-        data: { user },
-        error: userError,
-      } = await client.auth.getUser();
-
-      if (userError || !user) {
-        const error: AuthenticationError = createAppError(
-          AUTH_ERROR_CODE.AUTHENTICATION_ERROR,
-          {
-            debugMessage: "User must be authenticated to delete account",
-          }
-        ) as AuthenticationError;
-        return handleAuthError(error);
-      }
+      const identity = await requireCurrentAuthIdentity(client);
 
       // Delete user via admin API (cascade deletes associated data)
       const { error: deleteError } = await adminClient.auth.admin.deleteUser(
-        user.id
+        identity.userId
       );
 
       if (deleteError) {

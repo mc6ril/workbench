@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
 import { requireNonEmptyEnv } from "@/shared/errors/programmingError";
+import { Database } from "@/shared/infrastructure/supabase/types";
 
 /**
  * Create Supabase admin client with service_role key.
@@ -24,7 +25,7 @@ export const createSupabaseAdminClient = () => {
     "NEXT_PUBLIC_SUPABASE_URL is not configured. This is required for Supabase client."
   );
 
-  return createClient(supabaseUrl, serviceRoleKey, {
+  return createClient<Database>(supabaseUrl, serviceRoleKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,

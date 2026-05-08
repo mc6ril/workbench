@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import {
   DEFAULT_USER_PREFERENCES,
   type UserProfile,
@@ -11,14 +12,13 @@ import {
 import { profileGateway } from "@/domains/profile/infrastructure/profileGateway.browser";
 import { queryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
 import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 /**
  * Hook for updating user preferences (theme, notifications, language).
  */
 export const useUpdatePreferences = () => {
   const queryClient = useQueryClient();
-  const { data: session } = useSession();
+  const { data: identity } = useAuthIdentity();
   const { data: profile } = useMyProfile();
   const currentPreferences = profile?.preferences ?? DEFAULT_USER_PREFERENCES;
 
@@ -26,15 +26,15 @@ export const useUpdatePreferences = () => {
     mutationFn: (input: UpdatePreferencesInput) => {
       return updatePreferences(
         profileGateway,
-        session?.userId ?? "",
+        identity?.userId ?? "",
         currentPreferences,
         input
       );
     },
     onSuccess: (_data, input) => {
-      if (session) {
+      if (identity) {
         queryClient.setQueryData<UserProfile | null>(
-          queryKeys.userProfiles.detail(session.userId),
+          queryKeys.userProfiles.detail(identity.userId),
           (currentProfile) => {
             if (!currentProfile) {
               return currentProfile;

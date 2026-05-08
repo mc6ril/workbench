@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { useUserProfile } from "@/domains/profile/presentation/hooks/useUserProfile";
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
 import { buildCurrentViewer } from "@/domains/viewer/core/usecases/buildCurrentViewer";
 
 /**
@@ -9,31 +9,33 @@ import { buildCurrentViewer } from "@/domains/viewer/core/usecases/buildCurrentV
  * It never exposes raw access tokens or mutation capabilities.
  */
 export const useViewer = () => {
-  const sessionQuery = useSession();
-  const profileQuery = useUserProfile(sessionQuery.data?.userId);
+  const identityQuery = useAuthIdentity();
+  const profileQuery = useUserProfile(identityQuery.data?.userId);
 
   const viewer = useMemo(() => {
-    if (!sessionQuery.data || !profileQuery.data) {
+    if (!identityQuery.data || !profileQuery.data) {
       return null;
     }
 
     return buildCurrentViewer({
       profile: profileQuery.data,
-      session: sessionQuery.data,
+      identity: identityQuery.data,
     });
-  }, [profileQuery.data, sessionQuery.data]);
+  }, [identityQuery.data, profileQuery.data]);
 
-  const hasSession = !!sessionQuery.data?.userId;
+  const hasIdentity = !!identityQuery.data?.userId;
 
   return {
     data: viewer,
-    error: sessionQuery.error ?? profileQuery.error ?? null,
-    isError: sessionQuery.isError || profileQuery.isError,
-    isLoading: sessionQuery.isLoading || (hasSession && profileQuery.isLoading),
-    isPending: sessionQuery.isPending || (hasSession && profileQuery.isPending),
+    error: identityQuery.error ?? profileQuery.error ?? null,
+    isError: identityQuery.isError || profileQuery.isError,
+    isLoading:
+      identityQuery.isLoading || (hasIdentity && profileQuery.isLoading),
+    isPending:
+      identityQuery.isPending || (hasIdentity && profileQuery.isPending),
     isSuccess:
       !!viewer &&
-      sessionQuery.isSuccess &&
-      (!hasSession || profileQuery.isSuccess),
+      identityQuery.isSuccess &&
+      (!hasIdentity || profileQuery.isSuccess),
   };
 };

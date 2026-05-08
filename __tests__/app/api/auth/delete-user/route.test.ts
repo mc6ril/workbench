@@ -35,12 +35,8 @@ jest.mock("@/domains/auth/infrastructure/supabase/repositories", () => ({
   createAuthGateway: jest.fn(),
 }));
 
-jest.mock("@/domains/session/infrastructure/supabase/repositories", () => ({
-  createSessionGateway: jest.fn(),
-}));
-
-jest.mock("@/domains/session/core/usecases/getCurrentSession", () => ({
-  getCurrentSession: jest.fn(),
+jest.mock("@/domains/auth/infrastructure/supabase/currentAuthIdentity", () => ({
+  requireCurrentAuthIdentity: jest.fn(),
 }));
 
 jest.mock("@/domains/auth/core/usecases/user/deleteAccount", () => ({
@@ -61,9 +57,8 @@ import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/ser
 
 import { DELETE } from "@/app/api/auth/delete-user/route";
 import { deleteAccount } from "@/domains/auth/core/usecases/user/deleteAccount";
+import { requireCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 import { createAuthGateway } from "@/domains/auth/infrastructure/supabase/repositories";
-import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
-import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 
 type MockNextResponse = {
   status: number;
@@ -91,10 +86,7 @@ describe("DELETE /api/auth/delete-user", () => {
       .mocked(createSupabaseServerClient)
       .mockResolvedValue({} as ReturnType<typeof createSupabaseServerClient>);
     jest
-      .mocked(createSessionGateway)
-      .mockReturnValue({} as ReturnType<typeof createSessionGateway>);
-    jest
-      .mocked(getCurrentSession)
+      .mocked(requireCurrentAuthIdentity)
       .mockRejectedValue(new Error("Auth session missing"));
 
     const response = (await DELETE(
@@ -114,14 +106,13 @@ describe("DELETE /api/auth/delete-user", () => {
       ReturnType<typeof createSupabaseServerClient>
     >;
     const adminClient = {} as ReturnType<typeof createSupabaseAdminClient>;
-    const sessionGateway = {} as ReturnType<typeof createSessionGateway>;
     const authGateway = {} as ReturnType<typeof createAuthGateway>;
 
     jest.mocked(createSupabaseServerClient).mockResolvedValue(serverClient);
-    jest.mocked(createSessionGateway).mockReturnValue(sessionGateway);
-    jest.mocked(getCurrentSession).mockResolvedValue({
+    jest.mocked(requireCurrentAuthIdentity).mockResolvedValue({
       userId: "user-123",
       loginEmail: "user@example.com",
+      canUpdatePassword: true,
     });
     jest.mocked(createSupabaseAdminClient).mockReturnValue(adminClient);
     jest.mocked(createAuthGateway).mockReturnValue(authGateway);
@@ -145,14 +136,13 @@ describe("DELETE /api/auth/delete-user", () => {
       ReturnType<typeof createSupabaseServerClient>
     >;
     const adminClient = {} as ReturnType<typeof createSupabaseAdminClient>;
-    const sessionGateway = {} as ReturnType<typeof createSessionGateway>;
     const authGateway = {} as ReturnType<typeof createAuthGateway>;
 
     jest.mocked(createSupabaseServerClient).mockResolvedValue(serverClient);
-    jest.mocked(createSessionGateway).mockReturnValue(sessionGateway);
-    jest.mocked(getCurrentSession).mockResolvedValue({
+    jest.mocked(requireCurrentAuthIdentity).mockResolvedValue({
       userId: "user-123",
       loginEmail: "user@example.com",
+      canUpdatePassword: true,
     });
     jest.mocked(createSupabaseAdminClient).mockReturnValue(adminClient);
     jest.mocked(createAuthGateway).mockReturnValue(authGateway);

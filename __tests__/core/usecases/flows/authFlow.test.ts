@@ -3,10 +3,8 @@ import {
   mockAuthResult,
   mockAuthResultWithEmailVerification,
 } from "../../../../__mocks__/core/domain/authMocks";
-import { mockCurrentSession } from "../../../../__mocks__/core/domain/sessionMocks";
 import { createAuthRepositoryMock } from "../../../../__mocks__/core/ports/authRepository";
 import { createProjectGatewayMock } from "../../../../__mocks__/core/ports/projectGateway";
-import { createSessionGatewayMock } from "../../../../__mocks__/core/ports/sessionGateway";
 
 import type {
   AuthResult,
@@ -18,7 +16,6 @@ import {
   ProjectRole,
   type ProjectWithRole,
 } from "@/domains/project/core/domain/project.types";
-import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
 import { listProjects } from "@/domains/workspace/core/usecases/project/listProjects";
 
 describe("Auth Flow Tests", () => {
@@ -37,16 +34,13 @@ describe("Auth Flow Tests", () => {
     password: mockUserPassword,
   };
 
-  describe("complete signup flow: signUpUser → getCurrentSession (with email verification)", () => {
+  describe("complete signup flow with email verification", () => {
     it("should complete signup flow with email verification requirement", async () => {
       // Arrange
       const authRepository = createAuthRepositoryMock({
         signUp: jest.fn<Promise<AuthResult>, [SignUpInput]>(
           async () => mockAuthResultWithEmailVerification
         ),
-      });
-      const sessionGateway = createSessionGatewayMock({
-        getCurrentSession: jest.fn(async () => null),
       });
 
       // Act - Step 1: Sign up user
@@ -58,17 +52,6 @@ describe("Auth Flow Tests", () => {
       expect(signUpResult).toEqual(mockAuthResultWithEmailVerification);
       expect(signUpResult.requiresEmailVerification).toBe(true);
       expect(signUpResult.session).toBeNull();
-
-      // Act & Assert - Step 2: Get current session (should throw NotFoundError as email not verified)
-      await expect(getCurrentSession(sessionGateway)).rejects.toMatchObject({
-        code: "NOT_FOUND",
-        context: {
-          entityType: "Session",
-          entityId: "",
-        },
-      });
-      expect(sessionGateway.getCurrentSession).toHaveBeenCalledTimes(1);
-      expect(sessionGateway.getCurrentSession).toHaveBeenCalledWith();
     });
 
     it("should handle error propagation in signup flow", async () => {
@@ -90,7 +73,7 @@ describe("Auth Flow Tests", () => {
     });
   });
 
-  describe("complete signin flow: signInUser → getCurrentSession → listProjects", () => {
+  describe("complete signin flow: signInUser → listProjects", () => {
     const mockProjects: ProjectWithRole[] = [
       {
         id: "123e4567-e89b-12d3-a456-426614174000",
@@ -111,10 +94,6 @@ describe("Auth Flow Tests", () => {
           async () => mockAuthResult
         ),
       });
-      const sessionGateway = createSessionGatewayMock({
-        getCurrentSession: jest.fn(async () => mockCurrentSession),
-      });
-
       const projectRepository = createProjectGatewayMock({
         listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
           async () => mockProjects
@@ -124,25 +103,16 @@ describe("Auth Flow Tests", () => {
       // Act - Step 1: Sign in user
       const signInResult = await signInUser(authRepository, mockSignInInput);
 
-      // Assert - Step 1: Sign in should return session
+      // Assert - Step 1: Sign in should return auth identity
       expect(authRepository.signIn).toHaveBeenCalledTimes(1);
       expect(authRepository.signIn).toHaveBeenCalledWith(mockSignInInput);
       expect(signInResult).toEqual(mockAuthResult);
       expect(signInResult.session).not.toBeNull();
 
-      // Act - Step 2: Get current session
-      const sessionResult = await getCurrentSession(sessionGateway);
-
-      // Assert - Step 2: Session should be available
-      expect(sessionGateway.getCurrentSession).toHaveBeenCalledTimes(1);
-      expect(sessionGateway.getCurrentSession).toHaveBeenCalledWith();
-      expect(sessionResult).toEqual(mockCurrentSession);
-      expect(sessionResult.loginEmail).toBe(mockCurrentSession.loginEmail);
-
-      // Act - Step 3: List projects
+      // Act - Step 2: List projects
       const projectsResult = await listProjects(projectRepository);
 
-      // Assert - Step 3: Projects should be listed
+      // Assert - Step 2: Projects should be listed
       expect(projectRepository.listProjects).toHaveBeenCalledTimes(1);
       expect(projectRepository.listProjects).toHaveBeenCalledWith();
       expect(projectsResult).toEqual(mockProjects);
@@ -168,38 +138,6 @@ describe("Auth Flow Tests", () => {
         code: "INVALID_CREDENTIALS",
       });
       expect(authRepository.signIn).toHaveBeenCalledTimes(1);
-    });
-
-    it("should handle error propagation from getCurrentSession to listProjects", async () => {
-      // Arrange
-      const authRepository = createAuthRepositoryMock({
-        signIn: jest.fn<Promise<AuthResult>, [typeof mockSignInInput]>(
-          async () => mockAuthResult
-        ),
-      });
-      const sessionGateway = createSessionGatewayMock({
-        getCurrentSession: jest.fn(async () => {
-          throw createAuthError.authentication("Session retrieval failed");
-        }),
-      });
-
-      const projectRepository = createProjectGatewayMock({
-        listProjects: jest.fn<Promise<ProjectWithRole[]>, []>(
-          async () => mockProjects
-        ),
-      });
-
-      // Act - Step 1: Sign in (should succeed)
-      await signInUser(authRepository, mockSignInInput);
-
-      // Act & Assert - Step 2: Get session (should fail)
-      await expect(getCurrentSession(sessionGateway)).rejects.toMatchObject({
-        code: "AUTHENTICATION_ERROR",
-      });
-
-      // Note: In a real flow, listProjects wouldn't be called if getCurrentSession fails,
-      // but we verify that projectRepository was not called
-      expect(projectRepository.listProjects).not.toHaveBeenCalled();
     });
   });
 });

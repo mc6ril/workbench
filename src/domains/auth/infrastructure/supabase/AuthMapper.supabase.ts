@@ -1,11 +1,7 @@
-import type { Session } from "@supabase/supabase-js";
-
 import type { AppError } from "@/shared/errors/appError";
 import { createAppError } from "@/shared/errors/appError";
 import type { AuthErrorCode } from "@/shared/errors/appErrorCodes";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
-
-import type { CurrentSession } from "@/domains/session/core/domain/session.types";
 
 const createAuthInfrastructureError = (
   code: AuthErrorCode,
@@ -16,19 +12,6 @@ const createAuthInfrastructureError = (
     debugMessage,
     ...(originalError !== undefined ? { context: { originalError } } : {}),
   });
-
-/**
- * Maps Supabase Session to the stable session shape returned by auth flows.
- */
-export const mapSupabaseSessionToCurrentSession = (
-  session: Session,
-  userEmail: string
-): CurrentSession => {
-  return {
-    userId: session.user.id,
-    loginEmail: userEmail,
-  };
-};
 
 /**
  * Maps Supabase Auth errors to stable application auth error codes.

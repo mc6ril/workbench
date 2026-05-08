@@ -6,12 +6,10 @@ import {
   resetCookie,
 } from "@/shared/infrastructure/storage/cookies";
 import { navigateToDocumentPath } from "@/shared/navigation/documentNavigation";
-import { clearPersistedIdentityCache } from "@/shared/providers/persistedIdentityCache";
 
 import { signOutUser } from "@/domains/auth/core/usecases/user/signOutUser";
 import { authGateway } from "@/domains/auth/infrastructure/supabase/repositories";
 import { invalidatePostAuthMutation } from "@/domains/auth/presentation/utils/invalidatePostAuthMutation";
-import { clearLightUserCookieInBrowser } from "@/domains/session/infrastructure/lightUserCookie";
 
 /**
  * Hook for signing out the current user.
@@ -24,8 +22,6 @@ export const useSignOut = () => {
     mutationFn: () => signOutUser(authGateway),
     onSuccess: async () => {
       await invalidatePostAuthMutation(queryClient);
-      clearPersistedIdentityCache();
-      clearLightUserCookieInBrowser();
       queryClient.clear();
       resetCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES);
 

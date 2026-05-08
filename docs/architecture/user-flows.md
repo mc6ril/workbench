@@ -15,10 +15,10 @@ Route files should:
 ## Ownership Map
 
 - `src/domains/auth/presentation/` -> auth screens and auth action flows
-- `src/domains/session/presentation/` -> current identity/session state
+- `src/domains/auth/presentation/hooks/identity/` -> current auth identity state
 - `src/domains/profile/presentation/` -> profile editing and reusable current-profile flows
 - `src/domains/viewer/presentation/` -> current-user read-model composition
-- `src/domains/settings/presentation/` -> account/settings surfaces that compose viewer, profile, session, auth, and billing
+- `src/domains/settings/presentation/` -> account/settings surfaces that compose viewer, profile, auth, and billing
 - `src/domains/workspace/presentation/` -> workspace dashboard and create/join project entry UX
 - `src/domains/project/presentation/` -> project shell, project settings, members, invitations, enabled-module management
 - `src/modules/board/presentation/` -> board and ticket-specific screens
@@ -121,7 +121,7 @@ flowchart TD
 
 ### Auth route handling
 
-- Verifies session presence when needed
+- Verifies auth identity presence when needed
 - Delegates screen composition to the auth domain
 
 ### Workspace route handling
@@ -135,8 +135,7 @@ flowchart TD
 - That settings surface composes:
   - `viewer` for the current-user read model
   - `profile` for user business data
-  - `session` for current identity state and capabilities
-  - `auth` for action-oriented flows such as password or account deletion
+  - `auth` for current identity, password, and account deletion flows
   - `billing` for subscription management
 
 ### Project route handling
@@ -159,8 +158,8 @@ flowchart TD
 ## Security Model
 
 1. `middleware.ts` can optimize routing and early redirects
-2. `auth` owns authentication actions, not long-lived current-user state
-3. `session` owns current identity state and auth-derived capabilities
+2. `auth` owns authentication actions and current auth identity derived from Supabase claims/session
+3. current auth identity is the source for auth-derived capabilities
 4. `profile` owns user business data
 5. `viewer` owns read-only current-user composition for most UI consumption
 6. workspace confirms that the user can enter project selection/create/join flows
@@ -172,7 +171,7 @@ flowchart TD
 Routing stays in `src/app/`, but route-specific rendering is delegated to the correct owner:
 
 - auth routes -> `src/domains/auth/`
-- session state -> `src/domains/session/`
+- auth identity -> `src/domains/auth/presentation/hooks/identity/`
 - profile data -> `src/domains/profile/`
 - current-user/viewer composition -> `src/domains/viewer/`
 - account/settings surfaces -> `src/domains/settings/`

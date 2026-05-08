@@ -1,4 +1,4 @@
-import { mockCurrentSession } from "../../../../__mocks__/core/domain/sessionMocks";
+import { mockCurrentAuthIdentity } from "../../../../__mocks__/core/domain/authIdentityMocks";
 
 import {
   DEFAULT_USER_PREFERENCES,
@@ -9,7 +9,7 @@ import { buildCurrentViewer } from "@/domains/viewer/core/usecases/buildCurrentV
 describe("buildCurrentViewer", () => {
   it("should compose session and profile into a viewer read-model", () => {
     const profile: UserProfile = {
-      id: mockCurrentSession.userId,
+      id: mockCurrentAuthIdentity.userId,
       email: "profile@example.com",
       displayName: "Cyril",
       avatarUrl: "https://example.com/avatar.webp",
@@ -21,12 +21,12 @@ describe("buildCurrentViewer", () => {
 
     const result = buildCurrentViewer({
       profile,
-      session: mockCurrentSession,
+      identity: mockCurrentAuthIdentity,
     });
 
     expect(result).toEqual({
-      userId: mockCurrentSession.userId,
-      loginEmail: mockCurrentSession.loginEmail,
+      userId: mockCurrentAuthIdentity.userId,
+      loginEmail: mockCurrentAuthIdentity.loginEmail,
       displayName: "Cyril",
       avatarUrl: "https://example.com/avatar.webp",
       preferences: DEFAULT_USER_PREFERENCES,

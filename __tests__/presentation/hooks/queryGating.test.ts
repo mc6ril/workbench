@@ -1,5 +1,5 @@
 const useQueryMock = jest.fn();
-const useSessionMock = jest.fn();
+const useAuthIdentityMock = jest.fn();
 
 jest.mock("@tanstack/react-query", () => ({
   useQuery: (...args: unknown[]) => useQueryMock(...args),
@@ -9,8 +9,8 @@ jest.mock("@/domains/billing/core/usecases/getBillingVisibility", () => ({
   getBillingVisibility: jest.fn(),
 }));
 
-jest.mock("@/domains/session/presentation/hooks/useSession", () => ({
-  useSession: (...args: unknown[]) => useSessionMock(...args),
+jest.mock("@/domains/auth/presentation/hooks/identity/useAuthIdentity", () => ({
+  useAuthIdentity: (...args: unknown[]) => useAuthIdentityMock(...args),
 }));
 
 process.env.NEXT_PUBLIC_SUPABASE_URL =
@@ -26,14 +26,14 @@ import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/
 describe("query hook gating", () => {
   beforeEach(() => {
     useQueryMock.mockReset();
-    useSessionMock.mockReset();
+    useAuthIdentityMock.mockReset();
     useQueryMock.mockReturnValue({
       data: undefined,
       isLoading: false,
       isFetching: false,
       error: null,
     });
-    useSessionMock.mockReturnValue({
+    useAuthIdentityMock.mockReturnValue({
       data: { userId: "user-1" },
       isLoading: false,
     });
@@ -60,8 +60,8 @@ describe("query hook gating", () => {
     );
   });
 
-  it("disables workspace queries while the session is still loading", () => {
-    useSessionMock.mockReturnValue({
+  it("disables workspace queries while the auth identity is still loading", () => {
+    useAuthIdentityMock.mockReturnValue({
       data: undefined,
       isLoading: true,
     });
@@ -83,7 +83,7 @@ describe("query hook gating", () => {
     );
   });
 
-  it("keeps workspace queries enabled once the authenticated session is ready", () => {
+  it("keeps workspace queries enabled once the authenticated identity is ready", () => {
     useProjectsWithStats();
     useReclaimableProjects();
 

@@ -1,6 +1,6 @@
 const setQueryDataMock = jest.fn();
 const useMutationMock = jest.fn();
-const useSessionMock = jest.fn();
+const useAuthIdentityMock = jest.fn();
 const useMyProfileMock = jest.fn();
 
 jest.mock("@tanstack/react-query", () => ({
@@ -13,8 +13,8 @@ jest.mock("@tanstack/react-query", () => ({
   }),
 }));
 
-jest.mock("@/domains/session/presentation/hooks/useSession", () => ({
-  useSession: (...args: unknown[]) => useSessionMock(...args),
+jest.mock("@/domains/auth/presentation/hooks/identity/useAuthIdentity", () => ({
+  useAuthIdentity: (...args: unknown[]) => useAuthIdentityMock(...args),
 }));
 
 jest.mock("@/domains/profile/presentation/hooks/useMyProfile", () => ({
@@ -35,7 +35,7 @@ import { queryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
 import { useUpdatePreferences } from "@/domains/profile/presentation/hooks/useUpdatePreferences";
 
 describe("useUpdatePreferences", () => {
-  const session = { userId: "user-1" };
+  const identity = { userId: "user-1" };
   const profile = {
     id: "user-1",
     email: "user@example.com",
@@ -50,12 +50,12 @@ describe("useUpdatePreferences", () => {
   beforeEach(() => {
     useMutationMock.mockReset();
     setQueryDataMock.mockReset();
-    useSessionMock.mockReset();
+    useAuthIdentityMock.mockReset();
     useMyProfileMock.mockReset();
     jest.mocked(updatePreferences).mockReset();
 
-    useSessionMock.mockReturnValue({
-      data: session,
+    useAuthIdentityMock.mockReturnValue({
+      data: identity,
     });
     useMyProfileMock.mockReturnValue({
       data: profile,
@@ -78,7 +78,7 @@ describe("useUpdatePreferences", () => {
     });
 
     expect(setQueryDataMock).toHaveBeenCalledWith(
-      queryKeys.userProfiles.detail(session.userId),
+      queryKeys.userProfiles.detail(identity.userId),
       expect.any(Function)
     );
 
@@ -108,7 +108,7 @@ describe("useUpdatePreferences", () => {
 
     expect(updatePreferences).toHaveBeenCalledWith(
       {},
-      session.userId,
+      identity.userId,
       DEFAULT_USER_PREFERENCES,
       {
         gettingStartedStatus: "skipped",
