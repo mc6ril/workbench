@@ -26,6 +26,7 @@ import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatur
 import {
   getProjectRoleLabelKey,
   InvitationStatus,
+  isProjectRole,
   type ProjectInvitation,
   type ProjectMember,
   ProjectRole,
@@ -493,7 +494,12 @@ const ProjectPeopleSettingsSection = ({
                 }
                 helperText={selectedRoleDescription}
                 onChange={(event) => {
-                  setInviteRole(event.target.value as ProjectRole);
+                  const nextRole = event.target.value;
+                  if (!isProjectRole(nextRole)) {
+                    return;
+                  }
+
+                  setInviteRole(nextRole);
                   setInvitationLink("");
                   inviteMutation.reset();
                 }}
@@ -838,10 +844,12 @@ const ProjectPeopleSettingsSection = ({
                               name: displayName,
                             })}
                             onChange={(event) => {
-                              void handleRoleChange(
-                                member,
-                                event.target.value as ProjectRole
-                              );
+                              const nextRole = event.target.value;
+                              if (!isProjectRole(nextRole)) {
+                                return;
+                              }
+
+                              void handleRoleChange(member, nextRole);
                             }}
                           >
                             {availableRoles.map((role) => (

@@ -1,15 +1,10 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import type { RuntimeConfigEntry } from "@/domains/runtimeConfig/core/domain/runtimeConfig.types";
 import type { RuntimeConfigPort } from "@/domains/runtimeConfig/core/ports/runtimeConfig.port";
 
-type RuntimeConfigRow = {
-  key: string;
-  value: unknown;
-};
-
 export const createRuntimeConfigPort = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): RuntimeConfigPort => ({
   async getValue(key: string): Promise<unknown> {
     const { data, error } = await client
@@ -22,8 +17,7 @@ export const createRuntimeConfigPort = (
       throw error;
     }
 
-    const row = data as RuntimeConfigRow | null;
-    return row?.value;
+    return data?.value;
   },
 
   async listEntries(): Promise<RuntimeConfigEntry[]> {
@@ -36,7 +30,7 @@ export const createRuntimeConfigPort = (
       throw error;
     }
 
-    return ((data ?? []) as RuntimeConfigRow[]).map((entry) => ({
+    return (data ?? []).map((entry) => ({
       key: entry.key,
       value: entry.value,
     }));

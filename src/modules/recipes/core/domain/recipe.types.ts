@@ -14,6 +14,12 @@ export const RECIPE_INGREDIENT_KIND_VALUES = [
 export type RecipeIngredientKind =
   (typeof RECIPE_INGREDIENT_KIND_VALUES)[number];
 
+export const isRecipeIngredientKind = (
+  value: string
+): value is RecipeIngredientKind => {
+  return (RECIPE_INGREDIENT_KIND_VALUES as readonly string[]).includes(value);
+};
+
 export type RecipeIngredient = {
   id: string;
   displayName: string;

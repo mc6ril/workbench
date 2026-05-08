@@ -22,6 +22,14 @@ export const CATALOG_RECIPE_COVER_STYLE_VALUES = [
 export type CatalogRecipeCoverStyle =
   (typeof CATALOG_RECIPE_COVER_STYLE_VALUES)[number];
 
+export const isCatalogRecipeCoverStyle = (
+  value: string
+): value is CatalogRecipeCoverStyle => {
+  return (CATALOG_RECIPE_COVER_STYLE_VALUES as readonly string[]).includes(
+    value
+  );
+};
+
 export type CatalogRecipeTag = RecipeTag;
 
 export type CatalogRecipeListFilters = {

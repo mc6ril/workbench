@@ -1,4 +1,4 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
 
@@ -43,7 +43,7 @@ const createClientMock = (
 
       return nextQuery;
     }),
-  } as unknown as SupabaseClient;
+  } as unknown as AppSupabaseClient;
 };
 
 describe("createPlannerRepository", () => {

@@ -1,6 +1,5 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 import { isUuid } from "@/shared/utils/uuid";
 
 import {
@@ -16,13 +15,7 @@ import {
 } from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
 import type { RecipeTag } from "@/modules/recipes/core/domain/recipe.types";
 import type { CatalogRepository } from "@/modules/recipes/core/ports/catalog/catalogRepository";
-import type {
-  RecipeIngredientRow,
-  RecipeRow,
-  RecipeSelectionRow,
-  RecipeTagLinkRow,
-  RecipeTagRow,
-} from "@/modules/recipes/infrastructure/supabase/shared/persistence.types";
+import type { RecipeRow } from "@/modules/recipes/infrastructure/supabase/shared/persistence.types";
 import {
   loadRecipeGraphsByIds,
   loadRecipeTagsByRecipeIds,
@@ -37,7 +30,7 @@ import {
 } from "@/modules/recipes/infrastructure/supabase/shared/recipesFixtureData";
 
 const hasPersistedCatalogRecipes = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string
 ): Promise<boolean> => {
   const { data, error } = await client
@@ -54,7 +47,7 @@ const hasPersistedCatalogRecipes = async (
 };
 
 const loadSelectedRecipeIds = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string
 ): Promise<Set<string>> => {
   const { data, error } = await client
@@ -66,15 +59,11 @@ const loadSelectedRecipeIds = async (
     return handleRepositoryError(error, "RecipeSelection", projectId);
   }
 
-  return new Set(
-    ((data ?? []) as Array<Pick<RecipeSelectionRow, "recipe_id">>).map(
-      (selection) => selection.recipe_id
-    )
-  );
+  return new Set((data ?? []).map((selection) => selection.recipe_id));
 };
 
 const resolveRecipeIdsMatchingSearch = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   search: string
 ): Promise<string[] | null> => {
@@ -137,28 +126,16 @@ const resolveRecipeIdsMatchingSearch = async (
 
   return [
     ...new Set([
-      ...((titleMatches ?? []) as Array<Pick<RecipeRow, "id">>).map(
-        (row) => row.id
-      ),
-      ...((summaryMatches ?? []) as Array<Pick<RecipeRow, "id">>).map(
-        (row) => row.id
-      ),
-      ...(
-        (ingredientDisplayMatches ?? []) as Array<
-          Pick<RecipeIngredientRow, "recipe_id">
-        >
-      ).map((row) => row.recipe_id),
-      ...(
-        (ingredientNormalizedMatches ?? []) as Array<
-          Pick<RecipeIngredientRow, "recipe_id">
-        >
-      ).map((row) => row.recipe_id),
+      ...(titleMatches ?? []).map((row) => row.id),
+      ...(summaryMatches ?? []).map((row) => row.id),
+      ...(ingredientDisplayMatches ?? []).map((row) => row.recipe_id),
+      ...(ingredientNormalizedMatches ?? []).map((row) => row.recipe_id),
     ]),
   ];
 };
 
 const resolveRecipeIdsMatchingFilters = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   filterOptionIds: string[]
 ): Promise<string[] | null> => {
@@ -197,7 +174,7 @@ const resolveRecipeIdsMatchingFilters = async (
     return handleRepositoryError(tagError, "RecipeTag", projectId);
   }
 
-  const tagRows = (tagData ?? []) as Array<Pick<RecipeTagRow, "id" | "slug">>;
+  const tagRows = tagData ?? [];
   const tagIdBySlug = new Map(tagRows.map((tag) => [tag.slug, tag.id]));
   const tagIdsByCategory = new Map<string, Set<string>>();
 
@@ -244,7 +221,7 @@ const resolveRecipeIdsMatchingFilters = async (
   const categoryKeys = [...tagIdsByCategory.keys()];
   const matchedCategoriesByRecipeId = new Map<string, Set<string>>();
 
-  for (const tagLink of (tagLinkData ?? []) as RecipeTagLinkRow[]) {
+  for (const tagLink of tagLinkData ?? []) {
     const matchingCategoryKeys = categoryKeys.filter((categoryKey) =>
       tagIdsByCategory.get(categoryKey)?.has(tagLink.tag_id)
     );
@@ -293,7 +270,7 @@ const intersectRecipeIds = (
   return left.filter((recipeId) => rightIds.has(recipeId));
 };
 
-type CatalogRecipeRowPage = {
+type CatalogRecipePage = {
   items: RecipeRow[];
   nextCursor: CatalogRecipeListCursor | null;
   hasMore: boolean;
@@ -308,10 +285,10 @@ const buildCatalogRecipeListCursor = (
   };
 };
 
-const toCatalogRecipeRowPage = (
+const toCatalogRecipePage = (
   recipes: RecipeRow[],
   pageSize: number
-): CatalogRecipeRowPage => {
+): CatalogRecipePage => {
   const items = recipes.slice(0, pageSize);
   const hasMore = recipes.length > pageSize;
 
@@ -325,12 +302,12 @@ const toCatalogRecipeRowPage = (
   };
 };
 
-const loadCatalogRecipeRows = async (
-  client: SupabaseClient,
+const loadCatalogRecipePage = async (
+  client: AppSupabaseClient,
   projectId: string,
   filters: CatalogRecipeListFilters | undefined,
   pagination: CatalogRecipeListPagination
-): Promise<CatalogRecipeRowPage> => {
+): Promise<CatalogRecipePage> => {
   const normalizedFilters = normalizeCatalogRecipeListFilters(filters);
   const [searchRecipeIds, filterRecipeIds] = await Promise.all([
     resolveRecipeIdsMatchingSearch(client, projectId, normalizedFilters.search),
@@ -380,14 +357,11 @@ const loadCatalogRecipeRows = async (
     return handleRepositoryError(error, "Recipe", projectId);
   }
 
-  return toCatalogRecipeRowPage(
-    (data ?? []) as RecipeRow[],
-    pagination.pageSize
-  );
+  return toCatalogRecipePage(data ?? [], pagination.pageSize);
 };
 
 const listPersistedCatalogTags = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string
 ): Promise<RecipeTag[]> => {
   const { data: tagLinkData, error: tagLinkError } = await client
@@ -400,11 +374,7 @@ const listPersistedCatalogTags = async (
   }
 
   const tagIds = [
-    ...new Set(
-      ((tagLinkData ?? []) as Array<Pick<RecipeTagLinkRow, "tag_id">>).map(
-        (tagLink) => tagLink.tag_id
-      )
-    ),
+    ...new Set((tagLinkData ?? []).map((tagLink) => tagLink.tag_id)),
   ];
 
   if (tagIds.length === 0) {
@@ -422,7 +392,7 @@ const listPersistedCatalogTags = async (
     return handleRepositoryError(tagError, "RecipeTag", projectId);
   }
 
-  return ((tagData ?? []) as RecipeTagRow[]).map(mapRecipeTagRowToDomain);
+  return (tagData ?? []).map(mapRecipeTagRowToDomain);
 };
 
 /**
@@ -432,12 +402,12 @@ const listPersistedCatalogTags = async (
  * are still landing in later steps.
  */
 export const createCatalogRepository = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): CatalogRepository => ({
   async listByProject({ projectId, filters, pagination }) {
     const normalizedPagination =
       normalizeCatalogRecipeListPagination(pagination);
-    const recipePage = await loadCatalogRecipeRows(
+    const recipePage = await loadCatalogRecipePage(
       client,
       projectId,
       filters,

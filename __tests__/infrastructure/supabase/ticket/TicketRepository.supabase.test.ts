@@ -1,4 +1,4 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import { createQueryBuilderMock } from "../testUtils/queryBuilderMock";
 
@@ -35,7 +35,7 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     const ticketsQuery = createQueryBuilderMock<TicketRow[]>([baseRow]);
     const client = {
       from: jest.fn(() => ticketsQuery),
-    } as unknown as SupabaseClient;
+    } as unknown as AppSupabaseClient;
 
     const repository = createTicketRepository(client);
     const result = await repository.listByProject(projectId);
@@ -51,7 +51,7 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     const ticketsQuery = createQueryBuilderMock<TicketRow[]>([baseRow]);
     const client = {
       from: jest.fn(() => ticketsQuery),
-    } as unknown as SupabaseClient;
+    } as unknown as AppSupabaseClient;
 
     const repository = createTicketRepository(client);
     await repository.listByProject(projectId, { priority: "urgent" });
@@ -69,7 +69,7 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     ]);
     const client = {
       from: jest.fn(() => suggestionsQuery),
-    } as unknown as SupabaseClient;
+    } as unknown as AppSupabaseClient;
 
     const repository = createTicketRepository(client);
     const result = await repository.listSearchSuggestions(
@@ -104,7 +104,7 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     const ticketsQuery = createQueryBuilderMock<TicketRow[]>([baseRow]);
     const client = {
       from: jest.fn(() => ticketsQuery),
-    } as unknown as SupabaseClient;
+    } as unknown as AppSupabaseClient;
 
     const repository = createTicketRepository(client);
     await repository.listByColumnId(projectId, "column-todo");
@@ -118,7 +118,7 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     const ticketQuery = createQueryBuilderMock<TicketRow>(baseRow);
     const client = {
       from: jest.fn(() => ticketQuery),
-    } as unknown as SupabaseClient;
+    } as unknown as AppSupabaseClient;
 
     const repository = createTicketRepository(client);
     await repository.findByCode(projectId, 1);
@@ -132,7 +132,7 @@ describe("TicketRepository.supabase active ticket filtering", () => {
     const ticketQuery = createQueryBuilderMock<TicketRow>(baseRow);
     const client = {
       from: jest.fn(() => ticketQuery),
-    } as unknown as SupabaseClient;
+    } as unknown as AppSupabaseClient;
 
     const repository = createTicketRepository(client);
     await repository.findByCodeIncludingArchived(projectId, 1);
@@ -169,7 +169,7 @@ describe("TicketRepository.supabase active ticket filtering", () => {
           ],
           error: null,
         }),
-    } as unknown as SupabaseClient;
+    } as unknown as AppSupabaseClient;
 
     const repository = createTicketRepository(client);
     const result = await repository.getAssigneesByProjectId(projectId);
@@ -188,7 +188,7 @@ describe("TicketRepository.supabase active ticket filtering", () => {
         data: 5,
         error: null,
       }),
-    } as unknown as SupabaseClient;
+    } as unknown as AppSupabaseClient;
     const repository = createTicketRepository(client);
     const runAt = new Date("2026-03-30T00:05:00.000Z");
 

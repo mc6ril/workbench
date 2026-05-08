@@ -1,15 +1,12 @@
-import type {
-  JwtPayload,
-  Session,
-  SupabaseClient,
-} from "@supabase/supabase-js";
+import type { JwtPayload, Session } from "@supabase/supabase-js";
 
 import { createAppError } from "@/shared/errors/appError";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
-import { isRecord } from "@/shared/utils";
+import type { AppSupabaseAuthClient } from "@/shared/infrastructure/supabase/types";
 
 import type { CurrentAuthIdentity } from "@/domains/auth/core/domain/auth.types";
 import { handleAuthError } from "@/domains/auth/infrastructure/errors/authErrorHandler";
+import { getAuthUserMetadataEmail } from "@/domains/auth/infrastructure/supabase/AuthMetadata.supabase";
 import { canUpdatePasswordFromAppMetadata } from "@/domains/auth/infrastructure/supabase/providerCapabilities";
 
 const isAuthSessionMissingError = (error: unknown): boolean => {
@@ -28,16 +25,7 @@ const getClaimEmail = (claims: JwtPayload): string | null => {
     return claims.email;
   }
 
-  const userMetadata = claims.user_metadata;
-  if (
-    isRecord(userMetadata) &&
-    typeof userMetadata.email === "string" &&
-    userMetadata.email.length > 0
-  ) {
-    return userMetadata.email;
-  }
-
-  return null;
+  return getAuthUserMetadataEmail(claims.user_metadata);
 };
 
 export const mapSupabaseClaimsToCurrentAuthIdentity = (
@@ -71,7 +59,7 @@ export const mapSupabaseSessionToCurrentAuthIdentity = (
 };
 
 export const getCurrentAuthIdentity = async (
-  client: SupabaseClient
+  client: AppSupabaseAuthClient
 ): Promise<CurrentAuthIdentity | null> => {
   try {
     const { data, error } = await client.auth.getClaims();
@@ -97,7 +85,7 @@ export const getCurrentAuthIdentity = async (
 };
 
 export const requireCurrentAuthIdentity = async (
-  client: SupabaseClient
+  client: AppSupabaseAuthClient
 ): Promise<CurrentAuthIdentity> => {
   const identity = await getCurrentAuthIdentity(client);
 

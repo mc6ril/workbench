@@ -2,6 +2,10 @@ export const TICKET_PRIORITY_VALUES = ["urgent", "normal", "low"] as const;
 
 export type TicketPriority = (typeof TICKET_PRIORITY_VALUES)[number];
 
+export const isTicketPriority = (value: string): value is TicketPriority => {
+  return (TICKET_PRIORITY_VALUES as readonly string[]).includes(value);
+};
+
 export type Ticket = {
   id: string;
   projectId: string;

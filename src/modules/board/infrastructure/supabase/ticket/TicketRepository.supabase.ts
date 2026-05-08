@@ -1,10 +1,13 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import {
   createDatabaseError,
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type {
+  AppSupabaseClient,
+  TableInsert,
+  TableUpdate,
+} from "@/shared/infrastructure/supabase/types";
 
 import {
   mapTicketRowsToDomain,
@@ -25,7 +28,6 @@ import type { TicketRepository } from "@/modules/board/core/ports/ticketReposito
 import type {
   TicketAssigneeRow,
   TicketRow,
-  TicketSearchRow,
 } from "@/modules/board/infrastructure/supabase/ticket/types";
 
 type PostgrestErrorLike = {
@@ -121,7 +123,7 @@ const buildTicketSearchClauses = (searchTerm: string): string[] => {
  * @returns TicketRepository implementation
  */
 export const createTicketRepository = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): TicketRepository => {
   const getAssigneesByProjectIdFallback = async (
     projectId: string
@@ -136,7 +138,7 @@ export const createTicketRepository = (
       return handleRepositoryError(ticketIdsError, "TicketAssignee", projectId);
     }
 
-    const ticketIds = (ticketRows ?? []).map((row: { id: string }) => row.id);
+    const ticketIds = (ticketRows ?? []).map((row) => row.id);
     if (ticketIds.length === 0) {
       return {};
     }
@@ -149,7 +151,7 @@ export const createTicketRepository = (
       return handleRepositoryError(error, "TicketAssignee", projectId);
     }
 
-    return mapAssigneeRowsToTicketMap((data ?? []) as TicketAssigneeRow[]);
+    return mapAssigneeRowsToTicketMap(data ?? []);
   };
 
   const repo: TicketRepository = {
@@ -169,7 +171,7 @@ export const createTicketRepository = (
           return null;
         }
 
-        return mapTicketRowToDomain(data as TicketRow);
+        return mapTicketRowToDomain(data);
       } catch (error) {
         return handleRepositoryError(error, "Ticket");
       }
@@ -190,10 +192,7 @@ export const createTicketRepository = (
         }
 
         const currentMax =
-          data &&
-          typeof (data as { code_number: number }).code_number === "number"
-            ? (data as { code_number: number }).code_number
-            : 0;
+          data && typeof data.code_number === "number" ? data.code_number : 0;
 
         return currentMax + 1;
       } catch (error) {
@@ -225,11 +224,7 @@ export const createTicketRepository = (
           }
 
           assignedTicketIdsForExclusion = [
-            ...new Set(
-              (assigneeRows ?? []).map(
-                (row: { ticket_id: string }) => row.ticket_id
-              )
-            ),
+            ...new Set((assigneeRows ?? []).map((row) => row.ticket_id)),
           ];
         }
 
@@ -334,8 +329,7 @@ export const createTicketRepository = (
           return [];
         }
 
-        const rows = data as unknown as TicketSearchRow[];
-        return mapTicketSearchRowsToDomain(rows);
+        return mapTicketSearchRowsToDomain(data);
       } catch (error) {
         return handleRepositoryError(error, "Ticket");
       }
@@ -362,7 +356,7 @@ export const createTicketRepository = (
           return [];
         }
 
-        return mapTicketRowsToDomain(data as TicketRow[]);
+        return mapTicketRowsToDomain(data);
       } catch (error) {
         return handleRepositoryError(error, "Ticket");
       }
@@ -370,6 +364,13 @@ export const createTicketRepository = (
 
     async create(input: CreateTicketInput): Promise<Ticket> {
       try {
+        if (input.codeNumber === undefined) {
+          return handleRepositoryError(
+            createDatabaseError("Ticket code number is required"),
+            "Ticket"
+          );
+        }
+
         const { data, error } = await client
           .from("tickets")
           .insert({
@@ -399,7 +400,7 @@ export const createTicketRepository = (
           );
         }
 
-        return mapTicketRowToDomain(data as TicketRow);
+        return mapTicketRowToDomain(data);
       } catch (error) {
         return handleRepositoryError(error, "Ticket");
       }
@@ -407,7 +408,7 @@ export const createTicketRepository = (
 
     async update(id: string, input: UpdateTicketInput): Promise<Ticket> {
       try {
-        const updateData: Partial<TicketRow> = {};
+        const updateData: TableUpdate<"tickets"> = {};
 
         if (input.title !== undefined) {
           updateData.title = input.title;
@@ -459,7 +460,7 @@ export const createTicketRepository = (
           );
         }
 
-        return mapTicketRowToDomain(data as TicketRow);
+        return mapTicketRowToDomain(data);
       } catch (error) {
         return handleRepositoryError(error, "Ticket");
       }
@@ -489,7 +490,7 @@ export const createTicketRepository = (
           return handleRepositoryError(error, "Ticket");
         }
 
-        return mapTicketRowsToDomain((data ?? []) as TicketRow[]);
+        return mapTicketRowsToDomain(data ?? []);
       } catch (error) {
         return handleRepositoryError(error, "Ticket");
       }
@@ -527,7 +528,7 @@ export const createTicketRepository = (
           );
         }
 
-        return mapTicketRowToDomain(data as TicketRow);
+        return mapTicketRowToDomain(data);
       } catch (error) {
         return handleRepositoryError(error, "Ticket", id);
       }
@@ -545,7 +546,8 @@ export const createTicketRepository = (
           p_ticket_id: input.ticketId,
           p_column_id: input.columnId,
           p_position: input.position,
-          p_completed_at: input.completedAt?.toISOString() ?? null,
+          // The SQL arg accepts nullable timestamptz; generated RPC args omit nullability.
+          p_completed_at: (input.completedAt?.toISOString() ?? null) as string,
           p_positions: input.ticketPositions,
         });
 
@@ -553,7 +555,7 @@ export const createTicketRepository = (
           return handleRepositoryError(error, "Ticket", input.ticketId);
         }
 
-        const rows = (data ?? []) as TicketRow[];
+        const rows = data ?? [];
         const movedTicketExists = rows.some((row) => row.id === input.ticketId);
         if (!movedTicketExists) {
           return handleRepositoryError(
@@ -613,7 +615,7 @@ export const createTicketRepository = (
           return null;
         }
 
-        return mapTicketRowToDomain(data as TicketRow);
+        return mapTicketRowToDomain(data);
       } catch (error) {
         return handleRepositoryError(error, "Ticket");
       }
@@ -639,7 +641,7 @@ export const createTicketRepository = (
           return null;
         }
 
-        return mapTicketRowToDomain(data as TicketRow);
+        return mapTicketRowToDomain(data);
       } catch (error) {
         return handleRepositoryError(error, "Ticket");
       }
@@ -654,7 +656,7 @@ export const createTicketRepository = (
         ticket_id: ticketId,
         user_id: userId,
         assigned_by: null as string | null,
-      }));
+      })) satisfies Array<Omit<TableInsert<"ticket_assignees">, "project_id">>;
 
       try {
         const identity = await getCurrentAuthIdentity(client);
@@ -666,10 +668,13 @@ export const createTicketRepository = (
         // assigned_by is optional
       }
 
-      const { error } = await client.from("ticket_assignees").upsert(rows, {
-        onConflict: "ticket_id,user_id",
-        ignoreDuplicates: true,
-      });
+      const { error } = await client
+        .from("ticket_assignees")
+        // project_id is derived from ticket_id by the database trigger.
+        .upsert(rows as TableInsert<"ticket_assignees">[], {
+          onConflict: "ticket_id,user_id",
+          ignoreDuplicates: true,
+        });
 
       if (error) {
         return handleRepositoryError(error, "TicketAssignee", ticketId);
@@ -701,7 +706,7 @@ export const createTicketRepository = (
         return handleRepositoryError(error, "TicketAssignee", ticketId);
       }
 
-      return ((data ?? []) as TicketAssigneeRow[]).map((row) => ({
+      return (data ?? []).map((row) => ({
         userId: row.user_id,
         displayName: row.display_name,
         avatarUrl: row.avatar_url,
@@ -724,7 +729,7 @@ export const createTicketRepository = (
         return handleRepositoryError(error, "TicketAssignee");
       }
 
-      return mapAssigneeRowsToTicketMap((data ?? []) as TicketAssigneeRow[]);
+      return mapAssigneeRowsToTicketMap(data ?? []);
     },
 
     async getAssigneesByProjectId(
@@ -742,7 +747,7 @@ export const createTicketRepository = (
         return handleRepositoryError(error, "TicketAssignee", projectId);
       }
 
-      return mapAssigneeRowsToTicketMap((data ?? []) as TicketAssigneeRow[]);
+      return mapAssigneeRowsToTicketMap(data ?? []);
     },
   };
   return repo;

@@ -1,6 +1,5 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import type { RecipeIngredient } from "@/modules/recipes/core/domain/recipe.types";
 import {
@@ -25,7 +24,7 @@ import type {
   RecipeRow,
   RecipeSelectionRow,
   ShoppingListItemRow,
-  ShoppingListRecipeSourceRow,
+  ShoppingListRecipeSourceJson,
   ShoppingListRow,
 } from "@/modules/recipes/infrastructure/supabase/shared/persistence.types";
 import {
@@ -57,7 +56,7 @@ const buildDistinctPersistedItemKey = (
     RecipeIngredient,
     "kind" | "normalizedName" | "unit" | "amountText" | "notes"
   >,
-  recipes: Array<Pick<ShoppingListRecipeSourceRow, "recipeId">>
+  recipes: Array<Pick<ShoppingListRecipeSourceJson, "recipeId">>
 ): string => {
   const recipeIds = recipes
     .map((recipe) => recipe.recipeId)
@@ -217,7 +216,7 @@ const mapItemRowsToShoppingList = (
 };
 
 const loadOrCreateShoppingListRow = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string
 ): Promise<ShoppingListRow> => {
   const { data, error } = await client
@@ -237,11 +236,11 @@ const loadOrCreateShoppingListRow = async (
     return handleRepositoryError(error, "ShoppingList", projectId);
   }
 
-  return data as ShoppingListRow;
+  return data;
 };
 
 const loadShoppingItemRows = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   shoppingListId: string
 ): Promise<ShoppingListItemRow[]> => {
@@ -257,11 +256,11 @@ const loadShoppingItemRows = async (
     return handleRepositoryError(error, "ShoppingListItem", projectId);
   }
 
-  return (data ?? []) as ShoppingListItemRow[];
+  return data ?? [];
 };
 
 const loadSelectionRows = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string
 ): Promise<RecipeSelectionRow[]> => {
   const { data, error } = await client
@@ -274,11 +273,11 @@ const loadSelectionRows = async (
     return handleRepositoryError(error, "RecipeSelection", projectId);
   }
 
-  return (data ?? []) as RecipeSelectionRow[];
+  return data ?? [];
 };
 
 const loadRecipeTitlesByIds = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   recipeIds: string[]
 ): Promise<Map<string, Pick<RecipeRow, "id" | "title">>> => {
@@ -296,16 +295,11 @@ const loadRecipeTitlesByIds = async (
     return handleRepositoryError(error, "Recipe", projectId);
   }
 
-  return new Map(
-    ((data ?? []) as Array<Pick<RecipeRow, "id" | "title">>).map((recipe) => [
-      recipe.id,
-      recipe,
-    ])
-  );
+  return new Map((data ?? []).map((recipe) => [recipe.id, recipe]));
 };
 
 const loadIngredientRowsByRecipeIds = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   recipeIds: string[]
 ): Promise<Map<string, RecipeIngredientRow[]>> => {
@@ -327,7 +321,7 @@ const loadIngredientRowsByRecipeIds = async (
 
   const ingredientsByRecipeId = new Map<string, RecipeIngredientRow[]>();
 
-  for (const row of (data ?? []) as RecipeIngredientRow[]) {
+  for (const row of data ?? []) {
     const recipeIngredients = ingredientsByRecipeId.get(row.recipe_id) ?? [];
     recipeIngredients.push(row);
     ingredientsByRecipeId.set(row.recipe_id, recipeIngredients);
@@ -384,7 +378,7 @@ const buildSourcesFromSelections = (
 };
 
 const persistShoppingListItems = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   shoppingListId: string,
   shoppingList: ShoppingList
@@ -433,7 +427,7 @@ const persistShoppingListItems = async (
 };
 
 const generateAndPersistShoppingList = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string
 ): Promise<ShoppingList> => {
   const shoppingListRow = await loadOrCreateShoppingListRow(client, projectId);
@@ -485,7 +479,7 @@ const generateAndPersistShoppingList = async (
 };
 
 export const createShoppingRepository = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): ShoppingRepository => ({
   async getShoppingList(projectId) {
     const { data: shoppingListData, error: shoppingListError } = await client
@@ -502,16 +496,14 @@ export const createShoppingRepository = (
       );
     }
 
-    const shoppingList = shoppingListData as ShoppingListRow | null;
-
-    if (!shoppingList) {
+    if (!shoppingListData) {
       return createEmptyShoppingList();
     }
 
     const itemRows = await loadShoppingItemRows(
       client,
       projectId,
-      shoppingList.id
+      shoppingListData.id
     );
     return mapItemRowsToShoppingList(itemRows);
   },
