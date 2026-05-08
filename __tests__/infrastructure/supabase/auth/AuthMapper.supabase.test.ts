@@ -4,20 +4,18 @@ import {
   createSupabaseSessionMock,
 } from "../../../../__mocks__/infrastructure/supabase/authMocks";
 
-import {
-  mapSupabaseAuthError,
-  mapSupabaseSessionToCurrentSession,
-} from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
+import { mapSupabaseAuthError } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
+import { mapSupabaseSessionToCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 
 describe("AuthMapper.supabase", () => {
-  describe("mapSupabaseSessionToCurrentSession", () => {
-    it("should map Supabase session to domain CurrentSession", () => {
+  describe("mapSupabaseSessionToCurrentAuthIdentity", () => {
+    it("should map Supabase session to current auth identity", () => {
       // Arrange
       const supabaseSession = createSupabaseSessionMock();
       const userEmail = "test@example.com";
 
       // Act
-      const result = mapSupabaseSessionToCurrentSession(
+      const result = mapSupabaseSessionToCurrentAuthIdentity(
         supabaseSession,
         userEmail
       );
@@ -26,10 +24,11 @@ describe("AuthMapper.supabase", () => {
       expect(result).toEqual({
         userId: "user-123",
         loginEmail: "test@example.com",
+        canUpdatePassword: true,
       });
     });
 
-    it("should use provided email instead of session user email", () => {
+    it("should use session user email before the fallback email", () => {
       // Arrange
       const supabaseSession = createSupabaseSessionMock({
         user: {
@@ -39,13 +38,13 @@ describe("AuthMapper.supabase", () => {
       const userEmail = "different@example.com";
 
       // Act
-      const result = mapSupabaseSessionToCurrentSession(
+      const result = mapSupabaseSessionToCurrentAuthIdentity(
         supabaseSession,
         userEmail
       );
 
       // Assert
-      expect(result.loginEmail).toBe("different@example.com");
+      expect(result.loginEmail).toBe("original@example.com");
       expect(result.userId).toBe("user-123");
     });
 
@@ -57,7 +56,7 @@ describe("AuthMapper.supabase", () => {
       });
 
       // Act
-      const result = mapSupabaseSessionToCurrentSession(
+      const result = mapSupabaseSessionToCurrentAuthIdentity(
         supabaseSession,
         "test@example.com"
       );
@@ -66,6 +65,7 @@ describe("AuthMapper.supabase", () => {
       expect(result).toEqual({
         userId: "user-123",
         loginEmail: "test@example.com",
+        canUpdatePassword: true,
       });
     });
 
@@ -83,7 +83,7 @@ describe("AuthMapper.supabase", () => {
       });
 
       // Act
-      const result = mapSupabaseSessionToCurrentSession(
+      const result = mapSupabaseSessionToCurrentAuthIdentity(
         supabaseSession,
         "test@example.com"
       );
@@ -92,6 +92,7 @@ describe("AuthMapper.supabase", () => {
       expect(result).toEqual({
         userId: "user-123",
         loginEmail: "test@example.com",
+        canUpdatePassword: true,
       });
     });
   });

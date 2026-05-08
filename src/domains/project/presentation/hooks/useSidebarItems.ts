@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslations } from "@/shared/i18n";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { getEffectivePlan } from "@/domains/billing/core/domain/planFeatures.rules";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
@@ -15,7 +16,6 @@ import {
   getProjectViewFeatureLockState,
   isProjectViewModuleEnabled,
 } from "@/domains/project/presentation/navigation/projectViews.config";
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 export type UseSidebarItemsOptions = {
   enabledModules: readonly ProjectModuleKey[];
@@ -27,7 +27,7 @@ export const useSidebarItems = (
   options: UseSidebarItemsOptions
 ): SidebarItem[] => {
   const t = useTranslations("navigation.sidebar");
-  const { data: session, isLoading: isSessionLoading } = useSession();
+  const { data: identity, isLoading: isIdentityLoading } = useAuthIdentity();
   const {
     data: subscription,
     isLoading: isSubscriptionLoading,
@@ -38,11 +38,11 @@ export const useSidebarItems = (
   const { enabledModules, isRecipesBoardVisible } = options;
 
   const isEntitlementsReady = useMemo((): boolean => {
-    if (isSessionLoading) {
+    if (isIdentityLoading) {
       return false;
     }
 
-    if (!session) {
+    if (!identity) {
       return true;
     }
 
@@ -51,7 +51,12 @@ export const useSidebarItems = (
     }
 
     return isSubscriptionFetched;
-  }, [isSessionLoading, isSubscriptionFetched, isSubscriptionLoading, session]);
+  }, [
+    identity,
+    isIdentityLoading,
+    isSubscriptionFetched,
+    isSubscriptionLoading,
+  ]);
 
   const effectivePlan = useMemo((): SubscriptionPlan | null => {
     if (!isEntitlementsReady) {

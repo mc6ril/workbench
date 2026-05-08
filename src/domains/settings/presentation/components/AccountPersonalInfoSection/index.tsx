@@ -15,13 +15,12 @@ import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import AvatarUpload from "@/domains/profile/presentation/components/AvatarUpload";
 import {
   useRemoveAvatar,
   useUploadAvatar,
 } from "@/domains/profile/presentation/hooks/useAvatarUpload";
-import { useLightUserIdentity } from "@/domains/session/presentation/hooks/useLightUserIdentity";
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
 import { useUpdateAccountIdentity } from "@/domains/settings/presentation/hooks/useUpdateAccountIdentity";
 import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 
@@ -31,8 +30,7 @@ const AccountPersonalInfoSection = () => {
   const tAvatar = useTranslations("ui.avatarUpload");
   const addToast = useToastStore((s) => s.addToast);
 
-  const { data: session } = useSession();
-  const lightIdentity = useLightUserIdentity();
+  const { data: identity } = useAuthIdentity();
   const { data: viewer } = useViewer();
 
   const updateAccountIdentityMutation = useUpdateAccountIdentity();
@@ -43,8 +41,7 @@ const AccountPersonalInfoSection = () => {
   const [nameDraft, setNameDraft] = useState<string | undefined>(undefined);
 
   const email = emailDraft ?? viewer?.loginEmail ?? "";
-  const name =
-    nameDraft ?? viewer?.displayName ?? lightIdentity.displayName ?? "";
+  const name = nameDraft ?? viewer?.displayName ?? "";
 
   const accountIdentityErrorMessage = useMemo(() => {
     if (!updateAccountIdentityMutation.error) {
@@ -73,13 +70,13 @@ const AccountPersonalInfoSection = () => {
 
   const onAvatarFileSelect = useCallback(
     async (file: File) => {
-      if (!session?.userId) {
+      if (!identity?.userId) {
         return;
       }
 
       try {
         await uploadAvatarMutation.mutateAsync({
-          userId: session.userId,
+          userId: identity.userId,
           file,
         });
         addToast({
@@ -95,16 +92,16 @@ const AccountPersonalInfoSection = () => {
         });
       }
     },
-    [addToast, getAvatarErrorMessage, session, tAvatar, uploadAvatarMutation]
+    [addToast, getAvatarErrorMessage, identity, tAvatar, uploadAvatarMutation]
   );
 
   const onAvatarRemove = useCallback(async () => {
-    if (!session?.userId) {
+    if (!identity?.userId) {
       return;
     }
 
     try {
-      await removeAvatarMutation.mutateAsync(session.userId);
+      await removeAvatarMutation.mutateAsync(identity.userId);
       addToast({
         message: tAvatar("removeSuccess"),
         variant: "success",
@@ -117,7 +114,13 @@ const AccountPersonalInfoSection = () => {
         duration: 6000,
       });
     }
-  }, [addToast, getAvatarErrorMessage, removeAvatarMutation, session, tAvatar]);
+  }, [
+    addToast,
+    getAvatarErrorMessage,
+    identity,
+    removeAvatarMutation,
+    tAvatar,
+  ]);
 
   const onSave = useCallback(async () => {
     const currentDisplayName = viewer?.displayName ?? "";
@@ -172,9 +175,9 @@ const AccountPersonalInfoSection = () => {
 
       <div className={styles["section-content"]}>
         <AvatarUpload
-          avatarUrl={viewer?.avatarUrl ?? lightIdentity.avatarUrl}
+          avatarUrl={viewer?.avatarUrl}
           name={name || email}
-          disabled={!session?.userId}
+          disabled={!identity?.userId}
           isUploading={uploadAvatarMutation.isPending}
           isRemoving={removeAvatarMutation.isPending}
           onFileSelect={(file) => {

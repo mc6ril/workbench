@@ -1,6 +1,5 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import { APP_LIMITS } from "@/shared/constants/app";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import { createQueryBuilderMock } from "../../../../infrastructure/supabase/testUtils/queryBuilderMock";
 
@@ -166,7 +165,7 @@ describe("Recipes Supabase repositories", () => {
 
   const createClient = (
     builders: Record<string, unknown | unknown[]>
-  ): SupabaseClient => {
+  ): AppSupabaseClient => {
     const callsByTable = new Map<string, number>();
 
     return {
@@ -194,7 +193,7 @@ describe("Recipes Supabase repositories", () => {
         const builder = configuredBuilder;
         return builder;
       }),
-    } as unknown as SupabaseClient;
+    } as unknown as AppSupabaseClient;
   };
 
   it("loads a persisted recipe draft with ingredients, steps, and tags", async () => {

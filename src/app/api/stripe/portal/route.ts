@@ -10,6 +10,7 @@ import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
 import { createLoggerFactory } from "@/shared/observability";
 
+import { requireCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 import { createBillingPortalSession } from "@/domains/billing/core/usecases/createBillingPortalSession";
 import { getBillingVisibility } from "@/domains/billing/core/usecases/getBillingVisibility";
 import { stripePaymentGateway } from "@/domains/billing/infrastructure/stripe/stripePaymentGateway";
@@ -19,8 +20,6 @@ import {
   getRuntimeConfigBooleanOverride,
   readRuntimeConfigBooleanOverridesFromCookieValue,
 } from "@/domains/runtimeConfig/infrastructure/local/runtimeConfigLocalOverrides";
-import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
-import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 
 const logger = createLoggerFactory().forScope("API.Portal");
 
@@ -67,11 +66,9 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       );
     }
 
-    const sessionGateway = createSessionGateway(supabaseClient);
-
-    let session;
+    let identity;
     try {
-      session = await getCurrentSession(sessionGateway);
+      identity = await requireCurrentAuthIdentity(supabaseClient);
     } catch {
       return NextResponse.json(
         { error: API_MESSAGES_COMMON.NOT_AUTHENTICATED },
@@ -89,7 +86,7 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       stripePaymentGateway,
       subscriptionRepo,
       {
-        userId: session.userId,
+        userId: identity.userId,
         returnUrl: `${origin}/account`,
       }
     );

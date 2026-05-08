@@ -1,3 +1,5 @@
+import { createDatabaseError } from "@/shared/errors/repositoryError";
+
 import type {
   RecipeIngredientRow,
   ShoppingListItemRow,
@@ -5,6 +7,7 @@ import type {
 
 import {
   createRecipeIngredient,
+  isRecipeIngredientKind,
   type RecipeIngredient,
   type RecipeIngredientKind,
 } from "@/modules/recipes/core/domain/recipe.types";
@@ -35,6 +38,14 @@ const mapPersistedIngredientFieldsToDomain = (
   });
 };
 
+const mapRecipeIngredientKind = (value: string): RecipeIngredientKind => {
+  if (isRecipeIngredientKind(value)) {
+    return value;
+  }
+
+  throw createDatabaseError(`Invalid recipe ingredient kind: ${value}`);
+};
+
 export const mapRecipeIngredientRowToDomain = (
   row: RecipeIngredientRow
 ): RecipeIngredient => {
@@ -46,7 +57,7 @@ export const mapRecipeIngredientRowToDomain = (
     amountText: row.amount_text,
     unit: row.unit,
     notes: row.notes,
-    kind: row.kind,
+    kind: mapRecipeIngredientKind(row.kind),
   });
 };
 
@@ -61,6 +72,6 @@ export const mapShoppingListItemIngredientRowToDomain = (
     amountText: row.amount_text,
     unit: row.unit,
     notes: row.notes,
-    kind: row.ingredient_kind,
+    kind: mapRecipeIngredientKind(row.ingredient_kind),
   });
 };

@@ -9,6 +9,7 @@ import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/ser
 
 import { getProjectForRoute } from "./getProjectForRoute";
 
+import { getCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 import { getEffectivePlan } from "@/domains/billing/core/domain/planFeatures.rules";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import { getUserSubscription } from "@/domains/billing/core/usecases/getUserSubscription";
@@ -19,15 +20,13 @@ import {
   readRuntimeConfigBooleanOverridesFromCookieValue,
 } from "@/domains/runtimeConfig/infrastructure/local/runtimeConfigLocalOverrides";
 import { createRuntimeConfigPort } from "@/domains/runtimeConfig/infrastructure/supabase/RuntimeConfigPort.supabase";
-import { createSessionGateway } from "@/domains/session/infrastructure/supabase/SessionGateway.supabase";
 
 export const getProjectRouteViewState = cache(async (projectId: string) => {
   const project = await getProjectForRoute(projectId);
   const serverClient = await createSupabaseServerClient();
   const cookieStore = await cookies();
-  const sessionGateway = createSessionGateway(serverClient);
   const runtimeConfigPort = createRuntimeConfigPort(serverClient);
-  const session = await sessionGateway.getCurrentSession();
+  const identity = await getCurrentAuthIdentity(serverClient);
   const runtimeConfigOverrides =
     readRuntimeConfigBooleanOverridesFromCookieValue(
       getCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES, cookieStore)
@@ -45,7 +44,7 @@ export const getProjectRouteViewState = cache(async (projectId: string) => {
     }
   );
 
-  if (!session?.userId) {
+  if (!identity?.userId) {
     return {
       project,
       effectivePlan: SubscriptionPlan.FREE,
@@ -58,7 +57,7 @@ export const getProjectRouteViewState = cache(async (projectId: string) => {
     serverClient
   );
   const subscription = await getUserSubscription(subscriptionRepository, {
-    userId: session.userId,
+    userId: identity.userId,
   });
 
   return {

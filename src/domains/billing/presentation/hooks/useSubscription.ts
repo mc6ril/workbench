@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { getUserSubscription } from "@/domains/billing/core/usecases/getUserSubscription";
 import { subscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
 import { queryKeys } from "@/domains/billing/presentation/hooks/queryKeys";
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 /**
  * Hook for fetching the current user's subscription.
@@ -11,13 +11,13 @@ import { useSession } from "@/domains/session/presentation/hooks/useSession";
  * @returns React Query hook result with subscription data, loading state, and error
  */
 export const useSubscription = () => {
-  const { data: session } = useSession();
+  const { data: identity } = useAuthIdentity();
   return useQuery({
     queryKey: queryKeys.subscription.current(),
     queryFn: () =>
       getUserSubscription(subscriptionRepository, {
-        userId: session!.userId,
+        userId: identity!.userId,
       }),
-    enabled: !!session?.userId,
+    enabled: !!identity?.userId,
   });
 };

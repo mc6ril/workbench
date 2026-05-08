@@ -1,4 +1,9 @@
-import { ProjectRole } from "@/domains/project/core/domain/project.types";
+import { createDatabaseError } from "@/shared/errors/repositoryError";
+
+import {
+  isProjectRole,
+  ProjectRole,
+} from "@/domains/project/core/domain/project.types";
 import type {
   ProjectWithStats,
   ReclaimableProject,
@@ -7,6 +12,14 @@ import type {
   ProjectWithStatsRow,
   ReclaimableProjectRow,
 } from "@/domains/workspace/infrastructure/supabase/types";
+
+const mapProjectWithStatsRole = (value: string): ProjectRole => {
+  if (isProjectRole(value)) {
+    return value;
+  }
+
+  throw createDatabaseError(`Invalid project role in stats row: ${value}`);
+};
 
 /**
  * Maps a ProjectWithStatsRow from RPC to ProjectWithStats domain entity.
@@ -26,7 +39,7 @@ export const mapProjectWithStatsRowToDomain = (
   enabledModules: [],
   createdAt: new Date(row.created_at),
   updatedAt: new Date(row.updated_at),
-  role: row.role as ProjectRole,
+  role: mapProjectWithStatsRole(row.role),
   memberCount: row.member_count,
   ticketCount: row.ticket_count,
   inProgressCount: row.in_progress_count,

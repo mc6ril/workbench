@@ -1,15 +1,18 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import {
   createConstraintError,
   createDatabaseError,
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
+import {
+  extractProjectIdFromPayload,
+  extractProjectRowFromPayload,
+  fetchProjectRowById,
+} from "../project/projectRowPayload.supabase";
 import { mapMemberRowsToDomain } from "./MemberMapper.supabase";
 
-import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
 import type {
   Project,
   ProjectMember,
@@ -18,25 +21,6 @@ import type {
 import { isProjectRole } from "@/domains/project/core/domain/project.types";
 import type { ProjectMemberGateway } from "@/domains/project/core/ports/project-member.gateway";
 import { mapProjectRowToDomain } from "@/domains/project/infrastructure/supabase/project/ProjectMapper.supabase";
-import type { ProjectRow } from "@/domains/project/infrastructure/supabase/types";
-import type { ProjectMemberRow } from "@/domains/project/infrastructure/supabase/types";
-
-/**
- * Extract a full project row from an RPC response.
- * The RPC may return a single object or an array of objects.
- */
-const extractProjectRow = (data: unknown): ProjectRow | null => {
-  if (Array.isArray(data) && data.length > 0) {
-    const first = data[0];
-    if (typeof first === "object" && first !== null) {
-      return first as ProjectRow;
-    }
-  } else if (data && typeof data === "object" && !Array.isArray(data)) {
-    return data as ProjectRow;
-  }
-
-  return null;
-};
 
 /**
  * Create a ProjectMemberGateway implementation using the provided Supabase client.
@@ -45,7 +29,7 @@ const extractProjectRow = (data: unknown): ProjectRow | null => {
  * @returns ProjectMemberGateway implementation
  */
 export const createProjectMemberGateway = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): ProjectMemberGateway => ({
   async addCurrentUserAsMember(
     projectId: string,
@@ -77,13 +61,12 @@ export const createProjectMemberGateway = (
         return handleRepositoryError(error, "Project");
       }
 
-      const projectRow = extractProjectRow(data);
-      if (!projectRow) {
-        return handleRepositoryError(
-          createNotFoundError("Project", projectId),
-          "Project"
-        );
-      }
+      const projectRow =
+        extractProjectRowFromPayload(data) ??
+        (await fetchProjectRowById(
+          client,
+          extractProjectIdFromPayload(data) ?? projectId
+        ));
 
       return mapProjectRowToDomain(projectRow);
     } catch (error) {
@@ -135,7 +118,7 @@ export const createProjectMemberGateway = (
       return handleRepositoryError(membersError, "ProjectMember");
     }
 
-    const memberRows = (membersData ?? []) as ProjectMemberRow[];
+    const memberRows = membersData ?? [];
     const userIds = [...new Set(memberRows.map((member) => member.user_id))];
 
     if (userIds.length === 0) {
@@ -165,10 +148,7 @@ export const createProjectMemberGateway = (
     }
 
     const profilesById = new Map(
-      ((profilesData ?? []) as UserProfileRow[]).map((profile) => [
-        profile.id,
-        profile,
-      ])
+      (profilesData ?? []).map((profile) => [profile.id, profile])
     );
 
     return memberRows.flatMap((memberRow) => {

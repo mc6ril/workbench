@@ -26,7 +26,7 @@ export const SignUpFormSchema = z
       .trim()
       .max(100, "Display name must be less than 100 characters")
       .optional(),
-    acceptedTerms: z.literal(true, {
+    acceptedTerms: z.boolean().refine((value) => value, {
       message: "You must accept the terms",
     }),
   })

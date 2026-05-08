@@ -20,11 +20,13 @@ import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./projectPeopleSettingsSection.module.scss";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
 import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
 import {
   getProjectRoleLabelKey,
   InvitationStatus,
+  isProjectRole,
   type ProjectInvitation,
   type ProjectMember,
   ProjectRole,
@@ -41,7 +43,6 @@ import { useRemoveMember } from "@/domains/project/presentation/hooks/member/use
 import { useUpdateMemberRole } from "@/domains/project/presentation/hooks/member/useUpdateMemberRole";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import { buildInvitationRoute } from "@/domains/project/utils/invitationUtils";
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 type ProjectPeopleSettingsSectionProps = {
   projectId: string;
@@ -68,7 +69,7 @@ const ProjectPeopleSettingsSection = ({
   projectId,
 }: ProjectPeopleSettingsSectionProps) => {
   const router = useAppRouter();
-  const { data: session } = useSession();
+  const { data: identity } = useAuthIdentity();
   const { canManageMembers } = useProjectPermissions();
   const showInvitationCard = canManageMembers;
   const {
@@ -305,7 +306,7 @@ const ProjectPeopleSettingsSection = ({
           duration: 4000,
         });
 
-        if (member.userId === session?.userId) {
+        if (member.userId === identity?.userId) {
           router.replace(PAGE_ROUTES.WORKSPACE);
         }
       } catch {
@@ -321,7 +322,7 @@ const ProjectPeopleSettingsSection = ({
       projectId,
       removeMemberMutation,
       router,
-      session?.userId,
+      identity?.userId,
       tMembersGlobal,
     ]
   );
@@ -493,7 +494,12 @@ const ProjectPeopleSettingsSection = ({
                 }
                 helperText={selectedRoleDescription}
                 onChange={(event) => {
-                  setInviteRole(event.target.value as ProjectRole);
+                  const nextRole = event.target.value;
+                  if (!isProjectRole(nextRole)) {
+                    return;
+                  }
+
+                  setInviteRole(nextRole);
                   setInvitationLink("");
                   inviteMutation.reset();
                 }}
@@ -756,7 +762,7 @@ const ProjectPeopleSettingsSection = ({
               {members.map((member) => {
                 const displayName = getMemberDisplayName(member);
                 const email = getMemberEmail(member);
-                const isCurrentUser = member.userId === session?.userId;
+                const isCurrentUser = member.userId === identity?.userId;
                 const isUpdating = updatingMemberId === member.id;
                 const isRemoving = removingMemberId === member.id;
                 const isProtectedSoleAdmin =
@@ -838,10 +844,12 @@ const ProjectPeopleSettingsSection = ({
                               name: displayName,
                             })}
                             onChange={(event) => {
-                              void handleRoleChange(
-                                member,
-                                event.target.value as ProjectRole
-                              );
+                              const nextRole = event.target.value;
+                              if (!isProjectRole(nextRole)) {
+                                return;
+                              }
+
+                              void handleRoleChange(member, nextRole);
                             }}
                           >
                             {availableRoles.map((role) => (

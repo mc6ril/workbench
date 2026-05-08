@@ -1,19 +1,17 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import { createDatabaseError } from "@/shared/errors/repositoryError";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import type { ProjectLookupRepository } from "@/modules/board/core/ports/projectLookupRepository";
-import type { ProjectLookupRow } from "@/modules/board/infrastructure/supabase/project/types";
 
 export const createProjectLookupRepository = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): ProjectLookupRepository => ({
   async findIdByShortCode(shortCode) {
     const { data, error } = await client
       .from("projects")
       .select("id")
       .eq("short_code", shortCode.toUpperCase())
-      .maybeSingle<Pick<ProjectLookupRow, "id">>();
+      .maybeSingle();
 
     if (error) {
       throw createDatabaseError(error.message);
@@ -27,7 +25,7 @@ export const createProjectLookupRepository = (
       .from("projects")
       .select("short_code")
       .eq("id", projectId)
-      .maybeSingle<Pick<ProjectLookupRow, "short_code">>();
+      .maybeSingle();
 
     if (error) {
       throw createDatabaseError(error.message);

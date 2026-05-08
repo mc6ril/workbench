@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { queryKeys as authIdentityQueryKeys } from "@/domains/auth/presentation/hooks/identity/queryKeys";
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { queryKeys as profileQueryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
-import { queryKeys as sessionQueryKeys } from "@/domains/session/presentation/hooks/queryKeys";
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
 import {
   updateAccountIdentity,
   type UpdateAccountIdentityInput,
@@ -14,26 +14,26 @@ import { accountIdentityGateway } from "@/domains/settings/infrastructure/accoun
  */
 export const useUpdateAccountIdentity = () => {
   const queryClient = useQueryClient();
-  const { data: session } = useSession();
+  const { data: identity } = useAuthIdentity();
 
   return useMutation({
     mutationFn: async (input: UpdateAccountIdentityInput) => {
       await updateAccountIdentity(
         accountIdentityGateway,
-        session?.userId,
+        identity?.userId,
         input
       );
     },
     onSuccess: (_data, variables) => {
       if (variables.email) {
         queryClient.invalidateQueries({
-          queryKey: sessionQueryKeys.session.current(),
+          queryKey: authIdentityQueryKeys.authIdentity.current(),
         });
       }
 
-      if (session) {
+      if (identity) {
         queryClient.invalidateQueries({
-          queryKey: profileQueryKeys.userProfiles.detail(session.userId),
+          queryKey: profileQueryKeys.userProfiles.detail(identity.userId),
         });
       }
     },

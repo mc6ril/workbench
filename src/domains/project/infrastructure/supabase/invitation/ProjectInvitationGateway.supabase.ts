@@ -1,10 +1,10 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import { createDatabaseError } from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import { mapInvitationRowToDomain } from "./InvitationMapper.supabase";
 
+import { requireCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 import type {
   ProjectInvitation,
   ProjectRole,
@@ -14,7 +14,6 @@ import type {
   AcceptedProjectInvitation,
   ProjectInvitationGateway,
 } from "@/domains/project/core/ports/project-invitation.gateway";
-import type { InvitationRow } from "@/domains/project/infrastructure/supabase/types";
 
 /**
  * Create a ProjectInvitationGateway implementation using the provided Supabase client.
@@ -23,7 +22,7 @@ import type { InvitationRow } from "@/domains/project/infrastructure/supabase/ty
  * @returns ProjectInvitationGateway implementation
  */
 export const createProjectInvitationGateway = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): ProjectInvitationGateway => ({
   async listByProject(projectId: string): Promise<ProjectInvitation[]> {
     const { data, error } = await client
@@ -36,30 +35,21 @@ export const createProjectInvitationGateway = (
       return handleRepositoryError(error, "ProjectInvitation");
     }
 
-    return ((data ?? []) as InvitationRow[]).map(mapInvitationRowToDomain);
+    return (data ?? []).map(mapInvitationRowToDomain);
   },
 
   async create(input: {
     projectId: string;
     role: ProjectRole;
   }): Promise<ProjectInvitation> {
-    const { data: claimsData } = await client.auth.getClaims();
-
-    const claims = claimsData?.claims;
-
-    if (!claims) {
-      return handleRepositoryError(
-        createDatabaseError("User not authenticated"),
-        "ProjectInvitation"
-      );
-    }
+    const identity = await requireCurrentAuthIdentity(client);
 
     const { data, error } = await client
       .from("project_invitations")
       .insert({
         project_id: input.projectId,
         role: input.role,
-        invited_by: claims.sub,
+        invited_by: identity.userId,
       })
       .select()
       .single();
@@ -68,7 +58,7 @@ export const createProjectInvitationGateway = (
       return handleRepositoryError(error, "ProjectInvitation");
     }
 
-    return mapInvitationRowToDomain(data as InvitationRow);
+    return mapInvitationRowToDomain(data);
   },
 
   async accept(token: string): Promise<AcceptedProjectInvitation> {

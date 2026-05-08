@@ -1,4 +1,4 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import { createShoppingRepository } from "@/modules/recipes/infrastructure/supabase/shopping/ShoppingRepository.supabase";
 
@@ -152,7 +152,7 @@ const createClientMock = (
         return nextQuery;
       }
     ),
-  } as unknown as SupabaseClient;
+  } as unknown as AppSupabaseClient;
 };
 
 describe("createShoppingRepository", () => {

@@ -1,8 +1,9 @@
-import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
+import type { Session, User } from "@supabase/supabase-js";
 
 import { AUTH_PAGE_ROUTES, PAGE_ROUTES } from "@/shared/constants/routes";
 import { createAppError } from "@/shared/errors/appError";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
+import type { AppSupabaseAuthClient } from "@/shared/infrastructure/supabase/types";
 import {
   buildAuthCallbackPath,
   sanitizeInternalRedirectPath,
@@ -27,7 +28,14 @@ import type {
 } from "@/domains/auth/core/domain/auth.types";
 import type { AuthGateway } from "@/domains/auth/core/ports/auth.gateway";
 import { handleAuthError } from "@/domains/auth/infrastructure/errors/authErrorHandler";
-import { mapSupabaseSessionToCurrentSession } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
+import {
+  buildSignUpAuthUserMetadata,
+  type SignUpAuthUserMetadata,
+} from "@/domains/auth/infrastructure/supabase/AuthMetadata.supabase";
+import {
+  mapSupabaseSessionToCurrentAuthIdentity,
+  requireCurrentAuthIdentity,
+} from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 import { canUpdatePasswordFromAppMetadata } from "@/domains/auth/infrastructure/supabase/providerCapabilities";
 
 /**
@@ -63,7 +71,7 @@ const mapVerifiedSessionToAuthResult = (
   const userEmail = session.user.email || fallbackEmail || "";
 
   return {
-    session: mapSupabaseSessionToCurrentSession(session, userEmail),
+    session: mapSupabaseSessionToCurrentAuthIdentity(session, userEmail),
     requiresEmailVerification: false,
   };
 };
@@ -71,12 +79,12 @@ const mapVerifiedSessionToAuthResult = (
 const createPasswordUpdateNotAllowedError = (): PasswordUpdateNotAllowedError =>
   createAppError(AUTH_ERROR_CODE.PASSWORD_UPDATE_NOT_ALLOWED, {
     debugMessage: "Password updates are not available for OAuth-only accounts",
-  }) as PasswordUpdateNotAllowedError;
+  });
 
 const createPasswordUpdateAuthRequiredError = (): AuthenticationError =>
   createAppError(AUTH_ERROR_CODE.AUTHENTICATION_ERROR, {
     debugMessage: "User must be authenticated to update password",
-  }) as AuthenticationError;
+  });
 
 const ensurePasswordUpdateAllowed = (user: User | null | undefined): User => {
   if (!user) {
@@ -111,31 +119,21 @@ const buildBrowserAuthCallbackUrl = ({
 };
 
 export const createAuthGateway = (
-  client: SupabaseClient,
-  adminClient?: SupabaseClient
+  client: AppSupabaseAuthClient,
+  adminClient?: AppSupabaseAuthClient
 ): AuthGateway => ({
   async signUp(input: SignUpInput): Promise<AuthResult> {
     try {
       // `locale` is available in Supabase email templates as `{{ .Data.locale }}` (user_metadata).
-      const metadata: Record<string, unknown> = {
-        locale: input.locale,
-      };
-      if (input.displayName) {
-        metadata.display_name = input.displayName;
-      }
-      if (input.termsAcceptedAt) {
-        metadata.terms_accepted_at = input.termsAcceptedAt;
-      }
+      const metadata = buildSignUpAuthUserMetadata(input);
 
       const emailRedirectTo = buildBrowserAuthCallbackUrl({
         nextPath: VERIFIED_EMAIL_REDIRECT_PATH,
       });
       const signUpOptions: {
-        data?: Record<string, unknown>;
+        data: SignUpAuthUserMetadata;
         emailRedirectTo?: string;
-      } = {};
-
-      signUpOptions.data = metadata;
+      } = { data: metadata };
 
       if (emailRedirectTo) {
         signUpOptions.emailRedirectTo = emailRedirectTo;
@@ -144,8 +142,7 @@ export const createAuthGateway = (
       const { data, error } = await client.auth.signUp({
         email: input.email,
         password: input.password,
-        options:
-          Object.keys(signUpOptions).length > 0 ? signUpOptions : undefined,
+        options: signUpOptions,
       });
 
       if (error) {
@@ -167,7 +164,7 @@ export const createAuthGateway = (
           const emailAlreadyExistsError: EmailAlreadyExistsError =
             createAppError(AUTH_ERROR_CODE.EMAIL_ALREADY_EXISTS, {
               debugMessage: "User with this email already exists",
-            }) as EmailAlreadyExistsError;
+            });
           handleAuthError(emailAlreadyExistsError);
         }
       }
@@ -187,11 +184,11 @@ export const createAuthGateway = (
           {
             debugMessage: "User data or session not returned from signup",
           }
-        ) as AuthenticationError;
+        );
         handleAuthError(error);
       }
 
-      const baseSession = mapSupabaseSessionToCurrentSession(
+      const baseSession = mapSupabaseSessionToCurrentAuthIdentity(
         data.session!,
         data.user!.email || input.email
       );
@@ -218,11 +215,11 @@ export const createAuthGateway = (
           {
             debugMessage: "No session or user returned from signin",
           }
-        ) as AuthenticationError;
+        );
         handleAuthError(error);
       }
 
-      const baseSession = mapSupabaseSessionToCurrentSession(
+      const baseSession = mapSupabaseSessionToCurrentAuthIdentity(
         data.session!,
         data.user!.email || input.email
       );
@@ -263,7 +260,7 @@ export const createAuthGateway = (
           {
             debugMessage: "No OAuth URL returned from Supabase Google signin",
           }
-        ) as AuthenticationError;
+        );
         return handleAuthError(error);
       }
 
@@ -320,7 +317,7 @@ export const createAuthGateway = (
             debugMessage:
               "No active session. The reset link may be invalid or expired. Please request a new password reset email.",
           }
-        ) as InvalidTokenError;
+        );
         return handleAuthError(error);
       }
 
@@ -343,11 +340,11 @@ export const createAuthGateway = (
           {
             debugMessage: "User not found after password update",
           }
-        ) as InvalidTokenError;
+        );
         return handleAuthError(error);
       }
 
-      const baseSession = mapSupabaseSessionToCurrentSession(
+      const baseSession = mapSupabaseSessionToCurrentAuthIdentity(
         session,
         updatedUser.email || sessionUser.email || ""
       );
@@ -380,7 +377,7 @@ export const createAuthGateway = (
             {
               debugMessage: "No session returned after PKCE email verification",
             }
-          ) as EmailVerificationError;
+          );
           return handleAuthError(error);
         }
 
@@ -404,7 +401,7 @@ export const createAuthGateway = (
               debugMessage:
                 "No session or user returned from email verification token hash",
             }
-          ) as EmailVerificationError;
+          );
           handleAuthError(error);
         }
 
@@ -421,7 +418,7 @@ export const createAuthGateway = (
             debugMessage:
               "Missing verification token, token hash, or code for email verification",
           }
-        ) as EmailVerificationError;
+        );
         return handleAuthError(error);
       }
 
@@ -431,7 +428,7 @@ export const createAuthGateway = (
           {
             debugMessage: "Email is required for legacy email verification",
           }
-        ) as EmailVerificationError;
+        );
         return handleAuthError(error);
       }
 
@@ -451,7 +448,7 @@ export const createAuthGateway = (
           {
             debugMessage: "No session or user returned from email verification",
           }
-        ) as EmailVerificationError;
+        );
         handleAuthError(error);
       }
 
@@ -499,16 +496,11 @@ export const createAuthGateway = (
       }
 
       if (input.password) {
-        const {
-          data: { user },
-          error: userError,
-        } = await client.auth.getUser();
+        const identity = await requireCurrentAuthIdentity(client);
 
-        if (userError) {
-          handleAuthError(userError);
+        if (!identity.canUpdatePassword) {
+          handleAuthError(createPasswordUpdateNotAllowedError());
         }
-
-        ensurePasswordUpdateAllowed(user);
         updateData.password = input.password;
       }
 
@@ -532,29 +524,15 @@ export const createAuthGateway = (
             debugMessage:
               "Admin client required for user deletion. This operation must be performed server-side.",
           }
-        ) as AuthenticationError;
+        );
         return handleAuthError(error);
       }
 
-      // Get the current user to retrieve their ID
-      const {
-        data: { user },
-        error: userError,
-      } = await client.auth.getUser();
-
-      if (userError || !user) {
-        const error: AuthenticationError = createAppError(
-          AUTH_ERROR_CODE.AUTHENTICATION_ERROR,
-          {
-            debugMessage: "User must be authenticated to delete account",
-          }
-        ) as AuthenticationError;
-        return handleAuthError(error);
-      }
+      const identity = await requireCurrentAuthIdentity(client);
 
       // Delete user via admin API (cascade deletes associated data)
       const { error: deleteError } = await adminClient.auth.admin.deleteUser(
-        user.id
+        identity.userId
       );
 
       if (deleteError) {

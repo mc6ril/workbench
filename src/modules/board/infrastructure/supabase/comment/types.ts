@@ -1,27 +1,4 @@
-/**
- * Row type for the comments table.
- */
-export type CommentRow = {
-  id: string;
-  project_id: string;
-  ticket_id: string;
-  author_id: string;
-  content: string;
-  created_at: string;
-  updated_at: string;
-};
+import type { RpcRow, TableRow } from "@/shared/infrastructure/supabase/types";
 
-/**
- * Row type returned by get_ticket_comments RPC.
- * Includes author profile data.
- */
-export type CommentWithAuthorRow = {
-  id: string;
-  ticket_id: string;
-  author_id: string;
-  content: string;
-  author_display_name: string | null;
-  author_avatar_url: string | null;
-  created_at: string;
-  updated_at: string;
-};
+export type CommentRow = TableRow<"comments">;
+export type CommentWithAuthorRow = RpcRow<"get_ticket_comments">;

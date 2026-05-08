@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { listProjectsWithStats } from "@/domains/workspace/core/usecases/project/listProjectsWithStats";
 import { workspaceProjectCatalogGateway } from "@/domains/workspace/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
@@ -14,11 +14,11 @@ import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
  * @returns React Query hook result with projects array including stats
  */
 export const useProjectsWithStats = (enabled = true) => {
-  const { data: session, isLoading: isSessionLoading } = useSession();
+  const { data: identity, isLoading: isIdentityLoading } = useAuthIdentity();
 
   return useQuery({
     queryKey: queryKeys.projects.withStats(),
     queryFn: () => listProjectsWithStats(workspaceProjectCatalogGateway),
-    enabled: enabled && !isSessionLoading && !!session?.userId,
+    enabled: enabled && !isIdentityLoading && !!identity?.userId,
   });
 };

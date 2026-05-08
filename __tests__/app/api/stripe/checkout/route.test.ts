@@ -31,12 +31,8 @@ jest.mock("@/domains/billing/core/usecases/getBillingVisibility", () => ({
   getBillingVisibility: jest.fn(),
 }));
 
-jest.mock("@/domains/session/infrastructure/supabase/repositories", () => ({
-  createSessionGateway: jest.fn(),
-}));
-
-jest.mock("@/domains/session/core/usecases/getCurrentSession", () => ({
-  getCurrentSession: jest.fn(),
+jest.mock("@/domains/auth/infrastructure/supabase/currentAuthIdentity", () => ({
+  requireCurrentAuthIdentity: jest.fn(),
 }));
 
 jest.mock("@/domains/billing/infrastructure/supabase/repositories", () => ({
@@ -66,12 +62,11 @@ jest.mock("@/shared/observability", () => ({
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 
 import { POST } from "@/app/api/stripe/checkout/route";
+import { requireCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 import { createCheckoutSession } from "@/domains/billing/core/usecases/createCheckoutSession";
 import { getBillingVisibility } from "@/domains/billing/core/usecases/getBillingVisibility";
 import { createBillingVisibilityPort } from "@/domains/billing/infrastructure/supabase/BillingVisibilityPort.supabase";
 import { createSubscriptionRepository } from "@/domains/billing/infrastructure/supabase/repositories";
-import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
-import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 
 const createRequest = ({
   body = { plan: "pro" },
@@ -103,12 +98,10 @@ describe("POST /api/stripe/checkout", () => {
       .mocked(createBillingVisibilityPort)
       .mockReturnValue({ tag: "billingVisibilityPort" } as never);
     jest.mocked(getBillingVisibility).mockResolvedValue(true);
-    jest
-      .mocked(createSessionGateway)
-      .mockReturnValue({ tag: "sessionGateway" } as never);
-    jest.mocked(getCurrentSession).mockResolvedValue({
+    jest.mocked(requireCurrentAuthIdentity).mockResolvedValue({
       userId: "user-1",
       loginEmail: "cyril@example.com",
+      canUpdatePassword: true,
     });
     jest
       .mocked(createSubscriptionRepository)

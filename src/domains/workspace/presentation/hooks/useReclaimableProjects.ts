@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { listReclaimableProjects } from "@/domains/workspace/core/usecases/project/listReclaimableProjects";
 import { workspaceProjectCatalogGateway } from "@/domains/workspace/infrastructure/supabase/gateways";
 import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
@@ -12,11 +12,11 @@ import { queryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
  * @param enabled - Whether the query should execute (default: true). Pass false to defer until session is ready.
  */
 export const useReclaimableProjects = (enabled = true) => {
-  const { data: session, isLoading: isSessionLoading } = useSession();
+  const { data: identity, isLoading: isIdentityLoading } = useAuthIdentity();
 
   return useQuery({
     queryKey: queryKeys.projects.reclaimable(),
     queryFn: () => listReclaimableProjects(workspaceProjectCatalogGateway),
-    enabled: enabled && !isSessionLoading && !!session?.userId,
+    enabled: enabled && !isIdentityLoading && !!identity?.userId,
   });
 };

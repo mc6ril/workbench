@@ -1,7 +1,6 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 import { isUuid } from "@/shared/utils/uuid";
 
 import { EMPTY_RECIPE_DRAFT } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
@@ -15,7 +14,6 @@ import type {
 } from "@/modules/recipes/core/domain/editor/recipeEditor.types";
 import type { EditorRepository } from "@/modules/recipes/core/ports/editor/editorRepository";
 import type {
-  RecipeRow,
   RecipeTagLinkRow,
   RecipeTagRow,
 } from "@/modules/recipes/infrastructure/supabase/shared/persistence.types";
@@ -82,7 +80,7 @@ const mapPersistedStepToRow = (
 };
 
 const loadPersistedDraft = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   recipeId: string
 ) => {
@@ -99,7 +97,7 @@ const loadPersistedDraft = async (
 };
 
 const replaceRecipeIngredients = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   recipeId: string,
   ingredients: PersistedRecipeIngredientInput[]
@@ -132,7 +130,7 @@ const replaceRecipeIngredients = async (
 };
 
 const replaceRecipeSteps = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   recipeId: string,
   steps: PersistedRecipeStepInput[]
@@ -163,7 +161,7 @@ const replaceRecipeSteps = async (
 };
 
 const ensurePersistedTags = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   tags: PersistedRecipeTagInput[]
 ): Promise<RecipeTagRow[]> => {
@@ -182,7 +180,7 @@ const ensurePersistedTags = async (
     return handleRepositoryError(existingTagError, "RecipeTag", projectId);
   }
 
-  const existingTags = (existingTagData ?? []) as RecipeTagRow[];
+  const existingTags = existingTagData ?? [];
   const existingSlugs = new Set(existingTags.map((tag) => tag.slug));
   const missingTags = tags.filter((tag) => !existingSlugs.has(tag.slug));
 
@@ -214,11 +212,11 @@ const ensurePersistedTags = async (
     return handleRepositoryError(tagError, "RecipeTag", projectId);
   }
 
-  return (tagData ?? []) as RecipeTagRow[];
+  return tagData ?? [];
 };
 
 const replaceRecipeTagLinks = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   recipeId: string,
   tags: PersistedRecipeTagInput[]
@@ -260,7 +258,7 @@ const replaceRecipeTagLinks = async (
 };
 
 const syncRecipeGraph = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   input: CreateRecipeInput | UpdateRecipeInput,
   recipeId: string
 ) => {
@@ -275,7 +273,7 @@ const syncRecipeGraph = async (
 };
 
 const promoteAdditionToValidated = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   input: PromoteRecipeAdditionInput
 ) => {
   const { data, error } = await client
@@ -306,7 +304,7 @@ const promoteAdditionToValidated = async (
  * here so create/edit flows stop pretending data exists when it does not.
  */
 export const createEditorRepository = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): EditorRepository => ({
   async getCreationDraft() {
     return EMPTY_RECIPE_DRAFT;
@@ -342,7 +340,7 @@ export const createEditorRepository = (
       return handleRepositoryError(error, "RecipeTag", projectId);
     }
 
-    return ((data ?? []) as RecipeTagRow[]).map(mapRecipeTagRowToDomain);
+    return (data ?? []).map(mapRecipeTagRowToDomain);
   },
 
   async promoteAdditionToValidated(input) {
@@ -360,15 +358,13 @@ export const createEditorRepository = (
       return handleRepositoryError(error, "Recipe", input.projectId);
     }
 
-    const recipe = data as Pick<RecipeRow, "id"> | null;
-
-    if (!recipe) {
+    if (!data) {
       throw createNotFoundError("Recipe", "unknown");
     }
 
-    await syncRecipeGraph(client, input, recipe.id);
+    await syncRecipeGraph(client, input, data.id);
 
-    return loadPersistedDraft(client, input.projectId, recipe.id);
+    return loadPersistedDraft(client, input.projectId, data.id);
   },
 
   async updateRecipe(input) {
@@ -384,14 +380,12 @@ export const createEditorRepository = (
       return handleRepositoryError(error, "Recipe", input.recipeId);
     }
 
-    const recipe = data as Pick<RecipeRow, "id"> | null;
-
-    if (!recipe) {
+    if (!data) {
       throw createNotFoundError("Recipe", input.recipeId);
     }
 
-    await syncRecipeGraph(client, input, recipe.id);
+    await syncRecipeGraph(client, input, data.id);
 
-    return loadPersistedDraft(client, input.projectId, recipe.id);
+    return loadPersistedDraft(client, input.projectId, data.id);
   },
 });

@@ -1,29 +1,31 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import {
   createDatabaseError,
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type {
+  AppSupabaseClient,
+  TableInsert,
+} from "@/shared/infrastructure/supabase/types";
 
 import {
   mapCommentWithAuthorRowsToDomain,
   mapCommentWithAuthorRowToDomain,
 } from "./CommentMapper.supabase";
 
+import { requireCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 import type {
   CommentWithAuthor,
   CreateCommentInput,
   UpdateCommentInput,
 } from "@/modules/board/core/domain/comment.types";
 import type { CommentRepository } from "@/modules/board/core/ports/commentRepository";
-import type { CommentWithAuthorRow } from "@/modules/board/infrastructure/supabase/comment/types";
 
 /**
  * Create a CommentRepository implementation using the provided Supabase client.
  */
 export const createCommentRepository = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): CommentRepository => ({
   async hasByProject(projectId: string): Promise<boolean> {
     try {
@@ -53,9 +55,7 @@ export const createCommentRepository = (
         return handleRepositoryError(error, "Comment");
       }
 
-      return mapCommentWithAuthorRowsToDomain(
-        (data ?? []) as CommentWithAuthorRow[]
-      );
+      return mapCommentWithAuthorRowsToDomain(data ?? []);
     } catch (error) {
       return handleRepositoryError(error, "Comment");
     }
@@ -63,37 +63,17 @@ export const createCommentRepository = (
 
   async create(input: CreateCommentInput): Promise<CommentWithAuthor> {
     try {
-      const { data: claimsData, error: claimsError } =
-        await client.auth.getClaims();
-
-      if (claimsError) {
-        return handleRepositoryError(claimsError, "Comment");
-      }
-
-      const claims = claimsData?.claims;
-
-      if (!claims) {
-        return handleRepositoryError(
-          createDatabaseError("User not authenticated"),
-          "Comment"
-        );
-      }
-      const authorId = claims?.sub;
-
-      if (!authorId) {
-        return handleRepositoryError(
-          createDatabaseError("User not authenticated"),
-          "Comment"
-        );
-      }
+      const identity = await requireCurrentAuthIdentity(client);
+      const commentInsert = {
+        ticket_id: input.ticketId,
+        author_id: identity.userId,
+        content: input.content,
+      } satisfies Omit<TableInsert<"comments">, "project_id">;
 
       const { data, error } = await client
         .from("comments")
-        .insert({
-          ticket_id: input.ticketId,
-          author_id: authorId,
-          content: input.content,
-        })
+        // project_id is derived from ticket_id by the database trigger.
+        .insert(commentInsert as TableInsert<"comments">)
         .select()
         .single();
 
@@ -118,8 +98,8 @@ export const createCommentRepository = (
         return handleRepositoryError(rpcError, "Comment");
       }
 
-      const created = (enriched as CommentWithAuthorRow[]).find(
-        (c) => c.id === (data as { id: string }).id
+      const created = (enriched ?? []).find(
+        (comment) => comment.id === data.id
       );
 
       if (!created) {
@@ -161,7 +141,7 @@ export const createCommentRepository = (
         );
       }
 
-      const ticketId = (data as { ticket_id: string }).ticket_id;
+      const ticketId = data.ticket_id;
 
       const { data: enriched, error: rpcError } = await client.rpc(
         "get_ticket_comments",
@@ -172,9 +152,7 @@ export const createCommentRepository = (
         return handleRepositoryError(rpcError, "Comment", id);
       }
 
-      const updated = (enriched as CommentWithAuthorRow[]).find(
-        (author) => author.id === id
-      );
+      const updated = (enriched ?? []).find((comment) => comment.id === id);
 
       if (!updated) {
         return handleRepositoryError(

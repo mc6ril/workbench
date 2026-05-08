@@ -1,12 +1,10 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import { APP_LIMITS } from "@/shared/constants/app";
-import { createAppError } from "@/shared/errors/appError";
-import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import { prepareRecipeCoverUploadFile } from "./RecipeCoverUploadTransform.browser";
 
+import { requireCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 import type {
   EditorCoverStorage,
   UploadRecipeCoverInput,
@@ -22,30 +20,17 @@ const createRecipeCoverObjectKey = (projectId: string) => {
 };
 
 export const createEditorCoverStorage = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): EditorCoverStorage => ({
   async uploadRecipeCover({
     projectId,
     file,
   }: UploadRecipeCoverInput): Promise<string> {
-    const { data: claimsData, error: claimsError } =
-      await client.auth.getClaims();
-
-    if (claimsError) {
-      return handleRepositoryError(claimsError, "RecipeCover", projectId);
-    }
-
-    const claims = claimsData?.claims;
-
-    if (!claims) {
-      throw createAppError(AUTH_ERROR_CODE.AUTHENTICATION_ERROR, {
-        debugMessage: "Authenticated user is required to upload a recipe cover",
-      });
-    }
+    const identity = await requireCurrentAuthIdentity(client);
 
     const preparedFile = await prepareRecipeCoverUploadFile(file);
     const objectKey = createRecipeCoverObjectKey(projectId);
-    const filePath = `${claims.sub}/${objectKey}`;
+    const filePath = `${identity.userId}/${objectKey}`;
 
     const { error: uploadError } = await client.storage
       .from(APP_LIMITS.RECIPE_COVER.STORAGE_BUCKET)

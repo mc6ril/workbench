@@ -35,7 +35,7 @@ than "the app always loads the same data twice."
 - `src/app/(protected)/layout.tsx`
   - **Role**: authenticated app bootstrap
   - **Loads/Hydrates**:
-    - session (`getCurrentSession`) via `queryClient.setQueryData(...)`
+    - auth identity via `queryClient.setQueryData(...)`
     - profile (`getProfile`) via `queryClient.prefetchQuery(...)`
   - **Hydration handoff**:
     - `RequestLocaleAppProviders dehydratedState={dehydrate(queryClient)}`
@@ -179,7 +179,7 @@ navigation scope.
 
 - **Owner**: `src/app/(protected)/layout.tsx`
 - **Should own**:
-  - session bootstrap
+  - auth identity bootstrap
   - profile bootstrap required for runtime preferences
   - any other concern that can block the authenticated shell
 - **Rule**:

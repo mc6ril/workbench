@@ -1,17 +1,21 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import {
   createConstraintError,
   createDatabaseError,
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 import { isNonEmptyString, isObject } from "@/shared/utils/guards";
 
 import {
   mapProjectRowToDomain,
   mapProjectToProjectWithRole,
 } from "./ProjectMapper.supabase";
+import {
+  extractProjectIdFromPayload,
+  extractProjectRowFromPayload,
+  fetchProjectRowById,
+} from "./projectRowPayload.supabase";
 
 import type {
   Project,
@@ -20,67 +24,17 @@ import type {
 import { isProjectRole } from "@/domains/project/core/domain/project.types";
 import type { ProjectModuleKey } from "@/domains/project/core/domain/projectModule.types";
 import type { ProjectGateway } from "@/domains/project/core/ports/project.gateway";
-import type { ProjectRow } from "@/domains/project/infrastructure/supabase/types";
 
 /**
- * Extract a full project row from an RPC response.
- * The RPC may return a single object or an array of objects.
- */
-const extractProjectRow = (data: unknown): ProjectRow | null => {
-  if (Array.isArray(data) && data.length > 0) {
-    const first = data[0];
-    if (typeof first === "object" && first !== null) {
-      return first as ProjectRow;
-    }
-  } else if (data && typeof data === "object" && !Array.isArray(data)) {
-    return data as ProjectRow;
-  }
-
-  return null;
-};
-
-/**
- * Extract a project ID (UUID string) from an RPC response.
- * The RPC may return a single string or an array with a string.
- */
-const extractProjectId = (data: unknown): string | null => {
-  if (typeof data === "string") {
-    return data;
-  }
-
-  if (Array.isArray(data) && data.length > 0 && typeof data[0] === "string") {
-    return data[0];
-  }
-
-  return null;
-};
-
-/**
- * Fetch a project by ID using the get_project_by_id RPC function.
- * Used as a fallback when create_project only returns the UUID.
+ * Fetch a full project row by ID. Some RPCs only return an ID or a legacy
+ * partial project payload, so direct table reads keep the mapper fed with the
+ * generated projects row shape.
  */
 const fetchProjectById = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string
 ): Promise<Project> => {
-  const { data, error } = await client.rpc("get_project_by_id", {
-    p_project_id: projectId,
-  });
-
-  if (error) {
-    return handleRepositoryError(error, "Project", projectId);
-  }
-
-  const projectRow = Array.isArray(data) ? data[0] : data;
-  if (!projectRow) {
-    return handleRepositoryError(
-      createDatabaseError("No project data returned after creation"),
-      "Project",
-      projectId
-    );
-  }
-
-  return mapProjectRowToDomain(projectRow as ProjectRow);
+  return mapProjectRowToDomain(await fetchProjectRowById(client, projectId));
 };
 
 /**
@@ -90,7 +44,7 @@ const fetchProjectById = async (
  * @returns ProjectGateway implementation
  */
 export const createProjectGateway = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): ProjectGateway => ({
   async findByShortCode(shortCode: string): Promise<Project | null> {
     try {
@@ -108,7 +62,7 @@ export const createProjectGateway = (
         return null;
       }
 
-      return mapProjectRowToDomain(data as ProjectRow);
+      return mapProjectRowToDomain(data);
     } catch (error) {
       return handleRepositoryError(error, "Project");
     }
@@ -130,7 +84,7 @@ export const createProjectGateway = (
         return null;
       }
 
-      return mapProjectRowToDomain(data as ProjectRow);
+      return mapProjectRowToDomain(data);
     } catch (error) {
       return handleRepositoryError(error, "Project", id);
     }
@@ -156,7 +110,7 @@ export const createProjectGateway = (
         return [];
       }
 
-      return data.map((row: unknown) => {
+      return data.map((row) => {
         if (!isObject(row)) {
           return handleRepositoryError(
             createDatabaseError("Invalid project data structure"),
@@ -164,7 +118,7 @@ export const createProjectGateway = (
           );
         }
 
-        const project = mapProjectRowToDomain(row as ProjectRow);
+        const project = mapProjectRowToDomain(row);
         const members = (row as { project_members?: Array<{ role?: string }> })
           .project_members;
 
@@ -203,12 +157,12 @@ export const createProjectGateway = (
         return handleRepositoryError(rpcError, "Project");
       }
 
-      const projectRow = extractProjectRow(rpcData);
+      const projectRow = extractProjectRowFromPayload(rpcData);
       let project: Project;
       if (projectRow) {
         project = mapProjectRowToDomain(projectRow);
       } else {
-        const projectId = extractProjectId(rpcData);
+        const projectId = extractProjectIdFromPayload(rpcData);
         if (!projectId) {
           return handleRepositoryError(
             createDatabaseError(
@@ -301,7 +255,7 @@ export const createProjectGateway = (
         );
       }
 
-      return mapProjectRowToDomain(data as ProjectRow);
+      return mapProjectRowToDomain(data);
     } catch (error) {
       return handleRepositoryError(error, "Project", id);
     }

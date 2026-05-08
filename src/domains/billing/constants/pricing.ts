@@ -5,7 +5,7 @@
 
 export type PlanKey = "free" | "pro" | "team";
 
-export type FeatureRow = {
+export type PricingFeature = {
   key: string;
   free: string;
   pro: string;
@@ -14,7 +14,7 @@ export type FeatureRow = {
 
 export const PLAN_KEYS: PlanKey[] = ["free", "pro", "team"];
 
-export const FEATURE_ROWS: FeatureRow[] = [
+export const FEATURE_ROWS: PricingFeature[] = [
   {
     key: "membersPerWorkspace",
     free: "two",

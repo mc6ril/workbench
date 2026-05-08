@@ -1,13 +1,18 @@
-const EMAIL_PROVIDER = "email";
+import {
+  asAuthAppMetadata,
+  type AuthAppMetadata,
+  EMAIL_AUTH_PROVIDER,
+} from "@/domains/auth/infrastructure/supabase/AuthMetadata.supabase";
 
 /**
  * Extracts Supabase auth providers from app_metadata.
  * Supabase may expose either `provider` or `providers`.
  */
 export const extractAuthProviders = (
-  appMetadata: Record<string, unknown> | undefined
+  appMetadata: AuthAppMetadata | null | undefined
 ): string[] => {
-  const providers = appMetadata?.providers;
+  const metadata = asAuthAppMetadata(appMetadata);
+  const providers = metadata?.providers;
 
   if (Array.isArray(providers)) {
     return providers.filter(
@@ -16,7 +21,7 @@ export const extractAuthProviders = (
     );
   }
 
-  const provider = appMetadata?.provider;
+  const provider = metadata?.provider;
 
   if (typeof provider === "string" && provider.length > 0) {
     return [provider];
@@ -30,7 +35,7 @@ export const extractAuthProviders = (
  * If Supabase exposes no provider metadata, default to `true`.
  */
 export const canUpdatePasswordFromAppMetadata = (
-  appMetadata: Record<string, unknown> | undefined
+  appMetadata: AuthAppMetadata | null | undefined
 ): boolean => {
   const providers = extractAuthProviders(appMetadata);
 
@@ -38,5 +43,5 @@ export const canUpdatePasswordFromAppMetadata = (
     return true;
   }
 
-  return providers.includes(EMAIL_PROVIDER);
+  return providers.includes(EMAIL_AUTH_PROVIDER);
 };

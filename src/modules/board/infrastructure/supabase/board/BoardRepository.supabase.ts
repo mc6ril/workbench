@@ -1,11 +1,10 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import {
   createDatabaseError,
   createNotFoundError,
 } from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
 import { getPostgrestErrorCode } from "@/shared/infrastructure/supabase/postgrestErrorCode";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import {
   mapBoardRowToDomain,
@@ -21,10 +20,7 @@ import type {
   UpdateColumnInput,
 } from "@/modules/board/core/domain/board.types";
 import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
-import type {
-  BoardRow,
-  ColumnRow,
-} from "@/modules/board/infrastructure/supabase/board/types";
+import type { ColumnRow } from "@/modules/board/infrastructure/supabase/board/types";
 
 /**
  * Create a BoardRepository implementation using the provided Supabase client.
@@ -34,7 +30,7 @@ import type {
  * @returns BoardRepository implementation
  */
 export const createBoardRepository = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): BoardRepository => ({
   async findById(id: string): Promise<Board | null> {
     try {
@@ -58,7 +54,7 @@ export const createBoardRepository = (
         return null;
       }
 
-      return mapBoardRowToDomain(data as BoardRow);
+      return mapBoardRowToDomain(data);
     } catch (error) {
       return handleRepositoryError(error, "Board");
     }
@@ -80,7 +76,7 @@ export const createBoardRepository = (
         return null;
       }
 
-      return mapBoardRowToDomain(data as BoardRow);
+      return mapBoardRowToDomain(data);
     } catch (error) {
       return handleRepositoryError(error, "Board");
     }
@@ -107,7 +103,7 @@ export const createBoardRepository = (
         );
       }
 
-      return mapBoardRowToDomain(data as BoardRow);
+      return mapBoardRowToDomain(data);
     } catch (error) {
       return handleRepositoryError(error, "Board");
     }
@@ -141,7 +137,7 @@ export const createBoardRepository = (
         return [];
       }
 
-      return mapColumnRowsToDomain(data as ColumnRow[]);
+      return mapColumnRowsToDomain(data);
     } catch (error) {
       return handleRepositoryError(error, "Column");
     }
@@ -163,7 +159,7 @@ export const createBoardRepository = (
         return null;
       }
 
-      return mapColumnRowToDomain(data as ColumnRow);
+      return mapColumnRowToDomain(data);
     } catch (error) {
       return handleRepositoryError(error, "Column");
     }
@@ -195,7 +191,7 @@ export const createBoardRepository = (
         );
       }
 
-      return mapColumnRowToDomain(data as ColumnRow);
+      return mapColumnRowToDomain(data);
     } catch (error) {
       return handleRepositoryError(error, "Column");
     }
@@ -240,7 +236,7 @@ export const createBoardRepository = (
         );
       }
 
-      return mapColumnRowToDomain(data as ColumnRow);
+      return mapColumnRowToDomain(data);
     } catch (error) {
       return handleRepositoryError(error, "Column", id);
     }
@@ -284,7 +280,7 @@ export const createBoardRepository = (
           );
         }
 
-        updatedColumns.push(mapColumnRowToDomain(data as ColumnRow));
+        updatedColumns.push(mapColumnRowToDomain(data));
       }
 
       return updatedColumns;
@@ -315,7 +311,7 @@ export const createBoardRepository = (
         counts[columnId] = 0;
       }
 
-      for (const row of (data ?? []) as Array<{ column_id: string | null }>) {
+      for (const row of data ?? []) {
         if (!row.column_id) {
           continue;
         }

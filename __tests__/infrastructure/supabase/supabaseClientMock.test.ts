@@ -1,15 +1,15 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import { createSupabaseClientMock } from "../../../__mocks__/infrastructure/supabase/supabaseClientMock";
 
 describe("createSupabaseClientMock", () => {
-  it("returns a SupabaseClient-typed object using the provided overrides", async () => {
+  it("returns an AppSupabaseClient-typed object using the provided overrides", async () => {
     const signInWithPassword = jest.fn();
 
     const client = createSupabaseClientMock({
       auth: {
         signInWithPassword,
-      } as unknown as SupabaseClient["auth"],
+      } as unknown as AppSupabaseClient["auth"],
     });
 
     await client.auth?.signInWithPassword({

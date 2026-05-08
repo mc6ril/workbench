@@ -80,7 +80,7 @@ const SignupPage = ({ redirectPath }: SignupPageProps) => {
     resolver: zodResolver(SignUpFormSchema),
     mode: "onBlur",
     defaultValues: {
-      acceptedTerms: false as unknown as true,
+      acceptedTerms: false,
     },
   });
 

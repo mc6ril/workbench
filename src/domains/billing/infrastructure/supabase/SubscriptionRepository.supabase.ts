@@ -1,7 +1,9 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import { createDatabaseError } from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type {
+  AppSupabaseClient,
+  TableInsert,
+} from "@/shared/infrastructure/supabase/types";
 
 import { mapSubscriptionRowToDomain } from "./SubscriptionMapper.supabase";
 
@@ -10,7 +12,6 @@ import type {
   SaveSubscriptionInput,
   SubscriptionRepository,
 } from "@/domains/billing/core/ports/subscription.repository";
-import type { SubscriptionRow } from "@/domains/billing/infrastructure/supabase/types";
 
 /**
  * Create a SubscriptionRepository using the provided Supabase clients.
@@ -19,8 +20,8 @@ import type { SubscriptionRow } from "@/domains/billing/infrastructure/supabase/
  * @param adminClient - Supabase admin client with service role (for writes bypassing RLS)
  */
 export const createSubscriptionRepository = (
-  browserClient: SupabaseClient,
-  adminClient: SupabaseClient
+  browserClient: AppSupabaseClient,
+  adminClient: AppSupabaseClient
 ): SubscriptionRepository => ({
   async getByUserId(userId: string): Promise<Subscription | null> {
     try {
@@ -38,7 +39,7 @@ export const createSubscriptionRepository = (
         return null;
       }
 
-      return mapSubscriptionRowToDomain(data as SubscriptionRow);
+      return mapSubscriptionRowToDomain(data);
     } catch (error) {
       return handleRepositoryError(error, "Subscription");
     }
@@ -46,7 +47,7 @@ export const createSubscriptionRepository = (
 
   async save(input: SaveSubscriptionInput): Promise<Subscription> {
     try {
-      const row: Record<string, unknown> = {
+      const row: TableInsert<"subscriptions"> = {
         user_id: input.userId,
         plan: input.plan,
         status: input.status,
@@ -86,7 +87,7 @@ export const createSubscriptionRepository = (
         );
       }
 
-      return mapSubscriptionRowToDomain(data as SubscriptionRow);
+      return mapSubscriptionRowToDomain(data);
     } catch (error) {
       return handleRepositoryError(error, "Subscription");
     }
@@ -108,7 +109,7 @@ export const createSubscriptionRepository = (
         return null;
       }
 
-      return mapSubscriptionRowToDomain(data as SubscriptionRow);
+      return mapSubscriptionRowToDomain(data);
     } catch (error) {
       return handleRepositoryError(error, "Subscription");
     }
