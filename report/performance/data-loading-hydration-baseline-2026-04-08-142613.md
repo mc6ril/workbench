@@ -22,8 +22,8 @@ Document current data-loading and hydration initiation points to validate the re
 
 - **Owner**: `src/app/(protected)/layout.tsx`
 - **Server work**:
-  - `getCurrentSession(...)` then `queryClient.setQueryData(sessionQueryKeys.session.current(), session)`
-  - `queryClient.prefetchQuery(profileQueryKeys.userProfiles.detail(session.userId), getProfile(...))`
+  - auth identity bootstrap, then `queryClient.setQueryData(...)`
+  - `queryClient.prefetchQuery(profileQueryKeys.userProfiles.detail(identity.userId), getProfile(...))`
 - **Hydration handoff**: `RequestLocaleAppProviders dehydratedState={dehydrate(queryClient)}`
 
 Expected:\n+- Session and profile should be in the client cache on first render.\n+- No immediate profile refetch on mount when hydrated (unless keys mismatch or hydration is missing).\n+

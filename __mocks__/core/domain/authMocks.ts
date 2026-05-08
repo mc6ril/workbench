@@ -1,7 +1,7 @@
 import { createAppError } from "@/shared/errors/appError";
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 
-import { mockCurrentSession } from "./sessionMocks";
+import { mockCurrentAuthIdentity } from "./authIdentityMocks";
 
 import type {
   AuthenticationError,
@@ -24,7 +24,7 @@ import type {
  * Mock authentication result for testing.
  */
 export const mockAuthResult: AuthResult = {
-  session: mockCurrentSession,
+  session: mockCurrentAuthIdentity,
   requiresEmailVerification: false,
 };
 

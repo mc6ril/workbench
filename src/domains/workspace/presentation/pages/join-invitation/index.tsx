@@ -9,8 +9,8 @@ import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { useAcceptInvitation } from "@/domains/project/presentation/hooks/invitation/useAcceptInvitation";
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 const JoinInvitationPage = () => {
   const params = useParams<{ token: string }>();
@@ -18,7 +18,7 @@ const JoinInvitationPage = () => {
   const t = useTranslations("pages.join");
   const tErrors = useTranslations("errors");
 
-  const { data: session, isLoading: isLoadingSession } = useSession();
+  const { data: identity, isLoading: isLoadingIdentity } = useAuthIdentity();
   const acceptInvitationMutation = useAcceptInvitation();
   const hasStartedRef = useRef(false);
   const rawToken = params?.token;
@@ -32,7 +32,7 @@ const JoinInvitationPage = () => {
   const hasInvitationError = Boolean(invitationError);
 
   useEffect(() => {
-    if (isLoadingSession || hasStartedRef.current) {
+    if (isLoadingIdentity || hasStartedRef.current) {
       return;
     }
 
@@ -40,7 +40,7 @@ const JoinInvitationPage = () => {
       return;
     }
 
-    if (!session) {
+    if (!identity) {
       const redirect = encodeURIComponent(`/join/${token}`);
       router.replace(`/auth/signin?redirect=${redirect}`);
       return;
@@ -55,7 +55,7 @@ const JoinInvitationPage = () => {
       .catch(() => {
         hasStartedRef.current = false;
       });
-  }, [acceptInvitationMutation, isLoadingSession, router, session, token]);
+  }, [acceptInvitationMutation, identity, isLoadingIdentity, router, token]);
 
   const handleRetry = useCallback(() => {
     hasStartedRef.current = false;

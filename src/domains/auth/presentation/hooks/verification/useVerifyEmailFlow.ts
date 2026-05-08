@@ -10,12 +10,12 @@ import {
   VERIFIED_EMAIL_REDIRECT_PATH,
 } from "@/shared/utils/authRedirect";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { useVerifyEmail } from "@/domains/auth/presentation/hooks/verification/useVerifyEmail";
 import {
   getVerifyEmailRedirectErrorCode,
   parseVerifyEmailParams,
 } from "@/domains/auth/presentation/utils/verifyEmail";
-import { useOptionalSession } from "@/domains/session/presentation/hooks/useOptionalSession";
 
 /**
  * Encapsulates the full email verification orchestration.
@@ -36,7 +36,7 @@ export const useVerifyEmailFlow = () => {
     );
   }, [locationHash, searchParamsValue]);
   const shouldExchangeCode = !!parsedParams.input?.code;
-  const recoverySessionQuery = useOptionalSession({
+  const recoveryIdentityQuery = useAuthIdentity({
     enabled: parsedParams.shouldRecoverSession,
     queryKeySuffix: [
       "verify-email-recovery",
@@ -45,11 +45,11 @@ export const useVerifyEmailFlow = () => {
     ],
   });
   const hasRecoveredSession =
-    parsedParams.shouldRecoverSession && !!recoverySessionQuery.data;
+    parsedParams.shouldRecoverSession && !!recoveryIdentityQuery.data;
   const hasSessionRecoveryError =
     parsedParams.shouldRecoverSession &&
-    !recoverySessionQuery.isPending &&
-    !recoverySessionQuery.data;
+    !recoveryIdentityQuery.isPending &&
+    !recoveryIdentityQuery.data;
 
   useEffect(() => {
     if (parsedParams.input?.code) {
@@ -109,7 +109,7 @@ export const useVerifyEmailFlow = () => {
     isPending:
       shouldExchangeCode ||
       verifyEmailMutation.isPending ||
-      recoverySessionQuery.isPending,
+      recoveryIdentityQuery.isPending,
     isSuccess:
       hasRecoveredSession ||
       (verifyEmailMutation.isSuccess && !!verifyEmailMutation.data?.session),

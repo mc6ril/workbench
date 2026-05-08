@@ -14,6 +14,7 @@ import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import type { PlanKey } from "@/domains/billing/constants/pricing";
 import {
   FAQ_KEYS,
@@ -27,12 +28,11 @@ import {
 import { useCreateBillingPortalSession } from "@/domains/billing/presentation/hooks/useCreateBillingPortalSession";
 import { useCreateCheckoutSession } from "@/domains/billing/presentation/hooks/useCreateCheckoutSession";
 import { useSubscription } from "@/domains/billing/presentation/hooks/useSubscription";
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 const PricingPage = () => {
   const router = useAppRouter();
   const searchParams = useSearchParams();
-  const { data: session } = useSession();
+  const { data: identity } = useAuthIdentity();
   const { data: subscription } = useSubscription();
   const t = useTranslations("pages.pricing");
   const tCta = useTranslations("pages.pricing.cta");
@@ -120,7 +120,7 @@ const PricingPage = () => {
       const currentPlan = subscription?.plan ?? SubscriptionPlan.FREE;
       const planName = t(`plans.${planKey}.name`);
 
-      if (!session) {
+      if (!identity) {
         return {
           label: tCta("signUpFirst"),
           variant: planKey === "pro" ? "primary" : "secondary",
@@ -171,7 +171,7 @@ const PricingPage = () => {
       };
     },
     [
-      session,
+      identity,
       subscription,
       t,
       tCta,
@@ -239,7 +239,7 @@ const PricingPage = () => {
           {PLAN_KEYS.map((plan) => {
             const isPopular = plan === "pro";
             const currentPlan = subscription?.plan ?? SubscriptionPlan.FREE;
-            const isCurrent = !!session && plan === currentPlan;
+            const isCurrent = !!identity && plan === currentPlan;
 
             return (
               <div

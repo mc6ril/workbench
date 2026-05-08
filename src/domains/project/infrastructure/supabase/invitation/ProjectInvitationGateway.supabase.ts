@@ -5,6 +5,7 @@ import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandl
 
 import { mapInvitationRowToDomain } from "./InvitationMapper.supabase";
 
+import { requireCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 import type {
   ProjectInvitation,
   ProjectRole,
@@ -43,23 +44,14 @@ export const createProjectInvitationGateway = (
     projectId: string;
     role: ProjectRole;
   }): Promise<ProjectInvitation> {
-    const { data: claimsData } = await client.auth.getClaims();
-
-    const claims = claimsData?.claims;
-
-    if (!claims) {
-      return handleRepositoryError(
-        createDatabaseError("User not authenticated"),
-        "ProjectInvitation"
-      );
-    }
+    const identity = await requireCurrentAuthIdentity(client);
 
     const { data, error } = await client
       .from("project_invitations")
       .insert({
         project_id: input.projectId,
         role: input.role,
-        invited_by: claims.sub,
+        invited_by: identity.userId,
       })
       .select()
       .single();

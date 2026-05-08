@@ -12,6 +12,7 @@ import {
   mapTicketSearchRowsToDomain,
 } from "./TicketMapper.supabase";
 
+import { getCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 import type {
   CreateTicketInput,
   Ticket,
@@ -656,15 +657,8 @@ export const createTicketRepository = (
       }));
 
       try {
-        const { data: claimsData, error: claimsError } =
-          await client.auth.getClaims();
-
-        if (claimsError) {
-          return handleRepositoryError(claimsError, "TicketAssignee", ticketId);
-        }
-
-        const claims = claimsData?.claims;
-        const assignedBy = claims?.sub ?? null;
+        const identity = await getCurrentAuthIdentity(client);
+        const assignedBy = identity?.userId ?? null;
         rows.forEach((row) => {
           row.assigned_by = assignedBy;
         });

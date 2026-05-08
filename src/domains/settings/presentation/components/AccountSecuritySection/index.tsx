@@ -19,17 +19,14 @@ import styles from "./styles.module.scss";
 
 import type { ChangePasswordFormInput } from "@/domains/auth/presentation/forms/authForms.schema";
 import { ChangePasswordFormSchema } from "@/domains/auth/presentation/forms/authForms.schema";
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { useChangePassword } from "@/domains/auth/presentation/hooks/password/useChangePassword";
-import { useCanUpdatePassword } from "@/domains/session/presentation/hooks/useCanUpdatePassword";
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 const AccountSecuritySection = () => {
   const t = useTranslations("pages.account");
   const tErrors = useTranslations("errors");
 
-  const { data: session } = useSession();
-  const { data: canUpdatePassword, isLoading: isPasswordCapabilityLoading } =
-    useCanUpdatePassword(!!session?.userId);
+  const { data: identity, isLoading: isIdentityLoading } = useAuthIdentity();
 
   const changePasswordMutation = useChangePassword();
 
@@ -58,7 +55,7 @@ const AccountSecuritySection = () => {
     [changePasswordMutation, resetPasswordForm]
   );
 
-  const resolvedCanManagePassword = canUpdatePassword ?? true;
+  const resolvedCanManagePassword = identity?.canUpdatePassword ?? true;
 
   return (
     <section
@@ -84,7 +81,7 @@ const AccountSecuritySection = () => {
       </div>
 
       <div className={styles["section-content"]}>
-        {isPasswordCapabilityLoading ? (
+        {isIdentityLoading ? (
           <Loader variant="inline" />
         ) : resolvedCanManagePassword ? (
           <>

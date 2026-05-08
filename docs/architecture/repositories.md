@@ -22,7 +22,7 @@ Instead:
 
 That means:
 
-- `auth`, `session`, `profile`, `billing`, `workspace`, and `project` own
+- `auth`, `profile`, `billing`, `workspace`, and `project` own
   their repository or gateway implementations when they own persistence or
   provider contracts
 - `settings` is a composition owner and usually owns no repository
@@ -37,11 +37,6 @@ That means:
 src/
   domains/
     auth/
-      core/
-        ports/
-      infrastructure/
-        supabase/
-    session/
       core/
         ports/
       infrastructure/
@@ -186,13 +181,12 @@ const ticketRepository = createTicketRepository(client);
 
 ## Special Ownership Rules
 
-- `src/domains/auth/` owns auth mutations and auth action flows only
-- `src/domains/session/` owns current identity state such as `userId`,
-  `loginEmail`, `accessToken`, auth claims, and auth-derived capabilities
+- `src/domains/auth/` owns auth mutations, auth action flows, current auth
+  identity, auth claims, and auth-derived capabilities
 - `src/domains/profile/` owns reusable user business data such as
   `displayName`, `avatarUrl`, and preferences
-- `src/domains/viewer/` owns the current-user read-model composed from
-  `session` + `profile`, and should remain read-only
+- `src/domains/viewer/` owns the current-user read-model composed from auth
+  identity + `profile`, and should remain read-only
 - `src/domains/settings/` owns account/settings surfaces and usually only
   orchestrates other owners instead of owning repositories
 - `src/domains/project/` owns the canonical project entity, repository, project CRUD use cases, project settings, members, invitations, permissions, and enabled-module configuration

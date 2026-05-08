@@ -6,9 +6,9 @@ import { useTranslations } from "@/shared/i18n";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { buildProjectRoute } from "@/shared/utils/routes";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
 import type { ColumnWorkflowState } from "@/modules/board/core/domain/board.types";
 import type { TicketPriority } from "@/modules/board/core/domain/ticket.types";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
@@ -48,7 +48,7 @@ export const useTicketDetailController = ({
   const searchParams = useSearchParams();
   const tColumns = useTranslations("pages.board.columns");
 
-  const { data: session } = useSession();
+  const { data: identity } = useAuthIdentity();
   const {
     canComment,
     canDeleteTicket,
@@ -290,7 +290,7 @@ export const useTicketDetailController = ({
   return {
     ticket,
     error,
-    sessionUserId: session?.userId,
+    sessionUserId: identity?.userId,
     isLoading: isTicketLoading || isPermissionsLoading,
     canComment,
     canDeleteTicket,

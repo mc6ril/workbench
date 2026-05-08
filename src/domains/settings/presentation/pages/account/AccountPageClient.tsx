@@ -19,7 +19,7 @@ import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
 
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import AccountBillingAndActionsSection from "@/domains/settings/presentation/components/AccountBillingAndActionsSection";
 import AccountPersonalInfoSection from "@/domains/settings/presentation/components/AccountPersonalInfoSection";
 import AccountPreferencesSection from "@/domains/settings/presentation/components/AccountPreferencesSection";
@@ -33,7 +33,7 @@ const AccountPageClient = () => {
   const tStripe = useTranslations("errors.stripe");
   const t = useTranslations("pages.account");
 
-  const { data: session, isLoading: isSessionLoading } = useSession();
+  const { data: identity, isLoading: isIdentityLoading } = useAuthIdentity();
   const { isLoading: isViewerLoading } = useViewer();
 
   const checkoutHandled = useRef(false);
@@ -77,7 +77,7 @@ const AccountPageClient = () => {
   );
 
   const isPageLoading =
-    isSessionLoading || (session?.userId && isViewerLoading);
+    isIdentityLoading || (identity?.userId && isViewerLoading);
   const shouldShowLoader = !isMounted || isPageLoading;
 
   return (

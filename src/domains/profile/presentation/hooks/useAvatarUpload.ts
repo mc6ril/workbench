@@ -4,10 +4,6 @@ import { removeAvatar } from "@/domains/profile/core/usecases/removeAvatar";
 import { uploadAvatar } from "@/domains/profile/core/usecases/uploadAvatar";
 import { profileGateway } from "@/domains/profile/infrastructure/profileGateway.browser";
 import { queryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
-import {
-  clearLightUserCookieInBrowser,
-  persistLightUserCookieInBrowser,
-} from "@/domains/session/infrastructure/lightUserCookie";
 import { queryKeys as boardQueryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 
 const PROJECT_MEMBERS_QUERY_KEY = ["members"] as const;
@@ -22,7 +18,7 @@ export const useUploadAvatar = () => {
     mutationFn: ({ userId, file }: { userId: string; file: File }) =>
       uploadAvatar(profileGateway, userId, file),
     onSuccess: (avatarUrl, variables) => {
-      persistLightUserCookieInBrowser({ avatarUrl });
+      void avatarUrl;
       queryClient.invalidateQueries({
         queryKey: queryKeys.userProfiles.detail(variables.userId),
       });
@@ -51,7 +47,6 @@ export const useRemoveAvatar = () => {
   return useMutation({
     mutationFn: (userId: string) => removeAvatar(profileGateway, userId),
     onSuccess: (_data, userId) => {
-      clearLightUserCookieInBrowser();
       queryClient.invalidateQueries({
         queryKey: queryKeys.userProfiles.detail(userId),
       });

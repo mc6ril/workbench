@@ -1,6 +1,10 @@
 import type { Locale } from "@/shared/i18n/config";
 
-import type { CurrentSession } from "@/domains/session/core/domain/session.types";
+export type CurrentAuthIdentity = {
+  userId: string;
+  loginEmail: string;
+  canUpdatePassword: boolean;
+};
 
 export type SignUpInput = {
   email: string;
@@ -40,6 +44,6 @@ export type UpdateCredentialsInput = {
 };
 
 export type AuthResult = {
-  session: CurrentSession | null;
+  session: CurrentAuthIdentity | null;
   requiresEmailVerification?: boolean;
 };

@@ -11,23 +11,23 @@ import {
 } from "@/shared/i18n/config";
 import { persistThemeCookie } from "@/shared/theme/config";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { resolveThemePreference } from "@/domains/profile/core/domain/profile.types";
 import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 /**
  * Applies the authenticated user's runtime preferences (locale + theme) and
  * reports whether the app can render without waiting for the profile query.
  */
 export const useProfileRuntimeSync = (): boolean => {
-  const { data: session } = useSession();
+  const { data: identity } = useAuthIdentity();
   const profileQuery = useMyProfile();
   const locale = useLocale();
   const { theme, setTheme } = useTheme();
   const lastSyncedLocaleRef = useRef<Locale | null>(null);
   const lastSyncedThemeRef = useRef<string | null>(null);
 
-  const hasAuthenticatedSession = !!session?.userId;
+  const hasAuthenticatedIdentity = !!identity?.userId;
 
   const nextLocale = useMemo<Locale | null>(() => {
     const language = profileQuery.data?.preferences?.language;
@@ -52,7 +52,7 @@ export const useProfileRuntimeSync = (): boolean => {
   }, [profileQuery.data?.preferences?.theme]);
 
   useEffect(() => {
-    if (!hasAuthenticatedSession || !nextLocale || locale === nextLocale) {
+    if (!hasAuthenticatedIdentity || !nextLocale || locale === nextLocale) {
       lastSyncedLocaleRef.current = null;
       return;
     }
@@ -66,10 +66,10 @@ export const useProfileRuntimeSync = (): boolean => {
     // changes (for example from /account) as the only source of router.refresh().
     persistLocaleCookie(nextLocale);
     lastSyncedLocaleRef.current = nextLocale;
-  }, [hasAuthenticatedSession, locale, nextLocale]);
+  }, [hasAuthenticatedIdentity, locale, nextLocale]);
 
   useEffect(() => {
-    if (!hasAuthenticatedSession || !nextTheme) {
+    if (!hasAuthenticatedIdentity || !nextTheme) {
       lastSyncedThemeRef.current = null;
       return;
     }
@@ -82,9 +82,9 @@ export const useProfileRuntimeSync = (): boolean => {
     if (theme !== nextTheme) {
       setTheme(nextTheme);
     }
-  }, [hasAuthenticatedSession, nextTheme, setTheme, theme]);
+  }, [hasAuthenticatedIdentity, nextTheme, setTheme, theme]);
 
-  if (!hasAuthenticatedSession) {
+  if (!hasAuthenticatedIdentity) {
     return true;
   }
   /**

@@ -42,8 +42,7 @@ Workbench follows a **domain + module architecture**:
 src/
   app/                          # Next.js routing only
   domains/
-    auth/                       # auth actions only: sign in/up, reset password, verify email, delete account
-    session/                    # current identity state: userId, loginEmail, accessToken, claims, auth capabilities
+    auth/                       # auth actions and Supabase-derived identity/capabilities
     profile/                    # reusable user business data: displayName, avatar, preferences
     viewer/                     # read-model composition for the current authenticated user
     settings/                   # cross-owner account/settings surfaces
@@ -82,8 +81,7 @@ Inside both domains and modules, responsibilities stay layered:
 Ownership is explicit:
 
 - `src/app/` stays route-only
-- `src/domains/auth/` owns auth mutations and action-oriented flows
-- `src/domains/session/` owns current identity state and auth-derived capabilities
+- `src/domains/auth/` owns auth mutations, action-oriented flows, and Supabase-derived current identity
 - `src/domains/profile/` owns user business data such as display name, avatar, and preferences
 - `src/domains/viewer/` owns read-only current-user composition
 - `src/domains/settings/` owns cross-owner account/settings surfaces such as `/account`

@@ -11,6 +11,7 @@ import {
   mapCommentWithAuthorRowToDomain,
 } from "./CommentMapper.supabase";
 
+import { requireCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 import type {
   CommentWithAuthor,
   CreateCommentInput,
@@ -63,35 +64,13 @@ export const createCommentRepository = (
 
   async create(input: CreateCommentInput): Promise<CommentWithAuthor> {
     try {
-      const { data: claimsData, error: claimsError } =
-        await client.auth.getClaims();
-
-      if (claimsError) {
-        return handleRepositoryError(claimsError, "Comment");
-      }
-
-      const claims = claimsData?.claims;
-
-      if (!claims) {
-        return handleRepositoryError(
-          createDatabaseError("User not authenticated"),
-          "Comment"
-        );
-      }
-      const authorId = claims?.sub;
-
-      if (!authorId) {
-        return handleRepositoryError(
-          createDatabaseError("User not authenticated"),
-          "Comment"
-        );
-      }
+      const identity = await requireCurrentAuthIdentity(client);
 
       const { data, error } = await client
         .from("comments")
         .insert({
           ticket_id: input.ticketId,
-          author_id: authorId,
+          author_id: identity.userId,
           content: input.content,
         })
         .select()

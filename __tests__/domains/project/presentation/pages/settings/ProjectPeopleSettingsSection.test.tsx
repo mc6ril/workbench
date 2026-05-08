@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
@@ -17,7 +18,6 @@ import { useRemoveMember } from "@/domains/project/presentation/hooks/member/use
 import { useUpdateMemberRole } from "@/domains/project/presentation/hooks/member/useUpdateMemberRole";
 import ProjectPeopleSettingsSection from "@/domains/project/presentation/pages/settings/components/ProjectPeopleSettingsSection";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
-import { useSession } from "@/domains/session/presentation/hooks/useSession";
 
 const replaceMock = jest.fn();
 const addToastMock = jest.fn();
@@ -28,8 +28,8 @@ jest.mock("next/navigation", () => ({
   }),
 }));
 
-jest.mock("@/domains/session/presentation/hooks/useSession", () => ({
-  useSession: jest.fn(),
+jest.mock("@/domains/auth/presentation/hooks/identity/useAuthIdentity", () => ({
+  useAuthIdentity: jest.fn(),
 }));
 
 jest.mock(
@@ -172,8 +172,8 @@ describe("ProjectPeopleSettingsSection", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    jest.mocked(useSession).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useSession>>({
+    jest.mocked(useAuthIdentity).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useAuthIdentity>>({
         data: {
           userId: CURRENT_USER_ID,
           email: "owner@example.com",

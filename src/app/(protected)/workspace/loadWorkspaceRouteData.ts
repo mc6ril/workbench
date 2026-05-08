@@ -3,10 +3,9 @@ import { dehydrate } from "@tanstack/react-query";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 
+import { requireCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 import { getProfile } from "@/domains/profile/core/usecases/getProfile";
 import { createProfileGateway } from "@/domains/profile/infrastructure/profileGateway.supabase";
-import { getCurrentSession } from "@/domains/session/core/usecases/getCurrentSession";
-import { createSessionGateway } from "@/domains/session/infrastructure/supabase/repositories";
 import { listProjectsWithStats } from "@/domains/workspace/core/usecases/project/listProjectsWithStats";
 import { createWorkspaceProjectCatalogGateway } from "@/domains/workspace/infrastructure/supabase/gateways";
 import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
@@ -14,12 +13,11 @@ import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentatio
 export const loadWorkspaceRouteData = async () => {
   const queryClient = createAppQueryClient();
   const supabaseClient = await createSupabaseServerClient();
-  const sessionGateway = createSessionGateway(supabaseClient);
   const profileGateway = createProfileGateway(supabaseClient);
   const workspaceProjectCatalogGateway =
     createWorkspaceProjectCatalogGateway(supabaseClient);
-  const session = await getCurrentSession(sessionGateway);
-  const profile = await getProfile(profileGateway, session.userId);
+  const identity = await requireCurrentAuthIdentity(supabaseClient);
+  const profile = await getProfile(profileGateway, identity.userId);
   const displayName = profile?.displayName?.trim() || null;
 
   await queryClient.prefetchQuery({
