@@ -29,7 +29,6 @@ const ProjectToolbar = ({
   onSearchChange,
   onAddClick,
   canAddAction = true,
-  isPermissionsLoading = false,
   searchSuggestions = [],
   extraTools = [],
   assigneeFilters = [],
@@ -45,8 +44,7 @@ const ProjectToolbar = ({
   const showAddAction = addActionType !== null;
   const hasAssigneeFilters = assigneeFilters.length > 0;
   const hasToolbarTools = extraTools.length > 0;
-  const isAddActionLoading = showAddAction && isPermissionsLoading;
-  const isAddActionDisabled = !isPermissionsLoading && !canAddAction;
+  const isAddActionDisabled = !canAddAction;
   const searchInputRef = useRef<HTMLInputElement>(null);
   const hasSearchQuery = searchValue.trim().length > 0;
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
@@ -87,12 +85,12 @@ const ProjectToolbar = ({
   }, [isDesktopViewport, isMobileSearchExpanded, onSearchChange]);
 
   const handleAddActionClick = useCallback(() => {
-    if (isPermissionsLoading || !canAddAction) {
+    if (!canAddAction) {
       return;
     }
 
     onAddClick?.();
-  }, [canAddAction, isPermissionsLoading, onAddClick]);
+  }, [canAddAction, onAddClick]);
 
   const searchClasses = [
     styles["project-toolbar__search"],
@@ -111,12 +109,7 @@ const ProjectToolbar = ({
     .filter(Boolean)
     .join(" ");
 
-  const addButtonClasses = [
-    styles["project-toolbar__add-button"],
-    isAddActionLoading && styles["project-toolbar__add-button--loading"],
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const addButtonClasses = styles["project-toolbar__add-button"];
 
   const primaryRowClasses = [
     styles["project-toolbar__primary"],
@@ -247,7 +240,7 @@ const ProjectToolbar = ({
                 className={addButtonClasses}
                 onClick={handleAddActionClick}
                 disabled={isAddActionDisabled}
-                aria-disabled={isPermissionsLoading || !canAddAction}
+                aria-disabled={!canAddAction}
                 aria-label={addAriaLabel}
                 title={addLabel}
               >

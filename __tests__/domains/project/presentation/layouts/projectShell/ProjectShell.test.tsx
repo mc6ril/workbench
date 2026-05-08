@@ -1,11 +1,23 @@
+import { QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
+
+import { createAppQueryClient } from "@/shared/providers/queryClient";
 
 import { ProjectModuleKey } from "@/domains/project/core/domain/projectModule.types";
 import ProjectShell from "@/domains/project/presentation/layouts/projectShell/ProjectShell";
 
 jest.mock("next/navigation", () => ({
   usePathname: () => "/project-1/board",
+  useSearchParams: () => new URLSearchParams(),
 }));
+
+jest.mock(
+  "@/domains/project/presentation/components/projectRealtime/ProjectRealtime",
+  () => ({
+    __esModule: true,
+    default: () => null,
+  })
+);
 
 jest.mock("@/shared/navigation/useAppRouter", () => ({
   useAppRouter: () => ({
@@ -86,24 +98,42 @@ jest.mock(
       children,
     }: {
       children: React.ReactNode;
-      projectId: string;
     }) => <>{children}</>,
+    useProjectPermissions: () => ({
+      canCreateTicket: false,
+      canEditProject: false,
+      canDeleteProject: false,
+      canComment: false,
+      canManageMembers: false,
+      canMoveTicket: false,
+      canCreateEpic: false,
+      canEditTicket: false,
+      canDeleteTicket: false,
+      isViewer: false,
+      isMember: false,
+      isAdmin: false,
+      role: null,
+    }),
   })
 );
 
 describe("ProjectShell", () => {
   it("renders the immediate board toolbar in the initial shell HTML", () => {
+    const queryClient = createAppQueryClient();
     render(
-      <ProjectShell
-        projectId="project-1"
-        shellSnapshot={{
-          projectId: "project-1",
-          enabledModules: [ProjectModuleKey.RECIPES],
-          isRecipesBoardVisible: true,
-        }}
-      >
-        <div>Board content</div>
-      </ProjectShell>
+      <QueryClientProvider client={queryClient}>
+        <ProjectShell
+          projectId="project-1"
+          shellSnapshot={{
+            projectId: "project-1",
+            enabledModules: [ProjectModuleKey.RECIPES],
+            isRecipesBoardVisible: true,
+            role: null,
+          }}
+        >
+          <div>Board content</div>
+        </ProjectShell>
+      </QueryClientProvider>
     );
 
     expect(
@@ -115,12 +145,13 @@ describe("ProjectShell", () => {
       screen.getByRole("combobox", {
         name: "Search bar",
       })
-    ).toHaveAttribute("aria-disabled", "true");
+    ).toHaveAttribute("aria-disabled", "false");
     expect(
       screen.queryByRole("button", {
         name: "Search bar",
       })
     ).not.toBeInTheDocument();
+    // Add ticket disabled because canCreateTicket=false (role=null → no permissions)
     expect(
       screen.getByRole("button", {
         name: "Create a new task",
@@ -130,7 +161,7 @@ describe("ProjectShell", () => {
       screen.getByRole("button", {
         name: "Restart onboarding guide",
       })
-    ).toHaveAttribute("aria-disabled", "true");
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("group", {
         name: "Assignee",
@@ -140,6 +171,6 @@ describe("ProjectShell", () => {
       screen.getByRole("button", {
         name: "Assignee: Unassigned",
       })
-    ).toHaveAttribute("aria-disabled", "true");
+    ).toHaveAttribute("aria-disabled", "false");
   });
 });

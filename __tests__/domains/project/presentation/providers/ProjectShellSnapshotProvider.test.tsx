@@ -32,6 +32,7 @@ describe("ProjectShellSnapshotProvider", () => {
           projectId: "project-1",
           enabledModules: [],
           isRecipesBoardVisible: true,
+          role: null,
         }}
       >
         <SnapshotConsumer />

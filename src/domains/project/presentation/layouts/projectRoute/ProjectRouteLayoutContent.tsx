@@ -4,10 +4,8 @@ import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { createLoggerFactory } from "@/shared/observability";
 import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
 
-import { getProjectShellSnapshot } from "@/domains/project/infrastructure/server/getProjectShellSnapshot";
+import { loadProjectShellData } from "@/domains/project/infrastructure/server/loadProjectShellData";
 import ProjectShell from "@/domains/project/presentation/layouts/projectShell/ProjectShell";
-import BoardShellAdapter from "@/modules/board/presentation/projectShell/boardShellAdapter";
-import RecipesShellAdapter from "@/modules/recipes/presentation/projectShell/recipesShellAdapter";
 
 const logger = createLoggerFactory().forScope("ProjectRouteLayoutContent");
 
@@ -20,7 +18,7 @@ const ProjectRouteLayoutContent = async ({ children, projectId }: Props) => {
   let shellSnapshot;
 
   try {
-    shellSnapshot = await getProjectShellSnapshot(projectId);
+    shellSnapshot = await loadProjectShellData(projectId);
   } catch (error) {
     if (
       error &&
@@ -41,16 +39,7 @@ const ProjectRouteLayoutContent = async ({ children, projectId }: Props) => {
   }
 
   return (
-    <ProjectShell
-      projectId={projectId}
-      shellSnapshot={shellSnapshot}
-      shellAdapter={
-        <>
-          <BoardShellAdapter projectId={projectId} />
-          <RecipesShellAdapter projectId={projectId} />
-        </>
-      }
-    >
+    <ProjectShell projectId={projectId} shellSnapshot={shellSnapshot}>
       {children}
     </ProjectShell>
   );
