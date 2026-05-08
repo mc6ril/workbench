@@ -60,12 +60,7 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
     error: projectError,
     refetch,
   } = useProject(projectId);
-  const {
-    role,
-    isLoading: isPermissionsLoading,
-    canEditProject,
-    canManageMembers,
-  } = useProjectPermissions();
+  const { role, canEditProject, canManageMembers } = useProjectPermissions();
   const isAdmin = role === ProjectRole.ADMIN;
 
   const updateProjectMutation = useUpdateProject();
@@ -247,7 +242,7 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
     }
   };
 
-  if (isProjectLoading || isPermissionsLoading) {
+  if (isProjectLoading) {
     return (
       <RouteFallbackPage
         tone="loading"

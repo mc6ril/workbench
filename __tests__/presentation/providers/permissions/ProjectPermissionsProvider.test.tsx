@@ -2,38 +2,38 @@ import type { PropsWithChildren } from "react";
 import { renderHook } from "@testing-library/react";
 
 import { ProjectRole } from "@/domains/project/core/domain/project.types";
-import { useProjectRole } from "@/domains/project/presentation/hooks/member/useProjectRole";
 import {
   ProjectPermissionsProvider,
   useProjectPermissions,
 } from "@/domains/project/presentation/providers/permissions";
-
-jest.mock("@/domains/project/presentation/hooks/member/useProjectRole", () => ({
-  useProjectRole: jest.fn(),
-}));
+import { ProjectShellSnapshotProvider } from "@/domains/project/presentation/providers/ProjectShellSnapshotProvider";
 
 const PROJECT_ID = "123e4567-e89b-12d3-a456-426614174000";
 
+const makeWrapper = (role: ProjectRole | null) => {
+  const Wrapper = ({ children }: PropsWithChildren) => (
+    <ProjectShellSnapshotProvider
+      snapshot={{
+        projectId: PROJECT_ID,
+        enabledModules: [],
+        isRecipesBoardVisible: false,
+        role,
+      }}
+    >
+      <ProjectPermissionsProvider>{children}</ProjectPermissionsProvider>
+    </ProjectShellSnapshotProvider>
+  );
+
+  Wrapper.displayName = "ProjectPermissionsTestWrapper";
+
+  return Wrapper;
+};
+
 describe("ProjectPermissionsProvider", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("exposes permission flags from current role", () => {
-    jest.mocked(useProjectRole).mockReturnValue({
-      data: ProjectRole.ADMIN,
-      isLoading: false,
-    } as ReturnType<typeof useProjectRole>);
-
-    const wrapper = ({ children }: PropsWithChildren) => {
-      return (
-        <ProjectPermissionsProvider projectId={PROJECT_ID}>
-          {children}
-        </ProjectPermissionsProvider>
-      );
-    };
-
-    const { result } = renderHook(() => useProjectPermissions(), { wrapper });
+    const { result } = renderHook(() => useProjectPermissions(), {
+      wrapper: makeWrapper(ProjectRole.ADMIN),
+    });
 
     expect(result.current.role).toBe(ProjectRole.ADMIN);
     expect(result.current.isAdmin).toBe(true);

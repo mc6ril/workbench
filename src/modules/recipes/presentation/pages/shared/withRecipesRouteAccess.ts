@@ -2,29 +2,26 @@ import { redirect } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 
-import { getProjectRouteViewState } from "@/domains/project/infrastructure/server/getProjectRouteViewState";
 import {
-  buildProjectViewHref,
-  canAccessProjectView,
-  getDefaultProjectViewKey,
-} from "@/domains/project/presentation/navigation/projectViews.config";
+  hasProjectModule,
+  ProjectModuleKey,
+} from "@/domains/project/core/domain/projectModule.types";
+import { getProjectShellSnapshot } from "@/domains/project/infrastructure/server/getProjectShellSnapshot";
+import { buildProjectViewHref } from "@/domains/project/presentation/navigation/projectViews.config";
 
 export const withRecipesRouteAccess = async <T>(
   projectId: string,
   render: () => Promise<T> | T
 ): Promise<T> => {
-  const { project, effectivePlan, isRecipesBoardVisible } =
-    await getProjectRouteViewState(projectId);
-  const viewState = {
-    enabledModules: project.enabledModules,
-    effectivePlan,
-    hiddenViews: isRecipesBoardVisible ? [] : [PROJECT_VIEWS.RECIPES],
-  };
+  const { enabledModules, isRecipesBoardVisible } =
+    await getProjectShellSnapshot(projectId);
 
-  if (!canAccessProjectView(PROJECT_VIEWS.RECIPES, viewState)) {
-    redirect(
-      buildProjectViewHref(projectId, getDefaultProjectViewKey(viewState))
-    );
+  const hasAccess =
+    isRecipesBoardVisible &&
+    hasProjectModule(enabledModules, ProjectModuleKey.RECIPES);
+
+  if (!hasAccess) {
+    redirect(buildProjectViewHref(projectId, PROJECT_VIEWS.BOARD));
   }
 
   return render();

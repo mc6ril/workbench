@@ -49,12 +49,8 @@ export const useTicketDetailController = ({
   const tColumns = useTranslations("pages.board.columns");
 
   const { data: identity } = useAuthIdentity();
-  const {
-    canComment,
-    canDeleteTicket,
-    canEditTicket,
-    isLoading: isPermissionsLoading,
-  } = useProjectPermissions();
+  const { canComment, canDeleteTicket, canEditTicket } =
+    useProjectPermissions();
   const {
     data: ticket,
     isLoading: isTicketLoading,
@@ -293,7 +289,7 @@ export const useTicketDetailController = ({
     ticket,
     error,
     sessionUserId: identity?.userId,
-    isLoading: isTicketLoading || isPermissionsLoading,
+    isLoading: isTicketLoading,
     canComment,
     canDeleteTicket,
     canEditTicket,

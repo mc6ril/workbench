@@ -17,43 +17,12 @@ jest.mock(
 );
 
 jest.mock(
-  "@/modules/board/presentation/projectShell/boardShellAdapter",
-  () => ({
-    __esModule: true,
-    default: ({ projectId }: { projectId: string }) => (
-      <div data-testid="board-shell-adapter">{projectId}</div>
-    ),
-  })
-);
-
-jest.mock(
-  "@/modules/recipes/presentation/projectShell/recipesShellAdapter",
-  () => ({
-    __esModule: true,
-    default: ({ projectId }: { projectId: string }) => (
-      <div data-testid="recipes-shell-adapter">{projectId}</div>
-    ),
-  })
-);
-
-jest.mock(
   "@/domains/project/presentation/layouts/projectShell/ProjectShell",
   () => ({
     __esModule: true,
-    default: jest.fn(
-      ({
-        children,
-        shellAdapter,
-      }: {
-        children: React.ReactNode;
-        shellAdapter?: React.ReactNode;
-      }) => (
-        <>
-          {shellAdapter}
-          {children}
-        </>
-      )
-    ),
+    default: jest.fn(({ children }: { children: React.ReactNode }) => (
+      <>{children}</>
+    )),
   })
 );
 
@@ -66,10 +35,11 @@ describe("ProjectLayout", () => {
       projectId: PROJECT_ID,
       enabledModules: [ProjectModuleKey.RECIPES],
       isRecipesBoardVisible: true,
+      role: null,
     });
   });
 
-  it("resolves shell snapshot and renders project shell without hydrating legacy layout queries", async () => {
+  it("resolves shell snapshot and passes it to ProjectShell", async () => {
     const result = await ProjectRouteLayoutContent({
       children: <div>Project content</div>,
       projectId: PROJECT_ID,
@@ -77,12 +47,6 @@ describe("ProjectLayout", () => {
 
     render(result);
 
-    expect(screen.getByTestId("board-shell-adapter")).toHaveTextContent(
-      PROJECT_ID
-    );
-    expect(screen.getByTestId("recipes-shell-adapter")).toHaveTextContent(
-      PROJECT_ID
-    );
     expect(screen.getByText("Project content")).toBeInTheDocument();
     expect(getProjectShellSnapshot).toHaveBeenCalledWith(PROJECT_ID);
     expect(jest.mocked(ProjectShell)).toHaveBeenCalledWith(
@@ -92,6 +56,7 @@ describe("ProjectLayout", () => {
           projectId: PROJECT_ID,
           enabledModules: [ProjectModuleKey.RECIPES],
           isRecipesBoardVisible: true,
+          role: null,
         },
       }),
       undefined
