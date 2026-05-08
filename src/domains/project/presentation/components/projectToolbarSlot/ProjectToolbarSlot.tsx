@@ -38,7 +38,7 @@ const ProjectToolbarSlot = ({ projectId }: Props) => {
   const viewConfig = getProjectViewConfig(viewKey);
   const pageTitle = tSidebar(`items.${viewConfig.sidebarLabelKey}`);
 
-  return <ProjectToolbar pageTitle={pageTitle} />;
+  return <ProjectToolbar pageTitle={pageTitle} showSearch={viewConfig.navbar.showSearch} />;
 };
 
 export default ProjectToolbarSlot;
