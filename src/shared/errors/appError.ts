@@ -19,9 +19,9 @@ export type AppErrorContext = {
  * Canonical application error shape. All domain and infrastructure errors
  * should use this type; user-visible text is resolved via i18n from {@link AppError.code}.
  */
-export type AppError = {
+export type AppError<Code extends AppErrorCode = AppErrorCode> = {
   readonly _tag: "AppError";
-  readonly code: AppErrorCode;
+  readonly code: Code;
   readonly debugMessage?: string;
   readonly context?: AppErrorContext;
 };
@@ -31,10 +31,10 @@ type CreateAppErrorOptions = {
   context?: AppErrorContext;
 };
 
-export const createAppError = (
-  code: AppErrorCode,
+export const createAppError = <Code extends AppErrorCode>(
+  code: Code,
   options: CreateAppErrorOptions = {}
-): AppError => {
+): AppError<Code> => {
   const { debugMessage, context } = options;
   return {
     _tag: "AppError",

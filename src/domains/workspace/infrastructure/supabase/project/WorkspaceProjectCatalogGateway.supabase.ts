@@ -1,6 +1,5 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import {
   mapProjectWithStatsRowToDomain,
@@ -14,10 +13,6 @@ import type {
   ReclaimableProject,
 } from "@/domains/workspace/core/domain/workspace.types";
 import type { WorkspaceProjectCatalogGateway } from "@/domains/workspace/core/ports/workspace-project-catalog.gateway";
-import type {
-  ProjectWithStatsRow,
-  ReclaimableProjectRow,
-} from "@/domains/workspace/infrastructure/supabase/types";
 
 const mapProjectWithRoleToStats = (
   project: ProjectWithRole
@@ -37,7 +32,7 @@ const mapProjectWithRoleToStats = (
  * @returns WorkspaceProjectCatalogGateway implementation
  */
 export const createWorkspaceProjectCatalogGateway = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): WorkspaceProjectCatalogGateway => {
   const projectGateway = createProjectGateway(client);
 
@@ -51,9 +46,7 @@ export const createWorkspaceProjectCatalogGateway = (
         const { data, error } = await client.rpc("get_projects_with_stats");
 
         if (!error && Array.isArray(data) && data.length > 0) {
-          return data.map((row) =>
-            mapProjectWithStatsRowToDomain(row as ProjectWithStatsRow)
-          );
+          return data.map(mapProjectWithStatsRowToDomain);
         }
 
         // In some sessions the stats RPC can return an empty result even when
@@ -97,9 +90,7 @@ export const createWorkspaceProjectCatalogGateway = (
           return [];
         }
 
-        return data.map((row: unknown) =>
-          mapReclaimableProjectRowToDomain(row as ReclaimableProjectRow)
-        );
+        return data.map(mapReclaimableProjectRowToDomain);
       } catch (error) {
         return handleRepositoryError(error, "Project");
       }

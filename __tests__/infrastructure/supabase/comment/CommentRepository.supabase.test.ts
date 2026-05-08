@@ -1,4 +1,4 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import { createQueryBuilderMock } from "../testUtils/queryBuilderMock";
 
@@ -13,7 +13,7 @@ describe("CommentRepository.supabase hasByProject", () => {
     ]);
     const client = {
       from: jest.fn(() => commentsQuery),
-    } as unknown as SupabaseClient;
+    } as unknown as AppSupabaseClient;
 
     const repository = createCommentRepository(client);
 
@@ -29,7 +29,7 @@ describe("CommentRepository.supabase hasByProject", () => {
     const commentsQuery = createQueryBuilderMock<Array<{ id: string }>>([]);
     const client = {
       from: jest.fn(() => commentsQuery),
-    } as unknown as SupabaseClient;
+    } as unknown as AppSupabaseClient;
 
     const repository = createCommentRepository(client);
 

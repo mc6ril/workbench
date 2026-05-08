@@ -1,4 +1,4 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import { mockCurrentAuthIdentity } from "../../../../__mocks__/core/domain/authIdentityMocks";
 import { createSupabaseClientMock } from "../../../../__mocks__/infrastructure/supabase/supabaseClientMock";
@@ -26,7 +26,7 @@ describe("currentAuthIdentity", () => {
     const client = createSupabaseClientMock({
       auth: {
         getClaims,
-      } as unknown as SupabaseClient["auth"],
+      } as unknown as AppSupabaseClient["auth"],
     });
 
     await expect(getCurrentAuthIdentity(client)).resolves.toBeNull();
@@ -43,7 +43,7 @@ describe("currentAuthIdentity", () => {
     const client = createSupabaseClientMock({
       auth: {
         getClaims,
-      } as unknown as SupabaseClient["auth"],
+      } as unknown as AppSupabaseClient["auth"],
     });
 
     await expect(getCurrentAuthIdentity(client)).resolves.toEqual(
@@ -60,7 +60,7 @@ describe("currentAuthIdentity", () => {
     const client = createSupabaseClientMock({
       auth: {
         getClaims,
-      } as unknown as SupabaseClient["auth"],
+      } as unknown as AppSupabaseClient["auth"],
     });
 
     await expect(requireCurrentAuthIdentity(client)).rejects.toMatchObject({
@@ -80,7 +80,7 @@ describe("currentAuthIdentity", () => {
     const client = createSupabaseClientMock({
       auth: {
         getClaims,
-      } as unknown as SupabaseClient["auth"],
+      } as unknown as AppSupabaseClient["auth"],
     });
 
     await expect(getCurrentAuthIdentity(client)).resolves.toEqual({

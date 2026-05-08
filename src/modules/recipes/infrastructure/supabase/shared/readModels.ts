@@ -1,6 +1,6 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
+import { createDatabaseError } from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import {
   mapRecipeIngredientRowToDomain,
@@ -11,16 +11,17 @@ import type {
   RecipeRow,
   RecipeSelectionRow,
   RecipeStepRow,
-  RecipeTagLinkRow,
   RecipeTagRow,
   ShoppingListItemRow,
-  ShoppingListRecipeSourceRow,
+  ShoppingListRecipeSourceJson,
 } from "./persistence.types";
 
 import type {
+  CatalogRecipeCoverStyle,
   CatalogRecipeDetail,
   CatalogRecipeSummary,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import { isCatalogRecipeCoverStyle } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
 import { buildRecipeServingsLabel } from "@/modules/recipes/core/domain/editor/recipeEditor.helpers";
 import {
@@ -34,6 +35,14 @@ type LoadedRecipeGraph = {
   ingredients: RecipeIngredientRow[];
   steps: RecipeStepRow[];
   tags: RecipeTag[];
+};
+
+const mapRecipeCoverStyle = (value: string): CatalogRecipeCoverStyle => {
+  if (isCatalogRecipeCoverStyle(value)) {
+    return value;
+  }
+
+  throw createDatabaseError(`Invalid recipe cover style: ${value}`);
 };
 
 export const mapRecipeTagRowToDomain = (row: RecipeTagRow): RecipeTag => {
@@ -109,7 +118,7 @@ export const mapRecipeRowToCatalogSummary = (
     }),
     coverImageUrl: recipe.cover_image_url,
     tags,
-    coverStyle: recipe.cover_style,
+    coverStyle: mapRecipeCoverStyle(recipe.cover_style),
     isInQuickList,
   };
 };
@@ -148,7 +157,7 @@ export const mapRecipeSelectionRowToDomain = (
 
 export const parseShoppingListRecipeSources = (
   value: unknown
-): ShoppingListRecipeSourceRow[] => {
+): ShoppingListRecipeSourceJson[] => {
   if (!Array.isArray(value)) {
     return [];
   }
@@ -179,7 +188,7 @@ export const mapShoppingListItemRowToDomain = (row: ShoppingListItemRow) => {
 };
 
 export const loadRecipeTagsByRecipeIds = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   recipeIds: string[]
 ): Promise<Map<string, RecipeTag[]>> => {
@@ -198,7 +207,7 @@ export const loadRecipeTagsByRecipeIds = async (
     return handleRepositoryError(tagLinkError, "RecipeTagLink", projectId);
   }
 
-  const tagLinks = (tagLinkData ?? []) as RecipeTagLinkRow[];
+  const tagLinks = tagLinkData ?? [];
   const tagIds = [...new Set(tagLinks.map((tagLink) => tagLink.tag_id))];
 
   if (tagIds.length === 0) {
@@ -216,10 +225,7 @@ export const loadRecipeTagsByRecipeIds = async (
   }
 
   const tagRowsById = new Map(
-    ((tagData ?? []) as RecipeTagRow[]).map((tag) => [
-      tag.id,
-      mapRecipeTagRowToDomain(tag),
-    ])
+    (tagData ?? []).map((tag) => [tag.id, mapRecipeTagRowToDomain(tag)])
   );
 
   const tagsByRecipeId = new Map<string, RecipeTag[]>();
@@ -244,7 +250,7 @@ export const loadRecipeTagsByRecipeIds = async (
 };
 
 export const loadRecipeGraphsByIds = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   requestedRecipeIds?: string[]
 ): Promise<Map<string, LoadedRecipeGraph>> => {
@@ -268,7 +274,7 @@ export const loadRecipeGraphsByIds = async (
     return handleRepositoryError(recipeError, "Recipe", projectId);
   }
 
-  const recipes = (recipeData ?? []) as RecipeRow[];
+  const recipes = recipeData ?? [];
 
   if (recipes.length === 0) {
     return new Map();
@@ -317,7 +323,7 @@ export const loadRecipeGraphsByIds = async (
     return handleRepositoryError(tagLinkError, "RecipeTagLink", projectId);
   }
 
-  const tagLinks = (tagLinkData ?? []) as RecipeTagLinkRow[];
+  const tagLinks = tagLinkData ?? [];
   const tagIds = [...new Set(tagLinks.map((tagLink) => tagLink.tag_id))];
 
   let tags: RecipeTagRow[] = [];
@@ -333,7 +339,7 @@ export const loadRecipeGraphsByIds = async (
       return handleRepositoryError(tagError, "RecipeTag", projectId);
     }
 
-    tags = (tagData ?? []) as RecipeTagRow[];
+    tags = tagData ?? [];
   }
 
   const ingredientsByRecipeId = new Map<string, RecipeIngredientRow[]>();
@@ -343,14 +349,14 @@ export const loadRecipeGraphsByIds = async (
     tags.map((tag) => [tag.id, mapRecipeTagRowToDomain(tag)])
   );
 
-  for (const ingredient of (ingredientData ?? []) as RecipeIngredientRow[]) {
+  for (const ingredient of ingredientData ?? []) {
     const currentRecipeIngredients =
       ingredientsByRecipeId.get(ingredient.recipe_id) ?? [];
     currentRecipeIngredients.push(ingredient);
     ingredientsByRecipeId.set(ingredient.recipe_id, currentRecipeIngredients);
   }
 
-  for (const step of (stepData ?? []) as RecipeStepRow[]) {
+  for (const step of stepData ?? []) {
     const currentRecipeSteps = stepsByRecipeId.get(step.recipe_id) ?? [];
     currentRecipeSteps.push(step);
     stepsByRecipeId.set(step.recipe_id, currentRecipeSteps);

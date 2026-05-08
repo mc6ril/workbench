@@ -1,4 +1,4 @@
-import { toDate } from "@/shared/utils/guards";
+import { isRecord, toDate } from "@/shared/utils/guards";
 
 import {
   DEFAULT_USER_PREFERENCES,
@@ -13,30 +13,32 @@ import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
  * Parses the jsonb preferences column into a validated UserPreferences object.
  * Falls back to defaults for missing or invalid fields.
  */
-const parsePreferences = (raw: Record<string, unknown>): UserPreferences => {
-  const result = UserPreferencesSchema.safeParse(raw);
+const parsePreferences = (raw: unknown): UserPreferences => {
+  const preferences = isRecord(raw) ? raw : {};
+  const result = UserPreferencesSchema.safeParse(preferences);
   if (result.success) {
     return result.data;
   }
 
   return {
     theme:
-      typeof raw["theme"] === "string" &&
-      ["light", "dark", "system"].includes(raw["theme"])
-        ? (raw["theme"] as UserPreferences["theme"])
+      typeof preferences["theme"] === "string" &&
+      ["light", "dark", "system"].includes(preferences["theme"])
+        ? (preferences["theme"] as UserPreferences["theme"])
         : DEFAULT_USER_PREFERENCES.theme,
     emailNotifications:
-      typeof raw["emailNotifications"] === "boolean"
-        ? raw["emailNotifications"]
+      typeof preferences["emailNotifications"] === "boolean"
+        ? preferences["emailNotifications"]
         : DEFAULT_USER_PREFERENCES.emailNotifications,
     language:
-      typeof raw["language"] === "string" && raw["language"].length > 0
-        ? raw["language"]
+      typeof preferences["language"] === "string" &&
+      preferences["language"].length > 0
+        ? preferences["language"]
         : DEFAULT_USER_PREFERENCES.language,
     gettingStartedStatus:
-      typeof raw["gettingStartedStatus"] === "string" &&
-      isGettingStartedStatus(raw["gettingStartedStatus"])
-        ? raw["gettingStartedStatus"]
+      typeof preferences["gettingStartedStatus"] === "string" &&
+      isGettingStartedStatus(preferences["gettingStartedStatus"])
+        ? preferences["gettingStartedStatus"]
         : DEFAULT_USER_PREFERENCES.gettingStartedStatus,
   };
 };

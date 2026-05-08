@@ -1,3 +1,5 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 export type Json =
   | string
   | number
@@ -1206,3 +1208,29 @@ export const Constants = {
     Enums: {},
   },
 } as const;
+
+export type PublicSchema = DefaultSchema;
+export type PublicTableName = keyof PublicSchema["Tables"];
+export type PublicFunctionName = keyof PublicSchema["Functions"];
+
+export type AppSupabaseClient = SupabaseClient<Database>;
+export type AppSupabaseAuthClient = Pick<AppSupabaseClient, "auth">;
+
+export type TableRow<TableName extends PublicTableName> = Tables<TableName>;
+export type TableInsert<TableName extends PublicTableName> =
+  TablesInsert<TableName>;
+export type TableUpdate<TableName extends PublicTableName> =
+  TablesUpdate<TableName>;
+
+export type RpcArgs<FunctionName extends PublicFunctionName> =
+  PublicSchema["Functions"][FunctionName] extends { Args: infer Args }
+    ? Args
+    : never;
+
+export type RpcReturn<FunctionName extends PublicFunctionName> =
+  PublicSchema["Functions"][FunctionName] extends { Returns: infer Returns }
+    ? Returns
+    : never;
+
+export type RpcRow<FunctionName extends PublicFunctionName> =
+  RpcReturn<FunctionName> extends Array<infer Row> ? Row : never;

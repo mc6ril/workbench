@@ -1,7 +1,6 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import { APP_LIMITS } from "@/shared/constants/app";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import { prepareRecipeCoverUploadFile } from "./RecipeCoverUploadTransform.browser";
 
@@ -21,7 +20,7 @@ const createRecipeCoverObjectKey = (projectId: string) => {
 };
 
 export const createEditorCoverStorage = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): EditorCoverStorage => ({
   async uploadRecipeCover({
     projectId,

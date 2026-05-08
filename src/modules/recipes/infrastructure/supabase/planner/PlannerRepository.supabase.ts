@@ -1,7 +1,6 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import type {
   DoneQuickListSelection,
@@ -32,7 +31,7 @@ const mapSelectionToActiveQuickListRecipe = (
 };
 
 const listSelectionRows = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string
 ): Promise<RecipeSelectionRow[]> => {
   const { data, error } = await client
@@ -45,11 +44,11 @@ const listSelectionRows = async (
     return handleRepositoryError(error, "RecipeSelection", projectId);
   }
 
-  return (data ?? []) as RecipeSelectionRow[];
+  return data ?? [];
 };
 
 const loadRecipeById = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   recipeId: string
 ): Promise<RecipeRow> => {
@@ -72,11 +71,11 @@ const loadRecipeById = async (
     );
   }
 
-  return data as RecipeRow;
+  return data;
 };
 
 const loadRecipesByIds = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   recipeIds: string[]
 ): Promise<Map<string, RecipeRow>> => {
@@ -94,13 +93,11 @@ const loadRecipesByIds = async (
     return handleRepositoryError(error, "Recipe", projectId);
   }
 
-  return new Map(
-    ((data ?? []) as RecipeRow[]).map((recipe) => [recipe.id, recipe])
-  );
+  return new Map((data ?? []).map((recipe) => [recipe.id, recipe]));
 };
 
 const loadSelectionByRecipeId = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   recipeId: string
 ): Promise<RecipeSelectionRow | null> => {
@@ -115,11 +112,11 @@ const loadSelectionByRecipeId = async (
     return handleRepositoryError(error, "RecipeSelection", recipeId);
   }
 
-  return (data as RecipeSelectionRow | null) ?? null;
+  return data ?? null;
 };
 
 const loadSelectionById = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string,
   selectionId: string
 ): Promise<RecipeSelectionRow> => {
@@ -138,11 +135,11 @@ const loadSelectionById = async (
     throw createNotFoundError("RecipeSelection", selectionId);
   }
 
-  return data as RecipeSelectionRow;
+  return data;
 };
 
 const loadNextSelectionPosition = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   projectId: string
 ): Promise<number> => {
   const { data, error } = await client
@@ -156,15 +153,13 @@ const loadNextSelectionPosition = async (
     return handleRepositoryError(error, "RecipeSelection", projectId);
   }
 
-  const highestPosition = (
-    data?.[0] as Pick<RecipeSelectionRow, "position"> | undefined
-  )?.position;
+  const highestPosition = data?.[0]?.position;
 
   return typeof highestPosition === "number" ? highestPosition + 1 : 0;
 };
 
 const insertSelection = async (
-  client: SupabaseClient,
+  client: AppSupabaseClient,
   input: SelectRecipeInput,
   recipe: RecipeRow
 ): Promise<RecipeSelectionRow> => {
@@ -186,11 +181,11 @@ const insertSelection = async (
     return handleRepositoryError(error, "RecipeSelection", input.recipeId);
   }
 
-  return data as RecipeSelectionRow;
+  return data;
 };
 
 export const createPlannerRepository = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): PlannerRepository => ({
   async listActiveSelections(projectId) {
     const selections = await listSelectionRows(client, projectId);

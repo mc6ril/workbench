@@ -109,13 +109,15 @@ export const useTicketDetailController = ({
       return;
     }
 
+    const nextPriority = effectivePriority === "" ? null : effectivePriority;
+
     await updateMainTicketMutation.mutateAsync({
       id: ticket.id,
       input: {
         title: effectiveTitle,
         description: effectiveDescription || null,
         columnId: effectiveColumnId || undefined,
-        priority: (effectivePriority as TicketPriority) || null,
+        priority: nextPriority,
         dueDate: effectiveDueDate,
         position: ticket.position,
       },

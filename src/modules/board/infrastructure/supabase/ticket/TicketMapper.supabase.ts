@@ -1,13 +1,28 @@
+import { createDatabaseError } from "@/shared/errors/repositoryError";
 import { toDate } from "@/shared/utils/guards";
 
 import type {
   Ticket,
+  TicketPriority,
   TicketSearchItem,
 } from "@/modules/board/core/domain/ticket.types";
+import { isTicketPriority } from "@/modules/board/core/domain/ticket.types";
 import type {
   TicketRow,
   TicketSearchRow,
 } from "@/modules/board/infrastructure/supabase/ticket/types";
+
+const mapTicketPriority = (value: string | null): TicketPriority | null => {
+  if (value === null) {
+    return null;
+  }
+
+  if (isTicketPriority(value)) {
+    return value;
+  }
+
+  throw createDatabaseError(`Invalid ticket priority: ${value}`);
+};
 
 /**
  * Maps a Supabase row to a domain Ticket entity.
@@ -27,7 +42,7 @@ export const mapTicketRowToDomain = (row: TicketRow): Ticket => {
     columnId: row.column_id,
     position: row.position,
     codeNumber: row.code_number,
-    priority: row.priority,
+    priority: mapTicketPriority(row.priority),
     dueDate: row.due_date,
     storyPoints: row.story_points,
     createdBy: row.created_by,

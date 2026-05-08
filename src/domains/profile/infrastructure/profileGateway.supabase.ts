@@ -1,9 +1,8 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import { APP_LIMITS } from "@/shared/constants/app";
 import { createAppError } from "@/shared/errors/appError";
 import { INFRA_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandlers";
+import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import { prepareAvatarUploadFile } from "./avatarUploadTransform.browser";
 import { mapUserProfileRowToDomain } from "./UserProfileMapper.supabase";
@@ -13,7 +12,6 @@ import type {
   UserProfile,
 } from "@/domains/profile/core/domain/profile.types";
 import type { ProfileGateway } from "@/domains/profile/core/ports/profile.gateway";
-import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
 
 /**
  * Create a Supabase-backed profile gateway using the provided client.
@@ -22,7 +20,7 @@ import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
  * @returns ProfileGateway implementation
  */
 export const createProfileGateway = (
-  client: SupabaseClient
+  client: AppSupabaseClient
 ): ProfileGateway => ({
   async getById(userId: string): Promise<UserProfile | null> {
     const { data, error } = await client
@@ -39,7 +37,7 @@ export const createProfileGateway = (
       return null;
     }
 
-    return mapUserProfileRowToDomain(data as UserProfileRow);
+    return mapUserProfileRowToDomain(data);
   },
 
   async updateProfile(
@@ -47,7 +45,7 @@ export const createProfileGateway = (
     input: { displayName?: string }
   ): Promise<void> {
     const { error } = await client.rpc("update_user_profile", {
-      new_display_name: input.displayName ?? null,
+      new_display_name: input.displayName,
     });
 
     if (error) {
@@ -166,7 +164,9 @@ export const createProfileGateway = (
     }
 
     const { error: updateError } = await client.rpc("update_avatar_url", {
-      new_avatar_url: null,
+      // The SQL arg is nullable text; Supabase generated RPC types do not
+      // currently encode nullability for function arguments.
+      new_avatar_url: null as unknown as string,
     });
 
     if (updateError) {
