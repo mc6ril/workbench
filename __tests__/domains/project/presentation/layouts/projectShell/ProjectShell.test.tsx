@@ -39,7 +39,6 @@ jest.mock("@/shared/i18n", () => ({
           "items.board": "Board",
         },
         "navigation.navbar": {
-          reviewGuide: "Review guide",
           addTicket: "Add task",
           addTicketAriaLabel: "Create a new task",
         },
@@ -50,9 +49,6 @@ jest.mock("@/shared/i18n", () => ({
         "pages.board.filters": {
           assigneeLabel: "Assignee",
           assigneeUnassignedLabel: "Unassigned",
-        },
-        "pages.board.onboarding": {
-          reviewCtaAriaLabel: "Restart onboarding guide",
         },
       };
 
@@ -157,11 +153,6 @@ describe("ProjectShell", () => {
         name: "Create a new task",
       })
     ).toHaveAttribute("aria-disabled", "true");
-    expect(
-      screen.getByRole("button", {
-        name: "Restart onboarding guide",
-      })
-    ).toBeInTheDocument();
     expect(
       screen.getByRole("group", {
         name: "Assignee",

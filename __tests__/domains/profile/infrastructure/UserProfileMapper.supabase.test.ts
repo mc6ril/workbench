@@ -14,14 +14,13 @@ describe("UserProfileMapper.supabase", () => {
     updated_at: "2026-01-02T00:00:00.000Z",
   };
 
-  it("maps a valid getting-started status from stored preferences", () => {
+  it("maps valid preferences from stored data", () => {
     const result = mapUserProfileRowToDomain({
       ...baseRow,
       preferences: {
         theme: "dark",
         emailNotifications: false,
         language: "fr",
-        gettingStartedStatus: "completed",
       },
     });
 
@@ -29,26 +28,23 @@ describe("UserProfileMapper.supabase", () => {
       theme: "dark",
       emailNotifications: false,
       language: "fr",
-      gettingStartedStatus: "completed",
     });
   });
 
-  it("falls back to the default getting-started status when the stored value is invalid", () => {
+  it("falls back to defaults when stored preferences are invalid", () => {
     const result = mapUserProfileRowToDomain({
       ...baseRow,
       preferences: {
-        theme: "dark",
+        theme: "unknown-theme",
         emailNotifications: false,
         language: "fr",
-        gettingStartedStatus: "archived",
       },
     });
 
     expect(result.preferences).toEqual({
-      theme: "dark",
+      theme: DEFAULT_USER_PREFERENCES.theme,
       emailNotifications: false,
       language: "fr",
-      gettingStartedStatus: DEFAULT_USER_PREFERENCES.gettingStartedStatus,
     });
   });
 });

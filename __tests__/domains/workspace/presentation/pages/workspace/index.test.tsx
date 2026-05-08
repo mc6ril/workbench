@@ -1,7 +1,6 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
-import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
 import { ProjectRole } from "@/domains/project/core/domain/project.types";
 import { useAddUserToProject } from "@/domains/project/presentation/hooks/useAddUserToProject";
 import { useCreateProject } from "@/domains/project/presentation/hooks/useCreateProject";
@@ -16,13 +15,6 @@ jest.mock("next/navigation", () => ({
     push: jest.fn(),
   }),
 }));
-
-jest.mock(
-  "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus",
-  () => ({
-    useTicketGettingStartedStatus: jest.fn(),
-  })
-);
 
 jest.mock("@/domains/project/presentation/hooks/useAddUserToProject", () => ({
   useAddUserToProject: jest.fn(),
@@ -63,9 +55,7 @@ jest.mock("@/domains/billing/presentation/hooks/useBillingVisibility", () => ({
 
 const asMockedReturn = <T,>(value: unknown): T => value as T;
 
-describe("WorkspacePage onboarding", () => {
-  const markSkipped = jest.fn();
-
+describe("WorkspacePage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -125,79 +115,7 @@ describe("WorkspacePage onboarding", () => {
       );
   });
 
-  it("renders the workspace onboarding block when there is no project and getting started is pending", () => {
-    jest.mocked(useTicketGettingStartedStatus).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useTicketGettingStartedStatus>>({
-        status: "pending",
-        canAutoOpen: true,
-        isLoading: false,
-        isPending: false,
-        error: null,
-        setStatus: jest.fn(),
-        setStatusAsync: jest.fn(),
-        markSkipped,
-        markCompleted: jest.fn(),
-      })
-    );
-
-    render(<WorkspacePageContainer />);
-
-    expect(screen.getByText("Guide de demarrage")).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", {
-        name: "Ouvrir le formulaire pour creer mon premier espace",
-      })
-    ).toBeInTheDocument();
-
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Ne plus ouvrir automatiquement le guide de demarrage",
-      })
-    );
-
-    expect(markSkipped).toHaveBeenCalledTimes(1);
-  });
-
-  it("does not render the onboarding block when automatic opening is disabled", () => {
-    jest.mocked(useTicketGettingStartedStatus).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useTicketGettingStartedStatus>>({
-        status: "skipped",
-        canAutoOpen: false,
-        isLoading: false,
-        isPending: false,
-        error: null,
-        setStatus: jest.fn(),
-        setStatusAsync: jest.fn(),
-        markSkipped,
-        markCompleted: jest.fn(),
-      })
-    );
-
-    render(<WorkspacePageContainer />);
-
-    expect(screen.queryByText("Guide de demarrage")).not.toBeInTheDocument();
-    expect(
-      screen.getByRole("button", {
-        name: "Créer mon premier espace de travail",
-      })
-    ).toBeInTheDocument();
-  });
-
-  it("does not render a project actions menu on workspace cards anymore", () => {
-    jest.mocked(useTicketGettingStartedStatus).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useTicketGettingStartedStatus>>({
-        status: "completed",
-        canAutoOpen: false,
-        isLoading: false,
-        isPending: false,
-        error: null,
-        setStatus: jest.fn(),
-        setStatusAsync: jest.fn(),
-        markSkipped,
-        markCompleted: jest.fn(),
-      })
-    );
-
+  it("does not render a project actions menu on workspace cards", () => {
     jest.mocked(useProjectsWithStats).mockReturnValue(
       asMockedReturn<ReturnType<typeof useProjectsWithStats>>({
         data: [
@@ -223,7 +141,6 @@ describe("WorkspacePage onboarding", () => {
 
     render(<WorkspacePageContainer />);
 
-    expect(useTicketGettingStartedStatus).toHaveBeenCalledWith(false);
     expect(screen.getByText("Maison")).toBeInTheDocument();
     expect(
       screen.queryByRole("button", {

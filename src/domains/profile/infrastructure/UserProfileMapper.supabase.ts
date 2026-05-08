@@ -2,17 +2,12 @@ import { isRecord, toDate } from "@/shared/utils/guards";
 
 import {
   DEFAULT_USER_PREFERENCES,
-  isGettingStartedStatus,
   type UserPreferences,
   UserPreferencesSchema,
   type UserProfile,
 } from "@/domains/profile/core/domain/profile.types";
 import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
 
-/**
- * Parses the jsonb preferences column into a validated UserPreferences object.
- * Falls back to defaults for missing or invalid fields.
- */
 const parsePreferences = (raw: unknown): UserPreferences => {
   const preferences = isRecord(raw) ? raw : {};
   const result = UserPreferencesSchema.safeParse(preferences);
@@ -35,18 +30,9 @@ const parsePreferences = (raw: unknown): UserPreferences => {
       preferences["language"].length > 0
         ? preferences["language"]
         : DEFAULT_USER_PREFERENCES.language,
-    gettingStartedStatus:
-      typeof preferences["gettingStartedStatus"] === "string" &&
-      isGettingStartedStatus(preferences["gettingStartedStatus"])
-        ? preferences["gettingStartedStatus"]
-        : DEFAULT_USER_PREFERENCES.gettingStartedStatus,
   };
 };
 
-/**
- * Maps a Supabase row to a domain UserProfile entity.
- * Translates snake_case database fields to camelCase domain fields.
- */
 export const mapUserProfileRowToDomain = (row: UserProfileRow): UserProfile => {
   return {
     id: row.id,
@@ -62,9 +48,6 @@ export const mapUserProfileRowToDomain = (row: UserProfileRow): UserProfile => {
   };
 };
 
-/**
- * Maps multiple Supabase rows to domain UserProfile entities.
- */
 export const mapUserProfileRowsToDomain = (
   rows: UserProfileRow[]
 ): UserProfile[] => {

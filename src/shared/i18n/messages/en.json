@@ -92,8 +92,6 @@
     "navbar": {
       "filter": "Filter",
       "filterAriaLabel": "Open filters",
-      "reviewGuide": "Review guide",
-      "reviewGuideAriaLabel": "Restart the onboarding guide",
       "addTicket": "Add task",
       "addTicketAriaLabel": "Create a new task"
     }
@@ -431,12 +429,6 @@
       "pendingInvitationsAcceptAriaLabel": "Accept invitation for {project}",
       "pendingInvitationsDecline": "Decline",
       "pendingInvitationsDeclineAriaLabel": "Decline invitation for {project}",
-      "welcomeGuideTitle": "Getting started guide",
-      "welcomeGuideDescription": "Start by creating your first space. You will then be able to invite someone and discover the board.",
-      "welcomeGuidePrimaryCta": "Create my first space",
-      "welcomeGuidePrimaryCtaAriaLabel": "Open the form to create my first space",
-      "welcomeGuideSkipCta": "Skip for now",
-      "welcomeGuideSkipCtaAriaLabel": "Stop opening the getting started guide automatically",
       "actions": {
         "inviteRoleViewerDescription": "Can browse the project without changing its content.",
         "inviteRoleMemberDescription": "Can collaborate on tickets and everyday project work.",
@@ -551,47 +543,6 @@
         "errorGeneric": "An error occurred while creating the task",
         "readOnlyHint": "Viewers cannot create tasks.",
         "noStatusHint": "Manage and organize your tasks"
-      },
-      "onboarding": {
-        "eyebrow": "Onboarding",
-        "title": "Get oriented on the board",
-        "description": "Follow the three key actions to understand the board and build your first day-to-day workflow.",
-        "reviewTitle": "Review the guide",
-        "reviewDescription": "Restart the full onboarding whenever you want to revisit ticket creation, assignment, and comments.",
-        "reviewCta": "Review the guide",
-        "reviewCtaAriaLabel": "Review the board onboarding guide",
-        "hideCta": "Hide guide",
-        "hideCtaAriaLabel": "Hide the board onboarding guide",
-        "skipCta": "Skip onboarding",
-        "skipCtaAriaLabel": "Stop opening onboarding automatically",
-        "genericError": "Unable to update your onboarding preferences.",
-        "status": {
-          "complete": "Done",
-          "current": "In progress",
-          "pending": "Coming up"
-        },
-        "steps": {
-          "createTicket": {
-            "title": "Create a ticket",
-            "description": "Create your first task to see how the board structures the work.",
-            "action": "Create a ticket",
-            "actionAriaLabel": "Open ticket creation"
-          },
-          "assignTicket": {
-            "title": "Open and assign a ticket",
-            "description": "Open a ticket and assign it so ownership is clear from the start.",
-            "blockedDescription": "Create a first ticket first. Then you will be able to open it and assign it.",
-            "action": "Open the ticket",
-            "actionAriaLabel": "Open a ticket to assign it"
-          },
-          "commentTicket": {
-            "title": "Comment on a ticket",
-            "description": "Add a comment inside the ticket to keep context and decisions in one place.",
-            "blockedDescription": "Create a first ticket first. Then you will be able to open it and add a comment.",
-            "action": "Open comments",
-            "actionAriaLabel": "Open a ticket to add a comment"
-          }
-        }
       }
     },
     "settings": {

@@ -92,8 +92,6 @@
     "navbar": {
       "filter": "Filtrer",
       "filterAriaLabel": "Ouvrir les filtres",
-      "reviewGuide": "Revoir le guide",
-      "reviewGuideAriaLabel": "Relancer le guide d'onboarding",
       "addTicket": "Ajouter une tâche",
       "addTicketAriaLabel": "Créer une nouvelle tâche"
     }
@@ -431,12 +429,6 @@
       "pendingInvitationsAcceptAriaLabel": "Accepter l'invitation pour {project}",
       "pendingInvitationsDecline": "Refuser",
       "pendingInvitationsDeclineAriaLabel": "Refuser l'invitation pour {project}",
-      "welcomeGuideTitle": "Guide de demarrage",
-      "welcomeGuideDescription": "Commencez par creer votre premier espace. Vous pourrez ensuite inviter une personne et decouvrir le board.",
-      "welcomeGuidePrimaryCta": "Creer mon premier espace",
-      "welcomeGuidePrimaryCtaAriaLabel": "Ouvrir le formulaire pour creer mon premier espace",
-      "welcomeGuideSkipCta": "Passer pour l'instant",
-      "welcomeGuideSkipCtaAriaLabel": "Ne plus ouvrir automatiquement le guide de demarrage",
       "actions": {
         "inviteRoleViewerDescription": "Peut consulter le projet sans modifier son contenu.",
         "inviteRoleMemberDescription": "Peut collaborer sur les tickets et le travail courant.",
@@ -551,47 +543,6 @@
         "errorGeneric": "Une erreur s'est produite lors de la création de la tâche",
         "readOnlyHint": "Les lecteurs ne peuvent pas créer de tâches.",
         "noStatusHint": "Gérez et organisez vos tâches"
-      },
-      "onboarding": {
-        "eyebrow": "Onboarding",
-        "title": "Prenez vos reperes sur le board",
-        "description": "Retrouvez les trois actions cle pour apprendre le fonctionnement du board et prendre vos premiers reflexes.",
-        "reviewTitle": "Revoir le guide",
-        "reviewDescription": "Relancez a tout moment le parcours complet pour revoir la creation d'un ticket, l'assignation et les commentaires.",
-        "reviewCta": "Revoir le guide",
-        "reviewCtaAriaLabel": "Revoir le guide d'onboarding du board",
-        "hideCta": "Masquer le guide",
-        "hideCtaAriaLabel": "Masquer le guide d'onboarding du board",
-        "skipCta": "Passer l'onboarding",
-        "skipCtaAriaLabel": "Ne plus ouvrir automatiquement l'onboarding",
-        "genericError": "Impossible de mettre a jour vos preferences d'onboarding.",
-        "status": {
-          "complete": "Fait",
-          "current": "En cours",
-          "pending": "A venir"
-        },
-        "steps": {
-          "createTicket": {
-            "title": "Creer un ticket",
-            "description": "Creez votre premiere tache pour voir comment le board organise le travail.",
-            "action": "Creer un ticket",
-            "actionAriaLabel": "Ouvrir la creation d'un ticket"
-          },
-          "assignTicket": {
-            "title": "Ouvrir et assigner un ticket",
-            "description": "Ouvrez un ticket puis assignez-le a une personne pour clarifier qui prend le sujet en charge.",
-            "blockedDescription": "Créez d'abord un premier ticket. Vous pourrez ensuite l'ouvrir et l'assigner a une personne.",
-            "action": "Ouvrir le ticket",
-            "actionAriaLabel": "Ouvrir un ticket pour l'assigner"
-          },
-          "commentTicket": {
-            "title": "Commenter un ticket",
-            "description": "Ajoutez un commentaire dans le ticket pour centraliser le contexte et les decisions.",
-            "blockedDescription": "Créez d'abord un premier ticket. Vous pourrez ensuite l'ouvrir et y ajouter un commentaire.",
-            "action": "Ouvrir les commentaires",
-            "actionAriaLabel": "Ouvrir un ticket pour ajouter un commentaire"
-          }
-        }
       }
     },
     "settings": {

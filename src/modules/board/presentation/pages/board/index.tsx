@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 
@@ -12,10 +12,8 @@ import { useTranslations } from "@/shared/i18n";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { buildTicketDetailRoute } from "@/shared/utils/routes";
 
-import { getBoardOnboardingProgress } from "./boardOnboardingProgress";
 import styles from "./styles.module.scss";
 
-import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import type { BoardConfiguration } from "@/modules/board/core/domain/board.types";
 import type {
@@ -23,11 +21,6 @@ import type {
   TicketFilters,
 } from "@/modules/board/core/domain/ticket.types";
 import BoardView from "@/modules/board/presentation/components/board/boardView/BoardView";
-import BoardOnboardingPanel from "@/modules/board/presentation/components/boardOnboardingPanel/BoardOnboardingPanel";
-import {
-  ONBOARDING_STEP_STATUS,
-  type OnboardingStep,
-} from "@/modules/board/presentation/components/boardOnboardingPanel/onboarding.types";
 import CreateTicketForm, {
   type CreateTicketFormValues,
 } from "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm";
@@ -36,7 +29,6 @@ import { useBoardColumns } from "@/modules/board/presentation/hooks/board/useBoa
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { useBoardDnD } from "@/modules/board/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/modules/board/presentation/hooks/board/useBoardTickets";
-import { useHasProjectComments } from "@/modules/board/presentation/hooks/comment";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCreateTicket";
 import { usePrefetchTicketDetail } from "@/modules/board/presentation/hooks/ticket/usePrefetchTicketDetail";
@@ -70,24 +62,13 @@ const BoardLayout = ({
     return getAccessibilityId(`board-dnd-context-${projectId}`);
   }, [projectId]);
   const tBoard = useTranslations("pages.board");
-  const tOnboarding = useTranslations("pages.board.onboarding");
   const legacyTicketId = searchParams.get("ticket");
   const tCreateForm = useTranslations("pages.board.createTicketForm");
   const tColumns = useTranslations("pages.board.columns");
   const isCreateTicketModalOpen = searchParams.get("createTicket") === "1";
-  const isOnboardingReviewRequested = searchParams.get("onboarding") === "1";
-  const { canComment, canEditTicket, canMoveTicket, canCreateTicket } =
-    useProjectPermissions();
-  const {
-    status: gettingStartedStatus,
-    isLoading: isGettingStartedLoading,
-    isPending: isGettingStartedPending,
-    error: gettingStartedError,
-    setStatusAsync,
-  } = useTicketGettingStartedStatus();
+  const { canMoveTicket, canCreateTicket } = useProjectPermissions();
   const createTicketMutation = useCreateTicket();
   const prefetchTicketDetail = usePrefetchTicketDetail();
-  const completionTriggeredRef = useRef(false);
 
   const replaceSearchParams = useCallback(
     (updates: Record<string, string | null>) => {
@@ -97,10 +78,8 @@ const BoardLayout = ({
           params.delete(key);
           continue;
         }
-
         params.set(key, value);
       }
-
       const query = params.toString();
       router.replace(query ? `${pathname}?${query}` : pathname, {
         scroll: false,
@@ -159,42 +138,22 @@ const BoardLayout = ({
       filters.unassignedOnly
     );
   }, [filters]);
-  const shouldLoadProjectWideTicketsForProgress =
-    hasActiveFilters || effectiveSearch.trim() !== "";
-  const { data: projectWideOnboardingTickets = [] } = useTickets(
-    projectId,
-    undefined,
-    "",
-    {
-      enabled: shouldLoadProjectWideTicketsForProgress,
-      limit: 1,
-    }
-  );
-  const shouldLoadProjectWideTicketsForCreate =
-    isCreateTicketModalOpen && shouldLoadProjectWideTicketsForProgress;
+  const shouldLoadProjectWideTickets =
+    isCreateTicketModalOpen &&
+    (hasActiveFilters || effectiveSearch.trim() !== "");
   const { data: projectWideTickets = [] } = useTickets(
     projectId,
     undefined,
     "",
     {
-      enabled: shouldLoadProjectWideTicketsForCreate,
+      enabled: shouldLoadProjectWideTickets,
     }
   );
-  const ticketsForCreatePosition = shouldLoadProjectWideTicketsForCreate
+  const ticketsForCreatePosition = shouldLoadProjectWideTickets
     ? projectWideTickets
     : tickets;
-  const onboardingTargetTicket =
-    projectWideOnboardingTickets[0] ?? tickets[0] ?? null;
-  const shouldLoadBoardOnboardingSignals =
-    gettingStartedStatus === "pending" || isOnboardingReviewRequested;
   const { data: ticketAssigneesByProjectId = {} } =
     useTicketAssigneesByProjectId(projectId);
-  const { data: hasProjectComments = false } = useHasProjectComments(
-    projectId,
-    {
-      enabled: shouldLoadBoardOnboardingSignals,
-    }
-  );
 
   const { columns, columnById } = useBoardColumns(boardConfiguration);
   const { filteredTickets, ticketViewModelById } = useBoardTickets({
@@ -233,35 +192,7 @@ const BoardLayout = ({
   }, [boardColumnTickets, handleOpenTicketDetail, prefetchTicketDetail]);
 
   const closeCreateTicketModal = useCallback(() => {
-    replaceSearchParams({
-      createTicket: null,
-    });
-  }, [replaceSearchParams]);
-
-  const openCreateTicketModal = useCallback(() => {
-    replaceSearchParams({
-      createTicket: "1",
-    });
-  }, [replaceSearchParams]);
-
-  const openOnboardingTicket = useCallback(() => {
-    if (!onboardingTargetTicket) {
-      return;
-    }
-
-    handleOpenTicketDetail(onboardingTargetTicket.id);
-  }, [handleOpenTicketDetail, onboardingTargetTicket]);
-
-  const openOnboardingReview = useCallback(() => {
-    replaceSearchParams({
-      onboarding: "1",
-    });
-  }, [replaceSearchParams]);
-
-  const closeOnboardingReview = useCallback(() => {
-    replaceSearchParams({
-      onboarding: null,
-    });
+    replaceSearchParams({ createTicket: null });
   }, [replaceSearchParams]);
 
   const statusOptions = useMemo(() => {
@@ -276,159 +207,21 @@ const BoardLayout = ({
     createTicketMutation.error instanceof Error
       ? createTicketMutation.error.message
       : undefined;
-  const hasOnboardingTargetTicket = onboardingTargetTicket !== null;
-  const assignedTicketCount = useMemo(() => {
-    return Object.values(ticketAssigneesByProjectId).filter(
-      (assignees) => assignees.length > 0
-    ).length;
-  }, [ticketAssigneesByProjectId]);
-  const onboardingProgress = useMemo(() => {
-    return getBoardOnboardingProgress({
-      ticketCount: shouldLoadProjectWideTicketsForProgress
-        ? projectWideOnboardingTickets.length
-        : tickets.length,
-      assignedTicketCount,
-      commentCount: hasProjectComments ? 1 : 0,
-    });
-  }, [
-    assignedTicketCount,
-    hasProjectComments,
-    projectWideOnboardingTickets.length,
-    shouldLoadProjectWideTicketsForProgress,
-    tickets.length,
-  ]);
-  const isOnboardingExpanded =
-    !isGettingStartedLoading && isOnboardingReviewRequested;
-  const onboardingErrorMessage = gettingStartedError
-    ? gettingStartedError instanceof Error
-      ? gettingStartedError.message
-      : tOnboarding("genericError")
-    : null;
-  const onboardingSteps = useMemo<OnboardingStep[]>(() => {
-    return [
-      {
-        id: "create-ticket",
-        title: tOnboarding("steps.createTicket.title"),
-        description: tOnboarding("steps.createTicket.description"),
-        status: onboardingProgress.createTicketStepStatus,
-        actionLabel: canCreateTicket
-          ? tOnboarding("steps.createTicket.action")
-          : undefined,
-        actionAriaLabel: canCreateTicket
-          ? tOnboarding("steps.createTicket.actionAriaLabel")
-          : undefined,
-        onAction: canCreateTicket ? openCreateTicketModal : undefined,
-      },
-      {
-        id: "assign-ticket",
-        title: tOnboarding("steps.assignTicket.title"),
-        description: hasOnboardingTargetTicket
-          ? tOnboarding("steps.assignTicket.description")
-          : tOnboarding("steps.assignTicket.blockedDescription"),
-        status: hasOnboardingTargetTicket
-          ? onboardingProgress.assignTicketStepStatus
-          : ONBOARDING_STEP_STATUS.BLOCKED,
-        actionLabel:
-          canEditTicket && hasOnboardingTargetTicket
-            ? tOnboarding("steps.assignTicket.action")
-            : undefined,
-        actionAriaLabel:
-          canEditTicket && hasOnboardingTargetTicket
-            ? tOnboarding("steps.assignTicket.actionAriaLabel")
-            : undefined,
-        onAction:
-          canEditTicket && hasOnboardingTargetTicket
-            ? openOnboardingTicket
-            : undefined,
-      },
-      {
-        id: "comment-ticket",
-        title: tOnboarding("steps.commentTicket.title"),
-        description: hasOnboardingTargetTicket
-          ? tOnboarding("steps.commentTicket.description")
-          : tOnboarding("steps.commentTicket.blockedDescription"),
-        status: hasOnboardingTargetTicket
-          ? onboardingProgress.commentTicketStepStatus
-          : ONBOARDING_STEP_STATUS.BLOCKED,
-        actionLabel:
-          canComment && hasOnboardingTargetTicket
-            ? tOnboarding("steps.commentTicket.action")
-            : undefined,
-        actionAriaLabel:
-          canComment && hasOnboardingTargetTicket
-            ? tOnboarding("steps.commentTicket.actionAriaLabel")
-            : undefined,
-        onAction:
-          canComment && hasOnboardingTargetTicket
-            ? openOnboardingTicket
-            : undefined,
-      },
-    ];
-  }, [
-    canComment,
-    canCreateTicket,
-    canEditTicket,
-    hasOnboardingTargetTicket,
-    onboardingProgress.assignTicketStepStatus,
-    onboardingProgress.commentTicketStepStatus,
-    onboardingProgress.createTicketStepStatus,
-    openCreateTicketModal,
-    openOnboardingTicket,
-    tOnboarding,
-  ]);
 
   useEffect(() => {
     if (!legacyTicketId) {
       return;
     }
-
     router.replace(buildTicketDetailRoute(projectId, legacyTicketId), {
       scroll: false,
     });
   }, [legacyTicketId, projectId, router]);
-
-  useEffect(() => {
-    if (gettingStartedStatus !== "pending") {
-      completionTriggeredRef.current = false;
-      return;
-    }
-
-    if (!onboardingProgress.areAllStepsCompleted) {
-      completionTriggeredRef.current = false;
-      return;
-    }
-
-    if (completionTriggeredRef.current) {
-      return;
-    }
-
-    completionTriggeredRef.current = true;
-
-    void setStatusAsync("completed")
-      .then(() => {
-        closeOnboardingReview();
-      })
-      .catch(() => {
-        completionTriggeredRef.current = false;
-      });
-  }, [
-    closeOnboardingReview,
-    gettingStartedStatus,
-    onboardingProgress.areAllStepsCompleted,
-    setStatusAsync,
-  ]);
-
-  const handleSkipOnboarding = useCallback(async () => {
-    await setStatusAsync("skipped");
-    closeOnboardingReview();
-  }, [closeOnboardingReview, setStatusAsync]);
 
   const handleCreateTicketSubmit = useCallback(
     async (values: CreateTicketFormValues): Promise<void> => {
       if (!canCreateTicket) {
         return;
       }
-
       await createTicketMutation.mutateAsync({
         projectId,
         title: values.title,
@@ -438,7 +231,6 @@ const BoardLayout = ({
           (ticket) => ticket.columnId === values.columnId
         ).length,
       });
-
       closeCreateTicketModal();
     },
     [
@@ -456,24 +248,6 @@ const BoardLayout = ({
 
   return (
     <section className={styles["board-layout"]} aria-labelledby={layoutId}>
-      {isOnboardingExpanded && (
-        <BoardOnboardingPanel
-          isExpanded
-          steps={onboardingSteps}
-          errorMessage={onboardingErrorMessage}
-          isSkipPending={isGettingStartedPending}
-          onReviewGuide={openOnboardingReview}
-          onHideGuide={
-            isOnboardingReviewRequested ? closeOnboardingReview : undefined
-          }
-          onSkipOnboarding={
-            gettingStartedStatus === "pending"
-              ? handleSkipOnboarding
-              : undefined
-          }
-        />
-      )}
-
       <DndContext
         id={dndContextId}
         sensors={sensors}

@@ -67,15 +67,10 @@ describe("useUpdatePreferences", () => {
     useUpdatePreferences();
 
     const mutationOptions = useMutationMock.mock.calls[0]?.[0] as {
-      onSuccess?: (
-        data: void,
-        input: { gettingStartedStatus: "completed" }
-      ) => void;
+      onSuccess?: (data: void, input: { theme: "dark" }) => void;
     };
 
-    mutationOptions.onSuccess?.(undefined, {
-      gettingStartedStatus: "completed",
-    });
+    mutationOptions.onSuccess?.(undefined, { theme: "dark" });
 
     expect(setQueryDataMock).toHaveBeenCalledWith(
       queryKeys.userProfiles.detail(identity.userId),
@@ -90,7 +85,7 @@ describe("useUpdatePreferences", () => {
       ...profile,
       preferences: {
         ...DEFAULT_USER_PREFERENCES,
-        gettingStartedStatus: "completed",
+        theme: "dark",
       },
     });
   });
@@ -99,20 +94,16 @@ describe("useUpdatePreferences", () => {
     useUpdatePreferences();
 
     const mutationOptions = useMutationMock.mock.calls[0]?.[0] as {
-      mutationFn: (input: { gettingStartedStatus: "skipped" }) => Promise<void>;
+      mutationFn: (input: { theme: "dark" }) => Promise<void>;
     };
 
-    await mutationOptions.mutationFn({
-      gettingStartedStatus: "skipped",
-    });
+    await mutationOptions.mutationFn({ theme: "dark" });
 
     expect(updatePreferences).toHaveBeenCalledWith(
       {},
       identity.userId,
       DEFAULT_USER_PREFERENCES,
-      {
-        gettingStartedStatus: "skipped",
-      }
+      { theme: "dark" }
     );
   });
 });

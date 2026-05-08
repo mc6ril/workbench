@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import {
@@ -7,12 +7,10 @@ import {
   buildTicketDetailRoute,
 } from "@/shared/utils/routes";
 
-import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { useBoardDnD } from "@/modules/board/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/modules/board/presentation/hooks/board/useBoardTickets";
-import { useHasProjectComments } from "@/modules/board/presentation/hooks/comment";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCreateTicket";
 import { usePrefetchTicketDetail } from "@/modules/board/presentation/hooks/ticket/usePrefetchTicketDetail";
@@ -59,55 +57,6 @@ jest.mock("@/shared/design-system/modal", () => ({
 }));
 
 jest.mock(
-  "@/modules/board/presentation/components/boardOnboardingPanel/BoardOnboardingPanel",
-  () => ({
-    __esModule: true,
-    default: ({
-      isExpanded,
-      onReviewGuide,
-      onHideGuide,
-      onSkipOnboarding,
-      steps,
-    }: {
-      isExpanded: boolean;
-      onReviewGuide: () => void;
-      onHideGuide?: () => void;
-      onSkipOnboarding?: () => void;
-      steps: Array<{
-        id: string;
-        status: string;
-        description: string;
-        actionLabel?: string;
-        actionAriaLabel?: string;
-        onAction?: () => void;
-      }>;
-    }) => (
-      <div
-        data-testid="board-onboarding-panel"
-        data-expanded={String(isExpanded)}
-      >
-        <button onClick={onReviewGuide}>review-guide</button>
-        {onHideGuide ? <button onClick={onHideGuide}>hide-guide</button> : null}
-        {onSkipOnboarding ? (
-          <button onClick={onSkipOnboarding}>skip-onboarding</button>
-        ) : null}
-        {steps.map((step) => (
-          <div key={step.id}>
-            <span>{`${step.id}:${step.status}`}</span>
-            <span>{step.description}</span>
-            {step.onAction ? (
-              <button onClick={step.onAction} aria-label={step.actionAriaLabel}>
-                {step.actionLabel ?? step.id}
-              </button>
-            ) : null}
-          </div>
-        ))}
-      </div>
-    ),
-  })
-);
-
-jest.mock(
   "@/modules/board/presentation/components/board/boardView/BoardView",
   () => ({
     __esModule: true,
@@ -147,13 +96,6 @@ jest.mock(
 );
 
 jest.mock(
-  "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus",
-  () => ({
-    useTicketGettingStartedStatus: jest.fn(),
-  })
-);
-
-jest.mock(
   "@/modules/board/presentation/hooks/board/useBoardConfiguration",
   () => ({
     useBoardConfiguration: jest.fn(),
@@ -166,10 +108,6 @@ jest.mock("@/modules/board/presentation/hooks/board/useBoardDnD", () => ({
 
 jest.mock("@/modules/board/presentation/hooks/board/useBoardTickets", () => ({
   useBoardTickets: jest.fn(),
-}));
-
-jest.mock("@/modules/board/presentation/hooks/comment", () => ({
-  useHasProjectComments: jest.fn(),
 }));
 
 jest.mock(
@@ -218,8 +156,7 @@ jest.mock("@/modules/board/presentation/stores/useFilterStore", () => ({
 
 const asMockedReturn = <T,>(value: unknown): T => value as T;
 
-describe("BoardPage onboarding", () => {
-  const mockSetStatusAsync = jest.fn();
+describe("BoardPage", () => {
   const mockCreateTicketMutateAsync = jest.fn();
   const mockPrefetchTicketDetail = jest.fn();
   let mockTicketsData: Array<{
@@ -233,7 +170,6 @@ describe("BoardPage onboarding", () => {
     jest.clearAllMocks();
     mockSearchParams = new URLSearchParams();
     mockTicketsData = [];
-    mockSetStatusAsync.mockResolvedValue(undefined);
 
     jest.mocked(useProjectPermissions).mockReturnValue(
       asMockedReturn<ReturnType<typeof useProjectPermissions>>({
@@ -242,20 +178,6 @@ describe("BoardPage onboarding", () => {
         canMoveTicket: true,
         canCreateTicket: true,
         isLoading: false,
-      })
-    );
-
-    jest.mocked(useTicketGettingStartedStatus).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useTicketGettingStartedStatus>>({
-        status: "pending",
-        canAutoOpen: true,
-        isLoading: false,
-        isPending: false,
-        error: null,
-        setStatus: jest.fn(),
-        setStatusAsync: mockSetStatusAsync,
-        markSkipped: jest.fn(),
-        markCompleted: jest.fn(),
       })
     );
 
@@ -300,12 +222,6 @@ describe("BoardPage onboarding", () => {
       })
     );
 
-    jest.mocked(useHasProjectComments).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useHasProjectComments>>({
-        data: false,
-      })
-    );
-
     jest.mocked(useProjectShortCode).mockReturnValue(
       asMockedReturn<ReturnType<typeof useProjectShortCode>>({
         data: "WB",
@@ -337,14 +253,6 @@ describe("BoardPage onboarding", () => {
     });
   });
 
-  it("does not auto-open the onboarding when getting started is still pending", () => {
-    render(<BoardPage projectId={PROJECT_ID} />);
-
-    expect(
-      screen.queryByTestId("board-onboarding-panel")
-    ).not.toBeInTheDocument();
-  });
-
   it("keeps the board area in loading state while client tickets are still fetching", () => {
     jest.mocked(useTickets).mockImplementation(() => {
       return asMockedReturn<ReturnType<typeof useTickets>>({
@@ -362,47 +270,6 @@ describe("BoardPage onboarding", () => {
     );
   });
 
-  it("persists skipped status and closes the guide", async () => {
-    mockSearchParams = new URLSearchParams("onboarding=1");
-
-    render(<BoardPage projectId="project-1" />);
-
-    fireEvent.click(screen.getByText("skip-onboarding"));
-
-    await waitFor(() => {
-      expect(mockSetStatusAsync).toHaveBeenCalledWith("skipped");
-    });
-    await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith(mockPathname, {
-        scroll: false,
-      });
-    });
-  });
-
-  it("opens the ticket detail from the onboarding step action when the guide is explicitly opened", () => {
-    mockTicketsData = [
-      {
-        id: "ticket-1",
-        columnId: "column-todo",
-        title: "First task",
-        codeNumber: 1,
-      },
-    ];
-    mockSearchParams = new URLSearchParams("onboarding=1");
-
-    render(<BoardPage projectId="project-1" />);
-
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Ouvrir un ticket pour l'assigner",
-      })
-    );
-
-    expect(mockPush).toHaveBeenCalledWith(
-      buildTicketDetailRoute(PROJECT_ID, "ticket-1")
-    );
-  });
-
   it("redirects legacy ticket query params to the ticket detail page", async () => {
     mockSearchParams = new URLSearchParams("ticket=ticket-1");
 
@@ -415,89 +282,6 @@ describe("BoardPage onboarding", () => {
           scroll: false,
         }
       );
-    });
-  });
-
-  it("does not render the onboarding panel when auto-open is disabled", () => {
-    jest.mocked(useTicketGettingStartedStatus).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useTicketGettingStartedStatus>>({
-        status: "completed",
-        canAutoOpen: false,
-        isLoading: false,
-        isPending: false,
-        error: null,
-        setStatus: jest.fn(),
-        setStatusAsync: mockSetStatusAsync,
-        markSkipped: jest.fn(),
-        markCompleted: jest.fn(),
-      })
-    );
-
-    render(<BoardPage projectId="project-1" />);
-
-    expect(
-      screen.queryByTestId("board-onboarding-panel")
-    ).not.toBeInTheDocument();
-  });
-
-  it("shows the manually reopened guide even after completion and allows hiding it", () => {
-    mockSearchParams = new URLSearchParams("onboarding=1");
-    jest.mocked(useTicketGettingStartedStatus).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useTicketGettingStartedStatus>>({
-        status: "completed",
-        canAutoOpen: false,
-        isLoading: false,
-        isPending: false,
-        error: null,
-        setStatus: jest.fn(),
-        setStatusAsync: mockSetStatusAsync,
-        markSkipped: jest.fn(),
-        markCompleted: jest.fn(),
-      })
-    );
-
-    render(<BoardPage projectId="project-1" />);
-
-    expect(screen.getByTestId("board-onboarding-panel")).toHaveAttribute(
-      "data-expanded",
-      "true"
-    );
-    expect(screen.queryByText("skip-onboarding")).not.toBeInTheDocument();
-
-    fireEvent.click(screen.getByText("hide-guide"));
-
-    expect(mockReplace).toHaveBeenCalledWith(mockPathname, {
-      scroll: false,
-    });
-  });
-
-  it("persists completed status when the onboarding steps are done", async () => {
-    mockTicketsData = [
-      {
-        id: "ticket-1",
-        columnId: "column-todo",
-        title: "First task",
-        codeNumber: 1,
-      },
-    ];
-
-    jest.mocked(useTicketAssigneesByProjectId).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useTicketAssigneesByProjectId>>({
-        data: {
-          "ticket-1": [{ userId: "user-1" }],
-        },
-      })
-    );
-    jest.mocked(useHasProjectComments).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useHasProjectComments>>({
-        data: true,
-      })
-    );
-
-    render(<BoardPage projectId="project-1" />);
-
-    await waitFor(() => {
-      expect(mockSetStatusAsync).toHaveBeenCalledWith("completed");
     });
   });
 
