@@ -23,6 +23,7 @@
     "submit": "Soumettre",
     "delete": "Supprimer",
     "cancel": "Annuler",
+    "apply": "Valider",
     "emptyState": {
       "defaultTitle": "Aucun élément",
       "defaultMessage": "Il n'y a pas encore d'éléments à afficher."

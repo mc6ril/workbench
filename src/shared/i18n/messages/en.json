@@ -23,6 +23,7 @@
     "submit": "Submit",
     "delete": "Delete",
     "cancel": "Cancel",
+    "apply": "Apply",
     "emptyState": {
       "defaultTitle": "No items",
       "defaultMessage": "There are no items to display yet."
