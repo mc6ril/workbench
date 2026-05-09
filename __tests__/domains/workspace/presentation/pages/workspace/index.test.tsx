@@ -1,10 +1,10 @@
 import { render, screen } from "@testing-library/react";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { ProjectRole } from "@/domains/project/core/domain/project.types";
 import { useAddUserToProject } from "@/domains/project/presentation/hooks/useAddUserToProject";
 import { useCreateProject } from "@/domains/project/presentation/hooks/useCreateProject";
-import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 import { useLastActivitySubtitle } from "@/domains/workspace/presentation/hooks/useLastActivitySubtitle";
 import { useProjectsWithStats } from "@/domains/workspace/presentation/hooks/useProjectsWithStats";
 import { useReclaimableProjects } from "@/domains/workspace/presentation/hooks/useReclaimableProjects";
@@ -24,8 +24,8 @@ jest.mock("@/domains/project/presentation/hooks/useCreateProject", () => ({
   useCreateProject: jest.fn(),
 }));
 
-jest.mock("@/domains/viewer/presentation/hooks/useViewer", () => ({
-  useViewer: jest.fn(),
+jest.mock("@/domains/auth/presentation/hooks/identity/useAuthIdentity", () => ({
+  useAuthIdentity: jest.fn(),
 }));
 
 jest.mock(
@@ -59,8 +59,8 @@ describe("WorkspacePage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    jest.mocked(useViewer).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useViewer>>({
+    jest.mocked(useAuthIdentity).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useAuthIdentity>>({
         data: {
           displayName: "Cyril",
         },
