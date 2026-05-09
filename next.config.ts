@@ -70,7 +70,19 @@ const supabaseRemotePattern = (() => {
   }
 })();
 
+const ONE_DAY_IN_SECONDS = 86_400;
+
 const nextConfig: NextConfig = {
+  reactStrictMode: true,
+  poweredByHeader: false,
+  experimental: {
+    staleTimes: {
+      dynamic: ONE_DAY_IN_SECONDS,
+      static: ONE_DAY_IN_SECONDS,
+    },
+    optimizePackageImports: ["recharts", "next-intl"],
+  },
+  serverExternalPackages: ["stripe"],
   /**
    * Public SEO URLs keep the default locale unprefixed (`/`, `/pricing`, `/legal`)
    * and use `/{locale}` only for secondary locales (`/en`, `/es`).
@@ -82,6 +94,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: supabaseRemotePattern ? [supabaseRemotePattern] : [],
+    minimumCacheTTL: ONE_DAY_IN_SECONDS,
   },
   webpack: (config) => {
     config.resolve.alias = {
@@ -129,6 +142,12 @@ const sentryBuildOptions = {
   tunnelRoute: "/monitoring",
   silent: !process.env.CI,
   telemetry: false,
+  hideSourceMaps: true,
+  webpack: {
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
 };
 
 export default withSentryConfig(

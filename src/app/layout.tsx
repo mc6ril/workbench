@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 
 import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
 import { defaultLocale, getIntlLocale } from "@/shared/i18n";
+import NavigationProgress from "@/shared/providers/NavigationProgress";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 import "@/styles/global.scss";
@@ -37,7 +38,10 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang={getIntlLocale(defaultLocale)} suppressHydrationWarning>
-      <body>{children}</body>
+      <body>
+        <NavigationProgress />
+        {children}
+      </body>
     </html>
   );
 };
