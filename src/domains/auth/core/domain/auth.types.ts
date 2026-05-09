@@ -6,6 +6,8 @@ export type CurrentAuthIdentity = {
   userId: string;
   loginEmail: string;
   canUpdatePassword: boolean;
+  displayName: string | null;
+  avatarUrl: string | null;
   preferences: UserPreferences;
 };
 

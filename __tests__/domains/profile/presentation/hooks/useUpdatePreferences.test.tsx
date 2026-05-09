@@ -35,6 +35,8 @@ describe("useUpdatePreferences", () => {
     userId: "user-1",
     loginEmail: "user@example.com",
     canUpdatePassword: false,
+    displayName: null,
+    avatarUrl: null,
     preferences: DEFAULT_USER_PREFERENCES,
   };
 

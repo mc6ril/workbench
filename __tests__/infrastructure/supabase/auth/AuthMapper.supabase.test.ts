@@ -22,6 +22,8 @@ describe("AuthMapper.supabase", () => {
         userId: "user-123",
         loginEmail: "test@example.com",
         canUpdatePassword: true,
+        displayName: null,
+        avatarUrl: null,
         preferences: DEFAULT_USER_PREFERENCES,
       });
     });
@@ -40,7 +42,7 @@ describe("AuthMapper.supabase", () => {
       expect(result.userId).toBe("user-123");
     });
 
-    it("should not expose display_name from user metadata as a top-level field", () => {
+    it("should extract display_name from user metadata", () => {
       const supabaseSession = createSupabaseSessionMock({
         user: { user_metadata: { display_name: "John Doe" } },
       });
@@ -50,7 +52,7 @@ describe("AuthMapper.supabase", () => {
         "test@example.com"
       );
 
-      expect(result).not.toHaveProperty("displayName");
+      expect(result.displayName).toBe("John Doe");
       expect(result.userId).toBe("user-123");
       expect(result.loginEmail).toBe("test@example.com");
     });

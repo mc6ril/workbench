@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import type { CurrentAuthIdentity } from "@/domains/auth/core/domain/auth.types";
 import { queryKeys as authIdentityQueryKeys } from "@/domains/auth/presentation/hooks/identity/queryKeys";
 import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
-import { queryKeys as profileQueryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
 import {
   updateAccountIdentity,
   type UpdateAccountIdentityInput,
@@ -31,10 +31,17 @@ export const useUpdateAccountIdentity = () => {
         });
       }
 
-      if (identity) {
-        queryClient.invalidateQueries({
-          queryKey: profileQueryKeys.userProfiles.detail(identity.userId),
-        });
+      if (identity && variables.displayName !== undefined) {
+        queryClient.setQueryData<CurrentAuthIdentity | null>(
+          authIdentityQueryKeys.authIdentity.current(),
+          (current) => {
+            if (!current) return current;
+            return {
+              ...current,
+              displayName: variables.displayName?.trim() || null,
+            };
+          }
+        );
       }
     },
   });

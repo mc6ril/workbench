@@ -104,6 +104,8 @@ describe("POST /api/stripe/checkout", () => {
       userId: "user-1",
       loginEmail: "cyril@example.com",
       canUpdatePassword: true,
+      displayName: null,
+      avatarUrl: null,
       preferences: DEFAULT_USER_PREFERENCES,
     });
     jest

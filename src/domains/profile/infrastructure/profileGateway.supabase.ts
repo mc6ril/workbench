@@ -51,6 +51,10 @@ export const createProfileGateway = (
     if (error) {
       return handleRepositoryError(error, "UserProfile", userId);
     }
+
+    await client.auth.updateUser({
+      data: { display_name: input.displayName ?? null },
+    });
   },
 
   async updatePreferences(
@@ -120,6 +124,8 @@ export const createProfileGateway = (
       return handleRepositoryError(updateError, "UserProfile", userId);
     }
 
+    await client.auth.updateUser({ data: { avatar_url: versionedPublicUrl } });
+
     const legacyFilePaths = (existingFiles ?? [])
       .map((existingFile) => `${userId}/${existingFile.name}`)
       .filter((existingFilePath) => existingFilePath !== filePath);
@@ -172,5 +178,9 @@ export const createProfileGateway = (
     if (updateError) {
       return handleRepositoryError(updateError, "UserProfile", userId);
     }
+
+    await client.auth.updateUser({
+      data: { avatar_url: null as unknown as string },
+    });
   },
 });

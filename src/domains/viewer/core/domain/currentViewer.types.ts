@@ -1,13 +1,10 @@
 import type { CurrentAuthIdentity } from "@/domains/auth/core/domain/auth.types";
-import type { UserProfile } from "@/domains/profile/core/domain/profile.types";
 
 /**
  * Aggregate read model for the current authenticated viewer.
- * Identity fields (userId, loginEmail, preferences) come from the JWT claims —
- * no DB call required. Display fields (displayName, avatarUrl) come from user_profiles.
+ * All fields come from JWT claims via getClaims() — no DB call required.
  */
 export type CurrentViewer = Pick<
   CurrentAuthIdentity,
-  "userId" | "loginEmail" | "preferences"
-> &
-  Pick<UserProfile, "displayName" | "avatarUrl">;
+  "userId" | "loginEmail" | "preferences" | "displayName" | "avatarUrl"
+>;

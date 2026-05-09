@@ -115,6 +115,8 @@ describe("DELETE /api/auth/delete-user", () => {
       userId: "user-123",
       loginEmail: "user@example.com",
       canUpdatePassword: true,
+      displayName: null,
+      avatarUrl: null,
       preferences: DEFAULT_USER_PREFERENCES,
     });
     jest.mocked(createSupabaseAdminClient).mockReturnValue(adminClient);
@@ -146,6 +148,8 @@ describe("DELETE /api/auth/delete-user", () => {
       userId: "user-123",
       loginEmail: "user@example.com",
       canUpdatePassword: true,
+      displayName: null,
+      avatarUrl: null,
       preferences: DEFAULT_USER_PREFERENCES,
     });
     jest.mocked(createSupabaseAdminClient).mockReturnValue(adminClient);

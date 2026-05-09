@@ -22,6 +22,7 @@ export type AuthUserMetadata = {
   email?: unknown;
   locale?: unknown;
   display_name?: unknown;
+  avatar_url?: unknown;
   terms_accepted_at?: unknown;
   [key: string]: unknown;
 };
@@ -51,6 +52,24 @@ export const getAuthUserMetadataEmail = (
   const email = authUserMetadata?.email;
 
   return isString(email) && email.length > 0 ? email : null;
+};
+
+export const getAuthUserMetadataDisplayName = (
+  metadata: UserMetadata | null | undefined
+): string | null => {
+  const authUserMetadata = asAuthUserMetadata(metadata);
+  const displayName = authUserMetadata?.display_name;
+
+  return isString(displayName) && displayName.length > 0 ? displayName : null;
+};
+
+export const getAuthUserMetadataAvatarUrl = (
+  metadata: UserMetadata | null | undefined
+): string | null => {
+  const authUserMetadata = asAuthUserMetadata(metadata);
+  const avatarUrl = authUserMetadata?.avatar_url;
+
+  return isString(avatarUrl) && avatarUrl.length > 0 ? avatarUrl : null;
 };
 
 export const getAuthUserMetadataPreferences = (

@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 
 import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
-import { useUserProfile } from "@/domains/profile/presentation/hooks/useUserProfile";
 import { buildCurrentViewer } from "@/domains/viewer/core/usecases/buildCurrentViewer";
 
 /**
@@ -10,32 +9,21 @@ import { buildCurrentViewer } from "@/domains/viewer/core/usecases/buildCurrentV
  */
 export const useViewer = () => {
   const identityQuery = useAuthIdentity();
-  const profileQuery = useUserProfile(identityQuery.data?.userId);
 
   const viewer = useMemo(() => {
-    if (!identityQuery.data || !profileQuery.data) {
+    if (!identityQuery.data) {
       return null;
     }
 
-    return buildCurrentViewer({
-      profile: profileQuery.data,
-      identity: identityQuery.data,
-    });
-  }, [identityQuery.data, profileQuery.data]);
-
-  const hasIdentity = !!identityQuery.data?.userId;
+    return buildCurrentViewer(identityQuery.data);
+  }, [identityQuery.data]);
 
   return {
     data: viewer,
-    error: identityQuery.error ?? profileQuery.error ?? null,
-    isError: identityQuery.isError || profileQuery.isError,
-    isLoading:
-      identityQuery.isLoading || (hasIdentity && profileQuery.isLoading),
-    isPending:
-      identityQuery.isPending || (hasIdentity && profileQuery.isPending),
-    isSuccess:
-      !!viewer &&
-      identityQuery.isSuccess &&
-      (!hasIdentity || profileQuery.isSuccess),
+    error: identityQuery.error ?? null,
+    isError: identityQuery.isError,
+    isLoading: identityQuery.isLoading,
+    isPending: identityQuery.isPending,
+    isSuccess: !!viewer && identityQuery.isSuccess,
   };
 };

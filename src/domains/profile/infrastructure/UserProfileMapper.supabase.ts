@@ -36,8 +36,6 @@ const parsePreferences = (raw: unknown): UserPreferences => {
 export const mapUserProfileRowToDomain = (row: UserProfileRow): UserProfile => {
   return {
     id: row.id,
-    displayName: row.display_name,
-    avatarUrl: row.avatar_url,
     preferences: parsePreferences(row.preferences ?? {}),
     termsAcceptedAt: row.terms_accepted_at
       ? toDate(row.terms_accepted_at)

@@ -7,6 +7,8 @@ import type { AppSupabaseAuthClient } from "@/shared/infrastructure/supabase/typ
 import type { CurrentAuthIdentity } from "@/domains/auth/core/domain/auth.types";
 import { handleAuthError } from "@/domains/auth/infrastructure/errors/authErrorHandler";
 import {
+  getAuthUserMetadataAvatarUrl,
+  getAuthUserMetadataDisplayName,
   getAuthUserMetadataEmail,
   getAuthUserMetadataPreferences,
 } from "@/domains/auth/infrastructure/supabase/AuthMetadata.supabase";
@@ -45,6 +47,8 @@ export const mapSupabaseClaimsToCurrentAuthIdentity = (
     userId,
     loginEmail,
     canUpdatePassword: canUpdatePasswordFromAppMetadata(claims.app_metadata),
+    displayName: getAuthUserMetadataDisplayName(claims.user_metadata),
+    avatarUrl: getAuthUserMetadataAvatarUrl(claims.user_metadata),
     preferences: getAuthUserMetadataPreferences(claims.user_metadata),
   };
 };
@@ -59,6 +63,8 @@ export const mapSupabaseSessionToCurrentAuthIdentity = (
     canUpdatePassword: canUpdatePasswordFromAppMetadata(
       session.user.app_metadata
     ),
+    displayName: getAuthUserMetadataDisplayName(session.user.user_metadata),
+    avatarUrl: getAuthUserMetadataAvatarUrl(session.user.user_metadata),
     preferences: getAuthUserMetadataPreferences(session.user.user_metadata),
   };
 };
