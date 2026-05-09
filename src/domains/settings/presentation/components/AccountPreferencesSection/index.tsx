@@ -20,12 +20,12 @@ import { persistThemeCookie } from "@/shared/theme/config";
 
 import styles from "./styles.module.scss";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import {
   DEFAULT_USER_PREFERENCES,
   type Theme,
   ThemeValues,
 } from "@/domains/profile/core/domain/profile.types";
-import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
 import { useUpdatePreferences } from "@/domains/profile/presentation/hooks/useUpdatePreferences";
 
 const LANGUAGE_SELECT_OPTIONS = supportedLocaleOptions.map((locale) => ({
@@ -42,16 +42,16 @@ const AccountPreferencesSection = () => {
   const t = useTranslations("pages.account");
   const tErrors = useTranslations("errors");
 
-  const { data: profile } = useMyProfile();
+  const { data: identity } = useAuthIdentity();
   const updatePreferencesMutation = useUpdatePreferences();
 
   const profileEmailNotifications =
-    profile?.preferences.emailNotifications ??
+    identity?.preferences.emailNotifications ??
     DEFAULT_USER_PREFERENCES.emailNotifications;
   const profileTheme =
-    profile?.preferences.theme ?? DEFAULT_USER_PREFERENCES.theme;
+    identity?.preferences.theme ?? DEFAULT_USER_PREFERENCES.theme;
   const profileLanguage =
-    profile?.preferences.language ?? DEFAULT_USER_PREFERENCES.language;
+    identity?.preferences.language ?? DEFAULT_USER_PREFERENCES.language;
 
   const [emailNotifications, setEmailNotifications] = useState<boolean>(
     profileEmailNotifications

@@ -10,8 +10,6 @@ import WorkspaceRoutePage, {
   generateMetadata as generateWorkspaceMetadata,
 } from "@/app/(protected)/workspace/page";
 import { requireCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
-import { getProfile } from "@/domains/profile/core/usecases/getProfile";
-import { createProfileGateway } from "@/domains/profile/infrastructure/profileGateway.supabase";
 import { listProjectsWithStats } from "@/domains/workspace/core/usecases/project/listProjectsWithStats";
 import { createWorkspaceProjectCatalogGateway } from "@/domains/workspace/infrastructure/supabase/gateways";
 import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
@@ -44,14 +42,6 @@ jest.mock("@/domains/auth/infrastructure/supabase/currentAuthIdentity", () => ({
   requireCurrentAuthIdentity: jest.fn(),
 }));
 
-jest.mock("@/domains/profile/core/usecases/getProfile", () => ({
-  getProfile: jest.fn(),
-}));
-
-jest.mock("@/domains/profile/infrastructure/profileGateway.supabase", () => ({
-  createProfileGateway: jest.fn(),
-}));
-
 jest.mock("@/domains/workspace/infrastructure/supabase/gateways", () => ({
   createWorkspaceProjectCatalogGateway: jest.fn(),
 }));
@@ -77,7 +67,6 @@ describe("WorkspaceRoutePage hydration", () => {
   };
 
   const mockSupabaseClient = { tag: "supabase" };
-  const mockProfileGateway = { tag: "profileGateway" };
   const mockWorkspaceGateway = { tag: "workspaceGateway" };
   const mockCookieStore = {
     get: jest.fn(),
@@ -100,9 +89,6 @@ describe("WorkspaceRoutePage hydration", () => {
       .mocked(createSupabaseServerClient)
       .mockResolvedValue(mockSupabaseClient as never);
     jest
-      .mocked(createProfileGateway)
-      .mockReturnValue(mockProfileGateway as never);
-    jest
       .mocked(createWorkspaceProjectCatalogGateway)
       .mockReturnValue(mockWorkspaceGateway as never);
     jest.mocked(cookies).mockResolvedValue(mockCookieStore as never);
@@ -111,9 +97,8 @@ describe("WorkspaceRoutePage hydration", () => {
       userId: "user-1",
       loginEmail: "cyril@example.com",
       canUpdatePassword: true,
-    } as never);
-    jest.mocked(getProfile).mockResolvedValue({
       displayName: "Cyril Lesot",
+      avatarUrl: null,
     } as never);
     jest.mocked(listProjectsWithStats).mockResolvedValue([]);
     mockCookieStore.get.mockReturnValue(undefined);
@@ -138,9 +123,7 @@ describe("WorkspaceRoutePage hydration", () => {
       queryFn: expect.any(Function),
     });
     expect(mockQueryClient.prefetchQuery).toHaveBeenCalledTimes(1);
-    expect(createProfileGateway).toHaveBeenCalledWith(mockSupabaseClient);
     expect(requireCurrentAuthIdentity).toHaveBeenCalledWith(mockSupabaseClient);
-    expect(getProfile).toHaveBeenCalledWith(mockProfileGateway, "user-1");
     expect(listProjectsWithStats).toHaveBeenCalledWith(mockWorkspaceGateway);
     expect(dehydrateMock).toHaveBeenCalledWith(mockQueryClient);
   });

@@ -6,70 +6,58 @@ import {
 
 import { mapSupabaseAuthError } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
 import { mapSupabaseSessionToCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
+import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
 
 describe("AuthMapper.supabase", () => {
   describe("mapSupabaseSessionToCurrentAuthIdentity", () => {
     it("should map Supabase session to current auth identity", () => {
-      // Arrange
       const supabaseSession = createSupabaseSessionMock();
-      const userEmail = "test@example.com";
 
-      // Act
-      const result = mapSupabaseSessionToCurrentAuthIdentity(
-        supabaseSession,
-        userEmail
-      );
-
-      // Assert
-      expect(result).toEqual({
-        userId: "user-123",
-        loginEmail: "test@example.com",
-        canUpdatePassword: true,
-      });
-    });
-
-    it("should use session user email before the fallback email", () => {
-      // Arrange
-      const supabaseSession = createSupabaseSessionMock({
-        user: {
-          email: "original@example.com",
-        },
-      });
-      const userEmail = "different@example.com";
-
-      // Act
-      const result = mapSupabaseSessionToCurrentAuthIdentity(
-        supabaseSession,
-        userEmail
-      );
-
-      // Assert
-      expect(result.loginEmail).toBe("original@example.com");
-      expect(result.userId).toBe("user-123");
-    });
-
-    it("should ignore profile data from user metadata", () => {
-      const supabaseSession = createSupabaseSessionMock({
-        user: {
-          user_metadata: { display_name: "John Doe" },
-        },
-      });
-
-      // Act
       const result = mapSupabaseSessionToCurrentAuthIdentity(
         supabaseSession,
         "test@example.com"
       );
 
-      // Assert
       expect(result).toEqual({
         userId: "user-123",
         loginEmail: "test@example.com",
         canUpdatePassword: true,
+        displayName: null,
+        avatarUrl: null,
+        preferences: DEFAULT_USER_PREFERENCES,
       });
     });
 
-    it("should not expose preferences from user metadata", () => {
+    it("should use session user email before the fallback email", () => {
+      const supabaseSession = createSupabaseSessionMock({
+        user: { email: "original@example.com" },
+      });
+
+      const result = mapSupabaseSessionToCurrentAuthIdentity(
+        supabaseSession,
+        "different@example.com"
+      );
+
+      expect(result.loginEmail).toBe("original@example.com");
+      expect(result.userId).toBe("user-123");
+    });
+
+    it("should extract display_name from user metadata", () => {
+      const supabaseSession = createSupabaseSessionMock({
+        user: { user_metadata: { display_name: "John Doe" } },
+      });
+
+      const result = mapSupabaseSessionToCurrentAuthIdentity(
+        supabaseSession,
+        "test@example.com"
+      );
+
+      expect(result.displayName).toBe("John Doe");
+      expect(result.userId).toBe("user-123");
+      expect(result.loginEmail).toBe("test@example.com");
+    });
+
+    it("should extract preferences from user metadata", () => {
       const supabaseSession = createSupabaseSessionMock({
         user: {
           user_metadata: {
@@ -82,18 +70,29 @@ describe("AuthMapper.supabase", () => {
         },
       });
 
-      // Act
       const result = mapSupabaseSessionToCurrentAuthIdentity(
         supabaseSession,
         "test@example.com"
       );
 
-      // Assert
-      expect(result).toEqual({
-        userId: "user-123",
-        loginEmail: "test@example.com",
-        canUpdatePassword: true,
+      expect(result.preferences).toEqual({
+        theme: "dark",
+        emailNotifications: false,
+        language: "en",
       });
+    });
+
+    it("should fall back to default preferences when user metadata has none", () => {
+      const supabaseSession = createSupabaseSessionMock({
+        user: { user_metadata: {} },
+      });
+
+      const result = mapSupabaseSessionToCurrentAuthIdentity(
+        supabaseSession,
+        "test@example.com"
+      );
+
+      expect(result.preferences).toEqual(DEFAULT_USER_PREFERENCES);
     });
   });
 

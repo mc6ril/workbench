@@ -3,7 +3,6 @@ import { renderHook, waitFor } from "@testing-library/react";
 
 import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
-import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
 import { useProfileRuntimeSync } from "@/domains/profile/presentation/providers/useProfileRuntimeSync";
 
 let themeValue: string | undefined = "system";
@@ -48,10 +47,6 @@ jest.mock("@/domains/auth/presentation/hooks/identity/useAuthIdentity", () => ({
   useAuthIdentity: jest.fn(),
 }));
 
-jest.mock("@/domains/profile/presentation/hooks/useMyProfile", () => ({
-  useMyProfile: jest.fn(),
-}));
-
 const asMockedReturn = <T,>(value: unknown): T => value as T;
 
 const wrapper = ({ children }: { children: React.ReactNode }) => {
@@ -72,15 +67,6 @@ describe("useProfileRuntimeSync", () => {
         isPending: false,
       })
     );
-
-    jest.mocked(useMyProfile).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useMyProfile>>({
-        data: undefined,
-        isLoading: false,
-        isPending: false,
-        isError: false,
-      })
-    );
   });
 
   afterEach(() => {
@@ -96,21 +82,12 @@ describe("useProfileRuntimeSync", () => {
     expect(persistThemeCookieMock).not.toHaveBeenCalled();
   });
 
-  it("stays ready while the authenticated profile is still loading", () => {
+  it("stays ready while identity is loading", () => {
     jest.mocked(useAuthIdentity).mockReturnValue(
       asMockedReturn<ReturnType<typeof useAuthIdentity>>({
-        data: { userId: "user-1" },
-        isLoading: false,
-        isPending: false,
-      })
-    );
-
-    jest.mocked(useMyProfile).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useMyProfile>>({
         data: undefined,
         isLoading: true,
         isPending: true,
-        isError: false,
       })
     );
 
@@ -122,18 +99,13 @@ describe("useProfileRuntimeSync", () => {
     expect(persistThemeCookieMock).not.toHaveBeenCalled();
   });
 
-  it("stays ready once the profile is available while applying locale cookie and theme", async () => {
+  it("applies locale cookie and theme from JWT claims without a DB call", async () => {
     jest.mocked(useAuthIdentity).mockReturnValue(
       asMockedReturn<ReturnType<typeof useAuthIdentity>>({
-        data: { userId: "user-1" },
-        isLoading: false,
-        isPending: false,
-      })
-    );
-
-    jest.mocked(useMyProfile).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useMyProfile>>({
         data: {
+          userId: "user-1",
+          loginEmail: "user@example.com",
+          canUpdatePassword: false,
           preferences: {
             ...DEFAULT_USER_PREFERENCES,
             language: "fr",
@@ -142,7 +114,6 @@ describe("useProfileRuntimeSync", () => {
         },
         isLoading: false,
         isPending: false,
-        isError: false,
       })
     );
 

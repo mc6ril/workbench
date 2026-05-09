@@ -10,7 +10,6 @@ import { normalizePath } from "@/shared/utils/routes";
 
 import ProjectToolbar from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar";
 import type { ProjectToolbarExtraTool } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
-import type { ProjectViewContribution } from "@/domains/project/presentation/layouts/projectShell/projectViewContribution";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import { RECIPES_QUICK_LIST_TOOL_ID } from "@/modules/recipes/presentation/constants/quickListFeedback";
 import {
@@ -20,16 +19,18 @@ import {
 import { useRecipesCatalogFiltersStore } from "@/modules/recipes/presentation/stores";
 import { useRecipesQuickListFeedbackStore } from "@/modules/recipes/presentation/stores/useRecipesQuickListFeedbackStore";
 
-export const useRecipesShellContribution = (
-  projectId: string
-): ProjectViewContribution => {
+type Props = {
+  projectId: string;
+};
+
+const RecipesToolbar = ({ projectId }: Props) => {
   const router = useAppRouter();
   const pathname = usePathname();
   const tSidebar = useTranslation("navigation.sidebar");
   const tCatalog = useTranslation("pages.recipes.catalog");
   const pageTitle = tSidebar("items.recipes");
-  const { canCreateTicket: canCreateRecipe, isLoading: isPermissionsLoading } =
-    useProjectPermissions();
+  const { canCreateTicket: canCreateRecipe } = useProjectPermissions();
+
   const search = useRecipesCatalogFiltersStore((state) => state.search);
   const setSearch = useRecipesCatalogFiltersStore((state) => state.setSearch);
   const toggleQuickList = useRecipesCatalogFiltersStore(
@@ -53,6 +54,7 @@ export const useRecipesShellContribution = (
   const quickListBadgePulseKey = useRecipesQuickListFeedbackStore(
     (state) => state.badgePulseKey
   );
+
   const [searchInput, setSearchInput] = useState(search);
   const isCatalogRoute =
     normalizePath(pathname) === buildRecipesCatalogRoute(projectId);
@@ -63,34 +65,22 @@ export const useRecipesShellContribution = (
   }, [search]);
 
   useEffect(() => {
-    if (!isCatalogRoute) {
-      return;
-    }
-
+    if (!isCatalogRoute) return;
     const timeout = window.setTimeout(() => {
       if (searchInput !== search) {
         setSearch(searchInput);
       }
     }, 300);
-
-    return () => {
-      window.clearTimeout(timeout);
-    };
+    return () => window.clearTimeout(timeout);
   }, [isCatalogRoute, search, searchInput, setSearch]);
 
   const handleAddClick = useCallback(() => {
-    if (!canCreateRecipe) {
-      return;
-    }
-
+    if (!canCreateRecipe) return;
     router.push(buildRecipeCreationRoute(projectId));
   }, [canCreateRecipe, projectId, router]);
 
   const toolbarExtraTools = useMemo<ProjectToolbarExtraTool[]>(() => {
-    if (!isCatalogRoute) {
-      return [];
-    }
-
+    if (!isCatalogRoute) return [];
     return [
       {
         key: "recipes-filters",
@@ -125,40 +115,28 @@ export const useRecipesShellContribution = (
     activeFilterCount,
     isCatalogRoute,
     isFiltersOpen,
+    isQuickListOpen,
     quickListBadgePulseKey,
     quickListCount,
-    isQuickListOpen,
     tCatalog,
     toggleFilters,
     toggleQuickList,
   ]);
 
-  return useMemo<ProjectViewContribution>(() => {
-    return {
-      toolbar: (
-        <ProjectToolbar
-          pageTitle={pageTitle}
-          showSearch={isCatalogRoute}
-          addActionType={isCatalogRoute ? "ticket" : null}
-          addActionLabel={tCatalog("toolbar.addRecipe")}
-          addActionAriaLabel={tCatalog("toolbar.addRecipeAriaLabel")}
-          searchValue={isCatalogRoute ? searchInput : ""}
-          onSearchChange={isCatalogRoute ? setSearchInput : undefined}
-          onAddClick={handleAddClick}
-          canAddAction={canCreateRecipe}
-          isPermissionsLoading={isPermissionsLoading}
-          extraTools={toolbarExtraTools}
-        />
-      ),
-    };
-  }, [
-    canCreateRecipe,
-    handleAddClick,
-    isCatalogRoute,
-    isPermissionsLoading,
-    pageTitle,
-    searchInput,
-    tCatalog,
-    toolbarExtraTools,
-  ]);
+  return (
+    <ProjectToolbar
+      pageTitle={pageTitle}
+      showSearch={isCatalogRoute}
+      addActionType={isCatalogRoute ? "ticket" : null}
+      addActionLabel={tCatalog("toolbar.addRecipe")}
+      addActionAriaLabel={tCatalog("toolbar.addRecipeAriaLabel")}
+      searchValue={isCatalogRoute ? searchInput : ""}
+      onSearchChange={isCatalogRoute ? setSearchInput : undefined}
+      onAddClick={handleAddClick}
+      canAddAction={canCreateRecipe}
+      extraTools={toolbarExtraTools}
+    />
+  );
 };
+
+export default RecipesToolbar;

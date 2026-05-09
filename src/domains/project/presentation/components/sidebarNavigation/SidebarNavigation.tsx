@@ -27,6 +27,7 @@ import type {
   SidebarNavigationProps,
 } from "./SidebarNavigation.types";
 
+import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { useSignOut } from "@/domains/auth/presentation/hooks/user/useSignOut";
 import { ProjectModuleKey } from "@/domains/project/core/domain/projectModule.types";
 import { useEnableProjectModule } from "@/domains/project/presentation/hooks/useEnableProjectModule";
@@ -36,7 +37,6 @@ import {
   useProjectShellSnapshot,
   useProjectShellSnapshotActions,
 } from "@/domains/project/presentation/providers/ProjectShellSnapshotProvider";
-import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 
 const RECIPES_MODULE_TAGS = ["Repas", "Quick list", "Courses"];
 const RECIPES_MODULE_POINTS = [
@@ -54,7 +54,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const enableProjectModuleMutation = useEnableProjectModule();
   const { enabledModules, isRecipesBoardVisible } = useProjectShellSnapshot();
   const { updateEnabledModules } = useProjectShellSnapshotActions();
-  const { data: viewer } = useViewer();
+  const { data: viewer } = useAuthIdentity();
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [isModuleLibraryOpen, setIsModuleLibraryOpen] = useState(false);

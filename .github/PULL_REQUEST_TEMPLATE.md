@@ -8,22 +8,21 @@ Closes #
 
 <!-- Check one. If "Feature", a prior Discussion is required — see below. -->
 
-- [ ] Bug fix
-- [ ] Feature (requires [approved Discussion](https://github.com/emdash-cms/emdash/discussions/categories/ideas))
-- [ ] Refactor (no behavior change)
-- [ ] Documentation
-- [ ] Performance improvement
-- [ ] Tests
-- [ ] Chore (dependencies, CI, tooling)
+- [] Bug fix
+- [] Feature
+- [] Refactor (no behavior change)
+- [] Documentation
+- [] Performance improvement
+- [] Tests
+- [] Chore (dependencies, CI, tooling)
 
 ## Checklist
 
-- [ ] `yarn tsc` passes
-- [ ] `yarn lint` passes
-- [ ] `yarn test` passes (or targeted tests for my change)
-- [ ] `yarn format` has been run (or `yarn format:check` passes)
-- [ ] I have added/updated tests for my changes (if applicable)
-- [ ] I have added a [changeset](https://github.com/emdash-cms/emdash/blob/main/CONTRIBUTING.md#changesets) (if this PR changes a published package)
+- [] `yarn tsc` passes
+- [] `yarn lint` passes
+- [] `yarn test` passes (or targeted tests for my change)
+- [] `yarn format` has been run (or `yarn format:check` passes)
+- [] I have added/updated tests for my changes (if applicable)
 
 ## AI-generated code disclosure
 

@@ -9,31 +9,21 @@ import {
 
 import { assertDefined } from "@/shared/errors/programmingError";
 
-import { useProjectRole } from "@/domains/project/presentation/hooks/member/useProjectRole";
 import { resolveProjectPermissions } from "@/domains/project/presentation/providers/permissions/resolveProjectPermissions";
 import type { ProjectPermissions } from "@/domains/project/presentation/providers/permissions/types";
-
-type ProjectPermissionsProviderProps = PropsWithChildren<{
-  projectId: string;
-}>;
+import { useProjectShellSnapshot } from "@/domains/project/presentation/providers/ProjectShellSnapshotProvider";
 
 const ProjectPermissionsContext = createContext<ProjectPermissions | undefined>(
   undefined
 );
 
-export const ProjectPermissionsProvider = ({
-  projectId,
-  children,
-}: ProjectPermissionsProviderProps) => {
-  const { data: role = null, isLoading } = useProjectRole(projectId);
+export const ProjectPermissionsProvider = ({ children }: PropsWithChildren) => {
+  const { role } = useProjectShellSnapshot();
 
-  const value = useMemo<ProjectPermissions>(() => {
-    return {
-      ...resolveProjectPermissions(role),
-      role,
-      isLoading,
-    };
-  }, [isLoading, role]);
+  const value = useMemo<ProjectPermissions>(
+    () => ({ ...resolveProjectPermissions(role), role }),
+    [role]
+  );
 
   return (
     <ProjectPermissionsContext.Provider value={value}>

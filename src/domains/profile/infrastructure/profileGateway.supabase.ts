@@ -5,12 +5,8 @@ import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandl
 import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import { prepareAvatarUploadFile } from "./avatarUploadTransform.browser";
-import { mapUserProfileRowToDomain } from "./UserProfileMapper.supabase";
 
-import type {
-  UserPreferences,
-  UserProfile,
-} from "@/domains/profile/core/domain/profile.types";
+import type { UserPreferences } from "@/domains/profile/core/domain/profile.types";
 import type { ProfileGateway } from "@/domains/profile/core/ports/profile.gateway";
 
 /**
@@ -22,24 +18,6 @@ import type { ProfileGateway } from "@/domains/profile/core/ports/profile.gatewa
 export const createProfileGateway = (
   client: AppSupabaseClient
 ): ProfileGateway => ({
-  async getById(userId: string): Promise<UserProfile | null> {
-    const { data, error } = await client
-      .from("user_profiles")
-      .select("*")
-      .eq("id", userId)
-      .maybeSingle();
-
-    if (error) {
-      return handleRepositoryError(error, "UserProfile", userId);
-    }
-
-    if (!data) {
-      return null;
-    }
-
-    return mapUserProfileRowToDomain(data);
-  },
-
   async updateProfile(
     userId: string,
     input: { displayName?: string }
@@ -51,6 +29,10 @@ export const createProfileGateway = (
     if (error) {
       return handleRepositoryError(error, "UserProfile", userId);
     }
+
+    await client.auth.updateUser({
+      data: { display_name: input.displayName ?? null },
+    });
   },
 
   async updatePreferences(
@@ -120,6 +102,8 @@ export const createProfileGateway = (
       return handleRepositoryError(updateError, "UserProfile", userId);
     }
 
+    await client.auth.updateUser({ data: { avatar_url: versionedPublicUrl } });
+
     const legacyFilePaths = (existingFiles ?? [])
       .map((existingFile) => `${userId}/${existingFile.name}`)
       .filter((existingFilePath) => existingFilePath !== filePath);
@@ -172,5 +156,9 @@ export const createProfileGateway = (
     if (updateError) {
       return handleRepositoryError(updateError, "UserProfile", userId);
     }
+
+    await client.auth.updateUser({
+      data: { avatar_url: null as unknown as string },
+    });
   },
 });

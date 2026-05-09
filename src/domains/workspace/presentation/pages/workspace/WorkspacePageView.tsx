@@ -20,14 +20,11 @@ type WorkspacePageViewProps = {
     updatedAt: Date | undefined,
     referenceDate?: Date
   ) => string;
-  gettingStartedErrorMessage: string | null;
   isBillingVisible?: boolean;
-  isGettingStartedPending: boolean;
   legal: string;
   onCreateWorkspace: () => void;
   onOpenProject: (projectId: string) => void;
   onReclaimProject: (projectId: string) => void | Promise<void>;
-  onSkipWelcomeGuide: () => void;
   pricing: string;
   projects?: ProjectWithStats[];
   projectsErrorMessage: string | null;
@@ -36,21 +33,17 @@ type WorkspacePageViewProps = {
   referenceTime: Date;
   showProjectsListPlaceholder: boolean;
   showProjectsRefreshLoader: boolean;
-  showWelcomeGuide: boolean;
 };
 
 const WorkspacePageView = ({
   createWorkspaceModal,
   displayName,
   formatLastActivity,
-  gettingStartedErrorMessage,
   isBillingVisible,
-  isGettingStartedPending,
   legal,
   onCreateWorkspace,
   onOpenProject,
   onReclaimProject,
-  onSkipWelcomeGuide,
   pricing,
   projects,
   projectsErrorMessage,
@@ -59,7 +52,6 @@ const WorkspacePageView = ({
   referenceTime,
   showProjectsListPlaceholder,
   showProjectsRefreshLoader,
-  showWelcomeGuide,
 }: WorkspacePageViewProps) => {
   const hasProjects = Array.isArray(projects) && projects.length > 0;
 
@@ -99,13 +91,7 @@ const WorkspacePageView = ({
             onOpenProject={onOpenProject}
           />
         ) : Array.isArray(projects) && projects.length === 0 ? (
-          <WorkspaceEmptyState
-            showWelcomeGuide={showWelcomeGuide}
-            gettingStartedErrorMessage={gettingStartedErrorMessage}
-            isGettingStartedPending={isGettingStartedPending}
-            onCreateWorkspace={onCreateWorkspace}
-            onSkipWelcomeGuide={onSkipWelcomeGuide}
-          />
+          <WorkspaceEmptyState onCreateWorkspace={onCreateWorkspace} />
         ) : null}
       </div>
 

@@ -8,6 +8,8 @@ import { localeCookieName } from "@/shared/i18n/config";
 import { buildMarketingPricingPath } from "@/shared/i18n/marketingPaths";
 import { APP_COOKIE_KEYS } from "@/shared/infrastructure/storage/cookies";
 
+import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
+
 jest.mock("@/shared/infrastructure/web/security/csrf", () => ({
   verifyCsrfOrigin: jest.fn(() => null),
 }));
@@ -102,6 +104,9 @@ describe("POST /api/stripe/checkout", () => {
       userId: "user-1",
       loginEmail: "cyril@example.com",
       canUpdatePassword: true,
+      displayName: null,
+      avatarUrl: null,
+      preferences: DEFAULT_USER_PREFERENCES,
     });
     jest
       .mocked(createSubscriptionRepository)

@@ -1,9 +1,14 @@
 import type { Locale } from "@/shared/i18n/config";
 
+import type { UserPreferences } from "@/domains/profile/core/domain/profile.types";
+
 export type CurrentAuthIdentity = {
   userId: string;
   loginEmail: string;
   canUpdatePassword: boolean;
+  displayName: string | null;
+  avatarUrl: string | null;
+  preferences: UserPreferences;
 };
 
 export type SignUpInput = {

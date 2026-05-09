@@ -2,6 +2,8 @@ import type { NextRequest } from "next/server";
 
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 
+import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
+
 jest.mock("next/server", () => ({
   NextResponse: {
     json: (
@@ -113,6 +115,9 @@ describe("DELETE /api/auth/delete-user", () => {
       userId: "user-123",
       loginEmail: "user@example.com",
       canUpdatePassword: true,
+      displayName: null,
+      avatarUrl: null,
+      preferences: DEFAULT_USER_PREFERENCES,
     });
     jest.mocked(createSupabaseAdminClient).mockReturnValue(adminClient);
     jest.mocked(createAuthGateway).mockReturnValue(authGateway);
@@ -143,6 +148,9 @@ describe("DELETE /api/auth/delete-user", () => {
       userId: "user-123",
       loginEmail: "user@example.com",
       canUpdatePassword: true,
+      displayName: null,
+      avatarUrl: null,
+      preferences: DEFAULT_USER_PREFERENCES,
     });
     jest.mocked(createSupabaseAdminClient).mockReturnValue(adminClient);
     jest.mocked(createAuthGateway).mockReturnValue(authGateway);
