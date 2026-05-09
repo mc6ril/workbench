@@ -1,10 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
-import { GuideIcon } from "@/shared/design-system/icons";
 import { useTranslations } from "@/shared/i18n";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { buildProjectRoute } from "@/shared/utils/routes";
@@ -14,7 +12,6 @@ import ProjectToolbar from "@/domains/project/presentation/components/projectToo
 import {
   PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID,
   type ProjectToolbarAssigneeFilter,
-  type ProjectToolbarExtraTool,
 } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { getProjectViewConfig } from "@/domains/project/presentation/navigation/projectViews.config";
@@ -33,13 +30,8 @@ type Props = {
 
 const BoardToolbar = ({ projectId }: Props) => {
   const router = useAppRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const searchParamsString = searchParams.toString();
   const tSidebar = useTranslations("navigation.sidebar");
-  const tNavbar = useTranslations("navigation.navbar");
   const tBoardFilters = useTranslations("pages.board.filters");
-  const tBoardOnboarding = useTranslations("pages.board.onboarding");
   const { canCreateTicket } = useProjectPermissions();
 
   const filterProjectId = useFilterStore((state) => state.projectId);
@@ -86,31 +78,6 @@ const BoardToolbar = ({ projectId }: Props) => {
     return () => window.clearTimeout(timeout);
   }, [search, searchInput, setSearch]);
 
-  const updateQueryParams = useCallback(
-    (updates: Record<string, string | null>) => {
-      const params = new URLSearchParams(searchParamsString);
-      for (const [key, value] of Object.entries(updates)) {
-        if (value == null || value === "") {
-          params.delete(key);
-          continue;
-        }
-        params.set(key, value);
-      }
-      const query = params.toString();
-      router.replace(query ? `${pathname}?${query}` : pathname, {
-        scroll: false,
-        feedback: "none",
-      });
-    },
-    [pathname, router, searchParamsString]
-  );
-
-  const isOnboardingReviewRequested = searchParams.get("onboarding") === "1";
-
-  const handleReviewGuideClick = useCallback(() => {
-    updateQueryParams({ onboarding: isOnboardingReviewRequested ? null : "1" });
-  }, [isOnboardingReviewRequested, updateQueryParams]);
-
   const handleAssigneeFilterChange = useCallback(
     (filterId: string | null) => {
       if (!filterId) {
@@ -149,27 +116,6 @@ const BoardToolbar = ({ projectId }: Props) => {
     return [unassigned, ...members];
   }, [projectMembers, tBoardFilters]);
 
-  const toolbarExtraTools = useMemo<ProjectToolbarExtraTool[]>(
-    () => [
-      {
-        key: "review-guide",
-        label: tNavbar("reviewGuide"),
-        ariaLabel: isOnboardingReviewRequested
-          ? tBoardOnboarding("hideCtaAriaLabel")
-          : tBoardOnboarding("reviewCtaAriaLabel"),
-        icon: <GuideIcon />,
-        onClick: handleReviewGuideClick,
-        isActive: isOnboardingReviewRequested,
-      },
-    ],
-    [
-      handleReviewGuideClick,
-      isOnboardingReviewRequested,
-      tBoardOnboarding,
-      tNavbar,
-    ]
-  );
-
   return (
     <ProjectToolbar
       pageTitle={pageTitle}
@@ -182,7 +128,6 @@ const BoardToolbar = ({ projectId }: Props) => {
       onSearchChange={setSearchInput}
       onAddClick={handleAddClick}
       canAddAction={canCreateTicket}
-      extraTools={toolbarExtraTools}
       assigneeFilters={assigneeFilters}
       areAssigneeFiltersDisabled={false}
       selectedAssigneeFilterId={

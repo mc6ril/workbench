@@ -35,7 +35,6 @@ import {
 import WorkspacePageView from "./WorkspacePageView";
 
 import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
-import { useTicketGettingStartedStatus } from "@/domains/profile/presentation/hooks/useTicketGettingStartedStatus";
 import {
   type CreateProjectInput,
   CreateProjectInputSchema,
@@ -75,14 +74,6 @@ const WorkspacePageContainer = () => {
     shouldLoadSecondaryData
   );
   const { legal, pricing } = useMarketingRoutes();
-  const shouldLoadGettingStarted =
-    Array.isArray(projects) && projects.length === 0;
-  const {
-    canAutoOpen: canAutoOpenGettingStarted,
-    isPending: isGettingStartedPending,
-    error: gettingStartedError,
-    markSkipped,
-  } = useTicketGettingStartedStatus(shouldLoadGettingStarted);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedEmoji, setSelectedEmoji] = useState<string>(
     PROJECT_BOARD_EMOJI_PRESETS[0]
@@ -217,10 +208,6 @@ const WorkspacePageContainer = () => {
     }
   };
 
-  const handleSkipWelcomeGuide = useCallback(() => {
-    markSkipped();
-  }, [markSkipped]);
-
   const handleOpenProject = useCallback(
     (projectId: string) => {
       const targetRoute = buildProjectRoute(projectId, PROJECT_VIEWS.BOARD);
@@ -252,11 +239,6 @@ const WorkspacePageContainer = () => {
       isLoading: isLoadingProjects,
       isPending: addUserToProjectMutation.isPending,
     }) && hasProjects;
-  const showWelcomeGuide =
-    shouldLoadGettingStarted && canAutoOpenGettingStarted;
-  const gettingStartedErrorMessage = gettingStartedError
-    ? getErrorMessage(gettingStartedError, tErrors)
-    : null;
   const projectsErrorMessage = projectsError
     ? getErrorMessage(projectsError, tErrors)
     : null;
@@ -276,10 +258,6 @@ const WorkspacePageContainer = () => {
       onReclaimProject={handleReclaimProject}
       showProjectsListPlaceholder={showProjectsListPlaceholder}
       showProjectsRefreshLoader={showProjectsRefreshLoader}
-      showWelcomeGuide={showWelcomeGuide}
-      gettingStartedErrorMessage={gettingStartedErrorMessage}
-      isGettingStartedPending={isGettingStartedPending}
-      onSkipWelcomeGuide={handleSkipWelcomeGuide}
       onOpenProject={handleOpenProject}
       formatLastActivity={formatLastActivity}
       createWorkspaceModal={

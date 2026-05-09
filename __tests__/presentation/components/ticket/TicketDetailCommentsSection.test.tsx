@@ -1,6 +1,5 @@
 import { render, screen } from "@testing-library/react";
 
-import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
 import { ProjectRole } from "@/domains/project/core/domain/project.types";
 import TicketDetailCommentsSection from "@/modules/board/presentation/components/ticket/ticketDetailView/components/TicketDetailCommentsSection";
 
@@ -31,10 +30,6 @@ describe("TicketDetailCommentsSection", () => {
               email: "author@example.com",
               displayName: null,
               avatarUrl: null,
-              preferences: { ...DEFAULT_USER_PREFERENCES },
-              termsAcceptedAt: null,
-              createdAt: new Date("2026-03-20T10:00:00.000Z"),
-              updatedAt: new Date("2026-03-20T10:00:00.000Z"),
             },
             createdAt: new Date("2026-03-20T10:00:00.000Z"),
             updatedAt: new Date("2026-03-20T10:00:00.000Z"),

@@ -1,7 +1,6 @@
 const setQueryDataMock = jest.fn();
 const useMutationMock = jest.fn();
 const useAuthIdentityMock = jest.fn();
-const useMyProfileMock = jest.fn();
 
 jest.mock("@tanstack/react-query", () => ({
   useMutation: (options: unknown) => {
@@ -17,10 +16,6 @@ jest.mock("@/domains/auth/presentation/hooks/identity/useAuthIdentity", () => ({
   useAuthIdentity: (...args: unknown[]) => useAuthIdentityMock(...args),
 }));
 
-jest.mock("@/domains/profile/presentation/hooks/useMyProfile", () => ({
-  useMyProfile: (...args: unknown[]) => useMyProfileMock(...args),
-}));
-
 jest.mock("@/domains/profile/core/usecases/updatePreferences", () => ({
   updatePreferences: jest.fn(),
 }));
@@ -29,68 +24,55 @@ jest.mock("@/domains/profile/infrastructure/profileGateway.browser", () => ({
   profileGateway: {},
 }));
 
+import type { CurrentAuthIdentity } from "@/domains/auth/core/domain/auth.types";
+import { queryKeys as authQueryKeys } from "@/domains/auth/presentation/hooks/identity/queryKeys";
 import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
 import { updatePreferences } from "@/domains/profile/core/usecases/updatePreferences";
-import { queryKeys } from "@/domains/profile/presentation/hooks/queryKeys";
 import { useUpdatePreferences } from "@/domains/profile/presentation/hooks/useUpdatePreferences";
 
 describe("useUpdatePreferences", () => {
-  const identity = { userId: "user-1" };
-  const profile = {
-    id: "user-1",
-    email: "user@example.com",
-    displayName: "User",
+  const identity: CurrentAuthIdentity = {
+    userId: "user-1",
+    loginEmail: "user@example.com",
+    canUpdatePassword: false,
+    displayName: null,
     avatarUrl: null,
     preferences: DEFAULT_USER_PREFERENCES,
-    termsAcceptedAt: null,
-    createdAt: new Date("2026-04-10T08:00:00.000Z"),
-    updatedAt: new Date("2026-04-10T08:00:00.000Z"),
   };
 
   beforeEach(() => {
     useMutationMock.mockReset();
     setQueryDataMock.mockReset();
     useAuthIdentityMock.mockReset();
-    useMyProfileMock.mockReset();
     jest.mocked(updatePreferences).mockReset();
 
-    useAuthIdentityMock.mockReturnValue({
-      data: identity,
-    });
-    useMyProfileMock.mockReturnValue({
-      data: profile,
-    });
+    useAuthIdentityMock.mockReturnValue({ data: identity });
     jest.mocked(updatePreferences).mockResolvedValue(undefined);
   });
 
-  it("writes merged preferences into the cached profile after a successful update", () => {
+  it("writes merged preferences into the authIdentity cache after a successful update", () => {
     useUpdatePreferences();
 
     const mutationOptions = useMutationMock.mock.calls[0]?.[0] as {
-      onSuccess?: (
-        data: void,
-        input: { gettingStartedStatus: "completed" }
-      ) => void;
+      onSuccess?: (data: void, input: { theme: "dark" }) => void;
     };
 
-    mutationOptions.onSuccess?.(undefined, {
-      gettingStartedStatus: "completed",
-    });
+    mutationOptions.onSuccess?.(undefined, { theme: "dark" });
 
     expect(setQueryDataMock).toHaveBeenCalledWith(
-      queryKeys.userProfiles.detail(identity.userId),
+      authQueryKeys.authIdentity.current(),
       expect.any(Function)
     );
 
     const updater = setQueryDataMock.mock.calls[0]?.[1] as (
-      currentProfile: typeof profile
-    ) => typeof profile;
+      current: CurrentAuthIdentity
+    ) => CurrentAuthIdentity;
 
-    expect(updater(profile)).toEqual({
-      ...profile,
+    expect(updater(identity)).toEqual({
+      ...identity,
       preferences: {
         ...DEFAULT_USER_PREFERENCES,
-        gettingStartedStatus: "completed",
+        theme: "dark",
       },
     });
   });
@@ -99,20 +81,16 @@ describe("useUpdatePreferences", () => {
     useUpdatePreferences();
 
     const mutationOptions = useMutationMock.mock.calls[0]?.[0] as {
-      mutationFn: (input: { gettingStartedStatus: "skipped" }) => Promise<void>;
+      mutationFn: (input: { theme: "dark" }) => Promise<void>;
     };
 
-    await mutationOptions.mutationFn({
-      gettingStartedStatus: "skipped",
-    });
+    await mutationOptions.mutationFn({ theme: "dark" });
 
     expect(updatePreferences).toHaveBeenCalledWith(
       {},
       identity.userId,
       DEFAULT_USER_PREFERENCES,
-      {
-        gettingStartedStatus: "skipped",
-      }
+      { theme: "dark" }
     );
   });
 });

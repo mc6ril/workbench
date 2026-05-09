@@ -24,7 +24,6 @@ import AccountBillingAndActionsSection from "@/domains/settings/presentation/com
 import AccountPersonalInfoSection from "@/domains/settings/presentation/components/AccountPersonalInfoSection";
 import AccountPreferencesSection from "@/domains/settings/presentation/components/AccountPreferencesSection";
 import AccountSecuritySection from "@/domains/settings/presentation/components/AccountSecuritySection";
-import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 
 const AccountPageClient = () => {
   const router = useAppRouter();
@@ -33,8 +32,7 @@ const AccountPageClient = () => {
   const tStripe = useTranslations("errors.stripe");
   const t = useTranslations("pages.account");
 
-  const { data: identity, isLoading: isIdentityLoading } = useAuthIdentity();
-  const { isLoading: isViewerLoading } = useViewer();
+  const { isLoading: isIdentityLoading } = useAuthIdentity();
 
   const checkoutHandled = useRef(false);
   const isMounted = useSyncExternalStore(
@@ -76,8 +74,7 @@ const AccountPageClient = () => {
     [router]
   );
 
-  const isPageLoading =
-    isIdentityLoading || (identity?.userId && isViewerLoading);
+  const isPageLoading = isIdentityLoading;
   const shouldShowLoader = !isMounted || isPageLoading;
 
   return (

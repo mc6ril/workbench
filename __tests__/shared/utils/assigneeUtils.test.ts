@@ -1,4 +1,3 @@
-import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
 import { ProjectRole } from "@/domains/project/core/domain/project.types";
 import { resolveAssigneeIdentity } from "@/modules/board/utils/assigneeUtils";
 
@@ -22,10 +21,6 @@ describe("resolveAssigneeIdentity", () => {
             email: "user@example.com",
             displayName: "User Test",
             avatarUrl: "https://example.com/avatar.webp",
-            preferences: { ...DEFAULT_USER_PREFERENCES },
-            termsAcceptedAt: null,
-            createdAt: new Date("2026-03-20T10:00:00.000Z"),
-            updatedAt: new Date("2026-03-20T10:00:00.000Z"),
           },
           createdAt: new Date("2026-03-20T10:00:00.000Z"),
           updatedAt: new Date("2026-03-20T10:00:00.000Z"),

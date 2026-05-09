@@ -22,7 +22,6 @@ import {
   useUploadAvatar,
 } from "@/domains/profile/presentation/hooks/useAvatarUpload";
 import { useUpdateAccountIdentity } from "@/domains/settings/presentation/hooks/useUpdateAccountIdentity";
-import { useViewer } from "@/domains/viewer/presentation/hooks/useViewer";
 
 const AccountPersonalInfoSection = () => {
   const t = useTranslations("pages.account");
@@ -31,7 +30,6 @@ const AccountPersonalInfoSection = () => {
   const addToast = useToastStore((s) => s.addToast);
 
   const { data: identity } = useAuthIdentity();
-  const { data: viewer } = useViewer();
 
   const updateAccountIdentityMutation = useUpdateAccountIdentity();
   const uploadAvatarMutation = useUploadAvatar();
@@ -40,8 +38,8 @@ const AccountPersonalInfoSection = () => {
   const [emailDraft, setEmailDraft] = useState<string | undefined>(undefined);
   const [nameDraft, setNameDraft] = useState<string | undefined>(undefined);
 
-  const email = emailDraft ?? viewer?.loginEmail ?? "";
-  const name = nameDraft ?? viewer?.displayName ?? "";
+  const email = emailDraft ?? identity?.loginEmail ?? "";
+  const name = nameDraft ?? identity?.displayName ?? "";
 
   const accountIdentityErrorMessage = useMemo(() => {
     if (!updateAccountIdentityMutation.error) {
@@ -123,8 +121,8 @@ const AccountPersonalInfoSection = () => {
   ]);
 
   const onSave = useCallback(async () => {
-    const currentDisplayName = viewer?.displayName ?? "";
-    const currentEmail = viewer?.loginEmail ?? "";
+    const currentDisplayName = identity?.displayName ?? "";
+    const currentEmail = identity?.loginEmail ?? "";
     const nextDisplayName = name.trim();
     const nextEmail = email.trim();
     const updates: { displayName?: string; email?: string } = {};
@@ -146,8 +144,8 @@ const AccountPersonalInfoSection = () => {
     email,
     name,
     updateAccountIdentityMutation,
-    viewer?.displayName,
-    viewer?.loginEmail,
+    identity?.displayName,
+    identity?.loginEmail,
   ]);
 
   return (
@@ -175,7 +173,7 @@ const AccountPersonalInfoSection = () => {
 
       <div className={styles["section-content"]}>
         <AvatarUpload
-          avatarUrl={viewer?.avatarUrl}
+          avatarUrl={identity?.avatarUrl}
           name={name || email}
           disabled={!identity?.userId}
           isUploading={uploadAvatarMutation.isPending}

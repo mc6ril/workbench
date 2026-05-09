@@ -1,6 +1,5 @@
 import { getFeatureLimit } from "@/domains/billing/core/domain/planFeatures.rules";
 import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
-import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
 import {
   InvitationStatus,
   type ProjectInvitation,
@@ -52,10 +51,6 @@ describe("inviteToProject", () => {
       email: `${id}@example.com`,
       displayName: `User ${id}`,
       avatarUrl: null,
-      preferences: DEFAULT_USER_PREFERENCES,
-      termsAcceptedAt: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     },
     createdAt: new Date(),
     updatedAt: new Date(),

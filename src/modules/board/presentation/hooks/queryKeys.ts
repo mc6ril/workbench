@@ -92,11 +92,6 @@ const queryKeysObject = {
     byProject: (projectId: string) =>
       ["members", "project", projectId] as const,
   },
-  userProfiles: {
-    detail: (userId: string) => ["user-profiles", userId] as const,
-    byIds: (userIds: string[]) =>
-      ["user-profiles", "batch", ...userIds.sort()] as const,
-  },
 } as const;
 
 export const queryKeys = Object.freeze({
@@ -106,5 +101,4 @@ export const queryKeys = Object.freeze({
   invitations: Object.freeze(queryKeysObject.invitations),
   members: Object.freeze(queryKeysObject.members),
   subscription: Object.freeze(queryKeysObject.subscription),
-  userProfiles: Object.freeze(queryKeysObject.userProfiles),
 });
