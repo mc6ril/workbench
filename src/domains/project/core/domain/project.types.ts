@@ -1,4 +1,3 @@
-import type { UserProfile } from "@/domains/profile/core/domain/profile.types";
 import type { ProjectModuleKey } from "@/domains/project/core/domain/projectModule.types";
 
 export enum ProjectRole {
@@ -65,12 +64,19 @@ export type ProjectWithRole = Project & {
   role: ProjectRole;
 };
 
+export type MemberProfile = {
+  id: string;
+  email: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+};
+
 export type ProjectMember = {
   id: string;
   projectId: string;
   userId: string;
   role: ProjectRole;
-  profile: UserProfile;
+  profile: MemberProfile;
   createdAt: Date;
   updatedAt: Date;
 };

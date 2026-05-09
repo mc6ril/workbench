@@ -3,8 +3,11 @@ import type { UserProfile } from "@/domains/profile/core/domain/profile.types";
 
 /**
  * Aggregate read model for the current authenticated viewer.
- * It intentionally exposes identity and profile information, but never raw
- * session tokens or infrastructure-specific details.
+ * Identity fields (userId, loginEmail, preferences) come from the JWT claims —
+ * no DB call required. Display fields (displayName, avatarUrl) come from user_profiles.
  */
-export type CurrentViewer = Pick<CurrentAuthIdentity, "userId" | "loginEmail"> &
-  Pick<UserProfile, "displayName" | "avatarUrl" | "preferences">;
+export type CurrentViewer = Pick<
+  CurrentAuthIdentity,
+  "userId" | "loginEmail" | "preferences"
+> &
+  Pick<UserProfile, "displayName" | "avatarUrl">;

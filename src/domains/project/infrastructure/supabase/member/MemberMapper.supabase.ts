@@ -2,9 +2,9 @@ import { createDatabaseError } from "@/shared/errors/repositoryError";
 import { toDate } from "@/shared/utils/guards";
 
 import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
-import { mapUserProfileRowToDomain } from "@/domains/profile/infrastructure/UserProfileMapper.supabase";
 import {
   isProjectRole,
+  type MemberProfile,
   type ProjectMember,
   ProjectRole,
 } from "@/domains/project/core/domain/project.types";
@@ -18,9 +18,13 @@ const mapProjectMemberRole = (value: string): ProjectRole => {
   throw createDatabaseError(`Invalid project member role: ${value}`);
 };
 
-/**
- * Maps project member and user profile rows to a domain ProjectMember.
- */
+const mapMemberProfile = (row: UserProfileRow): MemberProfile => ({
+  id: row.id,
+  email: row.email,
+  displayName: row.display_name,
+  avatarUrl: row.avatar_url,
+});
+
 export const mapMemberRowsToDomain = (
   memberRow: ProjectMemberRow,
   profileRow: UserProfileRow
@@ -30,7 +34,7 @@ export const mapMemberRowsToDomain = (
     projectId: memberRow.project_id,
     userId: memberRow.user_id,
     role: mapProjectMemberRole(memberRow.role),
-    profile: mapUserProfileRowToDomain(profileRow),
+    profile: mapMemberProfile(profileRow),
     createdAt: toDate(memberRow.created_at),
     updatedAt: toDate(memberRow.updated_at),
   };

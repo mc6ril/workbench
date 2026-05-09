@@ -10,7 +10,6 @@ describe("buildCurrentViewer", () => {
   it("should compose session and profile into a viewer read-model", () => {
     const profile: UserProfile = {
       id: mockCurrentAuthIdentity.userId,
-      email: "profile@example.com",
       displayName: "Cyril",
       avatarUrl: "https://example.com/avatar.webp",
       preferences: DEFAULT_USER_PREFERENCES,

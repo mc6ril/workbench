@@ -19,6 +19,6 @@ export const buildCurrentViewer = ({
     loginEmail: identity.loginEmail,
     displayName: profile.displayName,
     avatarUrl: profile.avatarUrl,
-    preferences: profile.preferences,
+    preferences: identity.preferences,
   };
 };

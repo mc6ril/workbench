@@ -36,7 +36,6 @@ export const DEFAULT_USER_PREFERENCES: UserPreferences = {
 
 export const UserProfileSchema = z.object({
   id: z.string().uuid(),
-  email: z.string(),
   displayName: z.string().nullable(),
   avatarUrl: z.string().nullable(),
   preferences: UserPreferencesSchema,

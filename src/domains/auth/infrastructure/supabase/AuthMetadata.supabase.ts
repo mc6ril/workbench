@@ -3,6 +3,12 @@ import type { UserAppMetadata, UserMetadata } from "@supabase/supabase-js";
 import type { Locale } from "@/shared/i18n/config";
 import { isRecord, isString } from "@/shared/utils";
 
+import {
+  DEFAULT_USER_PREFERENCES,
+  type UserPreferences,
+  UserPreferencesSchema,
+} from "@/domains/profile/core/domain/profile.types";
+
 export const EMAIL_AUTH_PROVIDER = "email";
 
 export type AuthAppMetadata = {
@@ -45,6 +51,20 @@ export const getAuthUserMetadataEmail = (
   const email = authUserMetadata?.email;
 
   return isString(email) && email.length > 0 ? email : null;
+};
+
+export const getAuthUserMetadataPreferences = (
+  metadata: UserMetadata | null | undefined
+): UserPreferences => {
+  const authUserMetadata = asAuthUserMetadata(metadata);
+  const raw = authUserMetadata?.preferences;
+
+  if (!isRecord(raw)) {
+    return DEFAULT_USER_PREFERENCES;
+  }
+
+  const result = UserPreferencesSchema.safeParse(raw);
+  return result.success ? result.data : DEFAULT_USER_PREFERENCES;
 };
 
 export const buildSignUpAuthUserMetadata = ({

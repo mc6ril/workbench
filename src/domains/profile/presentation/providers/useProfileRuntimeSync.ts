@@ -13,15 +13,9 @@ import { persistThemeCookie } from "@/shared/theme/config";
 
 import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 import { resolveThemePreference } from "@/domains/profile/core/domain/profile.types";
-import { useMyProfile } from "@/domains/profile/presentation/hooks/useMyProfile";
 
-/**
- * Applies the authenticated user's runtime preferences (locale + theme) and
- * reports whether the app can render without waiting for the profile query.
- */
 export const useProfileRuntimeSync = (): boolean => {
   const { data: identity } = useAuthIdentity();
-  const profileQuery = useMyProfile();
   const locale = useLocale();
   const { theme, setTheme } = useTheme();
   const lastSyncedLocaleRef = useRef<Locale | null>(null);
@@ -30,7 +24,7 @@ export const useProfileRuntimeSync = (): boolean => {
   const hasAuthenticatedIdentity = !!identity?.userId;
 
   const nextLocale = useMemo<Locale | null>(() => {
-    const language = profileQuery.data?.preferences?.language;
+    const language = identity?.preferences?.language;
 
     if (!language) {
       return null;
@@ -39,17 +33,17 @@ export const useProfileRuntimeSync = (): boolean => {
     return supportedLocales.includes(language as Locale)
       ? (language as Locale)
       : defaultLocale;
-  }, [profileQuery.data?.preferences?.language]);
+  }, [identity?.preferences?.language]);
 
   const nextTheme = useMemo(() => {
-    const profileTheme = profileQuery.data?.preferences?.theme;
+    const identityTheme = identity?.preferences?.theme;
 
-    if (!profileTheme) {
+    if (!identityTheme) {
       return null;
     }
 
-    return resolveThemePreference(profileTheme);
-  }, [profileQuery.data?.preferences?.theme]);
+    return resolveThemePreference(identityTheme);
+  }, [identity?.preferences?.theme]);
 
   useEffect(() => {
     if (!hasAuthenticatedIdentity || !nextLocale || locale === nextLocale) {
@@ -61,9 +55,6 @@ export const useProfileRuntimeSync = (): boolean => {
       return;
     }
 
-    // Passive runtime sync should not refresh the current route. Persist the
-    // preferred locale for the next server navigation and keep explicit locale
-    // changes (for example from /account) as the only source of router.refresh().
     persistLocaleCookie(nextLocale);
     lastSyncedLocaleRef.current = nextLocale;
   }, [hasAuthenticatedIdentity, locale, nextLocale]);
@@ -84,16 +75,5 @@ export const useProfileRuntimeSync = (): boolean => {
     }
   }, [hasAuthenticatedIdentity, nextTheme, setTheme, theme]);
 
-  if (!hasAuthenticatedIdentity) {
-    return true;
-  }
-  /**
-   * This hook should never globally block the authenticated shell.
-   *
-   * The protected route layout hydrates the profile query server-side, and even
-   * if hydration is missing/late, the app should still render using defaults.
-   * Preferences will be applied as soon as the query becomes available.
-   */
-  void profileQuery;
   return true;
 };
