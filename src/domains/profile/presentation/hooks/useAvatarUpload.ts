@@ -5,65 +5,106 @@ import { queryKeys as authQueryKeys } from "@/domains/auth/presentation/hooks/id
 import { removeAvatar } from "@/domains/profile/core/usecases/removeAvatar";
 import { uploadAvatar } from "@/domains/profile/core/usecases/uploadAvatar";
 import { profileGateway } from "@/domains/profile/infrastructure/profileGateway.browser";
-import { queryKeys as boardQueryKeys } from "@/modules/board/presentation/hooks/queryKeys";
+import type {
+  MemberProfile,
+  ProjectMember,
+} from "@/domains/project/core/domain/project.types";
+import type { CommentWithAuthor } from "@/modules/board/core/domain/comment.types";
+import type { TicketAssignee } from "@/modules/board/core/domain/ticket.types";
 
-const PROJECT_MEMBERS_QUERY_KEY = ["members"] as const;
+const patchMemberAvatar = (
+  members: ProjectMember[] | undefined,
+  userId: string,
+  avatarUrl: string | null
+): ProjectMember[] | undefined =>
+  members?.map((m) =>
+    m.profile.id === userId
+      ? { ...m, profile: { ...m.profile, avatarUrl } satisfies MemberProfile }
+      : m
+  );
 
-/**
- * Hook for uploading a user avatar.
- */
+const patchAssigneeRecordAvatar = (
+  cache: Record<string, TicketAssignee[]> | undefined,
+  userId: string,
+  avatarUrl: string | null
+): Record<string, TicketAssignee[]> | undefined => {
+  if (!cache) return cache;
+  return Object.fromEntries(
+    Object.entries(cache).map(([k, assignees]) => [
+      k,
+      assignees.map((a) => (a.userId === userId ? { ...a, avatarUrl } : a)),
+    ])
+  );
+};
+
+const updateAvatarInBoardCaches = (
+  queryClient: ReturnType<typeof useQueryClient>,
+  userId: string,
+  avatarUrl: string | null
+) => {
+  queryClient.setQueriesData<ProjectMember[]>(
+    { queryKey: ["members"] },
+    (cache) => patchMemberAvatar(cache, userId, avatarUrl)
+  );
+  queryClient.setQueriesData<Record<string, TicketAssignee[]>>(
+    { queryKey: ["ticket-assignees", "project"] },
+    (cache) => patchAssigneeRecordAvatar(cache, userId, avatarUrl)
+  );
+  queryClient.setQueriesData<Record<string, TicketAssignee[]>>(
+    { queryKey: ["ticket-assignees", "batch"] },
+    (cache) => patchAssigneeRecordAvatar(cache, userId, avatarUrl)
+  );
+  queryClient.setQueriesData<TicketAssignee[]>(
+    {
+      predicate: (q) => {
+        const key = q.queryKey;
+        return (
+          Array.isArray(key) &&
+          key[0] === "ticket-assignees" &&
+          key[1] !== "project" &&
+          key[1] !== "batch"
+        );
+      },
+    },
+    (assignees) =>
+      assignees?.map((a) => (a.userId === userId ? { ...a, avatarUrl } : a))
+  );
+  queryClient.setQueriesData<CommentWithAuthor[]>(
+    { queryKey: ["comments"] },
+    (comments) =>
+      comments?.map((c) =>
+        c.authorId === userId ? { ...c, authorAvatarUrl: avatarUrl } : c
+      )
+  );
+};
+
 export const useUploadAvatar = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ userId, file }: { userId: string; file: File }) =>
       uploadAvatar(profileGateway, userId, file),
-    onSuccess: (avatarUrl) => {
+    onSuccess: (avatarUrl, { userId }) => {
       queryClient.setQueryData<CurrentAuthIdentity | null>(
         authQueryKeys.authIdentity.current(),
-        (current) => {
-          if (!current) return current;
-          return { ...current, avatarUrl };
-        }
+        (current) => (current ? { ...current, avatarUrl } : current)
       );
-      queryClient.invalidateQueries({
-        queryKey: boardQueryKeys.tickets.assigneesRoot(),
-      });
-      queryClient.invalidateQueries({
-        queryKey: boardQueryKeys.comments.root(),
-      });
-      queryClient.invalidateQueries({
-        queryKey: PROJECT_MEMBERS_QUERY_KEY,
-      });
+      updateAvatarInBoardCaches(queryClient, userId, avatarUrl);
     },
   });
 };
 
-/**
- * Hook for removing a user avatar.
- */
 export const useRemoveAvatar = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (userId: string) => removeAvatar(profileGateway, userId),
-    onSuccess: () => {
+    onSuccess: (_data, userId) => {
       queryClient.setQueryData<CurrentAuthIdentity | null>(
         authQueryKeys.authIdentity.current(),
-        (current) => {
-          if (!current) return current;
-          return { ...current, avatarUrl: null };
-        }
+        (current) => (current ? { ...current, avatarUrl: null } : current)
       );
-      queryClient.invalidateQueries({
-        queryKey: boardQueryKeys.tickets.assigneesRoot(),
-      });
-      queryClient.invalidateQueries({
-        queryKey: boardQueryKeys.comments.root(),
-      });
-      queryClient.invalidateQueries({
-        queryKey: PROJECT_MEMBERS_QUERY_KEY,
-      });
+      updateAvatarInBoardCaches(queryClient, userId, null);
     },
   });
 };

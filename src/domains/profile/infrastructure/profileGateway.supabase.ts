@@ -5,12 +5,8 @@ import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandl
 import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import { prepareAvatarUploadFile } from "./avatarUploadTransform.browser";
-import { mapUserProfileRowToDomain } from "./UserProfileMapper.supabase";
 
-import type {
-  UserPreferences,
-  UserProfile,
-} from "@/domains/profile/core/domain/profile.types";
+import type { UserPreferences } from "@/domains/profile/core/domain/profile.types";
 import type { ProfileGateway } from "@/domains/profile/core/ports/profile.gateway";
 
 /**
@@ -22,24 +18,6 @@ import type { ProfileGateway } from "@/domains/profile/core/ports/profile.gatewa
 export const createProfileGateway = (
   client: AppSupabaseClient
 ): ProfileGateway => ({
-  async getById(userId: string): Promise<UserProfile | null> {
-    const { data, error } = await client
-      .from("user_profiles")
-      .select("*")
-      .eq("id", userId)
-      .maybeSingle();
-
-    if (error) {
-      return handleRepositoryError(error, "UserProfile", userId);
-    }
-
-    if (!data) {
-      return null;
-    }
-
-    return mapUserProfileRowToDomain(data);
-  },
-
   async updateProfile(
     userId: string,
     input: { displayName?: string }

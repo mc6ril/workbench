@@ -1,27 +1,6 @@
-import type {
-  UserPreferences,
-  UserProfile,
-} from "@/domains/profile/core/domain/profile.types";
+import type { UserPreferences } from "@/domains/profile/core/domain/profile.types";
 
-/**
- * Gateway contract for profile persistence and asset storage operations.
- *
- * user_profiles is the single source of truth for applicative user data.
- * Profile rows are created on signup via a database trigger.
- *
- * Invariants:
- * - A profile exists for every auth.users row (guaranteed by signup trigger)
- * - Only the owning user can update their own profile
- * - All authenticated users can read any profile (needed for teammate display)
- */
 export type ProfileGateway = {
-  /**
-   * Get a user profile by user ID.
-   * @returns Profile or null if not found
-   * @throws DatabaseError if database operation fails
-   */
-  getById(userId: string): Promise<UserProfile | null>;
-
   /**
    * Update the user's profile (display name).
    * @param userId - User ID (must match authenticated user)
