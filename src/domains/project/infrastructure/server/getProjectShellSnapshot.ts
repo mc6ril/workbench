@@ -11,12 +11,11 @@ import type { ProjectShellSnapshot } from "@/domains/project/core/domain/project
 import { getCurrentProjectRole } from "@/domains/project/core/usecases/member/getCurrentProjectRole";
 import { getProjectForRoute } from "@/domains/project/infrastructure/server/getProjectForRoute";
 import { createProjectMemberGateway } from "@/domains/project/infrastructure/supabase/gateways";
-import { getRuntimeConfigBoolean } from "@/domains/runtimeConfig/core/usecases/getRuntimeConfigBoolean";
 import {
   getRuntimeConfigBooleanOverride,
   readRuntimeConfigBooleanOverridesFromCookieValue,
 } from "@/domains/runtimeConfig/infrastructure/local/runtimeConfigLocalOverrides";
-import { createRuntimeConfigPort } from "@/domains/runtimeConfig/infrastructure/supabase/RuntimeConfigPort.supabase";
+import { getCachedRuntimeConfigBoolean } from "@/domains/runtimeConfig/infrastructure/server/getCachedRuntimeConfigBoolean";
 
 /**
  * Resolves minimal shell state server-side: project access, recipes visibility, and user role.
@@ -27,15 +26,6 @@ export const getProjectShellSnapshot = cache(
     const supabaseClient = await createSupabaseServerClient();
     const cookieStore = await cookies();
 
-    const [project, role] = await Promise.all([
-      getProjectForRoute(projectId),
-      getCurrentProjectRole(
-        createProjectMemberGateway(supabaseClient),
-        projectId
-      ),
-    ]);
-
-    const runtimeConfigPort = createRuntimeConfigPort(supabaseClient);
     const runtimeConfigOverrides =
       readRuntimeConfigBooleanOverridesFromCookieValue(
         getCookie(APP_COOKIE_KEYS.RUNTIME_CONFIG_OVERRIDES, cookieStore)
@@ -44,14 +34,17 @@ export const getProjectShellSnapshot = cache(
       runtimeConfigOverrides,
       "is_recipes_board_visible"
     );
-    const isRecipesBoardVisible = await getRuntimeConfigBoolean(
-      runtimeConfigPort,
-      {
-        key: "is_recipes_board_visible",
-        defaultValue: false,
-        overrideValue: recipesBoardOverride,
-      }
-    );
+
+    const [project, role, isRecipesBoardVisible] = await Promise.all([
+      getProjectForRoute(projectId),
+      getCurrentProjectRole(
+        createProjectMemberGateway(supabaseClient),
+        projectId
+      ),
+      recipesBoardOverride !== undefined
+        ? Promise.resolve(recipesBoardOverride)
+        : getCachedRuntimeConfigBoolean("is_recipes_board_visible", false),
+    ]);
 
     return {
       projectId: project.id,
