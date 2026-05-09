@@ -70,7 +70,15 @@ const supabaseRemotePattern = (() => {
   }
 })();
 
+const ONE_DAY_IN_SECONDS = 86_400;
+
 const nextConfig: NextConfig = {
+  experimental: {
+    staleTimes: {
+      dynamic: ONE_DAY_IN_SECONDS,
+      static: ONE_DAY_IN_SECONDS,
+    },
+  },
   /**
    * Public SEO URLs keep the default locale unprefixed (`/`, `/pricing`, `/legal`)
    * and use `/{locale}` only for secondary locales (`/en`, `/es`).
