@@ -410,7 +410,6 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
                         setDueDateDraft(
                           parseDateInputValue(event.target.value)
                         );
-                        close();
                       }}
                     />
 
@@ -431,6 +430,13 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
                         onClick={close}
                       >
                         {tCommon("cancel")}
+                      </button>
+                      <button
+                        type="button"
+                        className={styles["ticket-detail__secondary-action"]}
+                        onClick={close}
+                      >
+                        {tCommon("apply")}
                       </button>
                     </div>
                   </div>
