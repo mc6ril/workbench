@@ -78,13 +78,6 @@ Users can manage:
 - security actions (password change when allowed, sign out, delete account),
 - subscription and billing actions (when billing is enabled).
 
-### Billing (optional)
-
-Workbench supports paid plans with Stripe:
-
-- `/pricing` shows plan cards and triggers checkout or billing portal actions,
-- subscription entitlements can gate features and/or enforce limits.
-
 ## How the codebase is organized
 
 ### Routes (`src/app/`)

@@ -58,7 +58,6 @@ Client pages live under domain/module presentation:
 - Ticket detail UI: `src/modules/board/presentation/pages/ticket`
 - Account UI: `src/domains/settings/presentation/pages/account`
 - Auth pages: `src/domains/auth/presentation/pages/*`
-- Pricing UI: `src/domains/billing/presentation/pages/pricing`
 
 ## 4) Domain and module responsibilities
 
@@ -127,7 +126,6 @@ Scope:
 - Subscription read model and entitlements (plans, features, limits).
 - Stripe checkout/portal sessions.
 - Stripe webhook handling and subscription persistence.
-- “Billing visibility” runtime config used to hide/show pricing routes.
 
 ### 4.9 `board` module
 

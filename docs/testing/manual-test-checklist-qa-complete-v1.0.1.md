@@ -158,7 +158,6 @@ It is organized by feature domain and includes execution notes.
 - [ ] Stripe customer portal access works
 - [ ] Subscription cancellation flow works
 - [ ] Pro-rata refund policy behavior validated against actual Stripe setup
-- [ ] Monthly pricing display correctness
 - [ ] Superuser full access behavior (admin-only path)
 - [ ] Subscription management page works end-to-end
 

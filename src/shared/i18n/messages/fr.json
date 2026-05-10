@@ -59,23 +59,14 @@
         },
         "recipes": {
           "status": "Disponible",
-          "lockedStatus": "Plan {plan}",
           "subtitle": "Le module repas du foyer, pensé pour devenir immédiatement désirable dans un projet.",
           "teaser": "Un espace premium pour choisir ses recettes, garder les bons plats sous la main et transformer la semaine en plan d’achats très simple.",
-          "cta": "Ajouter Recipes au projet",
-          "upgradeCta": "Voir l'offre"
+          "cta": "Ajouter Recipes au projet"
         },
         "empty": {
           "badge": "Projet déjà à jour",
           "title": "Aucun nouveau module à ajouter pour le moment",
           "description": "Les modules déjà intégrés n’apparaissent plus ici, et les futurs modules restent masqués tant qu’ils ne sont pas prêts."
-        }
-      },
-      "locked": {
-        "ariaLabel": "{feature} — nécessite le plan {plan}",
-        "badge": {
-          "pro": "Foyer",
-          "team": "Foyer Plus"
         }
       },
       "profile": {
@@ -643,14 +634,7 @@
       "people": {
         "title": "Membres et invitations",
         "subtitle": "Gérez les accès au projet, les rôles en cours et les liens d'invitation encore actifs.",
-        "adminOnly": "Seul un administrateur peut inviter, changer les rôles ou retirer un membre du projet.",
-        "advancedRolesLocked": "Le rôle Observateur est réservé au plan {plan}. Les membres déjà observateurs restent visibles jusqu'à leur prochaine modification.",
-        "currentPlan": "Plan actuel : {plan}",
-        "memberLimit": {
-          "limited": "{count}/{limit} accès utilisés",
-          "unlimited": "{count} accès utilisés, sans limite",
-          "reached": "La limite de {limit} accès est atteinte pour votre plan {plan}. Les membres actifs et les invitations en attente comptent tous dans ce total."
-        }
+        "adminOnly": "Seul un administrateur peut inviter, changer les rôles ou retirer un membre du projet."
       },
       "members": {
         "title": "Membres du projet",
@@ -1210,33 +1194,6 @@
           "es": "Español"
         }
       },
-      "subscription": {
-        "title": "Mon abonnement",
-        "description": "Gérez votre plan et votre facturation",
-        "icon": "💳",
-        "currentPlan": "Plan actuel",
-        "planLabels": {
-          "free": "Gratuit",
-          "pro": "Foyer",
-          "team": "Foyer Plus"
-        },
-        "statusLabels": {
-          "active": "Actif",
-          "canceled": "Annulé",
-          "past_due": "Paiement en retard",
-          "trialing": "Période d'essai"
-        },
-        "periodEnd": "Renouvellement le {date}",
-        "cancelAtPeriodEnd": "Votre abonnement sera annulé à la fin de la période en cours",
-        "manageButton": "Gérer mon abonnement",
-        "manageButtonAriaLabel": "Ouvrir le portail de gestion d'abonnement Stripe",
-        "changePlanButton": "Changer de plan",
-        "changePlanButtonAriaLabel": "Voir les autres plans disponibles",
-        "superuser": {
-          "badge": "Super Utilisateur",
-          "description": "Accès complet à toutes les fonctionnalités"
-        }
-      },
       "dangerZone": {
         "title": "Zone de danger",
         "description": "Actions irréversibles",
@@ -1388,8 +1345,7 @@
       },
       "footer": {
         "ariaLabel": "Liens de pied de page",
-        "legal": "Mentions légales",
-        "pricing": "Tarifs"
+        "legal": "Mentions légales"
       }
     },
     "legal": {
@@ -1454,137 +1410,6 @@
         }
       },
       "lastUpdated": "Dernière mise à jour : février 2026"
-    },
-    "pricing": {
-      "metadata": {
-        "title": "Tarifs",
-        "description": "Découvrez les offres Tribu Nova : gratuit, Foyer et Foyer Plus pour organiser votre quotidien."
-      },
-      "header": {
-        "label": "Retour",
-        "title": "Nos tarifs",
-        "subtitle": "Des offres pensées pour les familles et leur organisation du quotidien"
-      },
-      "billing": {
-        "monthly": "Facturation mensuelle",
-        "yearly": "Facturation annuelle",
-        "yearlyDiscount": "Économisez 20%",
-        "perMonth": "/mois",
-        "free": "Gratuit"
-      },
-      "plans": {
-        "free": {
-          "name": "Gratuit",
-          "description": "Pour démarrer simplement et organiser le quotidien familial",
-          "price": "0€",
-          "cta": "Commencer gratuitement",
-          "ctaAriaLabel": "Créer un compte gratuit"
-        },
-        "pro": {
-          "name": "Foyer",
-          "description": "Pour les familles qui veulent mieux répartir les responsabilités et les routines",
-          "price": "3,99€",
-          "cta": "Passer à Foyer",
-          "ctaAriaLabel": "Souscrire à l'offre Foyer",
-          "badge": "Populaire"
-        },
-        "team": {
-          "name": "Foyer Plus",
-          "description": "Pour les foyers élargis et la coordination avec aidants, proches ou co-parents",
-          "price": "8,99€",
-          "cta": "Choisir Foyer Plus",
-          "ctaAriaLabel": "Souscrire à l'offre Foyer Plus"
-        },
-        "currentBadge": "Actif"
-      },
-      "comparison": {
-        "title": "Comparaison détaillée des offres",
-        "featuresColumn": "Inclus dans le plan"
-      },
-      "features": {
-        "projectsPerAccount": "Projets par compte",
-        "workspaces": "Projets par compte",
-        "membersPerWorkspace": "Membres du foyer",
-        "tickets": "Tâches",
-        "boardView": "Vue tableau",
-        "customColumns": "Personnalisation des colonnes",
-        "advancedRoles": "Rôles avancés (observateur)",
-        "prioritySupport": "Support prioritaire"
-      },
-      "values": {
-        "one": "1",
-        "two": "2",
-        "four": "4",
-        "three": "3",
-        "five": "5",
-        "twenty": "20",
-        "hundred": "100",
-        "ten": "10",
-        "twentyFive": "25",
-        "fifty": "50",
-        "threeColumns": "3 colonnes fixes",
-        "unlimited": "Illimité",
-        "included": "Inclus",
-        "notIncluded": "Non inclus"
-      },
-      "faq": {
-        "title": "Questions fréquentes",
-        "items": {
-          "cancel": {
-            "question": "Puis-je annuler à tout moment ?",
-            "answer": "Oui, vous pouvez annuler votre abonnement à tout moment. Vous conserverez l'accès jusqu'à la fin de la période en cours."
-          },
-          "upgrade": {
-            "question": "Puis-je changer de forfait ?",
-            "answer": "Vous pouvez passer à un forfait supérieur à tout moment. Le changement est effectif immédiatement et la différence est calculée au prorata."
-          },
-          "data": {
-            "question": "Que deviennent mes données si je repasse au gratuit ?",
-            "answer": "Vos données sont conservées. Si vous dépassez les limites du plan gratuit, vous pourrez consulter vos projets existants mais ne pourrez pas en créer de nouveaux."
-          },
-          "payment": {
-            "question": "Quels moyens de paiement acceptez-vous ?",
-            "answer": "Nous acceptons les cartes bancaires (Visa, Mastercard) et les prélèvements SEPA."
-          }
-        }
-      },
-      "guarantee": {
-        "title": "Satisfait ou remboursé",
-        "description": "Essayez Tribu Nova Pro ou Équipe pendant 14 jours. Si vous n'êtes pas satisfait, nous vous remboursons intégralement."
-      },
-      "trust": {
-        "title": "Une offre premium, sans surprise",
-        "item1": "Version gratuite solide pour démarrer sans friction.",
-        "item2": "Fonctionnalités premium activables uniquement quand vous en avez besoin.",
-        "item3": "Tarification claire, sans coût caché."
-      },
-      "cta": {
-        "currentPlan": "Plan actuel",
-        "upgrade": "Passer au {plan}",
-        "downgrade": "Passer au {plan}",
-        "downgradeFree": "Passer au Gratuit",
-        "signUpFirst": "Créer un compte",
-        "superuserFullAccess": "Accès complet",
-        "manageBilling": "Gérer la facturation"
-      }
-    },
-    "upgrade": {
-      "title": "Fonctionnalité réservée au plan {plan}",
-      "description": "Cette fonctionnalité n'est pas disponible avec votre plan actuel. Passez au plan {plan} pour y accéder.",
-      "ctaLabel": "Voir les tarifs",
-      "ctaAriaLabel": "Voir les tarifs et passer à un plan supérieur",
-      "featureNames": {
-        "advancedRoles": "Rôles avancés",
-        "workspaces": "Projets par compte",
-        "membersPerWorkspace": "Membres du foyer",
-        "tickets": "Tâches",
-        "customColumns": "Colonnes personnalisées"
-      },
-      "planBadges": {
-        "free": "Gratuit",
-        "pro": "Foyer",
-        "team": "Foyer Plus"
-      }
     },
     "members": {
       "title": "Membres du projet",
@@ -1693,17 +1518,9 @@
       "avatarFileTooLarge": "Le fichier est trop volumineux pour être traité",
       "avatarInvalidMimeType": "Format non supporté. Utilisez JPEG, PNG ou WebP",
       "avatarProcessingFailed": "Impossible de préparer l'image. Essayez un autre fichier.",
-      "stripeWebhookNotConfigured": "Le paiement en ligne n'est pas configuré correctement. Contactez le support.",
-      "billingNoCustomer": "Aucun compte de facturation n'est associé à votre profil.",
       "boardInvalidColumnWorkflowState": "Données de colonne incohérentes. Actualisez la page.",
       "googleOauthNotAvailable": "La connexion Google n'est pas disponible pour le moment.",
       "deleteAccountFailed": "Impossible de supprimer le compte. Réessayez plus tard."
-    },
-    "stripe": {
-      "checkoutFailed": "Impossible de lancer le paiement. Veuillez réessayer.",
-      "portalFailed": "Impossible d'accéder à la gestion de l'abonnement. Veuillez réessayer.",
-      "checkoutSuccess": "Paiement effectué avec succès ! Votre abonnement est actif.",
-      "notAuthenticated": "Vous devez être connecté pour effectuer cette action."
     }
   },
   "ui": {

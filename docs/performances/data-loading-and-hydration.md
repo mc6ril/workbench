@@ -127,12 +127,6 @@ than "the app always loads the same data twice."
     - it still mixes shell UI composition with runtime data ownership
 
 - `src/domains/settings/presentation/pages/account/index.tsx`
-- `src/domains/billing/presentation/pages/pricing/index.tsx`
-  - **Does**:
-    - calls Stripe endpoints directly via `fetch(...)` from presentation pages
-  - **Why it matters**:
-    - couples page components to imperative network calls
-    - bypasses the domain/module `hook -> usecase -> port` ownership pattern
 
 ## 3) What is actually problematic
 
