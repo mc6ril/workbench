@@ -7,16 +7,10 @@ import { useTranslations } from "@/shared/i18n";
 import styles from "./styles.module.scss";
 
 type WorkspaceFooterProps = {
-  isBillingVisible?: boolean;
   legal: string;
-  pricing: string;
 };
 
-const WorkspaceFooter = ({
-  isBillingVisible,
-  legal,
-  pricing,
-}: WorkspaceFooterProps) => {
+const WorkspaceFooter = ({ legal }: WorkspaceFooterProps) => {
   const t = useTranslations("pages.workspace");
 
   return (
@@ -31,20 +25,12 @@ const WorkspaceFooter = ({
         </Link>
         <Link
           href={legal}
+          prefetch={false}
           className={styles["footer__link"]}
           ariaLabel={t("footer.legal")}
         >
           {t("footer.legal")}
         </Link>
-        {isBillingVisible && (
-          <Link
-            href={pricing}
-            className={styles["footer__link"]}
-            ariaLabel={t("footer.subscriptions")}
-          >
-            {t("footer.subscriptions")}
-          </Link>
-        )}
       </nav>
     </footer>
   );

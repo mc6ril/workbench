@@ -1,11 +1,9 @@
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 
-import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
 import { ProjectModuleKey } from "@/domains/project/core/domain/projectModule.types";
 import {
   canAccessProjectView,
   getDefaultProjectViewKey,
-  getProjectViewFeatureLockState,
   isProjectViewModuleEnabled,
 } from "@/domains/project/presentation/navigation/projectViews.config";
 
@@ -21,42 +19,28 @@ describe("projectViews.config", () => {
 
   it("prefers the Recipes landing view when the module is enabled", () => {
     expect(
-      getDefaultProjectViewKey({
-        enabledModules: [ProjectModuleKey.RECIPES],
-        effectivePlan: SubscriptionPlan.FREE,
-      })
+      getDefaultProjectViewKey({ enabledModules: [ProjectModuleKey.RECIPES] })
     ).toBe(PROJECT_VIEWS.RECIPES);
   });
 
   it("falls back to Board when Recipes is not enabled", () => {
-    expect(
-      getDefaultProjectViewKey({
-        enabledModules: [],
-        effectivePlan: SubscriptionPlan.FREE,
-      })
-    ).toBe(PROJECT_VIEWS.BOARD);
+    expect(getDefaultProjectViewKey({ enabledModules: [] })).toBe(
+      PROJECT_VIEWS.BOARD
+    );
   });
 
   it("reports Recipes as accessible once the module is enabled", () => {
     expect(
       canAccessProjectView(PROJECT_VIEWS.RECIPES, {
         enabledModules: [ProjectModuleKey.RECIPES],
-        effectivePlan: SubscriptionPlan.FREE,
       })
     ).toBe(true);
-    expect(
-      getProjectViewFeatureLockState(
-        PROJECT_VIEWS.RECIPES,
-        SubscriptionPlan.FREE
-      )
-    ).toEqual({ locked: false });
   });
 
   it("hides Recipes when the runtime visibility marks the view as hidden", () => {
     expect(
       canAccessProjectView(PROJECT_VIEWS.RECIPES, {
         enabledModules: [ProjectModuleKey.RECIPES],
-        effectivePlan: SubscriptionPlan.FREE,
         hiddenViews: [PROJECT_VIEWS.RECIPES],
       })
     ).toBe(false);
@@ -64,7 +48,6 @@ describe("projectViews.config", () => {
     expect(
       getDefaultProjectViewKey({
         enabledModules: [ProjectModuleKey.RECIPES],
-        effectivePlan: SubscriptionPlan.FREE,
         hiddenViews: [PROJECT_VIEWS.RECIPES],
       })
     ).toBe(PROJECT_VIEWS.BOARD);

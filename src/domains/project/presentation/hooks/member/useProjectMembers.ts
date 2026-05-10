@@ -16,5 +16,6 @@ export const useProjectMembers = (projectId: string | undefined) => {
     queryKey: queryKeys.members.byProject(projectId ?? ""),
     queryFn: () => listProjectMembers(projectMemberGateway, projectId!),
     enabled: !!projectId,
+    staleTime: Infinity,
   });
 };

@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useSyncExternalStore,
-} from "react";
+import React, { useMemo, useSyncExternalStore } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
@@ -14,8 +8,6 @@ import BackButton from "@/shared/design-system/back_button";
 import Loader from "@/shared/design-system/loader";
 import Title from "@/shared/design-system/title";
 import { useTranslations } from "@/shared/i18n";
-import { useAppRouter } from "@/shared/navigation/useAppRouter";
-import { useToastStore } from "@/shared/stores/useToastStore";
 
 import styles from "./styles.module.scss";
 
@@ -26,38 +18,16 @@ import AccountSecuritySection from "@/domains/account/presentation/components/Ac
 import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
 
 const AccountPageClient = () => {
-  const router = useAppRouter();
   const searchParams = useSearchParams();
-  const addToast = useToastStore((s) => s.addToast);
-  const tStripe = useTranslations("errors.stripe");
   const t = useTranslations("pages.account");
 
   const { isLoading: isIdentityLoading } = useAuthIdentity();
 
-  const checkoutHandled = useRef(false);
   const isMounted = useSyncExternalStore(
     () => () => {},
     () => true,
     () => false
   );
-
-  useEffect(() => {
-    if (
-      searchParams.get("checkout") === "success" &&
-      !checkoutHandled.current
-    ) {
-      checkoutHandled.current = true;
-      addToast({
-        message: tStripe("checkoutSuccess"),
-        variant: "success",
-        duration: 6000,
-      });
-      router.replace(PAGE_ROUTES.ACCOUNT, {
-        scroll: false,
-        feedback: "none",
-      });
-    }
-  }, [addToast, router, searchParams, tStripe]);
 
   const goBackHref = useMemo(() => {
     const from = searchParams.get("from");
@@ -67,15 +37,7 @@ const AccountPageClient = () => {
     return PAGE_ROUTES.WORKSPACE;
   }, [searchParams]);
 
-  const onGoToPricing = useCallback(
-    (pricingHref: string) => {
-      router.push(pricingHref);
-    },
-    [router]
-  );
-
-  const isPageLoading = isIdentityLoading;
-  const shouldShowLoader = !isMounted || isPageLoading;
+  const shouldShowLoader = !isMounted || isIdentityLoading;
 
   return (
     <main className={styles["account-page"]}>
@@ -104,7 +66,7 @@ const AccountPageClient = () => {
             <AccountPersonalInfoSection />
             <AccountSecuritySection />
             <AccountPreferencesSection />
-            <AccountBillingAndActionsSection onGoToPricing={onGoToPricing} />
+            <AccountBillingAndActionsSection />
           </>
         )}
       </div>

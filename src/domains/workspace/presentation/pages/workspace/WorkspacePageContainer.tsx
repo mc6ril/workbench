@@ -34,7 +34,6 @@ import {
 } from "./WorkspacePageRouteContext";
 import WorkspacePageView from "./WorkspacePageView";
 
-import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import {
   type CreateProjectInput,
   CreateProjectInputSchema,
@@ -70,10 +69,7 @@ const WorkspacePageContainer = () => {
   const { data: reclaimableProjects } = useReclaimableProjects(
     shouldLoadSecondaryData
   );
-  const { data: isBillingVisible } = useBillingVisibility(
-    shouldLoadSecondaryData
-  );
-  const { legal, pricing } = useMarketingRoutes();
+  const { legal } = useMarketingRoutes();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedEmoji, setSelectedEmoji] = useState<string>(
     PROJECT_BOARD_EMOJI_PRESETS[0]
@@ -247,9 +243,7 @@ const WorkspacePageContainer = () => {
     <WorkspacePageView
       displayName={displayName}
       onCreateWorkspace={openCreateModal}
-      isBillingVisible={isBillingVisible}
       legal={legal}
-      pricing={pricing}
       projects={projects}
       projectsErrorMessage={projectsErrorMessage}
       reclaimableProjects={reclaimableProjects}
