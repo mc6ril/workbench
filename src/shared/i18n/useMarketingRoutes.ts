@@ -4,7 +4,6 @@ import { useLocale } from "@/shared/i18n";
 import {
   buildMarketingHomePath,
   buildMarketingLegalPath,
-  buildMarketingPricingPath,
 } from "@/shared/i18n/marketingPaths";
 
 /**
@@ -15,7 +14,6 @@ export const useMarketingRoutes = () => {
 
   return {
     home: buildMarketingHomePath(locale),
-    pricing: buildMarketingPricingPath(locale),
     legal: buildMarketingLegalPath(locale),
   };
 };

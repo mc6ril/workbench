@@ -8,7 +8,7 @@ import {
 } from "./config";
 
 const marketingLocalePattern = supportedLocales.join("|");
-const MARKETING_LEAF_ROUTES = [PAGE_ROUTES.PRICING, PAGE_ROUTES.LEGAL] as const;
+const MARKETING_LEAF_ROUTES = [PAGE_ROUTES.LEGAL] as const;
 const marketingLeafRoutePattern = MARKETING_LEAF_ROUTES.map((value) =>
   value.slice(1)
 ).join("|");
@@ -25,18 +25,12 @@ const normalizeMarketingPathname = (pathname: string): string => {
 };
 
 /**
- * Marketing routes keep the default locale unprefixed (`/`, `/pricing`, `/legal`)
+ * Marketing routes keep the default locale unprefixed (`/`, `/legal`)
  * and use a locale prefix for secondary locales (`/en`, `/es`, ...).
  * App routes (workspace, auth, join, api) stay unprefixed.
  */
 export const buildMarketingHomePath = (locale: Locale): string => {
   return locale === defaultLocale ? PAGE_ROUTES.HOME : `/${locale}`;
-};
-
-export const buildMarketingPricingPath = (locale: Locale): string => {
-  return locale === defaultLocale
-    ? PAGE_ROUTES.PRICING
-    : `/${locale}${PAGE_ROUTES.PRICING}`;
 };
 
 export const buildMarketingLegalPath = (locale: Locale): string => {
@@ -99,7 +93,6 @@ export const isDefaultLocaleMarketingPathname = (pathname: string): boolean => {
 
   return (
     normalizedPathname === PAGE_ROUTES.HOME ||
-    normalizedPathname === PAGE_ROUTES.PRICING ||
     normalizedPathname === PAGE_ROUTES.LEGAL ||
     normalizedPathname.startsWith(`${PAGE_ROUTES.LEGAL}/`)
   );
@@ -107,8 +100,8 @@ export const isDefaultLocaleMarketingPathname = (pathname: string): boolean => {
 
 /**
  * Resolves the marketing locale encoded by the URL itself.
- * - `/`, `/pricing`, `/legal` => default locale
- * - `/{locale}`, `/{locale}/pricing`, `/{locale}/legal` => explicit locale
+ * - `/`, `/legal` => default locale
+ * - `/{locale}`, `/{locale}/legal` => explicit locale
  */
 export const getResolvedMarketingLocaleFromPathname = (
   pathname: string

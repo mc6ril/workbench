@@ -41,8 +41,6 @@ export const useSidebarItems = (
           label: t(`items.${config.sidebarLabelKey}`),
           exactOnly: false,
           enabled,
-          locked: false,
-          planBadge: undefined,
         },
       ];
     });

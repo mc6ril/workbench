@@ -18,10 +18,6 @@ const marketingRewrites = [
     destination: `${INTERNAL_MARKETING_ROOT}/${defaultLocale}`,
   },
   {
-    source: PAGE_ROUTES.PRICING,
-    destination: `${INTERNAL_MARKETING_ROOT}/${defaultLocale}${PAGE_ROUTES.PRICING}`,
-  },
-  {
     source: PAGE_ROUTES.LEGAL,
     destination: `${INTERNAL_MARKETING_ROOT}/${defaultLocale}${PAGE_ROUTES.LEGAL}`,
   },
@@ -32,10 +28,6 @@ const marketingRewrites = [
   {
     source: `/:locale(${secondaryMarketingLocalePattern})`,
     destination: `${INTERNAL_MARKETING_ROOT}/:locale`,
-  },
-  {
-    source: `/:locale(${secondaryMarketingLocalePattern})${PAGE_ROUTES.PRICING}`,
-    destination: `${INTERNAL_MARKETING_ROOT}/:locale${PAGE_ROUTES.PRICING}`,
   },
   {
     source: `/:locale(${secondaryMarketingLocalePattern})${PAGE_ROUTES.LEGAL}`,
@@ -82,9 +74,8 @@ const nextConfig: NextConfig = {
     },
     optimizePackageImports: ["recharts", "next-intl"],
   },
-  serverExternalPackages: ["stripe"],
   /**
-   * Public SEO URLs keep the default locale unprefixed (`/`, `/pricing`, `/legal`)
+   * Public SEO URLs keep the default locale unprefixed (`/`, `/legal`)
    * and use `/{locale}` only for secondary locales (`/en`, `/es`).
    * Files live under `app/marketing/[locale]/…` to avoid clashing with `app/(protected)/[projectId]`.
    */

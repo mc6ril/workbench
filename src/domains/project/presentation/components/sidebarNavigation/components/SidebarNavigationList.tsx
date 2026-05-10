@@ -11,9 +11,7 @@ type Props = {
   navListId: string;
   addTabLabel: string;
   addTabAriaLabel: string;
-  getLockedAriaLabel: (item: SidebarItem) => string;
   onAddTabClick: () => void;
-  onItemClick: (item: SidebarItem) => void;
   onItemPrefetch: (item: SidebarItem) => void;
 };
 
@@ -23,9 +21,7 @@ const SidebarNavigationList = ({
   navListId,
   addTabLabel,
   addTabAriaLabel,
-  getLockedAriaLabel,
   onAddTabClick,
-  onItemClick,
   onItemPrefetch,
 }: Props) => {
   return (
@@ -36,24 +32,15 @@ const SidebarNavigationList = ({
             key={item.key}
             href={item.href}
             label={item.label}
-            active={
-              !item.locked &&
-              isActiveHref(pathname, item.href, {
-                exactOnly: item.exactOnly,
-              })
-            }
-            locked={item.locked}
-            planBadge={item.planBadge}
-            onClick={() => {
-              onItemClick(item);
-            }}
+            active={isActiveHref(pathname, item.href, {
+              exactOnly: item.exactOnly,
+            })}
             onMouseEnter={() => {
               onItemPrefetch(item);
             }}
             onFocus={() => {
               onItemPrefetch(item);
             }}
-            ariaLabel={item.locked ? getLockedAriaLabel(item) : undefined}
           />
         ))}
       </ul>

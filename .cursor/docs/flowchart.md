@@ -16,7 +16,6 @@ flowchart TD
    AUTH --> CALLBACK[/auth/callback]
 
    R --> STATIC[Static routes]
-   STATIC --> PRICING[/pricing]
    STATIC --> LEGAL[/legal]
 
    R --> JOIN[/join/:token]
@@ -30,9 +29,7 @@ flowchart TD
    PROJ --> SETTINGS[/:projectId/settings]
 
    R --> API[API routes]
-   API --> CHECKOUT[/api/stripe/checkout]
-   API --> PORTAL[/api/stripe/portal]
-   API --> WEBHOOK[/api/stripe/webhook]
+   API --> DELETE_USER[/api/auth/delete-user]
 ```
 
 ## 2. End-to-End Product Flow
@@ -50,10 +47,8 @@ stateDiagram-v2
 
    Workspace --> Account: manage account
    Workspace --> ProjectBoard: create or open project
-   Workspace --> BillingPortal: manage plan
 
    ProjectBoard --> ProjectSettings: navigate
-   ProjectBoard --> BillingPortal: upgrade
    ProjectSettings --> ProjectBoard: navigate
 ```
 
@@ -69,14 +64,12 @@ flowchart TD
    ROUTE -->|workspace| WS_ROUTE[Workspace route composition]
    ROUTE -->|account| ACCOUNT_ROUTE[Account settings route composition]
    ROUTE -->|project shell| PROJECT_ROUTE[Project route composition]
-   ROUTE -->|billing api| BILLING_ROUTE[Billing route composition]
 
    AUTH_ROUTE --> AUTH_PAGE[domains/auth/presentation/...]
    WS_ROUTE --> WS_PAGE[domains/workspace/presentation/...]
    ACCOUNT_ROUTE --> ACCOUNT_PAGE[domains/settings/presentation/pages/account]
    PROJECT_ROUTE --> PROJECT_SHELL[domains/project/presentation/layouts/projectShell/...]
    PROJECT_SHELL --> BOARD_PAGE[modules/board/presentation/pages/...]
-   BILLING_ROUTE --> BILLING_FLOW[domains/billing/...]
 ```
 
 ## 4. Final Architecture Map
@@ -117,12 +110,6 @@ flowchart LR
          SETTINGS_PRE[presentation]
       end
 
-      subgraph BILLING[billing]
-         BILLING_PRE[presentation]
-         BILLING_CORE[core]
-         BILLING_INFRA[infrastructure]
-      end
-
       subgraph WORKSPACE[workspace]
          WORKSPACE_PRE[presentation]
          WORKSPACE_CORE[core]
@@ -153,18 +140,16 @@ flowchart LR
       SHARED_2[i18n]
       SHARED_3[observability]
       SHARED_4[infrastructure/supabase]
-      SHARED_5[infrastructure/stripe]
-      SHARED_6[infrastructure/web]
-      SHARED_7[constants]
-      SHARED_8[types]
-      SHARED_9[utils]
-      SHARED_10[a11y]
+      SHARED_5[infrastructure/web]
+      SHARED_6[constants]
+      SHARED_7[types]
+      SHARED_8[utils]
+      SHARED_9[a11y]
    end
 
    subgraph EXT[External Services]
       EXT1[Supabase]
-      EXT2[Stripe]
-      EXT3[Web APIs]
+      EXT2[Web APIs]
    end
 
    APP1 --> AUTH_PRE
@@ -172,7 +157,6 @@ flowchart LR
    APP1 --> WORKSPACE_PRE
    APP1 --> PROJECT_PRE
    PROJECT_PRE --> BOARD_PRE
-   APP3 --> BILLING_INFRA
 
    AUTH_PRE --> AUTH_CORE
    AUTH_INFRA --> SHARED_4
@@ -187,10 +171,6 @@ flowchart LR
    VIEWER_PRE --> SESSION_PRE
    VIEWER_PRE --> PROFILE_PRE
 
-   BILLING_PRE --> BILLING_CORE
-   BILLING_INFRA --> SHARED_5
-   BILLING_INFRA --> SHARED_4
-
    WORKSPACE_PRE --> WORKSPACE_CORE
    WORKSPACE_INFRA --> SHARED_4
 
@@ -203,7 +183,6 @@ flowchart LR
 
    SHARED_4 --> EXT1
    SHARED_5 --> EXT2
-   SHARED_6 --> EXT3
 ```
 
 ## 5. Data Flow Reference

@@ -74,16 +74,13 @@ describe("proxy", () => {
 
   it("lets public routes pass without an authenticated user", async () => {
     const homeResponse = await proxy(createRequest(PAGE_ROUTES.HOME));
-    const pricingResponse = await proxy(createRequest(PAGE_ROUTES.PRICING));
     const signinResponse = await proxy(createRequest(AUTH_PAGE_ROUTES.SIGNIN));
 
     expect(homeResponse.status).toBe(200);
-    expect(pricingResponse.status).toBe(200);
     expect(signinResponse.status).toBe(200);
     expect(homeResponse.headers.get("location")).toBeNull();
-    expect(pricingResponse.headers.get("location")).toBeNull();
     expect(signinResponse.headers.get("location")).toBeNull();
-    expect(mockGetClaims).toHaveBeenCalledTimes(3);
+    expect(mockGetClaims).toHaveBeenCalledTimes(2);
   });
 
   it("redirects unauthenticated protected routes to auth signin with a redirect param", async () => {

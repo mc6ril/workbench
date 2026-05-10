@@ -45,11 +45,6 @@ export const APP_ERROR_MESSAGE_KEY = {
   [APP_ERROR_CODE.AVATAR_FILE_TOO_LARGE]: "infra.avatarFileTooLarge",
   [APP_ERROR_CODE.AVATAR_INVALID_MIME_TYPE]: "infra.avatarInvalidMimeType",
   [APP_ERROR_CODE.AVATAR_PROCESSING_FAILED]: "infra.avatarProcessingFailed",
-  [APP_ERROR_CODE.STRIPE_PRICE_NOT_CONFIGURED]: "stripe.checkoutFailed",
-  [APP_ERROR_CODE.STRIPE_CHECKOUT_NO_URL]: "stripe.checkoutFailed",
-  [APP_ERROR_CODE.STRIPE_WEBHOOK_NOT_CONFIGURED]:
-    "infra.stripeWebhookNotConfigured",
-  [APP_ERROR_CODE.BILLING_NO_CUSTOMER]: "infra.billingNoCustomer",
   [APP_ERROR_CODE.BOARD_INVALID_COLUMN_WORKFLOW_STATE]:
     "infra.boardInvalidColumnWorkflowState",
   [APP_ERROR_CODE.GOOGLE_OAUTH_NOT_AVAILABLE]: "infra.googleOauthNotAvailable",

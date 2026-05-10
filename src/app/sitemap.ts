@@ -4,7 +4,6 @@ import { supportedLocales } from "@/shared/i18n/config";
 import {
   buildMarketingHomePath,
   buildMarketingLegalPath,
-  buildMarketingPricingPath,
 } from "@/shared/i18n/marketingPaths";
 import { getLanguageAlternates } from "@/shared/seo/languageAlternates";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
@@ -14,7 +13,6 @@ const marketingPaths: {
   priority: number;
 }[] = [
   { buildPath: buildMarketingHomePath, priority: 1 },
-  { buildPath: buildMarketingPricingPath, priority: 0.8 },
   { buildPath: buildMarketingLegalPath, priority: 0.6 },
 ];
 
