@@ -1,13 +1,12 @@
 import type { UserAppMetadata, UserMetadata } from "@supabase/supabase-js";
 
 import type { Locale } from "@/shared/i18n/config";
-import { isRecord, isString } from "@/shared/utils";
-
 import {
   DEFAULT_USER_PREFERENCES,
   type UserPreferences,
   UserPreferencesSchema,
-} from "@/domains/profile/core/domain/profile.types";
+} from "@/shared/user/userPreferences";
+import { isRecord, isString } from "@/shared/utils";
 
 export const EMAIL_AUTH_PROVIDER = "email";
 
