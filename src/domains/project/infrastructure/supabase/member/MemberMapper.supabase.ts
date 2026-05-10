@@ -1,7 +1,7 @@
 import { createDatabaseError } from "@/shared/errors/repositoryError";
 import { toDate } from "@/shared/utils/guards";
 
-import type { UserProfileRow } from "@/domains/profile/infrastructure/types";
+import type { UserProfileRow } from "@/domains/account/infrastructure/types";
 import {
   isProjectRole,
   type MemberProfile,

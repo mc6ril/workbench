@@ -1,10 +1,10 @@
 import type { Locale } from "@/shared/i18n/config";
-
-import type { UserPreferences } from "@/domains/profile/core/domain/profile.types";
+import type { UserPreferences } from "@/shared/user/userPreferences";
 
 export type CurrentAuthIdentity = {
   userId: string;
   loginEmail: string;
+  isSuperuser: boolean;
   canUpdatePassword: boolean;
   displayName: string | null;
   avatarUrl: string | null;

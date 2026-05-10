@@ -1,8 +1,7 @@
 import type { NextRequest } from "next/server";
 
 import { AUTH_ERROR_CODE } from "@/shared/errors/appErrorCodes";
-
-import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
+import { DEFAULT_USER_PREFERENCES } from "@/shared/user/userPreferences";
 
 jest.mock("next/server", () => ({
   NextResponse: {
@@ -114,6 +113,7 @@ describe("DELETE /api/auth/delete-user", () => {
     jest.mocked(requireCurrentAuthIdentity).mockResolvedValue({
       userId: "user-123",
       loginEmail: "user@example.com",
+      isSuperuser: false,
       canUpdatePassword: true,
       displayName: null,
       avatarUrl: null,
@@ -147,6 +147,7 @@ describe("DELETE /api/auth/delete-user", () => {
     jest.mocked(requireCurrentAuthIdentity).mockResolvedValue({
       userId: "user-123",
       loginEmail: "user@example.com",
+      isSuperuser: false,
       canUpdatePassword: true,
       displayName: null,
       avatarUrl: null,

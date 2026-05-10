@@ -6,12 +6,12 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import Toast from "@/shared/design-system/toast";
+import type { Theme } from "@/shared/theme/config";
 
 import AppErrorBoundary from "./AppErrorBoundary";
 import ReactQueryProvider from "./ReactQueryProvider";
 
-import type { Theme } from "@/domains/profile/core/domain/profile.types";
-import { useProfileRuntimeSync } from "@/domains/profile/presentation/providers/useProfileRuntimeSync";
+import { useAccountRuntimeSync } from "@/domains/account/presentation/hooks/useAccountRuntimeSync";
 
 type AppProviderProps = {
   children: React.ReactNode;
@@ -19,11 +19,8 @@ type AppProviderProps = {
   initialTheme?: Theme | null;
 };
 
-/**
- * Applies hydrated profile preferences (locale, theme) without blocking the tree.
- */
-const ProfilePreferencesSync = () => {
-  useProfileRuntimeSync();
+const AccountPreferencesSync = () => {
+  useAccountRuntimeSync();
   return null;
 };
 
@@ -44,7 +41,7 @@ const AppProvider = ({
     >
       <AppErrorBoundary>
         <ReactQueryProvider dehydratedState={dehydratedState}>
-          <ProfilePreferencesSync />
+          <AccountPreferencesSync />
           {children}
           <Toast />
           <Analytics />

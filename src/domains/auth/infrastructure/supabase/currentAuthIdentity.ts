@@ -12,7 +12,10 @@ import {
   getAuthUserMetadataEmail,
   getAuthUserMetadataPreferences,
 } from "@/domains/auth/infrastructure/supabase/AuthMetadata.supabase";
-import { canUpdatePasswordFromAppMetadata } from "@/domains/auth/infrastructure/supabase/providerCapabilities";
+import {
+  canUpdatePasswordFromAppMetadata,
+  isSuperuserFromAppMetadata,
+} from "@/domains/auth/infrastructure/supabase/providerCapabilities";
 
 const isAuthSessionMissingError = (error: unknown): boolean => {
   return (
@@ -46,6 +49,7 @@ export const mapSupabaseClaimsToCurrentAuthIdentity = (
   return {
     userId,
     loginEmail,
+    isSuperuser: isSuperuserFromAppMetadata(claims.app_metadata),
     canUpdatePassword: canUpdatePasswordFromAppMetadata(claims.app_metadata),
     displayName: getAuthUserMetadataDisplayName(claims.user_metadata),
     avatarUrl: getAuthUserMetadataAvatarUrl(claims.user_metadata),
@@ -60,6 +64,7 @@ export const mapSupabaseSessionToCurrentAuthIdentity = (
   return {
     userId: session.user.id,
     loginEmail: session.user.email || fallbackEmail || "",
+    isSuperuser: isSuperuserFromAppMetadata(session.user.app_metadata),
     canUpdatePassword: canUpdatePasswordFromAppMetadata(
       session.user.app_metadata
     ),

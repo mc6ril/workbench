@@ -4,7 +4,7 @@ import { render, screen } from "@testing-library/react";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import AppProvider from "@/shared/providers/AppProvider";
 
-import { useProfileRuntimeSync } from "@/domains/profile/presentation/providers/useProfileRuntimeSync";
+import { useAccountRuntimeSync } from "@/domains/account/presentation/hooks/useAccountRuntimeSync";
 
 jest.mock("next/navigation", () => ({
   usePathname: () => PAGE_ROUTES.WORKSPACE,
@@ -31,12 +31,9 @@ jest.mock("@/shared/design-system/toast", () => ({
   default: () => null,
 }));
 
-jest.mock(
-  "@/domains/profile/presentation/providers/useProfileRuntimeSync",
-  () => ({
-    useProfileRuntimeSync: jest.fn(),
-  })
-);
+jest.mock("@/domains/account/presentation/hooks/useAccountRuntimeSync", () => ({
+  useAccountRuntimeSync: jest.fn(),
+}));
 
 describe("AppProvider", () => {
   beforeEach(() => {
@@ -51,7 +48,7 @@ describe("AppProvider", () => {
     );
 
     expect(screen.getByText("app content")).toBeInTheDocument();
-    expect(useProfileRuntimeSync).toHaveBeenCalled();
+    expect(useAccountRuntimeSync).toHaveBeenCalled();
     expect(jest.mocked(ThemeProvider)).toHaveBeenCalledWith(
       expect.objectContaining({
         attribute: "data-theme",
