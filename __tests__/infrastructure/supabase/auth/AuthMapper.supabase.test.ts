@@ -1,3 +1,5 @@
+import { DEFAULT_USER_PREFERENCES } from "@/shared/user/userPreferences";
+
 import { createAuthError } from "../../../../__mocks__/core/domain/authMocks";
 import {
   createSupabaseAuthError,
@@ -6,7 +8,6 @@ import {
 
 import { mapSupabaseAuthError } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
 import { mapSupabaseSessionToCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
-import { DEFAULT_USER_PREFERENCES } from "@/domains/profile/core/domain/profile.types";
 
 describe("AuthMapper.supabase", () => {
   describe("mapSupabaseSessionToCurrentAuthIdentity", () => {
@@ -21,6 +22,7 @@ describe("AuthMapper.supabase", () => {
       expect(result).toEqual({
         userId: "user-123",
         loginEmail: "test@example.com",
+        isSuperuser: false,
         canUpdatePassword: true,
         displayName: null,
         avatarUrl: null,

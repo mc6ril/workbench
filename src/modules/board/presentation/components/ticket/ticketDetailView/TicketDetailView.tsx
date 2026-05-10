@@ -19,6 +19,7 @@ import TicketStatusBar from "./components/TicketStatusBar";
 import styles from "./TicketDetailView.module.scss";
 
 import type { ProjectMember } from "@/domains/project/core/domain/project.types";
+import { useRegisterToolbarBreadcrumb } from "@/domains/project/presentation/contexts/ToolbarBreadcrumb";
 import type { TicketAssignee } from "@/modules/board/core/domain/ticket.types";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useTicketDetailController } from "@/modules/board/presentation/hooks/ticket";
@@ -27,7 +28,6 @@ import { buildTicketCode } from "@/modules/board/utils/ticketUtils";
 type Props = {
   projectId: string;
   ticketId: string;
-  onClose: () => void;
 };
 
 const getMemberName = (member: ProjectMember): string => {
@@ -98,7 +98,7 @@ const isDueDateOverdue = (value: string | null): boolean => {
   return dueDay < currentDate;
 };
 
-const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
+const TicketDetailView = ({ projectId, ticketId }: Props) => {
   const t = useTranslations("pages.ticketDetail.page");
   const tCommon = useTranslations("common");
   const locale = useLocale();
@@ -158,6 +158,8 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
     ticketId,
   });
 
+  useRegisterToolbarBreadcrumb(ticket ? effectiveTitle : null);
+
   const canSaveMainFields =
     canEditTicket && effectiveTitle.trim().length > 0 && !isSavingMainFields;
 
@@ -213,7 +215,6 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
         ticketCode={ticketCode}
         canEditTicket={canEditTicket}
         onTitleChange={setTitleDraft}
-        onBack={onClose}
       />
 
       <TicketStatusBar
@@ -410,7 +411,6 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
                         setDueDateDraft(
                           parseDateInputValue(event.target.value)
                         );
-                        close();
                       }}
                     />
 
@@ -431,6 +431,13 @@ const TicketDetailView = ({ projectId, ticketId, onClose }: Props) => {
                         onClick={close}
                       >
                         {tCommon("cancel")}
+                      </button>
+                      <button
+                        type="button"
+                        className={styles["ticket-detail__secondary-action"]}
+                        onClick={close}
+                      >
+                        {tCommon("apply")}
                       </button>
                     </div>
                   </div>

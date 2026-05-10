@@ -4,10 +4,23 @@ import {
   updateCookie,
 } from "@/shared/infrastructure/storage/cookies";
 
-import {
-  isThemePreference,
-  type Theme,
-} from "@/domains/profile/core/domain/profile.types";
+export const ThemeValues = ["light", "dark", "system"] as const;
+export type Theme = (typeof ThemeValues)[number];
+
+export const isThemePreference = (value: string): value is Theme => {
+  return (ThemeValues as readonly string[]).includes(value);
+};
+
+export const resolveThemePreference = (
+  value?: string | null,
+  fallback: Theme = "system"
+): Theme => {
+  if (!value) {
+    return fallback;
+  }
+
+  return isThemePreference(value) ? value : fallback;
+};
 
 export const themeCookieMaxAgeSeconds = 60 * 60 * 24 * 365;
 export const themeCookieName = APP_COOKIE_KEYS.THEME;

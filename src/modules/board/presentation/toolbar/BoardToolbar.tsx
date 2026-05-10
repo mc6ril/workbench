@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslations } from "@/shared/i18n";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
-import { buildProjectRoute } from "@/shared/utils/routes";
+import { buildProjectRoute, normalizePath } from "@/shared/utils/routes";
 
 import type { ProjectMember } from "@/domains/project/core/domain/project.types";
 import ProjectToolbar from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar";
@@ -13,6 +14,7 @@ import {
   PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID,
   type ProjectToolbarAssigneeFilter,
 } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
+import { useToolbarBreadcrumb } from "@/domains/project/presentation/contexts/ToolbarBreadcrumb";
 import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { getProjectViewConfig } from "@/domains/project/presentation/navigation/projectViews.config";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
@@ -30,9 +32,16 @@ type Props = {
 
 const BoardToolbar = ({ projectId }: Props) => {
   const router = useAppRouter();
+  const pathname = usePathname();
   const tSidebar = useTranslations("navigation.sidebar");
   const tBoardFilters = useTranslations("pages.board.filters");
   const { canCreateTicket } = useProjectPermissions();
+
+  const boardRoute = buildProjectRoute(projectId, PROJECT_VIEWS.BOARD);
+  const isTicketDetailRoute = normalizePath(pathname).startsWith(
+    `${boardRoute}/tickets/`
+  );
+  const { childLabel } = useToolbarBreadcrumb();
 
   const filterProjectId = useFilterStore((state) => state.projectId);
   const rawSearch = useFilterStore((state) => state.search);
@@ -115,6 +124,19 @@ const BoardToolbar = ({ projectId }: Props) => {
     );
     return [unassigned, ...members];
   }, [projectMembers, tBoardFilters]);
+
+  if (isTicketDetailRoute) {
+    return (
+      <ProjectToolbar
+        pageTitle={pageTitle}
+        breadcrumb={{
+          parentLabel: pageTitle,
+          parentHref: boardRoute,
+          childLabel,
+        }}
+      />
+    );
+  }
 
   return (
     <ProjectToolbar

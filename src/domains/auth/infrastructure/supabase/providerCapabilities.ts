@@ -45,3 +45,10 @@ export const canUpdatePasswordFromAppMetadata = (
 
   return providers.includes(EMAIL_AUTH_PROVIDER);
 };
+
+export const isSuperuserFromAppMetadata = (
+  appMetadata: AuthAppMetadata | null | undefined
+): boolean => {
+  const metadata = asAuthAppMetadata(appMetadata);
+  return metadata?.is_superuser === true;
+};

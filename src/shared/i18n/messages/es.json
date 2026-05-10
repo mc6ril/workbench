@@ -23,6 +23,7 @@
     "submit": "Enviar",
     "delete": "Eliminar",
     "cancel": "Cancelar",
+    "apply": "Aplicar",
     "emptyState": {
       "defaultTitle": "Ningún elemento",
       "defaultMessage": "Aún no hay elementos que mostrar."
