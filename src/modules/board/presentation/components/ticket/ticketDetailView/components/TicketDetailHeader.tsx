@@ -1,6 +1,5 @@
 import { useLayoutEffect, useRef } from "react";
 
-import CloseButton from "@/shared/design-system/close_button";
 import Text from "@/shared/design-system/text";
 import { useTranslations } from "@/shared/i18n";
 
@@ -11,7 +10,6 @@ type Props = {
   ticketCode: string;
   canEditTicket: boolean;
   onTitleChange: (value: string) => void;
-  onBack: () => void;
 };
 
 const TicketDetailHeader = ({
@@ -19,7 +17,6 @@ const TicketDetailHeader = ({
   ticketCode,
   canEditTicket,
   onTitleChange,
-  onBack,
 }: Props) => {
   const t = useTranslations("pages.ticketDetail.page");
   const titleRef = useRef<HTMLTextAreaElement | null>(null);
@@ -44,7 +41,6 @@ const TicketDetailHeader = ({
         >
           {ticketCode}
         </Text>
-        <CloseButton ariaLabel={t("actions.close")} onClick={onBack} />
       </div>
       <textarea
         ref={titleRef}

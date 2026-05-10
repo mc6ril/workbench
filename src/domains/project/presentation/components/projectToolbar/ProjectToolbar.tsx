@@ -4,6 +4,7 @@ import { getAccessibilityId } from "@/shared/a11y/constants";
 import Button from "@/shared/design-system/button";
 import { PlusIcon, SearchIcon } from "@/shared/design-system/icons";
 import Input from "@/shared/design-system/input";
+import Link from "@/shared/design-system/link";
 import Title from "@/shared/design-system/title";
 import { useTranslations } from "@/shared/i18n";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
@@ -19,6 +20,7 @@ import { useIsDesktopDashboardViewport } from "@/domains/project/presentation/co
 
 const ProjectToolbar = ({
   pageTitle,
+  breadcrumb,
   showSearch = true,
   hideTitleOnMobile = false,
   addActionType = null,
@@ -144,6 +146,40 @@ const ProjectToolbar = ({
     onSearchChange,
     onSuggestionSelect: navigateToSuggestion,
   });
+
+  if (breadcrumb) {
+    return (
+      <header id={navbarId} className={styles["project-toolbar"]} role="banner">
+        <div className={styles["project-toolbar__content"]}>
+          <nav
+            className={styles["project-toolbar__breadcrumb"]}
+            aria-label="breadcrumb"
+          >
+            <Link
+              href={breadcrumb.parentHref}
+              unstyled
+              className={styles["project-toolbar__breadcrumb-parent"]}
+            >
+              {breadcrumb.parentLabel}
+            </Link>
+            {breadcrumb.childLabel ? (
+              <>
+                <span
+                  className={styles["project-toolbar__breadcrumb-separator"]}
+                  aria-hidden
+                >
+                  &gt;
+                </span>
+                <span className={styles["project-toolbar__breadcrumb-child"]}>
+                  {breadcrumb.childLabel}
+                </span>
+              </>
+            ) : null}
+          </nav>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header
