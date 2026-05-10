@@ -10,11 +10,13 @@ import { normalizePath } from "@/shared/utils/routes";
 
 import ProjectToolbar from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar";
 import type { ProjectToolbarExtraTool } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
+import { useToolbarBreadcrumb } from "@/domains/project/presentation/contexts/ToolbarBreadcrumb";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import { RECIPES_QUICK_LIST_TOOL_ID } from "@/modules/recipes/presentation/constants/quickListFeedback";
 import {
   buildRecipeCreationRoute,
   buildRecipesCatalogRoute,
+  RECIPES_ROUTE_SEGMENTS,
 } from "@/modules/recipes/presentation/routes";
 import { useRecipesCatalogFiltersStore } from "@/modules/recipes/presentation/stores";
 import { useRecipesQuickListFeedbackStore } from "@/modules/recipes/presentation/stores/useRecipesQuickListFeedbackStore";
@@ -56,8 +58,22 @@ const RecipesToolbar = ({ projectId }: Props) => {
   );
 
   const [searchInput, setSearchInput] = useState(search);
-  const isCatalogRoute =
-    normalizePath(pathname) === buildRecipesCatalogRoute(projectId);
+  const catalogRoute = buildRecipesCatalogRoute(projectId);
+  const isCatalogRoute = normalizePath(pathname) === catalogRoute;
+
+  const SPECIAL_SEGMENTS = [
+    RECIPES_ROUTE_SEGMENTS.QUICK_LIST,
+    RECIPES_ROUTE_SEGMENTS.SHOPPING_LIST,
+    RECIPES_ROUTE_SEGMENTS.NEW,
+  ] as const;
+  const isRecipeDetailRoute =
+    !isCatalogRoute &&
+    normalizePath(pathname).startsWith(`${catalogRoute}/`) &&
+    !SPECIAL_SEGMENTS.some((seg) =>
+      normalizePath(pathname).startsWith(`${catalogRoute}/${seg}`)
+    );
+
+  const { childLabel } = useToolbarBreadcrumb();
   const activeFilterCount = (search ? 1 : 0) + selectedFilterOptionIds.length;
 
   useEffect(() => {
@@ -122,6 +138,19 @@ const RecipesToolbar = ({ projectId }: Props) => {
     toggleFilters,
     toggleQuickList,
   ]);
+
+  if (isRecipeDetailRoute) {
+    return (
+      <ProjectToolbar
+        pageTitle={pageTitle}
+        breadcrumb={{
+          parentLabel: pageTitle,
+          parentHref: catalogRoute,
+          childLabel,
+        }}
+      />
+    );
+  }
 
   return (
     <ProjectToolbar

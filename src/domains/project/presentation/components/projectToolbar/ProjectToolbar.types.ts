@@ -37,8 +37,15 @@ export type ProjectToolbarAssigneeFilter =
       label: string;
     };
 
+export type ProjectToolbarBreadcrumb = {
+  parentLabel: string;
+  parentHref: string;
+  childLabel: string | null;
+};
+
 export type ProjectToolbarProps = {
   pageTitle: string;
+  breadcrumb?: ProjectToolbarBreadcrumb;
   showSearch?: boolean;
   hideTitleOnMobile?: boolean;
   addActionType?: ProjectToolbarAddActionType | null;
