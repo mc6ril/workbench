@@ -1,16 +1,20 @@
-import type { ReactNode } from "react";
 import type { Metadata } from "next";
 
+import LegalPage from "@/presentation/pages/legal";
+
+import type { Locale } from "@/shared/i18n";
 import { isSupportedLocale } from "@/shared/i18n/config";
-import { buildMarketingLegalPath } from "@/shared/i18n/marketingPaths";
+import { buildLegalPath } from "@/shared/i18n/publicPaths";
 import { getStaticTranslator } from "@/shared/i18n/staticTranslator";
 import { buildPublicMetadata } from "@/shared/seo/buildPublicMetadata";
 
+type Props = {
+  params: Promise<{ locale: Locale }>;
+};
+
 export const generateMetadata = async ({
   params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> => {
+}: Props): Promise<Metadata> => {
   const { locale } = await params;
 
   if (!isSupportedLocale(locale)) {
@@ -23,17 +27,14 @@ export const generateMetadata = async ({
     locale,
     title: tMetadata("title"),
     description: tMetadata("description"),
-    pathname: buildMarketingLegalPath(locale),
-    buildPathForLocale: buildMarketingLegalPath,
+    pathname: buildLegalPath(locale),
+    buildPathForLocale: buildLegalPath,
   });
 };
 
-type Props = {
-  children: ReactNode;
+const Legal = async ({ params }: Props) => {
+  const { locale } = await params;
+  return <LegalPage locale={locale} />;
 };
 
-const LegalLayout = ({ children }: Props) => {
-  return <>{children}</>;
-};
-
-export default LegalLayout;
+export default Legal;

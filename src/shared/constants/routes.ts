@@ -7,7 +7,7 @@
  * Named page routes reused across redirects and navigation.
  */
 export const PAGE_ROUTES = Object.freeze({
-  /** Site root; serves the default-locale marketing home. */
+  /** Site root; serves the default-locale home page. */
   HOME: "/",
   LEGAL: "/legal",
   WORKSPACE: "/workspace",

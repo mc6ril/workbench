@@ -3,10 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { localeCookieName } from "@/shared/i18n/config";
 import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
-import {
-  buildMarketingHomePath,
-  buildMarketingLegalPath,
-} from "@/shared/i18n/marketingPaths";
+import { buildHomePath, buildLegalPath } from "@/shared/i18n/publicPaths";
 
 let mockPathname: string = PAGE_ROUTES.WORKSPACE;
 
@@ -40,11 +37,11 @@ describe("GlobalErrorPage", () => {
       screen.getByRole("link", {
         name: getFallbackMessages("es").globalError.secondaryActionAriaLabel,
       })
-    ).toHaveAttribute("href", buildMarketingHomePath("es"));
+    ).toHaveAttribute("href", buildHomePath("es"));
   });
 
-  it("uses the marketing locale encoded in the pathname", async () => {
-    mockPathname = buildMarketingLegalPath("en");
+  it("uses the locale encoded in the pathname", async () => {
+    mockPathname = buildLegalPath("en");
 
     render(<GlobalErrorPage error={new Error("boom")} reset={jest.fn()} />);
 
@@ -56,6 +53,6 @@ describe("GlobalErrorPage", () => {
       screen.getByRole("link", {
         name: getFallbackMessages("en").globalError.secondaryActionAriaLabel,
       })
-    ).toHaveAttribute("href", buildMarketingHomePath("en"));
+    ).toHaveAttribute("href", buildHomePath("en"));
   });
 });

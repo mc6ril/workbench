@@ -8,7 +8,7 @@ import { getSiteUrl } from "@/shared/seo/siteUrl";
 import "@/styles/global.scss";
 
 /**
- * Per-locale SEO for marketing lives under `[locale]/(marketing)/*` via `buildHomeMetadata` / `buildPublicMetadata`.
+ * Per-locale SEO lives under `app/public/[locale]/` via `buildHomeMetadata` / `buildPublicMetadata`.
  * Web app manifest is locale-aware for all routes.
  */
 const siteUrl = getSiteUrl();
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     default: PRODUCT_BRAND_NAME,
     template: `%s | ${PRODUCT_BRAND_NAME}`,
   },
-  // Locale-specific manifests are set on marketing routes; keep root metadata static for SSG.
+  // Locale-specific manifests are set on public routes; keep root metadata static for SSG.
   manifest: new URL(`/manifest/${defaultLocale}`, siteUrl).toString(),
 };
 

@@ -2,19 +2,19 @@
  * @jest-environment node
  */
 import { supportedLocales } from "@/shared/i18n/config";
-import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { buildHomePath } from "@/shared/i18n/publicPaths";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 import { GET as manifestGet } from "@/app/manifest/[locale]/route";
 import sitemap from "@/app/sitemap";
 
 describe("SEO smoke: sitemap and manifest", () => {
-  it("sitemap includes all marketing locales and expected paths", () => {
+  it("sitemap includes all locales and expected paths", () => {
     const entries = sitemap();
     const base = getSiteUrl().origin;
     expect(entries.length).toBeGreaterThan(0);
     for (const locale of supportedLocales) {
-      const home = new URL(buildMarketingHomePath(locale), base).toString();
+      const home = new URL(buildHomePath(locale), base).toString();
       expect(entries.some((e) => e.url === home)).toBe(true);
     }
   });
@@ -49,7 +49,7 @@ describe("SEO smoke: sitemap and manifest", () => {
     expect(body.lang).toBe("fr");
   });
 
-  it("manifest route uses the locale-specific marketing home for launch URLs", async () => {
+  it("manifest route uses the locale-specific home for launch URLs", async () => {
     const res = await manifestGet(
       new Request("http://localhost:3000/manifest/en"),
       { params: Promise.resolve({ locale: "en" }) }

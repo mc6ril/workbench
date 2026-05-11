@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
 import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
-import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { buildHomePath } from "@/shared/i18n/publicPaths";
 import { useRuntimeLocaleSnapshot } from "@/shared/i18n/useRuntimeLocaleSnapshot";
 
 type AppErrorBoundaryProps = {
@@ -67,7 +67,7 @@ const AppErrorBoundary = ({ children }: AppErrorBoundaryProps) => {
   const locale = useRuntimeLocaleSnapshot();
   const pathname = usePathname() ?? "";
   const copy = getFallbackMessages(locale).error;
-  const homePath = buildMarketingHomePath(locale);
+  const homePath = buildHomePath(locale);
 
   return (
     <InternalAppErrorBoundary

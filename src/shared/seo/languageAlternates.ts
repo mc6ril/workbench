@@ -8,7 +8,7 @@ import { getSiteUrl } from "@/shared/seo/siteUrl";
 type Hreflang = Locale | "x-default";
 
 /**
- * hreflang map for a marketing route.
+ * hreflang map for a public route.
  * The default locale is unprefixed; secondary locales keep their prefix.
  */
 export const getLanguageAlternates = (

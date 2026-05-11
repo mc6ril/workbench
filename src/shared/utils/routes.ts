@@ -6,20 +6,17 @@ import {
 } from "@/shared/constants/routes";
 import { supportedLocales } from "@/shared/i18n/config";
 
-const MARKETING_LOCALE_PREFIX = supportedLocales.join("|");
-const MARKETING_LEAF_ROUTES = [PAGE_ROUTES.LEGAL]
+const LOCALE_PREFIX = supportedLocales.join("|");
+const PUBLIC_LEAF_ROUTES = [PAGE_ROUTES.LEGAL]
   .map((value) => value.replace(/^\//, ""))
   .join("|");
-const MARKETING_PUBLIC_PATH = new RegExp(
-  `^(?:${PAGE_ROUTES.HOME}$|${PAGE_ROUTES.LEGAL}(?:/.*)?$|/(${MARKETING_LOCALE_PREFIX})(?:$|/(?:${MARKETING_LEAF_ROUTES})/?$|/${PAGE_ROUTES.LEGAL.replace(/^\//, "")}(?:/.*)?$))`,
+const PUBLIC_PAGE_PATH = new RegExp(
+  `^(?:${PAGE_ROUTES.HOME}$|${PAGE_ROUTES.LEGAL}(?:/.*)?$|/(${LOCALE_PREFIX})(?:$|/(?:${PUBLIC_LEAF_ROUTES})/?$|/${PAGE_ROUTES.LEGAL.replace(/^\//, "")}(?:/.*)?$))`,
   "i"
 );
 
-/**
- * Marketing URLs (default locale unprefixed, secondary locales prefixed).
- */
-export const isMarketingPublicRoute = (pathname: string): boolean => {
-  return MARKETING_PUBLIC_PATH.test(normalizePath(pathname));
+const isLocalizedPublicPath = (pathname: string): boolean => {
+  return PUBLIC_PAGE_PATH.test(normalizePath(pathname));
 };
 
 const UUID_PATH_SEGMENT =
@@ -40,7 +37,7 @@ export const isPublicRoute = (pathname: string): boolean => {
     return true;
   }
 
-  if (isMarketingPublicRoute(pathname)) {
+  if (isLocalizedPublicPath(pathname)) {
     return true;
   }
 

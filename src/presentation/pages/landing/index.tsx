@@ -12,7 +12,7 @@ import Link from "@/shared/design-system/link";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import type { Locale } from "@/shared/i18n/config";
-import { buildMarketingLegalPath } from "@/shared/i18n/marketingPaths";
+import { buildLegalPath } from "@/shared/i18n/publicPaths";
 import { getStaticTranslator } from "@/shared/i18n/staticTranslator";
 import { buildFeaturePreviewContent } from "@/shared/utils";
 
@@ -55,7 +55,7 @@ const LandingPage = async ({ locale }: LandingPageProps) => {
     createNamespaceTranslationGetter(locale, "pages.landing.footer"),
   ]);
 
-  const legal = buildMarketingLegalPath(locale);
+  const legal = buildLegalPath(locale);
   const featurePreview = buildFeaturePreviewContent("board", tExamples);
   const previewAnchor = `#${getAccessibilityId("landing-example-preview")}`;
   const primaryCtaClassName = getCtaClassName(

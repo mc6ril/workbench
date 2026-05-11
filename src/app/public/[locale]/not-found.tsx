@@ -3,10 +3,10 @@
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
 import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
-import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { buildHomePath } from "@/shared/i18n/publicPaths";
 import { useRuntimeLocaleSnapshot } from "@/shared/i18n/useRuntimeLocaleSnapshot";
 
-const MarketingNotFoundPage = () => {
+const PublicNotFoundPage = () => {
   const locale = useRuntimeLocaleSnapshot();
   const copy = getFallbackMessages(locale).notFound;
 
@@ -22,7 +22,7 @@ const MarketingNotFoundPage = () => {
         {
           label: copy.primaryAction,
           ariaLabel: copy.primaryActionAriaLabel,
-          href: buildMarketingHomePath(locale),
+          href: buildHomePath(locale),
           variant: "primary",
         },
         {
@@ -36,4 +36,4 @@ const MarketingNotFoundPage = () => {
   );
 };
 
-export default MarketingNotFoundPage;
+export default PublicNotFoundPage;

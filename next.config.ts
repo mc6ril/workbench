@@ -8,34 +8,34 @@ import { PAGE_ROUTES } from "./src/shared/constants/routes";
 import { defaultLocale, supportedLocales } from "./src/shared/i18n/config";
 
 const withNextIntl = createNextIntlPlugin("./src/shared/i18n/request.ts");
-const INTERNAL_MARKETING_ROOT = "/marketing";
-const secondaryMarketingLocalePattern = supportedLocales
+const INTERNAL_PUBLIC_ROOT = "/public";
+const secondaryLocalePattern = supportedLocales
   .filter((locale) => locale !== defaultLocale)
   .join("|");
-const marketingRewrites = [
+const publicPageRewrites = [
   {
     source: PAGE_ROUTES.HOME,
-    destination: `${INTERNAL_MARKETING_ROOT}/${defaultLocale}`,
+    destination: `${INTERNAL_PUBLIC_ROOT}/${defaultLocale}`,
   },
   {
     source: PAGE_ROUTES.LEGAL,
-    destination: `${INTERNAL_MARKETING_ROOT}/${defaultLocale}${PAGE_ROUTES.LEGAL}`,
+    destination: `${INTERNAL_PUBLIC_ROOT}/${defaultLocale}${PAGE_ROUTES.LEGAL}`,
   },
   {
     source: `${PAGE_ROUTES.LEGAL}/:path*`,
-    destination: `${INTERNAL_MARKETING_ROOT}/${defaultLocale}${PAGE_ROUTES.LEGAL}/:path*`,
+    destination: `${INTERNAL_PUBLIC_ROOT}/${defaultLocale}${PAGE_ROUTES.LEGAL}/:path*`,
   },
   {
-    source: `/:locale(${secondaryMarketingLocalePattern})`,
-    destination: `${INTERNAL_MARKETING_ROOT}/:locale`,
+    source: `/:locale(${secondaryLocalePattern})`,
+    destination: `${INTERNAL_PUBLIC_ROOT}/:locale`,
   },
   {
-    source: `/:locale(${secondaryMarketingLocalePattern})${PAGE_ROUTES.LEGAL}`,
-    destination: `${INTERNAL_MARKETING_ROOT}/:locale${PAGE_ROUTES.LEGAL}`,
+    source: `/:locale(${secondaryLocalePattern})${PAGE_ROUTES.LEGAL}`,
+    destination: `${INTERNAL_PUBLIC_ROOT}/:locale${PAGE_ROUTES.LEGAL}`,
   },
   {
-    source: `/:locale(${secondaryMarketingLocalePattern})${PAGE_ROUTES.LEGAL}/:path*`,
-    destination: `${INTERNAL_MARKETING_ROOT}/:locale${PAGE_ROUTES.LEGAL}/:path*`,
+    source: `/:locale(${secondaryLocalePattern})${PAGE_ROUTES.LEGAL}/:path*`,
+    destination: `${INTERNAL_PUBLIC_ROOT}/:locale${PAGE_ROUTES.LEGAL}/:path*`,
   },
 ];
 
@@ -75,11 +75,11 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["recharts", "next-intl"],
   },
   /**
-   * Public SEO URLs keep the default locale unprefixed (`/`, `/legal`)
+   * Public URLs keep the default locale unprefixed (`/`, `/legal`)
    * and use `/{locale}` only for secondary locales (`/en`, `/es`).
-   * Files live under `app/marketing/[locale]/…` to avoid clashing with `app/(protected)/[projectId]`.
+   * Files live under `app/public/[locale]/…` to avoid clashing with `app/(protected)/[projectId]`.
    */
-  rewrites: async () => marketingRewrites,
+  rewrites: async () => publicPageRewrites,
   sassOptions: {
     includePaths: [path.join(__dirname, "./src/styles")],
   },
