@@ -20,12 +20,10 @@ type WorkspacePageViewProps = {
     updatedAt: Date | undefined,
     referenceDate?: Date
   ) => string;
-  isBillingVisible?: boolean;
   legal: string;
   onCreateWorkspace: () => void;
   onOpenProject: (projectId: string) => void;
   onReclaimProject: (projectId: string) => void | Promise<void>;
-  pricing: string;
   projects?: ProjectWithStats[];
   projectsErrorMessage: string | null;
   reclaimableProjects?: ReclaimableProject[];
@@ -39,12 +37,10 @@ const WorkspacePageView = ({
   createWorkspaceModal,
   displayName,
   formatLastActivity,
-  isBillingVisible,
   legal,
   onCreateWorkspace,
   onOpenProject,
   onReclaimProject,
-  pricing,
   projects,
   projectsErrorMessage,
   reclaimableProjects,
@@ -95,11 +91,7 @@ const WorkspacePageView = ({
         ) : null}
       </div>
 
-      <WorkspaceFooter
-        isBillingVisible={isBillingVisible}
-        legal={legal}
-        pricing={pricing}
-      />
+      <WorkspaceFooter legal={legal} />
 
       {createWorkspaceModal}
     </main>

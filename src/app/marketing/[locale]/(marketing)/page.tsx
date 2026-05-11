@@ -7,8 +7,6 @@ import { isSupportedLocale } from "@/shared/i18n/config";
 import { buildHomeMetadata } from "@/shared/seo/homeMetadata";
 import WebsiteJsonLd from "@/shared/seo/WebsiteJsonLd";
 
-import { getCachedBillingVisibility } from "@/domains/billing/infrastructure/server/getCachedBillingVisibility";
-
 type PageProps = {
   params: Promise<{ locale: string }>;
 };
@@ -32,12 +30,10 @@ const MarketingHomePage = async ({ params }: PageProps) => {
     notFound();
   }
 
-  const isBillingVisible = await getCachedBillingVisibility();
-
   return (
     <>
       <WebsiteJsonLd locale={locale} />
-      <LandingPage locale={locale} isBillingVisible={isBillingVisible} />
+      <LandingPage locale={locale} />
     </>
   );
 };

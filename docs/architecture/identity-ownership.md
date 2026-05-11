@@ -105,7 +105,6 @@ Typical composition for the account surface:
 - `viewer` for the current-user read model
 - `profile` for editable business data such as avatar and preferences
 - `auth` for identity state, sign-out, password, and delete-account flows
-- `billing` for subscription management
 
 ## Important Guardrails
 

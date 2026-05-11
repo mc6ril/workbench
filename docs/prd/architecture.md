@@ -7,7 +7,7 @@ This document is derived **only** from `src/` and `supabase/migrations/`. It int
 Workbench follows a domain + module architecture:
 
 - **Routes**: `src/app/` (Next.js App Router)
-- **Stable domains**: `src/domains/*` (auth, session, profile, viewer, billing, workspace, project, settings)
+- **Stable domains**: `src/domains/*` (auth, session, profile, viewer, workspace, project, settings)
 - **Project-scoped modules**: `src/modules/*` (currently `board`)
 - **Cross-cutting**: `src/shared/*` (design system, i18n, a11y, infra clients, errors, utilities)
 - **Database**: `supabase/migrations/*` (schema + RLS + RPCs)
@@ -21,7 +21,7 @@ Typical dependency flow:
 → `*/core/ports/*` (interfaces/contracts)
 → `*/infrastructure/*` (Supabase adapters, server helpers)
 → `src/shared/infrastructure/*` (shared clients)
-→ Supabase / Stripe.
+→ Supabase.
 
 Key rules observed:
 
@@ -58,7 +58,6 @@ Client pages live under domain/module presentation:
 - Ticket detail UI: `src/modules/board/presentation/pages/ticket`
 - Account UI: `src/domains/settings/presentation/pages/account`
 - Auth pages: `src/domains/auth/presentation/pages/*`
-- Pricing UI: `src/domains/billing/presentation/pages/pricing`
 
 ## 4) Domain and module responsibilities
 
@@ -120,16 +119,7 @@ Scope:
 
 - Account identity updates (email/display name) from an account screen.
 
-### 4.8 `billing` domain
-
-Scope:
-
-- Subscription read model and entitlements (plans, features, limits).
-- Stripe checkout/portal sessions.
-- Stripe webhook handling and subscription persistence.
-- “Billing visibility” runtime config used to hide/show pricing routes.
-
-### 4.9 `board` module
+### 4.8 `board` module
 
 Scope:
 
@@ -160,7 +150,6 @@ From migrations and domain types:
 - `ticket_assignees` (assignment join table, added in later migrations)
 - `comments`
 - `user_profiles` (single source of truth)
-- `subscriptions` (per user, Stripe identifiers)
 
 ### 5.2 Row Level Security (RLS)
 
@@ -170,7 +159,6 @@ RLS is enabled broadly; access is constrained to project membership:
 - Tickets: select for members; insert/update/delete for editors (admin/member).
 - Members and invitations: admin-only mutations.
 - Comments: select for members; create for editors; update for author; delete for author or project admin.
-- Subscriptions: user can read own row; writes via webhook/service role.
 
 ### 5.3 RPCs (examples visible in migrations)
 
@@ -202,6 +190,5 @@ RLS is enabled broadly; access is constrained to project membership:
 
 From `src/app/api/*`:
 
-- Stripe: checkout, portal, webhook.
 - Auth: delete user.
 - Jobs: archive completed tickets batch.

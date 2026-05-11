@@ -1,9 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
-import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
-import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
-import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
 import {
   InvitationStatus,
   type ProjectInvitation,
@@ -52,10 +49,6 @@ jest.mock(
     useProjectInvitations: jest.fn(),
   })
 );
-
-jest.mock("@/domains/billing/presentation/hooks/useFeatureAccess", () => ({
-  useFeatureAccess: jest.fn(),
-}));
 
 jest.mock(
   "@/domains/project/presentation/hooks/invitation/useInviteMember",
@@ -202,26 +195,6 @@ describe("ProjectPeopleSettingsSection", () => {
       })
     );
 
-    jest.mocked(useFeatureAccess).mockImplementation((feature) => {
-      if (feature === PlanFeature.ADVANCED_ROLES) {
-        return asMockedReturn<ReturnType<typeof useFeatureAccess>>({
-          hasAccess: true,
-          currentPlan: SubscriptionPlan.TEAM,
-          minimumPlan: SubscriptionPlan.TEAM,
-          limit: undefined,
-          isLoading: false,
-        });
-      }
-
-      return asMockedReturn<ReturnType<typeof useFeatureAccess>>({
-        hasAccess: true,
-        currentPlan: SubscriptionPlan.TEAM,
-        minimumPlan: SubscriptionPlan.FREE,
-        limit: 20,
-        isLoading: false,
-      });
-    });
-
     jest.mocked(useInviteMember).mockReturnValue(
       asMockedReturn<ReturnType<typeof useInviteMember>>({
         mutateAsync: inviteMutateAsync,
@@ -278,11 +251,8 @@ describe("ProjectPeopleSettingsSection", () => {
 
     await waitFor(() => {
       expect(inviteMutateAsync).toHaveBeenCalledWith({
-        input: {
-          projectId: PROJECT_ID,
-          role: ProjectRole.MEMBER,
-        },
-        currentPlan: SubscriptionPlan.TEAM,
+        projectId: PROJECT_ID,
+        role: ProjectRole.MEMBER,
       });
     });
 
@@ -327,43 +297,6 @@ describe("ProjectPeopleSettingsSection", () => {
         projectId: PROJECT_ID,
       });
     });
-  });
-
-  it("shows explicit plan gating when advanced roles are locked and the member limit is reached", () => {
-    jest.mocked(useFeatureAccess).mockImplementation((feature) => {
-      if (feature === PlanFeature.ADVANCED_ROLES) {
-        return asMockedReturn<ReturnType<typeof useFeatureAccess>>({
-          hasAccess: false,
-          currentPlan: SubscriptionPlan.FREE,
-          minimumPlan: SubscriptionPlan.TEAM,
-          limit: 0,
-          isLoading: false,
-        });
-      }
-
-      return asMockedReturn<ReturnType<typeof useFeatureAccess>>({
-        hasAccess: true,
-        currentPlan: SubscriptionPlan.FREE,
-        minimumPlan: SubscriptionPlan.FREE,
-        limit: 2,
-        isLoading: false,
-      });
-    });
-
-    render(<ProjectPeopleSettingsSection projectId={PROJECT_ID} />);
-
-    expect(
-      screen.getByText(/Le rôle Observateur est réservé au plan/i)
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/La limite de 2 accès est atteinte/i)
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("option", { name: "Observateur" })
-    ).not.toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Créer un lien" })
-    ).toBeDisabled();
   });
 
   it("renders loading states for members and invitations", () => {

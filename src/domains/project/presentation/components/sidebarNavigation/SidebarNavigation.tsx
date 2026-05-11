@@ -16,7 +16,6 @@ import Button from "@/shared/design-system/button";
 import Modal from "@/shared/design-system/modal";
 import { useIsHydrated } from "@/shared/hooks/useIsHydrated";
 import { useTranslations } from "@/shared/i18n";
-import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import SidebarNavigationList from "./components/SidebarNavigationList";
@@ -48,7 +47,6 @@ const RECIPES_MODULE_POINTS = [
 const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
   const pathname = usePathname();
   const router = useAppRouter();
-  const { pricing } = useMarketingRoutes();
   const t = useTranslations("navigation.sidebar");
   const signOutMutation = useSignOut();
   const enableProjectModuleMutation = useEnableProjectModule();
@@ -74,24 +72,9 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
     return items.find((item) => item.key === PROJECT_VIEWS.RECIPES) ?? null;
   }, [items]);
   const canShowRecipesModule = recipesItem !== null && !recipesItem.enabled;
-  const canEnableRecipes =
-    recipesItem !== null && !recipesItem.enabled && !recipesItem.locked;
-  const recipesModuleStatusLabel =
-    recipesItem?.locked && recipesItem.planBadge
-      ? t("moduleLibrary.recipes.lockedStatus").replace(
-          "{plan}",
-          recipesItem.planBadge
-        )
-      : t("moduleLibrary.recipes.status");
-  const recipesModuleCtaLabel =
-    recipesItem?.locked && canShowRecipesModule
-      ? t("moduleLibrary.recipes.upgradeCta")
-      : t("moduleLibrary.recipes.cta");
-
-  const handleLockedClick = useCallback(() => {
-    const from = encodeURIComponent(pathname ?? PAGE_ROUTES.WORKSPACE);
-    router.push(`${pricing}?from=${from}`);
-  }, [router, pathname, pricing]);
+  const canEnableRecipes = recipesItem !== null && !recipesItem.enabled;
+  const recipesModuleStatusLabel = t("moduleLibrary.recipes.status");
+  const recipesModuleCtaLabel = t("moduleLibrary.recipes.cta");
 
   const fallbackDisplayName = t("profile.userFallbackName");
   const displayNameValue = viewer?.displayName?.trim();
@@ -114,10 +97,6 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
 
   const prefetchProjectView = useCallback(
     (item: SidebarItem) => {
-      if (item.locked) {
-        return;
-      }
-
       void router.prefetch(item.href);
     },
     [router]
@@ -156,13 +135,8 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
       return;
     }
 
-    if (recipesItem.locked) {
-      handleLockedClick();
-      return;
-    }
-
     handleEnableRecipes();
-  }, [handleEnableRecipes, handleLockedClick, recipesItem]);
+  }, [handleEnableRecipes, recipesItem]);
 
   const handleProfileTriggerClick = useCallback(() => {
     setProfileMenuOpen((prev) => {
@@ -205,15 +179,6 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
     signOutMutation.mutate();
   }, [closeProfileMenu, signOutMutation]);
 
-  const handleSidebarItemClick = useCallback(
-    (item: SidebarItem) => {
-      if (item.locked) {
-        handleLockedClick();
-      }
-    },
-    [handleLockedClick]
-  );
-
   const handleWorkspaceLinkClick = useCallback(() => {
     closeProfileMenu();
   }, [closeProfileMenu]);
@@ -222,15 +187,6 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
     closeProfileMenu();
   }, [closeProfileMenu]);
 
-  const getLockedAriaLabel = useCallback(
-    (item: SidebarItem): string => {
-      return t("locked.ariaLabel", {
-        feature: item.label,
-        plan: item.planBadge ?? "",
-      });
-    },
-    [t]
-  );
   const visibleItems = useMemo(() => {
     return items.filter((item) => item.enabled);
   }, [items]);
@@ -244,9 +200,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
           navListId={navListId}
           addTabLabel={t("addTab")}
           addTabAriaLabel={t("addTabAriaLabel")}
-          getLockedAriaLabel={getLockedAriaLabel}
           onAddTabClick={handleAddTabClick}
-          onItemClick={handleSidebarItemClick}
           onItemPrefetch={prefetchProjectView}
         />
 
@@ -319,7 +273,7 @@ const SidebarNavigation = ({ projectId }: SidebarNavigationProps) => {
                     </div>
                     <Badge
                       label={recipesModuleStatusLabel}
-                      variant={recipesItem?.locked ? "warning" : "info"}
+                      variant="info"
                       size="small"
                     />
                   </div>

@@ -12,10 +12,7 @@ import Link from "@/shared/design-system/link";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import type { Locale } from "@/shared/i18n/config";
-import {
-  buildMarketingLegalPath,
-  buildMarketingPricingPath,
-} from "@/shared/i18n/marketingPaths";
+import { buildMarketingLegalPath } from "@/shared/i18n/marketingPaths";
 import { getStaticTranslator } from "@/shared/i18n/staticTranslator";
 import { buildFeaturePreviewContent } from "@/shared/utils";
 
@@ -23,7 +20,6 @@ import styles from "./styles.module.scss";
 
 type LandingPageProps = {
   locale: Locale;
-  isBillingVisible: boolean;
 };
 
 const createNamespaceTranslationGetter = async (
@@ -38,7 +34,7 @@ const getCtaClassName = (...classNames: Array<string | undefined>) => {
   return classNames.filter(Boolean).join(" ");
 };
 
-const LandingPage = async ({ locale, isBillingVisible }: LandingPageProps) => {
+const LandingPage = async ({ locale }: LandingPageProps) => {
   const [
     tHero,
     tValues,
@@ -60,7 +56,6 @@ const LandingPage = async ({ locale, isBillingVisible }: LandingPageProps) => {
   ]);
 
   const legal = buildMarketingLegalPath(locale);
-  const pricing = buildMarketingPricingPath(locale);
   const featurePreview = buildFeaturePreviewContent("board", tExamples);
   const previewAnchor = `#${getAccessibilityId("landing-example-preview")}`;
   const primaryCtaClassName = getCtaClassName(
@@ -352,14 +347,13 @@ const LandingPage = async ({ locale, isBillingVisible }: LandingPageProps) => {
           className={styles["landing-footer__nav"]}
           aria-label={tFooter("ariaLabel")}
         >
-          <Link href={legal} className={styles["landing-footer__link"]}>
+          <Link
+            href={legal}
+            prefetch={false}
+            className={styles["landing-footer__link"]}
+          >
             {tFooter("legal")}
           </Link>
-          {isBillingVisible && (
-            <Link href={pricing} className={styles["landing-footer__link"]}>
-              {tFooter("pricing")}
-            </Link>
-          )}
         </nav>
       </footer>
     </main>

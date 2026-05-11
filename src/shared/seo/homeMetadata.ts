@@ -5,7 +5,6 @@ import type { Locale } from "@/shared/i18n/config";
 import {
   buildMarketingHomePath,
   buildMarketingLegalPath,
-  buildMarketingPricingPath,
 } from "@/shared/i18n/marketingPaths";
 import { getStaticTranslator } from "@/shared/i18n/staticTranslator";
 import { getLanguageAlternates } from "@/shared/seo/languageAlternates";
@@ -89,4 +88,4 @@ export const buildHomeMetadata = async (locale: Locale): Promise<Metadata> => {
   };
 };
 
-export { buildMarketingLegalPath, buildMarketingPricingPath };
+export { buildMarketingLegalPath };

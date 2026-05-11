@@ -59,23 +59,14 @@
         },
         "recipes": {
           "status": "Disponible",
-          "lockedStatus": "Plan {plan}",
           "subtitle": "El módulo de comidas del hogar, pensado para resultar deseable en cuanto entra en un proyecto.",
           "teaser": "Un espacio premium para elegir recetas, tener a mano los platos adecuados y convertir la semana en un plan de compras muy simple.",
-          "cta": "Añadir Recipes al proyecto",
-          "upgradeCta": "Ver planes"
+          "cta": "Añadir Recipes al proyecto"
         },
         "empty": {
           "badge": "Proyecto al día",
           "title": "No hay nuevos módulos para añadir por ahora",
           "description": "Los módulos ya integrados desaparecen de aquí, y los futuros siguen ocultos hasta que estén listos."
-        }
-      },
-      "locked": {
-        "ariaLabel": "{feature} — requiere el plan {plan}",
-        "badge": {
-          "pro": "Foyer",
-          "team": "Foyer Plus"
         }
       },
       "profile": {
@@ -643,14 +634,7 @@
       "people": {
         "title": "Miembros e invitaciones",
         "subtitle": "Gestiona el acceso al proyecto, los roles activos y los enlaces de invitación que siguen siendo válidos.",
-        "adminOnly": "Solo un administrador puede invitar personas, cambiar roles o eliminar a un miembro del proyecto.",
-        "advancedRolesLocked": "El rol Observador requiere el plan {plan}. Los observadores actuales siguen visibles hasta su próximo cambio de rol.",
-        "currentPlan": "Plan actual: {plan}",
-        "memberLimit": {
-          "limited": "{count}/{limit} accesos usados",
-          "unlimited": "{count} accesos usados, sin límite",
-          "reached": "Se ha alcanzado el límite de {limit} accesos para tu plan {plan}. Los miembros activos y las invitaciones pendientes cuentan en este total."
-        }
+        "adminOnly": "Solo un administrador puede invitar personas, cambiar roles o eliminar a un miembro del proyecto."
       },
       "members": {
         "title": "Miembros del proyecto",
@@ -1210,33 +1194,6 @@
           "es": "Español"
         }
       },
-      "subscription": {
-        "title": "Mi suscripción",
-        "description": "Gestiona tu plan y facturación",
-        "icon": "💳",
-        "currentPlan": "Plan actual",
-        "planLabels": {
-          "free": "Gratuito",
-          "pro": "Foyer",
-          "team": "Foyer Plus"
-        },
-        "statusLabels": {
-          "active": "Activo",
-          "canceled": "Cancelado",
-          "past_due": "Pago pendiente",
-          "trialing": "Periodo de prueba"
-        },
-        "periodEnd": "Renovación el {date}",
-        "cancelAtPeriodEnd": "Tu suscripción se cancelará al final del periodo actual",
-        "manageButton": "Gestionar mi suscripción",
-        "manageButtonAriaLabel": "Abrir el portal de gestión de suscripción de Stripe",
-        "changePlanButton": "Cambiar de plan",
-        "changePlanButtonAriaLabel": "Ver otros planes disponibles",
-        "superuser": {
-          "badge": "Super Usuario",
-          "description": "Acceso completo a todas las funcionalidades"
-        }
-      },
       "dangerZone": {
         "title": "Zona de peligro",
         "description": "Acciones irreversibles",
@@ -1388,8 +1345,7 @@
       },
       "footer": {
         "ariaLabel": "Enlaces del pie de página",
-        "legal": "Aviso legal",
-        "pricing": "Precios"
+        "legal": "Aviso legal"
       }
     },
     "legal": {
@@ -1455,119 +1411,6 @@
       },
       "lastUpdated": "Última actualización: febrero de 2026"
     },
-    "pricing": {
-      "metadata": {
-        "title": "Precios",
-        "description": "Descubre los planes de Tribu Nova: Gratuito, Foyer y Foyer Plus — pensados para parejas y familias que quieren aligerar la carga mental."
-      },
-      "header": {
-        "label": "Volver",
-        "title": "Nuestros precios",
-        "subtitle": "Planes sencillos para parejas y familias que organizan el día a día juntas"
-      },
-      "billing": {
-        "monthly": "Facturación mensual",
-        "yearly": "Facturación anual",
-        "yearlyDiscount": "Ahorra un 20%",
-        "perMonth": "/mes",
-        "free": "Gratuito"
-      },
-      "plans": {
-        "free": {
-          "name": "Gratuito",
-          "description": "Para descubrir Tribu Nova y organizar la vida en casa juntos",
-          "price": "0€",
-          "cta": "Empezar gratis",
-          "ctaAriaLabel": "Crear una cuenta gratuita"
-        },
-        "pro": {
-          "name": "Foyer",
-          "description": "Para parejas que quieren repartir mejor la carga mental y las rutinas",
-          "price": "3,99€",
-          "cta": "Pasar a Foyer",
-          "ctaAriaLabel": "Suscribirse al plan Foyer",
-          "badge": "Popular"
-        },
-        "team": {
-          "name": "Foyer Plus",
-          "description": "Para hogares amplios y coparentalidad con más coordinación",
-          "price": "8,99€",
-          "cta": "Elegir Foyer Plus",
-          "ctaAriaLabel": "Suscribirse al plan Foyer Plus"
-        },
-        "currentBadge": "Activo"
-      },
-      "comparison": {
-        "title": "Comparación detallada de los planes",
-        "featuresColumn": "Incluido en el plan"
-      },
-      "features": {
-        "projectsPerAccount": "Proyectos por cuenta",
-        "workspaces": "Proyectos por cuenta",
-        "membersPerWorkspace": "Miembros por espacio",
-        "tickets": "Tickets",
-        "boardView": "Vista Tablero",
-        "customColumns": "Columnas personalizadas",
-        "advancedRoles": "Roles avanzados (observador)",
-        "prioritySupport": "Soporte prioritario"
-      },
-      "values": {
-        "one": "1",
-        "two": "2",
-        "four": "4",
-        "three": "3",
-        "five": "5",
-        "twenty": "20",
-        "hundred": "100",
-        "ten": "10",
-        "twentyFive": "25",
-        "fifty": "50",
-        "threeColumns": "3 columnas fijas (sin personalizacion)",
-        "unlimited": "Ilimitado",
-        "included": "Incluido",
-        "notIncluded": "No incluido"
-      },
-      "faq": {
-        "title": "Preguntas frecuentes",
-        "items": {
-          "cancel": {
-            "question": "¿Puedo cancelar en cualquier momento?",
-            "answer": "Sí, puedes cancelar tu suscripción en cualquier momento. Mantendrás el acceso hasta el final del periodo actual."
-          },
-          "upgrade": {
-            "question": "¿Puedo cambiar de plan?",
-            "answer": "Puedes pasar a un plan superior en cualquier momento. El cambio se aplica de inmediato y la diferencia se calcula de forma proporcional."
-          },
-          "data": {
-            "question": "¿Qué pasa con mis datos si vuelvo al plan gratuito?",
-            "answer": "Tus datos se conservan. Si superas los límites del plan gratuito, podrás consultar tus proyectos existentes pero no podrás crear nuevos."
-          },
-          "payment": {
-            "question": "¿Qué métodos de pago aceptan?",
-            "answer": "Aceptamos tarjetas bancarias (Visa, Mastercard) y adeudos directos SEPA."
-          }
-        }
-      },
-      "guarantee": {
-        "title": "Garantía de satisfacción",
-        "description": "Prueba Tribu Nova Foyer o Foyer Plus durante 14 días. Si no estás satisfecho, te devolvemos el importe íntegro."
-      },
-      "trust": {
-        "title": "Premium, con expectativas claras",
-        "item1": "Versión gratuita sólida para empezar sin fricción.",
-        "item2": "Funciones premium solo cuando realmente las necesites.",
-        "item3": "Precios transparentes, sin costes ocultos."
-      },
-      "cta": {
-        "currentPlan": "Plan actual",
-        "upgrade": "Pasar a {plan}",
-        "downgrade": "Cambiar a {plan}",
-        "downgradeFree": "Cambiar a Gratuito",
-        "signUpFirst": "Crear una cuenta",
-        "superuserFullAccess": "Acceso completo",
-        "manageBilling": "Gestionar facturación"
-      }
-    },
     "members": {
       "title": "Miembros del proyecto",
       "listAriaLabel": "Lista de miembros del proyecto",
@@ -1592,24 +1435,6 @@
       "roleUpdateSuccess": "Rol actualizado",
       "lastAdminError": "No se puede eliminar al último administrador",
       "emptyState": "No hay miembros en este proyecto"
-    },
-    "upgrade": {
-      "title": "Función reservada al plan {plan}",
-      "description": "Esta función no está disponible en tu plan actual. Cambia al plan {plan} para desbloquearla.",
-      "ctaLabel": "Ver planes",
-      "ctaAriaLabel": "Ver planes y mejorar tu suscripción",
-      "featureNames": {
-        "advancedRoles": "Roles avanzados",
-        "workspaces": "Proyectos por cuenta",
-        "membersPerWorkspace": "Miembros por espacio",
-        "tickets": "Tickets",
-        "customColumns": "Columnas personalizadas"
-      },
-      "planBadges": {
-        "free": "Gratis",
-        "pro": "Foyer",
-        "team": "Foyer Plus"
-      }
     }
   },
   "forms": {
@@ -1693,17 +1518,9 @@
       "avatarFileTooLarge": "El archivo es demasiado grande para procesarlo",
       "avatarInvalidMimeType": "Formato no admitido. Usa JPEG, PNG o WebP",
       "avatarProcessingFailed": "No se pudo preparar la imagen. Prueba con otro archivo.",
-      "stripeWebhookNotConfigured": "Los pagos en línea no están configurados correctamente. Contacta con soporte.",
-      "billingNoCustomer": "No hay cuenta de facturación vinculada a tu perfil.",
       "boardInvalidColumnWorkflowState": "Datos de columna incoherentes. Actualiza la página.",
       "googleOauthNotAvailable": "El inicio de sesión con Google no está disponible ahora.",
       "deleteAccountFailed": "No se pudo eliminar la cuenta. Inténtalo más tarde."
-    },
-    "stripe": {
-      "checkoutFailed": "No se pudo iniciar el proceso de pago. Inténtalo de nuevo.",
-      "portalFailed": "No se pudo acceder a la gestión de la suscripción. Inténtalo de nuevo.",
-      "checkoutSuccess": "¡Pago exitoso! Tu suscripción está activa.",
-      "notAuthenticated": "Debes iniciar sesión para realizar esta acción."
     }
   },
   "ui": {

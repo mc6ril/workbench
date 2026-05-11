@@ -22,14 +22,13 @@ Instead:
 
 That means:
 
-- `auth`, `profile`, `billing`, `workspace`, and `project` own
+- `auth`, `profile`, `workspace`, and `project` own
   their repository or gateway implementations when they own persistence or
   provider contracts
 - `settings` is a composition owner and usually owns no repository
 - `board` owns its own repositories and mappers
 - `viewer` is a read-model/composition owner and usually owns no repository
 - `shared/infrastructure/supabase/` owns browser/server/admin Supabase clients
-- `shared/infrastructure/stripe/` owns the low-level Stripe client
 
 ## Target Structure
 
@@ -52,12 +51,6 @@ src/
       presentation/
     settings/
       presentation/
-    billing/
-      core/
-        ports/
-      infrastructure/
-        stripe/
-        supabase/
     workspace/
       core/
         ports/
@@ -100,8 +93,6 @@ src/
         client.ts
         server.ts
         admin.ts
-      stripe/
-        stripeClient.ts
 ```
 
 ## Responsibilities
@@ -192,7 +183,6 @@ const ticketRepository = createTicketRepository(client);
 - `src/domains/project/` owns the canonical project entity, repository, project CRUD use cases, project settings, members, invitations, permissions, and enabled-module configuration
 - `src/modules/board/` owns board data such as tickets, board configuration, comments, and realtime sync
 - `src/domains/workspace/` owns workspace catalog queries and entry flows such as list/join/reclaim, but project membership and invitation contracts remain project-owned
-- plan-to-module entitlement decisions remain owned by `billing`; consumers should import billing-owned rules and gates directly from that owner
 
 ## Rules
 
