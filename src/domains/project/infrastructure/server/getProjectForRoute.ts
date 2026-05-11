@@ -1,4 +1,6 @@
 import { cache } from "react";
+import { notFound } from "next/navigation";
+import { ZodError } from "zod";
 
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 
@@ -15,6 +17,13 @@ export const getProjectForRoute = cache(
     const supabaseClient = await createSupabaseServerClient();
     const projectGateway = createProjectGateway(supabaseClient);
 
-    return getProject(projectGateway, projectId);
+    try {
+      return await getProject(projectGateway, projectId);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        notFound();
+      }
+      throw error;
+    }
   }
 );

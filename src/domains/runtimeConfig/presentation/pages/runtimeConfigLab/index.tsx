@@ -117,7 +117,7 @@ const RuntimeConfigLabPage = ({ entries, initialOverrides }: Props) => {
               label="Back to account"
               variant="secondary"
               onClick={() =>
-                router.push(PAGE_ROUTES.ACCOUNT, { feedback: "none" })
+                router.replace(PAGE_ROUTES.ACCOUNT, { feedback: "none" })
               }
             />
             <Button
