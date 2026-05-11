@@ -6,7 +6,7 @@ import { buildManifest } from "@/shared/seo/buildManifest";
 
 /**
  * Default web app manifest (PWA install).
- * Prefer the localized manifest route (`/manifest/{locale}`) for marketing pages.
+ * Prefer the localized manifest route (`/manifest/{locale}`) for public pages.
  */
 const manifest = (): MetadataRoute.Manifest => {
   const tManifest = getStaticTranslator(defaultLocale, "app.manifest");

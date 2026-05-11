@@ -1,5 +1,5 @@
 import { type Locale, localeCookieName, resolveLocale } from "./config";
-import { getResolvedMarketingLocaleFromPathname } from "./marketingPaths";
+import { getResolvedLocaleFromPathname } from "./publicPaths";
 
 type ResolveRuntimeLocaleInput = {
   pathname?: string | null;
@@ -42,9 +42,7 @@ export const resolveRuntimeLocale = ({
   acceptLanguage,
 }: ResolveRuntimeLocaleInput): Locale => {
   return resolveLocale({
-    preferredLocale: pathname
-      ? getResolvedMarketingLocaleFromPathname(pathname)
-      : null,
+    preferredLocale: pathname ? getResolvedLocaleFromPathname(pathname) : null,
     cookieLocale: cookieLocale ?? readLocaleCookieValue(cookieString),
     acceptLanguage,
   });

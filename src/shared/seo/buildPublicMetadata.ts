@@ -18,7 +18,7 @@ type BuildPublicMetadataInput = {
 };
 
 /**
- * Metadata for indexable marketing routes (canonical, Open Graph, Twitter).
+ * Metadata for indexable public routes (canonical, Open Graph, Twitter).
  */
 export const buildPublicMetadata = ({
   locale,

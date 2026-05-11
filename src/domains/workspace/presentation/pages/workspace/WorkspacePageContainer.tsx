@@ -23,7 +23,7 @@ import { getAppErrorCode } from "@/shared/errors/appError";
 import { REPOSITORY_ERROR_CODE } from "@/shared/errors/appErrorCodes";
 import { useTranslations } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
+import { usePublicRoutes } from "@/shared/i18n/usePublicRoutes";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { shouldShowLoading } from "@/shared/utils/queryStatus";
 import { buildProjectRoute } from "@/shared/utils/routes";
@@ -69,7 +69,7 @@ const WorkspacePageContainer = () => {
   const { data: reclaimableProjects } = useReclaimableProjects(
     shouldLoadSecondaryData
   );
-  const { legal } = useMarketingRoutes();
+  const { legal } = usePublicRoutes();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedEmoji, setSelectedEmoji] = useState<string>(
     PROJECT_BOARD_EMOJI_PRESETS[0]

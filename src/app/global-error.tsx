@@ -6,7 +6,7 @@ import * as Sentry from "@sentry/nextjs";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
 import { getIntlLocale } from "@/shared/i18n";
 import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
-import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { buildHomePath } from "@/shared/i18n/publicPaths";
 import { useRuntimeLocaleSnapshot } from "@/shared/i18n/useRuntimeLocaleSnapshot";
 
 type Props = {
@@ -20,7 +20,7 @@ const GlobalErrorContent = ({
   locale,
 }: Props & { locale: ReturnType<typeof useRuntimeLocaleSnapshot> }) => {
   const copy = getFallbackMessages(locale).globalError;
-  const homePath = buildMarketingHomePath(locale);
+  const homePath = buildHomePath(locale);
 
   useEffect(() => {
     console.error(error);

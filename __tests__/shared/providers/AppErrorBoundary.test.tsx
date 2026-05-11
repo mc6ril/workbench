@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { localeCookieName } from "@/shared/i18n/config";
 import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
-import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { buildHomePath } from "@/shared/i18n/publicPaths";
 import AppErrorBoundary from "@/shared/providers/AppErrorBoundary";
 
 let mockPathname: string = PAGE_ROUTES.WORKSPACE;
@@ -104,6 +104,6 @@ describe("AppErrorBoundary", () => {
       screen.getByRole("link", {
         name: getFallbackMessages("en").error.secondaryActionAriaLabel,
       })
-    ).toHaveAttribute("href", buildMarketingHomePath("en"));
+    ).toHaveAttribute("href", buildHomePath("en"));
   });
 });

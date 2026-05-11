@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
 import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
-import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { buildHomePath } from "@/shared/i18n/publicPaths";
 import { useRuntimeLocaleSnapshot } from "@/shared/i18n/useRuntimeLocaleSnapshot";
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
 const ErrorPage = ({ error, reset }: Props) => {
   const locale = useRuntimeLocaleSnapshot();
   const copy = getFallbackMessages(locale).error;
-  const homePath = buildMarketingHomePath(locale);
+  const homePath = buildHomePath(locale);
 
   useEffect(() => {
     console.error(error);

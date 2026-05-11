@@ -23,7 +23,7 @@ export const generateMetadata = async ({
   return await buildHomeMetadata(locale);
 };
 
-const MarketingHomePage = async ({ params }: PageProps) => {
+const HomePage = async ({ params }: PageProps) => {
   const { locale } = await params;
 
   if (!isSupportedLocale(locale)) {
@@ -38,4 +38,4 @@ const MarketingHomePage = async ({ params }: PageProps) => {
   );
 };
 
-export default MarketingHomePage;
+export default HomePage;

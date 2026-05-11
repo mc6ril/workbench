@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
 import type { Locale } from "@/shared/i18n/config";
-import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { buildHomePath } from "@/shared/i18n/publicPaths";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 export const buildManifest = (
@@ -15,8 +15,8 @@ export const buildManifest = (
     name: PRODUCT_BRAND_NAME,
     short_name: PRODUCT_BRAND_NAME,
     description,
-    start_url: buildMarketingHomePath(locale),
-    scope: buildMarketingHomePath(locale),
+    start_url: buildHomePath(locale),
+    scope: buildHomePath(locale),
     display: "standalone",
     background_color: "#faf7f4",
     theme_color: "#2a1f1a",

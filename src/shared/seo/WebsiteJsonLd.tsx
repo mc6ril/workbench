@@ -1,10 +1,10 @@
 import type { Locale } from "@/shared/i18n/config";
-import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { buildHomePath } from "@/shared/i18n/publicPaths";
 import { getStaticTranslator } from "@/shared/i18n/staticTranslator";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
 /**
- * Server-only JSON-LD for the marketing home page (WebSite + Organization).
+ * Server-only JSON-LD for the home page (WebSite + Organization).
  */
 const WebsiteJsonLd = async ({ locale }: { locale: Locale }) => {
   const tMetadata = getStaticTranslator(locale, "app.metadata");
@@ -12,7 +12,7 @@ const WebsiteJsonLd = async ({ locale }: { locale: Locale }) => {
   const description = tMetadata("description");
   const base = getSiteUrl();
   const siteUrl = base.origin;
-  const homeUrl = new URL(buildMarketingHomePath(locale), base).toString();
+  const homeUrl = new URL(buildHomePath(locale), base).toString();
 
   const graph = {
     "@context": "https://schema.org",
