@@ -30,12 +30,15 @@ const AccountPageClient = () => {
   );
 
   const goBackHref = useMemo(() => {
+    if (!isMounted) {
+      return PAGE_ROUTES.WORKSPACE;
+    }
     const from = searchParams.get("from");
     if (from && from.startsWith(PAGE_ROUTES.HOME)) {
       return from;
     }
     return PAGE_ROUTES.WORKSPACE;
-  }, [searchParams]);
+  }, [isMounted, searchParams]);
 
   const shouldShowLoader = !isMounted || isIdentityLoading;
 
