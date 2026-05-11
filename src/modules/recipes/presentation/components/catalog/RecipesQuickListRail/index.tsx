@@ -71,6 +71,7 @@ const RecipesQuickListRail = ({
               <Link
                 key={recipe.id}
                 href={buildRecipeDetailRoute(projectId, recipe.recipeId)}
+                prefetch={false}
                 className={styles["recipes-page__quick-list-card"]}
                 onClick={() => {
                   onRecipeNavigate?.(recipe.recipeId);

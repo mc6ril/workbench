@@ -107,7 +107,8 @@ export const updateSession = async (request: NextRequest) => {
   if (
     user &&
     (pathname === AUTH_PAGE_ROUTES.SIGNIN ||
-      pathname === AUTH_PAGE_ROUTES.SIGNUP)
+      pathname === AUTH_PAGE_ROUTES.SIGNUP ||
+      pathname === PAGE_ROUTES.HOME)
   ) {
     return buildWorkspaceRedirectResponse(request, supabaseResponse);
   }
