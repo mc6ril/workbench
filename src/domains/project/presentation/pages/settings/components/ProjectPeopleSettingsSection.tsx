@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import Avatar from "@/shared/design-system/avatar";
@@ -21,8 +21,6 @@ import { useToastStore } from "@/shared/stores/useToastStore";
 import styles from "./projectPeopleSettingsSection.module.scss";
 
 import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
-import { PlanFeature } from "@/domains/billing/core/domain/planFeatures.rules";
-import { useFeatureAccess } from "@/domains/billing/presentation/hooks/useFeatureAccess";
 import {
   getProjectRoleLabelKey,
   InvitationStatus,
@@ -86,10 +84,6 @@ const ProjectPeopleSettingsSection = ({
     error: invitationsError,
     refetch: refetchInvitations,
   } = useProjectInvitations(projectId, showInvitationCard);
-  const membersLimitAccess = useFeatureAccess(
-    PlanFeature.MEMBERS_PER_WORKSPACE
-  );
-  const advancedRolesAccess = useFeatureAccess(PlanFeature.ADVANCED_ROLES);
   const inviteMutation = useInviteMember();
   const revokeInvitationMutation = useRevokeInvitation();
   const updateMemberRoleMutation = useUpdateMemberRole();
@@ -100,7 +94,6 @@ const ProjectPeopleSettingsSection = ({
   const tMembers = useTranslations("pages.settings.members");
   const tInvitations = useTranslations("pages.settings.invitations");
   const tWorkspace = useTranslations("pages.workspace");
-  const tUpgrade = useTranslations("pages.upgrade");
   const tMembersGlobal = useTranslations("pages.members");
   const tErrors = useTranslations("errors");
   const locale = useLocale();
@@ -119,19 +112,9 @@ const ProjectPeopleSettingsSection = ({
   const [invitationPendingRevoke, setInvitationPendingRevoke] =
     useState<ProjectInvitation | null>(null);
 
-  useEffect(() => {
-    if (!advancedRolesAccess.hasAccess && inviteRole === ProjectRole.VIEWER) {
-      setInviteRole(DEFAULT_INVITE_ROLE);
-      setInvitationLink("");
-    }
-  }, [advancedRolesAccess.hasAccess, inviteRole]);
-
   const dateFormatter = useMemo(() => {
     return new Intl.DateTimeFormat(intlLocale, { dateStyle: "medium" });
   }, [intlLocale]);
-  const currentPlanLabel = tUpgrade(
-    `planBadges.${membersLimitAccess.currentPlan}`
-  );
   const hasInvitationLink = invitationLink.length > 0;
   const selectedRoleDescription = tWorkspace(
     INVITE_ROLE_DESCRIPTION_KEYS[inviteRole]
@@ -144,26 +127,15 @@ const ProjectPeopleSettingsSection = ({
     (isInvitationsLoading ||
       invitationsError != null ||
       pendingInvitations.length > 0);
-  const memberLimit = membersLimitAccess.limit;
-  const occupiedSeats = members.length + pendingInvitations.length;
-  const hasUnlimitedSeats = memberLimit === undefined;
-  const isMemberLimitReached =
-    memberLimit !== undefined && occupiedSeats >= memberLimit;
   const adminCount = members.filter(
     (member) => member.role === ProjectRole.ADMIN
   ).length;
   const inviteRoleOptions = useMemo(() => {
-    const roles = [...MANAGEABLE_ROLES];
-
-    if (advancedRolesAccess.hasAccess) {
-      roles.unshift(ProjectRole.VIEWER);
-    }
-
-    return roles.map((role) => ({
+    return [ProjectRole.VIEWER, ...MANAGEABLE_ROLES].map((role) => ({
       value: role,
       label: tWorkspace(getProjectRoleLabelKey(role)),
     }));
-  }, [advancedRolesAccess.hasAccess, tWorkspace]);
+  }, [tWorkspace]);
   const invitationErrorMessage = invitationsError
     ? getErrorMessage(invitationsError, tErrors)
     : null;
@@ -190,11 +162,7 @@ const ProjectPeopleSettingsSection = ({
   );
 
   const handleCreateInvitation = useCallback(async () => {
-    if (
-      !canManageMembers ||
-      membersLimitAccess.isLoading ||
-      isMemberLimitReached
-    ) {
+    if (!canManageMembers) {
       return;
     }
 
@@ -202,11 +170,8 @@ const ProjectPeopleSettingsSection = ({
 
     try {
       const invitation = await inviteMutation.mutateAsync({
-        input: {
-          projectId,
-          role: inviteRole,
-        },
-        currentPlan: membersLimitAccess.currentPlan,
+        projectId,
+        role: inviteRole,
       });
 
       const nextLink =
@@ -218,15 +183,7 @@ const ProjectPeopleSettingsSection = ({
     } catch {
       // Error state is rendered in the section.
     }
-  }, [
-    canManageMembers,
-    inviteMutation,
-    inviteRole,
-    isMemberLimitReached,
-    membersLimitAccess.currentPlan,
-    membersLimitAccess.isLoading,
-    projectId,
-  ]);
+  }, [canManageMembers, inviteMutation, inviteRole, projectId]);
 
   const handleCopyInvitationLink = useCallback(async () => {
     if (!invitationLink) {
@@ -416,47 +373,7 @@ const ProjectPeopleSettingsSection = ({
                   count: pendingInvitations.length,
                 })}
               </span>
-              <span className={styles["people-settings__pill"]}>
-                {hasUnlimitedSeats
-                  ? tPeople("memberLimit.unlimited", {
-                      count: occupiedSeats,
-                    })
-                  : tPeople("memberLimit.limited", {
-                      count: occupiedSeats,
-                      limit: memberLimit!,
-                    })}
-              </span>
-              <span className={styles["people-settings__pill"]}>
-                {tPeople("currentPlan", { plan: currentPlanLabel })}
-              </span>
             </div>
-
-            {canManageMembers && !advancedRolesAccess.hasAccess && (
-              <div
-                className={`${styles["people-settings__notice"]} ${styles["people-settings__notice--info"]}`}
-              >
-                <Text variant="small">
-                  {tPeople("advancedRolesLocked", {
-                    plan: tUpgrade(
-                      `planBadges.${advancedRolesAccess.minimumPlan}`
-                    ),
-                  })}
-                </Text>
-              </div>
-            )}
-
-            {canManageMembers && isMemberLimitReached && (
-              <div
-                className={`${styles["people-settings__notice"]} ${styles["people-settings__notice--warning"]}`}
-              >
-                <Text variant="small">
-                  {tPeople("memberLimit.reached", {
-                    limit: memberLimit!,
-                    plan: currentPlanLabel,
-                  })}
-                </Text>
-              </div>
-            )}
 
             {inviteActionErrorMessage && (
               <ErrorMessage message={inviteActionErrorMessage} />
@@ -487,11 +404,7 @@ const ProjectPeopleSettingsSection = ({
                 aria-label={tInvitations("roleLabel")}
                 options={inviteRoleOptions}
                 value={inviteRole}
-                disabled={
-                  !canManageMembers ||
-                  inviteMutation.isPending ||
-                  membersLimitAccess.isLoading
-                }
+                disabled={!canManageMembers || inviteMutation.isPending}
                 helperText={selectedRoleDescription}
                 onChange={(event) => {
                   const nextRole = event.target.value;
@@ -530,12 +443,7 @@ const ProjectPeopleSettingsSection = ({
                       : tInvitations("create")
                   }
                   onClick={() => void handleCreateInvitation()}
-                  disabled={
-                    !canManageMembers ||
-                    inviteMutation.isPending ||
-                    membersLimitAccess.isLoading ||
-                    isMemberLimitReached
-                  }
+                  disabled={!canManageMembers || inviteMutation.isPending}
                 />
               </div>
             </div>
@@ -770,11 +678,8 @@ const ProjectPeopleSettingsSection = ({
                 const shouldShowMemberActions =
                   canManageMembers && !isProtectedSoleAdmin;
                 const availableRoles = [
+                  ProjectRole.VIEWER,
                   ...MANAGEABLE_ROLES,
-                  ...(advancedRolesAccess.hasAccess ||
-                  member.role === ProjectRole.VIEWER
-                    ? [ProjectRole.VIEWER]
-                    : []),
                 ];
 
                 return (

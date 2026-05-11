@@ -45,7 +45,6 @@ than "the app always loads the same data twice."
   - **Loads/Hydrates**:
     - projects with stats (`listProjectsWithStats`)
     - reclaimable projects (`listReclaimableProjects`)
-    - billing visibility (`getBillingVisibility`)
   - **Hydration handoff**:
     - `HydrationBoundary state={dehydrate(queryClient)}`
 
@@ -108,15 +107,6 @@ than "the app always loads the same data twice."
     - it is effectively a loader helper, but it is mounted from UI interaction
     - ownership is implicit rather than declared
 
-- `src/domains/project/presentation/hooks/useSidebarItems.ts`
-  - **Does**:
-    - reads `useSubscription()` and `useBillingVisibility()` to compute locked navigation items
-  - **Why it matters**:
-    - project-shell navigation depends on client queries that are not owned by
-      the project route loader
-    - this is not necessarily wrong, but it means project-shell rendering still
-      has cross-cutting data dependencies
-
 - `src/modules/board/presentation/projectShell/boardShellAdapter.tsx`
   - **Does**:
     - mounts long-lived realtime side effects
@@ -127,12 +117,6 @@ than "the app always loads the same data twice."
     - it still mixes shell UI composition with runtime data ownership
 
 - `src/domains/settings/presentation/pages/account/index.tsx`
-- `src/domains/billing/presentation/pages/pricing/index.tsx`
-  - **Does**:
-    - calls Stripe endpoints directly via `fetch(...)` from presentation pages
-  - **Why it matters**:
-    - couples page components to imperative network calls
-    - bypasses the domain/module `hook -> usecase -> port` ownership pattern
 
 ## 3) What is actually problematic
 
@@ -145,11 +129,7 @@ The strongest issues are:
   - `ProjectShell` and `BoardShellAdapter` currently combine UI contribution,
     long-lived subscriptions, and view-aware data reads
 - **Cross-cutting shell data is not explicitly owned**
-  - project navigation depends on subscription/billing visibility; these should
-    be owned by the project route layout, but are currently unowned at that
-    boundary
-- **Presentation pages perform imperative network flows directly**
-  - Stripe entry points live in page components instead of a domain boundary
+  - project navigation data should be owned by the project route layout, but is currently unowned at that boundary
 
 ## 4) Where the original wording was too strong
 
@@ -203,10 +183,6 @@ navigation scope.
   - current role
   - project members
   - project-level metadata needed across project views
-  - billing visibility and subscription summary / entitlements
-    - these are only consumed within project routes (navigation lock state via
-      `useSidebarItems`) — loading them at the global layout level would add
-      unnecessary weight to every authenticated render
 - **Should make explicit**:
   - whether module-owned metadata such as project short code is truly
     project-baseline or only board-view metadata
@@ -236,15 +212,9 @@ navigation scope.
 1. Move `usePrefetchWorkspaceProjects` ownership out of `SidebarNavigation` and
    into a shell-owned prefetch policy, or remove it if SSR hydration + route
    prefetch already give acceptable latency.
-2. Move `subscription` and `billingVisibility` ownership to
-   `src/app/(protected)/[projectId]/layout.tsx`. These queries are only consumed
-   within project routes (navigation lock state in `useSidebarItems`) and should
-   not be loaded at the global authenticated layout.
-3. Turn `useProfileRuntimeSync` into a pure "apply hydrated preferences" step
+2. Turn `useProfileRuntimeSync` into a pure "apply hydrated preferences" step
    unless the protected layout explicitly guarantees the profile query on every
    authenticated render path.
-4. Keep `ProjectShellContributionProvider` focused on UI contribution
+3. Keep `ProjectShellContributionProvider` focused on UI contribution
    (`toolbar`, `filters`, `onMount`) and introduce a separate loader/prefetch
    contract if modules need to declare data requirements.
-5. Replace page-level Stripe `fetch()` calls with a dedicated domain
-   hook/usecase boundary.

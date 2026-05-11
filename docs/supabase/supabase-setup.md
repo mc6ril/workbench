@@ -20,7 +20,6 @@ This guide explains how to set up a Supabase project for Workbench and configure
      - **Name**: `workbench` (or your preferred name)
      - **Database Password**: Create a strong password (save it securely)
      - **Region**: Choose the closest region to your users
-     - **Pricing Plan**: Select appropriate plan (Free tier is sufficient for development)
 
 3. **Wait for Project Initialization**
    - This usually takes 1-2 minutes

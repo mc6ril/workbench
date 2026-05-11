@@ -7,11 +7,11 @@ import {
 import { supportedLocales } from "@/shared/i18n/config";
 
 const MARKETING_LOCALE_PREFIX = supportedLocales.join("|");
-const MARKETING_LEAF_ROUTES = [PAGE_ROUTES.PRICING, PAGE_ROUTES.LEGAL]
+const MARKETING_LEAF_ROUTES = [PAGE_ROUTES.LEGAL]
   .map((value) => value.replace(/^\//, ""))
   .join("|");
 const MARKETING_PUBLIC_PATH = new RegExp(
-  `^(?:${PAGE_ROUTES.HOME}$|${PAGE_ROUTES.PRICING}/?$|${PAGE_ROUTES.LEGAL}(?:/.*)?$|/(${MARKETING_LOCALE_PREFIX})(?:$|/(?:${MARKETING_LEAF_ROUTES})/?$|/${PAGE_ROUTES.LEGAL.replace(/^\//, "")}(?:/.*)?$))`,
+  `^(?:${PAGE_ROUTES.HOME}$|${PAGE_ROUTES.LEGAL}(?:/.*)?$|/(${MARKETING_LOCALE_PREFIX})(?:$|/(?:${MARKETING_LEAF_ROUTES})/?$|/${PAGE_ROUTES.LEGAL.replace(/^\//, "")}(?:/.*)?$))`,
   "i"
 );
 

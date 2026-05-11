@@ -5,7 +5,7 @@ import { localeCookieName } from "@/shared/i18n/config";
 import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
 import {
   buildMarketingHomePath,
-  buildMarketingPricingPath,
+  buildMarketingLegalPath,
 } from "@/shared/i18n/marketingPaths";
 
 let mockPathname: string = PAGE_ROUTES.WORKSPACE;
@@ -44,7 +44,7 @@ describe("GlobalErrorPage", () => {
   });
 
   it("uses the marketing locale encoded in the pathname", async () => {
-    mockPathname = buildMarketingPricingPath("en");
+    mockPathname = buildMarketingLegalPath("en");
 
     render(<GlobalErrorPage error={new Error("boom")} reset={jest.fn()} />);
 

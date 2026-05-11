@@ -9,7 +9,6 @@ It is organized by feature domain and includes execution notes.
 
 - Production: `https://tribu-nova.vercel.app`
 - Supabase project: `qoonsjagwtmxfwityxiz`
-- Stripe mode: verify current mode before billing tests (test/live)
 
 ## Required Test Accounts
 
@@ -150,37 +149,7 @@ It is organized by feature domain and includes execution notes.
 
 ---
 
-## 10) Plans, Billing, Stripe
-
-- [ ] Plan cards visible: Free / Family / Tribu
-- [ ] Plan comparison content accuracy
-- [ ] Stripe checkout creation works
-- [ ] Stripe customer portal access works
-- [ ] Subscription cancellation flow works
-- [ ] Pro-rata refund policy behavior validated against actual Stripe setup
-- [ ] Monthly pricing display correctness
-- [ ] Superuser full access behavior (admin-only path)
-- [ ] Subscription management page works end-to-end
-
----
-
-## 11) Plan Entitlements
-
-### Free
-
-- [ ] Maximum 1 project enforced
-- [ ] Maximum 2 users enforced
-- [ ] Custom column editing blocked
-
-### Paid
-
-- [ ] 3+ projects allowed according to configured plan caps
-- [ ] User caps enforced for configured ranges (5 to 20 depending on plan)
-- [ ] Custom column management enabled
-
----
-
-## 12) Non-Functional QA Smoke
+## 10) Non-Functional QA Smoke
 
 - [ ] No blocking console errors on key pages
 - [ ] No major layout breakpoints on desktop/tablet/mobile

@@ -18,11 +18,10 @@ Route files should:
 - `src/domains/auth/presentation/hooks/identity/` -> current auth identity state
 - `src/domains/profile/presentation/` -> profile editing and reusable current-profile flows
 - `src/domains/viewer/presentation/` -> current-user read-model composition
-- `src/domains/settings/presentation/` -> account/settings surfaces that compose viewer, profile, auth, and billing
+- `src/domains/settings/presentation/` -> account/settings surfaces that compose viewer, profile, and auth
 - `src/domains/workspace/presentation/` -> workspace dashboard and create/join project entry UX
 - `src/domains/project/presentation/` -> project shell, project settings, members, invitations, enabled-module management
 - `src/modules/board/presentation/` -> board and ticket-specific screens
-- `src/domains/billing/` -> checkout, portal, plans, subscriptions, billing webhooks
 
 Shared cross-cutting pieces still belong in:
 
@@ -52,7 +51,6 @@ stateDiagram-v2
    Workspace --> ProjectBoard: create or open project
 
    ProjectBoard --> ProjectSettings: navigate
-   ProjectBoard --> BillingPortal: upgrade or manage plan
    ProjectSettings --> ProjectBoard: navigate
 ```
 
@@ -71,8 +69,6 @@ flowchart TD
    PROTECTED --> WORKSPACE_ROUTE[/workspace composition]
    PROTECTED --> ACCOUNT_ROUTE[/account composition]
    PROTECTED --> PROJECT_ROUTE[/:projectId/* composition]
-   PROTECTED --> BILLING_ROUTE[/api/stripe/* composition]
-
    WORKSPACE_ROUTE --> WORKSPACE_DOMAIN[workspace presentation]
    ACCOUNT_ROUTE --> SETTINGS_DOMAIN[settings presentation]
    PROJECT_ROUTE --> ACCESS_CHECK{Project access allowed?}
@@ -81,7 +77,6 @@ flowchart TD
    PROJECT_SHELL --> MODULE_ROUTE{Active route}
    MODULE_ROUTE --> BOARD_MODULE[board presentation]
    MODULE_ROUTE --> PROJECT_SETTINGS[project settings presentation]
-   BILLING_ROUTE --> BILLING_DOMAIN[billing flow]
 ```
 
 ## Route Structure
@@ -104,12 +99,6 @@ flowchart TD
 - `/:projectId`
 - `/:projectId/board`
 - `/:projectId/settings`
-
-### Billing/API Routes
-
-- `/api/stripe/checkout`
-- `/api/stripe/portal`
-- `/api/stripe/webhook`
 
 ## Layout Responsibilities
 
@@ -136,17 +125,12 @@ flowchart TD
   - `viewer` for the current-user read model
   - `profile` for user business data
   - `auth` for current identity, password, and account deletion flows
-  - `billing` for subscription management
 
 ### Project route handling
 
 - Verifies project access
 - Delegates the shell and governance UI to `domains/project/presentation/`
 - Delegates project-scoped capability screens to `modules/*/presentation/`
-
-### Billing route handling
-
-- Delegates checkout, portal, and webhook orchestration to the billing domain
 
 ## Data Fetching Strategy
 
@@ -178,7 +162,6 @@ Routing stays in `src/app/`, but route-specific rendering is delegated to the co
 - workspace routes -> `src/domains/workspace/`
 - project container routes -> `src/domains/project/`
 - project module routes -> `src/modules/<module>/`
-- billing flows -> `src/domains/billing/`
 
 Canonical imports matter as much as route ownership:
 

@@ -42,11 +42,7 @@ export {
 } from "./landing";
 
 // Re-export API message constants
-export {
-  API_MESSAGES_AUTH,
-  API_MESSAGES_COMMON,
-  API_MESSAGES_STRIPE,
-} from "./apiMessages";
+export { API_MESSAGES_AUTH, API_MESSAGES_COMMON } from "./apiMessages";
 
 // Re-export project constants
 export {

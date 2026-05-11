@@ -59,23 +59,14 @@
         },
         "recipes": {
           "status": "Available",
-          "lockedStatus": "{plan} plan",
           "subtitle": "The household meals module, designed to feel desirable as soon as it lands in a project.",
           "teaser": "A premium space to pick recipes, keep the right meals close, and turn the week into a very simple shopping plan.",
-          "cta": "Add Recipes to the project",
-          "upgradeCta": "See plans"
+          "cta": "Add Recipes to the project"
         },
         "empty": {
           "badge": "Project up to date",
           "title": "No new module to add right now",
           "description": "Modules already enabled disappear from this list, and future modules stay hidden until they are ready."
-        }
-      },
-      "locked": {
-        "ariaLabel": "{feature} — requires {plan} plan",
-        "badge": {
-          "pro": "Foyer",
-          "team": "Foyer Plus"
         }
       },
       "profile": {
@@ -643,14 +634,7 @@
       "people": {
         "title": "Members and invitations",
         "subtitle": "Manage project access, active roles, and invitation links that are still valid.",
-        "adminOnly": "Only an administrator can invite people, change roles, or remove a member from the project.",
-        "advancedRolesLocked": "The Viewer role requires the {plan} plan. Existing viewers remain visible until their next role change.",
-        "currentPlan": "Current plan: {plan}",
-        "memberLimit": {
-          "limited": "{count}/{limit} seats used",
-          "unlimited": "{count} seats used, no limit",
-          "reached": "The {plan} plan limit of {limit} seats has been reached. Active members and pending invitations both count toward this total."
-        }
+        "adminOnly": "Only an administrator can invite people, change roles, or remove a member from the project."
       },
       "members": {
         "title": "Project members",
@@ -1210,33 +1194,6 @@
           "es": "Español"
         }
       },
-      "subscription": {
-        "title": "My subscription",
-        "description": "Manage your plan and billing",
-        "icon": "💳",
-        "currentPlan": "Current plan",
-        "planLabels": {
-          "free": "Free",
-          "pro": "Foyer",
-          "team": "Foyer Plus"
-        },
-        "statusLabels": {
-          "active": "Active",
-          "canceled": "Canceled",
-          "past_due": "Payment overdue",
-          "trialing": "Trial period"
-        },
-        "periodEnd": "Renews on {date}",
-        "cancelAtPeriodEnd": "Your subscription will be canceled at the end of the current period",
-        "manageButton": "Manage my subscription",
-        "manageButtonAriaLabel": "Open Stripe subscription management portal",
-        "changePlanButton": "Change plan",
-        "changePlanButtonAriaLabel": "View other available plans",
-        "superuser": {
-          "badge": "Super User",
-          "description": "Full access to all features"
-        }
-      },
       "dangerZone": {
         "title": "Danger zone",
         "description": "Irreversible actions",
@@ -1388,8 +1345,7 @@
       },
       "footer": {
         "ariaLabel": "Footer links",
-        "legal": "Legal notice",
-        "pricing": "Pricing"
+        "legal": "Legal notice"
       }
     },
     "legal": {
@@ -1455,119 +1411,6 @@
       },
       "lastUpdated": "Last updated: February 2026"
     },
-    "pricing": {
-      "metadata": {
-        "title": "Pricing",
-        "description": "Explore Tribu Nova plans: Free, Foyer, and Foyer Plus — built for couples and families easing mental load."
-      },
-      "header": {
-        "label": "Back",
-        "title": "Our pricing",
-        "subtitle": "Simple plans for couples and families organizing daily life together"
-      },
-      "billing": {
-        "monthly": "Monthly billing",
-        "yearly": "Annual billing",
-        "yearlyDiscount": "Save 20%",
-        "perMonth": "/month",
-        "free": "Free"
-      },
-      "plans": {
-        "free": {
-          "name": "Free",
-          "description": "Discover Tribu Nova and organize your home life together",
-          "price": "€0",
-          "cta": "Get started for free",
-          "ctaAriaLabel": "Create a free account"
-        },
-        "pro": {
-          "name": "Foyer",
-          "description": "For couples who want a clearer split of mental load and routines",
-          "price": "€3.99",
-          "cta": "Upgrade to Foyer",
-          "ctaAriaLabel": "Subscribe to the Foyer plan",
-          "badge": "Popular"
-        },
-        "team": {
-          "name": "Foyer Plus",
-          "description": "For larger households and co-parents who need more coordination",
-          "price": "€8.99",
-          "cta": "Choose Foyer Plus",
-          "ctaAriaLabel": "Subscribe to the Foyer Plus plan"
-        },
-        "currentBadge": "Active"
-      },
-      "comparison": {
-        "title": "Detailed plan comparison",
-        "featuresColumn": "Included in plan"
-      },
-      "features": {
-        "projectsPerAccount": "Projects per account",
-        "workspaces": "Projects per account",
-        "membersPerWorkspace": "Members per workspace",
-        "tickets": "Tickets",
-        "boardView": "Board view",
-        "customColumns": "Custom columns",
-        "advancedRoles": "Advanced roles (viewer)",
-        "prioritySupport": "Priority support"
-      },
-      "values": {
-        "one": "1",
-        "two": "2",
-        "four": "4",
-        "three": "3",
-        "five": "5",
-        "twenty": "20",
-        "hundred": "100",
-        "ten": "10",
-        "twentyFive": "25",
-        "fifty": "50",
-        "threeColumns": "3 fixed columns (not customizable)",
-        "unlimited": "Unlimited",
-        "included": "Included",
-        "notIncluded": "Not included"
-      },
-      "faq": {
-        "title": "Frequently asked questions",
-        "items": {
-          "cancel": {
-            "question": "Can I cancel at any time?",
-            "answer": "Yes, you can cancel your subscription at any time. You will keep access until the end of the current billing period."
-          },
-          "upgrade": {
-            "question": "Can I change my plan?",
-            "answer": "You can upgrade to a higher plan at any time. The change takes effect immediately and the difference is prorated."
-          },
-          "data": {
-            "question": "What happens to my data if I switch back to free?",
-            "answer": "Your data is preserved. If you exceed the free plan limits, you can view your existing projects but cannot create new ones."
-          },
-          "payment": {
-            "question": "What payment methods do you accept?",
-            "answer": "We accept credit cards (Visa, Mastercard) and SEPA direct debits."
-          }
-        }
-      },
-      "guarantee": {
-        "title": "Money-back guarantee",
-        "description": "Try Tribu Nova Foyer or Foyer Plus for 14 days. If you're not satisfied, we'll give you a full refund."
-      },
-      "trust": {
-        "title": "Premium, with clear expectations",
-        "item1": "A solid free version to get started without friction.",
-        "item2": "Premium features only when you truly need them.",
-        "item3": "Transparent pricing with no hidden costs."
-      },
-      "cta": {
-        "currentPlan": "Current plan",
-        "upgrade": "Upgrade to {plan}",
-        "downgrade": "Switch to {plan}",
-        "downgradeFree": "Switch to Free",
-        "signUpFirst": "Create an account",
-        "superuserFullAccess": "Full access",
-        "manageBilling": "Manage billing"
-      }
-    },
     "members": {
       "title": "Project members",
       "listAriaLabel": "Project members list",
@@ -1592,24 +1435,6 @@
       "roleUpdateSuccess": "Role updated",
       "lastAdminError": "Cannot remove the last administrator",
       "emptyState": "No members in this project"
-    },
-    "upgrade": {
-      "title": "Feature requires {plan} plan",
-      "description": "This feature is not available on your current plan. Upgrade to {plan} to unlock it.",
-      "ctaLabel": "View plans",
-      "ctaAriaLabel": "View plans and upgrade your subscription",
-      "featureNames": {
-        "advancedRoles": "Advanced roles",
-        "workspaces": "Projects per account",
-        "membersPerWorkspace": "Members per workspace",
-        "tickets": "Tickets",
-        "customColumns": "Custom columns"
-      },
-      "planBadges": {
-        "free": "Free",
-        "pro": "Foyer",
-        "team": "Foyer Plus"
-      }
     }
   },
   "forms": {
@@ -1693,17 +1518,9 @@
       "avatarFileTooLarge": "File is too large to process",
       "avatarInvalidMimeType": "Unsupported format. Use JPEG, PNG, or WebP",
       "avatarProcessingFailed": "The image could not be prepared. Try another file.",
-      "stripeWebhookNotConfigured": "Online payments are not configured correctly. Contact support.",
-      "billingNoCustomer": "No billing account is linked to your profile.",
       "boardInvalidColumnWorkflowState": "Inconsistent column data. Refresh the page.",
       "googleOauthNotAvailable": "Google sign-in is not available right now.",
       "deleteAccountFailed": "Could not delete the account. Try again later."
-    },
-    "stripe": {
-      "checkoutFailed": "Unable to start the payment process. Please try again.",
-      "portalFailed": "Unable to access subscription management. Please try again.",
-      "checkoutSuccess": "Payment successful! Your subscription is now active.",
-      "notAuthenticated": "You must be logged in to perform this action."
     }
   },
   "ui": {

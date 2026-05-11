@@ -48,4 +48,4 @@ participant Supabase as ☁️ Supabase
 - Shared infrastructure in `src/shared/infrastructure/supabase/` provides technical clients, not auth business flows.
 - Password reset validation, orchestration, and provider adaptation belong to the auth domain.
 - The resulting authenticated identity state belongs to the `session` owner, not to `profile`.
-- Account surfaces belong to `settings`, which may compose `viewer`, `profile`, `session`, `auth`, and `billing` without making `auth` own all account UI.
+- Account surfaces belong to `settings`, which may compose `viewer`, `profile`, `session`, and `auth` without making `auth` own all account UI.

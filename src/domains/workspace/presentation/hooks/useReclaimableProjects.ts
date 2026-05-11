@@ -18,5 +18,6 @@ export const useReclaimableProjects = (enabled = true) => {
     queryKey: queryKeys.projects.reclaimable(),
     queryFn: () => listReclaimableProjects(workspaceProjectCatalogGateway),
     enabled: enabled && !isIdentityLoading && !!identity?.userId,
+    staleTime: Infinity,
   });
 };

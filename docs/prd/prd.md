@@ -6,7 +6,7 @@ This PRD is derived **only** from runtime code in `src/` and database migrations
 
 ## 1) Product summary
 
-Workbench is a web application for **project task management** centered around a **Kanban-style board of tickets** with collaboration (members, invitations, roles) and optional paid plans (Stripe).
+Workbench is a web application for **project task management** centered around a **Kanban-style board of tickets** with collaboration (members, invitations, roles).
 
 ### What the product does
 
@@ -14,7 +14,7 @@ Workbench is a web application for **project task management** centered around a
 - Provide a **board** per project with configurable columns (default workflow states) and **drag & drop**.
 - Create, update, move, reorder, and archive **tickets**.
 - Collaborate via **members**, **roles**, **invitations**, **assignees**, and **comments**.
-- Manage **account** (identity, avatar, preferences) and **billing** (pricing, checkout, portal).
+- Manage **account** (identity, avatar, preferences)
 
 ### What the product does not aim to do (based on current codebase)
 
@@ -66,11 +66,6 @@ DB enforcement is aligned with RLS helpers such as `is_project_member`, `is_proj
 - Admin invites users to a project.
 - Invited user accepts via a tokenized join link.
 
-### Billing
-
-- Pricing page presents plans and checkout/portal actions.
-- Stripe checkout → return to account page and show success toast.
-
 ## 4) Functional requirements
 
 ### 4.1 Routing and pages (high-level)
@@ -79,7 +74,6 @@ Observed route groups and main pages in `src/app/`:
 
 - Public:
   - `/` landing
-  - `/pricing` (static group route, gated by server-side billing visibility)
   - `/legal`
 - Auth:
   - `/auth/signup`
@@ -145,12 +139,6 @@ Account settings include:
 - Preferences: email notifications, theme (light/dark/system), language (persisted).
 - Security: password change when permitted, sign out, account deletion.
 
-### 4.8 Billing (Stripe)
-
-- Subscriptions table is per-user; no row implies “free”.
-- Users can read their own subscription (RLS). Writes go via service role (Stripe webhook).
-- Pricing UX supports upgrade/downgrade via checkout/portal depending on current plan.
-
 ## 5) Non-functional requirements
 
 - **Security**: protected routes “fail-closed” (redirect to landing/workspace on errors). Access control relies on RLS and server-side guards.
@@ -163,9 +151,8 @@ Account settings include:
 - Activation: % users creating a project and first ticket.
 - Engagement: tickets created/updated per project per week.
 - Collaboration: invitations accepted rate; comments per ticket.
-- Reliability: rate of access guard redirects and Stripe checkout/portal errors.
+- Reliability: rate of access guard redirects and error boundary triggers.
 
 ## 7) Open questions / next iterations
 
-- Feature gating: confirm which specific features are gated and their limits by plan (requires auditing usage of `checkFeatureAccess` throughout `src/`).
 - Archival: confirm user-facing archival and weekly archival job UX (there is an API job route for archiving completed tickets).

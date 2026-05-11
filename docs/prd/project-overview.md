@@ -8,8 +8,7 @@ Workbench is a web app for managing projects through a **Kanban board**. Each pr
 
 - a **board** with columns (workflow lanes),
 - **tickets** that move across columns,
-- collaboration features (members, invitations, roles, comments, assignees),
-- optional **paid plans** via Stripe subscriptions.
+- collaboration features (members, invitations, roles, comments, assignees).
 
 Think: “a lightweight Jira/Trello-style board per project”, with strong database-level access control (RLS).
 
@@ -75,15 +74,7 @@ Users can manage:
 - display name and login email,
 - avatar upload/remove,
 - preferences (language, theme, email notifications),
-- security actions (password change when allowed, sign out, delete account),
-- subscription and billing actions (when billing is enabled).
-
-### Billing (optional)
-
-Workbench supports paid plans with Stripe:
-
-- `/pricing` shows plan cards and triggers checkout or billing portal actions,
-- subscription entitlements can gate features and/or enforce limits.
+- security actions (password change when allowed, sign out, delete account).
 
 ## How the codebase is organized
 
@@ -94,7 +85,7 @@ All Next.js routes live here. The codebase uses route groups:
 - public routes (landing and static pages),
 - auth routes (signup/signin/reset/update/verify/callback),
 - protected routes (workspace, project board, project settings, account),
-- API routes for Stripe, auth deletion, and background jobs.
+- API routes for auth deletion and background jobs.
 
 Protected route groups use server-side layouts to enforce:
 
@@ -112,7 +103,6 @@ Domains contain stable business capabilities:
 - `workspace`: project catalog and workspace-level behaviors
 - `project`: project entity + membership + roles + invitations + permissions
 - `settings`: account identity updates (email/display name)
-- `billing`: subscriptions, entitlements, Stripe integration, billing visibility
 
 Within a domain:
 
@@ -153,7 +143,6 @@ From migrations and domain types, the core entities are:
 - ticket assignees (join table)
 - comments
 - user profiles
-- subscriptions (Stripe)
 
 ### RLS-first access control
 
@@ -178,6 +167,6 @@ If you are debugging “access denied” behavior, start by checking:
    - board page (DnD, filters, create ticket),
    - ticket detail view (comments/assignees),
    - project settings page (members/invitations/deletion),
-   - account page (profile/preferences/security/billing).
+   - account page (profile/preferences/security).
 3. Trace each feature through: presentation hook → usecase → port → Supabase adapter.
 4. Use `supabase/migrations/` to understand the authoritative data model, RLS policies, and RPCs.

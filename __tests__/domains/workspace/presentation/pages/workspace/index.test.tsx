@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
 import { useAuthIdentity } from "@/domains/auth/presentation/hooks/identity/useAuthIdentity";
-import { useBillingVisibility } from "@/domains/billing/presentation/hooks/useBillingVisibility";
 import { ProjectRole } from "@/domains/project/core/domain/project.types";
 import { useAddUserToProject } from "@/domains/project/presentation/hooks/useAddUserToProject";
 import { useCreateProject } from "@/domains/project/presentation/hooks/useCreateProject";
@@ -49,10 +48,6 @@ jest.mock(
   })
 );
 
-jest.mock("@/domains/billing/presentation/hooks/useBillingVisibility", () => ({
-  useBillingVisibility: jest.fn(),
-}));
-
 const asMockedReturn = <T,>(value: unknown): T => value as T;
 
 describe("WorkspacePage", () => {
@@ -99,12 +94,6 @@ describe("WorkspacePage", () => {
     jest.mocked(useReclaimableProjects).mockReturnValue(
       asMockedReturn<ReturnType<typeof useReclaimableProjects>>({
         data: [],
-      })
-    );
-
-    jest.mocked(useBillingVisibility).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useBillingVisibility>>({
-        data: false,
       })
     );
 

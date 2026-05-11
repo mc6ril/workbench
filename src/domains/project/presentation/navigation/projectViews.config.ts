@@ -1,12 +1,6 @@
 import { PAGE_ROUTES, PROJECT_VIEWS } from "@/shared/constants/routes";
 
 import {
-  canAccessFeature,
-  getMinimumPlanForFeature,
-  PlanFeature,
-} from "@/domains/billing/core/domain/planFeatures.rules";
-import { SubscriptionPlan } from "@/domains/billing/core/domain/subscription.types";
-import {
   hasProjectModule,
   ProjectModuleKey,
 } from "@/domains/project/core/domain/projectModule.types";
@@ -33,26 +27,18 @@ export type ProjectViewConfig = {
   sidebarLabelKey: string;
   navbar: ProjectViewNavbarConfig;
   showInSidebar?: boolean;
-  requiredFeature?: PlanFeature;
   requiredModule?: ProjectModuleKey;
 };
 
 export type ProjectViewAvailabilityInput = {
   enabledModules?: readonly ProjectModuleKey[];
-  effectivePlan: SubscriptionPlan;
   hiddenViews?: readonly ProjectViewKey[];
-};
-
-export type ProjectViewFeatureLockState = {
-  locked: boolean;
-  minimumPlan?: SubscriptionPlan;
 };
 
 type ProjectViewConfigInput = {
   navbar: ProjectViewNavbarConfig;
   sidebarLabelKey?: string;
   showInSidebar?: boolean;
-  requiredFeature?: PlanFeature;
   requiredModule?: ProjectModuleKey;
   pathOverride?: string;
 };
@@ -66,7 +52,6 @@ const PROJECT_VIEW_CONFIG_INPUTS: Record<
   },
   [PROJECT_VIEWS.RECIPES]: {
     navbar: { showSearch: false, addActionType: null },
-    requiredFeature: PlanFeature.RECIPES,
     requiredModule: ProjectModuleKey.RECIPES,
   },
   [PROJECT_VIEWS.SETTINGS]: {
@@ -84,7 +69,6 @@ const createProjectViewConfig = (
     sidebarLabelKey: input.sidebarLabelKey ?? key,
     navbar: input.navbar,
     showInSidebar: input.showInSidebar,
-    requiredFeature: input.requiredFeature,
     requiredModule: input.requiredModule,
   };
 };
@@ -148,26 +132,6 @@ export const isProjectViewModuleEnabled = (
   return hasProjectModule(enabledModules, config.requiredModule);
 };
 
-export const getProjectViewFeatureLockState = (
-  key: ProjectViewKey,
-  effectivePlan: SubscriptionPlan
-): ProjectViewFeatureLockState => {
-  const config = getProjectViewConfig(key);
-
-  if (!config.requiredFeature) {
-    return { locked: false };
-  }
-
-  if (canAccessFeature(effectivePlan, config.requiredFeature)) {
-    return { locked: false };
-  }
-
-  return {
-    locked: true,
-    minimumPlan: getMinimumPlanForFeature(config.requiredFeature),
-  };
-};
-
 export const canAccessProjectView = (
   key: ProjectViewKey,
   options: ProjectViewAvailabilityInput
@@ -176,11 +140,7 @@ export const canAccessProjectView = (
     return false;
   }
 
-  if (!isProjectViewModuleEnabled(key, options.enabledModules)) {
-    return false;
-  }
-
-  return !getProjectViewFeatureLockState(key, options.effectivePlan).locked;
+  return isProjectViewModuleEnabled(key, options.enabledModules);
 };
 
 export const getDefaultProjectViewKey = (

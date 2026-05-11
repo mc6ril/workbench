@@ -3,10 +3,7 @@ import {
   PAGE_ROUTES,
   PROJECT_VIEWS,
 } from "@/shared/constants/routes";
-import {
-  buildMarketingLegalPath,
-  buildMarketingPricingPath,
-} from "@/shared/i18n/marketingPaths";
+import { buildMarketingLegalPath } from "@/shared/i18n/marketingPaths";
 import {
   buildProjectRoute,
   buildTicketDetailRoute,
@@ -27,7 +24,6 @@ const DEFAULT_LOCALE_PREFIXED_HOME = "/fr";
 describe("isPublicRoute", () => {
   it("should return true for known public routes", () => {
     expect(isPublicRoute(PAGE_ROUTES.HOME)).toBe(true);
-    expect(isPublicRoute(PAGE_ROUTES.PRICING)).toBe(true);
     expect(isPublicRoute(PAGE_ROUTES.LEGAL)).toBe(true);
     expect(isPublicRoute(AUTH_PAGE_ROUTES.SIGNIN)).toBe(true);
     expect(isPublicRoute(AUTH_PAGE_ROUTES.SIGNUP)).toBe(true);
@@ -36,7 +32,6 @@ describe("isPublicRoute", () => {
     expect(isPublicRoute(AUTH_PAGE_ROUTES.UPDATE_PASSWORD)).toBe(true);
     expect(isPublicRoute(AUTH_PAGE_ROUTES.CALLBACK)).toBe(true);
     expect(isPublicRoute(DEFAULT_LOCALE_PREFIXED_HOME)).toBe(true);
-    expect(isPublicRoute(buildMarketingPricingPath("en"))).toBe(true);
     expect(isPublicRoute(buildMarketingLegalPath("es"))).toBe(true);
   });
 
@@ -51,10 +46,8 @@ describe("isPublicRoute", () => {
 describe("isMarketingPublicRoute", () => {
   it("should return true for marketing paths", () => {
     expect(isMarketingPublicRoute(PAGE_ROUTES.HOME)).toBe(true);
-    expect(isMarketingPublicRoute(PAGE_ROUTES.PRICING)).toBe(true);
     expect(isMarketingPublicRoute(PAGE_ROUTES.LEGAL)).toBe(true);
     expect(isMarketingPublicRoute(DEFAULT_LOCALE_PREFIXED_HOME)).toBe(true);
-    expect(isMarketingPublicRoute(buildMarketingPricingPath("en"))).toBe(true);
     expect(isMarketingPublicRoute(buildMarketingLegalPath("es"))).toBe(true);
   });
 
