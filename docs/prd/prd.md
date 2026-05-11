@@ -6,7 +6,7 @@ This PRD is derived **only** from runtime code in `src/` and database migrations
 
 ## 1) Product summary
 
-Workbench is a web application for **project task management** centered around a **Kanban-style board of tickets** with collaboration (members, invitations, roles) and optional paid plans (Stripe).
+Workbench is a web application for **project task management** centered around a **Kanban-style board of tickets** with collaboration (members, invitations, roles).
 
 ### What the product does
 
@@ -151,9 +151,8 @@ Account settings include:
 - Activation: % users creating a project and first ticket.
 - Engagement: tickets created/updated per project per week.
 - Collaboration: invitations accepted rate; comments per ticket.
-- Reliability: rate of access guard redirects and Stripe checkout/portal errors.
+- Reliability: rate of access guard redirects and error boundary triggers.
 
 ## 7) Open questions / next iterations
 
-- Feature gating: confirm which specific features are gated and their limits by plan (requires auditing usage of `checkFeatureAccess` throughout `src/`).
 - Archival: confirm user-facing archival and weekly archival job UX (there is an API job route for archiving completed tickets).
