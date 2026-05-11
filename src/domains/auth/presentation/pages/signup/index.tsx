@@ -23,7 +23,7 @@ import {
   useTranslations,
 } from "@/shared/i18n";
 import { getErrorMessage } from "@/shared/i18n/errorMessages";
-import { useMarketingRoutes } from "@/shared/i18n/useMarketingRoutes";
+import { usePublicRoutes } from "@/shared/i18n/usePublicRoutes";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import styles from "./styles.module.scss";
@@ -57,7 +57,7 @@ const SignupPage = ({ redirectPath }: SignupPageProps) => {
   const signupLocale: Locale = isSupportedLocale(activeLocale)
     ? activeLocale
     : defaultLocale;
-  const { legal } = useMarketingRoutes();
+  const { legal } = usePublicRoutes();
   const [submittedEmail, setSubmittedEmail] = useState("");
   const [verificationFeedback, setVerificationFeedback] = useState<{
     tone: "success" | "error";

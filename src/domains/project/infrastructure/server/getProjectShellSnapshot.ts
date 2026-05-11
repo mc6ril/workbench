@@ -1,5 +1,7 @@
 import { cache } from "react";
 import { cookies } from "next/headers";
+import { notFound } from "next/navigation";
+import { ZodError } from "zod";
 
 import {
   APP_COOKIE_KEYS,
@@ -44,7 +46,12 @@ export const getProjectShellSnapshot = cache(
       recipesBoardOverride !== undefined
         ? Promise.resolve(recipesBoardOverride)
         : getCachedRuntimeConfigBoolean("is_recipes_board_visible", false),
-    ]);
+    ]).catch((error) => {
+      if (error instanceof ZodError) {
+        notFound();
+      }
+      throw error;
+    });
 
     return {
       projectId: project.id,

@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 
 import { localeCookieName } from "@/shared/i18n/config";
 import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
-import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { buildHomePath } from "@/shared/i18n/publicPaths";
 
 let mockPathname = "/";
 
@@ -23,7 +23,7 @@ describe("ErrorPage", () => {
     jest.restoreAllMocks();
   });
 
-  it("routes the home action to the current marketing locale", () => {
+  it("routes the home action to the current locale", () => {
     mockPathname = "/en";
 
     render(<ErrorPage error={new Error("boom")} reset={jest.fn()} />);
@@ -32,6 +32,6 @@ describe("ErrorPage", () => {
       screen.getByRole("link", {
         name: getFallbackMessages("en").error.secondaryActionAriaLabel,
       })
-    ).toHaveAttribute("href", buildMarketingHomePath("en"));
+    ).toHaveAttribute("href", buildHomePath("en"));
   });
 });

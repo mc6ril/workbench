@@ -2,10 +2,7 @@ import type { Metadata } from "next";
 
 import { PRODUCT_BRAND_NAME } from "@/shared/constants/brand";
 import type { Locale } from "@/shared/i18n/config";
-import {
-  buildMarketingHomePath,
-  buildMarketingLegalPath,
-} from "@/shared/i18n/marketingPaths";
+import { buildHomePath } from "@/shared/i18n/publicPaths";
 import { getStaticTranslator } from "@/shared/i18n/staticTranslator";
 import { getLanguageAlternates } from "@/shared/seo/languageAlternates";
 import {
@@ -29,7 +26,7 @@ export const buildHomeMetadata = async (locale: Locale): Promise<Metadata> => {
 
   const ogLocale = getOpenGraphLocale(locale);
   const alternateOgLocales = getAlternateOpenGraphLocales(locale);
-  const homePath = buildMarketingHomePath(locale);
+  const homePath = buildHomePath(locale);
   const homeUrl = new URL(homePath, siteUrl).toString();
   const manifestUrl = new URL(`/manifest/${locale}`, siteUrl).toString();
   const openGraphImageUrl = new URL(`/og/${locale}`, siteUrl).toString();
@@ -59,7 +56,7 @@ export const buildHomeMetadata = async (locale: Locale): Promise<Metadata> => {
     },
     alternates: {
       canonical: homeUrl,
-      languages: getLanguageAlternates(buildMarketingHomePath),
+      languages: getLanguageAlternates(buildHomePath),
     },
     openGraph: {
       type: "website",
@@ -87,5 +84,3 @@ export const buildHomeMetadata = async (locale: Locale): Promise<Metadata> => {
     category: "productivity",
   };
 };
-
-export { buildMarketingLegalPath };

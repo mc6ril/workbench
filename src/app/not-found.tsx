@@ -4,7 +4,7 @@ import { PAGE_ROUTES } from "@/shared/constants/routes";
 import RouteFallbackPage from "@/shared/design-system/route_fallback_page";
 import { getIntlLocale } from "@/shared/i18n";
 import { getFallbackMessages } from "@/shared/i18n/fallbackMessages";
-import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { buildHomePath } from "@/shared/i18n/publicPaths";
 import { useRuntimeLocaleSnapshot } from "@/shared/i18n/useRuntimeLocaleSnapshot";
 import DocumentLang from "@/shared/providers/DocumentLang";
 const NotFoundContent = ({
@@ -26,7 +26,7 @@ const NotFoundContent = ({
         {
           label: copy.primaryAction,
           ariaLabel: copy.primaryActionAriaLabel,
-          href: buildMarketingHomePath(locale),
+          href: buildHomePath(locale),
           variant: "primary",
         },
         {

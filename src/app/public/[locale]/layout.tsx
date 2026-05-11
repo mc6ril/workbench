@@ -10,7 +10,7 @@ import {
 import { getStaticMessages } from "@/shared/i18n/staticTranslator";
 import DocumentLang from "@/shared/providers/DocumentLang";
 
-export const revalidate = 300;
+export const revalidate = false;
 export const dynamicParams = false;
 export const dynamic = "error";
 

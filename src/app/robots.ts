@@ -22,7 +22,6 @@ const robots = (): MetadataRoute.Robots => {
       },
     ],
     sitemap: new URL("/sitemap.xml", base).toString(),
-    host: base.host,
   };
 };
 

@@ -11,7 +11,7 @@ export const routing = Object.freeze({
     maxAge: localeCookieMaxAgeSeconds,
   },
   alternateLinks: false,
-  // Marketing URLs stay canonical until a locale is explicitly encoded in the URL.
+  // Public URLs stay canonical until a locale is explicitly encoded in the URL.
   localeDetection: false,
 });
 

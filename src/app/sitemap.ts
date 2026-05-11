@@ -1,19 +1,16 @@
 import type { MetadataRoute } from "next";
 
 import { supportedLocales } from "@/shared/i18n/config";
-import {
-  buildMarketingHomePath,
-  buildMarketingLegalPath,
-} from "@/shared/i18n/marketingPaths";
+import { buildHomePath, buildLegalPath } from "@/shared/i18n/publicPaths";
 import { getLanguageAlternates } from "@/shared/seo/languageAlternates";
 import { getSiteUrl } from "@/shared/seo/siteUrl";
 
-const marketingPaths: {
+const publicPaths: {
   buildPath: (locale: (typeof supportedLocales)[number]) => string;
   priority: number;
 }[] = [
-  { buildPath: buildMarketingHomePath, priority: 1 },
-  { buildPath: buildMarketingLegalPath, priority: 0.6 },
+  { buildPath: buildHomePath, priority: 1 },
+  { buildPath: buildLegalPath, priority: 0.6 },
 ];
 
 const sitemap = (): MetadataRoute.Sitemap => {
@@ -23,7 +20,7 @@ const sitemap = (): MetadataRoute.Sitemap => {
   const entries: MetadataRoute.Sitemap = [];
 
   for (const locale of supportedLocales) {
-    for (const { buildPath, priority } of marketingPaths) {
+    for (const { buildPath, priority } of publicPaths) {
       const path = buildPath(locale);
       entries.push({
         url: new URL(path, base).toString(),

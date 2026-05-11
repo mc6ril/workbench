@@ -4,7 +4,7 @@ import BackButton from "@/shared/design-system/back_button";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import type { Locale } from "@/shared/i18n";
-import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { buildHomePath } from "@/shared/i18n/publicPaths";
 import { getStaticTranslator } from "@/shared/i18n/staticTranslator";
 
 import styles from "./styles.module.scss";
@@ -31,7 +31,7 @@ const LegalPage = async ({ locale }: LegalPageProps) => {
           <BackButton
             label={t("header.label")}
             ariaLabel={t("header.label")}
-            fallbackHref={buildMarketingHomePath(locale)}
+            fallbackHref={buildHomePath(locale)}
           />
           <div className={styles["legal-welcome"]}>
             <Title variant="h1" className={styles["legal-welcome__title"]}>

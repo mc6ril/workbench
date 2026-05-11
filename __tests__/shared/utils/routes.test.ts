@@ -3,14 +3,13 @@ import {
   PAGE_ROUTES,
   PROJECT_VIEWS,
 } from "@/shared/constants/routes";
-import { buildMarketingLegalPath } from "@/shared/i18n/marketingPaths";
+import { buildLegalPath } from "@/shared/i18n/publicPaths";
 import {
   buildProjectRoute,
   buildTicketDetailRoute,
   extractProjectId,
   extractProjectView,
   isActiveHref,
-  isMarketingPublicRoute,
   isProjectRoute,
   isProtectedRoute,
   isPublicRoute,
@@ -32,7 +31,7 @@ describe("isPublicRoute", () => {
     expect(isPublicRoute(AUTH_PAGE_ROUTES.UPDATE_PASSWORD)).toBe(true);
     expect(isPublicRoute(AUTH_PAGE_ROUTES.CALLBACK)).toBe(true);
     expect(isPublicRoute(DEFAULT_LOCALE_PREFIXED_HOME)).toBe(true);
-    expect(isPublicRoute(buildMarketingLegalPath("es"))).toBe(true);
+    expect(isPublicRoute(buildLegalPath("es"))).toBe(true);
   });
 
   it("should return false for non-public routes", () => {
@@ -40,20 +39,6 @@ describe("isPublicRoute", () => {
     expect(isPublicRoute(PAGE_ROUTES.ACCOUNT)).toBe(false);
     expect(isPublicRoute(PAGE_ROUTES.RUNTIME_CONFIG_LAB)).toBe(false);
     expect(isPublicRoute("/unknown")).toBe(false);
-  });
-});
-
-describe("isMarketingPublicRoute", () => {
-  it("should return true for marketing paths", () => {
-    expect(isMarketingPublicRoute(PAGE_ROUTES.HOME)).toBe(true);
-    expect(isMarketingPublicRoute(PAGE_ROUTES.LEGAL)).toBe(true);
-    expect(isMarketingPublicRoute(DEFAULT_LOCALE_PREFIXED_HOME)).toBe(true);
-    expect(isMarketingPublicRoute(buildMarketingLegalPath("es"))).toBe(true);
-  });
-
-  it("should return false for non-marketing paths", () => {
-    expect(isMarketingPublicRoute(PAGE_ROUTES.WORKSPACE)).toBe(false);
-    expect(isMarketingPublicRoute("/fr/board")).toBe(false);
   });
 });
 

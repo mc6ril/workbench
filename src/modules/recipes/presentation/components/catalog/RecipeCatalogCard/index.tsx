@@ -229,6 +229,7 @@ const RecipeCatalogCard = ({
       <div className={styles["recipes-page__recipe-card-toggle-row"]}>
         <Link
           href={editHref}
+          prefetch={false}
           unstyled
           ariaLabel={t("card.editRecipeAriaLabel", { title: recipe.title })}
           className={styles["recipes-page__recipe-edit-link"]}
@@ -256,6 +257,7 @@ const RecipeCatalogCard = ({
 
       <Link
         href={detailHref}
+        prefetch={false}
         unstyled
         ariaLabel={t("card.openRecipeAriaLabel", { title: recipe.title })}
         className={styles["recipes-page__recipe-card-link"]}

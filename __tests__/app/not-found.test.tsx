@@ -6,7 +6,7 @@ jest.mock("use-intl", () => ({
   ),
 }));
 
-import { buildMarketingHomePath } from "@/shared/i18n/marketingPaths";
+import { buildHomePath } from "@/shared/i18n/publicPaths";
 
 import NotFoundPage from "@/app/not-found";
 
@@ -15,13 +15,13 @@ jest.mock("next/navigation", () => ({
 }));
 
 describe("NotFoundPage", () => {
-  it("routes the primary action to the localized marketing home", () => {
+  it("routes the primary action to the localized home", () => {
     render(<NotFoundPage />);
 
     expect(
       screen
         .getAllByRole("link")
         .find((link) => link.getAttribute("href") === "/en")
-    ).toHaveAttribute("href", buildMarketingHomePath("en"));
+    ).toHaveAttribute("href", buildHomePath("en"));
   });
 });

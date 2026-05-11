@@ -49,14 +49,8 @@ export const createWorkspaceProjectCatalogGateway = (
           return data.map(mapProjectWithStatsRowToDomain);
         }
 
-        // In some sessions the stats RPC can return an empty result even when
-        // the user still has project access. Fallback to the regular catalog
-        // listing to keep the workspace usable.
-        const hasAccess = await gateway.hasProjectAccess();
-        if (!hasAccess) {
-          return [];
-        }
-
+        // RPC can return empty due to a known session timing issue; fall back
+        // to listProjects which returns [] when there is genuinely no access.
         const projects = await gateway.listProjects();
         return projects.map(mapProjectWithRoleToStats);
       } catch (error) {
