@@ -56,6 +56,7 @@ const QuickListSummaryCard = ({ projectId, recipes }: Props) => {
                 <div className={styles["recipes-scaffold__summary-head"]}>
                   <Link
                     href={buildRecipeDetailRoute(projectId, recipe.recipeId)}
+                    prefetch={false}
                   >
                     {recipe.title}
                   </Link>

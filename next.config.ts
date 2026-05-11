@@ -72,7 +72,7 @@ const nextConfig: NextConfig = {
       dynamic: ONE_DAY_IN_SECONDS,
       static: ONE_DAY_IN_SECONDS,
     },
-    optimizePackageImports: ["recharts", "next-intl"],
+    optimizePackageImports: ["next-intl"],
   },
   /**
    * Public URLs keep the default locale unprefixed (`/`, `/legal`)

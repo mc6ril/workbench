@@ -105,6 +105,7 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
                         projectId,
                         selection.recipeId
                       )}
+                      prefetch={false}
                     >
                       {selection.title}
                     </Link>
@@ -126,6 +127,7 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
                         projectId,
                         selection.recipeId
                       )}
+                      prefetch={false}
                     >
                       Voir la fiche
                     </Link>
