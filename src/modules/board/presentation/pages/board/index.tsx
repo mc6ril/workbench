@@ -1,19 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useMemo } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 
 import { getAccessibilityId } from "@/shared/a11y";
 import Loader from "@/shared/design-system/loader";
-import Modal from "@/shared/design-system/modal";
-import Text from "@/shared/design-system/text";
-import { useTranslations } from "@/shared/i18n";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { buildTicketDetailRoute } from "@/shared/utils/routes";
 
 import styles from "./styles.module.scss";
 
+import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import type { BoardConfiguration } from "@/modules/board/core/domain/board.types";
 import type {
@@ -21,22 +19,17 @@ import type {
   TicketFilters,
 } from "@/modules/board/core/domain/ticket.types";
 import BoardView from "@/modules/board/presentation/components/board/boardView/BoardView";
-import CreateTicketForm, {
-  type CreateTicketFormValues,
-} from "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm";
 import TicketCard from "@/modules/board/presentation/components/ticket/ticketCard/TicketCard";
 import { useBoardColumns } from "@/modules/board/presentation/hooks/board/useBoardColumns";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { useBoardDnD } from "@/modules/board/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/modules/board/presentation/hooks/board/useBoardTickets";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
-import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCreateTicket";
 import { usePrefetchTicketDetail } from "@/modules/board/presentation/hooks/ticket/usePrefetchTicketDetail";
 import { useTicketAssigneesByProjectId } from "@/modules/board/presentation/hooks/ticket/useTicketAssigneesByProjectId";
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
 import type { BoardColumnConfig } from "@/modules/board/presentation/types/boardView.types";
-import { getBoardColumnDisplayName } from "@/modules/board/presentation/utils/columnI18n";
 import { normalizeTicketSearch } from "@/modules/board/utils/ticketUtils";
 
 const EMPTY_FILTERS: TicketFilters = {};
@@ -55,39 +48,14 @@ const BoardLayout = ({
   initialProjectShortCode,
 }: BoardLayoutProps) => {
   const router = useAppRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const layoutId = useMemo(() => getAccessibilityId("board-layout"), []);
   const dndContextId = useMemo(() => {
     return getAccessibilityId(`board-dnd-context-${projectId}`);
   }, [projectId]);
-  const tBoard = useTranslations("pages.board");
   const legacyTicketId = searchParams.get("ticket");
-  const tCreateForm = useTranslations("pages.board.createTicketForm");
-  const tColumns = useTranslations("pages.board.columns");
-  const isCreateTicketModalOpen = searchParams.get("createTicket") === "1";
-  const { canMoveTicket, canCreateTicket } = useProjectPermissions();
-  const createTicketMutation = useCreateTicket();
+  const { canMoveTicket } = useProjectPermissions();
   const prefetchTicketDetail = usePrefetchTicketDetail();
-
-  const replaceSearchParams = useCallback(
-    (updates: Record<string, string | null>) => {
-      const params = new URLSearchParams(searchParams.toString());
-      for (const [key, value] of Object.entries(updates)) {
-        if (value == null || value === "") {
-          params.delete(key);
-          continue;
-        }
-        params.set(key, value);
-      }
-      const query = params.toString();
-      router.replace(query ? `${pathname}?${query}` : pathname, {
-        scroll: false,
-        feedback: "none",
-      });
-    },
-    [pathname, router, searchParams]
-  );
 
   const handleOpenTicketDetail = useCallback(
     (ticketId: string) => {
@@ -130,36 +98,16 @@ const BoardLayout = ({
       initialData: shouldUseInitialTickets ? initialTickets : undefined,
     }
   );
-  const hasActiveFilters = useMemo(() => {
-    return Boolean(
-      filters.columnId ||
-      filters.priority ||
-      filters.assigneeUserId ||
-      filters.unassignedOnly
-    );
-  }, [filters]);
-  const shouldLoadProjectWideTickets =
-    isCreateTicketModalOpen &&
-    (hasActiveFilters || effectiveSearch.trim() !== "");
-  const { data: projectWideTickets = [] } = useTickets(
-    projectId,
-    undefined,
-    "",
-    {
-      enabled: shouldLoadProjectWideTickets,
-    }
-  );
-  const ticketsForCreatePosition = shouldLoadProjectWideTickets
-    ? projectWideTickets
-    : tickets;
   const { data: ticketAssigneesByProjectId = {} } =
     useTicketAssigneesByProjectId(projectId);
+  const { data: projectMembers = [] } = useProjectMembers(projectId);
 
   const { columns, columnById } = useBoardColumns(boardConfiguration);
   const { filteredTickets, ticketViewModelById } = useBoardTickets({
     tickets,
     projectShortCode,
     assigneesByTicketId: ticketAssigneesByProjectId,
+    members: projectMembers,
   });
 
   const {
@@ -191,23 +139,6 @@ const BoardLayout = ({
     };
   }, [boardColumnTickets, handleOpenTicketDetail, prefetchTicketDetail]);
 
-  const closeCreateTicketModal = useCallback(() => {
-    replaceSearchParams({ createTicket: null });
-  }, [replaceSearchParams]);
-
-  const statusOptions = useMemo(() => {
-    const currentColumns = boardConfiguration?.columns ?? [];
-    return currentColumns.map((column) => ({
-      value: column.id,
-      label: getBoardColumnDisplayName(column, tColumns),
-    }));
-  }, [boardConfiguration?.columns, tColumns]);
-
-  const createTicketErrorMessage =
-    createTicketMutation.error instanceof Error
-      ? createTicketMutation.error.message
-      : undefined;
-
   useEffect(() => {
     if (!legacyTicketId) {
       return;
@@ -216,31 +147,6 @@ const BoardLayout = ({
       scroll: false,
     });
   }, [legacyTicketId, projectId, router]);
-
-  const handleCreateTicketSubmit = useCallback(
-    async (values: CreateTicketFormValues): Promise<void> => {
-      if (!canCreateTicket) {
-        return;
-      }
-      await createTicketMutation.mutateAsync({
-        projectId,
-        title: values.title,
-        description: values.description ?? null,
-        columnId: values.columnId,
-        position: ticketsForCreatePosition.filter(
-          (ticket) => ticket.columnId === values.columnId
-        ).length,
-      });
-      closeCreateTicketModal();
-    },
-    [
-      canCreateTicket,
-      closeCreateTicketModal,
-      createTicketMutation,
-      projectId,
-      ticketsForCreatePosition,
-    ]
-  );
 
   if (legacyTicketId) {
     return <Loader variant="full-page" />;
@@ -279,25 +185,6 @@ const BoardLayout = ({
           ) : null}
         </DragOverlay>
       </DndContext>
-      <Modal
-        isOpen={isCreateTicketModalOpen}
-        onClose={closeCreateTicketModal}
-        title={tCreateForm("title")}
-      >
-        {statusOptions.length === 0 ? (
-          <Text variant="small">{tBoard("createTicketForm.noStatusHint")}</Text>
-        ) : !canCreateTicket ? (
-          <Text variant="small">{tCreateForm("readOnlyHint")}</Text>
-        ) : (
-          <CreateTicketForm
-            columnOptions={statusOptions}
-            isSubmitting={createTicketMutation.isPending}
-            errorMessage={createTicketErrorMessage}
-            onCancel={closeCreateTicketModal}
-            onSubmit={handleCreateTicketSubmit}
-          />
-        )}
-      </Modal>
     </section>
   );
 };
