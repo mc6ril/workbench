@@ -1,6 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { UpdateTicketInput } from "@/modules/board/core/domain/ticket.types";
+import type {
+  Ticket,
+  UpdateTicketInput,
+} from "@/modules/board/core/domain/ticket.types";
 import { updateTicket } from "@/modules/board/core/usecases/ticket/updateTicket";
 import {
   boardRepository,
@@ -13,22 +16,45 @@ type UpdateTicketVariables = {
   input: UpdateTicketInput;
 };
 
-/**
- * Hook for updating a ticket.
- * Invalidates the project tickets root and the ticket detail on success.
- */
 export const useUpdateTicket = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ id, input }: UpdateTicketVariables) =>
       updateTicket(ticketRepository, boardRepository, id, input),
+    onMutate: async ({ id, input }) => {
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.tickets.detail(id),
+      });
+
+      const previousTicket = queryClient.getQueryData<Ticket>(
+        queryKeys.tickets.detail(id)
+      );
+
+      queryClient.setQueryData<Ticket>(queryKeys.tickets.detail(id), (old) => {
+        if (!old) return old;
+        // Spread only defined values; null is a valid clear, undefined means unspecified
+        const patch = Object.fromEntries(
+          Object.entries(input).filter(([, v]) => v !== undefined)
+        ) as Partial<Ticket>;
+        return { ...old, ...patch };
+      });
+
+      return { previousTicket, id };
+    },
+    onError: (_, __, context) => {
+      if (context?.previousTicket) {
+        queryClient.setQueryData(
+          queryKeys.tickets.detail(context.id),
+          context.previousTicket
+        );
+      }
+    },
     onSuccess: (ticket) => {
+      // Settle with the authoritative server value, then refresh the board list
+      queryClient.setQueryData(queryKeys.tickets.detail(ticket.id), ticket);
       queryClient.invalidateQueries({
         queryKey: queryKeys.projects.ticketsRoot(ticket.projectId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.tickets.detail(ticket.id),
       });
     },
   });

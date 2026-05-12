@@ -728,6 +728,7 @@
             "saving": "Enregistrement...",
             "saved": "Enregistré"
           },
+          "moreActions": "Plus d'options",
           "delete": "Supprimer la tâche",
           "deleteModal": {
             "title": "Supprimer la tâche",

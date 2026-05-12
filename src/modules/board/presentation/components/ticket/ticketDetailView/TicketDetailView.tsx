@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback } from "react";
+
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import Avatar from "@/shared/design-system/avatar";
 import Card from "@/shared/design-system/card";
@@ -14,13 +16,17 @@ import TicketDetailDeleteModal from "./components/TicketDetailDeleteModal";
 import TicketDetailHeader from "./components/TicketDetailHeader";
 import TicketDetailInlinePopover from "./components/TicketDetailInlinePopover";
 import TicketStatusBar from "./components/TicketStatusBar";
+import TicketToolbarMenu from "./components/TicketToolbarMenu";
 import styles from "./TicketDetailView.module.scss";
 
 import type { ProjectMember } from "@/domains/project/core/domain/project.types";
-import { useRegisterToolbarBreadcrumb } from "@/domains/project/presentation/contexts/ToolbarBreadcrumb";
-import type { TicketAssignee } from "@/modules/board/core/domain/ticket.types";
+import {
+  useRegisterToolbarActions,
+  useRegisterToolbarBreadcrumb,
+} from "@/domains/project/presentation/contexts/ToolbarBreadcrumb";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
 import { useTicketDetailController } from "@/modules/board/presentation/hooks/ticket";
+import { resolveAssigneeIdentity } from "@/modules/board/utils/assigneeUtils";
 import { buildTicketCode } from "@/modules/board/utils/ticketUtils";
 
 type Props = {
@@ -30,21 +36,6 @@ type Props = {
 
 const getMemberName = (member: ProjectMember): string => {
   return member.profile.displayName || member.profile.email;
-};
-
-const getAssigneeName = (
-  assignee: TicketAssignee,
-  members: ProjectMember[],
-  fallbackLabel: string
-): string => {
-  if (assignee.displayName) {
-    return assignee.displayName;
-  }
-
-  const member = members.find(
-    (projectMember) => projectMember.userId === assignee.userId
-  );
-  return member ? getMemberName(member) : fallbackLabel;
 };
 
 const parseCalendarDate = (value: string): Date | null => {
@@ -157,6 +148,14 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
 
   useRegisterToolbarBreadcrumb(ticket ? effectiveTitle : null);
 
+  const renderToolbarActions = useCallback(() => {
+    return (
+      <TicketToolbarMenu onDeleteClick={() => setIsDeleteModalOpen(true)} />
+    );
+  }, [setIsDeleteModalOpen]);
+
+  useRegisterToolbarActions(canDeleteTicket ? renderToolbarActions : null);
+
   if (isLoading) {
     return <Loader variant="full-page" />;
   }
@@ -209,6 +208,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
         ticketCode={ticketCode}
         canEditTicket={canEditTicket}
         onTitleChange={setTitleDraft}
+        onTitleReset={() => setTitleDraft(null)}
       />
 
       <TicketStatusBar
@@ -266,15 +266,16 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
                     {visibleAssignees.length > 0 ? (
                       <div className={styles["ticket-detail__assignee-stack"]}>
                         {visibleAssignees.map((assignee) => {
-                          const name = getAssigneeName(
+                          const identity = resolveAssigneeIdentity(
                             assignee,
-                            projectMembers,
-                            t("comments.unknownAuthor")
+                            projectMembers
                           );
+                          const name =
+                            identity.displayName ?? t("comments.unknownAuthor");
                           return (
                             <Avatar
                               key={assignee.userId}
-                              src={assignee.avatarUrl ?? null}
+                              src={identity.avatarUrl}
                               name={name}
                               size="sm"
                               aria-label={name}
@@ -460,33 +461,15 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
           }}
         />
 
-        <div className={styles["ticket-detail__actions-row"]}>
-          {autoSaveState !== "idle" ? (
+        {autoSaveState !== "idle" ? (
+          <div className={styles["ticket-detail__actions-row"]}>
             <span className={styles["ticket-detail__autosave-status"]}>
               {autoSaveState === "saving"
                 ? t("actions.autoSave.saving")
                 : t("actions.autoSave.saved")}
             </span>
-          ) : null}
-
-          {canDeleteTicket ? (
-            <button
-              type="button"
-              className={[
-                styles["ticket-detail__action-button"],
-                styles["ticket-detail__action-button--delete"],
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              onClick={() => {
-                setIsDeleteModalOpen(true);
-              }}
-              disabled={isDeletingTicket}
-            >
-              {tCommon("delete")}
-            </button>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </Card>
 
       <TicketDetailDeleteModal

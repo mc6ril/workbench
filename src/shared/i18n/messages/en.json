@@ -728,6 +728,7 @@
             "saving": "Saving...",
             "saved": "Saved"
           },
+          "moreActions": "More options",
           "delete": "Delete task",
           "deleteModal": {
             "title": "Delete task",

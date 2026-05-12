@@ -45,7 +45,7 @@ const BoardToolbar = ({ projectId }: Props) => {
   const isTicketDetailRoute = normalizePath(pathname).startsWith(
     `${boardRoute}/tickets/`
   );
-  const { childLabel } = useToolbarBreadcrumb();
+  const { childLabel, renderActions } = useToolbarBreadcrumb();
 
   const filterProjectId = useFilterStore((state) => state.projectId);
   const rawSearch = useFilterStore((state) => state.search);
@@ -135,6 +135,7 @@ const BoardToolbar = ({ projectId }: Props) => {
           parentLabel: pageTitle,
           parentHref: boardRoute,
           childLabel,
+          actions: renderActions?.(),
         }}
       />
     );

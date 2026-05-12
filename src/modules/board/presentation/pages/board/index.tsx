@@ -11,6 +11,7 @@ import { buildTicketDetailRoute } from "@/shared/utils/routes";
 
 import styles from "./styles.module.scss";
 
+import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import type { BoardConfiguration } from "@/modules/board/core/domain/board.types";
 import type {
@@ -99,12 +100,14 @@ const BoardLayout = ({
   );
   const { data: ticketAssigneesByProjectId = {} } =
     useTicketAssigneesByProjectId(projectId);
+  const { data: projectMembers = [] } = useProjectMembers(projectId);
 
   const { columns, columnById } = useBoardColumns(boardConfiguration);
   const { filteredTickets, ticketViewModelById } = useBoardTickets({
     tickets,
     projectShortCode,
     assigneesByTicketId: ticketAssigneesByProjectId,
+    members: projectMembers,
   });
 
   const {

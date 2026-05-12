@@ -11,10 +11,12 @@ import {
 
 type BreadcrumbState = {
   childLabel: string | null;
+  renderActions: (() => ReactNode) | null;
 };
 
 type BreadcrumbContextValue = BreadcrumbState & {
   setChildLabel: (label: string | null) => void;
+  setRenderActions: (fn: (() => ReactNode) | null) => void;
 };
 
 const ToolbarBreadcrumbContext = createContext<BreadcrumbContextValue | null>(
@@ -27,14 +29,27 @@ export const ToolbarBreadcrumbProvider = ({
   children: ReactNode;
 }) => {
   const [childLabel, setChildLabel] = useState<string | null>(null);
+  const [renderActions, setRenderActionsState] = useState<
+    (() => ReactNode) | null
+  >(null);
 
   const set = useCallback((label: string | null) => {
     setChildLabel(label);
   }, []);
 
+  // Wrap in arrow fn to prevent React from calling `fn` as a state initializer.
+  const setRenderActions = useCallback((fn: (() => ReactNode) | null) => {
+    setRenderActionsState(fn === null ? null : () => fn);
+  }, []);
+
   return (
     <ToolbarBreadcrumbContext.Provider
-      value={{ childLabel, setChildLabel: set }}
+      value={{
+        childLabel,
+        renderActions,
+        setChildLabel: set,
+        setRenderActions,
+      }}
     >
       {children}
     </ToolbarBreadcrumbContext.Provider>
@@ -47,7 +62,7 @@ export const useToolbarBreadcrumb = (): BreadcrumbState => {
     throw new Error(
       "useToolbarBreadcrumb must be used inside ToolbarBreadcrumbProvider"
     );
-  return { childLabel: ctx.childLabel };
+  return { childLabel: ctx.childLabel, renderActions: ctx.renderActions };
 };
 
 export const useRegisterToolbarBreadcrumb = (label: string | null): void => {
@@ -63,4 +78,21 @@ export const useRegisterToolbarBreadcrumb = (label: string | null): void => {
     setChildLabel(label);
     return () => setChildLabel(null);
   }, [label, setChildLabel]);
+};
+
+export const useRegisterToolbarActions = (
+  fn: (() => ReactNode) | null
+): void => {
+  const ctx = useContext(ToolbarBreadcrumbContext);
+  if (!ctx)
+    throw new Error(
+      "useRegisterToolbarActions must be used inside ToolbarBreadcrumbProvider"
+    );
+
+  const { setRenderActions } = ctx;
+
+  useEffect(() => {
+    setRenderActions(fn);
+    return () => setRenderActions(null);
+  }, [fn, setRenderActions]);
 };

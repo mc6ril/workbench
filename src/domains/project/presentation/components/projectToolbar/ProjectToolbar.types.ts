@@ -41,6 +41,7 @@ export type ProjectToolbarBreadcrumb = {
   parentLabel: string;
   parentHref: string;
   childLabel: string | null;
+  actions?: ReactNode;
 };
 
 export type ProjectToolbarProps = {

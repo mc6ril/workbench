@@ -728,6 +728,7 @@
             "saving": "Guardando...",
             "saved": "Guardado"
           },
+          "moreActions": "Más opciones",
           "delete": "Eliminar tarea",
           "deleteModal": {
             "title": "Eliminar tarea",
