@@ -17,6 +17,7 @@ type AppProviderProps = {
   children: React.ReactNode;
   dehydratedState?: DehydratedState;
   initialTheme?: Theme | null;
+  userId?: string;
 };
 
 const AccountPreferencesSync = () => {
@@ -32,6 +33,7 @@ const AppProvider = ({
   children,
   dehydratedState,
   initialTheme,
+  userId,
 }: AppProviderProps) => {
   return (
     <ThemeProvider
@@ -40,7 +42,10 @@ const AppProvider = ({
       enableSystem
     >
       <AppErrorBoundary>
-        <ReactQueryProvider dehydratedState={dehydratedState}>
+        <ReactQueryProvider
+          dehydratedState={dehydratedState}
+          userId={userId ?? ""}
+        >
           <AccountPreferencesSync />
           {children}
           <Toast />
