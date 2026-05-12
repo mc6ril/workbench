@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
@@ -38,6 +38,8 @@ export type TicketDetailStatusOption = {
   label: string;
   state: ColumnWorkflowState;
 };
+
+export type AutoSaveState = "idle" | "saving" | "saved";
 
 export const useTicketDetailController = ({
   projectId,
@@ -82,6 +84,10 @@ export const useTicketDetailController = ({
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentContent, setEditingCommentContent] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [autoSaveState, setAutoSaveState] = useState<AutoSaveState>("idle");
+
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const statusOptions = useMemo<TicketDetailStatusOption[]>(() => {
     const columns = boardConfiguration?.columns ?? [];
@@ -99,6 +105,13 @@ export const useTicketDetailController = ({
     priorityDraft ?? ticket?.priority ?? "";
   const effectiveDueDate =
     dueDateDraft === undefined ? (ticket?.dueDate ?? null) : dueDateDraft;
+
+  const hasDirtyFields =
+    titleDraft !== null ||
+    descriptionDraft !== null ||
+    columnIdDraft !== null ||
+    priorityDraft !== null ||
+    dueDateDraft !== undefined;
 
   const handleSaveMainFields = useCallback(async (): Promise<void> => {
     if (!ticket || !canEditTicket) {
@@ -134,6 +147,48 @@ export const useTicketDetailController = ({
     ticket,
     updateMainTicketMutation,
   ]);
+
+  useEffect(() => {
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+
+    if (!hasDirtyFields || !ticket || !canEditTicket) return;
+
+    autoSaveTimerRef.current = setTimeout(async () => {
+      setAutoSaveState("saving");
+      try {
+        await handleSaveMainFields();
+        setAutoSaveState("saved");
+        if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
+        savedTimerRef.current = setTimeout(
+          () => setAutoSaveState("idle"),
+          2000
+        );
+      } catch {
+        setAutoSaveState("idle");
+      }
+    }, 800);
+
+    return () => {
+      if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    };
+  }, [
+    hasDirtyFields,
+    effectiveTitle,
+    effectiveDescription,
+    effectiveColumnId,
+    effectivePriority,
+    effectiveDueDate,
+    ticket,
+    canEditTicket,
+    handleSaveMainFields,
+  ]);
+
+  useEffect(() => {
+    return () => {
+      if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
+      if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    };
+  }, []);
 
   const handleAssign = useCallback(
     async (userId: string): Promise<void> => {
@@ -306,6 +361,7 @@ export const useTicketDetailController = ({
     editingCommentId,
     editingCommentContent,
     isDeleteModalOpen,
+    autoSaveState,
     isCreatingComment: createCommentMutation.isPending,
     isUpdatingComment: updateCommentMutation.isPending,
     isDeletingComment: deleteCommentMutation.isPending,

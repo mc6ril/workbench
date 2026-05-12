@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import Avatar from "@/shared/design-system/avatar";
 import Card from "@/shared/design-system/card";
@@ -127,10 +125,10 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     editingCommentId,
     editingCommentContent,
     isDeleteModalOpen,
+    autoSaveState,
     isCreatingComment,
     isUpdatingComment,
     isDeletingComment,
-    isSavingMainFields,
     isDeletingTicket,
     isUpdatingAssignees,
     isTicketArchived,
@@ -143,7 +141,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
     setCommentInput,
     setEditingCommentContent,
     setIsDeleteModalOpen,
-    handleSaveMainFields,
     handleAssign,
     handleUnassign,
     handleCreateComment,
@@ -159,9 +156,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
   });
 
   useRegisterToolbarBreadcrumb(ticket ? effectiveTitle : null);
-
-  const canSaveMainFields =
-    canEditTicket && effectiveTitle.trim().length > 0 && !isSavingMainFields;
 
   if (isLoading) {
     return <Loader variant="full-page" />;
@@ -430,13 +424,6 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
                         className={styles["ticket-detail__secondary-action"]}
                         onClick={close}
                       >
-                        {tCommon("cancel")}
-                      </button>
-                      <button
-                        type="button"
-                        className={styles["ticket-detail__secondary-action"]}
-                        onClick={close}
-                      >
                         {tCommon("apply")}
                       </button>
                     </div>
@@ -474,21 +461,13 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
         />
 
         <div className={styles["ticket-detail__actions-row"]}>
-          <button
-            type="button"
-            className={[
-              styles["ticket-detail__action-button"],
-              styles["ticket-detail__action-button--save"],
-            ]
-              .filter(Boolean)
-              .join(" ")}
-            onClick={() => {
-              void handleSaveMainFields();
-            }}
-            disabled={!canSaveMainFields}
-          >
-            {t("actions.save")}
-          </button>
+          {autoSaveState !== "idle" ? (
+            <span className={styles["ticket-detail__autosave-status"]}>
+              {autoSaveState === "saving"
+                ? t("actions.autoSave.saving")
+                : t("actions.autoSave.saved")}
+            </span>
+          ) : null}
 
           {canDeleteTicket ? (
             <button

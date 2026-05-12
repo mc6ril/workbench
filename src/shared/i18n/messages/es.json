@@ -535,6 +535,9 @@
         "errorGeneric": "Se ha producido un error al crear la tarea",
         "readOnlyHint": "Los lectores no pueden crear tareas.",
         "noStatusHint": "Gestiona y organiza tus tareas"
+      },
+      "newTicket": {
+        "defaultTitle": "Sin título"
       }
     },
     "settings": {
@@ -721,6 +724,10 @@
           "back": "Volver",
           "close": "Cerrar",
           "save": "Guardar",
+          "autoSave": {
+            "saving": "Guardando...",
+            "saved": "Guardado"
+          },
           "delete": "Eliminar tarea",
           "deleteModal": {
             "title": "Eliminar tarea",

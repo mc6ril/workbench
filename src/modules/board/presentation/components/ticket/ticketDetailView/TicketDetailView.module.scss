@@ -744,9 +744,17 @@
 
 .ticket-detail__actions-row {
   display: flex;
+  align-items: center;
   gap: $spacing-sm;
   border-top: $border-width solid $color-border-subtle;
   padding: $spacing-lg $spacing-2xl;
+}
+
+.ticket-detail__autosave-status {
+  flex: 1;
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+  letter-spacing: $letter-spacing-normal;
 }
 
 .ticket-detail__action-button {

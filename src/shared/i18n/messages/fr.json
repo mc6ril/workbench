@@ -535,6 +535,9 @@
         "errorGeneric": "Une erreur s'est produite lors de la création de la tâche",
         "readOnlyHint": "Les lecteurs ne peuvent pas créer de tâches.",
         "noStatusHint": "Gérez et organisez vos tâches"
+      },
+      "newTicket": {
+        "defaultTitle": "Sans titre"
       }
     },
     "settings": {
@@ -721,6 +724,10 @@
           "back": "Retour",
           "close": "Fermer",
           "save": "Enregistrer",
+          "autoSave": {
+            "saving": "Enregistrement...",
+            "saved": "Enregistré"
+          },
           "delete": "Supprimer la tâche",
           "deleteModal": {
             "title": "Supprimer la tâche",
