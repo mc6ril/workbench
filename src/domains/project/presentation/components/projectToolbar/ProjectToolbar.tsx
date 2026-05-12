@@ -151,31 +151,38 @@ const ProjectToolbar = ({
     return (
       <header id={navbarId} className={styles["project-toolbar"]} role="banner">
         <div className={styles["project-toolbar__content"]}>
-          <nav
-            className={styles["project-toolbar__breadcrumb"]}
-            aria-label="breadcrumb"
-          >
-            <Link
-              href={breadcrumb.parentHref}
-              unstyled
-              className={styles["project-toolbar__breadcrumb-parent"]}
+          <div className={styles["project-toolbar__breadcrumb-row"]}>
+            <nav
+              className={styles["project-toolbar__breadcrumb"]}
+              aria-label="breadcrumb"
             >
-              {breadcrumb.parentLabel}
-            </Link>
-            {breadcrumb.childLabel ? (
-              <>
-                <span
-                  className={styles["project-toolbar__breadcrumb-separator"]}
-                  aria-hidden
-                >
-                  &gt;
-                </span>
-                <span className={styles["project-toolbar__breadcrumb-child"]}>
-                  {breadcrumb.childLabel}
-                </span>
-              </>
+              <Link
+                href={breadcrumb.parentHref}
+                unstyled
+                className={styles["project-toolbar__breadcrumb-parent"]}
+              >
+                {breadcrumb.parentLabel}
+              </Link>
+              {breadcrumb.childLabel ? (
+                <>
+                  <span
+                    className={styles["project-toolbar__breadcrumb-separator"]}
+                    aria-hidden
+                  >
+                    &gt;
+                  </span>
+                  <span className={styles["project-toolbar__breadcrumb-child"]}>
+                    {breadcrumb.childLabel}
+                  </span>
+                </>
+              ) : null}
+            </nav>
+            {breadcrumb.actions ? (
+              <div className={styles["project-toolbar__breadcrumb-actions"]}>
+                {breadcrumb.actions}
+              </div>
             ) : null}
-          </nav>
+          </div>
         </div>
       </header>
     );

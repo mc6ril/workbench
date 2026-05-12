@@ -535,6 +535,9 @@
         "errorGeneric": "An error occurred while creating the task",
         "readOnlyHint": "Viewers cannot create tasks.",
         "noStatusHint": "Manage and organize your tasks"
+      },
+      "newTicket": {
+        "defaultTitle": "Untitled"
       }
     },
     "settings": {
@@ -721,6 +724,11 @@
           "back": "Back",
           "close": "Close",
           "save": "Save",
+          "autoSave": {
+            "saving": "Saving...",
+            "saved": "Saved"
+          },
+          "moreActions": "More options",
           "delete": "Delete task",
           "deleteModal": {
             "title": "Delete task",

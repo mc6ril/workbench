@@ -7,12 +7,12 @@ import {
   buildTicketDetailRoute,
 } from "@/shared/utils/routes";
 
+import { useProjectMembers } from "@/domains/project/presentation/hooks/member/useProjectMembers";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { useBoardDnD } from "@/modules/board/presentation/hooks/board/useBoardDnD";
 import { useBoardTickets } from "@/modules/board/presentation/hooks/board/useBoardTickets";
 import { useProjectShortCode } from "@/modules/board/presentation/hooks/project/useProjectShortCode";
-import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCreateTicket";
 import { usePrefetchTicketDetail } from "@/modules/board/presentation/hooks/ticket/usePrefetchTicketDetail";
 import { useTicketAssigneesByProjectId } from "@/modules/board/presentation/hooks/ticket/useTicketAssigneesByProjectId";
 import { useTickets } from "@/modules/board/presentation/hooks/ticket/useTickets";
@@ -50,12 +50,6 @@ jest.mock("@/shared/design-system/loader", () => ({
   default: () => <div>loading</div>,
 }));
 
-jest.mock("@/shared/design-system/modal", () => ({
-  __esModule: true,
-  default: ({ isOpen, children }: { isOpen: boolean; children: ReactNode }) =>
-    isOpen ? <div data-testid="modal">{children}</div> : null,
-}));
-
 jest.mock(
   "@/modules/board/presentation/components/board/boardView/BoardView",
   () => ({
@@ -65,26 +59,17 @@ jest.mock(
 );
 
 jest.mock(
-  "@/modules/board/presentation/components/ticket/ticketDetailView/TicketDetailView",
-  () => ({
-    __esModule: true,
-    default: () => <div data-testid="ticket-detail-view" />,
-  })
-);
-
-jest.mock(
-  "@/modules/board/presentation/components/ticket/createTicketForm/CreateTicketForm",
-  () => ({
-    __esModule: true,
-    default: () => <div data-testid="create-ticket-form" />,
-  })
-);
-
-jest.mock(
   "@/modules/board/presentation/components/ticket/ticketCard/TicketCard",
   () => ({
     __esModule: true,
     default: () => <div data-testid="ticket-card" />,
+  })
+);
+
+jest.mock(
+  "@/domains/project/presentation/hooks/member/useProjectMembers",
+  () => ({
+    useProjectMembers: jest.fn(),
   })
 );
 
@@ -116,10 +101,6 @@ jest.mock(
     useProjectShortCode: jest.fn(),
   })
 );
-
-jest.mock("@/modules/board/presentation/hooks/ticket/useCreateTicket", () => ({
-  useCreateTicket: jest.fn(),
-}));
 
 jest.mock(
   "@/modules/board/presentation/hooks/ticket/usePrefetchTicketDetail",
@@ -157,7 +138,6 @@ jest.mock("@/modules/board/presentation/stores/useFilterStore", () => ({
 const asMockedReturn = <T,>(value: unknown): T => value as T;
 
 describe("BoardPage", () => {
-  const mockCreateTicketMutateAsync = jest.fn();
   const mockPrefetchTicketDetail = jest.fn();
   let mockTicketsData: Array<{
     id: string;
@@ -178,6 +158,12 @@ describe("BoardPage", () => {
         canMoveTicket: true,
         canCreateTicket: true,
         isLoading: false,
+      })
+    );
+
+    jest.mocked(useProjectMembers).mockReturnValue(
+      asMockedReturn<ReturnType<typeof useProjectMembers>>({
+        data: [],
       })
     );
 
@@ -225,14 +211,6 @@ describe("BoardPage", () => {
     jest.mocked(useProjectShortCode).mockReturnValue(
       asMockedReturn<ReturnType<typeof useProjectShortCode>>({
         data: "WB",
-      })
-    );
-
-    jest.mocked(useCreateTicket).mockReturnValue(
-      asMockedReturn<ReturnType<typeof useCreateTicket>>({
-        mutateAsync: mockCreateTicketMutateAsync,
-        isPending: false,
-        error: null,
       })
     );
 

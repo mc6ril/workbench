@@ -6,7 +6,11 @@ import { usePathname } from "next/navigation";
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslations } from "@/shared/i18n";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
-import { buildProjectRoute, normalizePath } from "@/shared/utils/routes";
+import {
+  buildNewTicketRoute,
+  buildProjectRoute,
+  normalizePath,
+} from "@/shared/utils/routes";
 
 import type { ProjectMember } from "@/domains/project/core/domain/project.types";
 import ProjectToolbar from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar";
@@ -41,7 +45,7 @@ const BoardToolbar = ({ projectId }: Props) => {
   const isTicketDetailRoute = normalizePath(pathname).startsWith(
     `${boardRoute}/tickets/`
   );
-  const { childLabel } = useToolbarBreadcrumb();
+  const { childLabel, renderActions } = useToolbarBreadcrumb();
 
   const filterProjectId = useFilterStore((state) => state.projectId);
   const rawSearch = useFilterStore((state) => state.search);
@@ -104,9 +108,7 @@ const BoardToolbar = ({ projectId }: Props) => {
 
   const handleAddClick = useCallback(() => {
     if (!canCreateTicket) return;
-    router.push(
-      `${buildProjectRoute(projectId, PROJECT_VIEWS.BOARD)}?createTicket=1`
-    );
+    router.push(buildNewTicketRoute(projectId));
   }, [canCreateTicket, projectId, router]);
 
   const assigneeFilters = useMemo<ProjectToolbarAssigneeFilter[]>(() => {
@@ -133,6 +135,7 @@ const BoardToolbar = ({ projectId }: Props) => {
           parentLabel: pageTitle,
           parentHref: boardRoute,
           childLabel,
+          actions: renderActions?.(),
         }}
       />
     );

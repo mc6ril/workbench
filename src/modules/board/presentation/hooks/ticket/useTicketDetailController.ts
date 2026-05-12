@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
@@ -38,6 +38,8 @@ export type TicketDetailStatusOption = {
   label: string;
   state: ColumnWorkflowState;
 };
+
+export type AutoSaveState = "idle" | "saving" | "saved";
 
 export const useTicketDetailController = ({
   projectId,
@@ -82,6 +84,10 @@ export const useTicketDetailController = ({
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentContent, setEditingCommentContent] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [autoSaveState, setAutoSaveState] = useState<AutoSaveState>("idle");
+
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const statusOptions = useMemo<TicketDetailStatusOption[]>(() => {
     const columns = boardConfiguration?.columns ?? [];
@@ -100,10 +106,26 @@ export const useTicketDetailController = ({
   const effectiveDueDate =
     dueDateDraft === undefined ? (ticket?.dueDate ?? null) : dueDateDraft;
 
+  const hasDirtyFields =
+    titleDraft !== null ||
+    descriptionDraft !== null ||
+    columnIdDraft !== null ||
+    priorityDraft !== null ||
+    dueDateDraft !== undefined;
+
   const handleSaveMainFields = useCallback(async (): Promise<void> => {
     if (!ticket || !canEditTicket) {
       return;
     }
+
+    // Snapshot the raw draft values before the async operation so we can
+    // compare after the mutation resolves — the user may have typed more
+    // characters during the network round-trip.
+    const snapshotTitle = titleDraft;
+    const snapshotDescription = descriptionDraft;
+    const snapshotColumnId = columnIdDraft;
+    const snapshotPriority = priorityDraft;
+    const snapshotDueDate = dueDateDraft;
 
     const nextPriority = effectivePriority === "" ? null : effectivePriority;
 
@@ -119,21 +141,140 @@ export const useTicketDetailController = ({
       },
     });
 
-    setTitleDraft(null);
-    setDescriptionDraft(null);
-    setColumnIdDraft(null);
-    setPriorityDraft(null);
-    setDueDateDraft(undefined);
+    // Only clear drafts that haven't changed since the save started.
+    // If the user typed during the mutation, keep the newer value so it
+    // doesn't get silently discarded.
+    setTitleDraft((cur) => (cur === snapshotTitle ? null : cur));
+    setDescriptionDraft((cur) => (cur === snapshotDescription ? null : cur));
+    setColumnIdDraft((cur) => (cur === snapshotColumnId ? null : cur));
+    setPriorityDraft((cur) => (cur === snapshotPriority ? null : cur));
+    setDueDateDraft((cur) => (cur === snapshotDueDate ? undefined : cur));
   }, [
     canEditTicket,
+    columnIdDraft,
+    descriptionDraft,
+    dueDateDraft,
     effectiveColumnId,
     effectiveDescription,
     effectiveDueDate,
     effectivePriority,
     effectiveTitle,
+    priorityDraft,
     ticket,
+    titleDraft,
     updateMainTicketMutation,
   ]);
+
+  // Auto-save: fires 800 ms after the last change (true inactivity debounce).
+  // Every dep change resets the timer, so the save only triggers when the
+  // user stops interacting for a full 800 ms.
+  useEffect(() => {
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+
+    if (!hasDirtyFields || !ticket || !canEditTicket || !effectiveTitle.trim())
+      return;
+
+    autoSaveTimerRef.current = setTimeout(async () => {
+      setAutoSaveState("saving");
+      try {
+        await handleSaveMainFields();
+        setAutoSaveState("saved");
+        if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
+        savedTimerRef.current = setTimeout(
+          () => setAutoSaveState("idle"),
+          2000
+        );
+      } catch {
+        setAutoSaveState("idle");
+      }
+    }, 800);
+
+    return () => {
+      if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    };
+  }, [
+    hasDirtyFields,
+    effectiveTitle,
+    effectiveDescription,
+    effectiveColumnId,
+    effectivePriority,
+    effectiveDueDate,
+    ticket,
+    canEditTicket,
+    handleSaveMainFields,
+  ]);
+
+  // Keep a ref with the latest save-relevant state so the unmount cleanup can
+  // read current values without stale-closure issues.
+  const unmountSaveRef = useRef({
+    hasDirtyFields,
+    ticket,
+    canEditTicket,
+    effectiveTitle,
+    effectiveDescription,
+    effectiveColumnId,
+    effectivePriority,
+    effectiveDueDate,
+    mutate: updateMainTicketMutation.mutate,
+  });
+
+  useEffect(() => {
+    unmountSaveRef.current = {
+      hasDirtyFields,
+      ticket,
+      canEditTicket,
+      effectiveTitle,
+      effectiveDescription,
+      effectiveColumnId,
+      effectivePriority,
+      effectiveDueDate,
+      mutate: updateMainTicketMutation.mutate,
+    };
+  });
+
+  // On unmount (navigation away), cancel any pending timer and fire an
+  // immediate save if there are unsaved changes.
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+      if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
+
+      const {
+        hasDirtyFields,
+        ticket,
+        canEditTicket,
+        effectiveTitle,
+        effectiveDescription,
+        effectiveColumnId,
+        effectivePriority,
+        effectiveDueDate,
+        mutate,
+      } = unmountSaveRef.current;
+
+      if (
+        !hasDirtyFields ||
+        !ticket ||
+        !canEditTicket ||
+        !effectiveTitle.trim()
+      ) {
+        return;
+      }
+
+      const nextPriority = effectivePriority === "" ? null : effectivePriority;
+
+      mutate({
+        id: ticket.id,
+        input: {
+          title: effectiveTitle,
+          description: effectiveDescription || null,
+          columnId: effectiveColumnId || undefined,
+          priority: nextPriority,
+          dueDate: effectiveDueDate,
+          position: ticket.position,
+        },
+      });
+    };
+  }, []); // intentional empty deps: cleanup reads from ref, not closure
 
   const handleAssign = useCallback(
     async (userId: string): Promise<void> => {
@@ -306,6 +447,7 @@ export const useTicketDetailController = ({
     editingCommentId,
     editingCommentContent,
     isDeleteModalOpen,
+    autoSaveState,
     isCreatingComment: createCommentMutation.isPending,
     isUpdatingComment: updateCommentMutation.isPending,
     isDeletingComment: deleteCommentMutation.isPending,

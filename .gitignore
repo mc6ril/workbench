@@ -131,3 +131,5 @@ privateProd.lighthouse.json
 
 
 src/app/_isolated/
+# next-agents-md
+.next-docs/
