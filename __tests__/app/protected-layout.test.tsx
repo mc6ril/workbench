@@ -1,10 +1,11 @@
-import { cookies } from "next/headers";
 import { render, screen } from "@testing-library/react";
 
 import AppProvider from "@/shared/providers/AppProvider";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
+import { DEFAULT_USER_PREFERENCES } from "@/shared/user/userPreferences";
 
 import ProtectedLayout from "@/app/(protected)/layout";
+import { getSessionData } from "@/domains/auth/infrastructure/supabase/getSessionData.server";
 
 const dehydrateMock = jest.fn((_queryClient?: unknown) => ({
   dehydrated: true,
@@ -14,9 +15,12 @@ jest.mock("next/navigation", () => ({
   redirect: jest.fn(),
 }));
 
-jest.mock("next/headers", () => ({
-  cookies: jest.fn(),
-}));
+jest.mock(
+  "@/domains/auth/infrastructure/supabase/getSessionData.server",
+  () => ({
+    getSessionData: jest.fn(),
+  })
+);
 
 jest.mock("@tanstack/react-query", () => ({
   dehydrate: (queryClient: unknown) => dehydrateMock(queryClient),
@@ -59,9 +63,15 @@ describe("ProtectedLayout hydration", () => {
     mockQueryClient.prefetchQuery.mockReset();
 
     jest.mocked(createAppQueryClient).mockReturnValue(mockQueryClient as never);
-    jest.mocked(cookies).mockResolvedValue({
-      get: jest.fn().mockReturnValue({ value: "dark" }),
-    } as never);
+    jest.mocked(getSessionData).mockResolvedValue({
+      userId: "test-user-id",
+      loginEmail: "test@example.com",
+      isSuperuser: false,
+      canUpdatePassword: true,
+      displayName: null,
+      avatarUrl: null,
+      preferences: { ...DEFAULT_USER_PREFERENCES, theme: "dark" },
+    });
   });
 
   it("renders protected children without SSR session/profile hydration", async () => {
@@ -82,6 +92,7 @@ describe("ProtectedLayout hydration", () => {
       expect.objectContaining({
         dehydratedState: { dehydrated: true },
         initialTheme: "dark",
+        userId: "test-user-id",
       })
     );
   });
