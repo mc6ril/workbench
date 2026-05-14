@@ -11,6 +11,8 @@ import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { getIntlLocale, useLocale, useTranslations } from "@/shared/i18n";
 
+import TicketAttachmentsSection from "./components/TicketAttachmentsSection";
+import TicketChecklist from "./components/TicketChecklist";
 import TicketDetailCommentsSection from "./components/TicketDetailCommentsSection";
 import TicketDetailDeleteModal from "./components/TicketDetailDeleteModal";
 import TicketDetailHeader from "./components/TicketDetailHeader";
@@ -433,6 +435,22 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
               </TicketDetailInlinePopover>
             </div>
           </div>
+        </div>
+
+        <div className={styles["ticket-detail__section"]}>
+          <TicketChecklist
+            ticketId={ticket.id}
+            checklist={ticket.checklist ?? []}
+            canEdit={canEditTicket}
+          />
+        </div>
+
+        <div className={styles["ticket-detail__section"]}>
+          <TicketAttachmentsSection
+            ticketId={ticket.id}
+            projectId={projectId}
+            canEdit={canEditTicket}
+          />
         </div>
 
         <TicketDetailCommentsSection
