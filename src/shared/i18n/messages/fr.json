@@ -755,7 +755,20 @@
           "none": "Aucun"
         },
         "sections": {
-          "details": "Détails"
+          "details": "Détails",
+          "checklist": "Checklist",
+          "attachments": "Pièces jointes"
+        },
+        "checklist": {
+          "addPlaceholder": "Ajouter une tâche...",
+          "deleteItem": "Supprimer l'élément",
+          "progress": "{checked}/{total} faits"
+        },
+        "attachments": {
+          "dropZone": "Glissez des fichiers ici, ou cliquez pour parcourir",
+          "deleteFile": "Supprimer le fichier",
+          "fileTooLarge": "Le fichier dépasse la limite de 10 Mo",
+          "fileTypeNotAllowed": "Type de fichier non autorisé"
         },
         "priority": {
           "urgent": "Urgente",

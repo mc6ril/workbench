@@ -755,7 +755,20 @@
           "none": "None"
         },
         "sections": {
-          "details": "Details"
+          "details": "Details",
+          "checklist": "Checklist",
+          "attachments": "Attachments"
+        },
+        "checklist": {
+          "addPlaceholder": "Add a task...",
+          "deleteItem": "Delete item",
+          "progress": "{checked}/{total} done"
+        },
+        "attachments": {
+          "dropZone": "Drag & drop files here, or click to browse",
+          "deleteFile": "Delete file",
+          "fileTooLarge": "File exceeds 10 MB limit",
+          "fileTypeNotAllowed": "File type not allowed"
         },
         "priority": {
           "urgent": "Urgent",
