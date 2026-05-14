@@ -518,7 +518,7 @@ describe("useProjectRealtime", () => {
 
     renderHook(() => useProjectRealtime(PROJECT_ID), { wrapper });
 
-    expect(registrations).toHaveLength(11);
+    expect(registrations).toHaveLength(13);
     expect(getRegistrationsForTable(registrations, "columns")).toEqual([]);
 
     getRegistration(registrations, "tickets")?.callback({
