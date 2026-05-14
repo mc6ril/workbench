@@ -1,3 +1,15 @@
+// Every write method in this gateway must update TWO stores:
+//
+//   1. user_profiles (via RPC) — the team-visible identity table.
+//      Other domains JOIN it to display display_name, avatar_url, and email
+//      on comments, ticket assignees, and project invitations.
+//
+//   2. auth.user_metadata (via auth.updateUser) — the data embedded in the JWT,
+//      read by getClaims() for the current user's own session without a DB round-trip.
+//
+// Skipping either store creates a split-brain: teammates see stale data
+// OR the logged-in user sees stale data until their next JWT refresh.
+
 import { APP_LIMITS } from "@/shared/constants/app";
 import { createAppError } from "@/shared/errors/appError";
 import { INFRA_ERROR_CODE } from "@/shared/errors/appErrorCodes";
