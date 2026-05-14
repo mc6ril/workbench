@@ -3,6 +3,7 @@
  * Provides simple, reusable functions for common validation patterns.
  */
 
+import { APP_LIMITS } from "@/shared/constants/app";
 import { throwProgrammingError } from "@/shared/errors/programmingError";
 
 /**
@@ -147,3 +148,13 @@ export const toDate = (value: unknown): Date => {
 export const isRecord = (value: unknown): value is Record<string, unknown> => {
   return !!value && isObject(value) && !isArray(value);
 };
+
+/**
+ * Type guard to check if a value is an image
+ * @param mimeType - to check
+ * @returns true if value is an image
+ */
+export const isImageMimeType = (mimeType: string): boolean =>
+  (APP_LIMITS.TICKET_ATTACHMENT.IMAGE_MIME_TYPES as readonly string[]).includes(
+    mimeType
+  );

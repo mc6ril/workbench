@@ -23,6 +23,7 @@ describe("getTicketByCodeInProjectIncludingArchived", () => {
       archivedWeekStart: new Date("2026-03-01T00:00:00.000Z"),
       createdAt: new Date("2026-03-01T00:00:00.000Z"),
       updatedAt: new Date("2026-03-02T00:00:00.000Z"),
+      checklist: [],
     };
 
     repository.findByCodeIncludingArchived.mockResolvedValueOnce(ticket);

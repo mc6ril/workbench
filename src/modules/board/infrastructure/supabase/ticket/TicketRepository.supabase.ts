@@ -441,6 +441,9 @@ export const createTicketRepository = (
           updateData.archived_week_start =
             input.archivedWeekStart?.toISOString().slice(0, 10) ?? null;
         }
+        if (input.checklist !== undefined) {
+          updateData.checklist = input.checklist;
+        }
 
         const { data, error } = await client
           .from("tickets")

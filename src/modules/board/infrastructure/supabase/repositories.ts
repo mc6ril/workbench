@@ -8,6 +8,8 @@ import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/cl
 import { createBoardRepository } from "./board/BoardRepository.supabase";
 import { createProjectLookupRepository } from "./project/ProjectLookupRepository.supabase";
 import { createTicketRepository } from "./ticket/TicketRepository.supabase";
+import { createTicketAttachmentRepository } from "./ticketAttachment/TicketAttachmentRepository.supabase";
+import { createTicketAttachmentStorage } from "./ticketAttachment/TicketAttachmentStorage.supabase";
 
 import { createCommentRepository } from "@/modules/board/infrastructure/supabase/comment/CommentRepository.supabase";
 import { createRealtimeRepository } from "@/modules/board/infrastructure/supabase/realtime/RealtimeRepository.supabase";
@@ -19,6 +21,12 @@ export const boardRepository = createBoardRepository(
   createSupabaseBrowserClient()
 );
 export const commentRepository = createCommentRepository(
+  createSupabaseBrowserClient()
+);
+export const ticketAttachmentRepository = createTicketAttachmentRepository(
+  createSupabaseBrowserClient()
+);
+export const ticketAttachmentStorage = createTicketAttachmentStorage(
   createSupabaseBrowserClient()
 );
 

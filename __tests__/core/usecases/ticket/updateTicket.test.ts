@@ -62,6 +62,7 @@ describe("updateTicket completedAt workflow logic", () => {
     archivedWeekStart: null,
     createdAt: new Date("2024-01-01T00:00:00Z"),
     updatedAt: new Date("2024-01-01T00:00:00Z"),
+    checklist: [],
   };
 
   beforeEach(() => {

@@ -24,4 +24,6 @@ export type BoardTicketViewModel = {
   assigneeAvatarUrl?: string | null;
   priority?: TicketPriority | null;
   storyPoints?: number | null;
+  checklistTotal?: number;
+  checklistChecked?: number;
 };

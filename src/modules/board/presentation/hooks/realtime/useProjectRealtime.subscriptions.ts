@@ -244,6 +244,62 @@ export const registerTicketAssigneeSubscriptions = ({
 };
 
 /**
+ * Register ticket attachment subscriptions.
+ * INSERT is filtered by project_id. DELETE is unfiltered (Supabase limitation).
+ * On INSERT we invalidate the attachments cache for the affected ticket so it
+ * refetches with fresh signed URLs. On DELETE we do the same.
+ */
+export const registerAttachmentSubscriptions = ({
+  channel,
+  projectId,
+  queryClient,
+}: ProjectRealtimeSubscriptionParams): RealtimeChannel => {
+  const handleAttachmentChange = (payload: unknown) => {
+    const row =
+      (payload as Record<string, unknown>)?.new ??
+      (payload as Record<string, unknown>)?.old;
+    const ticketId =
+      typeof (row as Record<string, unknown>)?.ticket_id === "string"
+        ? ((row as Record<string, unknown>).ticket_id as string)
+        : null;
+
+    if (!ticketId) {
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.ticketAttachments.root(),
+        refetchType: "active",
+      });
+      return;
+    }
+
+    void queryClient.invalidateQueries({
+      queryKey: queryKeys.ticketAttachments.byTicket(ticketId),
+      refetchType: "active",
+    });
+  };
+
+  return channel
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "ticket_attachments",
+        filter: `project_id=eq.${projectId}`,
+      },
+      handleAttachmentChange
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "DELETE",
+        schema: "public",
+        table: "ticket_attachments",
+      },
+      handleAttachmentChange
+    );
+};
+
+/**
  * Register project invitation subscriptions.
  * INSERT/UPDATE are filtered by project_id. DELETE is unfiltered (Supabase
  * limitation) and may fire for other projects — the handler simply invalidates

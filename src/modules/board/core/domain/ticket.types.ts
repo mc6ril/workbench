@@ -1,3 +1,10 @@
+export type ChecklistItem = {
+  id: string;
+  text: string;
+  checked: boolean;
+  position: number;
+};
+
 export const TICKET_PRIORITY_VALUES = ["urgent", "normal", "low"] as const;
 
 export type TicketPriority = (typeof TICKET_PRIORITY_VALUES)[number];
@@ -22,6 +29,7 @@ export type Ticket = {
   completedAt: Date | null;
   archivedAt: Date | null;
   archivedWeekStart: Date | null;
+  checklist: ChecklistItem[];
   createdAt: Date;
   updatedAt: Date;
 };
@@ -65,6 +73,7 @@ export type UpdateTicketInput = {
   completedAt?: Date | null;
   archivedAt?: Date | null;
   archivedWeekStart?: Date | null;
+  checklist?: ChecklistItem[];
 };
 
 export type ReorderTicketInput = {

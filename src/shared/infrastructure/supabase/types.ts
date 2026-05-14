@@ -708,6 +708,57 @@ export type Database = {
         };
         Relationships: [];
       };
+      ticket_attachments: {
+        Row: {
+          created_at: string;
+          file_name: string;
+          file_size: number;
+          id: string;
+          mime_type: string;
+          project_id: string;
+          storage_path: string;
+          ticket_id: string;
+          uploaded_by: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          file_name: string;
+          file_size: number;
+          id?: string;
+          mime_type: string;
+          project_id: string;
+          storage_path: string;
+          ticket_id: string;
+          uploaded_by?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          file_name?: string;
+          file_size?: number;
+          id?: string;
+          mime_type?: string;
+          project_id?: string;
+          storage_path?: string;
+          ticket_id?: string;
+          uploaded_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ticket_attachments_ticket_id_fkey";
+            columns: ["ticket_id"];
+            isOneToOne: false;
+            referencedRelation: "tickets";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ticket_attachments_project_id_fkey";
+            columns: ["project_id"];
+            isOneToOne: false;
+            referencedRelation: "projects";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       ticket_assignees: {
         Row: {
           assigned_at: string;
@@ -747,6 +798,7 @@ export type Database = {
         Row: {
           archived_at: string | null;
           archived_week_start: string | null;
+          checklist: Json;
           code_number: number;
           column_id: string;
           completed_at: string | null;
@@ -765,6 +817,7 @@ export type Database = {
         Insert: {
           archived_at?: string | null;
           archived_week_start?: string | null;
+          checklist?: Json;
           code_number: number;
           column_id: string;
           completed_at?: string | null;
@@ -783,6 +836,7 @@ export type Database = {
         Update: {
           archived_at?: string | null;
           archived_week_start?: string | null;
+          checklist?: Json;
           code_number?: number;
           column_id?: string;
           completed_at?: string | null;
@@ -991,6 +1045,7 @@ export type Database = {
         Returns: {
           archived_at: string | null;
           archived_week_start: string | null;
+          checklist: Json;
           code_number: number;
           column_id: string;
           completed_at: string | null;
@@ -1043,6 +1098,7 @@ export type Database = {
         Returns: {
           archived_at: string | null;
           archived_week_start: string | null;
+          checklist: Json;
           code_number: number;
           column_id: string;
           completed_at: string | null;
