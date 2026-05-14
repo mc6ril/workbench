@@ -13,6 +13,13 @@ import { resolveCompletedAtForProjectColumnChange } from "@/modules/board/core/u
 
 const TicketPrioritySchema = z.enum(TICKET_PRIORITY_VALUES);
 
+const ChecklistItemSchema = z.object({
+  id: z.string().uuid(),
+  text: z.string(),
+  checked: z.boolean(),
+  position: z.number().int().nonnegative(),
+});
+
 const UpdateTicketInputSchema = z.object({
   title: z.string().min(1, "Ticket title must not be empty").optional(),
   description: z.string().nullable().optional(),
@@ -31,6 +38,7 @@ const UpdateTicketInputSchema = z.object({
   completedAt: z.coerce.date().nullable().optional(),
   archivedAt: z.coerce.date().nullable().optional(),
   archivedWeekStart: z.coerce.date().nullable().optional(),
+  checklist: z.array(ChecklistItemSchema).optional(),
 });
 
 /**
