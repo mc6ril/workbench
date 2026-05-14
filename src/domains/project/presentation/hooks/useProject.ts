@@ -15,5 +15,6 @@ export const useProject = (id: string, options?: { enabled?: boolean }) => {
     queryKey: queryKeys.projects.detail(id),
     queryFn: () => getProject(projectGateway, id),
     enabled: !!id && (options?.enabled ?? true),
+    staleTime: Infinity,
   });
 };

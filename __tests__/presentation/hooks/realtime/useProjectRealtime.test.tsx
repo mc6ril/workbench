@@ -468,7 +468,7 @@ describe("useProjectRealtime", () => {
     });
   });
 
-  it("uses project_id filters only for INSERT and UPDATE on comments and ticket assignees", () => {
+  it("uses project_id filters only for INSERT and UPDATE on comments, ticket assignees, and invitations", () => {
     const queryClient = new QueryClient();
     const wrapper = createWrapper(queryClient);
     const { registrations } = createRealtimeMocks();
@@ -496,6 +496,18 @@ describe("useProjectRealtime", () => {
       getRegistration(registrations, "ticket_assignees", "DELETE")?.config
         .filter
     ).toBeUndefined();
+    expect(
+      getRegistration(registrations, "project_invitations", "INSERT")?.config
+        .filter
+    ).toBe(`project_id=eq.${PROJECT_ID}`);
+    expect(
+      getRegistration(registrations, "project_invitations", "UPDATE")?.config
+        .filter
+    ).toBe(`project_id=eq.${PROJECT_ID}`);
+    expect(
+      getRegistration(registrations, "project_invitations", "DELETE")?.config
+        .filter
+    ).toBeUndefined();
   });
 
   it("subscribes only to tickets when boardId is not available", () => {
@@ -506,7 +518,7 @@ describe("useProjectRealtime", () => {
 
     renderHook(() => useProjectRealtime(PROJECT_ID), { wrapper });
 
-    expect(registrations).toHaveLength(8);
+    expect(registrations).toHaveLength(11);
     expect(getRegistrationsForTable(registrations, "columns")).toEqual([]);
 
     getRegistration(registrations, "tickets")?.callback({

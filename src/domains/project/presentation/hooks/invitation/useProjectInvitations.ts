@@ -19,5 +19,6 @@ export const useProjectInvitations = (
     queryKey: queryKeys.invitations.byProject(projectId ?? ""),
     queryFn: () => listProjectInvitations(projectInvitationGateway, projectId!),
     enabled: Boolean(projectId) && enabled,
+    staleTime: Infinity,
   });
 };
