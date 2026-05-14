@@ -40,6 +40,10 @@ export const createAccountGateway = (
     if (error) {
       return handleRepositoryError(error, "UserProfile", userId);
     }
+
+    await client.auth.updateUser({
+      data: { preferences },
+    });
   },
 
   async uploadAvatar(userId: string, file: File): Promise<string> {
