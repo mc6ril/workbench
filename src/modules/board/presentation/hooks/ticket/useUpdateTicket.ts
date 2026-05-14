@@ -10,6 +10,7 @@ import {
   ticketRepository,
 } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
+import { patchTicketAcrossProjectLists } from "@/modules/board/presentation/hooks/realtime/useProjectRealtime.helpers";
 
 type UpdateTicketVariables = {
   id: string;
@@ -51,11 +52,8 @@ export const useUpdateTicket = () => {
       }
     },
     onSuccess: (ticket) => {
-      // Settle with the authoritative server value, then refresh the board list
       queryClient.setQueryData(queryKeys.tickets.detail(ticket.id), ticket);
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.projects.ticketsRoot(ticket.projectId),
-      });
+      patchTicketAcrossProjectLists(queryClient, ticket.projectId, ticket);
     },
   });
 };
