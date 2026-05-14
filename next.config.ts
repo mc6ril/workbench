@@ -43,22 +43,25 @@ const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseRemotePattern = (() => {
+const supabaseRemotePatterns = (() => {
   if (!supabaseUrl) {
-    return null;
+    return [];
   }
 
   try {
     const { protocol, hostname, port } = new URL(supabaseUrl);
-    const basePattern = {
+    const base = {
       protocol: protocol.replace(":", "") as "http" | "https",
       hostname,
-      pathname: "/storage/v1/object/public/**",
+      ...(port ? { port } : {}),
     };
 
-    return port ? { ...basePattern, port } : basePattern;
+    return [
+      { ...base, pathname: "/storage/v1/object/public/**" },
+      { ...base, pathname: "/storage/v1/object/sign/**" },
+    ];
   } catch {
-    return null;
+    return [];
   }
 })();
 
@@ -84,7 +87,7 @@ const nextConfig: NextConfig = {
     includePaths: [path.join(__dirname, "./src/styles")],
   },
   images: {
-    remotePatterns: supabaseRemotePattern ? [supabaseRemotePattern] : [],
+    remotePatterns: supabaseRemotePatterns,
     minimumCacheTTL: ONE_DAY_IN_SECONDS,
   },
   webpack: (config) => {

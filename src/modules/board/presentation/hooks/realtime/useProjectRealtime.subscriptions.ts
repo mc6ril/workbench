@@ -242,3 +242,109 @@ export const registerTicketAssigneeSubscriptions = ({
       handleTicketAssigneeChange
     );
 };
+
+/**
+ * Register ticket attachment subscriptions.
+ * INSERT is filtered by project_id. DELETE is unfiltered (Supabase limitation).
+ * On INSERT we invalidate the attachments cache for the affected ticket so it
+ * refetches with fresh signed URLs. On DELETE we do the same.
+ */
+export const registerAttachmentSubscriptions = ({
+  channel,
+  projectId,
+  queryClient,
+}: ProjectRealtimeSubscriptionParams): RealtimeChannel => {
+  const handleAttachmentChange = (payload: unknown) => {
+    const row =
+      (payload as Record<string, unknown>)?.new ??
+      (payload as Record<string, unknown>)?.old;
+    const ticketId =
+      typeof (row as Record<string, unknown>)?.ticket_id === "string"
+        ? ((row as Record<string, unknown>).ticket_id as string)
+        : null;
+
+    if (!ticketId) {
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.ticketAttachments.root(),
+        refetchType: "active",
+      });
+      return;
+    }
+
+    void queryClient.invalidateQueries({
+      queryKey: queryKeys.ticketAttachments.byTicket(ticketId),
+      refetchType: "active",
+    });
+  };
+
+  return channel
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "ticket_attachments",
+        filter: `project_id=eq.${projectId}`,
+      },
+      handleAttachmentChange
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "DELETE",
+        schema: "public",
+        table: "ticket_attachments",
+      },
+      handleAttachmentChange
+    );
+};
+
+/**
+ * Register project invitation subscriptions.
+ * INSERT/UPDATE are filtered by project_id. DELETE is unfiltered (Supabase
+ * limitation) and may fire for other projects — the handler simply invalidates
+ * the current project's cache, so the worst case is one spurious refetch.
+ */
+export const registerInvitationSubscriptions = ({
+  channel,
+  projectId,
+  queryClient,
+}: ProjectRealtimeSubscriptionParams): RealtimeChannel => {
+  const invalidate = () => {
+    void queryClient.invalidateQueries({
+      queryKey: queryKeys.invitations.byProject(projectId),
+      refetchType: "active",
+    });
+  };
+
+  return channel
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "project_invitations",
+        filter: `project_id=eq.${projectId}`,
+      },
+      invalidate
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "project_invitations",
+        filter: `project_id=eq.${projectId}`,
+      },
+      invalidate
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "DELETE",
+        schema: "public",
+        table: "project_invitations",
+      },
+      invalidate
+    );
+};

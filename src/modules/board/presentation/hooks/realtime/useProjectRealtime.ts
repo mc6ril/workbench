@@ -12,7 +12,9 @@ import {
   removeTicketFromProjectLists,
 } from "./useProjectRealtime.helpers";
 import {
+  registerAttachmentSubscriptions,
   registerCommentSubscriptions,
+  registerInvitationSubscriptions,
   registerTicketAssigneeSubscriptions,
 } from "./useProjectRealtime.subscriptions";
 
@@ -140,7 +142,19 @@ export const useProjectRealtime = (
       queryClient,
     });
 
-    const channelSubscription = channelWithTicketAssignees.subscribe();
+    const channelWithAttachments = registerAttachmentSubscriptions({
+      channel: channelWithTicketAssignees,
+      projectId,
+      queryClient,
+    });
+
+    const channelWithInvitations = registerInvitationSubscriptions({
+      channel: channelWithAttachments,
+      projectId,
+      queryClient,
+    });
+
+    const channelSubscription = channelWithInvitations.subscribe();
 
     return () => {
       void realtimeRepository.removeChannel(channelSubscription);

@@ -26,6 +26,7 @@ describe("listTickets", () => {
     archivedWeekStart: null,
     createdAt: new Date("2024-01-01T00:00:00Z"),
     updatedAt: new Date("2024-01-01T00:00:00Z"),
+    checklist: [],
   };
 
   const mockTicket2: Ticket = {
@@ -45,6 +46,7 @@ describe("listTickets", () => {
     archivedWeekStart: null,
     createdAt: new Date("2024-01-02T00:00:00Z"),
     updatedAt: new Date("2024-01-02T00:00:00Z"),
+    checklist: [],
   };
 
   it("should list tickets for project", async () => {

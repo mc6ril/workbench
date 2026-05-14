@@ -89,6 +89,7 @@ describe("createTicket completedAt workflow logic", () => {
         archivedWeekStart: null,
         createdAt: now,
         updatedAt: now,
+        checklist: [],
       })),
     });
 

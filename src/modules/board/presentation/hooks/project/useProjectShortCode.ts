@@ -20,5 +20,6 @@ export const useProjectShortCode = (
     queryFn: () => getProjectShortCode(projectLookupRepository, projectId),
     enabled: !!projectId && (options?.enabled ?? true),
     initialData: options?.initialData,
+    staleTime: Infinity,
   });
 };

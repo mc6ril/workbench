@@ -33,6 +33,8 @@ const mapTicketToViewModel = (
     assigneeAvatarUrl: assigneeAvatarUrl ?? null,
     priority: ticket.priority,
     storyPoints: ticket.storyPoints,
+    checklistTotal: (ticket.checklist ?? []).length,
+    checklistChecked: (ticket.checklist ?? []).filter((i) => i.checked).length,
   };
 };
 

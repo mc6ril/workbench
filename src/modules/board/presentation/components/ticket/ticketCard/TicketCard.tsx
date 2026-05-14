@@ -21,6 +21,8 @@ export type TicketCardProps = {
   assigneeAvatarUrl?: string | null;
   priority?: TicketPriority | null;
   storyPoints?: number | null;
+  checklistTotal?: number;
+  checklistChecked?: number;
 };
 
 type Props = TicketCardProps;
@@ -33,6 +35,8 @@ const TicketCard = ({
   assigneeAvatarUrl,
   priority,
   storyPoints,
+  checklistTotal,
+  checklistChecked,
 }: Props) => {
   const t = useTranslations("pages.board.ticketCard");
   const baseId = useMemo(() => getAccessibilityId(`board-ticket-${id}`), [id]);
@@ -56,6 +60,11 @@ const TicketCard = ({
           : undefined,
     });
   }, [t, title, ticketCode, assigneeName, priority, storyPoints]);
+
+  const showChecklistBadge =
+    typeof checklistTotal === "number" && checklistTotal > 0;
+  const isChecklistComplete =
+    showChecklistBadge && checklistChecked === checklistTotal;
 
   const cardClasses = useMemo(() => {
     return [
@@ -89,6 +98,20 @@ const TicketCard = ({
         >
           {title}
         </Title>
+        {showChecklistBadge ? (
+          <p
+            className={[
+              styles["ticket-card__checklist-badge"],
+              isChecklistComplete
+                ? styles["ticket-card__checklist-badge--complete"]
+                : null,
+            ]
+              .filter(Boolean)
+              .join(" ")}
+          >
+            {checklistChecked}/{checklistTotal}
+          </p>
+        ) : null}
       </div>
     </article>
   );

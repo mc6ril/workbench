@@ -26,6 +26,7 @@ describe("buildArchivedSuggestionFallback", () => {
         archivedAt: new Date("2026-03-02T00:00:00.000Z"),
         archivedWeekStart: new Date("2026-03-01T00:00:00.000Z"),
         createdBy: null,
+        checklist: [],
       },
     });
 
@@ -67,6 +68,7 @@ describe("buildArchivedSuggestionFallback", () => {
         archivedAt: new Date("2026-03-02T00:00:00.000Z"),
         archivedWeekStart: new Date("2026-03-01T00:00:00.000Z"),
         createdBy: null,
+        checklist: [],
       },
     });
 
@@ -104,6 +106,7 @@ describe("buildArchivedSuggestionFallback", () => {
         archivedAt: null,
         archivedWeekStart: null,
         createdBy: null,
+        checklist: [],
       },
     });
 
@@ -134,6 +137,7 @@ describe("buildArchivedSuggestionFallback", () => {
         archivedAt: new Date("2026-03-02T00:00:00.000Z"),
         archivedWeekStart: new Date("2026-03-01T00:00:00.000Z"),
         createdBy: null,
+        checklist: [],
       },
     });
 

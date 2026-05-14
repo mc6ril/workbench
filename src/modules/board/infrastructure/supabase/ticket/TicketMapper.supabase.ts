@@ -1,7 +1,15 @@
 import { createDatabaseError } from "@/shared/errors/repositoryError";
-import { toDate } from "@/shared/utils/guards";
+import {
+  isArray,
+  isBoolean,
+  isNumber,
+  isObject,
+  isString,
+  toDate,
+} from "@/shared/utils/guards";
 
 import type {
+  ChecklistItem,
   Ticket,
   TicketPriority,
   TicketSearchItem,
@@ -11,6 +19,25 @@ import type {
   TicketRow,
   TicketSearchRow,
 } from "@/modules/board/infrastructure/supabase/ticket/types";
+
+const isChecklistItem = (item: unknown): item is ChecklistItem => {
+  if (!isObject(item)) {
+    return false;
+  }
+  return (
+    isString(item.id) &&
+    isString(item.text) &&
+    isBoolean(item.checked) &&
+    isNumber(item.position)
+  );
+};
+
+const mapChecklist = (value: unknown): ChecklistItem[] => {
+  if (!isArray(value)) {
+    return [];
+  }
+  return value.filter(isChecklistItem);
+};
 
 const mapTicketPriority = (value: string | null): TicketPriority | null => {
   if (value === null) {
@@ -51,6 +78,7 @@ export const mapTicketRowToDomain = (row: TicketRow): Ticket => {
     archivedWeekStart: row.archived_week_start
       ? toDate(row.archived_week_start)
       : null,
+    checklist: mapChecklist(row.checklist),
     createdAt: toDate(row.created_at),
     updatedAt: toDate(row.updated_at),
   };

@@ -50,4 +50,29 @@ export const APP_LIMITS = Object.freeze({
     OUTPUT_QUALITY: 0.84,
     STORAGE_BUCKET: "recipe-covers",
   },
+  TICKET_ATTACHMENT: {
+    /** Hard limit enforced by the Storage bucket (10 MB). */
+    MAX_FILE_SIZE_BYTES: 10 * 1024 * 1024,
+    /** Images are converted to WebP before upload. */
+    IMAGE_MIME_TYPES: [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+    ] as const,
+    ALLOWED_MIME_TYPES: [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+      "application/pdf",
+      "text/plain",
+    ] as const,
+    MAX_PER_TICKET: 10,
+    IMAGE_MAX_DIMENSION_PX: 2000,
+    IMAGE_OUTPUT_MIME_TYPE: "image/webp" as const,
+    IMAGE_OUTPUT_QUALITY: 0.85,
+    STORAGE_BUCKET: "ticket-attachments",
+    SIGNED_URL_TTL_SECONDS: 3600,
+  },
 });
