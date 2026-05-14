@@ -242,3 +242,53 @@ export const registerTicketAssigneeSubscriptions = ({
       handleTicketAssigneeChange
     );
 };
+
+/**
+ * Register project invitation subscriptions.
+ * INSERT/UPDATE are filtered by project_id. DELETE is unfiltered (Supabase
+ * limitation) and may fire for other projects — the handler simply invalidates
+ * the current project's cache, so the worst case is one spurious refetch.
+ */
+export const registerInvitationSubscriptions = ({
+  channel,
+  projectId,
+  queryClient,
+}: ProjectRealtimeSubscriptionParams): RealtimeChannel => {
+  const invalidate = () => {
+    void queryClient.invalidateQueries({
+      queryKey: queryKeys.invitations.byProject(projectId),
+      refetchType: "active",
+    });
+  };
+
+  return channel
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "project_invitations",
+        filter: `project_id=eq.${projectId}`,
+      },
+      invalidate
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "project_invitations",
+        filter: `project_id=eq.${projectId}`,
+      },
+      invalidate
+    )
+    .on(
+      "postgres_changes",
+      {
+        event: "DELETE",
+        schema: "public",
+        table: "project_invitations",
+      },
+      invalidate
+    );
+};
