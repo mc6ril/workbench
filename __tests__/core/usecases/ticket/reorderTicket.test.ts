@@ -25,6 +25,7 @@ describe("reorderTicket", () => {
     archivedWeekStart: null,
     createdAt: new Date("2024-01-01T00:00:00Z"),
     updatedAt: new Date("2024-01-01T00:00:00Z"),
+    checklist: [],
   };
 
   const mockTicket2: Ticket = {
@@ -44,6 +45,7 @@ describe("reorderTicket", () => {
     archivedWeekStart: null,
     createdAt: new Date("2024-01-02T00:00:00Z"),
     updatedAt: new Date("2024-01-02T00:00:00Z"),
+    checklist: [],
   };
 
   const updatedTicket1: Ticket = {
