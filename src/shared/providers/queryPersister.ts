@@ -1,7 +1,8 @@
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { del, get, set } from "idb-keyval";
+import superjson from "superjson";
 
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 
 // Deployed: Vercel sets this automatically. Locally: "dev" keeps cache warm across restarts.
 const BUILD_BUSTER = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ?? "dev";
@@ -17,4 +18,6 @@ export const createQueryPersister = (userId: string) =>
     },
     // Per-user key prevents cross-account cache bleed.
     key: `workbench-query-${CACHE_VERSION}-${userId}`,
+    serialize: superjson.stringify,
+    deserialize: superjson.parse,
   });
