@@ -92,7 +92,7 @@ const TicketDetailCommentsSection = ({
                     {t("comments.author", { author: authorName })}
                   </span>
                   <span className={styles["ticket-detail__comment-time"]}>
-                    {commentDateFormatter.format(comment.createdAt)}
+                    {commentDateFormatter.format(new Date(comment.createdAt))}
                   </span>
                 </div>
 
