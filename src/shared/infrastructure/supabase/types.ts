@@ -260,6 +260,38 @@ export type Database = {
         };
         Relationships: [];
       };
+      recipe_cooking_history: {
+        Row: {
+          cooked_at: string;
+          created_at: string;
+          id: string;
+          project_id: string;
+          recipe_id: string;
+        };
+        Insert: {
+          cooked_at?: string;
+          created_at?: string;
+          id?: string;
+          project_id: string;
+          recipe_id: string;
+        };
+        Update: {
+          cooked_at?: string;
+          created_at?: string;
+          id?: string;
+          project_id?: string;
+          recipe_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "recipe_cooking_history_project_id_fkey";
+            columns: ["project_id"];
+            isOneToOne: false;
+            referencedRelation: "projects";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       recipe_ingredients: {
         Row: {
           amount_text: string | null;
@@ -333,6 +365,7 @@ export type Database = {
           recipe_id: string;
           servings_count: number | null;
           servings_label: string;
+          status: "pending" | "shopping_done";
           updated_at: string;
         };
         Insert: {
@@ -344,6 +377,7 @@ export type Database = {
           recipe_id: string;
           servings_count?: number | null;
           servings_label?: string;
+          status?: "pending" | "shopping_done";
           updated_at?: string;
         };
         Update: {
@@ -355,6 +389,7 @@ export type Database = {
           recipe_id?: string;
           servings_count?: number | null;
           servings_label?: string;
+          status?: "pending" | "shopping_done";
           updated_at?: string;
         };
         Relationships: [

@@ -1,21 +1,16 @@
 "use client";
 
-import { useState } from "react";
-
 import Badge from "@/shared/design-system/badge";
 import Button from "@/shared/design-system/button";
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
-import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import styles from "./styles.module.scss";
 
-import type {
-  DoneQuickListSelection,
-  QuickListRecipe,
-} from "@/modules/recipes/core/domain/planner/quickList.types";
+import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
 import { useListActiveSelections } from "@/modules/recipes/presentation/hooks/planner/listActiveSelections";
-import { useMarkSelectionDone } from "@/modules/recipes/presentation/hooks/planner/useMarkSelectionDone";
+import { useMarkAsCooked } from "@/modules/recipes/presentation/hooks/planner/useMarkAsCooked";
+import { useMarkShoppingDone } from "@/modules/recipes/presentation/hooks/planner/useMarkShoppingDone";
 import { useRemoveSelection } from "@/modules/recipes/presentation/hooks/planner/useRemoveSelection";
 import {
   buildRecipeDetailRoute,
@@ -27,151 +22,202 @@ type Props = {
   initialSelections: QuickListRecipe[];
 };
 
+type SelectionCardProps = {
+  projectId: string;
+  selection: QuickListRecipe;
+  isMutating: boolean;
+  primaryAction: React.ReactNode;
+  onRemove: () => void;
+};
+
+const SelectionCard = ({
+  projectId,
+  selection,
+  isMutating,
+  primaryAction,
+  onRemove,
+}: SelectionCardProps) => (
+  <article className={styles["recipes-scaffold__selection-card"]}>
+    <div className={styles["recipes-scaffold__summary-copy"]}>
+      <div className={styles["recipes-scaffold__summary-head"]}>
+        <Link
+          href={buildRecipeDetailRoute(projectId, selection.recipeId)}
+          prefetch={false}
+        >
+          {selection.title}
+        </Link>
+      </div>
+      <p className={styles["recipes-scaffold__summary-meta"]}>
+        {selection.servingsLabel}
+      </p>
+    </div>
+    <div className={styles["recipes-scaffold__selection-side"]}>
+      <div className={styles["recipes-scaffold__actions"]}>
+        <Link
+          href={buildRecipeDetailRoute(projectId, selection.recipeId)}
+          prefetch={false}
+        >
+          Voir
+        </Link>
+        {primaryAction}
+        <Button
+          label="Retirer"
+          variant="danger"
+          disabled={isMutating}
+          onClick={onRemove}
+        />
+      </div>
+    </div>
+  </article>
+);
+
 const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
-  const router = useAppRouter();
-  const [doneSelection, setDoneSelection] =
-    useState<DoneQuickListSelection | null>(null);
   const selectionsQuery = useListActiveSelections(projectId, {
     initialData: initialSelections,
   });
-  const markSelectionDoneMutation = useMarkSelectionDone();
+  const markShoppingDoneMutation = useMarkShoppingDone();
+  const markAsCookedMutation = useMarkAsCooked();
   const removeSelectionMutation = useRemoveSelection();
   const selections = selectionsQuery.data ?? [];
+
+  const pendingSelections = selections.filter((s) => s.status === "pending");
+  const shoppingDoneSelections = selections.filter(
+    (s) => s.status === "shopping_done"
+  );
+
+  const isMutatingSelection = (selectionId: string) =>
+    (markShoppingDoneMutation.isPending &&
+      markShoppingDoneMutation.variables?.selectionId === selectionId) ||
+    (markAsCookedMutation.isPending &&
+      markAsCookedMutation.variables?.selectionId === selectionId) ||
+    (removeSelectionMutation.isPending &&
+      removeSelectionMutation.variables?.selectionId === selectionId);
+
+  const totalCount = selections.length;
 
   return (
     <Card
       variant="outlined"
       title={
         <div className={styles["recipes-scaffold__panel-head"]}>
-          <p className={styles["recipes-scaffold__panel-kicker"]}>Quick list</p>
+          <p className={styles["recipes-scaffold__panel-kicker"]}>Nos repas</p>
           <h2 className={styles["recipes-scaffold__panel-title"]}>
-            {selections.length === 0
-              ? "Semaine encore ouverte"
-              : `${selections.length} repas actif${selections.length > 1 ? "s" : ""}`}
+            {totalCount === 0
+              ? "Aucun repas cette semaine"
+              : `${totalCount} repas${totalCount > 1 ? "" : ""}`}
           </h2>
         </div>
       }
     >
-      {doneSelection ? (
-        <div className={styles["recipes-scaffold__success-banner"]}>
-          <div className={styles["recipes-scaffold__stack"]}>
-            <p className={styles["recipes-scaffold__panel-kicker"]}>Done</p>
-            <h3 className={styles["recipes-scaffold__section-title"]}>
-              {doneSelection.title} a quitté la quick list
-            </h3>
-            <p className={styles["recipes-scaffold__helper"]}>
-              La semaine continue avec {selections.length} repas restant
-              {selections.length > 1 ? "s" : ""}.
-            </p>
-          </div>
-          <Badge label="Done" variant="success" />
-        </div>
-      ) : null}
-
-      <p className={styles["recipes-scaffold__panel-copy"]}>
-        La quick list garde les repas prévus sous la main, avec un accès direct
-        à la fiche et deux décisions simples: done ou retirer la sélection.
-      </p>
-
-      {selections.length === 0 ? (
+      {totalCount === 0 ? (
         <div className={styles["recipes-scaffold__empty"]}>
           <p className={styles["recipes-scaffold__helper"]}>
-            Aucune recette active pour le moment.
+            Sélectionnez des recettes depuis le catalogue pour démarrer la
+            semaine.
           </p>
           <Link href={buildRecipesCatalogRoute(projectId)}>
-            Retour au catalogue
+            Parcourir le catalogue
           </Link>
         </div>
       ) : (
-        <div className={styles["recipes-scaffold__summary-list"]}>
-          {selections.map((selection) => {
-            const isMutatingCurrentSelection =
-              (markSelectionDoneMutation.isPending &&
-                markSelectionDoneMutation.variables?.selectionId ===
-                  selection.id) ||
-              (removeSelectionMutation.isPending &&
-                removeSelectionMutation.variables?.selectionId ===
-                  selection.id);
-
-            return (
-              <article
-                key={selection.id}
-                className={styles["recipes-scaffold__selection-card"]}
-              >
-                <div className={styles["recipes-scaffold__summary-copy"]}>
-                  <div className={styles["recipes-scaffold__summary-head"]}>
-                    <Link
-                      href={buildRecipeDetailRoute(
-                        projectId,
-                        selection.recipeId
-                      )}
-                      prefetch={false}
-                    >
-                      {selection.title}
-                    </Link>
-                    <Badge label="Active" variant="success" size="small" />
-                  </div>
-                  <p className={styles["recipes-scaffold__helper"]}>
-                    {selection.note ??
-                      "Recette retenue pour un prochain repas."}
-                  </p>
-                </div>
-
-                <div className={styles["recipes-scaffold__selection-side"]}>
-                  <span className={styles["recipes-scaffold__summary-meta"]}>
-                    {selection.servingsLabel}
-                  </span>
-                  <div className={styles["recipes-scaffold__actions"]}>
-                    <Link
-                      href={buildRecipeDetailRoute(
-                        projectId,
-                        selection.recipeId
-                      )}
-                      prefetch={false}
-                    >
-                      Voir la fiche
-                    </Link>
-                    <Button
-                      label="Done"
-                      variant="secondary"
-                      disabled={isMutatingCurrentSelection}
-                      onClick={async () => {
-                        const result =
-                          await markSelectionDoneMutation.mutateAsync({
+        <div className={styles["recipes-scaffold__sections"]}>
+          {pendingSelections.length > 0 && (
+            <section className={styles["recipes-scaffold__section"]}>
+              <div className={styles["recipes-scaffold__section-head"]}>
+                <p className={styles["recipes-scaffold__panel-kicker"]}>
+                  À cuisiner
+                </p>
+                <Badge
+                  label={`${pendingSelections.length}`}
+                  variant="default"
+                  size="small"
+                />
+              </div>
+              <div className={styles["recipes-scaffold__summary-list"]}>
+                {pendingSelections.map((selection) => (
+                  <SelectionCard
+                    key={selection.id}
+                    projectId={projectId}
+                    selection={selection}
+                    isMutating={isMutatingSelection(selection.id)}
+                    primaryAction={
+                      <Button
+                        label="Courses faites"
+                        variant="secondary"
+                        disabled={isMutatingSelection(selection.id)}
+                        onClick={() => {
+                          void markShoppingDoneMutation.mutate({
                             projectId,
                             selectionId: selection.id,
                           });
+                        }}
+                      />
+                    }
+                    onRemove={() => {
+                      void removeSelectionMutation.mutate({
+                        projectId,
+                        selectionId: selection.id,
+                      });
+                    }}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
 
-                        setDoneSelection(result);
-                        router.refresh();
-                      }}
-                    />
-                    <Button
-                      label="Retirer"
-                      variant="danger"
-                      disabled={isMutatingCurrentSelection}
-                      onClick={async () => {
-                        await removeSelectionMutation.mutateAsync({
-                          projectId,
-                          selectionId: selection.id,
-                        });
-
-                        router.refresh();
-                      }}
-                    />
-                  </div>
-                </div>
-              </article>
-            );
-          })}
+          {shoppingDoneSelections.length > 0 && (
+            <section className={styles["recipes-scaffold__section"]}>
+              <div className={styles["recipes-scaffold__section-head"]}>
+                <p className={styles["recipes-scaffold__panel-kicker"]}>
+                  Prêt à cuisiner
+                </p>
+                <Badge
+                  label={`${shoppingDoneSelections.length}`}
+                  variant="info"
+                  size="small"
+                />
+              </div>
+              <div className={styles["recipes-scaffold__summary-list"]}>
+                {shoppingDoneSelections.map((selection) => (
+                  <SelectionCard
+                    key={selection.id}
+                    projectId={projectId}
+                    selection={selection}
+                    isMutating={isMutatingSelection(selection.id)}
+                    primaryAction={
+                      <Button
+                        label="Cuisiné ✓"
+                        variant="secondary"
+                        disabled={isMutatingSelection(selection.id)}
+                        onClick={() => {
+                          void markAsCookedMutation.mutate({
+                            projectId,
+                            selectionId: selection.id,
+                          });
+                        }}
+                      />
+                    }
+                    onRemove={() => {
+                      void removeSelectionMutation.mutate({
+                        projectId,
+                        selectionId: selection.id,
+                      });
+                    }}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       )}
 
-      {markSelectionDoneMutation.isError || removeSelectionMutation.isError ? (
+      {(markShoppingDoneMutation.isError ||
+        markAsCookedMutation.isError ||
+        removeSelectionMutation.isError) && (
         <p className={styles["recipes-scaffold__error"]}>
-          La quick list n&apos;a pas pu être mise à jour. Réessayez.
+          La mise à jour n&apos;a pas pu être enregistrée. Réessayez.
         </p>
-      ) : null}
+      )}
     </Card>
   );
 };

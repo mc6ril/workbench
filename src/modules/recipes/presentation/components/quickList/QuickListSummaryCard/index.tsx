@@ -15,6 +15,13 @@ type Props = {
   recipes: QuickListRecipe[];
 };
 
+const statusBadge = (status: QuickListRecipe["status"]) => {
+  if (status === "shopping_done") {
+    return <Badge label="Prêt" variant="info" size="small" />;
+  }
+  return <Badge label="À cuisiner" variant="success" size="small" />;
+};
+
 const QuickListSummaryCard = ({ projectId, recipes }: Props) => {
   const isEmpty = recipes.length === 0;
 
@@ -23,27 +30,21 @@ const QuickListSummaryCard = ({ projectId, recipes }: Props) => {
       variant="outlined"
       title={
         <div className={styles["recipes-scaffold__panel-head"]}>
-          <p className={styles["recipes-scaffold__panel-kicker"]}>Quick list</p>
+          <p className={styles["recipes-scaffold__panel-kicker"]}>Nos repas</p>
           <h2 className={styles["recipes-scaffold__panel-title"]}>
-            {isEmpty ? "Visible même à vide" : "Repas retenus pour la semaine"}
+            {isEmpty
+              ? "Aucun repas cette semaine"
+              : `${recipes.length} repas`}
           </h2>
         </div>
       }
       footer={
-        <Link href={buildRecipesQuickListRoute(projectId)}>
-          Ouvrir la quick list
-        </Link>
+        <Link href={buildRecipesQuickListRoute(projectId)}>Voir nos repas</Link>
       }
     >
-      <p className={styles["recipes-scaffold__panel-copy"]}>
-        {isEmpty
-          ? "La quick list garde sa place dans le parcours, même avant la première sélection."
-          : "Le résumé garde les recettes actives lisibles depuis les autres écrans du module."}
-      </p>
-
       {isEmpty ? (
-        <p className={styles["recipes-scaffold__note"]}>
-          Aucune recette active pour l&apos;instant.
+        <p className={styles["recipes-scaffold__helper"]}>
+          Sélectionnez des recettes depuis le catalogue pour commencer.
         </p>
       ) : (
         <div className={styles["recipes-scaffold__summary-list"]}>
@@ -60,15 +61,12 @@ const QuickListSummaryCard = ({ projectId, recipes }: Props) => {
                   >
                     {recipe.title}
                   </Link>
-                  <Badge label="Active" variant="success" size="small" />
+                  {statusBadge(recipe.status)}
                 </div>
                 <p className={styles["recipes-scaffold__helper"]}>
-                  {recipe.note ?? "Recette retenue pour un prochain repas."}
+                  {recipe.servingsLabel}
                 </p>
               </div>
-              <span className={styles["recipes-scaffold__summary-meta"]}>
-                {recipe.servingsLabel}
-              </span>
             </article>
           ))}
         </div>

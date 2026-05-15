@@ -50,6 +50,7 @@ describe("Recipes Supabase repositories", () => {
     note: "Mardi soir",
     servings_count: 2,
     servings_label: "2 portions",
+    status: "pending",
     created_at: "2026-03-31T08:05:00.000Z",
     updated_at: "2026-03-31T08:05:00.000Z",
   };
@@ -341,7 +342,7 @@ describe("Recipes Supabase repositories", () => {
         note: selectionRow.note,
         servingsCount: selectionRow.servings_count,
         servingsLabel: selectionRow.servings_label,
-        status: "active",
+        status: "pending",
       },
     ]);
   });

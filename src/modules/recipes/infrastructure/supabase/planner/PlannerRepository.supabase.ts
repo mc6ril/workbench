@@ -3,8 +3,9 @@ import { handleRepositoryError } from "@/shared/infrastructure/errors/errorHandl
 import type { AppSupabaseClient } from "@/shared/infrastructure/supabase/types";
 
 import type {
-  DoneQuickListSelection,
+  CookedSelection,
   QuickListRecipe,
+  QuickListSelectionStatus,
   SelectRecipeInput,
 } from "@/modules/recipes/core/domain/planner/quickList.types";
 import type { PlannerRepository } from "@/modules/recipes/core/ports/planner/plannerRepository";
@@ -15,18 +16,18 @@ import type {
 import { mapRecipeSelectionRowToDomain } from "@/modules/recipes/infrastructure/supabase/shared/readModels";
 
 const RECIPE_SELECTION_FIELDS =
-  "id, project_id, recipe_id, position, note, servings_count, servings_label, created_at, updated_at";
+  "id, project_id, recipe_id, position, note, servings_count, servings_label, status, created_at, updated_at";
 
 const RECIPE_SELECTION_RECIPE_FIELDS =
   "id, project_id, title, summary, total_time_minutes, total_time_label, servings_count, servings_label, note, cover_image_url, cover_style, created_at, updated_at";
 
-const mapSelectionToActiveQuickListRecipe = (
+const mapSelectionToQuickListRecipe = (
   selection: RecipeSelectionRow,
   recipe: RecipeRow
 ): QuickListRecipe => {
   return {
     ...mapRecipeSelectionRowToDomain(selection, recipe),
-    status: "active",
+    status: selection.status as QuickListSelectionStatus,
   };
 };
 
@@ -173,6 +174,7 @@ const insertSelection = async (
       note: null,
       servings_count: recipe.servings_count,
       servings_label: recipe.servings_label,
+      status: "pending",
     })
     .select(RECIPE_SELECTION_FIELDS)
     .single();
@@ -207,7 +209,7 @@ export const createPlannerRepository = (
         return [];
       }
 
-      return [mapSelectionToActiveQuickListRecipe(selection, recipe)];
+      return [mapSelectionToQuickListRecipe(selection, recipe)];
     });
   },
 
@@ -224,15 +226,61 @@ export const createPlannerRepository = (
     );
 
     if (existingSelection) {
-      return mapSelectionToActiveQuickListRecipe(existingSelection, recipe);
+      if (existingSelection.status !== "pending") {
+        const { data, error } = await client
+          .from("recipe_selections")
+          .update({ status: "pending" })
+          .eq("project_id", input.projectId)
+          .eq("id", existingSelection.id)
+          .select(RECIPE_SELECTION_FIELDS)
+          .single();
+
+        if (error) {
+          return handleRepositoryError(
+            error,
+            "RecipeSelection",
+            existingSelection.id
+          );
+        }
+
+        return mapSelectionToQuickListRecipe(data, recipe);
+      }
+
+      return mapSelectionToQuickListRecipe(existingSelection, recipe);
     }
 
     const insertedSelection = await insertSelection(client, input, recipe);
 
-    return mapSelectionToActiveQuickListRecipe(insertedSelection, recipe);
+    return mapSelectionToQuickListRecipe(insertedSelection, recipe);
   },
 
-  async markSelectionDone(input) {
+  async markShoppingDone(input) {
+    const { data, error } = await client
+      .from("recipe_selections")
+      .update({ status: "shopping_done" })
+      .eq("project_id", input.projectId)
+      .eq("id", input.selectionId)
+      .select(RECIPE_SELECTION_FIELDS)
+      .single();
+
+    if (error) {
+      return handleRepositoryError(
+        error,
+        "RecipeSelection",
+        input.selectionId
+      );
+    }
+
+    const recipe = await loadRecipeById(
+      client,
+      input.projectId,
+      data.recipe_id
+    );
+
+    return mapSelectionToQuickListRecipe(data, recipe);
+  },
+
+  async markAsCooked(input) {
     const selection = await loadSelectionById(
       client,
       input.projectId,
@@ -243,24 +291,43 @@ export const createPlannerRepository = (
       input.projectId,
       selection.recipe_id
     );
-    const { error } = await client
+
+    const { error: deleteError } = await client
       .from("recipe_selections")
       .delete()
       .eq("project_id", input.projectId)
       .eq("id", input.selectionId);
 
-    if (error) {
-      return handleRepositoryError(error, "RecipeSelection", input.selectionId);
+    if (deleteError) {
+      return handleRepositoryError(
+        deleteError,
+        "RecipeSelection",
+        input.selectionId
+      );
     }
 
-    const doneSelection: DoneQuickListSelection = {
+    const { error: historyError } = await client
+      .from("recipe_cooking_history")
+      .insert({
+        project_id: input.projectId,
+        recipe_id: selection.recipe_id,
+      });
+
+    if (historyError) {
+      return handleRepositoryError(
+        historyError,
+        "RecipeCookingHistory",
+        selection.recipe_id
+      );
+    }
+
+    const cookedSelection: CookedSelection = {
       selectionId: input.selectionId,
       recipeId: selection.recipe_id,
       title: recipe.title,
-      status: "done",
     };
 
-    return doneSelection;
+    return cookedSelection;
   },
 
   async removeSelection(input) {

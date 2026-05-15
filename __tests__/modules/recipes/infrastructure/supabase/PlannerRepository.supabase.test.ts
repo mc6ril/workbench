@@ -26,23 +26,31 @@ const selection = {
   note: "Mardi soir.",
   servings_count: 4,
   servings_label: "4 portions",
+  status: "pending",
   created_at: "2026-04-01T10:00:00.000Z",
   updated_at: "2026-04-01T10:00:00.000Z",
 } as const;
 
 const createClientMock = (
-  queues: Partial<Record<"recipe_selections" | "recipes", unknown[]>>
+  queues: Partial<
+    Record<
+      "recipe_selections" | "recipes" | "recipe_cooking_history",
+      unknown[]
+    >
+  >
 ) => {
   return {
-    from: jest.fn((table: "recipe_selections" | "recipes") => {
-      const nextQuery = queues[table]?.shift();
+    from: jest.fn(
+      (table: "recipe_selections" | "recipes" | "recipe_cooking_history") => {
+        const nextQuery = queues[table]?.shift();
 
-      if (!nextQuery) {
-        throw new Error(`Unexpected query for table ${table}`);
+        if (!nextQuery) {
+          throw new Error(`Unexpected query for table ${table}`);
+        }
+
+        return nextQuery;
       }
-
-      return nextQuery;
-    }),
+    ),
   } as unknown as AppSupabaseClient;
 };
 
@@ -79,7 +87,7 @@ describe("createPlannerRepository", () => {
           note: "Mardi soir.",
           servingsCount: 4,
           servingsLabel: "4 portions",
-          status: "active",
+          status: "pending",
         },
       ]
     );
@@ -141,7 +149,7 @@ describe("createPlannerRepository", () => {
       note: "Mardi soir.",
       servingsCount: 4,
       servingsLabel: "4 portions",
-      status: "active",
+      status: "pending",
     });
 
     expect(insert).toHaveBeenCalledWith({
@@ -151,10 +159,11 @@ describe("createPlannerRepository", () => {
       note: null,
       servings_count: 4,
       servings_label: "4 portions",
+      status: "pending",
     });
   });
 
-  it("reuses an existing selection instead of inserting a duplicate", async () => {
+  it("reuses an existing pending selection instead of inserting a duplicate", async () => {
     const existingSelectionQuery = {
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
@@ -189,11 +198,90 @@ describe("createPlannerRepository", () => {
       note: "Mardi soir.",
       servingsCount: 4,
       servingsLabel: "4 portions",
-      status: "active",
+      status: "pending",
     });
   });
 
-  it("marks a selection as done by deleting it and returning a done payload", async () => {
+  it("resets a shopping_done selection back to pending on re-select", async () => {
+    const shoppingDoneSelection = { ...selection, status: "shopping_done" };
+    const existingSelectionQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn().mockResolvedValue({
+        data: shoppingDoneSelection,
+        error: null,
+      }),
+    };
+    const recipeQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn().mockResolvedValue({
+        data: recipe,
+        error: null,
+      }),
+    };
+    const single = jest
+      .fn()
+      .mockResolvedValue({ data: selection, error: null });
+    const selectFn = jest.fn().mockReturnValue({ single });
+    const updateQuery = {
+      update: jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnThis(),
+        select: selectFn,
+      }),
+    };
+    const client = createClientMock({
+      recipe_selections: [existingSelectionQuery, updateQuery],
+      recipes: [recipeQuery],
+    });
+    const repository = createPlannerRepository(client);
+
+    const result = await repository.selectRecipe({
+      projectId: "project-1",
+      recipeId: "recipe-1",
+    });
+
+    expect(result.status).toBe("pending");
+  });
+
+  it("marks a selection as shopping_done by updating the status", async () => {
+    const single = jest.fn().mockResolvedValue({
+      data: { ...selection, status: "shopping_done" },
+      error: null,
+    });
+    const selectFn = jest.fn().mockReturnValue({ single });
+    const updateQuery = {
+      update: jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnThis(),
+        select: selectFn,
+      }),
+    };
+    const recipeQuery = {
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn().mockResolvedValue({
+        data: recipe,
+        error: null,
+      }),
+    };
+    const client = createClientMock({
+      recipe_selections: [updateQuery],
+      recipes: [recipeQuery],
+    });
+    const repository = createPlannerRepository(client);
+
+    await expect(
+      repository.markShoppingDone({
+        projectId: "project-1",
+        selectionId: "selection-1",
+      })
+    ).resolves.toMatchObject({
+      id: "selection-1",
+      status: "shopping_done",
+    });
+  });
+
+  it("marks a selection as cooked by deleting it and recording cooking history", async () => {
     const selectionQuery = {
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
@@ -215,14 +303,18 @@ describe("createPlannerRepository", () => {
     const deleteQuery = {
       delete: jest.fn().mockReturnValue({ eq: deleteByProject }),
     };
+    const historyInsertQuery = {
+      insert: jest.fn().mockResolvedValue({ error: null }),
+    };
     const client = createClientMock({
       recipe_selections: [selectionQuery, deleteQuery],
       recipes: [recipeQuery],
+      recipe_cooking_history: [historyInsertQuery],
     });
     const repository = createPlannerRepository(client);
 
     await expect(
-      repository.markSelectionDone({
+      repository.markAsCooked({
         projectId: "project-1",
         selectionId: "selection-1",
       })
@@ -230,11 +322,12 @@ describe("createPlannerRepository", () => {
       selectionId: "selection-1",
       recipeId: "recipe-1",
       title: "Poulet citron",
-      status: "done",
     });
 
-    expect(deleteByProject).toHaveBeenCalledWith("project_id", "project-1");
-    expect(deleteById).toHaveBeenCalledWith("id", "selection-1");
+    expect(historyInsertQuery.insert).toHaveBeenCalledWith({
+      project_id: "project-1",
+      recipe_id: "recipe-1",
+    });
   });
 
   it("removes a selection without touching the recipe catalog", async () => {

@@ -70,6 +70,24 @@
   gap: $spacing-sm;
 }
 
+.recipes-scaffold__section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.recipes-scaffold__section-head {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.recipes-scaffold__sections {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
 .recipes-scaffold__selection-side,
 .recipes-scaffold__stack,
 .recipes-scaffold__summary-copy,
