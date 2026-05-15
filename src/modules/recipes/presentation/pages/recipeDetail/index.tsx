@@ -34,11 +34,18 @@ const RecipeDetailPage = async ({ projectId, recipeId }: Props) => {
   return (
     <Layout
       title={recipe.title}
-      editHref={buildRecipeEditRoute(projectId, recipe.id)}
-      editLabel={t("editAction")}
-      editAriaLabel={t("editRecipeAriaLabel", { title: recipe.title })}
+      coverImageUrl={recipe.coverImageUrl}
+      coverStyle={recipe.coverStyle}
+      servingsLabel={recipe.servingsLabel}
+      totalTimeLabel={recipe.totalTimeLabel}
     >
-      <Client projectId={projectId} recipe={recipe} />
+      <Client
+        projectId={projectId}
+        recipe={recipe}
+        editHref={buildRecipeEditRoute(projectId, recipe.id)}
+        editLabel={t("editAction")}
+        editAriaLabel={t("editRecipeAriaLabel", { title: recipe.title })}
+      />
     </Layout>
   );
 };

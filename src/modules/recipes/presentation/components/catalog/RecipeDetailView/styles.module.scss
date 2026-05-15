@@ -259,6 +259,24 @@
   }
 }
 
+.recipe-detail__section--hero {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.recipe-detail__meta-item--hero {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.recipe-detail__meta-value--hero {
+  color: #fff;
+}
+
 @media (max-width: $breakpoint-md) {
   .recipe-detail__meta-grid {
     grid-template-columns: 1fr;

@@ -73,7 +73,7 @@ const RecipesToolbar = ({ projectId }: Props) => {
       normalizePath(pathname).startsWith(`${catalogRoute}/${seg}`)
     );
 
-  const { childLabel } = useToolbarBreadcrumb();
+  const { childLabel, renderActions } = useToolbarBreadcrumb();
   const activeFilterCount = (search ? 1 : 0) + selectedFilterOptionIds.length;
 
   useEffect(() => {
@@ -147,6 +147,7 @@ const RecipesToolbar = ({ projectId }: Props) => {
           parentLabel: pageTitle,
           parentHref: catalogRoute,
           childLabel,
+          actions: renderActions?.(),
         }}
       />
     );

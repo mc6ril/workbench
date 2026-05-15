@@ -5,7 +5,6 @@ import { useTranslation } from "@/shared/i18n";
 
 import RecipeDetailAdditionsSection from "./RecipeDetailAdditionsSection";
 import RecipeDetailIngredientsSection from "./RecipeDetailIngredientsSection";
-import RecipeDetailMetaSummary from "./RecipeDetailMetaSummary";
 import RecipeDetailStepsSection from "./RecipeDetailStepsSection";
 import RecipeDetailTagList from "./RecipeDetailTagList";
 import styles from "./styles.module.scss";
@@ -49,11 +48,6 @@ const RecipeDetailView = ({
         isValidationPending={isValidationPending}
         onValidateAddition={onValidateAddition}
         t={t}
-      />
-
-      <RecipeDetailMetaSummary
-        servingsLabel={recipe.servingsLabel}
-        totalTimeLabel={recipe.totalTimeLabel}
       />
 
       <div className={styles["recipe-detail__content"]}>
