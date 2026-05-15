@@ -917,6 +917,7 @@
         "notes": {
           "label": "Notes"
         },
+        "moreActionsAriaLabel": "Plus d'actions",
         "errors": {
           "validateAddition": "La validation de l'ajout a échoué. Réessayez."
         }

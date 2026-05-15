@@ -917,6 +917,7 @@
         "notes": {
           "label": "Notas"
         },
+        "moreActionsAriaLabel": "Más acciones",
         "errors": {
           "validateAddition": "La validación del añadido ha fallado. Inténtalo de nuevo."
         }

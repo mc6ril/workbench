@@ -2,7 +2,6 @@
 
 import { useCallback, useState } from "react";
 
-import Button from "@/shared/design-system/button";
 import { useTranslation } from "@/shared/i18n";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { isUuid } from "@/shared/utils/uuid";
@@ -14,6 +13,7 @@ import {
 import type { CatalogRecipeDetail } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import RecipeDetailView from "@/modules/recipes/presentation/components/catalog/RecipeDetailView";
 import { usePromoteRecipeAddition } from "@/modules/recipes/presentation/hooks/editor/usePromoteRecipeAddition";
+import RecipeDetailToolbarMenu from "./RecipeDetailToolbarMenu";
 
 type Props = {
   projectId: string;
@@ -36,15 +36,13 @@ const Client = ({
 
   const renderEditAction = useCallback(
     () => (
-      <Button
-        variant="publish"
-        label={editAriaLabel}
-        onClick={() => router.push(editHref)}
-      >
-        {editLabel}
-      </Button>
+      <RecipeDetailToolbarMenu
+        editHref={editHref}
+        editLabel={editLabel}
+        editAriaLabel={editAriaLabel}
+      />
     ),
-    [editHref, editLabel, editAriaLabel, router]
+    [editHref, editLabel, editAriaLabel]
   );
   useRegisterToolbarActions(renderEditAction);
 
