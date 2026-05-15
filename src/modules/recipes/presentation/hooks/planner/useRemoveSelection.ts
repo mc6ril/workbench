@@ -16,8 +16,13 @@ export const useRemoveSelection = () => {
         plannerRepository,
       })(input),
     onSuccess: (_result, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: recipesQueryKeys.root(variables.projectId),
+      void queryClient.invalidateQueries({
+        queryKey: recipesQueryKeys.planner.quickList(variables.projectId),
+        refetchType: "active",
+      });
+      void queryClient.invalidateQueries({
+        queryKey: recipesQueryKeys.shopping.list(variables.projectId),
+        refetchType: "active",
       });
     },
   });
