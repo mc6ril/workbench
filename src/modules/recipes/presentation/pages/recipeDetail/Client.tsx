@@ -6,6 +6,8 @@ import { useTranslation } from "@/shared/i18n";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { isUuid } from "@/shared/utils/uuid";
 
+import RecipeDetailToolbarMenu from "./RecipeDetailToolbarMenu";
+
 import {
   useRegisterToolbarActions,
   useRegisterToolbarBreadcrumb,
@@ -13,7 +15,6 @@ import {
 import type { CatalogRecipeDetail } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import RecipeDetailView from "@/modules/recipes/presentation/components/catalog/RecipeDetailView";
 import { usePromoteRecipeAddition } from "@/modules/recipes/presentation/hooks/editor/usePromoteRecipeAddition";
-import RecipeDetailToolbarMenu from "./RecipeDetailToolbarMenu";
 
 type Props = {
   projectId: string;

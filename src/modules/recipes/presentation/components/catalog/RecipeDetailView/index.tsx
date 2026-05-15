@@ -40,6 +40,8 @@ const RecipeDetailView = ({
 
   return (
     <div className={styles["recipe-detail"]}>
+      <h1 className={styles["recipe-detail__page-title"]}>{recipe.title}</h1>
+
       <RecipeDetailAdditionsSection
         additions={additionIngredients}
         canValidateAdditions={canValidateAdditions}

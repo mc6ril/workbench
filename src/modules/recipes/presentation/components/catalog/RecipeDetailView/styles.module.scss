@@ -6,20 +6,37 @@
 @use "@/styles/variables/spacing" as *;
 @use "@/styles/variables/typography" as *;
 
-.recipe-detail,
-.recipe-detail__addition-actions,
-.recipe-detail__addition-main,
-.recipe-detail__step-copy {
-  display: flex;
-  flex-direction: column;
-}
+// ─── Container ──────────────────────────────────────────────────────────────
 
 .recipe-detail {
+  display: flex;
+  flex-direction: column;
   gap: $spacing-lg;
   width: 100%;
-  max-width: 52rem;
-  margin: 0 auto;
+
+  @media (min-width: $breakpoint-md) {
+    max-width: 52rem;
+    margin: 0 auto;
+    gap: $spacing-lg;
+  }
 }
+
+// ─── Mobile-only page title (hidden on desktop, shown in toolbar instead) ───
+
+.recipe-detail__page-title {
+  margin: 0;
+  font-family: $font-family-serif;
+  font-size: clamp(1.5rem, 6vw, 2rem);
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  color: $color-text;
+
+  @media (min-width: $breakpoint-md) {
+    display: none;
+  }
+}
+
+// ─── Tags ───────────────────────────────────────────────────────────────────
 
 .recipe-detail__tag-row {
   display: flex;
@@ -40,24 +57,31 @@
   color: $color-text-secondary;
 }
 
+// ─── Section card (shared by meta, ingredients, steps, additions) ────────────
+
 .recipe-detail__section {
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
-  padding: $spacing-lg;
+  padding: $spacing-md;
   border: $border-width solid $color-border-subtle;
-  border-radius: calc(#{$border-radius-md} + #{$spacing-2xs});
+  border-radius: $border-radius-md;
   background: linear-gradient(
     160deg,
     $color-surface-subtle 0%,
     $color-background 100%
   );
   box-shadow: $shadow-card;
+
+  @media (min-width: $breakpoint-md) {
+    padding: $spacing-lg;
+    border-radius: calc(#{$border-radius-md} + #{$spacing-2xs});
+  }
 }
 
 .recipe-detail__section--additions {
   gap: $spacing-sm;
-  padding: $spacing-md $spacing-lg;
+  padding: $spacing-sm $spacing-md;
   background: linear-gradient(
     160deg,
     rgba(var(--shadow-color-accent), 0.04) 0%,
@@ -66,12 +90,20 @@
   box-shadow: none;
 }
 
-.recipe-detail__section-head,
-.recipe-detail__addition-item {
+// ─── Section header ──────────────────────────────────────────────────────────
+
+.recipe-detail__section-head {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: $spacing-md;
+  gap: $spacing-sm;
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $spacing-md;
+  }
 }
 
 .recipe-detail__section-title,
@@ -83,7 +115,11 @@
 
 .recipe-detail__section-title {
   font-family: $font-family-serif;
-  font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+  font-size: clamp(1.25rem, 4vw, 1.9rem);
+}
+
+.recipe-detail__section--additions .recipe-detail__section-title {
+  font-size: clamp(1.1rem, 3.5vw, 1.5rem);
 }
 
 .recipe-detail__addition-title,
@@ -92,9 +128,7 @@
   font-size: $font-size-lg;
 }
 
-.recipe-detail__section--additions .recipe-detail__section-title {
-  font-size: clamp(1.25rem, 2vw, 1.5rem);
-}
+// ─── Shared secondary text ───────────────────────────────────────────────────
 
 .recipe-detail__addition-note,
 .recipe-detail__empty-copy,
@@ -107,6 +141,8 @@
   line-height: $line-height-relaxed;
 }
 
+// ─── Additions ───────────────────────────────────────────────────────────────
+
 .recipe-detail__addition-list {
   display: flex;
   flex-direction: column;
@@ -114,16 +150,31 @@
 }
 
 .recipe-detail__addition-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-sm;
   padding: $spacing-sm 0 0;
   border-top: 1px solid rgba(var(--shadow-color), 0.08);
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $spacing-md;
+  }
 }
 
 .recipe-detail__addition-main {
+  display: flex;
+  flex-direction: column;
   gap: $spacing-2xs;
   min-width: 0;
 }
 
 .recipe-detail__addition-actions {
+  display: flex;
+  flex-direction: column;
   align-items: flex-start;
   gap: $spacing-xs;
   width: auto;
@@ -134,17 +185,23 @@
   min-height: 2.25rem;
 }
 
+// ─── Meta (portions / time) ──────────────────────────────────────────────────
+
 .recipe-detail__meta-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: $spacing-lg;
+  gap: $spacing-sm;
+
+  @media (min-width: $breakpoint-md) {
+    gap: $spacing-lg;
+  }
 }
 
 .recipe-detail__meta-item {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: $spacing-md;
+  padding: $spacing-sm;
   border: $border-width solid $color-border-subtle;
   border-radius: $border-radius-sm;
   background:
@@ -154,26 +211,44 @@
       transparent 45%
     ),
     $color-surface-onboarding-gradient;
+
+  @media (min-width: $breakpoint-md) {
+    padding: $spacing-md;
+  }
 }
 
 .recipe-detail__meta-value {
   color: $color-accent;
+  font-size: clamp(1rem, 4vw, 1.375rem);
 }
+
+// ─── Content grid (ingredients + steps) ─────────────────────────────────────
 
 .recipe-detail__content {
   display: grid;
-  grid-template-columns: minmax(16rem, 0.8fr) minmax(0, 1.2fr);
-  gap: $spacing-xl;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
   align-items: start;
+
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: $spacing-xl;
+  }
 }
 
 .recipe-detail__section--ingredients {
-  grid-column: 1;
+  @media (min-width: $breakpoint-lg) {
+    grid-column: 1;
+  }
 }
 
 .recipe-detail__section--steps {
-  grid-column: 2;
+  @media (min-width: $breakpoint-lg) {
+    grid-column: 2;
+  }
 }
+
+// ─── Ingredient list ─────────────────────────────────────────────────────────
 
 .recipe-detail__ingredient-list,
 .recipe-detail__step-list {
@@ -196,6 +271,8 @@
 .recipe-detail__ingredient-primary {
   font-weight: $font-weight-semibold;
 }
+
+// ─── Step list ───────────────────────────────────────────────────────────────
 
 .recipe-detail__step-item {
   display: flex;
@@ -230,6 +307,8 @@
 }
 
 .recipe-detail__step-copy {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
   gap: $spacing-sm;
 }
@@ -243,15 +322,21 @@
   color: $color-text;
 }
 
+// ─── Notes ───────────────────────────────────────────────────────────────────
+
 .recipe-detail__note {
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
-  padding: $spacing-md $spacing-lg;
+  padding: $spacing-sm $spacing-md;
   border: $border-width solid rgba(var(--shadow-color-accent), 0.18);
   border-left: 3px solid rgba(var(--shadow-color-accent), 0.5);
   border-radius: $border-radius-md;
   background: rgba(var(--shadow-color-accent), 0.04);
+
+  @media (min-width: $breakpoint-md) {
+    padding: $spacing-md $spacing-lg;
+  }
 }
 
 .recipe-detail__note-label {
@@ -268,39 +353,12 @@
   color: $color-text;
   line-height: $line-height-relaxed;
   white-space: pre-wrap;
+  word-break: break-word;
 }
+
+// ─── Error ───────────────────────────────────────────────────────────────────
 
 .recipe-detail__error {
   color: $color-error;
   padding: 0 $spacing-sm;
-}
-
-@media (max-width: $breakpoint-lg) {
-  .recipe-detail__content {
-    grid-template-columns: 1fr;
-  }
-
-  .recipe-detail__section--ingredients,
-  .recipe-detail__section--steps {
-    grid-column: auto;
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .recipe-detail__meta-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .recipe-detail__addition-item,
-  .recipe-detail__section-head {
-    flex-direction: column;
-  }
-
-  .recipe-detail__addition-actions {
-    width: auto;
-  }
-
-  .recipe-detail__step-topline {
-    align-items: center;
-  }
 }

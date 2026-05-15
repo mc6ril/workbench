@@ -14,7 +14,11 @@ type Props = {
   editAriaLabel: string;
 };
 
-const RecipeDetailToolbarMenu = ({ editHref, editLabel, editAriaLabel }: Props) => {
+const RecipeDetailToolbarMenu = ({
+  editHref,
+  editLabel,
+  editAriaLabel,
+}: Props) => {
   const t = useTranslation("pages.recipes.detail");
   const router = useAppRouter();
   const [isOpen, setIsOpen] = useState(false);

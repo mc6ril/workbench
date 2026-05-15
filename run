@@ -63,6 +63,7 @@ show_usage() {
     echo "  start            Start production server"
     echo "  clean            Remove build artifacts (.next/ directory)"
     echo "  clean --all      Remove build artifacts and node_modules/ (with confirmation)"
+    echo "  clean-next-build Stop stuck next build processes and remove .next/lock"
     echo "  help, --help, -h Show this help message"
     echo ""
     echo "Examples:"
@@ -72,6 +73,7 @@ show_usage() {
     echo "  sh run start"
     echo "  sh run clean"
     echo "  sh run clean --all"
+    echo "  sh run clean-next-build"
     echo "  sh run help"
     echo ""
     echo "For more information, see README.md"
@@ -222,6 +224,66 @@ handle_clean() {
     exit $exit_code
 }
 
+# Stop stuck Next.js build processes and release .next/lock (project-scoped only)
+handle_clean_next_build() {
+    local project_root
+    project_root="$(get_project_root)"
+    local lock_file="${project_root}/.next/lock"
+    local build_pattern="${project_root}.*next build"
+
+    echo "Stopping stuck Next.js build processes..."
+    echo "Project root: ${project_root}"
+    echo ""
+
+    local pids=""
+    pids="$(pgrep -f "$build_pattern" 2>/dev/null || true)"
+
+    if [ -n "$pids" ]; then
+        echo "  Terminating next build process(es): ${pids}"
+        # shellcheck disable=SC2086
+        kill -TERM $pids 2>/dev/null || true
+        sleep 1
+        for pid in $pids; do
+            if kill -0 "$pid" 2>/dev/null; then
+                echo "  Force killing process ${pid}..."
+                kill -KILL "$pid" 2>/dev/null || true
+            fi
+        done
+    else
+        echo "  ℹ No next build process found for this project."
+    fi
+
+    if [ -f "$lock_file" ]; then
+        local lock_pids=""
+        lock_pids="$(lsof -t "$lock_file" 2>/dev/null || true)"
+        if [ -n "$lock_pids" ]; then
+            echo "  Terminating process(es) holding .next/lock: ${lock_pids}"
+            # shellcheck disable=SC2086
+            kill -TERM $lock_pids 2>/dev/null || true
+            sleep 1
+            for pid in $lock_pids; do
+                if kill -0 "$pid" 2>/dev/null; then
+                    kill -KILL "$pid" 2>/dev/null || true
+                fi
+            done
+        fi
+
+        if [ ! -f "$lock_file" ] || ! lsof "$lock_file" &>/dev/null; then
+            rm -f "$lock_file" 2>/dev/null || true
+            echo "  ✓ Removed .next/lock"
+        else
+            echo "Error: .next/lock is still held by a running process." >&2
+            lsof "$lock_file" >&2 || true
+            exit 1
+        fi
+    else
+        echo "  ℹ No lock file found (.next/lock)."
+    fi
+
+    echo ""
+    echo "✓ clean-next-build complete."
+}
+
 # Main script logic
 main() {
     # Get command from first argument
@@ -285,6 +347,9 @@ main() {
         clean)
             # Clean command doesn't require yarn
             handle_clean "$@"
+            ;;
+        clean-next-build)
+            handle_clean_next_build
             ;;
         *)
             echo "Error: Unknown command '$command'" >&2
