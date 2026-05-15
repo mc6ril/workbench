@@ -1,3 +1,4 @@
+import Text from "@/shared/design-system/text";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
@@ -21,15 +22,19 @@ const RecipesCatalogActiveFilters = ({
   return (
     <div className={styles["recipes-page__active-filters"]}>
       {search ? (
-        <span className={styles["recipes-page__tag"]}>
+        <Text as="span" className={styles["recipes-page__tag"]}>
           {t("activeFilters.search", { search })}
-        </span>
+        </Text>
       ) : null}
 
       {selectedFilterLabels.map((filterLabel) => (
-        <span key={filterLabel} className={styles["recipes-page__tag"]}>
+        <Text
+          as="span"
+          key={filterLabel}
+          className={styles["recipes-page__tag"]}
+        >
           {filterLabel}
-        </span>
+        </Text>
       ))}
     </div>
   );

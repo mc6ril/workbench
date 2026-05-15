@@ -7,7 +7,7 @@ export type ProjectToolbarSearchSuggestion = {
   isArchived: boolean;
 };
 
-export type ProjectToolbarAddActionType = "ticket";
+export type ProjectToolbarAddActionType = "ticket" | "recipe";
 
 export type ProjectToolbarExtraTool = {
   key: string;

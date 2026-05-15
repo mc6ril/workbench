@@ -1,5 +1,6 @@
 import { listActiveSelections } from "@/modules/recipes/core/usecases/planner/listActiveSelections";
-import { markSelectionDone } from "@/modules/recipes/core/usecases/planner/markSelectionDone";
+import { markAsCooked } from "@/modules/recipes/core/usecases/planner/markAsCooked";
+import { markShoppingDone } from "@/modules/recipes/core/usecases/planner/markShoppingDone";
 import { removeSelection } from "@/modules/recipes/core/usecases/planner/removeSelection";
 import { selectRecipe } from "@/modules/recipes/core/usecases/planner/selectRecipe";
 
@@ -7,7 +8,8 @@ describe("Recipes planner use cases", () => {
   const plannerRepository = {
     listActiveSelections: jest.fn(),
     selectRecipe: jest.fn(),
-    markSelectionDone: jest.fn(),
+    markShoppingDone: jest.fn(),
+    markAsCooked: jest.fn(),
     removeSelection: jest.fn(),
   };
 
@@ -43,17 +45,33 @@ describe("Recipes planner use cases", () => {
     });
   });
 
-  it("delegates done transitions to the planner repository", async () => {
-    plannerRepository.markSelectionDone.mockResolvedValueOnce(null);
+  it("delegates shopping done transition to the planner repository", async () => {
+    plannerRepository.markShoppingDone.mockResolvedValueOnce(null);
 
-    await markSelectionDone({
+    await markShoppingDone({
       plannerRepository,
     })({
       projectId: "project-1",
       selectionId: "selection-1",
     });
 
-    expect(plannerRepository.markSelectionDone).toHaveBeenCalledWith({
+    expect(plannerRepository.markShoppingDone).toHaveBeenCalledWith({
+      projectId: "project-1",
+      selectionId: "selection-1",
+    });
+  });
+
+  it("delegates cooked transition to the planner repository", async () => {
+    plannerRepository.markAsCooked.mockResolvedValueOnce(null);
+
+    await markAsCooked({
+      plannerRepository,
+    })({
+      projectId: "project-1",
+      selectionId: "selection-1",
+    });
+
+    expect(plannerRepository.markAsCooked).toHaveBeenCalledWith({
       projectId: "project-1",
       selectionId: "selection-1",
     });

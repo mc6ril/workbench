@@ -22,10 +22,6 @@ import {
   mapLoadedRecipeGraphToDraft,
   mapRecipeTagRowToDomain,
 } from "@/modules/recipes/infrastructure/supabase/shared/readModels";
-import {
-  getRecipeDraftFixture,
-  hasRecipeFixture,
-} from "@/modules/recipes/infrastructure/supabase/shared/recipesFixtureData";
 
 const buildRecipeRowPayload = (
   input: CreateRecipeInput | UpdateRecipeInput
@@ -297,12 +293,6 @@ const promoteAdditionToValidated = async (
   }
 };
 
-/**
- * Step 7:
- * editor reads and writes now target the real Recipes schema with project-scoped
- * tags, ingredients, additions and steps. The old fixture fallback is removed
- * here so create/edit flows stop pretending data exists when it does not.
- */
 export const createEditorRepository = (
   client: AppSupabaseClient
 ): EditorRepository => ({
@@ -312,9 +302,7 @@ export const createEditorRepository = (
 
   async getDraft(projectId, recipeId) {
     if (!isUuid(recipeId)) {
-      return hasRecipeFixture(recipeId)
-        ? getRecipeDraftFixture(recipeId)
-        : null;
+      return null;
     }
 
     const recipeGraphs = await loadRecipeGraphsByIds(client, projectId, [

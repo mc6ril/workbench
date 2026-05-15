@@ -36,7 +36,7 @@ const SHOPPING_LIST_FIELDS = "id, project_id, created_at, updated_at";
 const SHOPPING_ITEM_FIELDS =
   "id, project_id, shopping_list_id, group_id, group_title, position, display_name, normalized_name, amount_value, amount_text, unit, notes, ingredient_kind, checked, recipe_sources, created_at, updated_at";
 const RECIPE_SELECTION_FIELDS =
-  "id, project_id, recipe_id, position, note, servings_count, servings_label, created_at, updated_at";
+  "id, project_id, recipe_id, position, note, servings_count, servings_label, status, created_at, updated_at";
 const RECIPE_TITLE_FIELDS = "id, title";
 const RECIPE_INGREDIENT_FIELDS =
   "id, project_id, recipe_id, position, display_name, normalized_name, amount_value, amount_text, unit, notes, kind, created_at, updated_at";
@@ -267,6 +267,7 @@ const loadSelectionRows = async (
     .from("recipe_selections")
     .select(RECIPE_SELECTION_FIELDS)
     .eq("project_id", projectId)
+    .eq("status", "pending")
     .order("position", { ascending: true });
 
   if (error) {

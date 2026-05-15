@@ -171,11 +171,9 @@ describe("useListRecipes", () => {
       expect(result.current.recipes).toEqual(firstPage.items);
     });
 
-    expect(runListCatalogRecipes).toHaveBeenCalledWith({
-      projectId,
-      filters,
-      pagination: undefined,
-    });
+    // With staleTime: 7 days, initialData is treated as fresh in React Query v5 —
+    // no background refetch occurs on mount. The SSR data is displayed immediately.
+    expect(runListCatalogRecipes).not.toHaveBeenCalled();
     expect(result.current.hasNextPage).toBe(true);
   });
 

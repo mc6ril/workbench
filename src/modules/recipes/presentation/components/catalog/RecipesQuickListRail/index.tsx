@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 
 import Link from "@/shared/design-system/link";
+import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 
 import styles from "./styles.module.scss";
 
@@ -61,9 +63,12 @@ const RecipesQuickListRail = ({
       >
         <div className={styles["recipes-page__quick-list"]}>
           <div className={styles["recipes-page__quick-list-head"]}>
-            <h2 className={styles["recipes-page__quick-list-title"]}>
+            <Title
+              variant="h2"
+              className={styles["recipes-page__quick-list-title"]}
+            >
               Quick list
-            </h2>
+            </Title>
           </div>
 
           <div className={styles["recipes-page__quick-list-items"]}>
@@ -77,9 +82,12 @@ const RecipesQuickListRail = ({
                   onRecipeNavigate?.(recipe.recipeId);
                 }}
               >
-                <span className={styles["recipes-page__quick-list-card-title"]}>
+                <Text
+                  as="span"
+                  className={styles["recipes-page__quick-list-card-title"]}
+                >
                   {recipe.title}
-                </span>
+                </Text>
               </Link>
             ))}
           </div>

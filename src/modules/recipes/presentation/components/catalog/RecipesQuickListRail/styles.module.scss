@@ -53,11 +53,7 @@
 }
 
 .recipes-page__quick-list-title {
-  margin: 0;
   font-family: $font-family-serif;
-  font-size: $font-size-2xl;
-  line-height: $line-height-tight;
-  color: $color-text;
 }
 
 .recipes-page__quick-list-items {
@@ -108,11 +104,8 @@
 }
 
 .recipes-page__quick-list-card-title {
-  margin: 0;
   font-family: $font-family-serif;
   font-size: $font-size-xl;
-  line-height: $line-height-tight;
-  color: $color-text;
 }
 
 @media (max-width: #{$breakpoint-md - 1px}) {
