@@ -81,6 +81,13 @@ export type CatalogRecipeListResponse = {
   hasMore: boolean;
 };
 
+export type CookingHistoryEntry = {
+  recipeId: string;
+  title: string;
+  cookedAt: string;
+  coverStyle: CatalogRecipeCoverStyle;
+};
+
 export const normalizeCatalogRecipeSearch = (
   value: string | null | undefined
 ): string => {

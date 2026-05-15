@@ -243,6 +243,33 @@
   color: $color-text;
 }
 
+.recipe-detail__note {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  border: $border-width solid rgba(var(--shadow-color-accent), 0.18);
+  border-left: 3px solid rgba(var(--shadow-color-accent), 0.5);
+  border-radius: $border-radius-md;
+  background: rgba(var(--shadow-color-accent), 0.04);
+}
+
+.recipe-detail__note-label {
+  margin: 0;
+  color: $color-accent;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+}
+
+.recipe-detail__note-body {
+  margin: 0;
+  color: $color-text;
+  line-height: $line-height-relaxed;
+  white-space: pre-wrap;
+}
+
 .recipe-detail__error {
   color: $color-error;
   padding: 0 $spacing-sm;

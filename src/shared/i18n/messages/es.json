@@ -46,7 +46,7 @@
       "items": {
         "home": "Inicio",
         "board": "Tablero",
-        "recipes": "Recipes",
+        "recipes": "Comidas",
         "ticketDetail": "Tarea",
         "settings": "Configuración"
       },
@@ -61,7 +61,7 @@
           "status": "Disponible",
           "subtitle": "El módulo de comidas del hogar, pensado para resultar deseable en cuanto entra en un proyecto.",
           "teaser": "Un espacio premium para elegir recetas, tener a mano los platos adecuados y convertir la semana en un plan de compras muy simple.",
-          "cta": "Añadir Recipes al proyecto"
+          "cta": "Añadir Comidas al proyecto"
         },
         "empty": {
           "badge": "Proyecto al día",
@@ -892,6 +892,10 @@
           "quickListHideAriaLabel": "Ocultar nuestras comidas",
           "addRecipe": "Añadir una receta",
           "addRecipeAriaLabel": "Crear una nueva receta"
+        },
+        "cookingHistory": {
+          "kicker": "Cocinadas recientemente",
+          "openRecipeAriaLabel": "Abrir la receta {title}"
         }
       },
       "detail": {
@@ -909,6 +913,9 @@
         "steps": {
           "label": "Paso {position}",
           "empty": "Todavía no hay pasos."
+        },
+        "notes": {
+          "label": "Notas"
         },
         "errors": {
           "validateAddition": "La validación del añadido ha fallado. Inténtalo de nuevo."
@@ -995,7 +1002,9 @@
           "coverImageUrl": {
             "label": "Imagen",
             "placeholder": "https://...",
-            "helper": "Pega la dirección de una imagen en línea o sube una."
+            "helper": "Pega la dirección de una imagen en línea o sube una.",
+            "dropHint": "o arrastra un archivo aquí",
+            "previewAlt": "Vista previa de la imagen de portada"
           },
           "servingsCount": {
             "label": "Raciones",

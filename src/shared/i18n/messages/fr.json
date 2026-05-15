@@ -46,7 +46,7 @@
       "items": {
         "home": "Accueil",
         "board": "Tableau",
-        "recipes": "Recipes",
+        "recipes": "Repas",
         "ticketDetail": "Tâche",
         "settings": "Paramètres"
       },
@@ -61,7 +61,7 @@
           "status": "Disponible",
           "subtitle": "Le module repas du foyer, pensé pour devenir immédiatement désirable dans un projet.",
           "teaser": "Un espace premium pour choisir ses recettes, garder les bons plats sous la main et transformer la semaine en plan d’achats très simple.",
-          "cta": "Ajouter Recipes au projet"
+          "cta": "Ajouter Repas au projet"
         },
         "empty": {
           "badge": "Projet déjà à jour",
@@ -892,6 +892,10 @@
           "quickListHideAriaLabel": "Masquer nos repas",
           "addRecipe": "Ajouter une recette",
           "addRecipeAriaLabel": "Créer une nouvelle recette"
+        },
+        "cookingHistory": {
+          "kicker": "Récemment cuisinées",
+          "openRecipeAriaLabel": "Ouvrir la recette {title}"
         }
       },
       "detail": {
@@ -909,6 +913,9 @@
         "steps": {
           "label": "Étape {position}",
           "empty": "Aucune étape pour l'instant."
+        },
+        "notes": {
+          "label": "Notes"
         },
         "errors": {
           "validateAddition": "La validation de l'ajout a échoué. Réessayez."
@@ -995,7 +1002,9 @@
           "coverImageUrl": {
             "label": "Image",
             "placeholder": "https://...",
-            "helper": "Colle l’adresse d’une image en ligne ou télécharge-en une."
+            "helper": "Colle l’adresse d’une image en ligne ou télécharge-en une.",
+            "dropHint": "ou glisse un fichier ici",
+            "previewAlt": "Aperçu de l'image de couverture"
           },
           "servingsCount": {
             "label": "Portions",

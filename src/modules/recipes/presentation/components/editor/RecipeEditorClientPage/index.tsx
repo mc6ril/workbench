@@ -2,6 +2,7 @@
 
 import {
   type ChangeEvent,
+  type DragEvent,
   type KeyboardEvent,
   useCallback,
   useLayoutEffect,
@@ -11,6 +12,7 @@ import {
   useTransition,
 } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import NextImage from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ZodError } from "zod";
 
@@ -442,6 +444,7 @@ const RecipeEditorClientPage = ({
   const [isRouting, startRouting] = useTransition();
   const titleTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const coverUploadInputRef = useRef<HTMLInputElement | null>(null);
+  const [dragOverCover, setDragOverCover] = useState(false);
   const pendingFocusFieldNameRef = useRef<string | null>(null);
   const createRecipeMutation = useCreateRecipe();
   const coverUploadMutation = useUploadRecipeCover();
@@ -658,16 +661,9 @@ const RecipeEditorClientPage = ({
     ],
     [t]
   );
-  const coverImageFieldId = getAccessibilityId("recipe-cover-image-url");
-  const coverImageFieldHintId = getAccessibilityId(
-    "recipe-cover-image-url-hint"
-  );
   const coverImageFieldErrorId = getAccessibilityId(
     "recipe-cover-image-url-error"
   );
-  const coverImageFieldDescribedBy = errors.coverImageUrl?.message
-    ? coverImageFieldErrorId
-    : coverImageFieldHintId;
 
   const handleAddTag = (candidate: string) => {
     const label = normalizeRecipeTagLabel(candidate);
@@ -746,16 +742,8 @@ const RecipeEditorClientPage = ({
     [handleAppendStep, watchedSteps]
   );
 
-  const handleCoverFileChange = useCallback(
-    async (event: ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-
-      event.target.value = "";
-
-      if (!file) {
-        return;
-      }
-
+  const handleCoverFile = useCallback(
+    async (file: File) => {
       if (file.size > APP_LIMITS.RECIPE_COVER.MAX_INPUT_SIZE_BYTES) {
         setError("coverImageUrl", {
           type: "server",
@@ -796,6 +784,27 @@ const RecipeEditorClientPage = ({
     [clearErrors, coverUploadMutation, projectId, setError, setValue, t]
   );
 
+  const handleCoverFileChange = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      event.target.value = "";
+      if (!file) return;
+      await handleCoverFile(file);
+    },
+    [handleCoverFile]
+  );
+
+  const handleCoverDrop = useCallback(
+    async (e: DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      setDragOverCover(false);
+      const file = e.dataTransfer.files?.[0];
+      if (!file) return;
+      await handleCoverFile(file);
+    },
+    [handleCoverFile]
+  );
+
   const onSubmit = handleSubmit(async (values) => {
     clearErrors("root");
 
@@ -819,6 +828,7 @@ const RecipeEditorClientPage = ({
         clearDraft();
       }
 
+      router.refresh();
       startRouting(() => {
         router.push(buildRecipeDetailRoute(projectId, savedRecipe.id ?? ""));
       });
@@ -946,46 +956,77 @@ const RecipeEditorClientPage = ({
 
               <div className={styles["editor-grid"]}>
                 <div className={styles["editor-cover-field"]}>
-                  <label
-                    htmlFor={coverImageFieldId}
-                    className={styles["editor-cover-label"]}
-                  >
+                  <input type="hidden" {...register("coverImageUrl")} />
+                  <p className={styles["editor-cover-label"]}>
                     {t("fields.coverImageUrl.label")}
-                  </label>
-                  <div className={styles["editor-cover-controls"]}>
-                    <div className={styles["editor-cover-input"]}>
-                      <Input
-                        id={coverImageFieldId}
-                        type="url"
-                        placeholder={t("fields.coverImageUrl.placeholder")}
-                        aria-describedby={coverImageFieldDescribedBy}
-                        disabled={isPending}
-                        {...register("coverImageUrl")}
+                  </p>
+                  {normalizeRecipeTagLabel(watchedCoverImageUrl) ? (
+                    <div className={styles["editor-cover-preview"]}>
+                      <NextImage
+                        src={watchedCoverImageUrl}
+                        alt={t("fields.coverImageUrl.previewAlt")}
+                        fill
+                        className={styles["editor-cover-preview__img"]}
+                        sizes="(max-width: 768px) 100vw, 480px"
+                        unoptimized
                       />
                     </div>
-                    <div className={styles["editor-upload-actions"]}>
-                      <input
-                        ref={coverUploadInputRef}
-                        type="file"
-                        accept={RECIPE_COVER_ACCEPT}
-                        className={styles["editor-upload-input"]}
-                        aria-label={t("actions.uploadCover")}
-                        disabled={isPending}
-                        onChange={handleCoverFileChange}
-                      />
-                      <Button
-                        label={
-                          coverUploadMutation.isPending
-                            ? t("actions.uploadingCover")
-                            : normalizeRecipeTagLabel(watchedCoverImageUrl)
-                              ? t("actions.replaceCover")
-                              : t("actions.uploadCover")
-                        }
-                        variant="secondary"
-                        onClick={handleTriggerCoverUpload}
-                        disabled={isPending}
-                      />
-                    </div>
+                  ) : null}
+                  <input
+                    ref={coverUploadInputRef}
+                    type="file"
+                    accept={RECIPE_COVER_ACCEPT}
+                    className={styles["editor-upload-input"]}
+                    aria-label={t("actions.uploadCover")}
+                    disabled={isPending}
+                    onChange={handleCoverFileChange}
+                  />
+                  <div
+                    className={[
+                      styles["editor-cover-drop-zone"],
+                      dragOverCover
+                        ? styles["editor-cover-drop-zone--active"]
+                        : null,
+                      coverUploadMutation.isPending
+                        ? styles["editor-cover-drop-zone--uploading"]
+                        : null,
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setDragOverCover(true);
+                    }}
+                    onDragLeave={() => setDragOverCover(false)}
+                    onDrop={handleCoverDrop}
+                    onClick={handleTriggerCoverUpload}
+                    role="button"
+                    tabIndex={isPending ? -1 : 0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        handleTriggerCoverUpload();
+                      }
+                    }}
+                    aria-label={
+                      coverUploadMutation.isPending
+                        ? t("actions.uploadingCover")
+                        : normalizeRecipeTagLabel(watchedCoverImageUrl)
+                          ? t("actions.replaceCover")
+                          : t("actions.uploadCover")
+                    }
+                  >
+                    <span className={styles["editor-cover-drop-zone__label"]}>
+                      {coverUploadMutation.isPending
+                        ? t("actions.uploadingCover")
+                        : normalizeRecipeTagLabel(watchedCoverImageUrl)
+                          ? t("actions.replaceCover")
+                          : t("actions.uploadCover")}
+                    </span>
+                    {!coverUploadMutation.isPending ? (
+                      <span className={styles["editor-cover-drop-zone__hint"]}>
+                        {t("fields.coverImageUrl.dropHint")}
+                      </span>
+                    ) : null}
                   </div>
                   {errors.coverImageUrl?.message ? (
                     <Text
@@ -995,15 +1036,7 @@ const RecipeEditorClientPage = ({
                     >
                       {errors.coverImageUrl.message}
                     </Text>
-                  ) : (
-                    <Text
-                      id={coverImageFieldHintId}
-                      variant="small"
-                      className={styles["editor-cover-hint"]}
-                    >
-                      {t("fields.coverImageUrl.helper")}
-                    </Text>
-                  )}
+                  ) : null}
                 </div>
               </div>
 
@@ -1030,15 +1063,6 @@ const RecipeEditorClientPage = ({
                   {...register("totalTimeMinutes")}
                 />
               </div>
-
-              <Textarea
-                label={t("fields.summary.label")}
-                rows={4}
-                resize="vertical"
-                error={errors.summary?.message}
-                disabled={isPending}
-                {...register("summary")}
-              />
             </section>
 
             <section className={styles["editor-main-section"]}>

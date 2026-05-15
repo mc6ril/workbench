@@ -9,6 +9,7 @@ describe("listCatalogRecipeTags", () => {
         listByProject: jest.fn(),
         listTagsByProject,
         getDetail: jest.fn(),
+        listCookingHistory: jest.fn(),
       },
     })("project-1");
 
