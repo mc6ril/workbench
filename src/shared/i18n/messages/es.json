@@ -1091,16 +1091,41 @@
           "coverUploadInvalidType": "Formato de imagen no compatible."
         }
       },
+      "quickList": {
+        "kicker": "Nuestras comidas",
+        "titleEmpty": "Sin comidas esta semana",
+        "titleFilled": "{count} comidas",
+        "emptyDescription": "Selecciona recetas del catálogo para empezar la semana.",
+        "browseCatalog": "Ver el catálogo",
+        "pendingSection": "Por cocinar",
+        "shoppingDoneSection": "Listo para cocinar",
+        "viewRecipe": "Ver",
+        "markShoppingDone": "Compras hechas",
+        "markAsCooked": "Cocinado",
+        "remove": "Quitar",
+        "updateFailed": "No se pudo guardar la actualización. Inténtalo de nuevo."
+      },
       "quickListSummary": {
-        "kicker": "Quick list",
-        "titleEmpty": "Visible incluso vacía",
-        "titleFilled": "Comidas previstas para la semana",
-        "copyEmpty": "La quick list mantiene su lugar en el recorrido, incluso antes de la primera selección.",
-        "copyFilled": "El resumen mantiene las recetas activas legibles desde las otras pantallas del módulo.",
-        "emptyNote": "Todavía no hay ninguna receta activa.",
-        "open": "Abrir la quick list",
-        "activeBadge": "Activa",
-        "defaultNote": "Receta guardada para una próxima comida."
+        "kicker": "Nuestras comidas",
+        "titleEmpty": "Sin comidas esta semana",
+        "titleFilled": "{count} comidas",
+        "empty": "Selecciona recetas del catálogo para empezar.",
+        "open": "Ver nuestras comidas",
+        "pendingBadge": "Por cocinar",
+        "shoppingDoneBadge": "Listo"
+      },
+      "shopping": {
+        "title": "Tu lista de la compra",
+        "pendingCountLabel": "artículos por comprar",
+        "checkedCountLabel": "artículos en el carrito",
+        "viewMeals": "Ver nuestras comidas",
+        "empty": "Aún no hay ninguna receta seleccionada.",
+        "emptyForGeneration": "Añade recetas a tus comidas semanales para generar la lista.",
+        "itemCount": "{count} línea",
+        "itemCount_other": "{count} líneas",
+        "additionBadge": "A probar",
+        "openList": "Ver la lista de la compra",
+        "updateFailed": "No se pudo actualizar la lista de la compra. Inténtalo de nuevo."
       }
     },
     "account": {

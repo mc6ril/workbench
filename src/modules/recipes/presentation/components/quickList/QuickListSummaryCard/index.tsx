@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import Badge from "@/shared/design-system/badge";
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
@@ -15,14 +17,8 @@ type Props = {
   recipes: QuickListRecipe[];
 };
 
-const statusBadge = (status: QuickListRecipe["status"]) => {
-  if (status === "shopping_done") {
-    return <Badge label="Prêt" variant="info" size="small" />;
-  }
-  return <Badge label="À cuisiner" variant="success" size="small" />;
-};
-
-const QuickListSummaryCard = ({ projectId, recipes }: Props) => {
+const QuickListSummaryCard = async ({ projectId, recipes }: Props) => {
+  const t = await getTranslations("pages.recipes.quickListSummary");
   const isEmpty = recipes.length === 0;
 
   return (
@@ -30,22 +26,22 @@ const QuickListSummaryCard = ({ projectId, recipes }: Props) => {
       variant="outlined"
       title={
         <div className={styles["recipes-scaffold__panel-head"]}>
-          <p className={styles["recipes-scaffold__panel-kicker"]}>Nos repas</p>
+          <p className={styles["recipes-scaffold__panel-kicker"]}>
+            {t("kicker")}
+          </p>
           <h2 className={styles["recipes-scaffold__panel-title"]}>
             {isEmpty
-              ? "Aucun repas cette semaine"
-              : `${recipes.length} repas`}
+              ? t("titleEmpty")
+              : t("titleFilled", { count: recipes.length })}
           </h2>
         </div>
       }
       footer={
-        <Link href={buildRecipesQuickListRoute(projectId)}>Voir nos repas</Link>
+        <Link href={buildRecipesQuickListRoute(projectId)}>{t("open")}</Link>
       }
     >
       {isEmpty ? (
-        <p className={styles["recipes-scaffold__helper"]}>
-          Sélectionnez des recettes depuis le catalogue pour commencer.
-        </p>
+        <p className={styles["recipes-scaffold__helper"]}>{t("empty")}</p>
       ) : (
         <div className={styles["recipes-scaffold__summary-list"]}>
           {recipes.map((recipe) => (
@@ -61,7 +57,17 @@ const QuickListSummaryCard = ({ projectId, recipes }: Props) => {
                   >
                     {recipe.title}
                   </Link>
-                  {statusBadge(recipe.status)}
+                  <Badge
+                    label={
+                      recipe.status === "shopping_done"
+                        ? t("shoppingDoneBadge")
+                        : t("pendingBadge")
+                    }
+                    variant={
+                      recipe.status === "shopping_done" ? "info" : "success"
+                    }
+                    size="small"
+                  />
                 </div>
                 <p className={styles["recipes-scaffold__helper"]}>
                   {recipe.servingsLabel}

@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import Badge from "@/shared/design-system/badge";
 import Button from "@/shared/design-system/button";
 import Card from "@/shared/design-system/card";
@@ -27,6 +29,8 @@ type SelectionCardProps = {
   selection: QuickListRecipe;
   isMutating: boolean;
   primaryAction: React.ReactNode;
+  viewLabel: string;
+  removeLabel: string;
   onRemove: () => void;
 };
 
@@ -35,6 +39,8 @@ const SelectionCard = ({
   selection,
   isMutating,
   primaryAction,
+  viewLabel,
+  removeLabel,
   onRemove,
 }: SelectionCardProps) => (
   <article className={styles["recipes-scaffold__selection-card"]}>
@@ -57,11 +63,11 @@ const SelectionCard = ({
           href={buildRecipeDetailRoute(projectId, selection.recipeId)}
           prefetch={false}
         >
-          Voir
+          {viewLabel}
         </Link>
         {primaryAction}
         <Button
-          label="Retirer"
+          label={removeLabel}
           variant="danger"
           disabled={isMutating}
           onClick={onRemove}
@@ -72,6 +78,7 @@ const SelectionCard = ({
 );
 
 const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
+  const t = useTranslations("pages.recipes.quickList");
   const selectionsQuery = useListActiveSelections(projectId, {
     initialData: initialSelections,
   });
@@ -100,11 +107,13 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
       variant="outlined"
       title={
         <div className={styles["recipes-scaffold__panel-head"]}>
-          <p className={styles["recipes-scaffold__panel-kicker"]}>Nos repas</p>
+          <p className={styles["recipes-scaffold__panel-kicker"]}>
+            {t("kicker")}
+          </p>
           <h2 className={styles["recipes-scaffold__panel-title"]}>
             {totalCount === 0
-              ? "Aucun repas cette semaine"
-              : `${totalCount} repas${totalCount > 1 ? "" : ""}`}
+              ? t("titleEmpty")
+              : t("titleFilled", { count: totalCount })}
           </h2>
         </div>
       }
@@ -112,11 +121,10 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
       {totalCount === 0 ? (
         <div className={styles["recipes-scaffold__empty"]}>
           <p className={styles["recipes-scaffold__helper"]}>
-            Sélectionnez des recettes depuis le catalogue pour démarrer la
-            semaine.
+            {t("emptyDescription")}
           </p>
           <Link href={buildRecipesCatalogRoute(projectId)}>
-            Parcourir le catalogue
+            {t("browseCatalog")}
           </Link>
         </div>
       ) : (
@@ -125,7 +133,7 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
             <section className={styles["recipes-scaffold__section"]}>
               <div className={styles["recipes-scaffold__section-head"]}>
                 <p className={styles["recipes-scaffold__panel-kicker"]}>
-                  À cuisiner
+                  {t("pendingSection")}
                 </p>
                 <Badge
                   label={`${pendingSelections.length}`}
@@ -140,9 +148,11 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
                     projectId={projectId}
                     selection={selection}
                     isMutating={isMutatingSelection(selection.id)}
+                    viewLabel={t("viewRecipe")}
+                    removeLabel={t("remove")}
                     primaryAction={
                       <Button
-                        label="Courses faites"
+                        label={t("markShoppingDone")}
                         variant="secondary"
                         disabled={isMutatingSelection(selection.id)}
                         onClick={() => {
@@ -169,7 +179,7 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
             <section className={styles["recipes-scaffold__section"]}>
               <div className={styles["recipes-scaffold__section-head"]}>
                 <p className={styles["recipes-scaffold__panel-kicker"]}>
-                  Prêt à cuisiner
+                  {t("shoppingDoneSection")}
                 </p>
                 <Badge
                   label={`${shoppingDoneSelections.length}`}
@@ -184,9 +194,11 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
                     projectId={projectId}
                     selection={selection}
                     isMutating={isMutatingSelection(selection.id)}
+                    viewLabel={t("viewRecipe")}
+                    removeLabel={t("remove")}
                     primaryAction={
                       <Button
-                        label="Cuisiné ✓"
+                        label={t("markAsCooked")}
                         variant="secondary"
                         disabled={isMutatingSelection(selection.id)}
                         onClick={() => {
@@ -214,9 +226,7 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
       {(markShoppingDoneMutation.isError ||
         markAsCookedMutation.isError ||
         removeSelectionMutation.isError) && (
-        <p className={styles["recipes-scaffold__error"]}>
-          La mise à jour n&apos;a pas pu être enregistrée. Réessayez.
-        </p>
+        <p className={styles["recipes-scaffold__error"]}>{t("updateFailed")}</p>
       )}
     </Card>
   );

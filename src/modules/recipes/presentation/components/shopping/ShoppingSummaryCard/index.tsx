@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
 
@@ -12,19 +14,16 @@ import type { ShoppingList } from "@/modules/recipes/core/domain/shopping/shoppi
 type Props = {
   href: string;
   shoppingList: ShoppingList;
-  ctaLabel?: string;
 };
 
-const ShoppingSummaryCard = ({
-  href,
-  shoppingList,
-  ctaLabel = "Voir la liste de courses",
-}: Props) => {
+const ShoppingSummaryCard = async ({ href, shoppingList }: Props) => {
+  const t = await getTranslations("pages.recipes.shopping");
+
   return (
     <Card
       variant="outlined"
-      title="Votre liste de courses"
-      footer={<Link href={href}>{ctaLabel}</Link>}
+      title={t("title")}
+      footer={<Link href={href}>{t("openList")}</Link>}
     >
       <div className={styles["recipes-scaffold__shopping-stats"]}>
         <div className={styles["recipes-scaffold__metric"]}>
@@ -32,7 +31,7 @@ const ShoppingSummaryCard = ({
             {shoppingList.pendingCount}
           </span>
           <span className={styles["recipes-scaffold__metric-label"]}>
-            articles à acheter
+            {t("pendingCountLabel")}
           </span>
         </div>
         <div className={styles["recipes-scaffold__metric"]}>
@@ -40,7 +39,7 @@ const ShoppingSummaryCard = ({
             {shoppingList.checkedCount}
           </span>
           <span className={styles["recipes-scaffold__metric-label"]}>
-            articles dans le panier
+            {t("checkedCountLabel")}
           </span>
         </div>
       </div>
@@ -48,8 +47,7 @@ const ShoppingSummaryCard = ({
       {shoppingList.groups.length === 0 ? (
         <div className={styles["recipes-scaffold__empty"]}>
           <p className={styles["recipes-scaffold__helper"]}>
-            Ajoutez des recettes à vos repas de la semaine pour générer la
-            liste.
+            {t("emptyForGeneration")}
           </p>
         </div>
       ) : (
@@ -66,7 +64,7 @@ const ShoppingSummaryCard = ({
                   {group.title}
                 </h3>
                 <span className={styles["recipes-scaffold__helper"]}>
-                  {group.items.length} ligne{group.items.length > 1 ? "s" : ""}
+                  {t("itemCount", { count: group.items.length })}
                 </span>
               </div>
 
@@ -101,7 +99,7 @@ const ShoppingSummaryCard = ({
                         </p>
                         {isAddition ? (
                           <span className={styles["recipes-scaffold__pill"]}>
-                            À tester
+                            {t("additionBadge")}
                           </span>
                         ) : null}
                       </div>

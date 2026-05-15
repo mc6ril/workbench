@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
 
@@ -20,6 +22,7 @@ type Props = {
 };
 
 const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
+  const t = useTranslations("pages.recipes.shopping");
   const shoppingListQuery = useListShoppingList(projectId, {
     initialData: initialShoppingList,
   });
@@ -30,9 +33,11 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
   return (
     <Card
       variant="outlined"
-      title="Votre liste de courses"
+      title={t("title")}
       footer={
-        <Link href={buildRecipesQuickListRoute(projectId)}>Voir nos repas</Link>
+        <Link href={buildRecipesQuickListRoute(projectId)}>
+          {t("viewMeals")}
+        </Link>
       }
     >
       <div className={styles["recipes-scaffold__shopping-stats"]}>
@@ -41,7 +46,7 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
             {shoppingList.pendingCount}
           </span>
           <span className={styles["recipes-scaffold__metric-label"]}>
-            articles à acheter
+            {t("pendingCountLabel")}
           </span>
         </div>
         <div className={styles["recipes-scaffold__metric"]}>
@@ -49,18 +54,16 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
             {shoppingList.checkedCount}
           </span>
           <span className={styles["recipes-scaffold__metric-label"]}>
-            articles dans le panier
+            {t("checkedCountLabel")}
           </span>
         </div>
       </div>
 
       {!hasItems ? (
         <div className={styles["recipes-scaffold__empty"]}>
-          <p className={styles["recipes-scaffold__helper"]}>
-            Aucune recette sélectionnée pour le moment.
-          </p>
+          <p className={styles["recipes-scaffold__helper"]}>{t("empty")}</p>
           <Link href={buildRecipesQuickListRoute(projectId)}>
-            Voir nos repas
+            {t("viewMeals")}
           </Link>
         </div>
       ) : (
@@ -77,7 +80,7 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
                   {group.title}
                 </h3>
                 <span className={styles["recipes-scaffold__helper"]}>
-                  {group.items.length} ligne{group.items.length > 1 ? "s" : ""}
+                  {t("itemCount", { count: group.items.length })}
                 </span>
               </div>
 
@@ -144,7 +147,7 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
                           </span>
                           {isAddition ? (
                             <span className={styles["recipes-scaffold__pill"]}>
-                              À tester
+                              {t("additionBadge")}
                             </span>
                           ) : null}
                         </span>
@@ -179,9 +182,7 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
       )}
 
       {setItemCheckedMutation.isError ? (
-        <p className={styles["recipes-scaffold__error"]}>
-          La liste de courses n&apos;a pas pu être mise à jour. Réessayez.
-        </p>
+        <p className={styles["recipes-scaffold__error"]}>{t("updateFailed")}</p>
       ) : null}
     </Card>
   );

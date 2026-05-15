@@ -1091,16 +1091,41 @@
           "coverUploadInvalidType": "Unsupported image format."
         }
       },
+      "quickList": {
+        "kicker": "Our meals",
+        "titleEmpty": "No meals this week",
+        "titleFilled": "{count} meals",
+        "emptyDescription": "Select recipes from the catalogue to start the week.",
+        "browseCatalog": "Browse catalogue",
+        "pendingSection": "To cook",
+        "shoppingDoneSection": "Ready to cook",
+        "viewRecipe": "View",
+        "markShoppingDone": "Shopping done",
+        "markAsCooked": "Cooked",
+        "remove": "Remove",
+        "updateFailed": "The update could not be saved. Please try again."
+      },
       "quickListSummary": {
-        "kicker": "Quick list",
-        "titleEmpty": "Visible even when empty",
-        "titleFilled": "Meals kept for the week",
-        "copyEmpty": "The quick list keeps its place in the flow, even before the first selection.",
-        "copyFilled": "The summary keeps active recipes readable from the other module screens.",
-        "emptyNote": "No active recipe yet.",
-        "open": "Open quick list",
-        "activeBadge": "Active",
-        "defaultNote": "Recipe kept for an upcoming meal."
+        "kicker": "Our meals",
+        "titleEmpty": "No meals this week",
+        "titleFilled": "{count} meals",
+        "empty": "Select recipes from the catalogue to get started.",
+        "open": "View our meals",
+        "pendingBadge": "To cook",
+        "shoppingDoneBadge": "Ready"
+      },
+      "shopping": {
+        "title": "Your shopping list",
+        "pendingCountLabel": "items to buy",
+        "checkedCountLabel": "items in the basket",
+        "viewMeals": "View our meals",
+        "empty": "No recipe selected yet.",
+        "emptyForGeneration": "Add recipes to your weekly meals to generate the list.",
+        "itemCount": "{count} item",
+        "itemCount_other": "{count} items",
+        "additionBadge": "To test",
+        "openList": "View shopping list",
+        "updateFailed": "The shopping list could not be updated. Please try again."
       }
     },
     "account": {

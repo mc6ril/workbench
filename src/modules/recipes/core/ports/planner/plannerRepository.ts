@@ -10,9 +10,7 @@ import type {
 export type PlannerRepository = {
   listActiveSelections: (projectId: string) => Promise<QuickListRecipe[]>;
   selectRecipe: (input: SelectRecipeInput) => Promise<QuickListRecipe>;
-  markShoppingDone: (
-    input: MarkShoppingDoneInput
-  ) => Promise<QuickListRecipe>;
+  markShoppingDone: (input: MarkShoppingDoneInput) => Promise<QuickListRecipe>;
   markAsCooked: (input: MarkAsCookedInput) => Promise<CookedSelection>;
   removeSelection: (input: RemoveSelectionInput) => Promise<void>;
 };

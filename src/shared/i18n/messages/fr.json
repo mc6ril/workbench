@@ -1091,16 +1091,41 @@
           "coverUploadInvalidType": "Format d’image non pris en charge."
         }
       },
+      "quickList": {
+        "kicker": "Nos repas",
+        "titleEmpty": "Aucun repas cette semaine",
+        "titleFilled": "{count} repas",
+        "emptyDescription": "Sélectionnez des recettes depuis le catalogue pour démarrer la semaine.",
+        "browseCatalog": "Parcourir le catalogue",
+        "pendingSection": "À cuisiner",
+        "shoppingDoneSection": "Prêt à cuisiner",
+        "viewRecipe": "Voir",
+        "markShoppingDone": "Courses faites",
+        "markAsCooked": "Cuisiné",
+        "remove": "Retirer",
+        "updateFailed": "La mise à jour n’a pas pu être enregistrée. Réessayez."
+      },
       "quickListSummary": {
-        "kicker": "Quick list",
-        "titleEmpty": "Visible même à vide",
-        "titleFilled": "Repas retenus pour la semaine",
-        "copyEmpty": "La quick list garde sa place dans le parcours, même avant la première sélection.",
-        "copyFilled": "Le résumé garde les recettes actives lisibles depuis les autres écrans du module.",
-        "emptyNote": "Aucune recette active pour l’instant.",
-        "open": "Ouvrir la quick list",
-        "activeBadge": "Active",
-        "defaultNote": "Recette retenue pour un prochain repas."
+        "kicker": "Nos repas",
+        "titleEmpty": "Aucun repas cette semaine",
+        "titleFilled": "{count} repas",
+        "empty": "Sélectionnez des recettes depuis le catalogue pour commencer.",
+        "open": "Voir nos repas",
+        "pendingBadge": "À cuisiner",
+        "shoppingDoneBadge": "Prêt"
+      },
+      "shopping": {
+        "title": "Votre liste de courses",
+        "pendingCountLabel": "articles à acheter",
+        "checkedCountLabel": "articles dans le panier",
+        "viewMeals": "Voir nos repas",
+        "empty": "Aucune recette sélectionnée pour le moment.",
+        "emptyForGeneration": "Ajoutez des recettes à vos repas de la semaine pour générer la liste.",
+        "itemCount": "{count} ligne",
+        "itemCount_other": "{count} lignes",
+        "additionBadge": "À tester",
+        "openList": "Voir la liste de courses",
+        "updateFailed": "La liste de courses n’a pas pu être mise à jour. Réessayez."
       }
     },
     "account": {

@@ -264,11 +264,7 @@ export const createPlannerRepository = (
       .single();
 
     if (error) {
-      return handleRepositoryError(
-        error,
-        "RecipeSelection",
-        input.selectionId
-      );
+      return handleRepositoryError(error, "RecipeSelection", input.selectionId);
     }
 
     const recipe = await loadRecipeById(
