@@ -17,7 +17,7 @@
   justify-content: flex-end;
   min-height: 22rem;
   /* pull out of the dashboard main padding to go edge-to-edge */
-  margin: -$spacing-lg -$spacing-lg 0;
+  margin: (-$spacing-lg) (-$spacing-lg) 0;
 }
 
 .recipe-detail-page__hero--citrus {
