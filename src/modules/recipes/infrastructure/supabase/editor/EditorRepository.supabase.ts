@@ -297,12 +297,6 @@ const promoteAdditionToValidated = async (
   }
 };
 
-/**
- * Step 7:
- * editor reads and writes now target the real Recipes schema with project-scoped
- * tags, ingredients, additions and steps. The old fixture fallback is removed
- * here so create/edit flows stop pretending data exists when it does not.
- */
 export const createEditorRepository = (
   client: AppSupabaseClient
 ): EditorRepository => ({

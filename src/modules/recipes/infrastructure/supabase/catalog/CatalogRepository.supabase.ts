@@ -395,12 +395,6 @@ const listPersistedCatalogTags = async (
   return (tagData ?? []).map(mapRecipeTagRowToDomain);
 };
 
-/**
- * Step 6:
- * keep the real Recipes schema as the source of truth for catalogue reads and
- * reduce the fixture fallback to the catalogue repository only while write flows
- * are still landing in later steps.
- */
 export const createCatalogRepository = (
   client: AppSupabaseClient
 ): CatalogRepository => ({

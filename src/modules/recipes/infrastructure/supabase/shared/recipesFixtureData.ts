@@ -15,11 +15,9 @@ import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDra
 import {
   type CreateRecipeIngredientFromDraftInput,
   createRecipeIngredientFromDraftInput,
-  type RecipeSelection,
   type RecipeStep,
   type RecipeTag,
 } from "@/modules/recipes/core/domain/recipe.types";
-import type { ShoppingListIngredientSource } from "@/modules/recipes/core/domain/shopping/buildShoppingListFromSources";
 
 type FixtureIngredientSource = CreateRecipeIngredientFromDraftInput & {
   shoppingGroupId?: string;
@@ -68,52 +66,6 @@ const buildStep = (
     notes: null,
     meta,
   };
-};
-
-const CREATION_DRAFT_SOURCE: FixtureRecipeSource = {
-  id: "creation-draft",
-  title: "",
-  summary: "",
-  totalTimeMinutes: null,
-  totalTimeLabel: "",
-  servingsCount: null,
-  servingsLabel: "",
-  coverStyle: "neutral",
-  tags: [buildTag("Poisson"), buildTag("Rapide")],
-  ingredients: [
-    {
-      id: "creation-ingredient-fish",
-      displayName: "poisson blanc",
-      amount: "2",
-      unit: "piece",
-      notes: "ou cabillaud",
-    },
-    {
-      id: "creation-ingredient-potatoes",
-      displayName: "pommes de terre grenaille",
-      amount: "320",
-      unit: "g",
-      notes: null,
-    },
-    {
-      id: "creation-ingredient-miso",
-      displayName: "miso blanc",
-      amount: "1/2",
-      unit: "cs",
-      notes: "tester dans la marinade",
-      kind: "addition_candidate",
-    },
-  ],
-  steps: [
-    buildStep(
-      "creation-step-1",
-      1,
-      "Preparer la marinade, napper le poisson puis laisser reposer 15 min.",
-      "Action courte"
-    ),
-  ],
-  note: null,
-  coverImageUrl: null,
 };
 
 const EDIT_RECIPE_SOURCES: Record<string, FixtureRecipeSource> = {
@@ -339,17 +291,6 @@ const formatTitleFromRecipeId = (recipeId: string): string => {
   return normalized.charAt(0).toUpperCase() + normalized.slice(1);
 };
 
-export const getCreationDraftFixture = (): RecipeDraft => {
-  const draft = normalizeFixtureRecipeSource(CREATION_DRAFT_SOURCE, {
-    id: null,
-  });
-
-  return {
-    ...draft,
-    id: null,
-  };
-};
-
 export const getRecipeDraftFixture = (recipeId: string): RecipeDraft | null => {
   const source = EDIT_RECIPE_SOURCES[recipeId];
 
@@ -367,24 +308,6 @@ export const getRecipeDraftFixture = (recipeId: string): RecipeDraft | null => {
 
 export const hasRecipeFixture = (recipeId: string): boolean => {
   return Boolean(EDIT_RECIPE_SOURCES[recipeId]);
-};
-
-export const listQuickListFixtureSelections = (): RecipeSelection[] => {
-  return QUICK_LIST_RECIPE_IDS.map((recipeId, index) => {
-    const recipe = EDIT_RECIPE_SOURCES[recipeId];
-
-    return {
-      id: `selection-${recipe.id}`,
-      recipeId: recipe.id,
-      title: recipe.title,
-      note:
-        index === 0
-          ? "Mardi soir, avec sauce yaourt citronnee."
-          : "Samedi midi, legumes du marche a ecouler.",
-      servingsCount: recipe.servingsCount,
-      servingsLabel: recipe.servingsLabel,
-    };
-  });
 };
 
 const mapFixtureSourceToCatalogSummary = (
@@ -460,13 +383,7 @@ const fixtureSourceMatchesFilters = (
   );
 };
 
-export const listCatalogFixtureRecipes = (): CatalogRecipeSummary[] => {
-  return Object.values(EDIT_RECIPE_SOURCES).map(
-    mapFixtureSourceToCatalogSummary
-  );
-};
-
-export const listCatalogFixtureRecipesByFilters = (
+const listCatalogFixtureRecipesByFilters = (
   filters?: CatalogRecipeListFilters
 ): CatalogRecipeSummary[] => {
   return Object.values(EDIT_RECIPE_SOURCES)
@@ -542,42 +459,3 @@ export const getCatalogFixtureDetail = (
   return mapFixtureSourceToCatalogDetail(source);
 };
 
-const buildShoppingIngredientSource = (
-  recipe: FixtureRecipeSource,
-  ingredient: FixtureIngredientSource
-): ShoppingListIngredientSource => {
-  return {
-    id: `shopping-${recipe.id}-${ingredient.id}`,
-    groupId: ingredient.shoppingGroupId ?? "other",
-    groupTitle: ingredient.shoppingGroupTitle ?? "Autres",
-    ingredient: createRecipeIngredientFromDraftInput(ingredient),
-    checked: ingredient.checked,
-    recipe: {
-      recipeId: recipe.id,
-      title: recipe.title,
-    },
-  };
-};
-
-export const listShoppingFixtureSources =
-  (): ShoppingListIngredientSource[] => {
-    return QUICK_LIST_RECIPE_IDS.flatMap((recipeId) => {
-      const recipe = EDIT_RECIPE_SOURCES[recipeId];
-
-      return recipe.ingredients
-        .filter(
-          (
-            ingredient
-          ): ingredient is FixtureIngredientSource & {
-            shoppingGroupId: string;
-            shoppingGroupTitle: string;
-          } =>
-            Boolean(ingredient.shoppingGroupId && ingredient.shoppingGroupTitle)
-        )
-        .map((ingredient) => buildShoppingIngredientSource(recipe, ingredient));
-    });
-  };
-
-export const getQuickListFixtureSelectionCount = (): number => {
-  return QUICK_LIST_RECIPE_IDS.length;
-};
