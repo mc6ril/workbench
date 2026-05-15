@@ -119,6 +119,7 @@ const RecipeCatalogCard = ({
     removeSelectionMutation.isPending &&
     removeSelectionMutation.variables?.selectionId === quickListSelectionId;
   const isUpdatingQuickList = isSelecting || isRemoving;
+  const isInQuickList = quickListSelectionId !== null;
   const popularTag = findCategoryOption(recipe.tags, "popular");
   const typeTag =
     findCategoryOption(
@@ -141,11 +142,9 @@ const RecipeCatalogCard = ({
     popularTag ? t(`sheet.options.${popularTag.optionId}`) : null,
     ...customTags.map((tag) => tag.label),
   ].filter((tagLabel): tagLabel is string => Boolean(tagLabel));
-  const quickListActionLabel = recipe.isInQuickList
+  const quickListActionLabel = isInQuickList
     ? t("card.removeFromQuickListAriaLabel", { title: recipe.title })
     : t("card.addToQuickListAriaLabel", { title: recipe.title });
-  const canToggleQuickList =
-    !recipe.isInQuickList || Boolean(quickListSelectionId);
   const hasQuickListError =
     (selectRecipeMutation.isError &&
       selectRecipeMutation.variables?.recipeId === recipe.id) ||
@@ -195,7 +194,7 @@ const RecipeCatalogCard = ({
   const handleQuickListToggle = (event: MouseEvent<HTMLButtonElement>) => {
     const sourceElement = event.currentTarget;
 
-    if (recipe.isInQuickList && quickListSelectionId) {
+    if (quickListSelectionId) {
       pendingQuickListFeedbackRef.current = {
         mutation: "remove",
         sourceElement,
@@ -223,7 +222,7 @@ const RecipeCatalogCard = ({
     <article
       className={cx(
         styles["recipes-page__recipe-card"],
-        recipe.isInQuickList && styles["recipes-page__recipe-card--selected"]
+        isInQuickList && styles["recipes-page__recipe-card--selected"]
       )}
     >
       <div className={styles["recipes-page__recipe-card-toggle-row"]}>
@@ -241,17 +240,16 @@ const RecipeCatalogCard = ({
           type="button"
           className={cx(
             styles["recipes-page__quick-list-toggle"],
-            recipe.isInQuickList &&
-              styles["recipes-page__quick-list-toggle--selected"]
+            isInQuickList && styles["recipes-page__quick-list-toggle--selected"]
           )}
           aria-busy={isUpdatingQuickList}
           aria-label={quickListActionLabel}
-          aria-pressed={recipe.isInQuickList}
-          disabled={!canToggleQuickList || isUpdatingQuickList}
+          aria-pressed={isInQuickList}
+          disabled={isUpdatingQuickList}
           title={quickListActionLabel}
           onClick={handleQuickListToggle}
         >
-          <QuickListToggleIcon selected={recipe.isInQuickList} />
+          <QuickListToggleIcon selected={isInQuickList} />
         </button>
       </div>
 
