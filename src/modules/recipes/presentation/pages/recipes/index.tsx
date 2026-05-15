@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/ser
 
 import { listCatalogRecipes } from "@/modules/recipes/core/usecases/catalog/listCatalogRecipes";
 import { listCatalogRecipeTags } from "@/modules/recipes/core/usecases/catalog/listCatalogRecipeTags";
+import { listRecentCookingHistory } from "@/modules/recipes/core/usecases/catalog/listRecentCookingHistory";
 import { listActiveSelections } from "@/modules/recipes/core/usecases/planner/listActiveSelections";
 import { createCatalogRepository } from "@/modules/recipes/infrastructure/supabase/catalog/CatalogRepository.supabase";
 import { createPlannerRepository } from "@/modules/recipes/infrastructure/supabase/planner/PlannerRepository.supabase";
@@ -23,28 +24,34 @@ const RecipesPage = async ({ projectId, searchParams = {} }: Props) => {
   const supabaseClient = await createSupabaseServerClient();
   const catalogRepository = createCatalogRepository(supabaseClient);
   const plannerRepository = createPlannerRepository(supabaseClient);
-  const [initialRecipesPage, initialTags, quickListRecipes] = await Promise.all(
-    [
-      listCatalogRecipes({
-        catalogRepository,
-      })({
-        projectId,
-        filters: {
-          search: initialQueryState.search,
-          filterOptionIds: initialQueryState.filterOptionIds,
-        },
-        pagination: {
-          pageSize: APP_LIMITS.PAGINATION.DEFAULT_PAGE_SIZE,
-        },
-      }),
-      listCatalogRecipeTags({
-        catalogRepository,
-      })(projectId),
-      listActiveSelections({
-        plannerRepository,
-      })(projectId),
-    ]
-  );
+  const [
+    initialRecipesPage,
+    initialTags,
+    quickListRecipes,
+    initialCookingHistory,
+  ] = await Promise.all([
+    listCatalogRecipes({
+      catalogRepository,
+    })({
+      projectId,
+      filters: {
+        search: initialQueryState.search,
+        filterOptionIds: initialQueryState.filterOptionIds,
+      },
+      pagination: {
+        pageSize: APP_LIMITS.PAGINATION.DEFAULT_PAGE_SIZE,
+      },
+    }),
+    listCatalogRecipeTags({
+      catalogRepository,
+    })(projectId),
+    listActiveSelections({
+      plannerRepository,
+    })(projectId),
+    listRecentCookingHistory({
+      catalogRepository,
+    })(projectId),
+  ]);
 
   return (
     <RecipesCatalogClientPage
@@ -53,6 +60,7 @@ const RecipesPage = async ({ projectId, searchParams = {} }: Props) => {
       initialQueryState={initialQueryState}
       initialTags={initialTags}
       quickListRecipes={quickListRecipes}
+      initialCookingHistory={initialCookingHistory}
     />
   );
 };

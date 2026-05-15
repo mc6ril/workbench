@@ -3,6 +3,7 @@ import type {
   CatalogRecipeListInput,
   CatalogRecipeListResponse,
   CatalogRecipeTag,
+  CookingHistoryEntry,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 
 export type CatalogRepository = {
@@ -14,4 +15,8 @@ export type CatalogRepository = {
     projectId: string,
     recipeId: string
   ) => Promise<CatalogRecipeDetail | null>;
+  listCookingHistory: (
+    projectId: string,
+    limit: number
+  ) => Promise<CookingHistoryEntry[]>;
 };

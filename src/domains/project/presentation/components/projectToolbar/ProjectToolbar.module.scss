@@ -150,8 +150,8 @@
   flex-shrink: 0;
   user-select: none;
 
-  @media (min-width: $breakpoint-md) {
-    font-size: $font-size-md;
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    display: none;
   }
 }
 
@@ -166,8 +166,8 @@
   text-overflow: ellipsis;
   min-width: 0;
 
-  @media (min-width: $breakpoint-md) {
-    font-size: $font-size-md;
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    display: none;
   }
 }
 

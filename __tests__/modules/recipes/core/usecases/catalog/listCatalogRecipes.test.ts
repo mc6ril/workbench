@@ -13,6 +13,7 @@ describe("listCatalogRecipes", () => {
         listByProject,
         listTagsByProject: jest.fn(),
         getDetail: jest.fn(),
+        listCookingHistory: jest.fn(),
       },
     })({
       projectId: "project-1",

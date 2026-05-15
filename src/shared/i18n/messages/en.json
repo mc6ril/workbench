@@ -46,7 +46,7 @@
       "items": {
         "home": "Home",
         "board": "Board",
-        "recipes": "Recipes",
+        "recipes": "Meals",
         "ticketDetail": "Task",
         "settings": "Settings"
       },
@@ -61,7 +61,7 @@
           "status": "Available",
           "subtitle": "The household meals module, designed to feel desirable as soon as it lands in a project.",
           "teaser": "A premium space to pick recipes, keep the right meals close, and turn the week into a very simple shopping plan.",
-          "cta": "Add Recipes to the project"
+          "cta": "Add Meals to the project"
         },
         "empty": {
           "badge": "Project up to date",
@@ -892,6 +892,10 @@
           "quickListHideAriaLabel": "Hide our meals",
           "addRecipe": "Add recipe",
           "addRecipeAriaLabel": "Create a new recipe"
+        },
+        "cookingHistory": {
+          "kicker": "Recently cooked",
+          "openRecipeAriaLabel": "Open recipe {title}"
         }
       },
       "detail": {
@@ -910,6 +914,10 @@
           "label": "Step {position}",
           "empty": "No steps yet."
         },
+        "notes": {
+          "label": "Notes"
+        },
+        "moreActionsAriaLabel": "More actions",
         "errors": {
           "validateAddition": "Addition validation failed. Please try again."
         }
@@ -995,7 +1003,9 @@
           "coverImageUrl": {
             "label": "Image",
             "placeholder": "https://...",
-            "helper": "Paste the address of an online image or upload one."
+            "helper": "Paste the address of an online image or upload one.",
+            "dropHint": "or drag a file here",
+            "previewAlt": "Cover image preview"
           },
           "servingsCount": {
             "label": "Servings",

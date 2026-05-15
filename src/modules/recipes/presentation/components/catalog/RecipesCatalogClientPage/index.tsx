@@ -10,9 +10,13 @@ import RecipesCatalogHeader from "./RecipesCatalogHeader";
 import RecipesCatalogResults from "./RecipesCatalogResults";
 import styles from "./styles.module.scss";
 
-import type { CatalogRecipeListResponse } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import type {
+  CatalogRecipeListResponse,
+  CookingHistoryEntry,
+} from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
 import type { QuickListRecipe } from "@/modules/recipes/core/domain/planner/quickList.types";
 import type { RecipeTag } from "@/modules/recipes/core/domain/recipe.types";
+import RecipesCookingHistory from "@/modules/recipes/presentation/components/catalog/RecipesCookingHistory";
 import {
   RECIPES_QUICK_LIST_FEEDBACK_DURATION_MS,
   RECIPES_QUICK_LIST_TOOL_ID,
@@ -27,9 +31,13 @@ type Props = {
   initialQueryState: RecipesCatalogQueryState;
   initialTags: RecipeTag[];
   quickListRecipes: QuickListRecipe[];
+  initialCookingHistory: CookingHistoryEntry[];
 };
 
-const RecipesCatalogClientPage = (props: Props) => {
+const RecipesCatalogClientPage = ({
+  initialCookingHistory,
+  ...props
+}: Props) => {
   const commitAnimatedCount = useRecipesQuickListFeedbackStore(
     (state) => state.commitAnimatedCount
   );
@@ -67,7 +75,7 @@ const RecipesCatalogClientPage = (props: Props) => {
     toggleDraftFilterOptionId,
     applyDraftFilters,
     resetDraftFilters,
-  } = useRecipesCatalogClientPage(props);
+  } = useRecipesCatalogClientPage({ ...props });
   const handleQuickListMutationSuccess = useCallback(
     ({
       sourceElement,
@@ -126,6 +134,11 @@ const RecipesCatalogClientPage = (props: Props) => {
           <RecipesCatalogActiveFilters
             search={search}
             selectedFilterLabels={selectedFilterLabels}
+          />
+
+          <RecipesCookingHistory
+            projectId={props.projectId}
+            entries={initialCookingHistory}
           />
 
           <RecipesCatalogResults

@@ -40,6 +40,8 @@ const RecipeDetailView = ({
 
   return (
     <div className={styles["recipe-detail"]}>
+      <h1 className={styles["recipe-detail__page-title"]}>{recipe.title}</h1>
+
       <RecipeDetailAdditionsSection
         additions={additionIngredients}
         canValidateAdditions={canValidateAdditions}
@@ -55,6 +57,15 @@ const RecipeDetailView = ({
       />
 
       <RecipeDetailTagList tags={recipe.tags} />
+
+      {recipe.note ? (
+        <div className={styles["recipe-detail__note"]}>
+          <p className={styles["recipe-detail__note-label"]}>
+            {t("notes.label")}
+          </p>
+          <p className={styles["recipe-detail__note-body"]}>{recipe.note}</p>
+        </div>
+      ) : null}
 
       <div className={styles["recipe-detail__content"]}>
         <RecipeDetailIngredientsSection

@@ -6,6 +6,8 @@ import {
   type CatalogRecipeListCursor,
   type CatalogRecipeListFilters,
   type CatalogRecipeListPagination,
+  type CookingHistoryEntry,
+  isCatalogRecipeCoverStyle,
   normalizeCatalogRecipeListFilters,
   normalizeCatalogRecipeListPagination,
 } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
@@ -446,5 +448,57 @@ export const createCatalogRepository = (
       recipeGraph,
       Boolean(selectionData)
     );
+  },
+
+  async listCookingHistory(projectId, limit) {
+    const { data: historyData, error: historyError } = await client
+      .from("recipe_cooking_history")
+      .select("recipe_id, cooked_at")
+      .eq("project_id", projectId)
+      .order("cooked_at", { ascending: false })
+      .limit(limit * 4);
+
+    if (historyError) {
+      return handleRepositoryError(
+        historyError,
+        "RecipeCookingHistory",
+        projectId
+      );
+    }
+
+    const seen = new Set<string>();
+    const unique: Array<{ recipeId: string; cookedAt: string }> = [];
+
+    for (const row of historyData ?? []) {
+      if (!seen.has(row.recipe_id)) {
+        seen.add(row.recipe_id);
+        unique.push({ recipeId: row.recipe_id, cookedAt: row.cooked_at });
+      }
+      if (unique.length >= limit) break;
+    }
+
+    if (unique.length === 0) return [];
+
+    const recipeIds = unique.map((e) => e.recipeId);
+    const { data: recipeData, error: recipeError } = await client
+      .from("recipes")
+      .select("id, title, cover_style")
+      .eq("project_id", projectId)
+      .in("id", recipeIds);
+
+    if (recipeError) {
+      return handleRepositoryError(recipeError, "Recipe", projectId);
+    }
+
+    const recipeById = new Map((recipeData ?? []).map((r) => [r.id, r]));
+
+    return unique.flatMap(({ recipeId, cookedAt }): CookingHistoryEntry[] => {
+      const recipe = recipeById.get(recipeId);
+      if (!recipe) return [];
+      const coverStyle = isCatalogRecipeCoverStyle(recipe.cover_style)
+        ? recipe.cover_style
+        : "neutral";
+      return [{ recipeId, title: recipe.title, cookedAt, coverStyle }];
+    });
   },
 });
