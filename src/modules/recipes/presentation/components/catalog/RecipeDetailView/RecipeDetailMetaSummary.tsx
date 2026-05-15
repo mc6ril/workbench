@@ -12,12 +12,20 @@ const RecipeDetailMetaSummary = ({ servingsLabel, totalTimeLabel }: Props) => {
     <section className={styles["recipe-detail__section"]}>
       <div className={styles["recipe-detail__meta-grid"]}>
         <article className={styles["recipe-detail__meta-item"]}>
-          <Text as="span" variant="metric" className={styles["recipe-detail__meta-value"]}>
+          <Text
+            as="span"
+            variant="metric"
+            className={styles["recipe-detail__meta-value"]}
+          >
             {servingsLabel || "-"}
           </Text>
         </article>
         <article className={styles["recipe-detail__meta-item"]}>
-          <Text as="span" variant="metric" className={styles["recipe-detail__meta-value"]}>
+          <Text
+            as="span"
+            variant="metric"
+            className={styles["recipe-detail__meta-value"]}
+          >
             {totalTimeLabel || "-"}
           </Text>
         </article>
