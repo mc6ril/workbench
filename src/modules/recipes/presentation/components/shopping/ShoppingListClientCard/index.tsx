@@ -30,33 +30,18 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
   return (
     <Card
       variant="outlined"
-      title={
-        <div className={styles["recipes-scaffold__panel-head"]}>
-          <p className={styles["recipes-scaffold__panel-kicker"]}>Courses</p>
-          <h2 className={styles["recipes-scaffold__panel-title"]}>
-            Todo list generee depuis les recettes actives
-          </h2>
-        </div>
-      }
+      title="Votre liste de courses"
       footer={
-        <Link href={buildRecipesQuickListRoute(projectId)}>
-          Retour a la quick list
-        </Link>
+        <Link href={buildRecipesQuickListRoute(projectId)}>Voir nos repas</Link>
       }
     >
-      <p className={styles["recipes-scaffold__panel-copy"]}>
-        La generation reste prudente: on fusionne seulement les lignes
-        compatibles, les ajouts a tester restent visibles et chaque item peut
-        etre coche.
-      </p>
-
       <div className={styles["recipes-scaffold__shopping-stats"]}>
         <div className={styles["recipes-scaffold__metric"]}>
           <span className={styles["recipes-scaffold__metric-value"]}>
             {shoppingList.pendingCount}
           </span>
           <span className={styles["recipes-scaffold__metric-label"]}>
-            lignes encore a acheter
+            articles à acheter
           </span>
         </div>
         <div className={styles["recipes-scaffold__metric"]}>
@@ -64,7 +49,7 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
             {shoppingList.checkedCount}
           </span>
           <span className={styles["recipes-scaffold__metric-label"]}>
-            lignes deja cochees
+            articles dans le panier
           </span>
         </div>
       </div>
@@ -72,10 +57,10 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
       {!hasItems ? (
         <div className={styles["recipes-scaffold__empty"]}>
           <p className={styles["recipes-scaffold__helper"]}>
-            Aucune recette active pour generer des courses pour le moment.
+            Aucune recette sélectionnée pour le moment.
           </p>
           <Link href={buildRecipesQuickListRoute(projectId)}>
-            Revenir a la quick list
+            Voir nos repas
           </Link>
         </div>
       ) : (
@@ -159,7 +144,7 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
                           </span>
                           {isAddition ? (
                             <span className={styles["recipes-scaffold__pill"]}>
-                              Ajout
+                              À tester
                             </span>
                           ) : null}
                         </span>
@@ -195,7 +180,7 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
 
       {setItemCheckedMutation.isError ? (
         <p className={styles["recipes-scaffold__error"]}>
-          La shopping list n&apos;a pas pu etre mise a jour. Reessayez.
+          La liste de courses n&apos;a pas pu être mise à jour. Réessayez.
         </p>
       ) : null}
     </Card>

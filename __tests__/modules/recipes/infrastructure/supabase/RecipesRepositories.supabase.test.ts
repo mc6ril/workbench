@@ -452,11 +452,7 @@ describe("Recipes Supabase repositories", () => {
     const filterTagsQuery = createQueryBuilderMock<
       Array<Pick<RecipeTagRow, "id">>
     >([{ id: tagId }]);
-    const persistedRecipesQuery = createQueryBuilderMock<
-      Array<Pick<RecipeRow, "id">>
-    >([{ id: recipeId }]);
     const client = createClient({
-      recipes: persistedRecipesQuery,
       recipe_tags: [filterTagsQuery],
     });
 
@@ -465,15 +461,14 @@ describe("Recipes Supabase repositories", () => {
       projectId,
       filters: {
         search: "",
-        filterOptionIds: ["type-express", "nutri-score-a"],
+        filterOptionIds: ["type-express", "popular-vegetarian"],
       },
     });
 
     expect(filterTagsQuery.in).toHaveBeenCalledWith(
       "slug",
-      expect.arrayContaining(["express", "rapide", "nutri-a", "nutriscore-a"])
+      expect.arrayContaining(["express", "rapide", "vegetarien", "vegetarian"])
     );
-    expect(persistedRecipesQuery.limit).toHaveBeenCalledWith(1);
     expect(recipes).toEqual({
       items: [],
       hasMore: false,

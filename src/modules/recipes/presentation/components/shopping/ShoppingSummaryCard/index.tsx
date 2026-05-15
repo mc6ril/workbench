@@ -18,33 +18,21 @@ type Props = {
 const ShoppingSummaryCard = ({
   href,
   shoppingList,
-  ctaLabel = "Ouvrir la shopping list",
+  ctaLabel = "Voir la liste de courses",
 }: Props) => {
   return (
     <Card
       variant="outlined"
-      title={
-        <div className={styles["recipes-scaffold__panel-head"]}>
-          <p className={styles["recipes-scaffold__panel-kicker"]}>Courses</p>
-          <h2 className={styles["recipes-scaffold__panel-title"]}>
-            Liste generee a partir des recettes actives
-          </h2>
-        </div>
-      }
+      title="Votre liste de courses"
       footer={<Link href={href}>{ctaLabel}</Link>}
     >
-      <p className={styles["recipes-scaffold__panel-copy"]}>
-        Les ingredients sont regroupes seulement quand le nom normalise,
-        l&apos;unite et la quantite structuree rendent la fusion fiable.
-      </p>
-
       <div className={styles["recipes-scaffold__shopping-stats"]}>
         <div className={styles["recipes-scaffold__metric"]}>
           <span className={styles["recipes-scaffold__metric-value"]}>
             {shoppingList.pendingCount}
           </span>
           <span className={styles["recipes-scaffold__metric-label"]}>
-            lignes encore a acheter
+            articles à acheter
           </span>
         </div>
         <div className={styles["recipes-scaffold__metric"]}>
@@ -52,7 +40,7 @@ const ShoppingSummaryCard = ({
             {shoppingList.checkedCount}
           </span>
           <span className={styles["recipes-scaffold__metric-label"]}>
-            lignes deja cochees
+            articles dans le panier
           </span>
         </div>
       </div>
@@ -60,8 +48,8 @@ const ShoppingSummaryCard = ({
       {shoppingList.groups.length === 0 ? (
         <div className={styles["recipes-scaffold__empty"]}>
           <p className={styles["recipes-scaffold__helper"]}>
-            La shopping list restera vide tant qu&apos;aucune recette n&apos;est
-            active.
+            Ajoutez des recettes à vos repas de la semaine pour générer la
+            liste.
           </p>
         </div>
       ) : (
@@ -113,7 +101,7 @@ const ShoppingSummaryCard = ({
                         </p>
                         {isAddition ? (
                           <span className={styles["recipes-scaffold__pill"]}>
-                            Ajout a tester
+                            À tester
                           </span>
                         ) : null}
                       </div>

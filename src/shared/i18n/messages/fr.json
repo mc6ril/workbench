@@ -854,12 +854,6 @@
             "type": {
               "title": "Type"
             },
-            "nutrition": {
-              "title": "Nutrition"
-            },
-            "nutriScore": {
-              "title": "Nutri-score"
-            },
             "dietary": {
               "title": "Habitudes alimentaires"
             },
@@ -872,8 +866,6 @@
           },
           "options": {
             "popular-express": "Express",
-            "popular-low-calories": "Faibles en calories",
-            "popular-boost-nutri": "Boost Nutri",
             "popular-organic-vegetables": "Légumes BIO",
             "popular-vegetarian": "Végétarien",
             "popular-gourmand": "Gourmand",
@@ -885,16 +877,6 @@
             "type-fish": "Poisson",
             "type-veggie": "Veggie",
             "type-meat": "Viande",
-            "nutrition-low-calories": "Faible en calories",
-            "nutrition-fibers-plus": "Fibres+",
-            "nutrition-omega-3": "Oméga 3",
-            "nutrition-protein": "Protéiné",
-            "nutrition-vegetables-rich": "Riche en légumes",
-            "nutri-score-a": "A",
-            "nutri-score-b": "B",
-            "nutri-score-c": "C",
-            "nutri-score-d": "D",
-            "nutri-score-e": "E",
             "dietary-naturally-gluten-free": "Naturellement sans gluten",
             "equipment-two-hobs-max": "2 plaques maximum",
             "equipment-food-processor": "Compatible robot de cuisine",
@@ -905,9 +887,9 @@
         "toolbar": {
           "filter": "Filtrer",
           "filterAriaLabel": "Ouvrir les filtres du catalogue",
-          "quickList": "Quick list",
-          "quickListShowAriaLabel": "Afficher la quick list",
-          "quickListHideAriaLabel": "Masquer la quick list",
+          "quickList": "Nos repas",
+          "quickListShowAriaLabel": "Afficher nos repas",
+          "quickListHideAriaLabel": "Masquer nos repas",
           "addRecipe": "Ajouter une recette",
           "addRecipeAriaLabel": "Créer une nouvelle recette"
         }
@@ -933,34 +915,14 @@
         }
       },
       "editor": {
-        "page": {
-          "create": {
-            "eyebrow": "Recipes / création",
-            "title": "Créer une recette",
-            "description": "Un écran plus direct pour poser l’idée, structurer la base et enregistrer proprement la fiche."
-          },
-          "edit": {
-            "eyebrow": "Recipes / édition",
-            "title": "Modifier la recette",
-            "description": "Une fiche d’édition lisible pour ajuster la base, les ajouts et les étapes sans perdre le fil."
-          },
-          "aside": {
-            "kicker": "Règles actives",
-            "title": "Cadre du v1",
-            "ruleQuantities": "Quantités structurées acceptées : {formats}.",
-            "ruleUnits": "Unités v1 : {units}.",
-            "ruleFallback": "Le fallback conserve `amountText` si la quantité reste libre.",
-            "ruleReorder": "Le réordonnancement reste simple avec les boutons haut / bas."
-          }
-        },
         "header": {
           "kicker": "Fiche recette",
           "createMode": "Création",
           "editMode": "Édition",
           "localDraftBadge": "Brouillon local",
           "localDraftHelper": "Appuyez sur le bouton \"Créer la recette\" tout en bas pour l’enregistrer.",
-          "descriptionCreate": "Commence par le titre puis complète les blocs utiles, comme sur l’écran de mise à jour d’une tâche.",
-          "descriptionEdit": "Retouche la recette bloc par bloc avec la même lecture compacte que sur l’écran de mise à jour d’une tâche."
+          "descriptionCreate": "Commence par le titre, puis ajoute les ingrédients, les étapes et les tags.",
+          "descriptionEdit": "Modifie la recette section par section."
         },
         "meta": {
           "servings": "Portions",
@@ -980,34 +942,34 @@
         "sections": {
           "identity": {
             "kicker": "Identité",
-            "title": "Les repères qui font reconnaître la recette",
+            "title": "Les informations de base",
             "description": "Le titre reste visible en haut, puis on complète l’image, le temps, les portions et le résumé."
           },
           "tags": {
             "kicker": "Tags",
             "title": "Des tags projet, sans doublon",
-            "description": "Les suggestions reprennent les tags déjà utilisés et le slug évite les répétitions.",
+            "description": "Les suggestions reprennent les tags déjà utilisés dans le projet.",
             "empty": "Aucun tag sélectionné pour l’instant."
           },
           "validatedIngredients": {
             "kicker": "Ingrédients",
-            "title": "La base stable de la recette",
-            "description": "Quantités structurées acceptées : {formats}. Unités v1 : {units}.",
+            "title": "Vos ingrédients",
+            "description": "Quantités acceptées : {formats}. Unités : {units}.",
             "empty": "Aucun ingrédient pour l’instant.",
             "rowLabel": "Ingrédient {position}",
             "nameLabel": "Ingrédient"
           },
           "additionIngredients": {
             "kicker": "Ajouts",
-            "title": "Les variantes à tester sans brouiller la base",
-            "description": "Les ajouts restent persistants, mais clairement identifiés comme hypothèses ou variations.",
+            "title": "Vos ajouts à tester",
+            "description": "Les ajouts restent persistants, mais clairement identifiés.",
             "empty": "Aucun ingrédient pour l’instant.",
             "rowLabel": "Ingrédient {position}",
             "nameLabel": "Ingrédient"
           },
           "steps": {
             "kicker": "Étapes",
-            "title": "Une suite de blocs courts et faciles à reprendre",
+            "title": "Les étapes de préparation",
             "description": "Chaque étape garde une instruction claire et un repère optionnel pour mieux relire.",
             "empty": "Aucune étape pour l’instant.",
             "rowLabel": "Étape {position}",
@@ -1016,8 +978,8 @@
           },
           "note": {
             "kicker": "Note",
-            "title": "Le retour de test ou le rappel personnel",
-            "description": "Optionnel, mais pratique pour garder un arbitrage après test."
+            "title": "Votre note personnelle",
+            "description": "Optionnelle. Pratique pour noter une astuce ou un retour après dégustation."
           },
           "summary": {
             "kicker": "Récap",
@@ -1050,7 +1012,7 @@
           },
           "note": {
             "label": "Note de recette",
-            "helper": "Optionnel. Pratique pour garder un arbitrage après test."
+            "helper": "Optionnelle. Pratique pour noter une astuce ou un retour après dégustation."
           },
           "tagDraft": {
             "label": "Nouveau tag",

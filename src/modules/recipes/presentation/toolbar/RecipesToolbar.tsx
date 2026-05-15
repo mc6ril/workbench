@@ -156,7 +156,7 @@ const RecipesToolbar = ({ projectId }: Props) => {
     <ProjectToolbar
       pageTitle={pageTitle}
       showSearch={isCatalogRoute}
-      addActionType={isCatalogRoute ? "ticket" : null}
+      addActionType={isCatalogRoute ? "recipe" : null}
       addActionLabel={tCatalog("toolbar.addRecipe")}
       addActionAriaLabel={tCatalog("toolbar.addRecipeAriaLabel")}
       searchValue={isCatalogRoute ? searchInput : ""}

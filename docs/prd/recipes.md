@@ -68,11 +68,11 @@ L'espace où les membres du projet sélectionnent les repas à préparer dans la
 
 Une sélection passe par trois états séquentiels :
 
-| État | Signification | Visible dans la quick list | Génère des courses |
-|---|---|---|---|
-| `pending` | Recette ajoutée, ingrédients pas encore achetés | ✓ | ✓ |
-| `shopping_done` | Courses faites pour cette recette, repas pas encore cuisiné | ✓ | ✗ |
-| supprimée | Recette cuisinée ou retirée manuellement | ✗ | ✗ |
+| État            | Signification                                               | Visible dans la quick list | Génère des courses |
+| --------------- | ----------------------------------------------------------- | -------------------------- | ------------------ |
+| `pending`       | Recette ajoutée, ingrédients pas encore achetés             | ✓                          | ✓                  |
+| `shopping_done` | Courses faites pour cette recette, repas pas encore cuisiné | ✓                          | ✗                  |
+| supprimée       | Recette cuisinée ou retirée manuellement                    | ✗                          | ✗                  |
 
 **Actions disponibles sur une sélection**
 
@@ -83,6 +83,7 @@ Une sélection passe par trois états séquentiels :
 **Affichage**
 
 La quick list distingue visuellement deux sections :
+
 - "À faire" : sélections `pending`
 - "Prêt à cuisiner" : sélections `shopping_done`
 
@@ -182,6 +183,7 @@ Lorsqu'une recette est rendue publique, elle devient visible dans le catalogue d
 - Un utilisateur peut liker/unliker. Son état (liké ou non) est visible dans l'interface.
 
 Table `recipe_likes` :
+
 ```
 id              uuid
 recipe_id       uuid    (FK recipes)
@@ -198,6 +200,7 @@ UNIQUE (recipe_id, user_id)
 - Les admins du projet qui a créé la recette peuvent supprimer n'importe quel commentaire.
 
 Table `recipe_comments` :
+
 ```
 id              uuid
 recipe_id       uuid    (FK recipes)
@@ -218,16 +221,16 @@ deleted_at      timestamptz  (soft delete)
 
 ## Stratégie de cache et realtime
 
-| Donnée | staleTime | Refetch | Realtime | Invalidé par |
-|---|---|---|---|---|
-| Catalogue (liste) | 7 jours | Manuel ("Actualiser") | Non | `createRecipe`, `updateRecipe` |
-| Tags du catalogue | 7 jours | Non | Non | `createRecipe`, `updateRecipe` |
-| Quick list | 0 (toujours frais) | Realtime | **Oui** | Realtime `recipe_selections` |
-| Liste de courses | 5 min | Sur changement de sélections `pending` | Non | Changement de sélections `pending` |
-| Fiche recette | 1 jour | Non | Non | `updateRecipe` |
-| Likes | 5 min | Non | Non | `likeRecipe`, `unlikeRecipe` |
-| Commentaires | 2 min | Non | Non | `addComment`, `deleteComment` |
-| Historique cuisson | 1 heure | Non | Non | `markAsCooked` |
+| Donnée             | staleTime          | Refetch                                | Realtime | Invalidé par                       |
+| ------------------ | ------------------ | -------------------------------------- | -------- | ---------------------------------- |
+| Catalogue (liste)  | 7 jours            | Manuel ("Actualiser")                  | Non      | `createRecipe`, `updateRecipe`     |
+| Tags du catalogue  | 7 jours            | Non                                    | Non      | `createRecipe`, `updateRecipe`     |
+| Quick list         | 0 (toujours frais) | Realtime                               | **Oui**  | Realtime `recipe_selections`       |
+| Liste de courses   | 5 min              | Sur changement de sélections `pending` | Non      | Changement de sélections `pending` |
+| Fiche recette      | 1 jour             | Non                                    | Non      | `updateRecipe`                     |
+| Likes              | 5 min              | Non                                    | Non      | `likeRecipe`, `unlikeRecipe`       |
+| Commentaires       | 2 min              | Non                                    | Non      | `addComment`, `deleteComment`      |
+| Historique cuisson | 1 heure            | Non                                    | Non      | `markAsCooked`                     |
 
 **Realtime (quick list)**
 
@@ -237,45 +240,50 @@ Abonnement sur `recipe_selections` (INSERT, UPDATE, DELETE) filtré par `project
 
 ## Invalidation ciblée par mutation
 
-| Mutation | Invalide |
-|---|---|
-| `createRecipe` | `catalog.all(projectId)` |
-| `updateRecipe` | `catalog.all(projectId)` + `catalog.detail(recipeId)` |
-| `selectRecipe` | — (géré par realtime) |
-| `markShoppingDone` | — (géré par realtime) |
-| `markAsCooked` | `planner.quickList(projectId)` + `cooking.history(projectId)` |
-| `removeSelection` | — (géré par realtime) |
-| `generateShoppingList` | `shopping.list(projectId)` |
-| `setShoppingItemChecked` | optimistic update + `shopping.list(projectId)` |
-| `likeRecipe` / `unlikeRecipe` | `catalog.detail(recipeId)` |
-| `addComment` / `deleteComment` | `catalog.comments(recipeId)` |
+| Mutation                       | Invalide                                                      |
+| ------------------------------ | ------------------------------------------------------------- |
+| `createRecipe`                 | `catalog.all(projectId)`                                      |
+| `updateRecipe`                 | `catalog.all(projectId)` + `catalog.detail(recipeId)`         |
+| `selectRecipe`                 | — (géré par realtime)                                         |
+| `markShoppingDone`             | — (géré par realtime)                                         |
+| `markAsCooked`                 | `planner.quickList(projectId)` + `cooking.history(projectId)` |
+| `removeSelection`              | — (géré par realtime)                                         |
+| `generateShoppingList`         | `shopping.list(projectId)`                                    |
+| `setShoppingItemChecked`       | optimistic update + `shopping.list(projectId)`                |
+| `likeRecipe` / `unlikeRecipe`  | `catalog.detail(recipeId)`                                    |
+| `addComment` / `deleteComment` | `catalog.comments(recipeId)`                                  |
 
 ---
 
 ## Plan d'implémentation (5 PR)
 
 ### PR 1 — Suppression du code mort
+
 - Supprimer `listQuickListRecipes.ts` (use-case doublon)
 - Supprimer 6 exports fantômes dans `recipesFixtureData.ts`
 - Supprimer les commentaires `Step N` dans les repositories
 
 ### PR 2 — Wording orienté utilisateur final
+
 - Remplacer tout le texte orienté développeur visible par l'utilisateur
 - Pages quick list, shopping, `ShoppingListClientCard`, `ShoppingSummaryCard`, `RecipeEditorOutlineCard`
 - Supprimer `RecipesPageScaffold` ou vider ses props de tout contenu dev
 - Étendre `ProjectToolbarAddActionType` avec `"recipe"`
 
 ### PR 3 — Design aligné sur le board
+
 - Supprimer le hero/scaffold sur les pages quick list et shopping
 - Aligner la structure de page sur le pattern board (toolbar = en-tête, cartes directement dans la page)
 
 ### PR 4 — Stratégie de cache + realtime quick list
+
 - Ajouter `staleTime` sur tous les hooks (catalogue : 7j, quick list : 0, shopping : 5min)
 - Implémenter l'abonnement realtime sur `recipe_selections`
 - Cibler les invalidations par mutation (tableau ci-dessus)
 - Optimiser `generateShoppingList` (hash des sélections pour éviter le DELETE+INSERT inutile)
 
 ### PR 5 — États de sélection (pending / shopping_done / cooked)
+
 - Migration : ajouter `status` sur `recipe_selections` (`pending` | `shopping_done`)
 - Migration : créer `recipe_cooking_history` (project_id, recipe_id, cooked_at, cooked_by)
 - Mettre à jour `generateShoppingList` pour exclure les sélections `shopping_done`
@@ -286,6 +294,7 @@ Abonnement sur `recipe_selections` (INSERT, UPDATE, DELETE) filtré par `project
 - UI : afficher "Cuisiné le [date]" sur la fiche recette
 
 ### PR 6 (future) — Recettes publiques, likes et commentaires
+
 - Migration : ajouter `visibility` sur `recipes` (`private` | `public`), `recipe_likes`, `recipe_comments`
 - RLS : recettes publiques accessibles en lecture à tous les utilisateurs authentifiés
 - UI : toggle visibilité dans l'éditeur

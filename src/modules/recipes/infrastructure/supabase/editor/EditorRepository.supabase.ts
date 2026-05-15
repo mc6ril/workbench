@@ -22,10 +22,6 @@ import {
   mapLoadedRecipeGraphToDraft,
   mapRecipeTagRowToDomain,
 } from "@/modules/recipes/infrastructure/supabase/shared/readModels";
-import {
-  getRecipeDraftFixture,
-  hasRecipeFixture,
-} from "@/modules/recipes/infrastructure/supabase/shared/recipesFixtureData";
 
 const buildRecipeRowPayload = (
   input: CreateRecipeInput | UpdateRecipeInput
@@ -306,9 +302,7 @@ export const createEditorRepository = (
 
   async getDraft(projectId, recipeId) {
     if (!isUuid(recipeId)) {
-      return hasRecipeFixture(recipeId)
-        ? getRecipeDraftFixture(recipeId)
-        : null;
+      return null;
     }
 
     const recipeGraphs = await loadRecipeGraphsByIds(client, projectId, [

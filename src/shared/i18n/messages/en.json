@@ -854,12 +854,6 @@
             "type": {
               "title": "Type"
             },
-            "nutrition": {
-              "title": "Nutrition"
-            },
-            "nutriScore": {
-              "title": "Nutri-score"
-            },
             "dietary": {
               "title": "Dietary habits"
             },
@@ -872,8 +866,6 @@
           },
           "options": {
             "popular-express": "Express",
-            "popular-low-calories": "Low calorie",
-            "popular-boost-nutri": "Nutri boost",
             "popular-organic-vegetables": "Organic vegetables",
             "popular-vegetarian": "Vegetarian",
             "popular-gourmand": "Gourmet",
@@ -885,16 +877,6 @@
             "type-fish": "Fish",
             "type-veggie": "Veggie",
             "type-meat": "Meat",
-            "nutrition-low-calories": "Low calorie",
-            "nutrition-fibers-plus": "Fiber+",
-            "nutrition-omega-3": "Omega 3",
-            "nutrition-protein": "Protein-rich",
-            "nutrition-vegetables-rich": "Rich in vegetables",
-            "nutri-score-a": "A",
-            "nutri-score-b": "B",
-            "nutri-score-c": "C",
-            "nutri-score-d": "D",
-            "nutri-score-e": "E",
             "dietary-naturally-gluten-free": "Naturally gluten-free",
             "equipment-two-hobs-max": "2 hobs max",
             "equipment-food-processor": "Food processor compatible",
@@ -905,9 +887,9 @@
         "toolbar": {
           "filter": "Filter",
           "filterAriaLabel": "Open the catalog filters",
-          "quickList": "Quick list",
-          "quickListShowAriaLabel": "Show the quick list",
-          "quickListHideAriaLabel": "Hide the quick list",
+          "quickList": "Our meals",
+          "quickListShowAriaLabel": "Show our meals",
+          "quickListHideAriaLabel": "Hide our meals",
           "addRecipe": "Add recipe",
           "addRecipeAriaLabel": "Create a new recipe"
         }
@@ -933,34 +915,14 @@
         }
       },
       "editor": {
-        "page": {
-          "create": {
-            "eyebrow": "Recipes / create",
-            "title": "Create a recipe",
-            "description": "A more direct screen to capture the idea, structure the base, and save the recipe cleanly."
-          },
-          "edit": {
-            "eyebrow": "Recipes / edit",
-            "title": "Edit recipe",
-            "description": "A readable editing sheet to adjust the base, additions, and steps without losing the thread."
-          },
-          "aside": {
-            "kicker": "Active rules",
-            "title": "V1 frame",
-            "ruleQuantities": "Accepted structured quantities: {formats}.",
-            "ruleUnits": "V1 units: {units}.",
-            "ruleFallback": "Fallback keeps `amountText` when the quantity stays free-form.",
-            "ruleReorder": "Reordering stays simple with up / down buttons."
-          }
-        },
         "header": {
           "kicker": "Recipe sheet",
           "createMode": "Create",
           "editMode": "Edit",
           "localDraftBadge": "Local draft",
           "localDraftHelper": "Press the \"Create recipe\" button at the very bottom to save it.",
-          "descriptionCreate": "Start with the title, then fill the useful blocks just like on the task update screen.",
-          "descriptionEdit": "Adjust the recipe block by block with the same compact reading as on the task update screen."
+          "descriptionCreate": "Start with the title, then add the ingredients, steps, and tags.",
+          "descriptionEdit": "Edit the recipe section by section."
         },
         "meta": {
           "servings": "Servings",
@@ -980,34 +942,34 @@
         "sections": {
           "identity": {
             "kicker": "Identity",
-            "title": "The cues that make the recipe recognizable",
+            "title": "Basic information",
             "description": "The title stays visible at the top, then we complete the image, time, servings, and summary."
           },
           "tags": {
             "kicker": "Tags",
             "title": "Project tags, without duplicates",
-            "description": "Suggestions reuse already-used tags and the slug prevents duplicates.",
+            "description": "Suggestions reuse already-used tags in the project.",
             "empty": "No tag selected yet."
           },
           "validatedIngredients": {
             "kicker": "Ingredients",
-            "title": "The stable base of the recipe",
-            "description": "Accepted structured quantities: {formats}. V1 units: {units}.",
+            "title": "Your ingredients",
+            "description": "Accepted quantities: {formats}. Units: {units}.",
             "empty": "No ingredient yet.",
             "rowLabel": "Ingredient {position}",
             "nameLabel": "Ingredient"
           },
           "additionIngredients": {
             "kicker": "Additions",
-            "title": "Variations to test without blurring the base",
-            "description": "Additions stay persistent, but clearly identified as hypotheses or variants.",
+            "title": "Your additions to try",
+            "description": "Additions stay persistent, but clearly identified.",
             "empty": "No ingredient yet.",
             "rowLabel": "Ingredient {position}",
             "nameLabel": "Ingredient"
           },
           "steps": {
             "kicker": "Steps",
-            "title": "A sequence of short, easy-to-reuse blocks",
+            "title": "Preparation steps",
             "description": "Each step keeps a clear instruction and an optional marker for easier rereading.",
             "empty": "No step yet.",
             "rowLabel": "Step {position}",
@@ -1016,8 +978,8 @@
           },
           "note": {
             "kicker": "Note",
-            "title": "Testing feedback or personal reminder",
-            "description": "Optional, but useful to keep a decision after testing."
+            "title": "Your personal note",
+            "description": "Optional. Useful to jot down a tip or feedback after tasting."
           },
           "summary": {
             "kicker": "Summary",
@@ -1050,7 +1012,7 @@
           },
           "note": {
             "label": "Recipe note",
-            "helper": "Optional. Useful to keep a tradeoff after testing."
+            "helper": "Optional. Useful to jot down a tip or feedback after tasting."
           },
           "tagDraft": {
             "label": "New tag",

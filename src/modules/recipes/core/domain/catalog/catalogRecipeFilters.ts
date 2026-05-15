@@ -1,18 +1,12 @@
 export const CATALOG_RECIPE_FILTER_CATEGORY_KEYS = [
   "popular",
   "type",
-  "nutrition",
-  "nutriScore",
   "dietary",
   "equipment",
 ] as const;
 
 export type CatalogRecipeFilterCategoryKey =
   (typeof CATALOG_RECIPE_FILTER_CATEGORY_KEYS)[number];
-
-export const CATALOG_RECIPE_HIDDEN_FILTER_CATEGORY_KEYS = [
-  "nutriScore",
-] as const satisfies readonly CatalogRecipeFilterCategoryKey[];
 
 export type CatalogRecipeFilterOptionDefinition = {
   id: string;
@@ -36,21 +30,6 @@ const createOption = (
 
 export const CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS = [
   createOption("popular-express", "popular", ["express", "rapide"]),
-  createOption("popular-low-calories", "popular", [
-    "faible-en-calories",
-    "low-calorie",
-  ]),
-  createOption("popular-boost-nutri", "popular", [
-    "boost-nutri",
-    "faible-en-calories",
-    "fibres-plus",
-    "omega-3",
-    "omega3",
-    "proteine",
-    "proteine-plus",
-    "proteinee",
-    "riche-en-legumes",
-  ]),
   createOption("popular-organic-vegetables", "popular", ["legumes-bio", "bio"]),
   createOption("popular-vegetarian", "popular", [
     "vegetarien",
@@ -128,30 +107,6 @@ export const CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS = [
     "jambon",
     "saucisse",
   ]),
-  createOption("nutrition-low-calories", "nutrition", [
-    "faible-en-calories",
-    "low-calorie",
-  ]),
-  createOption("nutrition-fibers-plus", "nutrition", [
-    "fibres-plus",
-    "fiber-plus",
-  ]),
-  createOption("nutrition-omega-3", "nutrition", ["omega-3", "omega3"]),
-  createOption("nutrition-protein", "nutrition", [
-    "proteine",
-    "proteine-plus",
-    "proteinee",
-    "protein",
-  ]),
-  createOption("nutrition-vegetables-rich", "nutrition", [
-    "riche-en-legumes",
-    "rich-in-vegetables",
-  ]),
-  createOption("nutri-score-a", "nutriScore", ["nutri-a", "nutriscore-a"]),
-  createOption("nutri-score-b", "nutriScore", ["nutri-b", "nutriscore-b"]),
-  createOption("nutri-score-c", "nutriScore", ["nutri-c", "nutriscore-c"]),
-  createOption("nutri-score-d", "nutriScore", ["nutri-d", "nutriscore-d"]),
-  createOption("nutri-score-e", "nutriScore", ["nutri-e", "nutriscore-e"]),
   createOption("dietary-naturally-gluten-free", "dietary", [
     "naturellement-sans-gluten",
     "sans-gluten",
@@ -169,14 +124,8 @@ export const CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS = [
   createOption("equipment-no-blender", "equipment", ["sans-mixeur"]),
 ] as const satisfies readonly CatalogRecipeFilterOptionDefinition[];
 
-const HIDDEN_FILTER_CATEGORY_KEYS = new Set<string>(
-  CATALOG_RECIPE_HIDDEN_FILTER_CATEGORY_KEYS
-);
-
 export const CATALOG_RECIPE_VISIBLE_FILTER_CATEGORY_KEYS: CatalogRecipeFilterCategoryKey[] =
-  CATALOG_RECIPE_FILTER_CATEGORY_KEYS.filter(
-    (categoryKey) => !HIDDEN_FILTER_CATEGORY_KEYS.has(categoryKey)
-  );
+  [...CATALOG_RECIPE_FILTER_CATEGORY_KEYS];
 
 export type CatalogRecipePredefinedFilterOptionId =
   (typeof CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS)[number]["id"];

@@ -23,28 +23,6 @@ import {
   mapRecipeRowToCatalogSummary,
   mapRecipeTagRowToDomain,
 } from "@/modules/recipes/infrastructure/supabase/shared/readModels";
-import {
-  getCatalogFixtureDetail,
-  listCatalogFixtureRecipePage,
-  listCatalogFixtureTags,
-} from "@/modules/recipes/infrastructure/supabase/shared/recipesFixtureData";
-
-const hasPersistedCatalogRecipes = async (
-  client: AppSupabaseClient,
-  projectId: string
-): Promise<boolean> => {
-  const { data, error } = await client
-    .from("recipes")
-    .select("id")
-    .eq("project_id", projectId)
-    .limit(1);
-
-  if (error) {
-    return handleRepositoryError(error, "Recipe", projectId);
-  }
-
-  return (data ?? []).length > 0;
-};
 
 const loadSelectedRecipeIds = async (
   client: AppSupabaseClient,
@@ -409,15 +387,6 @@ export const createCatalogRepository = (
     );
 
     if (recipePage.items.length === 0) {
-      const hasPersistedRecipes = await hasPersistedCatalogRecipes(
-        client,
-        projectId
-      );
-
-      if (!hasPersistedRecipes) {
-        return listCatalogFixtureRecipePage(filters, normalizedPagination);
-      }
-
       return {
         items: [],
         hasMore: false,
@@ -445,27 +414,12 @@ export const createCatalogRepository = (
   },
 
   async listTagsByProject(projectId) {
-    const tags = await listPersistedCatalogTags(client, projectId);
-
-    if (tags.length > 0) {
-      return tags;
-    }
-
-    const hasPersistedRecipes = await hasPersistedCatalogRecipes(
-      client,
-      projectId
-    );
-
-    if (!hasPersistedRecipes) {
-      return listCatalogFixtureTags();
-    }
-
-    return [];
+    return listPersistedCatalogTags(client, projectId);
   },
 
   async getDetail(projectId, recipeId) {
     if (!isUuid(recipeId)) {
-      return getCatalogFixtureDetail(recipeId);
+      return null;
     }
 
     const recipeGraphs = await loadRecipeGraphsByIds(client, projectId, [
@@ -474,7 +428,7 @@ export const createCatalogRepository = (
     const recipeGraph = recipeGraphs.get(recipeId);
 
     if (!recipeGraph) {
-      return getCatalogFixtureDetail(recipeId);
+      return null;
     }
 
     const { data: selectionData, error: selectionError } = await client
