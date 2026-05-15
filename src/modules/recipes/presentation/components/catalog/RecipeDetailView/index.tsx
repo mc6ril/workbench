@@ -5,6 +5,7 @@ import { useTranslation } from "@/shared/i18n";
 
 import RecipeDetailAdditionsSection from "./RecipeDetailAdditionsSection";
 import RecipeDetailIngredientsSection from "./RecipeDetailIngredientsSection";
+import RecipeDetailMetaSummary from "./RecipeDetailMetaSummary";
 import RecipeDetailStepsSection from "./RecipeDetailStepsSection";
 import RecipeDetailTagList from "./RecipeDetailTagList";
 import styles from "./styles.module.scss";
@@ -39,8 +40,6 @@ const RecipeDetailView = ({
 
   return (
     <div className={styles["recipe-detail"]}>
-      <RecipeDetailTagList tags={recipe.tags} />
-
       <RecipeDetailAdditionsSection
         additions={additionIngredients}
         canValidateAdditions={canValidateAdditions}
@@ -49,6 +48,13 @@ const RecipeDetailView = ({
         onValidateAddition={onValidateAddition}
         t={t}
       />
+
+      <RecipeDetailMetaSummary
+        servingsLabel={recipe.servingsLabel}
+        totalTimeLabel={recipe.totalTimeLabel}
+      />
+
+      <RecipeDetailTagList tags={recipe.tags} />
 
       <div className={styles["recipe-detail__content"]}>
         <RecipeDetailIngredientsSection

@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 
-import Link from "@/shared/design-system/link";
+import Button from "@/shared/design-system/button";
 import { useTranslation } from "@/shared/i18n";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { isUuid } from "@/shared/utils/uuid";
@@ -36,11 +36,15 @@ const Client = ({
 
   const renderEditAction = useCallback(
     () => (
-      <Link href={editHref} variant="secondary" ariaLabel={editAriaLabel}>
+      <Button
+        variant="publish"
+        label={editAriaLabel}
+        onClick={() => router.push(editHref)}
+      >
         {editLabel}
-      </Link>
+      </Button>
     ),
-    [editHref, editLabel, editAriaLabel]
+    [editHref, editLabel, editAriaLabel, router]
   );
   useRegisterToolbarActions(renderEditAction);
 

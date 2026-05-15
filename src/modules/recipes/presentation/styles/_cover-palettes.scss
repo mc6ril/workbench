@@ -1,0 +1,10 @@
+// Palette de couleurs par style de couverture — partagée entre tous les composants
+// qui affichent la couverture d'une recette (carte catalogue, hero détail, etc.)
+
+$recipe-cover-citrus: linear-gradient(135deg, #f5d88b 0%, #ebb26b 52%, #d58e62 100%);
+$recipe-cover-tomato: linear-gradient(135deg, #f1b089 0%, #d87b68 54%, #b6574c 100%);
+$recipe-cover-green: linear-gradient(135deg, #c5d68f 0%, #8eb488 54%, #5d8a72 100%);
+$recipe-cover-gold: linear-gradient(135deg, #f0d6a0 0%, #d7a86f 52%, #b18156 100%);
+$recipe-cover-plum: linear-gradient(135deg, #d6c0c9 0%, #aa8695 52%, #765d6f 100%);
+$recipe-cover-neutral: linear-gradient(135deg, #e7decf 0%, #ccbba6 52%, #b29787 100%);
+$recipe-cover-sage: linear-gradient(135deg, #d4dbc7 0%, #94a98e 52%, #677c69 100%);
