@@ -3,6 +3,8 @@ import { getTranslations } from "next-intl/server";
 import Badge from "@/shared/design-system/badge";
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
+import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 
 import styles from "./styles.module.scss";
 
@@ -26,14 +28,18 @@ const QuickListSummaryCard = async ({ projectId, recipes }: Props) => {
       variant="outlined"
       title={
         <div className={styles["recipes-scaffold__panel-head"]}>
-          <p className={styles["recipes-scaffold__panel-kicker"]}>
+          <Text
+            as="span"
+            variant="caption"
+            className={styles["recipes-scaffold__panel-kicker"]}
+          >
             {t("kicker")}
-          </p>
-          <h2 className={styles["recipes-scaffold__panel-title"]}>
+          </Text>
+          <Title variant="h3">
             {isEmpty
               ? t("titleEmpty")
               : t("titleFilled", { count: recipes.length })}
-          </h2>
+          </Title>
         </div>
       }
       footer={
@@ -41,7 +47,7 @@ const QuickListSummaryCard = async ({ projectId, recipes }: Props) => {
       }
     >
       {isEmpty ? (
-        <p className={styles["recipes-scaffold__helper"]}>{t("empty")}</p>
+        <Text variant="small">{t("empty")}</Text>
       ) : (
         <div className={styles["recipes-scaffold__summary-list"]}>
           {recipes.map((recipe) => (
@@ -69,9 +75,7 @@ const QuickListSummaryCard = async ({ projectId, recipes }: Props) => {
                     size="small"
                   />
                 </div>
-                <p className={styles["recipes-scaffold__helper"]}>
-                  {recipe.servingsLabel}
-                </p>
+                <Text variant="small">{recipe.servingsLabel}</Text>
               </div>
             </article>
           ))}

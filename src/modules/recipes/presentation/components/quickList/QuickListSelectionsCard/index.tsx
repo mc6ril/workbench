@@ -5,7 +5,10 @@ import { useTranslations } from "next-intl";
 import Badge from "@/shared/design-system/badge";
 import Button from "@/shared/design-system/button";
 import Card from "@/shared/design-system/card";
+import ErrorMessage from "@/shared/design-system/error_message";
 import Link from "@/shared/design-system/link";
+import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 
 import styles from "./styles.module.scss";
 
@@ -53,9 +56,12 @@ const SelectionCard = ({
           {selection.title}
         </Link>
       </div>
-      <p className={styles["recipes-scaffold__summary-meta"]}>
+      <Text
+        variant="small"
+        className={styles["recipes-scaffold__summary-meta"]}
+      >
         {selection.servingsLabel}
-      </p>
+      </Text>
     </div>
     <div className={styles["recipes-scaffold__selection-side"]}>
       <div className={styles["recipes-scaffold__actions"]}>
@@ -107,22 +113,24 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
       variant="outlined"
       title={
         <div className={styles["recipes-scaffold__panel-head"]}>
-          <p className={styles["recipes-scaffold__panel-kicker"]}>
+          <Text
+            as="span"
+            variant="caption"
+            className={styles["recipes-scaffold__panel-kicker"]}
+          >
             {t("kicker")}
-          </p>
-          <h2 className={styles["recipes-scaffold__panel-title"]}>
+          </Text>
+          <Title variant="h3">
             {totalCount === 0
               ? t("titleEmpty")
               : t("titleFilled", { count: totalCount })}
-          </h2>
+          </Title>
         </div>
       }
     >
       {totalCount === 0 ? (
         <div className={styles["recipes-scaffold__empty"]}>
-          <p className={styles["recipes-scaffold__helper"]}>
-            {t("emptyDescription")}
-          </p>
+          <Text variant="small">{t("emptyDescription")}</Text>
           <Link href={buildRecipesCatalogRoute(projectId)}>
             {t("browseCatalog")}
           </Link>
@@ -132,9 +140,13 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
           {pendingSelections.length > 0 && (
             <section className={styles["recipes-scaffold__section"]}>
               <div className={styles["recipes-scaffold__section-head"]}>
-                <p className={styles["recipes-scaffold__panel-kicker"]}>
+                <Text
+                  as="span"
+                  variant="caption"
+                  className={styles["recipes-scaffold__panel-kicker"]}
+                >
                   {t("pendingSection")}
-                </p>
+                </Text>
                 <Badge
                   label={`${pendingSelections.length}`}
                   variant="default"
@@ -178,9 +190,13 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
           {shoppingDoneSelections.length > 0 && (
             <section className={styles["recipes-scaffold__section"]}>
               <div className={styles["recipes-scaffold__section-head"]}>
-                <p className={styles["recipes-scaffold__panel-kicker"]}>
+                <Text
+                  as="span"
+                  variant="caption"
+                  className={styles["recipes-scaffold__panel-kicker"]}
+                >
                   {t("shoppingDoneSection")}
-                </p>
+                </Text>
                 <Badge
                   label={`${shoppingDoneSelections.length}`}
                   variant="info"
@@ -226,7 +242,7 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
       {(markShoppingDoneMutation.isError ||
         markAsCookedMutation.isError ||
         removeSelectionMutation.isError) && (
-        <p className={styles["recipes-scaffold__error"]}>{t("updateFailed")}</p>
+        <ErrorMessage message={t("updateFailed")} />
       )}
     </Card>
   );

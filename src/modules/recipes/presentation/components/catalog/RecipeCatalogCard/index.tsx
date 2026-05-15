@@ -3,7 +3,10 @@
 import { type MouseEvent, useEffect, useRef } from "react";
 import Image from "next/image";
 
+import ErrorMessage from "@/shared/design-system/error_message";
 import Link from "@/shared/design-system/link";
+import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
@@ -284,22 +287,22 @@ const RecipeCatalogCard = ({
         </div>
 
         <div className={styles["recipes-page__recipe-card-body"]}>
-          <h3 className={styles["recipes-page__recipe-title"]}>
-            {recipe.title}
-          </h3>
+          <Title variant="h3">{recipe.title}</Title>
 
           {recipe.totalTimeLabel ? (
-            <p className={styles["recipes-page__recipe-meta"]}>
-              {recipe.totalTimeLabel}
-            </p>
+            <Text variant="small">{recipe.totalTimeLabel}</Text>
           ) : null}
 
           {displayTags.length > 0 ? (
             <div className={styles["recipes-page__tag-row"]}>
               {displayTags.map((tagLabel) => (
-                <span key={tagLabel} className={styles["recipes-page__tag"]}>
+                <Text
+                  as="span"
+                  key={tagLabel}
+                  className={styles["recipes-page__tag"]}
+                >
                   {tagLabel}
-                </span>
+                </Text>
               ))}
             </div>
           ) : null}
@@ -307,9 +310,7 @@ const RecipeCatalogCard = ({
       </Link>
 
       {hasQuickListError ? (
-        <p className={styles["recipes-page__recipe-error"]}>
-          {t("card.quickListUpdateFailed")}
-        </p>
+        <ErrorMessage message={t("card.quickListUpdateFailed")} />
       ) : null}
     </article>
   );

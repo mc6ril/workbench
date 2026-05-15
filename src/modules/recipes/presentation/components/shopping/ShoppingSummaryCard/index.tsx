@@ -2,6 +2,8 @@ import { getTranslations } from "next-intl/server";
 
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
+import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 
 import styles from "./styles.module.scss";
 
@@ -30,25 +32,23 @@ const ShoppingSummaryCard = async ({ href, shoppingList }: Props) => {
           <span className={styles["recipes-scaffold__metric-value"]}>
             {shoppingList.pendingCount}
           </span>
-          <span className={styles["recipes-scaffold__metric-label"]}>
+          <Text as="span" variant="caption">
             {t("pendingCountLabel")}
-          </span>
+          </Text>
         </div>
         <div className={styles["recipes-scaffold__metric"]}>
           <span className={styles["recipes-scaffold__metric-value"]}>
             {shoppingList.checkedCount}
           </span>
-          <span className={styles["recipes-scaffold__metric-label"]}>
+          <Text as="span" variant="caption">
             {t("checkedCountLabel")}
-          </span>
+          </Text>
         </div>
       </div>
 
       {shoppingList.groups.length === 0 ? (
         <div className={styles["recipes-scaffold__empty"]}>
-          <p className={styles["recipes-scaffold__helper"]}>
-            {t("emptyForGeneration")}
-          </p>
+          <Text variant="small">{t("emptyForGeneration")}</Text>
         </div>
       ) : (
         <div className={styles["recipes-scaffold__shopping-groups"]}>
@@ -58,14 +58,10 @@ const ShoppingSummaryCard = async ({ href, shoppingList }: Props) => {
               className={styles["recipes-scaffold__shopping-group"]}
             >
               <div className={styles["recipes-scaffold__shopping-group-head"]}>
-                <h3
-                  className={styles["recipes-scaffold__shopping-group-title"]}
-                >
-                  {group.title}
-                </h3>
-                <span className={styles["recipes-scaffold__helper"]}>
+                <Title variant="h4">{group.title}</Title>
+                <Text as="span" variant="small">
                   {t("itemCount", { count: group.items.length })}
-                </span>
+                </Text>
               </div>
 
               <div className={styles["recipes-scaffold__shopping-items"]}>
@@ -90,13 +86,13 @@ const ShoppingSummaryCard = async ({ href, shoppingList }: Props) => {
                           styles["recipes-scaffold__shopping-item-top"]
                         }
                       >
-                        <p
+                        <Text
                           className={
                             styles["recipes-scaffold__shopping-item-label"]
                           }
                         >
                           {formatRecipeIngredientLabel(item.ingredient)}
-                        </p>
+                        </Text>
                         {isAddition ? (
                           <span className={styles["recipes-scaffold__pill"]}>
                             {t("additionBadge")}
@@ -104,22 +100,12 @@ const ShoppingSummaryCard = async ({ href, shoppingList }: Props) => {
                         ) : null}
                       </div>
 
-                      <p
-                        className={
-                          styles["recipes-scaffold__shopping-item-recipes"]
-                        }
-                      >
+                      <Text variant="small">
                         {item.recipes.map((recipe) => recipe.title).join(", ")}
-                      </p>
+                      </Text>
 
                       {item.ingredient.notes ? (
-                        <p
-                          className={
-                            styles["recipes-scaffold__shopping-item-note"]
-                          }
-                        >
-                          {item.ingredient.notes}
-                        </p>
+                        <Text variant="small">{item.ingredient.notes}</Text>
                       ) : null}
                     </article>
                   );

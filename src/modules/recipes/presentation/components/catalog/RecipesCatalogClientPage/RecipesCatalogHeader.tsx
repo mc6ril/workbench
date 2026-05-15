@@ -33,15 +33,19 @@ const RecipesCatalogHeader = ({
       </div>
 
       <div className={styles["recipes-page__catalog-summary"]}>
-        <span>
+        <Text as="span">
           {hasActiveFilters
             ? t("summary.filteredResults", { count: recipesCount })
             : t("summary.availableResults", { count: recipesCount })}
-        </span>
+        </Text>
         {isRefreshing ? (
-          <span className={styles["recipes-page__catalog-status"]}>
+          <Text
+            as="span"
+            variant="caption"
+            className={styles["recipes-page__catalog-status"]}
+          >
             {t("summary.refreshing")}
-          </span>
+          </Text>
         ) : null}
       </div>
     </div>

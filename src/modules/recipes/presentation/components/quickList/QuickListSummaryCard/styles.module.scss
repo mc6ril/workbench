@@ -4,12 +4,6 @@
 @use "@/styles/variables/spacing" as *;
 @use "@/styles/variables/typography" as *;
 
-.recipes-scaffold__helper,
-.recipes-scaffold__panel-copy {
-  color: $color-text-secondary;
-  line-height: $line-height-relaxed;
-}
-
 .recipes-scaffold__note {
   padding: $spacing-md;
   border-radius: $border-radius-md;
@@ -26,18 +20,9 @@
   display: inline-flex;
   align-items: center;
   gap: $spacing-xs;
-  color: $color-text-secondary;
-  font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
   letter-spacing: $letter-spacing-wide;
   text-transform: uppercase;
-}
-
-.recipes-scaffold__panel-title {
-  margin: 0;
-  color: $color-text;
-  font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
 }
 
 .recipes-scaffold__summary-copy,
@@ -74,8 +59,6 @@
 }
 
 .recipes-scaffold__summary-meta {
-  color: $color-text-secondary;
-  font-size: $font-size-sm;
   white-space: nowrap;
 }
 

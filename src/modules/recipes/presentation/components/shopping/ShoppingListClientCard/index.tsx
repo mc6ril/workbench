@@ -3,7 +3,10 @@
 import { useTranslations } from "next-intl";
 
 import Card from "@/shared/design-system/card";
+import ErrorMessage from "@/shared/design-system/error_message";
 import Link from "@/shared/design-system/link";
+import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 
 import styles from "./styles.module.scss";
 
@@ -45,23 +48,23 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
           <span className={styles["recipes-scaffold__metric-value"]}>
             {shoppingList.pendingCount}
           </span>
-          <span className={styles["recipes-scaffold__metric-label"]}>
+          <Text as="span" variant="caption">
             {t("pendingCountLabel")}
-          </span>
+          </Text>
         </div>
         <div className={styles["recipes-scaffold__metric"]}>
           <span className={styles["recipes-scaffold__metric-value"]}>
             {shoppingList.checkedCount}
           </span>
-          <span className={styles["recipes-scaffold__metric-label"]}>
+          <Text as="span" variant="caption">
             {t("checkedCountLabel")}
-          </span>
+          </Text>
         </div>
       </div>
 
       {!hasItems ? (
         <div className={styles["recipes-scaffold__empty"]}>
-          <p className={styles["recipes-scaffold__helper"]}>{t("empty")}</p>
+          <Text variant="small">{t("empty")}</Text>
           <Link href={buildRecipesQuickListRoute(projectId)}>
             {t("viewMeals")}
           </Link>
@@ -74,14 +77,10 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
               className={styles["recipes-scaffold__shopping-group"]}
             >
               <div className={styles["recipes-scaffold__shopping-group-head"]}>
-                <h3
-                  className={styles["recipes-scaffold__shopping-group-title"]}
-                >
-                  {group.title}
-                </h3>
-                <span className={styles["recipes-scaffold__helper"]}>
+                <Title variant="h4">{group.title}</Title>
+                <Text as="span" variant="small">
                   {t("itemCount", { count: group.items.length })}
-                </span>
+                </Text>
               </div>
 
               <div className={styles["recipes-scaffold__shopping-items"]}>
@@ -138,13 +137,14 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
                             styles["recipes-scaffold__shopping-item-top"]
                           }
                         >
-                          <span
+                          <Text
+                            as="span"
                             className={
                               styles["recipes-scaffold__shopping-item-label"]
                             }
                           >
                             {formatRecipeIngredientLabel(item.ingredient)}
-                          </span>
+                          </Text>
                           {isAddition ? (
                             <span className={styles["recipes-scaffold__pill"]}>
                               {t("additionBadge")}
@@ -152,24 +152,16 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
                           ) : null}
                         </span>
 
-                        <span
-                          className={
-                            styles["recipes-scaffold__shopping-item-recipes"]
-                          }
-                        >
+                        <Text as="span" variant="small">
                           {item.recipes
                             .map((recipe) => recipe.title)
                             .join(", ")}
-                        </span>
+                        </Text>
 
                         {item.ingredient.notes ? (
-                          <span
-                            className={
-                              styles["recipes-scaffold__shopping-item-note"]
-                            }
-                          >
+                          <Text as="span" variant="small">
                             {item.ingredient.notes}
-                          </span>
+                          </Text>
                         ) : null}
                       </span>
                     </button>
@@ -182,7 +174,7 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
       )}
 
       {setItemCheckedMutation.isError ? (
-        <p className={styles["recipes-scaffold__error"]}>{t("updateFailed")}</p>
+        <ErrorMessage message={t("updateFailed")} />
       ) : null}
     </Card>
   );
