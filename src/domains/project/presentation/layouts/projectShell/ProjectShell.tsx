@@ -8,7 +8,6 @@ import { useTranslations } from "@/shared/i18n";
 
 import type { ProjectShellSnapshot } from "@/domains/project/core/domain/projectShell.types";
 import DashboardShell from "@/domains/project/presentation/components/dashboardShell";
-import ProjectRealtime from "@/domains/project/presentation/components/projectRealtime/ProjectRealtime";
 import ProjectToolbarSlot from "@/domains/project/presentation/components/projectToolbarSlot/ProjectToolbarSlot";
 import SidebarNavigation from "@/domains/project/presentation/components/sidebarNavigation/SidebarNavigation";
 import { ToolbarBreadcrumbProvider } from "@/domains/project/presentation/contexts/ToolbarBreadcrumb";
@@ -31,7 +30,6 @@ const ProjectShellContent = ({
 
   return (
     <ToolbarBreadcrumbProvider>
-      <ProjectRealtime projectId={projectId} />
       <SkipLink targetId={mainContentId} label={tSkipLink("label")} />
       <DashboardShell
         sidebar={<SidebarNavigation projectId={projectId} />}
