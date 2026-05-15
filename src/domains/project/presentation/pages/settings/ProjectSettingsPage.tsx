@@ -145,7 +145,7 @@ const ProjectSettingsPage = ({ projectId }: ProjectSettingsPageProps) => {
 
     return new Intl.DateTimeFormat(intlLocale, {
       dateStyle: "medium",
-    }).format(project.createdAt);
+    }).format(new Date(project.createdAt));
   }, [intlLocale, project]);
 
   const projectErrorMessage = projectError

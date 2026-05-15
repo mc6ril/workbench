@@ -20,6 +20,7 @@ export const useListRecipeTags = (
       listCatalogRecipeTags({
         catalogRepository,
       })(projectId),
+    staleTime: 7 * 24 * 60 * 60 * 1000,
     enabled: !!projectId && (options?.enabled ?? true),
     initialData: options?.initialData,
   });

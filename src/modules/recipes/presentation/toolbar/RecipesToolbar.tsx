@@ -73,7 +73,7 @@ const RecipesToolbar = ({ projectId }: Props) => {
       normalizePath(pathname).startsWith(`${catalogRoute}/${seg}`)
     );
 
-  const { childLabel } = useToolbarBreadcrumb();
+  const { childLabel, renderActions } = useToolbarBreadcrumb();
   const activeFilterCount = (search ? 1 : 0) + selectedFilterOptionIds.length;
 
   useEffect(() => {
@@ -147,6 +147,7 @@ const RecipesToolbar = ({ projectId }: Props) => {
           parentLabel: pageTitle,
           parentHref: catalogRoute,
           childLabel,
+          actions: renderActions?.(),
         }}
       />
     );
@@ -156,7 +157,7 @@ const RecipesToolbar = ({ projectId }: Props) => {
     <ProjectToolbar
       pageTitle={pageTitle}
       showSearch={isCatalogRoute}
-      addActionType={isCatalogRoute ? "ticket" : null}
+      addActionType={isCatalogRoute ? "recipe" : null}
       addActionLabel={tCatalog("toolbar.addRecipe")}
       addActionAriaLabel={tCatalog("toolbar.addRecipeAriaLabel")}
       searchValue={isCatalogRoute ? searchInput : ""}

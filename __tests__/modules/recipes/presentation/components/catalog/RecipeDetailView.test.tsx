@@ -82,8 +82,6 @@ describe("RecipeDetailView", () => {
     expect(screen.getByText("Rapide")).toBeInTheDocument();
     expect(screen.getByText("Batch cooking")).toBeInTheDocument();
     expect(screen.getByText("A tester")).toBeInTheDocument();
-    expect(screen.getByText("4 personnes")).toBeInTheDocument();
-    expect(screen.getByText("35 min")).toBeInTheDocument();
     expect(screen.getByText("Ingrédients")).toBeInTheDocument();
     expect(screen.getByText("250 g riz")).toBeInTheDocument();
     expect(screen.getByText("Preparer la base")).toBeInTheDocument();

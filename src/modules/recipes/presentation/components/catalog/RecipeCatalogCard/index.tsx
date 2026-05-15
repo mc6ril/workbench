@@ -3,7 +3,10 @@
 import { type MouseEvent, useEffect, useRef } from "react";
 import Image from "next/image";
 
+import ErrorMessage from "@/shared/design-system/error_message";
 import Link from "@/shared/design-system/link";
+import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
@@ -119,6 +122,7 @@ const RecipeCatalogCard = ({
     removeSelectionMutation.isPending &&
     removeSelectionMutation.variables?.selectionId === quickListSelectionId;
   const isUpdatingQuickList = isSelecting || isRemoving;
+  const isInQuickList = quickListSelectionId !== null;
   const popularTag = findCategoryOption(recipe.tags, "popular");
   const typeTag =
     findCategoryOption(
@@ -141,11 +145,9 @@ const RecipeCatalogCard = ({
     popularTag ? t(`sheet.options.${popularTag.optionId}`) : null,
     ...customTags.map((tag) => tag.label),
   ].filter((tagLabel): tagLabel is string => Boolean(tagLabel));
-  const quickListActionLabel = recipe.isInQuickList
+  const quickListActionLabel = isInQuickList
     ? t("card.removeFromQuickListAriaLabel", { title: recipe.title })
     : t("card.addToQuickListAriaLabel", { title: recipe.title });
-  const canToggleQuickList =
-    !recipe.isInQuickList || Boolean(quickListSelectionId);
   const hasQuickListError =
     (selectRecipeMutation.isError &&
       selectRecipeMutation.variables?.recipeId === recipe.id) ||
@@ -195,7 +197,7 @@ const RecipeCatalogCard = ({
   const handleQuickListToggle = (event: MouseEvent<HTMLButtonElement>) => {
     const sourceElement = event.currentTarget;
 
-    if (recipe.isInQuickList && quickListSelectionId) {
+    if (quickListSelectionId) {
       pendingQuickListFeedbackRef.current = {
         mutation: "remove",
         sourceElement,
@@ -223,7 +225,7 @@ const RecipeCatalogCard = ({
     <article
       className={cx(
         styles["recipes-page__recipe-card"],
-        recipe.isInQuickList && styles["recipes-page__recipe-card--selected"]
+        isInQuickList && styles["recipes-page__recipe-card--selected"]
       )}
     >
       <div className={styles["recipes-page__recipe-card-toggle-row"]}>
@@ -241,17 +243,16 @@ const RecipeCatalogCard = ({
           type="button"
           className={cx(
             styles["recipes-page__quick-list-toggle"],
-            recipe.isInQuickList &&
-              styles["recipes-page__quick-list-toggle--selected"]
+            isInQuickList && styles["recipes-page__quick-list-toggle--selected"]
           )}
           aria-busy={isUpdatingQuickList}
           aria-label={quickListActionLabel}
-          aria-pressed={recipe.isInQuickList}
-          disabled={!canToggleQuickList || isUpdatingQuickList}
+          aria-pressed={isInQuickList}
+          disabled={isUpdatingQuickList}
           title={quickListActionLabel}
           onClick={handleQuickListToggle}
         >
-          <QuickListToggleIcon selected={recipe.isInQuickList} />
+          <QuickListToggleIcon selected={isInQuickList} />
         </button>
       </div>
 
@@ -286,22 +287,22 @@ const RecipeCatalogCard = ({
         </div>
 
         <div className={styles["recipes-page__recipe-card-body"]}>
-          <h3 className={styles["recipes-page__recipe-title"]}>
-            {recipe.title}
-          </h3>
+          <Title variant="h3">{recipe.title}</Title>
 
           {recipe.totalTimeLabel ? (
-            <p className={styles["recipes-page__recipe-meta"]}>
-              {recipe.totalTimeLabel}
-            </p>
+            <Text variant="small">{recipe.totalTimeLabel}</Text>
           ) : null}
 
           {displayTags.length > 0 ? (
             <div className={styles["recipes-page__tag-row"]}>
               {displayTags.map((tagLabel) => (
-                <span key={tagLabel} className={styles["recipes-page__tag"]}>
+                <Text
+                  as="span"
+                  key={tagLabel}
+                  className={styles["recipes-page__tag"]}
+                >
                   {tagLabel}
-                </span>
+                </Text>
               ))}
             </div>
           ) : null}
@@ -309,9 +310,7 @@ const RecipeCatalogCard = ({
       </Link>
 
       {hasQuickListError ? (
-        <p className={styles["recipes-page__recipe-error"]}>
-          {t("card.quickListUpdateFailed")}
-        </p>
+        <ErrorMessage message={t("card.quickListUpdateFailed")} />
       ) : null}
     </article>
   );

@@ -1,7 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import Card from "@/shared/design-system/card";
+import ErrorMessage from "@/shared/design-system/error_message";
 import Link from "@/shared/design-system/link";
+import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 
 import styles from "./styles.module.scss";
 
@@ -20,6 +25,7 @@ type Props = {
 };
 
 const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
+  const t = useTranslations("pages.recipes.shopping");
   const shoppingListQuery = useListShoppingList(projectId, {
     initialData: initialShoppingList,
   });
@@ -30,52 +36,37 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
   return (
     <Card
       variant="outlined"
-      title={
-        <div className={styles["recipes-scaffold__panel-head"]}>
-          <p className={styles["recipes-scaffold__panel-kicker"]}>Courses</p>
-          <h2 className={styles["recipes-scaffold__panel-title"]}>
-            Todo list generee depuis les recettes actives
-          </h2>
-        </div>
-      }
+      title={t("title")}
       footer={
         <Link href={buildRecipesQuickListRoute(projectId)}>
-          Retour a la quick list
+          {t("viewMeals")}
         </Link>
       }
     >
-      <p className={styles["recipes-scaffold__panel-copy"]}>
-        La generation reste prudente: on fusionne seulement les lignes
-        compatibles, les ajouts a tester restent visibles et chaque item peut
-        etre coche.
-      </p>
-
       <div className={styles["recipes-scaffold__shopping-stats"]}>
         <div className={styles["recipes-scaffold__metric"]}>
           <span className={styles["recipes-scaffold__metric-value"]}>
             {shoppingList.pendingCount}
           </span>
-          <span className={styles["recipes-scaffold__metric-label"]}>
-            lignes encore a acheter
-          </span>
+          <Text as="span" variant="caption">
+            {t("pendingCountLabel")}
+          </Text>
         </div>
         <div className={styles["recipes-scaffold__metric"]}>
           <span className={styles["recipes-scaffold__metric-value"]}>
             {shoppingList.checkedCount}
           </span>
-          <span className={styles["recipes-scaffold__metric-label"]}>
-            lignes deja cochees
-          </span>
+          <Text as="span" variant="caption">
+            {t("checkedCountLabel")}
+          </Text>
         </div>
       </div>
 
       {!hasItems ? (
         <div className={styles["recipes-scaffold__empty"]}>
-          <p className={styles["recipes-scaffold__helper"]}>
-            Aucune recette active pour generer des courses pour le moment.
-          </p>
+          <Text variant="small">{t("empty")}</Text>
           <Link href={buildRecipesQuickListRoute(projectId)}>
-            Revenir a la quick list
+            {t("viewMeals")}
           </Link>
         </div>
       ) : (
@@ -86,14 +77,10 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
               className={styles["recipes-scaffold__shopping-group"]}
             >
               <div className={styles["recipes-scaffold__shopping-group-head"]}>
-                <h3
-                  className={styles["recipes-scaffold__shopping-group-title"]}
-                >
-                  {group.title}
-                </h3>
-                <span className={styles["recipes-scaffold__helper"]}>
-                  {group.items.length} ligne{group.items.length > 1 ? "s" : ""}
-                </span>
+                <Title variant="h4">{group.title}</Title>
+                <Text as="span" variant="small">
+                  {t("itemCount", { count: group.items.length })}
+                </Text>
               </div>
 
               <div className={styles["recipes-scaffold__shopping-items"]}>
@@ -150,38 +137,31 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
                             styles["recipes-scaffold__shopping-item-top"]
                           }
                         >
-                          <span
+                          <Text
+                            as="span"
                             className={
                               styles["recipes-scaffold__shopping-item-label"]
                             }
                           >
                             {formatRecipeIngredientLabel(item.ingredient)}
-                          </span>
+                          </Text>
                           {isAddition ? (
                             <span className={styles["recipes-scaffold__pill"]}>
-                              Ajout
+                              {t("additionBadge")}
                             </span>
                           ) : null}
                         </span>
 
-                        <span
-                          className={
-                            styles["recipes-scaffold__shopping-item-recipes"]
-                          }
-                        >
+                        <Text as="span" variant="small">
                           {item.recipes
                             .map((recipe) => recipe.title)
                             .join(", ")}
-                        </span>
+                        </Text>
 
                         {item.ingredient.notes ? (
-                          <span
-                            className={
-                              styles["recipes-scaffold__shopping-item-note"]
-                            }
-                          >
+                          <Text as="span" variant="small">
                             {item.ingredient.notes}
-                          </span>
+                          </Text>
                         ) : null}
                       </span>
                     </button>
@@ -194,9 +174,7 @@ const ShoppingListClientCard = ({ projectId, initialShoppingList }: Props) => {
       )}
 
       {setItemCheckedMutation.isError ? (
-        <p className={styles["recipes-scaffold__error"]}>
-          La shopping list n&apos;a pas pu etre mise a jour. Reessayez.
-        </p>
+        <ErrorMessage message={t("updateFailed")} />
       ) : null}
     </Card>
   );

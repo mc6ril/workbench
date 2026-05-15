@@ -1,6 +1,10 @@
+import { getTranslations } from "next-intl/server";
+
 import Badge from "@/shared/design-system/badge";
 import Card from "@/shared/design-system/card";
 import Link from "@/shared/design-system/link";
+import Text from "@/shared/design-system/text";
+import Title from "@/shared/design-system/title";
 
 import styles from "./styles.module.scss";
 
@@ -15,7 +19,8 @@ type Props = {
   recipes: QuickListRecipe[];
 };
 
-const QuickListSummaryCard = ({ projectId, recipes }: Props) => {
+const QuickListSummaryCard = async ({ projectId, recipes }: Props) => {
+  const t = await getTranslations("pages.recipes.quickListSummary");
   const isEmpty = recipes.length === 0;
 
   return (
@@ -23,28 +28,26 @@ const QuickListSummaryCard = ({ projectId, recipes }: Props) => {
       variant="outlined"
       title={
         <div className={styles["recipes-scaffold__panel-head"]}>
-          <p className={styles["recipes-scaffold__panel-kicker"]}>Quick list</p>
-          <h2 className={styles["recipes-scaffold__panel-title"]}>
-            {isEmpty ? "Visible même à vide" : "Repas retenus pour la semaine"}
-          </h2>
+          <Text
+            as="span"
+            variant="caption"
+            className={styles["recipes-scaffold__panel-kicker"]}
+          >
+            {t("kicker")}
+          </Text>
+          <Title variant="h3">
+            {isEmpty
+              ? t("titleEmpty")
+              : t("titleFilled", { count: recipes.length })}
+          </Title>
         </div>
       }
       footer={
-        <Link href={buildRecipesQuickListRoute(projectId)}>
-          Ouvrir la quick list
-        </Link>
+        <Link href={buildRecipesQuickListRoute(projectId)}>{t("open")}</Link>
       }
     >
-      <p className={styles["recipes-scaffold__panel-copy"]}>
-        {isEmpty
-          ? "La quick list garde sa place dans le parcours, même avant la première sélection."
-          : "Le résumé garde les recettes actives lisibles depuis les autres écrans du module."}
-      </p>
-
       {isEmpty ? (
-        <p className={styles["recipes-scaffold__note"]}>
-          Aucune recette active pour l&apos;instant.
-        </p>
+        <Text variant="small">{t("empty")}</Text>
       ) : (
         <div className={styles["recipes-scaffold__summary-list"]}>
           {recipes.map((recipe) => (
@@ -60,15 +63,20 @@ const QuickListSummaryCard = ({ projectId, recipes }: Props) => {
                   >
                     {recipe.title}
                   </Link>
-                  <Badge label="Active" variant="success" size="small" />
+                  <Badge
+                    label={
+                      recipe.status === "shopping_done"
+                        ? t("shoppingDoneBadge")
+                        : t("pendingBadge")
+                    }
+                    variant={
+                      recipe.status === "shopping_done" ? "info" : "success"
+                    }
+                    size="small"
+                  />
                 </div>
-                <p className={styles["recipes-scaffold__helper"]}>
-                  {recipe.note ?? "Recette retenue pour un prochain repas."}
-                </p>
+                <Text variant="small">{recipe.servingsLabel}</Text>
               </div>
-              <span className={styles["recipes-scaffold__summary-meta"]}>
-                {recipe.servingsLabel}
-              </span>
             </article>
           ))}
         </div>

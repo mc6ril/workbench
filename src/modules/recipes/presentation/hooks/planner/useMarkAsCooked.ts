@@ -2,20 +2,20 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { SelectRecipeInput } from "@/modules/recipes/core/domain/planner/quickList.types";
-import { selectRecipe } from "@/modules/recipes/core/usecases/planner/selectRecipe";
+import type { MarkAsCookedInput } from "@/modules/recipes/core/domain/planner/quickList.types";
+import { markAsCooked } from "@/modules/recipes/core/usecases/planner/markAsCooked";
 import { plannerRepository } from "@/modules/recipes/infrastructure/supabase/repositories";
 import { recipesQueryKeys } from "@/modules/recipes/queryKeys";
 
-export const useSelectRecipe = () => {
+export const useMarkAsCooked = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: SelectRecipeInput) =>
-      selectRecipe({
+    mutationFn: (input: MarkAsCookedInput) =>
+      markAsCooked({
         plannerRepository,
       })(input),
-    onSuccess: (_selection, variables) => {
+    onSuccess: (_result, variables) => {
       void queryClient.invalidateQueries({
         queryKey: recipesQueryKeys.planner.quickList(variables.projectId),
         refetchType: "active",

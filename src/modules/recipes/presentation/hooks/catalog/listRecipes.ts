@@ -31,6 +31,7 @@ export const useListRecipes = (
       }),
     initialPageParam: null as CatalogRecipeListCursor | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    staleTime: 7 * 24 * 60 * 60 * 1000,
     enabled: !!projectId && (options?.enabled ?? true),
     initialData: options?.initialData
       ? {

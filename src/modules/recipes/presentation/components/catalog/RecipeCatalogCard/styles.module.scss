@@ -4,6 +4,7 @@
 @use "@/styles/variables/shadows" as *;
 @use "@/styles/variables/spacing" as *;
 @use "@/styles/variables/typography" as *;
+@use "@/modules/recipes/presentation/styles/cover-palettes" as cover;
 
 .recipes-page__recipe-card {
   display: flex;
@@ -119,7 +120,7 @@
   text-decoration: none;
 }
 
-.recipes-page__recipe-card-link:hover .recipes-page__recipe-title {
+.recipes-page__recipe-card-link:hover :is(h3) {
   color: $color-accent;
 }
 
@@ -166,7 +167,7 @@
       rgba(255, 255, 255, 0.7),
       transparent 34%
     ),
-    linear-gradient(135deg, #f5d88b 0%, #ebb26b 52%, #d58e62 100%);
+    cover.$recipe-cover-citrus;
 }
 
 .recipes-page__recipe-media--tomato {
@@ -176,7 +177,7 @@
       rgba(255, 255, 255, 0.75),
       transparent 30%
     ),
-    linear-gradient(135deg, #f1b089 0%, #d87b68 54%, #b6574c 100%);
+    cover.$recipe-cover-tomato;
 }
 
 .recipes-page__recipe-media--green {
@@ -186,7 +187,7 @@
       rgba(255, 255, 255, 0.78),
       transparent 30%
     ),
-    linear-gradient(135deg, #c5d68f 0%, #8eb488 54%, #5d8a72 100%);
+    cover.$recipe-cover-green;
 }
 
 .recipes-page__recipe-media--gold {
@@ -196,7 +197,7 @@
       rgba(255, 255, 255, 0.76),
       transparent 30%
     ),
-    linear-gradient(135deg, #f0d6a0 0%, #d7a86f 52%, #b18156 100%);
+    cover.$recipe-cover-gold;
 }
 
 .recipes-page__recipe-media--plum {
@@ -206,7 +207,7 @@
       rgba(255, 255, 255, 0.74),
       transparent 34%
     ),
-    linear-gradient(135deg, #d6c0c9 0%, #aa8695 52%, #765d6f 100%);
+    cover.$recipe-cover-plum;
 }
 
 .recipes-page__recipe-media--neutral {
@@ -216,7 +217,7 @@
       rgba(255, 255, 255, 0.7),
       transparent 32%
     ),
-    linear-gradient(135deg, #e7decf 0%, #ccbba6 52%, #b29787 100%);
+    cover.$recipe-cover-neutral;
 }
 
 .recipes-page__recipe-media--sage {
@@ -226,7 +227,7 @@
       rgba(255, 255, 255, 0.76),
       transparent 30%
     ),
-    linear-gradient(135deg, #d4dbc7 0%, #94a98e 52%, #677c69 100%);
+    cover.$recipe-cover-sage;
 }
 
 .recipes-page__recipe-card-body {
@@ -236,17 +237,7 @@
   padding: $spacing-md;
 }
 
-.recipes-page__recipe-title {
-  margin: 0;
-  color: $color-text;
-  font-size: $font-size-lg;
-  line-height: $line-height-tight;
-}
-
 .recipes-page__recipe-meta {
-  margin: 0;
-  color: $color-text-secondary;
-  font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
 }
 
@@ -266,8 +257,6 @@
   border: $border-width solid rgba(var(--shadow-color), 0.08);
   border-radius: $border-radius-full;
   background: rgba(var(--shadow-color), 0.05);
-  color: $color-text-secondary;
-  font-size: $font-size-sm;
   text-decoration: none;
   transition:
     transform $animation-duration-base $easing-ease-out,
@@ -275,10 +264,4 @@
     background-color $animation-duration-base $easing-ease-out,
     border-color $animation-duration-base $easing-ease-out,
     color $animation-duration-base $easing-ease-out;
-}
-
-.recipes-page__recipe-error {
-  margin: 0 $spacing-md $spacing-md;
-  color: $color-error;
-  font-size: $font-size-sm;
 }
