@@ -1,0 +1,154 @@
+@use "@/styles/variables/animations" as *;
+@use "@/styles/variables/borders" as *;
+@use "@/styles/variables/colors" as *;
+@use "@/styles/variables/spacing" as *;
+@use "@/styles/variables/typography" as *;
+@use "@/modules/recipes/presentation/styles/cover-palettes" as cover;
+
+.cooking-history {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.cooking-history__kicker {
+  margin: 0;
+  color: $color-text-secondary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+}
+
+.cooking-history__scroll {
+  display: flex;
+  gap: $spacing-sm;
+  overflow-x: auto;
+  padding-bottom: $spacing-xs;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--shadow-color), 0.12) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cooking-history__scroll::-webkit-scrollbar {
+  height: 3px;
+}
+
+.cooking-history__scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cooking-history__scroll::-webkit-scrollbar-thumb {
+  background: rgba(var(--shadow-color), 0.12);
+  border-radius: $border-radius-full;
+}
+
+.cooking-history__card {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: $spacing-xs;
+  width: 7rem;
+  color: inherit;
+  text-decoration: none;
+  transition: transform $animation-duration-base $easing-ease-out;
+}
+
+.cooking-history__card:hover {
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.cooking-history__card:focus-visible {
+  outline: 2px solid rgba(var(--shadow-color-accent), 0.45);
+  outline-offset: 2px;
+  border-radius: $border-radius-sm;
+}
+
+.cooking-history__card-media {
+  width: 7rem;
+  height: 4.5rem;
+  border-radius: $border-radius-md;
+  overflow: hidden;
+}
+
+.cooking-history__card-media--citrus {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(255, 255, 255, 0.7),
+      transparent 34%
+    ),
+    cover.$recipe-cover-citrus;
+}
+
+.cooking-history__card-media--tomato {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(255, 255, 255, 0.75),
+      transparent 30%
+    ),
+    cover.$recipe-cover-tomato;
+}
+
+.cooking-history__card-media--green {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(255, 255, 255, 0.78),
+      transparent 30%
+    ),
+    cover.$recipe-cover-green;
+}
+
+.cooking-history__card-media--gold {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(255, 255, 255, 0.76),
+      transparent 30%
+    ),
+    cover.$recipe-cover-gold;
+}
+
+.cooking-history__card-media--plum {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(255, 255, 255, 0.74),
+      transparent 34%
+    ),
+    cover.$recipe-cover-plum;
+}
+
+.cooking-history__card-media--neutral {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(255, 255, 255, 0.7),
+      transparent 32%
+    ),
+    cover.$recipe-cover-neutral;
+}
+
+.cooking-history__card-media--sage {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(255, 255, 255, 0.76),
+      transparent 30%
+    ),
+    cover.$recipe-cover-sage;
+}
+
+.cooking-history__card-title {
+  display: -webkit-box;
+  overflow: hidden;
+  color: $color-text;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}

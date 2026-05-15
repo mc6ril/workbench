@@ -172,6 +172,7 @@ describe("RecipesCatalogClientPage", () => {
         }}
         initialTags={[]}
         quickListRecipes={[]}
+        initialCookingHistory={[]}
       />
     );
 
@@ -269,6 +270,7 @@ describe("RecipesCatalogClientPage", () => {
         }}
         initialTags={[]}
         quickListRecipes={[]}
+        initialCookingHistory={[]}
       />
     );
 
@@ -332,6 +334,7 @@ describe("RecipesCatalogClientPage", () => {
         }}
         initialTags={[]}
         quickListRecipes={[]}
+        initialCookingHistory={[]}
       />
     );
 
@@ -392,6 +395,7 @@ describe("RecipesCatalogClientPage", () => {
           },
         ]}
         quickListRecipes={[]}
+        initialCookingHistory={[]}
       />
     );
 

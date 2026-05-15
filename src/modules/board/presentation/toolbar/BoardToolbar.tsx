@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useIsRestoring } from "@tanstack/react-query";
 
 import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslations } from "@/shared/i18n";
@@ -67,8 +68,11 @@ const BoardToolbar = ({ projectId }: Props) => {
     initializeProject(projectId);
   }, [initializeProject, projectId]);
 
+  const isRestoring = useIsRestoring();
   const { data: projectMembersData } = useProjectMembers(projectId);
-  const projectMembers = projectMembersData ?? EMPTY_PROJECT_MEMBERS;
+  const projectMembers = isRestoring
+    ? EMPTY_PROJECT_MEMBERS
+    : (projectMembersData ?? EMPTY_PROJECT_MEMBERS);
 
   const pageTitle = tSidebar(`items.${boardViewConfig.sidebarLabelKey}`);
 

@@ -59,7 +59,7 @@ const getMemberEmail = (member: ProjectMember): string | null => {
 const isActiveInvitation = (invitation: ProjectInvitation): boolean => {
   return (
     invitation.status === InvitationStatus.PENDING &&
-    invitation.expiresAt.getTime() > Date.now()
+    new Date(invitation.expiresAt).getTime() > Date.now()
   );
 };
 
@@ -156,7 +156,7 @@ const ProjectPeopleSettingsSection = ({
 
   const formatDate = useCallback(
     (value: Date) => {
-      return dateFormatter.format(value);
+      return dateFormatter.format(new Date(value));
     },
     [dateFormatter]
   );

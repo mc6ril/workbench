@@ -2,10 +2,11 @@
 
 import { useCallback, useState } from "react";
 
-import Button from "@/shared/design-system/button";
 import { useTranslation } from "@/shared/i18n";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { isUuid } from "@/shared/utils/uuid";
+
+import RecipeDetailToolbarMenu from "./RecipeDetailToolbarMenu";
 
 import {
   useRegisterToolbarActions,
@@ -36,15 +37,13 @@ const Client = ({
 
   const renderEditAction = useCallback(
     () => (
-      <Button
-        variant="publish"
-        label={editAriaLabel}
-        onClick={() => router.push(editHref)}
-      >
-        {editLabel}
-      </Button>
+      <RecipeDetailToolbarMenu
+        editHref={editHref}
+        editLabel={editLabel}
+        editAriaLabel={editAriaLabel}
+      />
     ),
-    [editHref, editLabel, editAriaLabel, router]
+    [editHref, editLabel, editAriaLabel]
   );
   useRegisterToolbarActions(renderEditAction);
 
