@@ -2,10 +2,11 @@
 
 import { useRef } from "react";
 
+import CloseButton from "@/shared/design-system/close_button";
 import Link from "@/shared/design-system/link";
+import { useModalAccessibility } from "@/shared/design-system/modal/use_modal_accessibility";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
-import { useModalAccessibility } from "@/shared/design-system/modal/use_modal_accessibility";
 import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
@@ -61,6 +62,10 @@ const RecipesQuickListRail = ({
             >
               {t("toolbar.quickList")}
             </Title>
+            <CloseButton
+              ariaLabel={t("toolbar.quickListHideAriaLabel")}
+              onClick={onClose}
+            />
           </div>
 
           <div className={styles["recipes-page__quick-list-items"]}>
