@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useRef } from "react";
 
 import Link from "@/shared/design-system/link";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
+import { useModalAccessibility } from "@/shared/design-system/modal/use_modal_accessibility";
+import { useTranslation } from "@/shared/i18n";
 
 import styles from "./styles.module.scss";
 
@@ -26,23 +28,10 @@ const RecipesQuickListRail = ({
   onClose,
   onRecipeNavigate,
 }: Props) => {
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
+  const t = useTranslation("pages.recipes.catalog");
+  const drawerRef = useRef<HTMLDivElement>(null);
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isOpen, onClose]);
+  useModalAccessibility({ isOpen, modalRef: drawerRef, onClose });
 
   if (!isOpen) {
     return null;
@@ -55,8 +44,11 @@ const RecipesQuickListRail = ({
       role="presentation"
     >
       <aside
+        ref={drawerRef}
         className={styles["recipes-page__quick-list-drawer"]}
-        aria-label="Quick list recipes"
+        aria-label={t("toolbar.quickList")}
+        aria-modal="true"
+        role="dialog"
         onClick={(event) => {
           event.stopPropagation();
         }}
@@ -67,7 +59,7 @@ const RecipesQuickListRail = ({
               variant="h2"
               className={styles["recipes-page__quick-list-title"]}
             >
-              Quick list
+              {t("toolbar.quickList")}
             </Title>
           </div>
 
