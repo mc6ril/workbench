@@ -1,13 +1,10 @@
 @use "@/styles/variables/breakpoints" as *;
-@use "@/styles/variables/spacing" as *;
 
 .shopping-page {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
-  gap: $spacing-lg;
-  align-items: start;
+  width: 100%;
 
-  @media (max-width: $breakpoint-lg) {
-    grid-template-columns: 1fr;
+  @media (min-width: $breakpoint-md) {
+    max-width: 52rem;
+    margin: 0 auto;
   }
 }
