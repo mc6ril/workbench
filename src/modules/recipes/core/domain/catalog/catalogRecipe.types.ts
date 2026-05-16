@@ -58,6 +58,8 @@ export type CatalogRecipeListInput = {
   pagination?: CatalogRecipeListPaginationInput;
 };
 
+export type CatalogRecipeHeader = Pick<Recipe, "id" | "title">;
+
 export type CatalogRecipeSummary = Pick<
   Recipe,
   | "id"
