@@ -103,21 +103,9 @@
   padding: 0 $spacing-md;
   border: $border-width solid rgba(var(--shadow-color), 0.08);
   border-radius: $border-radius-full;
-  color: $color-text;
-  font-size: $font-size-sm;
-  text-decoration: none;
-  background: rgba(var(--shadow-color), 0.03);
-  transition:
-    transform $animation-duration-base $easing-ease-out,
-    box-shadow $animation-duration-base $easing-ease-out,
-    background-color $animation-duration-base $easing-ease-out,
-    border-color $animation-duration-base $easing-ease-out,
-    color $animation-duration-base $easing-ease-out;
-}
-
-.recipes-page__tag {
   background: rgba(var(--shadow-color), 0.05);
   color: $color-text-secondary;
+  font-size: $font-size-sm;
 }
 
 .recipes-page__catalog-layout {
