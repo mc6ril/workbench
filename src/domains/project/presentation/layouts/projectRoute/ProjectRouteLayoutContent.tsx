@@ -2,7 +2,10 @@ import { redirect } from "next/navigation";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { createLoggerFactory } from "@/shared/observability";
-import { isDynamicServerUsageError } from "@/shared/utils/nextErrors";
+import {
+  isDynamicServerUsageError,
+  isNotFoundError,
+} from "@/shared/utils/nextErrors";
 
 import { loadProjectShellData } from "@/domains/project/infrastructure/server/loadProjectShellData";
 import ProjectShell from "@/domains/project/presentation/layouts/projectShell/ProjectShell";
@@ -30,7 +33,7 @@ const ProjectRouteLayoutContent = async ({ children, projectId }: Props) => {
       throw error;
     }
 
-    if (isDynamicServerUsageError(error)) {
+    if (isDynamicServerUsageError(error) || isNotFoundError(error)) {
       throw error;
     }
 

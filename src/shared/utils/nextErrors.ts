@@ -1,3 +1,15 @@
+export const isNotFoundError = (error: unknown): boolean => {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  return (
+    "digest" in error &&
+    typeof error.digest === "string" &&
+    error.digest.startsWith("NEXT_HTTP_ERROR_FALLBACK;404")
+  );
+};
+
 /**
  * Detects Next.js dynamic server usage errors that must be re-thrown.
  * These errors are framework control flow signals, not application failures.
