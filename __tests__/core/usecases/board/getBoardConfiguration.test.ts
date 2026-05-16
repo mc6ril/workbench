@@ -84,18 +84,13 @@ describe("getBoardConfiguration", () => {
 
   it("should create only missing default columns when some workflow states already exist", async () => {
     const existingColumns = [mockColumn1, mockColumn2];
-    let listCall = 0;
     const repository = createBoardRepositoryMock({
       findByProject: jest.fn<Promise<Board | null>, [string]>(
         async () => mockBoard
       ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => {
-        listCall += 1;
-        if (listCall === 1) {
-          return existingColumns;
-        }
-        return [mockColumn1, mockColumn2, mockColumn3];
-      }),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
+        async () => existingColumns
+      ),
       createColumn: jest.fn<Promise<Column>, [CreateColumnInput]>(
         async (input) => {
           expect(input.state).toBe("done");
@@ -106,7 +101,7 @@ describe("getBoardConfiguration", () => {
 
     const result = await getBoardConfiguration(repository, projectId);
 
-    expect(repository.listColumnsByBoard).toHaveBeenCalledTimes(2);
+    expect(repository.listColumnsByBoard).toHaveBeenCalledTimes(1);
     expect(repository.createColumn).toHaveBeenCalledTimes(1);
     expect(repository.createColumn).toHaveBeenCalledWith({
       boardId,
@@ -155,19 +150,12 @@ describe("getBoardConfiguration", () => {
       updatedAt: new Date("2024-01-01T00:00:00Z"),
     };
     const defaultColumns = [defaultColumn1, defaultColumn2, defaultColumn3];
-    let listCall = 0;
     const repository = createBoardRepositoryMock({
       findByProject: jest.fn<Promise<Board | null>, [string]>(async () => null),
       create: jest.fn<Promise<Board>, [{ projectId: string }]>(
         async () => mockBoard
       ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => {
-        listCall += 1;
-        if (listCall === 1) {
-          return [];
-        }
-        return defaultColumns;
-      }),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => []),
       createColumn: jest.fn<Promise<Column>, [CreateColumnInput]>(
         async (input) => {
           if (input.name === "Todo") return defaultColumn1;
@@ -185,7 +173,7 @@ describe("getBoardConfiguration", () => {
     expect(repository.findByProject).toHaveBeenCalledWith(projectId);
     expect(repository.create).toHaveBeenCalledTimes(1);
     expect(repository.create).toHaveBeenCalledWith({ projectId });
-    expect(repository.listColumnsByBoard).toHaveBeenCalledTimes(2);
+    expect(repository.listColumnsByBoard).toHaveBeenCalledTimes(1);
     expect(repository.listColumnsByBoard).toHaveBeenCalledWith(boardId);
     expect(repository.createColumn).toHaveBeenCalledTimes(3);
     expect(result).toMatchObject<BoardConfiguration>({
@@ -234,18 +222,11 @@ describe("getBoardConfiguration", () => {
       updatedAt: new Date("2024-01-01T00:00:00Z"),
     };
     const defaultColumns = [defaultColumn1, defaultColumn2, defaultColumn3];
-    let listCallBoardOnly = 0;
     const repository = createBoardRepositoryMock({
       findByProject: jest.fn<Promise<Board | null>, [string]>(
         async () => mockBoard
       ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => {
-        listCallBoardOnly += 1;
-        if (listCallBoardOnly === 1) {
-          return [];
-        }
-        return defaultColumns;
-      }),
+      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(async () => []),
       createColumn: jest.fn<Promise<Column>, [CreateColumnInput]>(
         async (input) => {
           if (input.name === "Todo") return defaultColumn1;
@@ -260,7 +241,7 @@ describe("getBoardConfiguration", () => {
 
     // Assert
     expect(repository.findByProject).toHaveBeenCalledTimes(1);
-    expect(repository.listColumnsByBoard).toHaveBeenCalledTimes(2);
+    expect(repository.listColumnsByBoard).toHaveBeenCalledTimes(1);
     expect(repository.listColumnsByBoard).toHaveBeenCalledWith(boardId);
     expect(repository.create).not.toHaveBeenCalled();
     expect(repository.createColumn).toHaveBeenCalledTimes(3);

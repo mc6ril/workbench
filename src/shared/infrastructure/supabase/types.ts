@@ -743,6 +743,41 @@ export type Database = {
         };
         Relationships: [];
       };
+      ticket_assignees: {
+        Row: {
+          assigned_at: string;
+          assigned_by: string | null;
+          id: string;
+          project_id: string;
+          ticket_id: string;
+          user_id: string;
+        };
+        Insert: {
+          assigned_at?: string;
+          assigned_by?: string | null;
+          id?: string;
+          project_id: string;
+          ticket_id: string;
+          user_id: string;
+        };
+        Update: {
+          assigned_at?: string;
+          assigned_by?: string | null;
+          id?: string;
+          project_id?: string;
+          ticket_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ticket_assignees_ticket_id_fkey";
+            columns: ["ticket_id"];
+            isOneToOne: false;
+            referencedRelation: "tickets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       ticket_attachments: {
         Row: {
           created_at: string;
@@ -779,49 +814,14 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "ticket_attachments_ticket_id_fkey";
-            columns: ["ticket_id"];
-            isOneToOne: false;
-            referencedRelation: "tickets";
-            referencedColumns: ["id"];
-          },
-          {
             foreignKeyName: "ticket_attachments_project_id_fkey";
             columns: ["project_id"];
             isOneToOne: false;
             referencedRelation: "projects";
             referencedColumns: ["id"];
           },
-        ];
-      };
-      ticket_assignees: {
-        Row: {
-          assigned_at: string;
-          assigned_by: string | null;
-          id: string;
-          project_id: string;
-          ticket_id: string;
-          user_id: string;
-        };
-        Insert: {
-          assigned_at?: string;
-          assigned_by?: string | null;
-          id?: string;
-          project_id: string;
-          ticket_id: string;
-          user_id: string;
-        };
-        Update: {
-          assigned_at?: string;
-          assigned_by?: string | null;
-          id?: string;
-          project_id?: string;
-          ticket_id?: string;
-          user_id?: string;
-        };
-        Relationships: [
           {
-            foreignKeyName: "ticket_assignees_ticket_id_fkey";
+            foreignKeyName: "ticket_attachments_ticket_id_fkey";
             columns: ["ticket_id"];
             isOneToOne: false;
             referencedRelation: "tickets";

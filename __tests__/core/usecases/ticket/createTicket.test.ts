@@ -12,6 +12,7 @@ describe("createTicket completedAt workflow logic", () => {
   const projectId = "223e4567-e89b-12d3-a456-426614174000";
   const boardId = "323e4567-e89b-12d3-a456-426614174000";
   const todoColumnId = "423e4567-e89b-12d3-a456-426614174000";
+  const inProgressColumnId = "623e4567-e89b-12d3-a456-426614174000";
   const doneColumnId = "523e4567-e89b-12d3-a456-426614174000";
   const board: Board = {
     id: boardId,
@@ -32,12 +33,23 @@ describe("createTicket completedAt workflow logic", () => {
       updatedAt: new Date("2024-01-01T00:00:00Z"),
     },
     {
+      id: inProgressColumnId,
+      boardId,
+      name: "In Progress",
+      key: "in_progress",
+      state: "in_progress",
+      position: 1,
+      visible: true,
+      createdAt: new Date("2024-01-01T00:00:00Z"),
+      updatedAt: new Date("2024-01-01T00:00:00Z"),
+    },
+    {
       id: doneColumnId,
       boardId,
       name: "Done",
       key: "completed",
       state: "done",
-      position: 1,
+      position: 2,
       visible: true,
       createdAt: new Date("2024-01-01T00:00:00Z"),
       updatedAt: new Date("2024-01-01T00:00:00Z"),
