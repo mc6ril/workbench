@@ -34,28 +34,18 @@ export const useQuickListRealtime = (projectId: string) => {
             refetchType: "active",
           });
 
-          // Debounce regeneration so rapid selection changes produce one regen.
-          // The shopping list is invalidated by the shopping_list_items subscription
-          // once the write completes — no need to await here.
+          // Debounce rapid selection changes into one regen.
+          // Invalidate the shopping list only once the server write is done
+          // so getShoppingList always reads fresh data.
           if (regenTimeoutRef.current) clearTimeout(regenTimeoutRef.current);
           regenTimeoutRef.current = setTimeout(() => {
-            void regenerateShoppingListAction(projectId);
+            void regenerateShoppingListAction(projectId).finally(() => {
+              void queryClient.invalidateQueries({
+                queryKey: recipesQueryKeys.shopping.list(projectId),
+                refetchType: "active",
+              });
+            });
           }, 300);
-        }
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "shopping_list_items",
-          filter: `project_id=eq.${projectId}`,
-        },
-        () => {
-          void queryClient.invalidateQueries({
-            queryKey: recipesQueryKeys.shopping.list(projectId),
-            refetchType: "active",
-          });
         }
       )
       .subscribe();
