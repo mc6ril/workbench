@@ -442,19 +442,38 @@ export const createCatalogRepository = (
       return null;
     }
 
-    const [recipeGraphs, { data: selectionData, error: selectionError }] =
-      await Promise.all([
-        loadRecipeGraphsByIds(client, projectId, [recipeId]),
-        client
-          .from("recipe_selections")
-          .select("id")
-          .eq("project_id", projectId)
-          .eq("recipe_id", recipeId)
-          .maybeSingle(),
-      ]);
+    const [
+      recipeGraphs,
+      { data: selectionData, error: selectionError },
+      { data: historyData, error: historyError },
+    ] = await Promise.all([
+      loadRecipeGraphsByIds(client, projectId, [recipeId]),
+      client
+        .from("recipe_selections")
+        .select("id")
+        .eq("project_id", projectId)
+        .eq("recipe_id", recipeId)
+        .maybeSingle(),
+      client
+        .from("recipe_cooking_history")
+        .select("cooked_at")
+        .eq("project_id", projectId)
+        .eq("recipe_id", recipeId)
+        .order("cooked_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
 
     if (selectionError) {
       return handleRepositoryError(selectionError, "RecipeSelection", recipeId);
+    }
+
+    if (historyError) {
+      return handleRepositoryError(
+        historyError,
+        "RecipeCookingHistory",
+        recipeId
+      );
     }
 
     const recipeGraph = recipeGraphs.get(recipeId);
@@ -465,7 +484,8 @@ export const createCatalogRepository = (
 
     return mapLoadedRecipeGraphToCatalogDetail(
       recipeGraph,
-      Boolean(selectionData)
+      Boolean(selectionData),
+      historyData?.cooked_at ?? null
     );
   },
 

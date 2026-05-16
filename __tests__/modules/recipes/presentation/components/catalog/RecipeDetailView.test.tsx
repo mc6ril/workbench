@@ -66,6 +66,7 @@ const baseRecipe = {
       meta: "20 min",
     },
   ],
+  lastCookedAt: null,
 };
 
 describe("RecipeDetailView", () => {

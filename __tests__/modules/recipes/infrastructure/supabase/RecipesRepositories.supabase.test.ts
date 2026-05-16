@@ -296,6 +296,9 @@ describe("Recipes Supabase repositories", () => {
     const selectionQuery = createQueryBuilderMock<{ id: string } | null>({
       id: selectionId,
     });
+    const cookingHistoryQuery = createQueryBuilderMock<{
+      cooked_at: string;
+    } | null>(null);
     const client = createClient({
       recipes: recipeQuery,
       recipe_ingredients: ingredientQuery,
@@ -303,6 +306,7 @@ describe("Recipes Supabase repositories", () => {
       recipe_tag_links: tagLinkQuery,
       recipe_tags: tagQuery,
       recipe_selections: selectionQuery,
+      recipe_cooking_history: cookingHistoryQuery,
     });
 
     const repository = createCatalogRepository(client);
@@ -311,6 +315,7 @@ describe("Recipes Supabase repositories", () => {
     expect(selectionQuery.eq).toHaveBeenCalledWith("project_id", projectId);
     expect(selectionQuery.eq).toHaveBeenCalledWith("recipe_id", recipeId);
     expect(detail?.isInQuickList).toBe(true);
+    expect(detail?.lastCookedAt).toBeNull();
     expect(detail?.ingredients[0]?.displayName).toBe(
       ingredientRow.display_name
     );

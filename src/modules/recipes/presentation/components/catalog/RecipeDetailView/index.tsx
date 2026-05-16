@@ -1,7 +1,9 @@
 "use client";
 
+import { useMemo } from "react";
+
 import Text from "@/shared/design-system/text";
-import { useTranslation } from "@/shared/i18n";
+import { getIntlLocale, useLocale, useTranslation } from "@/shared/i18n";
 
 import RecipeDetailAdditionsSection from "./RecipeDetailAdditionsSection";
 import RecipeDetailIngredientsSection from "./RecipeDetailIngredientsSection";
@@ -31,6 +33,16 @@ const RecipeDetailView = ({
   onValidateAddition,
 }: Props) => {
   const t = useTranslation("pages.recipes.detail");
+  const locale = useLocale();
+  const dateFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(getIntlLocale(locale), {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }),
+    [locale]
+  );
   const validatedIngredients = recipe.ingredients.filter(
     (ingredient) => !isAdditionCandidateIngredient(ingredient)
   );
@@ -55,6 +67,14 @@ const RecipeDetailView = ({
         servingsLabel={recipe.servingsLabel}
         totalTimeLabel={recipe.totalTimeLabel}
       />
+
+      {recipe.lastCookedAt ? (
+        <Text variant="small" className={styles["recipe-detail__last-cooked"]}>
+          {t("lastCooked", {
+            date: dateFormatter.format(new Date(recipe.lastCookedAt)),
+          })}
+        </Text>
+      ) : null}
 
       <RecipeDetailTagList tags={recipe.tags} />
 
