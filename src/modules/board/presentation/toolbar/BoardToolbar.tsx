@@ -52,10 +52,8 @@ const BoardToolbar = ({ projectId }: Props) => {
   const rawSearch = useFilterStore((state) => state.search);
   const rawFilters = useFilterStore((state) => state.filters);
   const setSearch = useFilterStore((state) => state.setSearch);
-  const setAssigneeUserId = useFilterStore((state) => state.setAssigneeUserId);
-  const setUnassignedOnly = useFilterStore((state) => state.setUnassignedOnly);
-  const clearAssigneeUserId = useFilterStore(
-    (state) => state.clearAssigneeUserId
+  const setAssigneeFilterIds = useFilterStore(
+    (state) => state.setAssigneeFilterIds
   );
   const initializeProject = useFilterStore((state) => state.initializeProject);
 
@@ -96,18 +94,10 @@ const BoardToolbar = ({ projectId }: Props) => {
   }, [search, searchInput, setSearch]);
 
   const handleAssigneeFilterChange = useCallback(
-    (filterId: string | null) => {
-      if (!filterId) {
-        clearAssigneeUserId();
-        return;
-      }
-      if (filterId === PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID) {
-        setUnassignedOnly();
-        return;
-      }
-      setAssigneeUserId(filterId);
+    (filterIds: string[]) => {
+      setAssigneeFilterIds(filterIds);
     },
-    [clearAssigneeUserId, setAssigneeUserId, setUnassignedOnly]
+    [setAssigneeFilterIds]
   );
 
   const handleAddClick = useCallback(() => {
@@ -128,7 +118,7 @@ const BoardToolbar = ({ projectId }: Props) => {
         avatarUrl: member.profile.avatarUrl ?? null,
       })
     );
-    return [unassigned, ...members];
+    return [...members, unassigned];
   }, [projectMembers, tBoardFilters]);
 
   if (isTicketDetailRoute) {
@@ -159,11 +149,12 @@ const BoardToolbar = ({ projectId }: Props) => {
       canAddAction={canCreateTicket}
       assigneeFilters={assigneeFilters}
       areAssigneeFiltersDisabled={false}
-      selectedAssigneeFilterId={
-        filters.unassignedOnly
-          ? PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID
-          : (filters.assigneeUserId ?? null)
-      }
+      selectedAssigneeFilterIds={[
+        ...(filters.unassignedOnly
+          ? [PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID]
+          : []),
+        ...(filters.assigneeUserIds ?? []),
+      ]}
       assigneeFiltersLabel={tBoardFilters("assigneeLabel")}
       onAssigneeFilterChange={handleAssigneeFilterChange}
     />

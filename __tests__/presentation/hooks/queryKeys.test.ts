@@ -19,7 +19,7 @@ describe("queryKeys ticket list mapper", () => {
     expect(mapTicketListQueryKey(queryKey)).toEqual({
       projectId: "project-1",
       filters: {
-        assigneeUserId: null,
+        assigneeUserIds: null,
         columnId: "column-todo",
         priority: "urgent",
         unassignedOnly: false,

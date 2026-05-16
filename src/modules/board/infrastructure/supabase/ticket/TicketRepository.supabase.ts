@@ -207,9 +207,9 @@ export const createTicketRepository = (
       limit?: number
     ): Promise<Ticket[]> {
       try {
-        const hasUserAssigneeFilter = Boolean(filters?.assigneeUserId);
+        const hasUserAssigneeFilter = Boolean(filters?.assigneeUserIds?.length);
         const effectiveUnassignedOnly =
-          Boolean(filters?.unassignedOnly) && !filters?.assigneeUserId;
+          Boolean(filters?.unassignedOnly) && !filters?.assigneeUserIds?.length;
 
         let assignedTicketIdsForExclusion: string[] = [];
         if (effectiveUnassignedOnly) {
@@ -262,8 +262,8 @@ export const createTicketRepository = (
           query = query.eq("priority", filters.priority);
         }
 
-        if (filters?.assigneeUserId) {
-          query = query.eq("ticket_assignees.user_id", filters.assigneeUserId);
+        if (filters?.assigneeUserIds?.length) {
+          query = query.in("ticket_assignees.user_id", filters.assigneeUserIds);
         }
 
         const searchTerm = search?.trim();

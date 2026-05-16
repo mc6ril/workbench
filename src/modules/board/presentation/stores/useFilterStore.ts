@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+import { PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID } from "@/domains/project/presentation/components/projectToolbar/ProjectToolbar.types";
 import type { TicketFilters } from "@/modules/board/core/domain/ticket.types";
 
 type FilterState = {
@@ -28,9 +29,7 @@ type FilterActions = {
   setColumnId: (columnId: string) => void;
   clearColumnId: () => void;
 
-  setAssigneeUserId: (userId: string) => void;
-  setUnassignedOnly: () => void;
-  clearAssigneeUserId: () => void;
+  setAssigneeFilterIds: (filterIds: string[]) => void;
 
   /**
    * Resets domain-aligned filters only. Does NOT reset search.
@@ -84,36 +83,26 @@ export const useFilterStore = create<FilterStore>((set) => ({
     });
   },
 
-  setAssigneeUserId: (assigneeUserId: string): void => {
-    set((state) => {
-      const { unassignedOnly: _u, ...rest } = state.filters;
-      return {
-        filters: {
-          ...rest,
-          assigneeUserId,
-        },
-      };
-    });
-  },
-  setUnassignedOnly: (): void => {
-    set((state) => {
-      const { assigneeUserId: _a, unassignedOnly: _u, ...rest } = state.filters;
-      return {
-        filters: {
-          ...rest,
-          unassignedOnly: true,
-        },
-      };
-    });
-  },
-  clearAssigneeUserId: (): void => {
+  setAssigneeFilterIds: (filterIds: string[]): void => {
     set((state) => {
       const {
-        assigneeUserId: _assigneeUserId,
-        unassignedOnly: _unassignedOnly,
+        assigneeUserIds: _ids,
+        unassignedOnly: _u,
         ...rest
       } = state.filters;
-      return { filters: rest };
+      const userIds = filterIds.filter(
+        (id) => id !== PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID
+      );
+      const unassigned = filterIds.includes(
+        PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID
+      );
+      return {
+        filters: {
+          ...rest,
+          ...(userIds.length > 0 ? { assigneeUserIds: userIds } : {}),
+          ...(unassigned ? { unassignedOnly: true } : {}),
+        },
+      };
     });
   },
 

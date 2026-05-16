@@ -61,8 +61,8 @@ export type ProjectToolbarProps = {
   extraTools?: ProjectToolbarExtraTool[];
   assigneeFilters?: ProjectToolbarAssigneeFilter[];
   areAssigneeFiltersDisabled?: boolean;
-  /** Selected member user id, {@link PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID}, or null. */
-  selectedAssigneeFilterId?: string | null;
+  /** Selected filter ids: member user ids and/or {@link PROJECT_TOOLBAR_UNASSIGNED_FILTER_ID}. */
+  selectedAssigneeFilterIds?: string[];
   assigneeFiltersLabel?: string;
-  onAssigneeFilterChange?: (filterId: string | null) => void;
+  onAssigneeFilterChange?: (filterIds: string[]) => void;
 };

@@ -6,7 +6,7 @@ import { TICKET_PRIORITY_VALUES } from "@/modules/board/core/domain/ticket.types
 export type TicketListFilterKey = readonly [
   columnId: TicketFilters["columnId"] | null,
   priority: TicketFilters["priority"] | null,
-  assigneeUserId: TicketFilters["assigneeUserId"] | null,
+  assigneeUserIds: TicketFilters["assigneeUserIds"] | null,
   unassignedOnly: true | null,
 ];
 
@@ -21,7 +21,7 @@ export type TicketListQueryKeyDescriptor = {
   filters: {
     columnId: TicketFilters["columnId"] | null;
     priority: TicketFilters["priority"] | null;
-    assigneeUserId: TicketFilters["assigneeUserId"] | null;
+    assigneeUserIds: TicketFilters["assigneeUserIds"] | null;
     unassignedOnly: boolean;
   } | null;
   search: string | null;
@@ -38,7 +38,7 @@ export const createTicketListFilterKey = (
   const hasMeaningfulFilters = Boolean(
     filters.columnId ??
     filters.priority ??
-    filters.assigneeUserId ??
+    filters.assigneeUserIds?.length ??
     filters.unassignedOnly
   );
   if (!hasMeaningfulFilters) {
@@ -48,7 +48,7 @@ export const createTicketListFilterKey = (
   return [
     filters.columnId ?? null,
     filters.priority ?? null,
-    filters.assigneeUserId ?? null,
+    filters.assigneeUserIds?.length ? filters.assigneeUserIds : null,
     filters.unassignedOnly === true ? true : null,
   ] as const;
 };
@@ -81,12 +81,15 @@ const mapTicketListFilterKey = (
     return null;
   }
 
-  const [columnId, priority, assigneeUserId, unassignedOnly] = filterKey;
+  const [columnId, priority, assigneeUserIds, unassignedOnly] = filterKey;
 
   return {
     columnId: isString(columnId) ? columnId : null,
     priority: isTicketPriority(priority) ? priority : null,
-    assigneeUserId: isString(assigneeUserId) ? assigneeUserId : null,
+    assigneeUserIds:
+      Array.isArray(assigneeUserIds) && assigneeUserIds.every(isString)
+        ? (assigneeUserIds as string[])
+        : null,
     unassignedOnly: unassignedOnly === true,
   };
 };
