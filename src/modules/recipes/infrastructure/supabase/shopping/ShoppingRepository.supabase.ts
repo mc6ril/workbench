@@ -259,6 +259,24 @@ const loadShoppingItemRows = async (
   return data ?? [];
 };
 
+const loadShoppingItemRowsByProject = async (
+  client: AppSupabaseClient,
+  projectId: string
+): Promise<ShoppingListItemRow[]> => {
+  const { data, error } = await client
+    .from("shopping_list_items")
+    .select(SHOPPING_ITEM_FIELDS)
+    .eq("project_id", projectId)
+    .order("group_id", { ascending: true })
+    .order("position", { ascending: true });
+
+  if (error) {
+    return handleRepositoryError(error, "ShoppingListItem", projectId);
+  }
+
+  return data ?? [];
+};
+
 const loadSelectionRows = async (
   client: AppSupabaseClient,
   projectId: string
@@ -431,13 +449,11 @@ const generateAndPersistShoppingList = async (
   client: AppSupabaseClient,
   projectId: string
 ): Promise<ShoppingList> => {
-  const shoppingListRow = await loadOrCreateShoppingListRow(client, projectId);
-  const existingItemRows = await loadShoppingItemRows(
-    client,
-    projectId,
-    shoppingListRow.id
-  );
-  const selections = await loadSelectionRows(client, projectId);
+  const [shoppingListRow, existingItemRows, selections] = await Promise.all([
+    loadOrCreateShoppingListRow(client, projectId),
+    loadShoppingItemRowsByProject(client, projectId),
+    loadSelectionRows(client, projectId),
+  ]);
 
   if (selections.length === 0) {
     const emptyShoppingList = createEmptyShoppingList();

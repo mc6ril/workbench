@@ -3,7 +3,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 
-import { EyeIcon, EyeOffIcon, FilterIcon } from "@/shared/design-system/icons";
+import {
+  FilterIcon,
+  MealsIcon,
+  ShoppingCartIcon,
+} from "@/shared/design-system/icons";
 import { useTranslation } from "@/shared/i18n";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import { normalizePath } from "@/shared/utils/routes";
@@ -16,10 +20,17 @@ import { RECIPES_QUICK_LIST_TOOL_ID } from "@/modules/recipes/presentation/const
 import {
   buildRecipeCreationRoute,
   buildRecipesCatalogRoute,
+  buildRecipesShoppingRoute,
   RECIPES_ROUTE_SEGMENTS,
 } from "@/modules/recipes/presentation/routes";
 import { useRecipesCatalogFiltersStore } from "@/modules/recipes/presentation/stores";
 import { useRecipesQuickListFeedbackStore } from "@/modules/recipes/presentation/stores/useRecipesQuickListFeedbackStore";
+
+const SPECIAL_SEGMENTS = [
+  RECIPES_ROUTE_SEGMENTS.QUICK_LIST,
+  RECIPES_ROUTE_SEGMENTS.SHOPPING_LIST,
+  RECIPES_ROUTE_SEGMENTS.NEW,
+] as const;
 
 type Props = {
   projectId: string;
@@ -30,6 +41,8 @@ const RecipesToolbar = ({ projectId }: Props) => {
   const pathname = usePathname();
   const tSidebar = useTranslation("navigation.sidebar");
   const tCatalog = useTranslation("pages.recipes.catalog");
+  const tQuickList = useTranslation("pages.recipes.quickList");
+  const tShopping = useTranslation("pages.recipes.shopping");
   const pageTitle = tSidebar("items.recipes");
   const { canCreateTicket: canCreateRecipe } = useProjectPermissions();
 
@@ -59,18 +72,19 @@ const RecipesToolbar = ({ projectId }: Props) => {
 
   const [searchInput, setSearchInput] = useState(search);
   const catalogRoute = buildRecipesCatalogRoute(projectId);
-  const isCatalogRoute = normalizePath(pathname) === catalogRoute;
-
-  const SPECIAL_SEGMENTS = [
-    RECIPES_ROUTE_SEGMENTS.QUICK_LIST,
-    RECIPES_ROUTE_SEGMENTS.SHOPPING_LIST,
-    RECIPES_ROUTE_SEGMENTS.NEW,
-  ] as const;
+  const normalizedPathname = normalizePath(pathname);
+  const isCatalogRoute = normalizedPathname === catalogRoute;
+  const isQuickListRoute =
+    normalizedPathname ===
+    `${catalogRoute}/${RECIPES_ROUTE_SEGMENTS.QUICK_LIST}`;
+  const isShoppingRoute =
+    normalizedPathname ===
+    `${catalogRoute}/${RECIPES_ROUTE_SEGMENTS.SHOPPING_LIST}`;
   const isRecipeDetailRoute =
     !isCatalogRoute &&
-    normalizePath(pathname).startsWith(`${catalogRoute}/`) &&
+    normalizedPathname.startsWith(`${catalogRoute}/`) &&
     !SPECIAL_SEGMENTS.some((seg) =>
-      normalizePath(pathname).startsWith(`${catalogRoute}/${seg}`)
+      normalizedPathname.startsWith(`${catalogRoute}/${seg}`)
     );
 
   const { childLabel, renderActions } = useToolbarBreadcrumb();
@@ -95,45 +109,63 @@ const RecipesToolbar = ({ projectId }: Props) => {
     router.push(buildRecipeCreationRoute(projectId));
   }, [canCreateRecipe, projectId, router]);
 
+  const shoppingRoute = buildRecipesShoppingRoute(projectId);
+
   const toolbarExtraTools = useMemo<ProjectToolbarExtraTool[]>(() => {
-    if (!isCatalogRoute) return [];
-    return [
-      {
-        key: "recipes-filters",
-        label:
-          activeFilterCount > 0
-            ? `${tCatalog("toolbar.filter")} (${activeFilterCount})`
-            : tCatalog("toolbar.filter"),
-        ariaLabel: tCatalog("toolbar.filterAriaLabel"),
-        icon: <FilterIcon size={16} />,
-        onClick: toggleFilters,
-        isActive: isFiltersOpen,
-      },
-      {
-        key: "recipes-quick-list",
-        domId: RECIPES_QUICK_LIST_TOOL_ID,
-        label: tCatalog("toolbar.quickList"),
-        ariaLabel: isQuickListOpen
-          ? tCatalog("toolbar.quickListHideAriaLabel")
-          : tCatalog("toolbar.quickListShowAriaLabel"),
-        icon: isQuickListOpen ? (
-          <EyeOffIcon size={16} />
-        ) : (
-          <EyeIcon size={16} />
-        ),
-        badgeCount: quickListCount ?? 0,
-        badgePulseKey: quickListBadgePulseKey,
-        onClick: toggleQuickList,
-        isActive: isQuickListOpen,
-      },
-    ];
+    const tools: ProjectToolbarExtraTool[] = [];
+
+    if (isCatalogRoute) {
+      tools.push(
+        {
+          key: "recipes-filters",
+          label:
+            activeFilterCount > 0
+              ? `${tCatalog("toolbar.filter")} (${activeFilterCount})`
+              : tCatalog("toolbar.filter"),
+          ariaLabel: tCatalog("toolbar.filterAriaLabel"),
+          icon: <FilterIcon size={16} />,
+          onClick: toggleFilters,
+          isActive: isFiltersOpen,
+        },
+        {
+          key: "recipes-quick-list",
+          domId: RECIPES_QUICK_LIST_TOOL_ID,
+          label: tCatalog("toolbar.quickList"),
+          ariaLabel: isQuickListOpen
+            ? tCatalog("toolbar.quickListHideAriaLabel")
+            : tCatalog("toolbar.quickListShowAriaLabel"),
+          icon: <MealsIcon size={16} />,
+          iconOnly: true,
+          badgeCount: quickListCount ?? 0,
+          badgePulseKey: quickListBadgePulseKey,
+          onClick: toggleQuickList,
+          isActive: isQuickListOpen,
+        }
+      );
+    }
+
+    if (!isShoppingRoute) {
+      tools.push({
+        key: "recipes-shopping-list",
+        label: tCatalog("toolbar.shoppingList"),
+        ariaLabel: tCatalog("toolbar.shoppingListAriaLabel"),
+        icon: <ShoppingCartIcon size={16} />,
+        iconOnly: true,
+        onClick: () => router.push(shoppingRoute),
+      });
+    }
+
+    return tools;
   }, [
     activeFilterCount,
     isCatalogRoute,
     isFiltersOpen,
     isQuickListOpen,
+    isShoppingRoute,
     quickListBadgePulseKey,
     quickListCount,
+    router,
+    shoppingRoute,
     tCatalog,
     toggleFilters,
     toggleQuickList,
@@ -148,6 +180,33 @@ const RecipesToolbar = ({ projectId }: Props) => {
           parentHref: catalogRoute,
           childLabel,
           actions: renderActions?.(),
+        }}
+      />
+    );
+  }
+
+  if (isQuickListRoute) {
+    return (
+      <ProjectToolbar
+        pageTitle={pageTitle}
+        breadcrumb={{
+          parentLabel: pageTitle,
+          parentHref: catalogRoute,
+          childLabel: tQuickList("kicker"),
+        }}
+        extraTools={toolbarExtraTools}
+      />
+    );
+  }
+
+  if (isShoppingRoute) {
+    return (
+      <ProjectToolbar
+        pageTitle={pageTitle}
+        breadcrumb={{
+          parentLabel: pageTitle,
+          parentHref: catalogRoute,
+          childLabel: tShopping("breadcrumbLabel"),
         }}
       />
     );

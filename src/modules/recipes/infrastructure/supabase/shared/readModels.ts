@@ -125,7 +125,8 @@ export const mapRecipeRowToCatalogSummary = (
 
 export const mapLoadedRecipeGraphToCatalogDetail = (
   graph: LoadedRecipeGraph,
-  isInQuickList: boolean
+  isInQuickList: boolean,
+  lastCookedAt: string | null
 ): CatalogRecipeDetail => {
   const recipe = mapLoadedRecipeGraphToRecipe(graph);
 
@@ -134,6 +135,7 @@ export const mapLoadedRecipeGraphToCatalogDetail = (
     note: recipe.note,
     ingredients: recipe.ingredients,
     steps: recipe.steps,
+    lastCookedAt,
   };
 };
 

@@ -75,7 +75,9 @@ export type CatalogRecipeSummary = Pick<
 };
 
 export type CatalogRecipeDetail = CatalogRecipeSummary &
-  Pick<Recipe, "note" | "ingredients" | "steps">;
+  Pick<Recipe, "note" | "ingredients" | "steps"> & {
+    lastCookedAt: string | null;
+  };
 
 export type CatalogRecipeListResponse = {
   items: CatalogRecipeSummary[];

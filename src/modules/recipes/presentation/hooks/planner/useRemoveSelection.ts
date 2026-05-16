@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { RemoveSelectionInput } from "@/modules/recipes/core/domain/planner/quickList.types";
 import { removeSelection } from "@/modules/recipes/core/usecases/planner/removeSelection";
 import { plannerRepository } from "@/modules/recipes/infrastructure/supabase/repositories";
-import { recipesQueryKeys } from "@/modules/recipes/queryKeys";
+import { invalidatePlannerMutation } from "@/modules/recipes/presentation/hooks/planner/utils/invalidatePlannerMutation";
 
 export const useRemoveSelection = () => {
   const queryClient = useQueryClient();
@@ -15,15 +15,7 @@ export const useRemoveSelection = () => {
       removeSelection({
         plannerRepository,
       })(input),
-    onSuccess: (_result, variables) => {
-      void queryClient.invalidateQueries({
-        queryKey: recipesQueryKeys.planner.quickList(variables.projectId),
-        refetchType: "active",
-      });
-      void queryClient.invalidateQueries({
-        queryKey: recipesQueryKeys.shopping.list(variables.projectId),
-        refetchType: "active",
-      });
-    },
+    onSuccess: (_result, variables) =>
+      invalidatePlannerMutation(queryClient, variables.projectId),
   });
 };
