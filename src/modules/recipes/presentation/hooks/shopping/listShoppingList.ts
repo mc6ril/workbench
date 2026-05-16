@@ -20,6 +20,7 @@ export const useListShoppingList = (
       getShoppingList({
         shoppingRepository,
       })(projectId),
+    staleTime: Infinity,
     enabled: !!projectId && (options?.enabled ?? true),
     initialData: options?.initialData,
   });
