@@ -445,6 +445,7 @@ const RecipeEditorClientPage = ({
   const titleTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const coverUploadInputRef = useRef<HTMLInputElement | null>(null);
   const [dragOverCover, setDragOverCover] = useState(false);
+  const [dragCoverInvalid, setDragCoverInvalid] = useState(false);
   const pendingFocusFieldNameRef = useRef<string | null>(null);
   const createRecipeMutation = useCreateRecipe();
   const coverUploadMutation = useUploadRecipeCover();
@@ -798,6 +799,7 @@ const RecipeEditorClientPage = ({
     async (e: DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       setDragOverCover(false);
+      setDragCoverInvalid(false);
       const file = e.dataTransfer.files?.[0];
       if (!file) return;
       await handleCoverFile(file);
@@ -984,8 +986,11 @@ const RecipeEditorClientPage = ({
                   <div
                     className={[
                       styles["editor-cover-drop-zone"],
-                      dragOverCover
+                      dragOverCover && !dragCoverInvalid
                         ? styles["editor-cover-drop-zone--active"]
+                        : null,
+                      dragCoverInvalid
+                        ? styles["editor-cover-drop-zone--rejected"]
                         : null,
                       coverUploadMutation.isPending
                         ? styles["editor-cover-drop-zone--uploading"]
@@ -995,9 +1000,17 @@ const RecipeEditorClientPage = ({
                       .join(" ")}
                     onDragOver={(e) => {
                       e.preventDefault();
+                      const type = e.dataTransfer.items[0]?.type ?? "";
+                      const invalid =
+                        Boolean(type) &&
+                        !RECIPE_COVER_ALLOWED_MIME_TYPES.has(type);
                       setDragOverCover(true);
+                      setDragCoverInvalid(invalid);
                     }}
-                    onDragLeave={() => setDragOverCover(false)}
+                    onDragLeave={() => {
+                      setDragOverCover(false);
+                      setDragCoverInvalid(false);
+                    }}
                     onDrop={handleCoverDrop}
                     onClick={handleTriggerCoverUpload}
                     role="button"

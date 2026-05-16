@@ -4,10 +4,10 @@ import { useRef } from "react";
 
 import Button from "@/shared/design-system/button";
 import Checkbox from "@/shared/design-system/checkbox";
+import { useModalAccessibility } from "@/shared/design-system/modal/use_modal_accessibility";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
-import { useModalAccessibility } from "@/shared/design-system/modal/use_modal_accessibility";
 
 import styles from "./styles.module.scss";
 

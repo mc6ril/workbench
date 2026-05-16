@@ -152,7 +152,6 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
                     projectId={projectId}
                     selection={selection}
                     isMutating={isMutatingSelection(selection.id)}
-
                     removeLabel={t("remove")}
                     primaryAction={
                       <Button
@@ -202,7 +201,6 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
                     projectId={projectId}
                     selection={selection}
                     isMutating={isMutatingSelection(selection.id)}
-
                     removeLabel={t("remove")}
                     primaryAction={
                       <Button
