@@ -35,7 +35,7 @@ const ProjectToolbar = ({
   extraTools = [],
   assigneeFilters = [],
   areAssigneeFiltersDisabled = false,
-  selectedAssigneeFilterId = null,
+  selectedAssigneeFilterIds = [],
   assigneeFiltersLabel = "",
   onAssigneeFilterChange,
 }: ProjectToolbarProps) => {
@@ -211,7 +211,7 @@ const ProjectToolbar = ({
             {hasAssigneeFilters ? (
               <ProjectToolbarAssigneeFilters
                 filters={assigneeFilters}
-                selectedFilterId={selectedAssigneeFilterId}
+                selectedFilterIds={selectedAssigneeFilterIds}
                 label={assigneeFiltersLabel}
                 disabled={areAssigneeFiltersDisabled}
                 onChange={onAssigneeFilterChange}
