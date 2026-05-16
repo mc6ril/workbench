@@ -14,6 +14,7 @@ export type ProjectToolbarExtraTool = {
   label: string;
   ariaLabel: string;
   icon?: ReactNode;
+  iconOnly?: boolean;
   domId?: string;
   badgeCount?: number;
   badgePulseKey?: number;

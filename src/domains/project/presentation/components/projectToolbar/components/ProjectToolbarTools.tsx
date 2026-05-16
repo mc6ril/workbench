@@ -50,9 +50,11 @@ const ProjectToolbarTools = ({ extraTools = [] }: Props) => {
                 {tool.icon}
               </span>
             ) : null}
-            <span className={styles["project-toolbar__tool-label"]}>
-              {tool.label}
-            </span>
+            {!tool.iconOnly ? (
+              <span className={styles["project-toolbar__tool-label"]}>
+                {tool.label}
+              </span>
+            ) : null}
             {hasBadge ? (
               <span
                 key={`${tool.badgePulseKey ?? 0}-${badgeLabel}`}
