@@ -28,7 +28,7 @@ export const getBoardConfiguration = async (
   const missingCreates = buildMissingDefaultColumnCreates(columns);
 
   if (missingCreates.length > 0) {
-    await Promise.all(
+    const created = await Promise.all(
       missingCreates.map((columnInput) =>
         repository.createColumn({
           ...columnInput,
@@ -36,7 +36,7 @@ export const getBoardConfiguration = async (
         })
       )
     );
-    columns = await repository.listColumnsByBoard(board.id);
+    columns = [...columns, ...created].sort((a, b) => a.position - b.position);
   }
 
   return {
