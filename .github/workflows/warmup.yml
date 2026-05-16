@@ -1,0 +1,15 @@
+name: Post-deploy warmup
+
+on:
+  deployment_status:
+
+jobs:
+  warmup:
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Warmup app
+        run: |
+          URL="${{ github.event.deployment_status.target_url }}"
+          echo "Warming up: $URL/api/health"
+          curl -sf --max-time 30 "$URL/api/health" || true
