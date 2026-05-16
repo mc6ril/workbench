@@ -1,12 +1,23 @@
+import { isString } from "@/shared/utils/guards";
+
 export const isNotFoundError = (error: unknown): boolean => {
   if (!error || typeof error !== "object") {
     return false;
   }
 
-  return (
+  if (
     "digest" in error &&
-    typeof error.digest === "string" &&
+    isString(error.digest) &&
     error.digest.startsWith("NEXT_HTTP_ERROR_FALLBACK;404")
+  ) {
+    return true;
+  }
+
+  // Fallback: digest can be stripped when notFound() propagates through
+  // Promise.all().catch() chains or react.cache boundaries, while message
+  // remains intact.
+  return (
+    error instanceof Error && error.message === "NEXT_HTTP_ERROR_FALLBACK;404"
   );
 };
 
@@ -21,7 +32,7 @@ export const isDynamicServerUsageError = (error: unknown): boolean => {
 
   if (
     "digest" in error &&
-    typeof error.digest === "string" &&
+    isString(error.digest) &&
     error.digest === "DYNAMIC_SERVER_USAGE"
   ) {
     return true;

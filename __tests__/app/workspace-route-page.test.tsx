@@ -9,7 +9,7 @@ import { loadWorkspaceRouteData } from "@/app/(protected)/workspace/loadWorkspac
 import WorkspaceRoutePage, {
   generateMetadata as generateWorkspaceMetadata,
 } from "@/app/(protected)/workspace/page";
-import { requireCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
+import { getSessionData } from "@/domains/auth/infrastructure/supabase/getSessionData.server";
 import { listProjectsWithStats } from "@/domains/workspace/core/usecases/project/listProjectsWithStats";
 import { createWorkspaceProjectCatalogGateway } from "@/domains/workspace/infrastructure/supabase/gateways";
 import { queryKeys as workspaceQueryKeys } from "@/domains/workspace/presentation/hooks/queryKeys";
@@ -38,9 +38,12 @@ jest.mock("@/shared/infrastructure/supabase/server", () => ({
   createSupabaseServerClient: jest.fn(),
 }));
 
-jest.mock("@/domains/auth/infrastructure/supabase/currentAuthIdentity", () => ({
-  requireCurrentAuthIdentity: jest.fn(),
-}));
+jest.mock(
+  "@/domains/auth/infrastructure/supabase/getSessionData.server",
+  () => ({
+    getSessionData: jest.fn(),
+  })
+);
 
 jest.mock("@/domains/workspace/infrastructure/supabase/gateways", () => ({
   createWorkspaceProjectCatalogGateway: jest.fn(),
@@ -93,7 +96,7 @@ describe("WorkspaceRoutePage hydration", () => {
       .mockReturnValue(mockWorkspaceGateway as never);
     jest.mocked(cookies).mockResolvedValue(mockCookieStore as never);
     jest.mocked(headers).mockResolvedValue(mockHeaderStore as never);
-    jest.mocked(requireCurrentAuthIdentity).mockResolvedValue({
+    jest.mocked(getSessionData).mockResolvedValue({
       userId: "user-1",
       loginEmail: "cyril@example.com",
       canUpdatePassword: true,
@@ -123,7 +126,7 @@ describe("WorkspaceRoutePage hydration", () => {
       queryFn: expect.any(Function),
     });
     expect(mockQueryClient.prefetchQuery).toHaveBeenCalledTimes(1);
-    expect(requireCurrentAuthIdentity).toHaveBeenCalledWith(mockSupabaseClient);
+    expect(getSessionData).toHaveBeenCalled();
     expect(listProjectsWithStats).toHaveBeenCalledWith(mockWorkspaceGateway);
     expect(dehydrateMock).toHaveBeenCalledWith(mockQueryClient);
   });

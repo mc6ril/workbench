@@ -1,6 +1,7 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
+import { isNotFoundError as isRepositoryNotFoundError } from "@/shared/errors/repositoryError.guards";
 import { createLoggerFactory } from "@/shared/observability";
 import {
   isDynamicServerUsageError,
@@ -35,6 +36,13 @@ const ProjectRouteLayoutContent = async ({ children, projectId }: Props) => {
 
     if (isDynamicServerUsageError(error) || isNotFoundError(error)) {
       throw error;
+    }
+
+    // Repository NotFoundError means the project doesn't exist or is
+    // inaccessible (e.g. RLS blocks it). Show 404 rather than silently
+    // redirecting to workspace.
+    if (isRepositoryNotFoundError(error)) {
+      notFound();
     }
 
     logger.error("Project access check error", { error });
