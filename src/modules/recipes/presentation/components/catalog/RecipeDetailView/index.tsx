@@ -66,6 +66,7 @@ const RecipeDetailView = ({
       <RecipeDetailMetaSummary
         servingsLabel={recipe.servingsLabel}
         totalTimeLabel={recipe.totalTimeLabel}
+        t={t}
       />
 
       {recipe.lastCookedAt ? (
