@@ -87,7 +87,7 @@ const BoardLayout = ({
     !isFilterStoreReady ||
     (!filters.columnId &&
       !filters.priority &&
-      !filters.assigneeUserId &&
+      !filters.assigneeUserIds?.length &&
       !filters.unassignedOnly &&
       effectiveSearch.trim() === "");
   const { data: tickets = [], isLoading: isTicketsLoading } = useTickets(

@@ -1,18 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { createSupabaseBrowserClient } from "@/shared/infrastructure/supabase/client";
 
+import { regenerateShoppingListAction } from "@/modules/recipes/presentation/actions/shopping";
 import { recipesQueryKeys } from "@/modules/recipes/queryKeys";
 
-/**
- * Subscribe to recipe_selections changes so any device that mutates the quick
- * list is immediately reflected on all other open sessions for the same project.
- */
 export const useQuickListRealtime = (projectId: string) => {
   const queryClient = useQueryClient();
+  const regenTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!projectId) return;
@@ -35,15 +33,25 @@ export const useQuickListRealtime = (projectId: string) => {
             queryKey: recipesQueryKeys.planner.quickList(projectId),
             refetchType: "active",
           });
-          void queryClient.invalidateQueries({
-            queryKey: recipesQueryKeys.shopping.list(projectId),
-            refetchType: "active",
-          });
+
+          // Debounce rapid selection changes into one regen.
+          // Invalidate the shopping list only once the server write is done
+          // so getShoppingList always reads fresh data.
+          if (regenTimeoutRef.current) clearTimeout(regenTimeoutRef.current);
+          regenTimeoutRef.current = setTimeout(() => {
+            void regenerateShoppingListAction(projectId).finally(() => {
+              void queryClient.invalidateQueries({
+                queryKey: recipesQueryKeys.shopping.list(projectId),
+                refetchType: "active",
+              });
+            });
+          }, 300);
         }
       )
       .subscribe();
 
     return () => {
+      if (regenTimeoutRef.current) clearTimeout(regenTimeoutRef.current);
       void supabase.removeChannel(channel);
     };
   }, [projectId, queryClient]);

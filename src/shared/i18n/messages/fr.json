@@ -891,7 +891,9 @@
           "quickListShowAriaLabel": "Afficher nos repas",
           "quickListHideAriaLabel": "Masquer nos repas",
           "addRecipe": "Ajouter une recette",
-          "addRecipeAriaLabel": "Créer une nouvelle recette"
+          "addRecipeAriaLabel": "Créer une nouvelle recette",
+          "shoppingList": "Liste de courses",
+          "shoppingListAriaLabel": "Voir la liste de courses"
         },
         "cookingHistory": {
           "kicker": "Récemment cuisinées",
@@ -920,7 +922,8 @@
         "moreActionsAriaLabel": "Plus d'actions",
         "errors": {
           "validateAddition": "La validation de l'ajout a échoué. Réessayez."
-        }
+        },
+        "lastCooked": "Cuisiné le {date}"
       },
       "editor": {
         "header": {
@@ -1135,7 +1138,8 @@
         "itemCount_other": "{count} lignes",
         "additionBadge": "À tester",
         "openList": "Voir la liste de courses",
-        "updateFailed": "La liste de courses n’a pas pu être mise à jour. Réessayez."
+        "updateFailed": "La liste de courses n’a pas pu être mise à jour. Réessayez.",
+        "breadcrumbLabel": "Courses"
       }
     },
     "account": {

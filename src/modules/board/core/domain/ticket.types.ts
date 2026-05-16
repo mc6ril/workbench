@@ -39,8 +39,8 @@ export type TicketSearchItem = Pick<Ticket, "id" | "title" | "codeNumber">;
 export type TicketFilters = {
   columnId?: string;
   priority?: TicketPriority;
-  /** When set, only tickets assigned to this user (join on ticket_assignees). */
-  assigneeUserId?: string;
+  /** When set, only tickets assigned to any of these users (join on ticket_assignees). */
+  assigneeUserIds?: string[];
   /** When true, only tickets with no assignees. */
   unassignedOnly?: boolean;
 };

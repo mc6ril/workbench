@@ -378,6 +378,24 @@ const listPersistedCatalogTags = async (
 export const createCatalogRepository = (
   client: AppSupabaseClient
 ): CatalogRepository => ({
+  async getHeader(projectId, recipeId) {
+    if (!isUuid(recipeId)) {
+      return null;
+    }
+
+    const { data, error } = await client
+      .from("recipes")
+      .select("id, title")
+      .eq("project_id", projectId)
+      .eq("id", recipeId)
+      .maybeSingle();
+
+    if (error) {
+      return handleRepositoryError(error, "Recipe", recipeId);
+    }
+
+    return data;
+  },
   async listByProject({ projectId, filters, pagination }) {
     const normalizedPagination =
       normalizeCatalogRecipeListPagination(pagination);
@@ -424,29 +442,50 @@ export const createCatalogRepository = (
       return null;
     }
 
-    const recipeGraphs = await loadRecipeGraphsByIds(client, projectId, [
-      recipeId,
+    const [
+      recipeGraphs,
+      { data: selectionData, error: selectionError },
+      { data: historyData, error: historyError },
+    ] = await Promise.all([
+      loadRecipeGraphsByIds(client, projectId, [recipeId]),
+      client
+        .from("recipe_selections")
+        .select("id")
+        .eq("project_id", projectId)
+        .eq("recipe_id", recipeId)
+        .maybeSingle(),
+      client
+        .from("recipe_cooking_history")
+        .select("cooked_at")
+        .eq("project_id", projectId)
+        .eq("recipe_id", recipeId)
+        .order("cooked_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
     ]);
+
+    if (selectionError) {
+      return handleRepositoryError(selectionError, "RecipeSelection", recipeId);
+    }
+
+    if (historyError) {
+      return handleRepositoryError(
+        historyError,
+        "RecipeCookingHistory",
+        recipeId
+      );
+    }
+
     const recipeGraph = recipeGraphs.get(recipeId);
 
     if (!recipeGraph) {
       return null;
     }
 
-    const { data: selectionData, error: selectionError } = await client
-      .from("recipe_selections")
-      .select("id")
-      .eq("project_id", projectId)
-      .eq("recipe_id", recipeId)
-      .maybeSingle();
-
-    if (selectionError) {
-      return handleRepositoryError(selectionError, "RecipeSelection", recipeId);
-    }
-
     return mapLoadedRecipeGraphToCatalogDetail(
       recipeGraph,
-      Boolean(selectionData)
+      Boolean(selectionData),
+      historyData?.cooked_at ?? null
     );
   },
 

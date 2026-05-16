@@ -20,7 +20,7 @@ export const useListActiveSelections = (
       listActiveSelections({
         plannerRepository,
       })(projectId),
-    staleTime: 0,
+    staleTime: Infinity,
     enabled: !!projectId && (options?.enabled ?? true),
     initialData: options?.initialData,
   });

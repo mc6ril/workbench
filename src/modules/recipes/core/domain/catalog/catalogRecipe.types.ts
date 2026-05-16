@@ -58,6 +58,8 @@ export type CatalogRecipeListInput = {
   pagination?: CatalogRecipeListPaginationInput;
 };
 
+export type CatalogRecipeHeader = Pick<Recipe, "id" | "title">;
+
 export type CatalogRecipeSummary = Pick<
   Recipe,
   | "id"
@@ -73,7 +75,9 @@ export type CatalogRecipeSummary = Pick<
 };
 
 export type CatalogRecipeDetail = CatalogRecipeSummary &
-  Pick<Recipe, "note" | "ingredients" | "steps">;
+  Pick<Recipe, "note" | "ingredients" | "steps"> & {
+    lastCookedAt: string | null;
+  };
 
 export type CatalogRecipeListResponse = {
   items: CatalogRecipeSummary[];

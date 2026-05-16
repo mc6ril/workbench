@@ -322,6 +322,13 @@
   color: $color-text;
 }
 
+// ─── Last cooked ─────────────────────────────────────────────────────────────
+
+.recipe-detail__last-cooked {
+  color: $color-text-secondary;
+  text-align: center;
+}
+
 // ─── Notes ───────────────────────────────────────────────────────────────────
 
 .recipe-detail__note {

@@ -891,7 +891,9 @@
           "quickListShowAriaLabel": "Show our meals",
           "quickListHideAriaLabel": "Hide our meals",
           "addRecipe": "Add recipe",
-          "addRecipeAriaLabel": "Create a new recipe"
+          "addRecipeAriaLabel": "Create a new recipe",
+          "shoppingList": "Shopping list",
+          "shoppingListAriaLabel": "View shopping list"
         },
         "cookingHistory": {
           "kicker": "Recently cooked",
@@ -920,7 +922,8 @@
         "moreActionsAriaLabel": "More actions",
         "errors": {
           "validateAddition": "Addition validation failed. Please try again."
-        }
+        },
+        "lastCooked": "Cooked on {date}"
       },
       "editor": {
         "header": {
@@ -1135,7 +1138,8 @@
         "itemCount_other": "{count} items",
         "additionBadge": "To test",
         "openList": "View shopping list",
-        "updateFailed": "The shopping list could not be updated. Please try again."
+        "updateFailed": "The shopping list could not be updated. Please try again.",
+        "breadcrumbLabel": "Shopping list"
       }
     },
     "account": {
