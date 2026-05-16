@@ -12,6 +12,7 @@ describe("listCatalogRecipes", () => {
       catalogRepository: {
         listByProject,
         listTagsByProject: jest.fn(),
+        getHeader: jest.fn(),
         getDetail: jest.fn(),
         listCookingHistory: jest.fn(),
       },

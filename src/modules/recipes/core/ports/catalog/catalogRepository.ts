@@ -1,5 +1,6 @@
 import type {
   CatalogRecipeDetail,
+  CatalogRecipeHeader,
   CatalogRecipeListInput,
   CatalogRecipeListResponse,
   CatalogRecipeTag,
@@ -11,6 +12,10 @@ export type CatalogRepository = {
     input: CatalogRecipeListInput
   ) => Promise<CatalogRecipeListResponse>;
   listTagsByProject: (projectId: string) => Promise<CatalogRecipeTag[]>;
+  getHeader: (
+    projectId: string,
+    recipeId: string
+  ) => Promise<CatalogRecipeHeader | null>;
   getDetail: (
     projectId: string,
     recipeId: string
