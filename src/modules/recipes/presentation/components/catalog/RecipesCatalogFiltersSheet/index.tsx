@@ -1,5 +1,10 @@
+"use client";
+
+import { useRef } from "react";
+
 import Button from "@/shared/design-system/button";
 import Checkbox from "@/shared/design-system/checkbox";
+import { useModalAccessibility } from "@/shared/design-system/modal/use_modal_accessibility";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
 import { useTranslation } from "@/shared/i18n";
@@ -42,6 +47,9 @@ const RecipesCatalogFiltersSheet = ({
   onResetFilters,
 }: Props) => {
   const t = useTranslation("pages.recipes.catalog");
+  const sheetRef = useRef<HTMLDivElement>(null);
+
+  useModalAccessibility({ isOpen, modalRef: sheetRef, onClose });
 
   if (!isOpen) {
     return null;
@@ -59,8 +67,11 @@ const RecipesCatalogFiltersSheet = ({
       role="presentation"
     >
       <aside
+        ref={sheetRef}
         className={styles["recipes-page__sheet"]}
         aria-label={t("sheet.ariaLabel")}
+        aria-modal="true"
+        role="dialog"
         onClick={(event) => {
           event.stopPropagation();
         }}

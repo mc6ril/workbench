@@ -136,10 +136,12 @@ const RecipesCatalogClientPage = ({
             selectedFilterLabels={selectedFilterLabels}
           />
 
-          <RecipesCookingHistory
-            projectId={props.projectId}
-            entries={initialCookingHistory}
-          />
+          {!hasActiveFilters ? (
+            <RecipesCookingHistory
+              projectId={props.projectId}
+              entries={initialCookingHistory}
+            />
+          ) : null}
 
           <RecipesCatalogResults
             projectId={props.projectId}
