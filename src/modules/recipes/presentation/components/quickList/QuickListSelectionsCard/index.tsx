@@ -32,7 +32,6 @@ type SelectionCardProps = {
   selection: QuickListRecipe;
   isMutating: boolean;
   primaryAction: React.ReactNode;
-  viewLabel: string;
   removeLabel: string;
   onRemove: () => void;
 };
@@ -42,7 +41,6 @@ const SelectionCard = ({
   selection,
   isMutating,
   primaryAction,
-  viewLabel,
   removeLabel,
   onRemove,
 }: SelectionCardProps) => (
@@ -65,12 +63,6 @@ const SelectionCard = ({
     </div>
     <div className={styles["recipes-scaffold__selection-side"]}>
       <div className={styles["recipes-scaffold__actions"]}>
-        <Link
-          href={buildRecipeDetailRoute(projectId, selection.recipeId)}
-          prefetch={false}
-        >
-          {viewLabel}
-        </Link>
         {primaryAction}
         <Button
           label={removeLabel}
@@ -160,7 +152,6 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
                     projectId={projectId}
                     selection={selection}
                     isMutating={isMutatingSelection(selection.id)}
-                    viewLabel={t("viewRecipe")}
                     removeLabel={t("remove")}
                     primaryAction={
                       <Button
@@ -210,7 +201,6 @@ const QuickListSelectionsCard = ({ projectId, initialSelections }: Props) => {
                     projectId={projectId}
                     selection={selection}
                     isMutating={isMutatingSelection(selection.id)}
-                    viewLabel={t("viewRecipe")}
                     removeLabel={t("remove")}
                     primaryAction={
                       <Button

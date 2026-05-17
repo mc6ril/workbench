@@ -1,7 +1,5 @@
 import type { SelectHTMLAttributes } from "react";
-import React, { forwardRef, useMemo } from "react";
-
-import { getAccessibilityId } from "@/shared/a11y/constants";
+import React, { forwardRef, useId, useMemo } from "react";
 
 import styles from "./select.module.scss";
 
@@ -77,12 +75,10 @@ const Select = forwardRef<HTMLSelectElement, Props>(
     },
     ref
   ) => {
-    const baseKey = `select-${label}`;
-    const selectId = id || getAccessibilityId(baseKey);
-    const errorId = error ? getAccessibilityId(`${baseKey}-error`) : undefined;
-    const helperTextId = helperText
-      ? getAccessibilityId(`${baseKey}-helper`)
-      : undefined;
+    const generatedId = useId();
+    const selectId = id || generatedId;
+    const errorId = error ? `${selectId}-error` : undefined;
+    const helperTextId = helperText ? `${selectId}-helper` : undefined;
 
     const describedBy = useMemo(
       () =>
@@ -116,7 +112,7 @@ const Select = forwardRef<HTMLSelectElement, Props>(
           ref={ref}
           id={selectId}
           className={selectClasses}
-          aria-label={ariaLabel || label}
+          {...(ariaLabel ? { "aria-label": ariaLabel } : {})}
           aria-invalid={error ? "true" : "false"}
           aria-describedby={describedBy}
           aria-required={required}

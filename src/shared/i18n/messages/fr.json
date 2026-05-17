@@ -923,7 +923,11 @@
         "errors": {
           "validateAddition": "La validation de l'ajout a échoué. Réessayez."
         },
-        "lastCooked": "Cuisiné le {date}"
+        "lastCooked": "Cuisiné le {date}",
+        "meta": {
+          "servings": "Portions",
+          "totalTime": "Temps total"
+        }
       },
       "editor": {
         "header": {

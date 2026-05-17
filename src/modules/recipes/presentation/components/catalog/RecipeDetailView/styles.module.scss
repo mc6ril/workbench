@@ -32,7 +32,15 @@
   color: $color-text;
 
   @media (min-width: $breakpoint-md) {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 }
 
@@ -199,8 +207,10 @@
 
 .recipe-detail__meta-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: $spacing-2xs;
   padding: $spacing-sm;
   border: $border-width solid $color-border-subtle;
   border-radius: $border-radius-sm;
@@ -220,6 +230,13 @@
 .recipe-detail__meta-value {
   color: $color-accent;
   font-size: clamp(1rem, 4vw, 1.375rem);
+}
+
+.recipe-detail__meta-label {
+  color: $color-text-secondary;
+  font-size: $font-size-xs;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
 }
 
 // ─── Content grid (ingredients + steps) ─────────────────────────────────────

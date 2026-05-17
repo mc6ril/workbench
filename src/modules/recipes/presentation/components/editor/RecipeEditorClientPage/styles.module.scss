@@ -300,6 +300,12 @@
   background: rgba(var(--shadow-color-accent), 0.06);
 }
 
+.editor-cover-drop-zone--rejected {
+  border-color: $color-error;
+  background: rgba($color-error, 0.06);
+  color: $color-error;
+}
+
 .editor-cover-drop-zone--uploading {
   cursor: wait;
   opacity: 0.7;

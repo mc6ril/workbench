@@ -18,8 +18,8 @@
   line-height: $line-height-normal;
   cursor: pointer;
   transition:
-    $transition-background, $transition-color, $transition-border,
-    $transition-transform, $transition-shadow;
+    $transition-background, $transition-border, $transition-transform,
+    $transition-shadow;
   text-align: center;
   text-decoration: none;
 
@@ -77,7 +77,7 @@
 
 .button--secondary {
   background-color: transparent;
-  color: $color-text-muted;
+  color: $color-text-secondary;
   border-color: $color-border;
   border-radius: $border-radius-full;
   font-size: $font-size-xs;
@@ -131,13 +131,13 @@
 }
 
 .button--danger {
-  background-color: $color-error;
+  background-color: $color-error-text;
   color: $color-primary-text;
-  border-color: $color-error;
+  border-color: $color-error-text;
 
   &:hover:not(:disabled) {
-    background-color: $color-error-text;
-    border-color: $color-error-text;
+    background-color: $color-error;
+    border-color: $color-error;
     box-shadow: $shadow-button-hover;
     transform: translateY(-1px);
 

@@ -87,14 +87,23 @@ const QuickListToggleIcon = ({ selected }: { selected: boolean }) => {
       viewBox="0 0 20 20"
       aria-hidden="true"
       className={styles["recipes-page__quick-list-toggle-icon"]}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
     >
-      <path
-        d="M10 2.75l1.93 3.92 4.32.63-3.13 3.05.74 4.31L10 12.63 6.14 14.66l.74-4.31-3.13-3.05 4.32-.63L10 2.75z"
-        fill={selected ? "currentColor" : "none"}
-        stroke="currentColor"
-        strokeLinejoin="round"
-        strokeWidth="1.4"
+      <line
+        x1="10"
+        y1="4"
+        x2="10"
+        y2="16"
+        className={
+          selected
+            ? styles["recipes-page__quick-list-toggle-icon-v"]
+            : undefined
+        }
       />
+      <line x1="4" y1="10" x2="16" y2="10" />
     </svg>
   );
 };
