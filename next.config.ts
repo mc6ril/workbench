@@ -127,7 +127,7 @@ const nextConfig: NextConfig = {
       ],
     },
     {
-      source: "/workspace",
+      source: "/(workspace|account)",
       headers: [{ key: "Cache-Control", value: "private, no-cache" }],
     },
   ],
