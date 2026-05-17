@@ -120,7 +120,15 @@ const nextConfig: NextConfig = {
           key: "Strict-Transport-Security",
           value: "max-age=63072000; includeSubDomains; preload",
         },
+        {
+          key: "Cross-Origin-Opener-Policy",
+          value: "same-origin",
+        },
       ],
+    },
+    {
+      source: "/workspace",
+      headers: [{ key: "Cache-Control", value: "private, no-cache" }],
     },
   ],
   ...(process.env.NODE_ENV === "development" && {
