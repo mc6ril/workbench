@@ -95,6 +95,10 @@
   height: 1rem;
 }
 
+.recipes-page__quick-list-toggle-icon-v {
+  display: none;
+}
+
 .recipes-page__recipe-card-link {
   display: flex;
   flex: 1 1 auto;
@@ -222,10 +226,6 @@
   flex-direction: column;
   gap: $spacing-xs;
   padding: $spacing-md;
-}
-
-.recipes-page__recipe-meta {
-  font-weight: $font-weight-semibold;
 }
 
 .recipes-page__tag-row {
