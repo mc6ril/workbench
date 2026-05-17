@@ -92,7 +92,17 @@ const QuickListToggleIcon = ({ selected }: { selected: boolean }) => {
       strokeWidth="1.8"
       strokeLinecap="round"
     >
-      <line x1="10" y1="4" x2="10" y2="16" className={selected ? styles["recipes-page__quick-list-toggle-icon-v"] : undefined} />
+      <line
+        x1="10"
+        y1="4"
+        x2="10"
+        y2="16"
+        className={
+          selected
+            ? styles["recipes-page__quick-list-toggle-icon-v"]
+            : undefined
+        }
+      />
       <line x1="4" y1="10" x2="16" y2="10" />
     </svg>
   );
