@@ -94,9 +94,11 @@ describe("Select Component", () => {
     // Arrange & Act
     render(<Select label="Category" options={mockOptions} />);
 
-    // Assert
+    // Assert: label and select are linked via htmlFor/id (useId() generates the value)
     const select = screen.getByLabelText(/category/i);
-    expect(select).toHaveAttribute("id", "a11y-select-category");
+    const label = screen.getByText(/category/i);
+    expect(select).toHaveAttribute("id");
+    expect(label).toHaveAttribute("for", select.getAttribute("id")!);
   });
 
   it("should associate error message with select via aria-describedby", () => {
@@ -110,9 +112,9 @@ describe("Select Component", () => {
       />
     );
 
-    // Assert
+    // Assert: error ID is derived from the explicit id prop
     const select = screen.getByLabelText(/status/i);
-    const errorId = "a11y-select-status-error";
+    const errorId = "status-error";
     expect(select).toHaveAttribute(
       "aria-describedby",
       expect.stringContaining(errorId)
