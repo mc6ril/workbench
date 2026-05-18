@@ -84,7 +84,7 @@ const NavigationItem = ({
 
   if (locked) {
     return (
-      <li id={navItemId} className={navItemClasses} role="none">
+      <li id={navItemId} className={navItemClasses}>
         <span
           className={styles["navigation-item__link"]}
           data-sidebar-dismiss="true"
@@ -133,7 +133,7 @@ const NavigationItem = ({
     : {};
 
   return (
-    <li id={navItemId} className={navItemClasses} role="none">
+    <li id={navItemId} className={navItemClasses}>
       <Link
         href={href}
         className={styles["navigation-item__link"]}

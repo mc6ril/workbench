@@ -20,7 +20,7 @@
   padding: $spacing-sm $spacing-md;
   border-radius: $border-radius-md;
   position: relative;
-  color: $color-text-muted;
+  color: $color-text-secondary;
   transition: $transition-background, $transition-color, $transition-border;
 
   @media (prefers-reduced-motion: reduce) {
