@@ -20,5 +20,6 @@ export const useBoardConfiguration = (
     queryFn: () => getBoardConfiguration(boardRepository, projectId),
     enabled: !!projectId && (options?.enabled ?? true),
     initialData: options?.initialData,
+    staleTime: Infinity,
   });
 };
