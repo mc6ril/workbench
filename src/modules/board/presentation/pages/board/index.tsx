@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 
@@ -56,6 +56,7 @@ const BoardLayout = ({
   const legacyTicketId = searchParams.get("ticket");
   const { canMoveTicket } = useProjectPermissions();
   const prefetchTicketDetail = usePrefetchTicketDetail(projectId);
+  const hasPrewarmedRef = useRef(false);
 
   const handleOpenTicketDetail = useCallback(
     (ticketId: string) => {
@@ -138,6 +139,20 @@ const BoardLayout = ({
       };
     };
   }, [boardColumnTickets, handleOpenTicketDetail, prefetchTicketDetail]);
+
+  useEffect(() => {
+    if (
+      isTicketsLoading ||
+      !filteredTickets.length ||
+      hasPrewarmedRef.current
+    ) {
+      return;
+    }
+    hasPrewarmedRef.current = true;
+    filteredTickets.slice(0, 12).forEach((ticket) => {
+      router.prefetch(buildTicketDetailRoute(projectId, ticket.id));
+    });
+  }, [isTicketsLoading, filteredTickets, projectId, router]);
 
   useEffect(() => {
     if (!legacyTicketId) {

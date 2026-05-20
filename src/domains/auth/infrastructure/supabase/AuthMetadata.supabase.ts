@@ -68,7 +68,11 @@ export const getAuthUserMetadataAvatarUrl = (
   const authUserMetadata = asAuthUserMetadata(metadata);
   const avatarUrl = authUserMetadata?.avatar_url;
 
-  return isString(avatarUrl) && avatarUrl.length > 0 ? avatarUrl : null;
+  if (isString(avatarUrl) && avatarUrl.length > 0) {
+    return avatarUrl;
+  }
+
+  return null;
 };
 
 export const getAuthUserMetadataPreferences = (
