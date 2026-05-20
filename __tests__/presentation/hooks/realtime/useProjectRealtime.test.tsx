@@ -516,6 +516,8 @@ describe("useProjectRealtime", () => {
     const wrapper = createWrapper(queryClient);
     const { registrations } = createRealtimeMocks();
 
+    queryClient.setQueryData(queryKeys.projects.ticketsList(PROJECT_ID), []);
+
     renderHook(() => useProjectRealtime(PROJECT_ID), { wrapper });
 
     expect(registrations).toHaveLength(13);
@@ -526,10 +528,16 @@ describe("useProjectRealtime", () => {
       new: buildTicketRow(),
     });
 
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-      queryKey: queryKeys.projects.ticketsRoot(PROJECT_ID),
-      refetchType: "active",
-    });
+    const ticketList = queryClient.getQueryData<Array<{ id: string }>>(
+      queryKeys.projects.ticketsList(PROJECT_ID)
+    );
+    expect(ticketList).toHaveLength(1);
+    expect(ticketList?.[0]?.id).toBe(TICKET_ID);
+    expect(invalidateQueriesSpy).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryKey: queryKeys.projects.ticketsRoot(PROJECT_ID),
+      })
+    );
   });
 
   it("falls back to comments root invalidation when delete payload has only primary keys", () => {
