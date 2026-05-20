@@ -55,7 +55,7 @@ const BoardLayout = ({
   }, [projectId]);
   const legacyTicketId = searchParams.get("ticket");
   const { canMoveTicket } = useProjectPermissions();
-  const prefetchTicketDetail = usePrefetchTicketDetail();
+  const prefetchTicketDetail = usePrefetchTicketDetail(projectId);
 
   const handleOpenTicketDetail = useCallback(
     (ticketId: string) => {

@@ -3,6 +3,9 @@
 import { useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { useAppRouter } from "@/shared/navigation/useAppRouter";
+import { buildTicketDetailRoute } from "@/shared/utils/routes";
+
 import { listComments } from "@/modules/board/core/usecases/comment/listComments";
 import { getTicketDetail } from "@/modules/board/core/usecases/ticket/getTicketDetail";
 import {
@@ -11,18 +14,17 @@ import {
 } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 
-/**
- * Warm the ticket detail cache for the specific ticket the user is about to
- * open, without changing the board's own assignee/avatar data flow.
- */
-export const usePrefetchTicketDetail = () => {
+export const usePrefetchTicketDetail = (projectId: string) => {
   const queryClient = useQueryClient();
+  const router = useAppRouter();
 
   return useCallback(
     (ticketId: string) => {
       if (!ticketId) {
         return;
       }
+
+      router.prefetch(buildTicketDetailRoute(projectId, ticketId));
 
       void Promise.allSettled([
         queryClient.prefetchQuery({
@@ -39,6 +41,6 @@ export const usePrefetchTicketDetail = () => {
         }),
       ]);
     },
-    [queryClient]
+    [projectId, queryClient, router]
   );
 };
