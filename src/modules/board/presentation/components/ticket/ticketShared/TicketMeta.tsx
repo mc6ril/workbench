@@ -54,7 +54,12 @@ const TicketMeta = ({
         />
       ) : null}
       {ticketCode && (
-        <Text as="span" variant="caption" className={ticketCodeClassName}>
+        <Text
+          as="span"
+          variant="caption"
+          className={ticketCodeClassName}
+          aria-label={`ticket-code:${ticketCode}`}
+        >
           {ticketCode}
         </Text>
       )}

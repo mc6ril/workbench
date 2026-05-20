@@ -20,9 +20,6 @@ export type TicketCardProps = {
   assigneeName?: string | null;
   assigneeAvatarUrl?: string | null;
   priority?: TicketPriority | null;
-  storyPoints?: number | null;
-  checklistTotal?: number;
-  checklistChecked?: number;
 };
 
 type Props = TicketCardProps;
@@ -34,9 +31,6 @@ const TicketCard = ({
   assigneeName,
   assigneeAvatarUrl,
   priority,
-  storyPoints,
-  checklistTotal,
-  checklistChecked,
 }: Props) => {
   const t = useTranslations("pages.board.ticketCard");
   const baseId = useMemo(() => getAccessibilityId(`board-ticket-${id}`), [id]);
@@ -52,19 +46,8 @@ const TicketCard = ({
       assigneeLabel: t("assigneeLabel"),
       priority: priority ? t(`priority.${priority}`) : undefined,
       priorityLabel: t("priorityLabel"),
-      storyPointsLabel:
-        typeof storyPoints === "number"
-          ? t("storyPointsLabel", {
-              count: storyPoints,
-            })
-          : undefined,
     });
-  }, [t, title, ticketCode, assigneeName, priority, storyPoints]);
-
-  const showChecklistBadge =
-    typeof checklistTotal === "number" && checklistTotal > 0;
-  const isChecklistComplete =
-    showChecklistBadge && checklistChecked === checklistTotal;
+  }, [t, title, ticketCode, assigneeName, priority]);
 
   const cardClasses = useMemo(() => {
     return [
@@ -98,20 +81,6 @@ const TicketCard = ({
         >
           {title}
         </Title>
-        {showChecklistBadge ? (
-          <p
-            className={[
-              styles["ticket-card__checklist-badge"],
-              isChecklistComplete
-                ? styles["ticket-card__checklist-badge--complete"]
-                : null,
-            ]
-              .filter(Boolean)
-              .join(" ")}
-          >
-            {checklistChecked}/{checklistTotal}
-          </p>
-        ) : null}
       </div>
     </article>
   );
