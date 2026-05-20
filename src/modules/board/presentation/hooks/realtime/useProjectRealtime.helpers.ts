@@ -1,6 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query";
 
-import { isNonEmptyString, isObject, isString } from "@/shared/utils";
+import { isArray, isNonEmptyString, isObject, isString } from "@/shared/utils";
 
 import type { CommentWithAuthor } from "@/modules/board/core/domain/comment.types";
 import type {
@@ -231,7 +231,7 @@ const removeTicketAssignee = (
   return nextAssignees.length === assignees.length ? assignees : nextAssignees;
 };
 
-const matchesTicketListFilter = (
+export const matchesTicketListFilter = (
   ticket: Ticket,
   queryKey: readonly unknown[]
 ): boolean => {
@@ -270,6 +270,32 @@ export const invalidateProjectTickets = (
     queryKey: queryKeys.projects.ticketsRoot(projectId),
     refetchType: "active",
   });
+};
+
+export const insertTicketAcrossProjectLists = (
+  queryClient: QueryClient,
+  projectId: string,
+  newTicket: Ticket
+): void => {
+  const projectTicketQueries = queryClient.getQueriesData<Ticket[]>({
+    queryKey: queryKeys.projects.ticketsRoot(projectId),
+  });
+
+  for (const [queryKey, data] of projectTicketQueries) {
+    if (!isArray(data)) {
+      continue;
+    }
+
+    if (data.some((ticket) => ticket.id === newTicket.id)) {
+      continue;
+    }
+
+    if (!matchesTicketListFilter(newTicket, queryKey)) {
+      continue;
+    }
+
+    queryClient.setQueryData(queryKey, [newTicket, ...data]);
+  }
 };
 
 export const patchTicketAcrossProjectLists = (
