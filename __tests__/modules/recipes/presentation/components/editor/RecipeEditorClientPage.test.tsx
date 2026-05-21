@@ -18,6 +18,10 @@ import {
 import { useUpdateRecipe } from "@/modules/recipes/presentation/hooks/editor/useUpdateRecipe";
 import { useUploadRecipeCover } from "@/modules/recipes/presentation/hooks/editor/useUploadRecipeCover";
 
+jest.mock("@/modules/recipes/presentation/actions/editor", () => ({
+  revalidateRecipeDetailCache: jest.fn().mockResolvedValue(undefined),
+}));
+
 jest.mock(
   "@/modules/recipes/presentation/hooks/editor/useCreateRecipe",
   () => ({
@@ -56,6 +60,7 @@ const baseDraft = {
   totalTimeLabel: "",
   servingsCount: null,
   servingsLabel: "",
+  seasonalMonths: [],
   tags: [],
   ingredients: [],
   steps: [],
@@ -73,6 +78,7 @@ const createPersistedValues = (
   totalTimeMinutes: "",
   coverImageUrl: "",
   note: "",
+  seasonalMonths: [],
   tags: [],
   validatedIngredients: [
     {

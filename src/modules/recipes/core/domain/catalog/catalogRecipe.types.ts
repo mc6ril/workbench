@@ -68,6 +68,7 @@ export type CatalogRecipeSummary = Pick<
   | "totalTimeLabel"
   | "servingsLabel"
   | "coverImageUrl"
+  | "seasonalMonths"
 > & {
   tags: CatalogRecipeTag[];
   coverStyle: CatalogRecipeCoverStyle;

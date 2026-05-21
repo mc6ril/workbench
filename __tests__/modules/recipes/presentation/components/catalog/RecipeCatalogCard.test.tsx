@@ -52,6 +52,7 @@ const baseRecipe = {
   ],
   coverStyle: "citrus" as const,
   isInQuickList: false,
+  seasonalMonths: [],
 };
 
 describe("RecipeCatalogCard", () => {

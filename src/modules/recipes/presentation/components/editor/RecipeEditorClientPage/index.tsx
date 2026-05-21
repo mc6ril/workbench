@@ -33,7 +33,10 @@ import { useAppRouter } from "@/shared/navigation/useAppRouter";
 
 import styles from "./styles.module.scss";
 
-import { CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS } from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
+import {
+  CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS,
+  resolveTagColorCategory,
+} from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
 import type { RecipeDraft } from "@/modules/recipes/core/domain/editor/recipeDraft.types";
 import {
   buildRecipeTagSlug,
@@ -46,6 +49,7 @@ import {
   type RecipeTag,
 } from "@/modules/recipes/core/domain/recipe.types";
 import { RecipeEditorSubmissionSchema } from "@/modules/recipes/core/usecases/editor/saveRecipe";
+import { revalidateRecipeDetailCache } from "@/modules/recipes/presentation/actions/editor";
 import { useCreateRecipe } from "@/modules/recipes/presentation/hooks/editor/useCreateRecipe";
 import { useCreateRecipeLocalDraft } from "@/modules/recipes/presentation/hooks/editor/useCreateRecipeLocalDraft";
 import { useUpdateRecipe } from "@/modules/recipes/presentation/hooks/editor/useUpdateRecipe";
@@ -233,6 +237,7 @@ const mapDraftToFormValues = (
     totalTimeMinutes: draft.totalTimeMinutes?.toString() ?? "",
     coverImageUrl: draft.coverImageUrl ?? "",
     note: draft.note ?? "",
+    seasonalMonths: draft.seasonalMonths ?? [],
     tags: draft.tags.map((tag) => ({
       label: tag.label,
     })),
@@ -526,6 +531,14 @@ const RecipeEditorClientPage = ({
     name: "tags",
   });
   const watchedTags = useMemo(() => watchedTagsValue ?? [], [watchedTagsValue]);
+  const watchedSeasonalMonthsValue = useWatch({
+    control,
+    name: "seasonalMonths",
+  });
+  const watchedSeasonalMonths = useMemo(
+    () => new Set(watchedSeasonalMonthsValue ?? []),
+    [watchedSeasonalMonthsValue]
+  );
   const watchedValidatedIngredientsValue = useWatch({
     control,
     name: "validatedIngredients",
@@ -597,28 +610,9 @@ const RecipeEditorClientPage = ({
         (option) => option.tagSlugs
       )
     );
-    const suggestedTagsBySlug = new Map<string, RecipeTag>();
 
-    for (const option of CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS) {
-      const translatedLabel = tCatalog(`sheet.options.${option.id}`);
-      const translatedSlug = buildRecipeTagSlug(translatedLabel);
-      const preferredLabel = option.tagSlugs.includes(translatedSlug)
-        ? translatedLabel
-        : formatSuggestedTagLabelFromSlug(option.tagSlugs[0] ?? translatedSlug);
-      const preferredSlug = buildRecipeTagSlug(preferredLabel);
-
-      if (!preferredSlug || selectedTagSlugs.has(preferredSlug)) {
-        continue;
-      }
-
-      if (!suggestedTagsBySlug.has(preferredSlug)) {
-        suggestedTagsBySlug.set(preferredSlug, {
-          id: `default-filter-tag-${option.id}`,
-          label: preferredLabel,
-          slug: preferredSlug,
-        });
-      }
-    }
+    const customTags: RecipeTag[] = [];
+    const customTagSlugs = new Set<string>();
 
     for (const tag of availableTags) {
       if (
@@ -628,14 +622,46 @@ const RecipeEditorClientPage = ({
         continue;
       }
 
-      if (!suggestedTagsBySlug.has(tag.slug)) {
-        suggestedTagsBySlug.set(tag.slug, tag);
-      }
+      customTags.push(tag);
+      customTagSlugs.add(tag.slug);
     }
 
-    return Array.from(suggestedTagsBySlug.values()).sort((left, right) =>
-      left.label.localeCompare(right.label, "fr")
-    );
+    const predefinedTags: RecipeTag[] = [];
+    const seenPredefinedSlugs = new Set<string>();
+
+    for (const option of CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS) {
+      if (option.tagSlugs.length === 0) {
+        continue;
+      }
+
+      const translatedLabel = tCatalog(`sheet.options.${option.id}`);
+      const translatedSlug = buildRecipeTagSlug(translatedLabel);
+      const preferredLabel = option.tagSlugs.includes(translatedSlug)
+        ? translatedLabel
+        : formatSuggestedTagLabelFromSlug(option.tagSlugs[0]);
+      const preferredSlug = buildRecipeTagSlug(preferredLabel);
+
+      if (
+        !preferredSlug ||
+        selectedTagSlugs.has(preferredSlug) ||
+        customTagSlugs.has(preferredSlug) ||
+        seenPredefinedSlugs.has(preferredSlug)
+      ) {
+        continue;
+      }
+
+      seenPredefinedSlugs.add(preferredSlug);
+      predefinedTags.push({
+        id: `default-filter-tag-${option.id}`,
+        label: preferredLabel,
+        slug: preferredSlug,
+      });
+    }
+
+    const sort = (a: RecipeTag, b: RecipeTag) =>
+      a.label.localeCompare(b.label, "fr");
+
+    return [...customTags.sort(sort), ...predefinedTags.sort(sort)];
   }, [availableTags, selectedTagSlugs, tCatalog]);
 
   const normalizedServingsCount = normalizeRecipeTagLabel(watchedServingsCount);
@@ -665,6 +691,14 @@ const RecipeEditorClientPage = ({
   const coverImageFieldErrorId = getAccessibilityId(
     "recipe-cover-image-url-error"
   );
+
+  const handleToggleMonth = (month: number) => {
+    const current = [...watchedSeasonalMonths];
+    const next = watchedSeasonalMonths.has(month)
+      ? current.filter((m) => m !== month)
+      : [...current, month];
+    setValue("seasonalMonths", next, { shouldDirty: true });
+  };
 
   const handleAddTag = (candidate: string) => {
     const label = normalizeRecipeTagLabel(candidate);
@@ -828,9 +862,10 @@ const RecipeEditorClientPage = ({
 
       if (isCreate) {
         clearDraft();
+      } else {
+        await revalidateRecipeDetailCache(projectId, savedRecipe.id ?? "");
       }
 
-      router.refresh();
       startRouting(() => {
         router.push(buildRecipeDetailRoute(projectId, savedRecipe.id ?? ""));
       });
@@ -1079,26 +1114,54 @@ const RecipeEditorClientPage = ({
             </section>
 
             <section className={styles["editor-main-section"]}>
+              <SectionHeading title={t("sections.season.kicker")} />
+              <div className={styles["editor-month-grid"]}>
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                  <button
+                    key={month}
+                    type="button"
+                    className={styles["editor-month-toggle"]}
+                    data-active={watchedSeasonalMonths.has(month) || undefined}
+                    onClick={() => handleToggleMonth(month)}
+                    disabled={isPending}
+                  >
+                    {t(`months.${month}` as `months.${number}`)}
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <section className={styles["editor-main-section"]}>
               <SectionHeading title={t("sections.tags.kicker")} />
 
               {tagFields.length > 0 ? (
                 <div className={styles["editor-pill-row"]}>
-                  {tagFields.map((tag, index) => (
-                    <span key={tag.id} className={styles["editor-pill"]}>
-                      {tag.label}
-                      <button
-                        type="button"
-                        className={styles["editor-pill-remove"]}
-                        onClick={() => removeTag(index)}
-                        disabled={isPending}
-                        aria-label={t("actions.removeTagAriaLabel", {
-                          label: tag.label,
-                        })}
+                  {tagFields.map((tag, index) => {
+                    const slug = buildRecipeTagSlug(tag.label);
+                    const colorCategory = slug
+                      ? resolveTagColorCategory(slug)
+                      : null;
+                    return (
+                      <span
+                        key={tag.id}
+                        className={styles["editor-pill"]}
+                        data-color={colorCategory ?? undefined}
                       >
-                        {t("actions.remove")}
-                      </button>
-                    </span>
-                  ))}
+                        {tag.label}
+                        <button
+                          type="button"
+                          className={styles["editor-pill-remove"]}
+                          onClick={() => removeTag(index)}
+                          disabled={isPending}
+                          aria-label={t("actions.removeTagAriaLabel", {
+                            label: tag.label,
+                          })}
+                        >
+                          {t("actions.remove")}
+                        </button>
+                      </span>
+                    );
+                  })}
                 </div>
               ) : null}
 
@@ -1134,6 +1197,9 @@ const RecipeEditorClientPage = ({
                       key={tag.id}
                       type="button"
                       className={styles["editor-suggestion"]}
+                      data-color={
+                        resolveTagColorCategory(tag.slug) ?? undefined
+                      }
                       onClick={() => handleAddTag(tag.label)}
                       disabled={isPending}
                     >

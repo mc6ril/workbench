@@ -38,6 +38,7 @@ describe("Recipes Supabase repositories", () => {
     note: "Le sumac reste à confirmer.",
     cover_image_url: null,
     cover_style: "citrus",
+    seasonal_months: [],
     created_at: "2026-03-31T08:00:00.000Z",
     updated_at: "2026-03-31T08:00:00.000Z",
   };

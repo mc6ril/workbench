@@ -19,7 +19,7 @@ const RECIPE_SELECTION_FIELDS =
   "id, project_id, recipe_id, position, note, servings_count, servings_label, status, created_at, updated_at";
 
 const RECIPE_SELECTION_RECIPE_FIELDS =
-  "id, project_id, title, summary, total_time_minutes, total_time_label, servings_count, servings_label, note, cover_image_url, cover_style, created_at, updated_at";
+  "id, project_id, title, summary, total_time_minutes, total_time_label, servings_count, servings_label, note, cover_image_url, cover_style, seasonal_months, created_at, updated_at";
 
 const mapSelectionToQuickListRecipe = (
   selection: RecipeSelectionRow,

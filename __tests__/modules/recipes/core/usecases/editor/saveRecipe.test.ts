@@ -13,6 +13,7 @@ describe("normalizeRecipeEditorSubmission", () => {
       totalTimeMinutes: "35",
       coverImageUrl: "https://example.com/recipe.jpg",
       note: "  Tester le sumac sur une seule portion. ",
+      seasonalMonths: [],
       tags: [
         { label: " Rapide " },
         { label: "rapide" },
@@ -114,6 +115,7 @@ describe("normalizeRecipeEditorSubmission", () => {
         totalTimeMinutes: "",
         coverImageUrl: "",
         note: "",
+        seasonalMonths: [],
         tags: [],
         validatedIngredients: [
           { amount: "", unit: "", displayName: "", notes: "" },
@@ -141,6 +143,7 @@ describe("normalizeRecipeEditorSubmission", () => {
         totalTimeMinutes: "",
         coverImageUrl: "pas-une-url",
         note: "",
+        seasonalMonths: [],
         tags: [],
         validatedIngredients: [
           {
@@ -165,6 +168,7 @@ describe("normalizeRecipeEditorSubmission", () => {
       totalTimeMinutes: "",
       coverImageUrl: "",
       note: "",
+      seasonalMonths: [],
       tags: [],
       validatedIngredients: [
         {

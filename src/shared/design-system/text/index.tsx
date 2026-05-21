@@ -11,7 +11,7 @@ type Props = {
   id?: string;
   "aria-label"?: string;
   as?: "p" | "span" | "div";
-};
+} & Record<`data-${string}`, string | undefined>;
 
 const Text = ({
   children,
@@ -20,6 +20,7 @@ const Text = ({
   id,
   "aria-label": ariaLabel,
   as = "p",
+  ...dataProps
 }: Props) => {
   const textClasses = [styles.text, styles[`text--${variant}`], className]
     .filter(Boolean)
@@ -28,7 +29,12 @@ const Text = ({
   const TextTag = as;
 
   return (
-    <TextTag id={id} className={textClasses} aria-label={ariaLabel}>
+    <TextTag
+      id={id}
+      className={textClasses}
+      aria-label={ariaLabel}
+      {...dataProps}
+    >
       {children}
     </TextTag>
   );
