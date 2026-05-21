@@ -107,6 +107,7 @@ export const RecipeEditorSubmissionSchema = z
     totalTimeMinutes: z.string(),
     coverImageUrl: z.string(),
     note: z.string(),
+    seasonalMonths: z.array(z.number().int().min(1).max(12)),
     tags: z.array(RecipeEditorTagInputSchema),
     validatedIngredients: z.array(RecipeEditorIngredientInputSchema),
     additionIngredients: z.array(RecipeEditorIngredientInputSchema),
@@ -340,6 +341,9 @@ export const normalizeRecipeEditorSubmission = (
     coverImageUrl: normalizeRecipeEditorText(validatedInput.coverImageUrl),
     coverStyle: resolveRecipeCoverStyle(title),
     note: normalizeRecipeEditorText(validatedInput.note),
+    seasonalMonths: [...new Set(validatedInput.seasonalMonths)].sort(
+      (a, b) => a - b
+    ),
     tags: normalizeTags(validatedInput.tags),
     ingredients: [...validatedIngredients, ...additionIngredients],
     steps: normalizeSteps(validatedInput.steps),

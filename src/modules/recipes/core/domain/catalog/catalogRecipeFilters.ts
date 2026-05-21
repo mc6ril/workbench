@@ -3,6 +3,7 @@ export const CATALOG_RECIPE_FILTER_CATEGORY_KEYS = [
   "type",
   "dietary",
   "equipment",
+  "season",
 ] as const;
 
 export type CatalogRecipeFilterCategoryKey =
@@ -112,16 +113,7 @@ export const CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS = [
     "sans-gluten",
     "gluten-free",
   ]),
-  createOption("equipment-two-hobs-max", "equipment", [
-    "2-plaques-maximum",
-    "deux-plaques-maximum",
-  ]),
-  createOption("equipment-food-processor", "equipment", [
-    "compatible-robot-de-cuisine",
-    "robot-de-cuisine",
-  ]),
-  createOption("equipment-no-oven", "equipment", ["sans-four"]),
-  createOption("equipment-no-blender", "equipment", ["sans-mixeur"]),
+  createOption("season-current", "season", []),
 ] as const satisfies readonly CatalogRecipeFilterOptionDefinition[];
 
 export const CATALOG_RECIPE_VISIBLE_FILTER_CATEGORY_KEYS: CatalogRecipeFilterCategoryKey[] =
@@ -192,6 +184,17 @@ export const normalizeCatalogRecipeFilterOptionIds = (
       return [createCatalogRecipeTagFilterOptionId(tagSlug)];
     })
     .sort();
+};
+
+export const resolveTagColorCategory = (
+  slug: string
+): CatalogRecipeFilterCategoryKey | null => {
+  for (const option of CATALOG_RECIPE_FILTER_OPTION_DEFINITIONS) {
+    if (option.tagSlugs.includes(slug)) {
+      return option.category;
+    }
+  }
+  return null;
 };
 
 export const getCatalogRecipeFilterOptionDefinition = (

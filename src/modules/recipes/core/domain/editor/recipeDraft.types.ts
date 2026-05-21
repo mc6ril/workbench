@@ -23,6 +23,7 @@ export const EMPTY_RECIPE_DRAFT: RecipeDraft = {
   totalTimeLabel: "",
   servingsCount: null,
   servingsLabel: "",
+  seasonalMonths: [],
   tags: [],
   ingredients: [],
   steps: [],

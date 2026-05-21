@@ -352,6 +352,24 @@
   background: rgba(var(--shadow-color), 0.03);
   color: $color-text;
   font-size: $font-size-sm;
+
+  &[data-color="popular"] {
+    border-color: $color-accent-border-soft;
+    background: $color-accent-bg-soft;
+    color: $color-accent;
+  }
+
+  &[data-color="type"] {
+    border-color: $color-info;
+    background: $color-info-background;
+    color: $color-info-text;
+  }
+
+  &[data-color="dietary"] {
+    border-color: $color-sage-border;
+    background: $color-sage-bg-soft;
+    color: $color-sage-text;
+  }
 }
 
 .editor-pill-remove {
@@ -360,6 +378,44 @@
   color: $color-text-secondary;
   cursor: pointer;
   font: inherit;
+}
+
+.editor-month-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: $spacing-xs;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+.editor-month-toggle {
+  min-height: 2rem;
+  padding: $spacing-2xs $spacing-xs;
+  border: $border-width solid $color-border-subtle;
+  border-radius: $border-radius-sm;
+  background: transparent;
+  color: $color-text-secondary;
+  cursor: pointer;
+  font-size: $font-size-xs;
+  transition:
+    background-color 150ms ease-in-out,
+    border-color 150ms ease-in-out,
+    color 150ms ease-in-out;
+
+  &:hover:not(:disabled) {
+    border-color: $color-accent-border-soft;
+    background: $color-accent-bg-soft;
+    color: $color-accent;
+  }
+
+  &[data-active] {
+    border-color: $color-accent-border-soft;
+    background: $color-accent-bg-soft;
+    color: $color-accent;
+    font-weight: $font-weight-semibold;
+  }
 }
 
 .editor-suggestion {
@@ -377,6 +433,30 @@
   &:hover:not(:disabled) {
     border-color: $color-accent-border-soft;
     background: rgba(var(--shadow-color-accent), 0.06);
+  }
+
+  &[data-color="popular"] {
+    border-color: $color-accent-border-soft;
+    color: $color-accent;
+    &:hover:not(:disabled) {
+      background: $color-accent-bg-soft;
+    }
+  }
+
+  &[data-color="type"] {
+    border-color: $color-info;
+    color: $color-info-text;
+    &:hover:not(:disabled) {
+      background: $color-info-background;
+    }
+  }
+
+  &[data-color="dietary"] {
+    border-color: $color-sage-border;
+    color: $color-sage-text;
+    &:hover:not(:disabled) {
+      background: $color-sage-bg-soft;
+    }
   }
 }
 

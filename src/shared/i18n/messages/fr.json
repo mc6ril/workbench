@@ -860,6 +860,9 @@
             "equipment": {
               "title": "Équipement"
             },
+            "season": {
+              "title": "Saison"
+            },
             "customTags": {
               "title": "Tags ajoutés"
             }
@@ -877,11 +880,8 @@
             "type-fish": "Poisson",
             "type-veggie": "Veggie",
             "type-meat": "Viande",
-            "dietary-naturally-gluten-free": "Naturellement sans gluten",
-            "equipment-two-hobs-max": "2 plaques maximum",
-            "equipment-food-processor": "Compatible robot de cuisine",
-            "equipment-no-oven": "Sans four",
-            "equipment-no-blender": "Sans mixeur"
+            "dietary-naturally-gluten-free": "Sans gluten",
+            "season-current": "De saison"
           }
         },
         "toolbar": {
@@ -926,7 +926,7 @@
         "lastCooked": "Cuisiné le {date}",
         "meta": {
           "servings": "Portions",
-          "totalTime": "Temps total"
+          "totalTime": "Temps estimé (min)"
         }
       },
       "editor": {
@@ -954,7 +954,25 @@
           "imageReady": "Renseignée",
           "imageEmpty": "Optionnelle"
         },
+        "months": {
+          "1": "Jan",
+          "2": "Fév",
+          "3": "Mar",
+          "4": "Avr",
+          "5": "Mai",
+          "6": "Juin",
+          "7": "Juil",
+          "8": "Août",
+          "9": "Sep",
+          "10": "Oct",
+          "11": "Nov",
+          "12": "Déc"
+        },
         "sections": {
+          "season": {
+            "kicker": "Saison",
+            "empty": "Disponible toute l’année."
+          },
           "identity": {
             "kicker": "Identité",
             "title": "Les informations de base",

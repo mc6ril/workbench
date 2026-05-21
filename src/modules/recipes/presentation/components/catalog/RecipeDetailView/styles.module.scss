@@ -63,6 +63,49 @@
   border-radius: $border-radius-full;
   background: $color-secondary;
   color: $color-text-secondary;
+
+  &[data-color="popular"] {
+    border-color: $color-accent-border-soft;
+    background: $color-accent-bg-soft;
+    color: $color-accent;
+  }
+
+  &[data-color="type"] {
+    border-color: $color-info;
+    background: $color-info-background;
+    color: $color-info-text;
+  }
+
+  &[data-color="dietary"] {
+    border-color: $color-sage-border;
+    background: $color-sage-bg-soft;
+    color: $color-sage-text;
+  }
+}
+
+// ─── Season chips ────────────────────────────────────────────────────────────
+
+.recipe-detail__season-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  padding-top: $spacing-xs;
+  border-top: $border-width solid $color-border-subtle;
+}
+
+.recipe-detail__season-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  padding: 0 $spacing-sm;
+  border: $border-width solid $color-accent-border-soft;
+  border-radius: $border-radius-sm;
+  background: $color-accent-bg-soft;
+  color: $color-accent;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
 }
 
 // ─── Section card (shared by meta, ingredients, steps, additions) ────────────

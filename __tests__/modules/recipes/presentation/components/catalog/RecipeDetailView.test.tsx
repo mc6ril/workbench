@@ -14,6 +14,7 @@ const baseRecipe = {
   note: "Bien saisir avant d'ajouter le bouillon.",
   coverStyle: "citrus" as const,
   isInQuickList: true,
+  seasonalMonths: [],
   tags: [
     {
       id: "tag-1",

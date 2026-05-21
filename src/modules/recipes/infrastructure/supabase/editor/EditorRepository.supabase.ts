@@ -37,6 +37,7 @@ const buildRecipeRowPayload = (
     note: input.note,
     cover_image_url: input.coverImageUrl,
     cover_style: input.coverStyle,
+    seasonal_months: input.seasonalMonths,
   };
 };
 

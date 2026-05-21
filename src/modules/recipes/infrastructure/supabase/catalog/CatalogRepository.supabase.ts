@@ -114,6 +114,25 @@ const resolveRecipeIdsMatchingSearch = async (
   ];
 };
 
+const resolveRecipeIdsMatchingSeason = async (
+  client: AppSupabaseClient,
+  projectId: string
+): Promise<string[]> => {
+  const currentMonth = new Date().getMonth() + 1;
+
+  const { data, error } = await client
+    .from("recipes")
+    .select("id")
+    .eq("project_id", projectId)
+    .contains("seasonal_months", [currentMonth]);
+
+  if (error) {
+    return handleRepositoryError(error, "Recipe", projectId);
+  }
+
+  return (data ?? []).map((row) => row.id);
+};
+
 const resolveRecipeIdsMatchingFilters = async (
   client: AppSupabaseClient,
   projectId: string,
@@ -131,103 +150,127 @@ const resolveRecipeIdsMatchingFilters = async (
     ),
   ];
 
-  if (selectedOptionsByCategory.size === 0 && customTagSlugs.length === 0) {
+  const hasSeasonFilter = selectedOptionsByCategory.has("season");
+  const tagCategories = new Map(
+    [...selectedOptionsByCategory.entries()].filter(([key]) => key !== "season")
+  );
+
+  if (
+    tagCategories.size === 0 &&
+    customTagSlugs.length === 0 &&
+    !hasSeasonFilter
+  ) {
     return null;
   }
 
-  const requestedTagSlugs = [
-    ...new Set(
-      [...selectedOptionsByCategory.values()].flatMap((options) =>
-        options.flatMap((option) => option.tagSlugs)
-      )
-    ),
-    ...customTagSlugs,
-  ];
+  const [tagMatchedIds, seasonMatchedIds] = await Promise.all([
+    (async (): Promise<string[] | null> => {
+      if (tagCategories.size === 0 && customTagSlugs.length === 0) {
+        return null;
+      }
 
-  const { data: tagData, error: tagError } = await client
-    .from("recipe_tags")
-    .select("id, slug")
-    .eq("project_id", projectId)
-    .in("slug", requestedTagSlugs);
+      const requestedTagSlugs = [
+        ...new Set(
+          [...tagCategories.values()].flatMap((options) =>
+            options.flatMap((option) => option.tagSlugs)
+          )
+        ),
+        ...customTagSlugs,
+      ];
 
-  if (tagError) {
-    return handleRepositoryError(tagError, "RecipeTag", projectId);
-  }
+      const { data: tagData, error: tagError } = await client
+        .from("recipe_tags")
+        .select("id, slug")
+        .eq("project_id", projectId)
+        .in("slug", requestedTagSlugs);
 
-  const tagRows = tagData ?? [];
-  const tagIdBySlug = new Map(tagRows.map((tag) => [tag.slug, tag.id]));
-  const tagIdsByCategory = new Map<string, Set<string>>();
+      if (tagError) {
+        return handleRepositoryError(tagError, "RecipeTag", projectId);
+      }
 
-  for (const [categoryKey, options] of selectedOptionsByCategory.entries()) {
-    const tagIds = new Set(
-      options.flatMap((option) =>
-        option.tagSlugs.flatMap((tagSlug) => {
-          const tagId = tagIdBySlug.get(tagSlug);
-          return tagId ? [tagId] : [];
-        })
-      )
-    );
+      const tagRows = tagData ?? [];
+      const tagIdBySlug = new Map(tagRows.map((tag) => [tag.slug, tag.id]));
+      const tagIdsByCategory = new Map<string, Set<string>>();
 
-    if (tagIds.size === 0) {
-      return [];
-    }
+      for (const [categoryKey, options] of tagCategories.entries()) {
+        const tagIds = new Set(
+          options.flatMap((option) =>
+            option.tagSlugs.flatMap((tagSlug) => {
+              const tagId = tagIdBySlug.get(tagSlug);
+              return tagId ? [tagId] : [];
+            })
+          )
+        );
 
-    tagIdsByCategory.set(categoryKey, tagIds);
-  }
+        if (tagIds.size === 0) {
+          return [];
+        }
 
-  for (const customTagSlug of customTagSlugs) {
-    const tagId = tagIdBySlug.get(customTagSlug);
+        tagIdsByCategory.set(categoryKey, tagIds);
+      }
 
-    if (!tagId) {
-      return [];
-    }
+      for (const customTagSlug of customTagSlugs) {
+        const tagId = tagIdBySlug.get(customTagSlug);
 
-    tagIdsByCategory.set(`custom:${customTagSlug}`, new Set([tagId]));
-  }
+        if (!tagId) {
+          return [];
+        }
 
-  const selectedTagIds = [
-    ...new Set([...tagIdsByCategory.values()].flatMap((ids) => [...ids])),
-  ];
-  const { data: tagLinkData, error: tagLinkError } = await client
-    .from("recipe_tag_links")
-    .select("recipe_id, tag_id")
-    .eq("project_id", projectId)
-    .in("tag_id", selectedTagIds);
+        tagIdsByCategory.set(`custom:${customTagSlug}`, new Set([tagId]));
+      }
 
-  if (tagLinkError) {
-    return handleRepositoryError(tagLinkError, "RecipeTagLink", projectId);
-  }
+      const selectedTagIds = [
+        ...new Set([...tagIdsByCategory.values()].flatMap((ids) => [...ids])),
+      ];
+      const { data: tagLinkData, error: tagLinkError } = await client
+        .from("recipe_tag_links")
+        .select("recipe_id, tag_id")
+        .eq("project_id", projectId)
+        .in("tag_id", selectedTagIds);
 
-  const categoryKeys = [...tagIdsByCategory.keys()];
-  const matchedCategoriesByRecipeId = new Map<string, Set<string>>();
+      if (tagLinkError) {
+        return handleRepositoryError(tagLinkError, "RecipeTagLink", projectId);
+      }
 
-  for (const tagLink of tagLinkData ?? []) {
-    const matchingCategoryKeys = categoryKeys.filter((categoryKey) =>
-      tagIdsByCategory.get(categoryKey)?.has(tagLink.tag_id)
-    );
+      const categoryKeys = [...tagIdsByCategory.keys()];
+      const matchedCategoriesByRecipeId = new Map<string, Set<string>>();
 
-    if (matchingCategoryKeys.length === 0) {
-      continue;
-    }
+      for (const tagLink of tagLinkData ?? []) {
+        const matchingCategoryKeys = categoryKeys.filter((categoryKey) =>
+          tagIdsByCategory.get(categoryKey)?.has(tagLink.tag_id)
+        );
 
-    const currentMatchedCategories =
-      matchedCategoriesByRecipeId.get(tagLink.recipe_id) ?? new Set<string>();
+        if (matchingCategoryKeys.length === 0) {
+          continue;
+        }
 
-    for (const categoryKey of matchingCategoryKeys) {
-      currentMatchedCategories.add(categoryKey);
-    }
+        const currentMatchedCategories =
+          matchedCategoriesByRecipeId.get(tagLink.recipe_id) ??
+          new Set<string>();
 
-    matchedCategoriesByRecipeId.set(
-      tagLink.recipe_id,
-      currentMatchedCategories
-    );
-  }
+        for (const categoryKey of matchingCategoryKeys) {
+          currentMatchedCategories.add(categoryKey);
+        }
 
-  return [...matchedCategoriesByRecipeId.entries()]
-    .filter(
-      ([, matchedCategories]) => matchedCategories.size === categoryKeys.length
-    )
-    .map(([recipeId]) => recipeId);
+        matchedCategoriesByRecipeId.set(
+          tagLink.recipe_id,
+          currentMatchedCategories
+        );
+      }
+
+      return [...matchedCategoriesByRecipeId.entries()]
+        .filter(
+          ([, matchedCategories]) =>
+            matchedCategories.size === categoryKeys.length
+        )
+        .map(([recipeId]) => recipeId);
+    })(),
+    hasSeasonFilter
+      ? resolveRecipeIdsMatchingSeason(client, projectId)
+      : Promise.resolve(null),
+  ]);
+
+  return intersectRecipeIds(tagMatchedIds, seasonMatchedIds);
 };
 
 const intersectRecipeIds = (

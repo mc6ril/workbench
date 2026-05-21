@@ -860,6 +860,9 @@
             "equipment": {
               "title": "Equipment"
             },
+            "season": {
+              "title": "Season"
+            },
             "customTags": {
               "title": "Added tags"
             }
@@ -877,11 +880,8 @@
             "type-fish": "Fish",
             "type-veggie": "Veggie",
             "type-meat": "Meat",
-            "dietary-naturally-gluten-free": "Naturally gluten-free",
-            "equipment-two-hobs-max": "2 hobs max",
-            "equipment-food-processor": "Food processor compatible",
-            "equipment-no-oven": "No oven",
-            "equipment-no-blender": "No blender"
+            "dietary-naturally-gluten-free": "Gluten-free",
+            "season-current": "In season"
           }
         },
         "toolbar": {
@@ -926,7 +926,7 @@
         "lastCooked": "Cooked on {date}",
         "meta": {
           "servings": "Servings",
-          "totalTime": "Total time"
+          "totalTime": "Est. time (min)"
         }
       },
       "editor": {
@@ -954,7 +954,25 @@
           "imageReady": "Set",
           "imageEmpty": "Optional"
         },
+        "months": {
+          "1": "Jan",
+          "2": "Feb",
+          "3": "Mar",
+          "4": "Apr",
+          "5": "May",
+          "6": "Jun",
+          "7": "Jul",
+          "8": "Aug",
+          "9": "Sep",
+          "10": "Oct",
+          "11": "Nov",
+          "12": "Dec"
+        },
         "sections": {
+          "season": {
+            "kicker": "Season",
+            "empty": "Available all year."
+          },
           "identity": {
             "kicker": "Identity",
             "title": "Basic information",
