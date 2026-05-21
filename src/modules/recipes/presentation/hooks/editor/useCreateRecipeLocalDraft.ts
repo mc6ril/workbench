@@ -45,6 +45,7 @@ const CreateRecipeLocalDraftSchema = z.object({
     totalTimeMinutes: z.string(),
     coverImageUrl: z.string(),
     note: z.string(),
+    seasonalMonths: z.array(z.number()).optional().default([]),
     tags: z.array(RecipeEditorTagInputSchema),
     validatedIngredients: z.array(RecipeEditorIngredientInputSchema),
     additionIngredients: z.array(RecipeEditorIngredientInputSchema),

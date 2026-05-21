@@ -860,6 +860,9 @@
             "equipment": {
               "title": "Equipamiento"
             },
+            "season": {
+              "title": "Temporada"
+            },
             "customTags": {
               "title": "Tags añadidos"
             }
@@ -877,11 +880,8 @@
             "type-fish": "Pescado",
             "type-veggie": "Veggie",
             "type-meat": "Carne",
-            "dietary-naturally-gluten-free": "Naturalmente sin gluten",
-            "equipment-two-hobs-max": "Máximo 2 fuegos",
-            "equipment-food-processor": "Compatible con robot de cocina",
-            "equipment-no-oven": "Sin horno",
-            "equipment-no-blender": "Sin batidora"
+            "dietary-naturally-gluten-free": "Sin gluten",
+            "season-current": "De temporada"
           }
         },
         "toolbar": {
@@ -954,7 +954,25 @@
           "imageReady": "Indicada",
           "imageEmpty": "Opcional"
         },
+        "months": {
+          "1": "Ene",
+          "2": "Feb",
+          "3": "Mar",
+          "4": "Abr",
+          "5": "May",
+          "6": "Jun",
+          "7": "Jul",
+          "8": "Ago",
+          "9": "Sep",
+          "10": "Oct",
+          "11": "Nov",
+          "12": "Dic"
+        },
         "sections": {
+          "season": {
+            "kicker": "Temporada",
+            "empty": "Disponible todo el año."
+          },
           "identity": {
             "kicker": "Identidad",
             "title": "Información básica",

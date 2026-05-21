@@ -54,6 +54,7 @@ export type Recipe = {
   totalTimeLabel: string;
   servingsCount: number | null;
   servingsLabel: string;
+  seasonalMonths: number[];
   tags: RecipeTag[];
   ingredients: RecipeIngredient[];
   steps: RecipeStep[];

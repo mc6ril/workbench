@@ -66,6 +66,8 @@ const RecipeDetailView = ({
       <RecipeDetailMetaSummary
         servingsLabel={recipe.servingsLabel}
         totalTimeLabel={recipe.totalTimeLabel}
+        seasonalMonths={recipe.seasonalMonths}
+        locale={getIntlLocale(locale)}
         t={t}
       />
 

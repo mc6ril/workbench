@@ -77,6 +77,7 @@ const mapLoadedRecipeGraphToRecipe = (graph: LoadedRecipeGraph): Recipe => {
     servingsLabel: buildRecipeServingsLabel({
       servingsCount: graph.recipe.servings_count,
     }),
+    seasonalMonths: graph.recipe.seasonal_months ?? [],
     tags: graph.tags,
     ingredients: graph.ingredients.map(mapRecipeIngredientRowToDomain),
     steps: graph.steps.map(mapRecipeStepRowToDomain),
@@ -116,6 +117,7 @@ export const mapRecipeRowToCatalogSummary = (
     servingsLabel: buildRecipeServingsLabel({
       servingsCount: recipe.servings_count,
     }),
+    seasonalMonths: recipe.seasonal_months ?? [],
     coverImageUrl: recipe.cover_image_url,
     tags,
     coverStyle: mapRecipeCoverStyle(recipe.cover_style),

@@ -25,6 +25,7 @@ export type SaveRecipeEditorInput = {
   totalTimeMinutes: string;
   coverImageUrl: string;
   note: string;
+  seasonalMonths: number[];
   tags: RecipeEditorTagInput[];
   validatedIngredients: RecipeEditorIngredientInput[];
   additionIngredients: RecipeEditorIngredientInput[];
@@ -66,6 +67,7 @@ export type PersistedRecipeInput = {
   coverImageUrl: string | null;
   coverStyle: CatalogRecipeCoverStyle;
   note: string | null;
+  seasonalMonths: number[];
   tags: PersistedRecipeTagInput[];
   ingredients: PersistedRecipeIngredientInput[];
   steps: PersistedRecipeStepInput[];

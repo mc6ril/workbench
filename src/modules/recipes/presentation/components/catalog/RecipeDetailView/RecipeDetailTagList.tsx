@@ -3,6 +3,7 @@ import Text from "@/shared/design-system/text";
 import styles from "./styles.module.scss";
 
 import type { CatalogRecipeDetail } from "@/modules/recipes/core/domain/catalog/catalogRecipe.types";
+import { resolveTagColorCategory } from "@/modules/recipes/core/domain/catalog/catalogRecipeFilters";
 
 type Props = {
   tags: CatalogRecipeDetail["tags"];
@@ -21,6 +22,7 @@ const RecipeDetailTagList = ({ tags }: Props) => {
           as="span"
           variant="small"
           className={styles["recipe-detail__tag"]}
+          data-color={resolveTagColorCategory(tag.slug) ?? undefined}
         >
           {tag.label}
         </Text>

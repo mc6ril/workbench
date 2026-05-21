@@ -549,6 +549,7 @@ export type Database = {
           id: string;
           note: string | null;
           project_id: string;
+          seasonal_months: number[];
           servings_count: number | null;
           servings_label: string;
           summary: string;
@@ -564,6 +565,7 @@ export type Database = {
           id?: string;
           note?: string | null;
           project_id: string;
+          seasonal_months?: number[];
           servings_count?: number | null;
           servings_label?: string;
           summary?: string;
@@ -579,6 +581,7 @@ export type Database = {
           id?: string;
           note?: string | null;
           project_id?: string;
+          seasonal_months?: number[];
           servings_count?: number | null;
           servings_label?: string;
           summary?: string;
