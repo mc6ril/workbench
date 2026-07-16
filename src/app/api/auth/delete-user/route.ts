@@ -6,14 +6,11 @@ import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/admi
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 import { withRateLimit } from "@/shared/infrastructure/web/rateLimit";
 import { verifyCsrfOrigin } from "@/shared/infrastructure/web/security/csrf";
-import { createLoggerFactory } from "@/shared/observability";
 import { hasErrorCode } from "@/shared/utils/guards";
 
 import { deleteAccount } from "@/domains/auth/core/usecases/user/deleteAccount";
 import { requireCurrentAuthIdentity } from "@/domains/auth/infrastructure/supabase/currentAuthIdentity";
 import { createAuthGateway } from "@/domains/auth/infrastructure/supabase/repositories";
-
-const logger = createLoggerFactory().forScope("API.DeleteUser");
 
 /**
  * DELETE /api/auth/delete-user
@@ -80,7 +77,7 @@ export const DELETE = async (request: NextRequest): Promise<NextResponse> => {
       );
     }
 
-    logger.error("Delete user error", { error });
+    console.error("Delete user error", { error });
 
     return NextResponse.json(
       { error: API_MESSAGES_AUTH.DELETE_FAILED },

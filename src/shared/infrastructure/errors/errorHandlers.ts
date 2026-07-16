@@ -1,11 +1,7 @@
 import type { RepositoryErrorUnion } from "@/shared/errors/repositoryError";
 import { isRepositoryError } from "@/shared/errors/repositoryError.guards";
-import { createLoggerFactory } from "@/shared/observability";
 
 import { mapSupabaseError } from "./repositoryErrorMapper";
-
-const loggerFactory = createLoggerFactory();
-const logger = loggerFactory.forScope("infrastructure.repository-errors");
 
 /**
  * Standardized error handling for repository methods.
@@ -33,7 +29,7 @@ export const handleRepositoryError = (
   if (isRepositoryError(error)) {
     const repositoryError = error as RepositoryErrorUnion;
     // Log domain repository error with context
-    logger.error("Repository error", {
+    console.error("Repository error", {
       error,
       entityType,
       entityId,
@@ -47,7 +43,7 @@ export const handleRepositoryError = (
   const mappedError = mapSupabaseError(error, entityType, entityId);
 
   // Log mapped error with original error context
-  logger.error("Repository error (mapped from infrastructure error)", {
+  console.error("Repository error (mapped from infrastructure error)", {
     error,
     mappedError,
     entityType,

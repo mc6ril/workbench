@@ -29,7 +29,6 @@ Shared cross-cutting pieces still belong in:
 - `src/shared/infrastructure/`
 - `src/shared/i18n/`
 - `src/shared/a11y/`
-- `src/shared/observability/`
 
 Public/static pages that do not belong to a stable business owner may also live in `src/presentation/pages/`.
 
