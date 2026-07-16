@@ -1,11 +1,7 @@
 import { AUTH_ERROR_CODES } from "@/shared/errors/appErrorCodes";
-import { createLoggerFactory } from "@/shared/observability";
 import { hasErrorCode } from "@/shared/utils/guards";
 
 import { mapSupabaseAuthError } from "@/domains/auth/infrastructure/supabase/AuthMapper.supabase";
-
-const loggerFactory = createLoggerFactory();
-const logger = loggerFactory.forScope("infrastructure.supabase-auth-errors");
 
 /**
  * Re-throws known auth errors and maps unknown Supabase/provider errors into
@@ -13,7 +9,7 @@ const logger = loggerFactory.forScope("infrastructure.supabase-auth-errors");
  */
 export const handleAuthError = (error: unknown): never => {
   if (hasErrorCode(error, [...AUTH_ERROR_CODES])) {
-    logger.warn("Authentication error", {
+    console.warn("Authentication error", {
       error,
       errorCode: error.code,
     });
@@ -22,7 +18,7 @@ export const handleAuthError = (error: unknown): never => {
 
   const mappedError = mapSupabaseAuthError(error);
 
-  logger.warn("Authentication error (mapped from infrastructure error)", {
+  console.warn("Authentication error (mapped from infrastructure error)", {
     error,
     mappedError,
     errorCode: mappedError.code,

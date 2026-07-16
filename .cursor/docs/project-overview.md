@@ -99,7 +99,7 @@ Workbench now targets a **final domain + module architecture**:
 - `src/domains/project/` owns the project container: project settings, members, invitations, permissions, and enabled modules
 - `src/modules/board/` owns the current free module: tickets, epics, sprints, labels, board flows
 - future project modules will include `recipes`, `vacation`, and `budget`
-- `src/shared/` owns only cross-cutting concerns: design system, i18n, observability, shared infrastructure, constants, generic types, utils, and accessibility
+- `src/shared/` owns only cross-cutting concerns: design system, i18n, shared infrastructure, constants, generic types, utils, and accessibility
 
 Inside each concrete domain or module, responsibilities stay layered:
 

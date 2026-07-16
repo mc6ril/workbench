@@ -27,15 +27,6 @@ jest.mock(
   })
 );
 
-jest.mock("@/shared/observability", () => ({
-  createLoggerFactory: () => ({
-    forScope: () => ({
-      error: jest.fn(),
-      warn: jest.fn(),
-    }),
-  }),
-}));
-
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/admin";
 
 import { GET, POST } from "@/app/api/jobs/archive-completed-tickets/route";
