@@ -384,6 +384,58 @@
   color: $color-text;
   resize: none;
   outline: none;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease-in-out,
+    box-shadow 160ms ease-in-out;
+
+  &::placeholder {
+    color: $color-text-muted;
+  }
+
+  &:focus {
+    border-color: $color-accent;
+    box-shadow: $shadow-focus;
+  }
+
+  &:disabled {
+    opacity: 1;
+    cursor: default;
+  }
+}
+
+.ticket-detail__notes-modal {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  height: 100%;
+  min-height: 90vh;
+}
+
+.ticket-detail__notes-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
+  flex-shrink: 0;
+}
+
+.ticket-detail__notes-expanded {
+  @include typography-body;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  padding: $spacing-md;
+  border: $border-width solid $color-border-subtle;
+  border-radius: $border-radius-sm;
+  background: linear-gradient(
+    160deg,
+    $color-surface-subtle 0%,
+    $color-background 100%
+  );
+  color: $color-text;
+  resize: none;
+  outline: none;
   transition:
     border-color 160ms ease-in-out,
     box-shadow 160ms ease-in-out;
