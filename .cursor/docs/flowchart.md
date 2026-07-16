@@ -138,7 +138,6 @@ flowchart LR
    subgraph SHARED[src/shared]
       SHARED_1[design-system]
       SHARED_2[i18n]
-      SHARED_3[observability]
       SHARED_4[infrastructure/supabase]
       SHARED_5[infrastructure/web]
       SHARED_6[constants]

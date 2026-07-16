@@ -2,7 +2,6 @@ import { notFound, redirect } from "next/navigation";
 
 import { PAGE_ROUTES } from "@/shared/constants/routes";
 import { isNotFoundError as isRepositoryNotFoundError } from "@/shared/errors/repositoryError.guards";
-import { createLoggerFactory } from "@/shared/observability";
 import {
   isDynamicServerUsageError,
   isNotFoundError,
@@ -10,8 +9,6 @@ import {
 
 import { loadProjectShellData } from "@/domains/project/infrastructure/server/loadProjectShellData";
 import ProjectShell from "@/domains/project/presentation/layouts/projectShell/ProjectShell";
-
-const logger = createLoggerFactory().forScope("ProjectRouteLayoutContent");
 
 type Props = Readonly<{
   children: React.ReactNode;
@@ -45,7 +42,7 @@ const ProjectRouteLayoutContent = async ({ children, projectId }: Props) => {
       notFound();
     }
 
-    logger.error("Project access check error", { error });
+    console.error("Project access check error", { error });
     redirect(PAGE_ROUTES.WORKSPACE);
   }
 

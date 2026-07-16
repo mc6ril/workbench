@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/admin";
-import { createLoggerFactory } from "@/shared/observability";
 
 import { WEEKLY_TICKET_ARCHIVE_TIME_ZONE } from "@/modules/board/core/domain/rules/ticketArchival.rules";
 import { archiveCompletedTicketsBatch } from "@/modules/board/core/usecases/ticket/archiveCompletedTicketsBatch";
 import { createTicketRepository } from "@/modules/board/infrastructure/supabase/ticket/TicketRepository.supabase";
-
-const logger = createLoggerFactory().forScope("API.ArchiveCompletedTickets");
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +25,7 @@ const executeArchiveCompletedTickets = async (
   const cronSecret = getCronSecret();
 
   if (!cronSecret) {
-    logger.error("Archive completed tickets job is misconfigured", {
+    console.error("Archive completed tickets job is misconfigured", {
       reason: "CRON_SECRET is missing",
     });
 
@@ -59,7 +56,7 @@ const executeArchiveCompletedTickets = async (
       { status: 200 }
     );
   } catch (error) {
-    logger.error("Archive completed tickets job failed", { error });
+    console.error("Archive completed tickets job failed", { error });
 
     return NextResponse.json(
       { error: "Weekly ticket archival failed" },

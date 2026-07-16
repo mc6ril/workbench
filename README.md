@@ -57,7 +57,6 @@ src/
   shared/
     design-system/              # reusable UI primitives
     i18n/                       # translations and hooks
-    observability/              # logger and performance tracking
     infrastructure/
       supabase/                 # browser/server/admin clients
       stripe/                   # stripeClient

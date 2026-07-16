@@ -44,15 +44,6 @@ jest.mock("@/domains/auth/core/usecases/user/deleteAccount", () => ({
   deleteAccount: jest.fn(),
 }));
 
-jest.mock("@/shared/observability", () => ({
-  createLoggerFactory: () => ({
-    forScope: () => ({
-      error: jest.fn(),
-      warn: jest.fn(),
-    }),
-  }),
-}));
-
 import { createSupabaseAdminClient } from "@/shared/infrastructure/supabase/admin";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 
