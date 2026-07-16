@@ -1,11 +1,14 @@
 "use client";
 
-import { useCallback } from "react";
+import type { KeyboardEvent } from "react";
+import { useCallback, useState } from "react";
 
 import { getAccessibilityId } from "@/shared/a11y/constants";
 import Avatar from "@/shared/design-system/avatar";
 import Card from "@/shared/design-system/card";
+import CloseButton from "@/shared/design-system/close_button";
 import Loader from "@/shared/design-system/loader";
+import Modal from "@/shared/design-system/modal";
 import SectionTitle from "@/shared/design-system/section_title";
 import Text from "@/shared/design-system/text";
 import Title from "@/shared/design-system/title";
@@ -96,6 +99,7 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
   const notesFieldId = getAccessibilityId("ticket-notes");
   const intlLocale = getIntlLocale(locale);
   const { data: projectShortCode } = useProjectShortCode(projectId);
+  const [isNotesExpanded, setIsNotesExpanded] = useState(false);
 
   const {
     ticket,
@@ -157,6 +161,24 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
   }, [setIsDeleteModalOpen]);
 
   useRegisterToolbarActions(canDeleteTicket ? renderToolbarActions : null);
+
+  const openNotesExpanded = useCallback(() => {
+    setIsNotesExpanded(true);
+  }, []);
+
+  const closeNotesExpanded = useCallback(() => {
+    setIsNotesExpanded(false);
+  }, []);
+
+  const handleNotesPreviewKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLTextAreaElement>) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        openNotesExpanded();
+      }
+    },
+    [openNotesExpanded]
+  );
 
   if (isLoading) {
     return <Loader variant="full-page" />;
@@ -235,12 +257,39 @@ const TicketDetailView = ({ projectId, ticketId }: Props) => {
             rows={5}
             value={effectiveDescription}
             placeholder={t("fields.notesPlaceholder")}
-            disabled={!canEditTicket}
-            onChange={(event) => {
-              setDescriptionDraft(event.target.value);
-            }}
+            readOnly
+            onClick={openNotesExpanded}
+            onKeyDown={handleNotesPreviewKeyDown}
           />
         </div>
+
+        <Modal
+          isOpen={isNotesExpanded}
+          onClose={closeNotesExpanded}
+          title={t("fields.notes")}
+          size="full"
+          hideHeader
+        >
+          <div className={styles["ticket-detail__notes-modal"]}>
+            <div className={styles["ticket-detail__notes-modal-header"]}>
+              <Title variant="h2">{t("fields.notes")}</Title>
+              <CloseButton
+                ariaLabel={tCommon("dismiss")}
+                onClick={closeNotesExpanded}
+              />
+            </div>
+            <textarea
+              className={styles["ticket-detail__notes-expanded"]}
+              aria-label={t("fields.notes")}
+              value={effectiveDescription}
+              placeholder={t("fields.notesPlaceholder")}
+              disabled={!canEditTicket}
+              onChange={(event) => {
+                setDescriptionDraft(event.target.value);
+              }}
+            />
+          </div>
+        </Modal>
 
         <div className={styles["ticket-detail__section"]}>
           <div className={styles["ticket-detail__section-header"]}>
