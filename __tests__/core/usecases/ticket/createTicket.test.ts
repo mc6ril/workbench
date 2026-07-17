@@ -1,7 +1,6 @@
-import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
-import type { Board, Column } from "@/modules/board/core/domain/board.types";
+import type { Column } from "@/modules/board/core/domain/board.types";
 import type {
   CreateTicketInput,
   Ticket,
@@ -14,12 +13,6 @@ describe("createTicket completedAt workflow logic", () => {
   const todoColumnId = "423e4567-e89b-12d3-a456-426614174000";
   const inProgressColumnId = "623e4567-e89b-12d3-a456-426614174000";
   const doneColumnId = "523e4567-e89b-12d3-a456-426614174000";
-  const board: Board = {
-    id: boardId,
-    projectId,
-    createdAt: new Date("2024-01-01T00:00:00Z"),
-    updatedAt: new Date("2024-01-01T00:00:00Z"),
-  };
   const columns: Column[] = [
     {
       id: todoColumnId,
@@ -72,14 +65,6 @@ describe("createTicket completedAt workflow logic", () => {
       columnId: doneColumnId,
       position: 0,
     };
-    const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(
-        async () => board
-      ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
-        async () => columns
-      ),
-    });
     const repository = createTicketRepositoryMock({
       getNextCodeNumberForProject: jest.fn<Promise<number>, [string]>(
         async () => 7
@@ -105,7 +90,7 @@ describe("createTicket completedAt workflow logic", () => {
       })),
     });
 
-    await createTicket(repository, boardRepository, input);
+    await createTicket(repository, input, columns);
 
     expect(repository.create).toHaveBeenCalledWith({
       ...input,
@@ -121,14 +106,6 @@ describe("createTicket completedAt workflow logic", () => {
       columnId: todoColumnId,
       position: 0,
     };
-    const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(
-        async () => board
-      ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
-        async () => columns
-      ),
-    });
     const repository = createTicketRepositoryMock({
       getNextCodeNumberForProject: jest.fn<Promise<number>, [string]>(
         async () => 8
@@ -138,9 +115,9 @@ describe("createTicket completedAt workflow logic", () => {
       }),
     });
 
-    await expect(
-      createTicket(repository, boardRepository, input)
-    ).rejects.toThrow("stop");
+    await expect(createTicket(repository, input, columns)).rejects.toThrow(
+      "stop"
+    );
     expect(repository.create).toHaveBeenCalledWith({
       ...input,
       completedAt: null,

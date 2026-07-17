@@ -5,9 +5,11 @@ import {
   type Ticket,
   TICKET_PRIORITY_VALUES,
 } from "@/modules/board/core/domain/ticket.types";
-import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
-import { resolveCompletedAtForProjectColumnChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
+import {
+  resolveCompletedAtForColumnChange,
+  type WorkflowColumn,
+} from "@/modules/board/core/usecases/ticket/ticketCompletion";
 
 const TicketPrioritySchema = z.enum(TICKET_PRIORITY_VALUES);
 
@@ -38,29 +40,28 @@ const CreateTicketInputSchema = z.object({
  *
  * @param repository - Ticket repository
  * @param input - Ticket creation data
+ * @param columns - The project's board columns, used to resolve `completedAt`
+ *   without an extra round trip (caller already has these cached).
  * @returns Created ticket
  * @throws ConstraintError if constraint violation occurs
  * @throws DatabaseError if database operation fails
  */
 export const createTicket = async (
   repository: TicketRepository,
-  boardRepository: BoardRepository,
-  input: CreateTicketInput
+  input: CreateTicketInput,
+  columns: WorkflowColumn[]
 ): Promise<Ticket> => {
   const validatedInput = CreateTicketInputSchema.parse(input);
 
   const codeNumber = await repository.getNextCodeNumberForProject(
     validatedInput.projectId
   );
-  const completedAt = await resolveCompletedAtForProjectColumnChange(
-    boardRepository,
-    validatedInput.projectId,
-    {
-      previousColumnId: null,
-      previousCompletedAt: null,
-      nextColumnId: validatedInput.columnId,
-    }
-  );
+  const completedAt = resolveCompletedAtForColumnChange({
+    previousColumnId: null,
+    previousCompletedAt: null,
+    nextColumnId: validatedInput.columnId,
+    columns,
+  });
 
   return repository.create({
     ...validatedInput,

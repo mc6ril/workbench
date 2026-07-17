@@ -126,16 +126,6 @@ export const buildTicketDetailRoute = (
 };
 
 /**
- * Build the new ticket creation route pathname.
- *
- * @param projectId - The project UUID
- * @returns The new ticket page pathname
- */
-export const buildNewTicketRoute = (projectId: string): string => {
-  return `${buildProjectRoute(projectId, PROJECT_VIEWS.BOARD)}/tickets/new`;
-};
-
-/**
  * Normalize a pathname or href by removing a trailing slash (except for root).
  *
  * @param path - The path to normalize
