@@ -125,7 +125,14 @@ const BoardToolbar = ({ projectId }: Props) => {
       .catch(() => {
         // React Query already tracks the error; keep the board visible so the user can retry.
       });
-  }, [boardConfig, canCreateTicket, createTicket, projectId, router, tNewTicket]);
+  }, [
+    boardConfig,
+    canCreateTicket,
+    createTicket,
+    projectId,
+    router,
+    tNewTicket,
+  ]);
 
   const assigneeFilters = useMemo<ProjectToolbarAssigneeFilter[]>(() => {
     const unassigned: ProjectToolbarAssigneeFilter = {
