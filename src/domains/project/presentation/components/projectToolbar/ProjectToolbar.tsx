@@ -31,6 +31,7 @@ const ProjectToolbar = ({
   onSearchChange,
   onAddClick,
   canAddAction = true,
+  isAddActionPending = false,
   searchSuggestions = [],
   extraTools = [],
   assigneeFilters = [],
@@ -46,7 +47,7 @@ const ProjectToolbar = ({
   const showAddAction = addActionType !== null;
   const hasAssigneeFilters = assigneeFilters.length > 0;
   const hasToolbarTools = extraTools.length > 0;
-  const isAddActionDisabled = !canAddAction;
+  const isAddActionDisabled = !canAddAction || isAddActionPending;
   const searchInputRef = useRef<HTMLInputElement>(null);
   const hasSearchQuery = searchValue.trim().length > 0;
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
@@ -283,7 +284,7 @@ const ProjectToolbar = ({
                 className={addButtonClasses}
                 onClick={handleAddActionClick}
                 disabled={isAddActionDisabled}
-                aria-disabled={!canAddAction}
+                aria-disabled={isAddActionDisabled}
                 aria-label={addAriaLabel}
                 title={addLabel}
               >

@@ -1,7 +1,6 @@
-import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
-import type { Board, Column } from "@/modules/board/core/domain/board.types";
+import type { Column } from "@/modules/board/core/domain/board.types";
 import type {
   Ticket,
   UpdateTicketInput,
@@ -15,12 +14,6 @@ describe("updateTicket completedAt workflow logic", () => {
   const todoColumnId = "423e4567-e89b-12d3-a456-426614174000";
   const inProgressColumnId = "623e4567-e89b-12d3-a456-426614174000";
   const doneColumnId = "523e4567-e89b-12d3-a456-426614174000";
-  const board: Board = {
-    id: boardId,
-    projectId,
-    createdAt: new Date("2024-01-01T00:00:00Z"),
-    updatedAt: new Date("2024-01-01T00:00:00Z"),
-  };
   const columns: Column[] = [
     {
       id: todoColumnId,
@@ -87,14 +80,6 @@ describe("updateTicket completedAt workflow logic", () => {
 
   it("sets completedAt when a ticket enters a done column", async () => {
     const now = new Date("2026-03-25T12:00:00.000Z");
-    const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(
-        async () => board
-      ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
-        async () => columns
-      ),
-    });
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(
         async () => baseTicket
@@ -111,9 +96,12 @@ describe("updateTicket completedAt workflow logic", () => {
       ),
     });
 
-    await updateTicket(repository, boardRepository, ticketId, {
-      columnId: doneColumnId,
-    });
+    await updateTicket(
+      repository,
+      ticketId,
+      { columnId: doneColumnId },
+      columns
+    );
 
     expect(repository.update).toHaveBeenCalledWith(ticketId, {
       columnId: doneColumnId,
@@ -127,14 +115,6 @@ describe("updateTicket completedAt workflow logic", () => {
       columnId: doneColumnId,
       completedAt: new Date("2026-03-24T08:00:00.000Z"),
     };
-    const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(
-        async () => board
-      ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
-        async () => columns
-      ),
-    });
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(
         async () => completedTicket
@@ -151,9 +131,12 @@ describe("updateTicket completedAt workflow logic", () => {
       ),
     });
 
-    await updateTicket(repository, boardRepository, ticketId, {
-      columnId: todoColumnId,
-    });
+    await updateTicket(
+      repository,
+      ticketId,
+      { columnId: todoColumnId },
+      columns
+    );
 
     expect(repository.update).toHaveBeenCalledWith(ticketId, {
       columnId: todoColumnId,
@@ -167,7 +150,6 @@ describe("updateTicket completedAt workflow logic", () => {
       columnId: doneColumnId,
       completedAt: new Date("2026-03-24T08:00:00.000Z"),
     };
-    const boardRepository = createBoardRepositoryMock();
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(
         async () => completedTicket
@@ -181,14 +163,16 @@ describe("updateTicket completedAt workflow logic", () => {
       ),
     });
 
-    await updateTicket(repository, boardRepository, ticketId, {
-      title: "Updated title",
-    });
+    await updateTicket(
+      repository,
+      ticketId,
+      { title: "Updated title" },
+      columns
+    );
 
     expect(repository.update).toHaveBeenCalledWith(ticketId, {
       title: "Updated title",
       completedAt: undefined,
     });
-    expect(boardRepository.findByProject).not.toHaveBeenCalled();
   });
 });

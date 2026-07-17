@@ -1,11 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import type { BoardConfiguration } from "@/modules/board/core/domain/board.types";
 import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 import { moveAndReorderTicket } from "@/modules/board/core/usecases/ticket/moveAndReorderTicket";
-import {
-  boardRepository,
-  ticketRepository,
-} from "@/modules/board/infrastructure/supabase/repositories";
+import { ticketRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 
 type MoveAndReorderTicketVariables = {
@@ -21,17 +19,23 @@ export const useMoveAndReorderTicket = () => {
 
   return useMutation({
     mutationFn: ({
+      projectId,
       ticketId,
       columnId,
       position,
       ticketPositions,
-    }: MoveAndReorderTicketVariables) =>
-      moveAndReorderTicket(ticketRepository, boardRepository, {
-        ticketId,
-        columnId,
-        position,
-        ticketPositions,
-      }),
+    }: MoveAndReorderTicketVariables) => {
+      // The board's columns are already cached (staleTime: Infinity) from the
+      // board view — read them instead of re-fetching to resolve `completedAt`.
+      const boardConfig = queryClient.getQueryData<BoardConfiguration>(
+        queryKeys.projects.boardConfiguration(projectId)
+      );
+      return moveAndReorderTicket(
+        ticketRepository,
+        { ticketId, columnId, position, ticketPositions },
+        boardConfig?.columns ?? []
+      );
+    },
     onMutate: async ({
       projectId,
       ticketId,

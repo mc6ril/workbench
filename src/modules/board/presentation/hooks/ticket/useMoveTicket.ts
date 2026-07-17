@@ -1,11 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import type { BoardConfiguration } from "@/modules/board/core/domain/board.types";
 import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 import { moveTicket } from "@/modules/board/core/usecases/ticket/moveTicket";
-import {
-  boardRepository,
-  ticketRepository,
-} from "@/modules/board/infrastructure/supabase/repositories";
+import { ticketRepository } from "@/modules/board/infrastructure/supabase/repositories";
 import { queryKeys } from "@/modules/board/presentation/hooks/queryKeys";
 
 type MoveTicketVariables = {
@@ -23,14 +21,25 @@ export const useMoveTicket = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ ticketId, columnId, position }: MoveTicketVariables) =>
-      moveTicket(
+    mutationFn: ({
+      projectId,
+      ticketId,
+      columnId,
+      position,
+    }: MoveTicketVariables) => {
+      // The board's columns are already cached (staleTime: Infinity) from the
+      // board view — read them instead of re-fetching to resolve `completedAt`.
+      const boardConfig = queryClient.getQueryData<BoardConfiguration>(
+        queryKeys.projects.boardConfiguration(projectId)
+      );
+      return moveTicket(
         ticketRepository,
-        boardRepository,
         ticketId,
         columnId,
-        position
-      ),
+        position,
+        boardConfig?.columns ?? []
+      );
+    },
     onMutate: async ({ projectId, ticketId, columnId, position }) => {
       await queryClient.cancelQueries({
         queryKey: queryKeys.projects.ticketsRoot(projectId),

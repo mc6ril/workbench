@@ -1,9 +1,8 @@
 import { z } from "zod";
 
-import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
-import type { Board, Column } from "@/modules/board/core/domain/board.types";
+import type { Column } from "@/modules/board/core/domain/board.types";
 import type { Ticket } from "@/modules/board/core/domain/ticket.types";
 import { moveTicket } from "@/modules/board/core/usecases/ticket/moveTicket";
 
@@ -14,12 +13,6 @@ describe("moveTicket", () => {
   const todoColumnId = "423e4567-e89b-12d3-a456-426614174000";
   const doingColumnId = "523e4567-e89b-12d3-a456-426614174000";
   const doneColumnId = "623e4567-e89b-12d3-a456-426614174000";
-  const board: Board = {
-    id: boardId,
-    projectId,
-    createdAt: new Date("2024-01-01T00:00:00Z"),
-    updatedAt: new Date("2024-01-01T00:00:00Z"),
-  };
   const columns: Column[] = [
     {
       id: todoColumnId,
@@ -93,14 +86,6 @@ describe("moveTicket", () => {
 
   it("should move ticket to new status and position", async () => {
     // Arrange
-    const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(
-        async () => board
-      ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
-        async () => columns
-      ),
-    });
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(
         async () => mockTicket
@@ -114,10 +99,10 @@ describe("moveTicket", () => {
     // Act
     const result = await moveTicket(
       repository,
-      boardRepository,
       ticketId,
       doingColumnId,
-      1
+      1,
+      columns
     );
 
     // Assert
@@ -135,14 +120,6 @@ describe("moveTicket", () => {
 
   it("should set completedAt when moving a ticket into a done column", async () => {
     const now = new Date("2026-03-25T10:00:00.000Z");
-    const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(
-        async () => board
-      ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
-        async () => columns
-      ),
-    });
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(
         async () => mockTicket
@@ -158,7 +135,7 @@ describe("moveTicket", () => {
       })),
     });
 
-    await moveTicket(repository, boardRepository, ticketId, doneColumnId, 1);
+    await moveTicket(repository, ticketId, doneColumnId, 1, columns);
 
     expect(repository.moveTicket).toHaveBeenCalledWith(
       ticketId,
@@ -174,14 +151,6 @@ describe("moveTicket", () => {
       columnId: doneColumnId,
       completedAt: new Date("2026-03-24T09:00:00.000Z"),
     };
-    const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(
-        async () => board
-      ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
-        async () => columns
-      ),
-    });
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(
         async () => completedTicket
@@ -196,7 +165,7 @@ describe("moveTicket", () => {
       })),
     });
 
-    await moveTicket(repository, boardRepository, ticketId, todoColumnId, 0);
+    await moveTicket(repository, ticketId, todoColumnId, 0, columns);
 
     expect(repository.moveTicket).toHaveBeenCalledWith(
       ticketId,
@@ -208,12 +177,11 @@ describe("moveTicket", () => {
 
   it("should throw ZodError on invalid column id", async () => {
     // Arrange
-    const boardRepository = createBoardRepositoryMock();
     const repository = createTicketRepositoryMock();
 
     // Act & Assert
     await expect(
-      moveTicket(repository, boardRepository, ticketId, "", 1)
+      moveTicket(repository, ticketId, "", 1, columns)
     ).rejects.toThrow(z.ZodError);
     expect(repository.findById).not.toHaveBeenCalled();
     expect(repository.moveTicket).not.toHaveBeenCalled();
@@ -221,12 +189,11 @@ describe("moveTicket", () => {
 
   it("should throw ZodError on invalid position", async () => {
     // Arrange
-    const boardRepository = createBoardRepositoryMock();
     const repository = createTicketRepositoryMock();
 
     // Act & Assert
     await expect(
-      moveTicket(repository, boardRepository, ticketId, doingColumnId, -1)
+      moveTicket(repository, ticketId, doingColumnId, -1, columns)
     ).rejects.toThrow(z.ZodError);
     expect(repository.findById).not.toHaveBeenCalled();
     expect(repository.moveTicket).not.toHaveBeenCalled();
@@ -234,14 +201,13 @@ describe("moveTicket", () => {
 
   it("should throw NotFoundError when ticket not found", async () => {
     // Arrange
-    const boardRepository = createBoardRepositoryMock();
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(async () => null),
     });
 
     // Act & Assert
     await expect(
-      moveTicket(repository, boardRepository, ticketId, doingColumnId, 1)
+      moveTicket(repository, ticketId, doingColumnId, 1, columns)
     ).rejects.toMatchObject({
       code: "NOT_FOUND",
       context: {
@@ -256,14 +222,6 @@ describe("moveTicket", () => {
   it("should propagate repository errors", async () => {
     // Arrange
     const repositoryError = new Error("Database connection failed");
-    const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(
-        async () => board
-      ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
-        async () => columns
-      ),
-    });
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(
         async () => mockTicket
@@ -278,7 +236,7 @@ describe("moveTicket", () => {
 
     // Act & Assert
     await expect(
-      moveTicket(repository, boardRepository, ticketId, doingColumnId, 1)
+      moveTicket(repository, ticketId, doingColumnId, 1, columns)
     ).rejects.toThrow(repositoryError);
     expect(repository.findById).toHaveBeenCalledTimes(1);
     expect(repository.moveTicket).toHaveBeenCalledTimes(1);

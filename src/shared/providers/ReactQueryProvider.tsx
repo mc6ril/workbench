@@ -3,7 +3,12 @@
 import type { PropsWithChildren } from "react";
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { type DehydratedState, HydrationBoundary } from "@tanstack/react-query";
+import {
+  type DehydratedState,
+  environmentManager,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
 import { createAppQueryClient } from "./queryClient";
@@ -26,12 +31,25 @@ const isReactQueryDevtoolsEnabled =
   process.env.NODE_ENV === "development" &&
   process.env.NEXT_PUBLIC_ENABLE_QUERY_DEVTOOLS === "true";
 
+let browserQueryClient: QueryClient | undefined = undefined;
+
+const getQueryClient = () => {
+  if (environmentManager.isServer()) {
+    return createAppQueryClient();
+  } else {
+    if (!browserQueryClient) {
+      browserQueryClient = createAppQueryClient();
+    }
+    return browserQueryClient;
+  }
+};
+
 const ReactQueryProvider = ({
   children,
   dehydratedState,
   userId,
 }: ReactQueryProviderProps) => {
-  const [queryClient] = useState(createAppQueryClient);
+  const queryClient = getQueryClient();
   const [persister] = useState(() => createQueryPersister(userId));
 
   return (
