@@ -6,9 +6,11 @@ import type {
   MoveAndReorderTicketInput,
   Ticket,
 } from "@/modules/board/core/domain/ticket.types";
-import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
-import { resolveCompletedAtForProjectColumnChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
+import {
+  resolveCompletedAtForColumnChange,
+  type WorkflowColumn,
+} from "@/modules/board/core/usecases/ticket/ticketCompletion";
 
 const MoveAndReorderTicketInputSchema = z.object({
   ticketId: z.string().uuid("Ticket ID must be a valid UUID"),
@@ -24,8 +26,8 @@ const MoveAndReorderTicketInputSchema = z.object({
 
 export const moveAndReorderTicket = async (
   repository: TicketRepository,
-  boardRepository: BoardRepository,
-  input: MoveAndReorderTicketInput
+  input: MoveAndReorderTicketInput,
+  columns: WorkflowColumn[]
 ): Promise<Ticket[]> => {
   const validatedInput = MoveAndReorderTicketInputSchema.parse(input);
 
@@ -34,15 +36,12 @@ export const moveAndReorderTicket = async (
     throw createNotFoundError("Ticket", validatedInput.ticketId);
   }
 
-  const completedAt = await resolveCompletedAtForProjectColumnChange(
-    boardRepository,
-    ticket.projectId,
-    {
-      previousColumnId: ticket.columnId,
-      previousCompletedAt: ticket.completedAt,
-      nextColumnId: validatedInput.columnId,
-    }
-  );
+  const completedAt = resolveCompletedAtForColumnChange({
+    previousColumnId: ticket.columnId,
+    previousCompletedAt: ticket.completedAt,
+    nextColumnId: validatedInput.columnId,
+    columns,
+  });
 
   return repository.moveAndReorderTicket({
     ...validatedInput,

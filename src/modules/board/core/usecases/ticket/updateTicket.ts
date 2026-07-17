@@ -7,9 +7,11 @@ import {
   TICKET_PRIORITY_VALUES,
   type UpdateTicketInput,
 } from "@/modules/board/core/domain/ticket.types";
-import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
-import { resolveCompletedAtForProjectColumnChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
+import {
+  resolveCompletedAtForColumnChange,
+  type WorkflowColumn,
+} from "@/modules/board/core/usecases/ticket/ticketCompletion";
 
 const TicketPrioritySchema = z.enum(TICKET_PRIORITY_VALUES);
 
@@ -48,6 +50,9 @@ const UpdateTicketInputSchema = z.object({
  * @param repository - Ticket repository
  * @param id - Ticket ID
  * @param input - Ticket update data
+ * @param columns - The project's board columns, used to resolve `completedAt`
+ *   without an extra round trip when `columnId` changes (caller already has
+ *   these cached).
  * @returns Updated ticket
  * @throws NotFoundError if ticket not found
  * @throws ConstraintError if constraint violation occurs
@@ -55,9 +60,9 @@ const UpdateTicketInputSchema = z.object({
  */
 export const updateTicket = async (
   repository: TicketRepository,
-  boardRepository: BoardRepository,
   id: string,
-  input: UpdateTicketInput
+  input: UpdateTicketInput,
+  columns: WorkflowColumn[]
 ): Promise<Ticket> => {
   const validatedInput = UpdateTicketInputSchema.parse(input);
 
@@ -69,15 +74,12 @@ export const updateTicket = async (
   const completedAt =
     validatedInput.columnId === undefined
       ? validatedInput.completedAt
-      : await resolveCompletedAtForProjectColumnChange(
-          boardRepository,
-          existingTicket.projectId,
-          {
-            previousColumnId: existingTicket.columnId,
-            previousCompletedAt: existingTicket.completedAt,
-            nextColumnId: validatedInput.columnId,
-          }
-        );
+      : resolveCompletedAtForColumnChange({
+          previousColumnId: existingTicket.columnId,
+          previousCompletedAt: existingTicket.completedAt,
+          nextColumnId: validatedInput.columnId,
+          columns,
+        });
 
   return repository.update(id, {
     ...validatedInput,

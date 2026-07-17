@@ -2,10 +2,9 @@ import { z } from "zod";
 
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 
-import { createBoardRepositoryMock } from "../../../../__mocks__/core/ports/boardRepository";
 import { createTicketRepositoryMock } from "../../../../__mocks__/core/ports/ticketRepository";
 
-import type { Board, Column } from "@/modules/board/core/domain/board.types";
+import type { Column } from "@/modules/board/core/domain/board.types";
 import type {
   MoveAndReorderTicketInput,
   Ticket,
@@ -19,12 +18,6 @@ describe("moveAndReorderTicket", () => {
   const todoColumnId = "423e4567-e89b-12d3-a456-426614174000";
   const doingColumnId = "523e4567-e89b-12d3-a456-426614174000";
   const doneColumnId = "623e4567-e89b-12d3-a456-426614174000";
-  const board: Board = {
-    id: boardId,
-    projectId,
-    createdAt: new Date("2024-01-01T00:00:00Z"),
-    updatedAt: new Date("2024-01-01T00:00:00Z"),
-  };
   const columns: Column[] = [
     {
       id: todoColumnId,
@@ -113,14 +106,6 @@ describe("moveAndReorderTicket", () => {
         completedAt: now,
       },
     ];
-    const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(
-        async () => board
-      ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
-        async () => columns
-      ),
-    });
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(
         async () => mockTicket
@@ -131,11 +116,7 @@ describe("moveAndReorderTicket", () => {
       >(async () => updatedTickets),
     });
 
-    const result = await moveAndReorderTicket(
-      repository,
-      boardRepository,
-      input
-    );
+    const result = await moveAndReorderTicket(repository, input, columns);
 
     expect(repository.moveAndReorderTicket).toHaveBeenCalledTimes(1);
     expect(repository.moveAndReorderTicket).toHaveBeenCalledWith({
@@ -152,14 +133,6 @@ describe("moveAndReorderTicket", () => {
       position: 1,
       ticketPositions: [],
     };
-    const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(
-        async () => board
-      ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
-        async () => columns
-      ),
-    });
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(
         async () => mockTicket
@@ -177,7 +150,7 @@ describe("moveAndReorderTicket", () => {
     });
 
     await expect(
-      moveAndReorderTicket(repository, boardRepository, input)
+      moveAndReorderTicket(repository, input, columns)
     ).resolves.toEqual([
       {
         ...mockTicket,
@@ -189,29 +162,24 @@ describe("moveAndReorderTicket", () => {
   });
 
   it("should throw ZodError on invalid ticketId", async () => {
-    const boardRepository = createBoardRepositoryMock();
     const repository = createTicketRepositoryMock();
 
     await expect(
-      moveAndReorderTicket(repository, boardRepository, {
-        ticketId: "invalid-id",
-        columnId: doingColumnId,
-        position: 1,
-        ticketPositions: [],
-      })
+      moveAndReorderTicket(
+        repository,
+        {
+          ticketId: "invalid-id",
+          columnId: doingColumnId,
+          position: 1,
+          ticketPositions: [],
+        },
+        columns
+      )
     ).rejects.toThrow(z.ZodError);
     expect(repository.moveAndReorderTicket).not.toHaveBeenCalled();
   });
 
   it("should propagate NotFoundError from repository", async () => {
-    const boardRepository = createBoardRepositoryMock({
-      findByProject: jest.fn<Promise<Board | null>, [string]>(
-        async () => board
-      ),
-      listColumnsByBoard: jest.fn<Promise<Column[]>, [string]>(
-        async () => columns
-      ),
-    });
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(
         async () => mockTicket
@@ -225,12 +193,16 @@ describe("moveAndReorderTicket", () => {
     });
 
     await expect(
-      moveAndReorderTicket(repository, boardRepository, {
-        ticketId,
-        columnId: doingColumnId,
-        position: 1,
-        ticketPositions: [{ id: ticketId, position: 1 }],
-      })
+      moveAndReorderTicket(
+        repository,
+        {
+          ticketId,
+          columnId: doingColumnId,
+          position: 1,
+          ticketPositions: [{ id: ticketId, position: 1 }],
+        },
+        columns
+      )
     ).rejects.toMatchObject({
       code: "NOT_FOUND",
       context: {
@@ -242,18 +214,21 @@ describe("moveAndReorderTicket", () => {
   });
 
   it("should throw NotFoundError when the ticket does not exist", async () => {
-    const boardRepository = createBoardRepositoryMock();
     const repository = createTicketRepositoryMock({
       findById: jest.fn<Promise<Ticket | null>, [string]>(async () => null),
     });
 
     await expect(
-      moveAndReorderTicket(repository, boardRepository, {
-        ticketId,
-        columnId: doneColumnId,
-        position: 1,
-        ticketPositions: [],
-      })
+      moveAndReorderTicket(
+        repository,
+        {
+          ticketId,
+          columnId: doneColumnId,
+          position: 1,
+          ticketPositions: [],
+        },
+        columns
+      )
     ).rejects.toMatchObject({
       code: "NOT_FOUND",
       context: {

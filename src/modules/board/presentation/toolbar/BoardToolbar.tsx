@@ -8,8 +8,8 @@ import { PROJECT_VIEWS } from "@/shared/constants/routes";
 import { useTranslations } from "@/shared/i18n";
 import { useAppRouter } from "@/shared/navigation/useAppRouter";
 import {
-  buildNewTicketRoute,
   buildProjectRoute,
+  buildTicketDetailRoute,
   normalizePath,
 } from "@/shared/utils/routes";
 
@@ -24,7 +24,9 @@ import { useProjectMembers } from "@/domains/project/presentation/hooks/member/u
 import { getProjectViewConfig } from "@/domains/project/presentation/navigation/projectViews.config";
 import { useProjectPermissions } from "@/domains/project/presentation/providers/permissions/ProjectPermissionsProvider";
 import type { TicketFilters } from "@/modules/board/core/domain/ticket.types";
+import { useBoardConfiguration } from "@/modules/board/presentation/hooks/board/useBoardConfiguration";
 import { useProjectSearchSuggestions } from "@/modules/board/presentation/hooks/project/useProjectSearchSuggestions";
+import { useCreateTicket } from "@/modules/board/presentation/hooks/ticket/useCreateTicket";
 import { useFilterStore } from "@/modules/board/presentation/stores/useFilterStore";
 
 const EMPTY_PROJECT_MEMBERS: ProjectMember[] = [];
@@ -40,6 +42,7 @@ const BoardToolbar = ({ projectId }: Props) => {
   const pathname = usePathname();
   const tSidebar = useTranslations("navigation.sidebar");
   const tBoardFilters = useTranslations("pages.board.filters");
+  const tNewTicket = useTranslations("pages.board.newTicket");
   const { canCreateTicket } = useProjectPermissions();
 
   const boardRoute = buildProjectRoute(projectId, PROJECT_VIEWS.BOARD);
@@ -71,6 +74,8 @@ const BoardToolbar = ({ projectId }: Props) => {
   const projectMembers = isRestoring
     ? EMPTY_PROJECT_MEMBERS
     : (projectMembersData ?? EMPTY_PROJECT_MEMBERS);
+  const { data: boardConfig } = useBoardConfiguration(projectId);
+  const createTicket = useCreateTicket();
 
   const pageTitle = tSidebar(`items.${boardViewConfig.sidebarLabelKey}`);
 
@@ -101,9 +106,26 @@ const BoardToolbar = ({ projectId }: Props) => {
   );
 
   const handleAddClick = useCallback(() => {
-    if (!canCreateTicket) return;
-    router.push(buildNewTicketRoute(projectId));
-  }, [canCreateTicket, projectId, router]);
+    if (!canCreateTicket || createTicket.isPending) return;
+
+    const firstColumn = boardConfig?.columns[0];
+    if (!firstColumn) return;
+
+    createTicket
+      .mutateAsync({
+        projectId,
+        title: tNewTicket("defaultTitle"),
+        description: null,
+        columnId: firstColumn.id,
+        position: 0,
+      })
+      .then((ticket) => {
+        router.push(buildTicketDetailRoute(projectId, ticket.id));
+      })
+      .catch(() => {
+        // React Query already tracks the error; keep the board visible so the user can retry.
+      });
+  }, [boardConfig, canCreateTicket, createTicket, projectId, router, tNewTicket]);
 
   const assigneeFilters = useMemo<ProjectToolbarAssigneeFilter[]>(() => {
     const unassigned: ProjectToolbarAssigneeFilter = {
@@ -147,6 +169,7 @@ const BoardToolbar = ({ projectId }: Props) => {
       onSearchChange={setSearchInput}
       onAddClick={handleAddClick}
       canAddAction={canCreateTicket}
+      isAddActionPending={createTicket.isPending}
       assigneeFilters={assigneeFilters}
       areAssigneeFiltersDisabled={false}
       selectedAssigneeFilterIds={[

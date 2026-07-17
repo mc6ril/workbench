@@ -4,6 +4,9 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { createSupabaseServerClient } from "@/shared/infrastructure/supabase/server";
 import { createAppQueryClient } from "@/shared/providers/queryClient";
 
+import { listProjectMembers } from "@/domains/project/core/usecases/member/listProjectMembers";
+import { createProjectMemberGateway } from "@/domains/project/infrastructure/supabase/gateways";
+import { queryKeys as projectQueryKeys } from "@/domains/project/presentation/hooks/queryKeys";
 import { listComments } from "@/modules/board/core/usecases/comment/listComments";
 import { getTicketDetail } from "@/modules/board/core/usecases/ticket/getTicketDetail";
 import {
@@ -23,6 +26,20 @@ const BoardTicketDetailPageData = async ({
   const supabaseClient = await createSupabaseServerClient();
   const ticketRepository = createTicketRepository(supabaseClient);
   const commentRepository = createCommentRepository(supabaseClient);
+  const memberGateway = createProjectMemberGateway(supabaseClient);
+
+  // Not needed for first paint: fired here so it still lands in the dehydrated
+  // state if it resolves before the awaited queries below, but never blocks them.
+  // Members are usually already cached from the board visit (staleTime: Infinity);
+  // this only matters for direct/deep links straight into a ticket.
+  void queryClient.prefetchQuery({
+    queryKey: projectQueryKeys.members.byProject(projectId),
+    queryFn: () => listProjectMembers(memberGateway, projectId),
+  });
+  void queryClient.prefetchQuery({
+    queryKey: queryKeys.comments.byTicket(ticketId),
+    queryFn: () => listComments(ticketId, commentRepository),
+  });
 
   await Promise.all([
     queryClient.prefetchQuery({
@@ -32,10 +49,6 @@ const BoardTicketDetailPageData = async ({
     queryClient.prefetchQuery({
       queryKey: queryKeys.tickets.assignees(ticketId),
       queryFn: () => ticketRepository.getAssignees(ticketId),
-    }),
-    queryClient.prefetchQuery({
-      queryKey: queryKeys.comments.byTicket(ticketId),
-      queryFn: () => listComments(ticketId, commentRepository),
     }),
   ]);
 

@@ -3,9 +3,11 @@ import { z } from "zod";
 import { createNotFoundError } from "@/shared/errors/repositoryError";
 
 import type { Ticket } from "@/modules/board/core/domain/ticket.types";
-import type { BoardRepository } from "@/modules/board/core/ports/boardRepository";
 import type { TicketRepository } from "@/modules/board/core/ports/ticketRepository";
-import { resolveCompletedAtForProjectColumnChange } from "@/modules/board/core/usecases/ticket/ticketCompletion";
+import {
+  resolveCompletedAtForColumnChange,
+  type WorkflowColumn,
+} from "@/modules/board/core/usecases/ticket/ticketCompletion";
 
 const MoveTicketInputSchema = z.object({
   id: z.string().uuid("Ticket ID must be a valid UUID"),
@@ -22,6 +24,8 @@ const MoveTicketInputSchema = z.object({
  * @param id - Ticket ID (UUID)
  * @param columnId - New target column
  * @param position - New position within the column
+ * @param columns - The project's board columns, used to resolve `completedAt`
+ *   without an extra round trip (caller already has these cached).
  * @returns Updated ticket
  * @throws ZodError if input validation fails
  * @throws NotFoundError if ticket not found
@@ -30,10 +34,10 @@ const MoveTicketInputSchema = z.object({
  */
 export const moveTicket = async (
   repository: TicketRepository,
-  boardRepository: BoardRepository,
   id: string,
   columnId: string,
-  position: number
+  position: number,
+  columns: WorkflowColumn[]
 ): Promise<Ticket> => {
   const validatedInput = MoveTicketInputSchema.parse({
     id,
@@ -46,15 +50,12 @@ export const moveTicket = async (
     throw createNotFoundError("Ticket", validatedInput.id);
   }
 
-  const completedAt = await resolveCompletedAtForProjectColumnChange(
-    boardRepository,
-    ticket.projectId,
-    {
-      previousColumnId: ticket.columnId,
-      previousCompletedAt: ticket.completedAt,
-      nextColumnId: validatedInput.columnId,
-    }
-  );
+  const completedAt = resolveCompletedAtForColumnChange({
+    previousColumnId: ticket.columnId,
+    previousCompletedAt: ticket.completedAt,
+    nextColumnId: validatedInput.columnId,
+    columns,
+  });
 
   return repository.moveTicket(
     validatedInput.id,

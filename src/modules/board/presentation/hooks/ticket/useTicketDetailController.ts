@@ -116,6 +116,7 @@ export const useTicketDetailController = ({
 
     await updateMainTicketMutation.mutateAsync({
       id: ticket.id,
+      projectId,
       input: {
         title: effectiveTitle,
         description: effectiveDescription || null,
@@ -145,6 +146,7 @@ export const useTicketDetailController = ({
     effectivePriority,
     effectiveTitle,
     priorityDraft,
+    projectId,
     ticket,
     titleDraft,
     updateMainTicketMutation,

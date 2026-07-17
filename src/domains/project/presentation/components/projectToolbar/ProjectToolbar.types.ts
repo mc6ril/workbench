@@ -58,6 +58,7 @@ export type ProjectToolbarProps = {
   onSearchChange?: (value: string) => void;
   onAddClick?: () => void;
   canAddAction?: boolean;
+  isAddActionPending?: boolean;
   searchSuggestions?: ProjectToolbarSearchSuggestion[];
   extraTools?: ProjectToolbarExtraTool[];
   assigneeFilters?: ProjectToolbarAssigneeFilter[];
